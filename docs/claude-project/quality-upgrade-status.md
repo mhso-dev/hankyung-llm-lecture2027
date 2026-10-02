@@ -1,6 +1,6 @@
 # 교재 품질 개선 — 진행 상황
 
-**마지막 갱신 2026-10-01 · 대상 챕터 32개 마감 + 전체 마감 끝(삭제 포함). 남은 것은 사람 결정과 Ch 12 화면 한 건**
+**마지막 갱신 2026-10-02 · 대상 챕터 32개 마감 + 전체 마감 끝(삭제 포함) · GitHub 저장소로 옮길 준비 끝(첫 커밋). 남은 것은 사람 결정과 Ch 12 화면 한 건**
 
 대상: `~/working/claude/projects/한국경제신문/` HTML 교재 34개 챕터.
 자세한 기록은 `textbook/qa/upgrade-progress.md`(챕터별 전체 로그), 챕터별 `qa/upgrade/chapter-summary.md`,
@@ -51,6 +51,14 @@
 | **Ch 34 비용 · Rate Limit 엔지니어링** | **5** | **완료 2026-09-30** | `06-비용과-Rate-Limit-실습` |
 | Ch 22 Middleware | 9 | 완료(강사 확인 끝) | `09-Middleware-실습` |
 | Ch 32 Docker · Ch 33 CI/CD | 5·5 | **제외** | Docker 실행 환경 없음 |
+
+## GitHub 저장소와 새 컴퓨터 (2026-10-02)
+
+- 저장소: `https://github.com/mhso-dev/hankyung-llm-lecture2027.git`(가지 `main`). 맥의 작업 폴더 `~/working/claude/projects/한국경제신문`이 그대로 git 저장소가 됐습니다(첫 커밋 `029aba0` 외 — 15,494파일, 약 794 MiB). `.env`·가상환경·캐시는 `.gitignore`로 뺐고, 비밀값 검사 0건, 50MB 넘는 파일 0개.
+- 이 세션에서는 GitHub 인증이 없어 **마지막 `git push`는 맥 터미널에서 사용자가 실행**합니다(`cd ~/working/claude/projects/한국경제신문 && git push -u origin main`).
+- 새로 만든 문서: `README.md`(저장소 안내) · `docs/NEW-MACHINE-SETUP.md`(새 컴퓨터 준비 — `.env`·uv·Python 3.12·Mermaid·Playwright·Ch 12·23·31 DB 준비·검사 명령) · `docs/RESUME-PROMPT.md`(새 컴퓨터의 Claude에 붙여 넣을 프롬프트 — 짧은 판·긴 판) · `docs/claude-project/quality-upgrade-status.md`(이 문서의 사본).
+- 지침 갱신: `AGENTS.md` 맨 위 「지금 상태와 이어서 작업하기 (2026-10-02)」 절(사용자 작업 규칙 전부·문서 읽는 순서·프로젝트 문서 짝 표·git 저장소), `PLAYBOOK.md`·`AGENT-BRIEF.md`에 새 컴퓨터 안내.
+- 새 컴퓨터 주의: 작업 스크립트가 `$HOME/mnt/한국경제신문` 경로를 가정합니다 — 폴더 이름을 `한국경제신문`으로 받고 Cowork에서 연결(또는 링크). 가상환경·`.cache/vm/pgenv`·`/tmp` 도구는 저장소에 없으므로 `NEW-MACHINE-SETUP.md`대로 다시 만듭니다.
 
 ## 전체 마감 결과 (2026-10-01)
 
@@ -262,7 +270,7 @@
 
 ## 다음 세션이 이어서 할 일
 
-대상 챕터 품질 개선과 전체 마감은 모두 끝났습니다. 남은 것은 **사람 결정**입니다(`textbook/upgrade-final-checklist.md` 맨 위 「전체 마감 결과」 절).
+대상 챕터 품질 개선과 전체 마감은 모두 끝났습니다. 남은 것은 **사람 결정**입니다(`textbook/upgrade-final-checklist.md` 맨 위 「전체 마감 결과」 절). 새 컴퓨터에서는 저장소를 받은 뒤 `docs/NEW-MACHINE-SETUP.md`로 준비하고 `docs/RESUME-PROMPT.md`의 프롬프트로 시작합니다.
 
 1. Ch 12 그림 라벨(④)을 정하면: 그림을 고치거나 검사 허용치를 정한 뒤 Ch 12 화면 재촬영 → `textbook/part3/qa/finalize_continuity_evidence.py` → 기기에 보류한 작업 폴더 넷 지우기.
 2. ①~③(타입힌트·Ch 29 01 검증·Ch 2 복습 문항)을 정하면: 규칙을 고치거나 해당 노트북·원고를 고친 뒤 묶음 재생성 → Part 7 기준 파일 새로 만들기.

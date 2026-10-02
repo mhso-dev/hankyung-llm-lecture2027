@@ -69,7 +69,7 @@
 
 ### claude.ai 프로젝트 문서와의 관계
 
-claude.ai 프로젝트 「한국경제신문_LLM_Agent」의 문서 여섯은 저장소 문서의 사본입니다. 한쪽을 바꾸면 다른 쪽도 맞춥니다.
+claude.ai 프로젝트 「한국경제신문_LLM_Agent」의 문서 일곱은 저장소 문서의 사본입니다. 한쪽을 바꾸면 다른 쪽도 맞춥니다.
 
 | 프로젝트 문서 | 저장소 원본 |
 |---|---|
@@ -79,6 +79,11 @@ claude.ai 프로젝트 「한국경제신문_LLM_Agent」의 문서 여섯은 �
 | `textbook/upgrade-final-check-2026-09-30.md` | `textbook/qa/upgrade-final-check-2026-09-30.md` |
 | `textbook/upgrade-course-summary.md` | `textbook/qa/upgrade-course-summary.md` |
 | `textbook/QUALITY-UPGRADE.md` | `textbook/QUALITY-UPGRADE.md` |
+| `docs/RESUME-PROMPT.md` | `docs/RESUME-PROMPT.md` |
+
+### git 저장소
+
+이 폴더는 git 저장소입니다. 원격 `origin` = `https://github.com/mhso-dev/hankyung-llm-lecture2027.git`, 가지 `main`(첫 커밋 2026-10-02). 작업 단위가 끝나면 `git status`로 바뀐 파일을 보여 주고 사용자 확인 뒤 커밋·푸시합니다. `.env`·가상환경·캐시는 `.gitignore`로 빠집니다(`.cache/final-close/`만 마감 기록 근거로 올림). 맥에서 쓸 때는 `core.precomposeunicode true`·`core.quotepath false`(이 저장소 설정에 들어 있음).
 
 ---
 

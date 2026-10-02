@@ -78,6 +78,7 @@ API 키 값은 출력하지 말고, 파일은 지우지 마세요.
 - 하위 작업자에게는 textbook/_notebook/upgrade/AGENT-BRIEF.md를 기본 지시로 넘기고, 절차는 PLAYBOOK.md를 따릅니다. 절 하나는 bash textbook/_notebook/upgrade/run_section.sh <챕터 폴더> NN [--no-exec]로 생성기 → 새 커널 실행 → Mermaid 렌더 → 빌드 → verify → 게이트까지 돌립니다.
 - 마감 전에는 게이트 G1~G7 0건, verify PASS, 화면 검사, 검토 반영을 확인합니다. 끝낸 척하지 않고, 막힌 것은 무엇이·왜·선택지로 보고합니다.
 - 사용자에게 무엇을 할지 먼저 묻고, 계획과 완료 기준을 보여 승인받은 뒤 실행합니다.
+- 이 폴더는 git 저장소입니다(원격 origin = https://github.com/mhso-dev/hankyung-llm-lecture2027.git, 가지 main). 작업 단위가 끝나면 git status로 바뀐 파일을 확인해 보여 주고, 사용자 확인 뒤 커밋·푸시합니다. .env·가상환경·캐시는 .gitignore로 빠지며, 키 값이 든 파일을 커밋하지 않습니다.
 
 ## 6. 이 컴퓨터에서 먼저 확인할 것 (docs/NEW-MACHINE-SETUP.md)
 - 저장소가 $HOME/mnt/한국경제신문에서 보이는지(스크립트가 가정하는 경로).
@@ -93,13 +94,14 @@ API 키 값은 출력하지 말고, 파일은 지우지 마세요.
 - 참고로 지난 진행 문서가 적은 순서는 이렇습니다. 첫째, ④ Ch 12 그림 라벨을 정하면 그림을 고치거나 검사 허용치를 정한 뒤 Ch 12 화면을 다시 찍고 textbook/part3/qa/finalize_continuity_evidence.py를 돌립니다. 둘째, ①~③을 정하면 규칙이나 해당 노트북·원고를 고친 뒤 묶음을 다시 만들고 Part 7 기준 파일을 새로 만듭니다. 셋째, 2차 검토(한국어 감사·삽화 판독·Windows·macOS 실행) — 검토 묶음 236절이 준비돼 있습니다.
 
 ## 8. claude.ai 프로젝트 「한국경제신문_LLM_Agent」와의 관계
-- 프로젝트 문서 여섯은 저장소 문서의 사본입니다. 한쪽을 바꾸면 다른 쪽도 같은 내용으로 맞춥니다.
+- 프로젝트 문서 일곱은 저장소 문서의 사본입니다. 한쪽을 바꾸면 다른 쪽도 같은 내용으로 맞춥니다.
   claude/quality-upgrade-status.md ↔ docs/claude-project/quality-upgrade-status.md
   textbook/final-close-log.md ↔ textbook/qa/final-close-log.md
   textbook/upgrade-final-checklist.md ↔ textbook/qa/upgrade-final-checklist.md
   textbook/upgrade-final-check-2026-09-30.md ↔ textbook/qa/upgrade-final-check-2026-09-30.md
   textbook/upgrade-course-summary.md ↔ textbook/qa/upgrade-course-summary.md
   textbook/QUALITY-UPGRADE.md ↔ textbook/QUALITY-UPGRADE.md
+  docs/RESUME-PROMPT.md ↔ docs/RESUME-PROMPT.md (이 프롬프트)
 - 프로젝트 문서는 통째로 다시 쓰는 방식이라, 저장소 원본을 먼저 고친 뒤 같은 내용을 올립니다.
 
 ## 9. 지금 할 일
