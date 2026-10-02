@@ -1,0 +1,19 @@
+%%{init: {"sequence": {"messageAlign": "left", "actorMargin": 30, "width": 110}}}%%
+sequenceDiagram
+  participant U as 우리 코드
+  participant G as 그래프
+  participant D as 임시 폴더
+  box Lavender
+  participant M as 모델<br>gpt-5.4-mini
+  end
+  U->>G: 질문 한 줄로 invoke
+  Note over G: 기록 훅<br>받은 도구 아홉 · execute 없음
+  G->>M: 요청 1
+  M-->>G: lookup_rule 요청 · 한 응답에 함께
+  Note over G: 도구 실행 노드 · 규정 글
+  G->>M: 요청 2
+  M-->>G: write_file 요청 하나
+  G->>D: notes/rules.md를 씀
+  G->>M: 요청 3
+  M-->>G: 도구 요청 없음 · 답 글
+  G-->>U: 결과 메시지 · 상태 칸 files 빈 목록

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  src["재료 · 03절과 같음<br>질문 · 기준 궤적<br>도구 둘 · 시스템 메시지 글"]:::tool
+  lim["바꾸는 값 호출 한도<br>실행 1은 4 · 실행 2는 2"]:::flow
+  ag["조립 함수 run_agent<br>create_agent · 실행 한도 20<br>invoke 한 번"]:::flow
+  mdl["gpt-5.4-mini<br>에이전트 요청"]:::model
+  res["결과 메시지<br>실행마다 궤적 하나"]:::measure
+  mo["02절 four_modes<br>검색어를 뺀 모드 넷"]:::flow
+  row["count_asked · model_part<br>run_row · 04절 show_row<br>03절 셈 · 공통 칸 한 줄"]:::flow
+  src --> ag
+  lim --> ag
+  ag --> mdl
+  mdl --> res
+  res --> mo
+  res --> row

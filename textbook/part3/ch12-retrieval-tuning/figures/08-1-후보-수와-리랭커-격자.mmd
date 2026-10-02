@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  quest["개발 질문 15개 · 문서 청크 175개"]:::tool
+  first["1차 검색<br>두 순위를 합친 차례"]:::flow
+  cut["후보 수 2 · 4 · 8로 자르기"]:::flow
+  rankA["리랭커 A<br>bge-reranker-v2-m3"]:::model
+  rankB["리랭커 B<br>ko-reranker"]:::model
+  report["보고 자리 5에서 자르기"]:::flow
+  score["부모 문서 재현율<br>문서 청크 정밀도"]:::measure
+  quest --> first
+  first --> cut
+  cut --> rankA
+  cut --> rankB
+  cut --> report
+  rankA --> report
+  rankB --> report
+  report --> score

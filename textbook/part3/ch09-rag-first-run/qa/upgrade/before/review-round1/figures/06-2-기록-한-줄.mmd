@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph LABEL["라벨 · 평가셋에서 가져옴"]
+    direction LR
+    l1["qid<br>Q001"]:::tool
+    l2["gold_doc_ids<br>E01"]:::tool
+    l1 ~~~ l2
+  end
+  subgraph RUN["이번 실행에서 만든 값"]
+    direction LR
+    r1["config<br>k 2 · 크기 500"]:::tool
+    r2["retrieved<br>rank 1 E01 p.1<br>rank 2 E01 p.2"]:::measure
+    r3["answer<br>끝에 E01 p.2"]:::measure
+    r1 ~~~ r2
+    r2 ~~~ r3
+  end
+  note["Ch 11이 읽는 세 칸<br>question · gold_doc_ids<br>retrieved<br>이번 절에서는 읽지 않음"]
+  LABEL ~~~ RUN
+  RUN ~~~ note

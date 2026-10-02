@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  B["수업 예산 600토큰"]:::tool
+  RM["출력 예약분 120<br>여유분 40"]:::tool
+  F["input_budget<br>600 - 120 - 40"]:::flow
+  A["입력 가용분 440"]:::measure
+  E["추정 입력 187<br>페르소나 15 · 과업 명세 37<br>근거와 질문 135"]:::measure
+  Y["예산 안에 들어가는가<br>True"]:::measure
+  L["모델 최대 한도 400,000<br>수업 예산과 다른 값"]
+  B --> F
+  RM --> F
+  F --> A
+  A --> Y
+  E --> Y
+  L ~~~ B

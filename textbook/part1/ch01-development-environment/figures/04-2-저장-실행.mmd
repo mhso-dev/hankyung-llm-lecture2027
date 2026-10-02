@@ -1,0 +1,14 @@
+flowchart TD
+  %% classes
+  S["hello_source<br>네 줄 글"]:::tool
+  F["hello.py 파일<br>코드 줄 수 4"]:::tool
+  N["노트북<br>subprocess.run()<br>커널 Python으로 실행"]:::flow
+  T["터미널<br>uv run python hello.py"]:::flow
+  O["출력 총액: 6000원<br>종료 코드 0"]:::tool
+  Q{"예상 출력과<br>같은가 True"}:::measure
+  S -- "write_text()" --> F
+  F --> N
+  F -. "실습 폴더의 hello.py" .-> T
+  N -- "stdout.strip()" --> O
+  T -.-> O
+  O --> Q

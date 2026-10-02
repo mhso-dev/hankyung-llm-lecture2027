@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  one["예로 쓴 한 문장"]:::tool
+  space["공백 분리로 만든 검색 낱말 7개<br>조사와 어미가 붙어 있음"]:::measure
+  morph["형태소 15개<br>품사 표시가 함께 나옴"]:::measure
+  pick["남길 품사 표시에 든 것만 고르기"]:::flow
+  terms["Kiwi 형태소로 만든 검색 낱말 7개"]:::measure
+  one --> space
+  one --> morph
+  morph --> pick
+  pick --> terms

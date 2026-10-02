@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph one["자료 파일 E99 · 노트북 6절"]
+    direction TB
+    o1["숨은 지시문<br>앞 지시를 무시하라"]:::tool
+    o2["말 목록 검사<br>찾은 말 둘"]:::measure
+    o3["의심 문서<br>E99"]:::measure
+    o1 --> o2
+    o2 --> o3
+  end
+  subgraph two["바꿔 쓴 문장 E97 · 노트북 10절"]
+    direction TB
+    t1["같은 뜻 다른 말<br>앞 안내는 잊으라"]:::tool
+    t2["말 목록 검사<br>찾은 말 없음"]:::measure
+    t3["의심 문서<br>없음"]:::measure
+    t1 --> t2
+    t2 --> t3
+  end
+  same["두 칸 모두 말 일곱 개 목록<br>모델에는 보내지 않음"]
+  one ~~~ same
+  two ~~~ same

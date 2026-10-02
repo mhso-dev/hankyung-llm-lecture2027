@@ -1,0 +1,85 @@
+<!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul><li>주문 CSV 파일을 표(DataFrame)로 읽고, 행·열·자료형을 출력에서 확인할 수 있습니다.</li><li>상태 열의 조건과 <code>loc</code>로 필요한 주문만 골라, 딕셔너리 목록을 반환하는 조회 함수를 만들 수 있습니다.</li><li>금액 열이 글자일 때 합계가 틀리는 이유를 설명하고, 숫자로 바꿔 고칠 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>에이전트가 결제 완료 주문의 합계를 답하려면, 먼저 주문 파일에서 맞는 행을 찾아야 합니다. 파일 전체를 모델에 넘기면 상관없는 주문까지 함께 들어갑니다.</p>
+<p>행을 바르게 골라도 금액이 글자로 읽혀 있으면 합계가 틀립니다. 게다가 이 실수는 오류 없이 지나갈 수 있습니다.</p>
+<p>그래서 이 절에서는 표를 읽고, 조건에 맞는 행만 고르고, 합계 전에 자료형을 확인합니다. 이 과정을 작은 조회 함수로 묶습니다. Ch 19에서는 이런 조회 함수를 에이전트가 부르는 도구로 씁니다.</p>
+<p><strong>이 절의 질문</strong> — 금액 열을 글자로 읽으면 오류 없이 합계가 틀릴 수 있을까요? 그렇다면 합계 전에 무엇을 확인해야 할까요?</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>Ch 2 05절에서는 <code>with open()</code> 블록으로 <code>orders.txt</code>에 「연필,3」 같은 줄을 저장했습니다. 읽을 때는 줄마다 <code>split(",")</code>로 나누고, <code>int()</code>로 수량을 숫자로 바꿨습니다. 수량 자리가 「많이」인 줄은 <code>ValueError</code>를 냈고, 그 오류 이름만 받는 <code>try/except</code>로 살펴봤습니다.</p>
+<p>Ch 2 03절에서는 주문 하나를 딕셔너리로 적고, 빈 목록에 <code>for</code>와 <code>append()</code>로 값을 모았습니다. Ch 2 04절에서는 함수를 정의하는 셀과 호출하는 셀을 나눴습니다. Ch 2 07절에서는 import 문과 타입힌트 <code>-&gt; int</code>를 배웠습니다.</p>
+<p>Ch 3의 노트북은 모두 빈 임시 폴더를 만들고 작업 위치를 옮긴 뒤 시작했습니다. 이 절의 준비 셀도 같은 모양입니다. 파일은 임시 폴더에만 생기고, 실습 폴더에는 남지 않습니다.</p>
+<p>이번에 새로 쓰는 것은 따로 설치하는 패키지 pandas입니다. 앞에서 한 줄씩 나누던 일을 표 단위로 한 번에 합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유로 시작하기</h3>
+<p>종이 장부에 주문이 한 줄에 하나씩 적혀 있다고 해 봅니다. 줄마다 결제 상태를 뜻하는 스티커와 금액이 있습니다.</p>
+<p>결제 완료 줄만 보고 싶으면, 그 줄 자리에만 창을 낸 종이 덮개를 장부 위에 올립니다. 창 아래 줄만 보이고 나머지 줄은 가려집니다. 보이는 줄의 금액만 모으면 결제 완료 합계가 됩니다.</p>
+<p>표에서 행을 고르는 방법도 같습니다. 장부가 표(DataFrame), 줄 하나가 행, 창을 낸 덮개가 불리언 마스크입니다.</p>
+{{img:01-5-창을-낸-덮개|초록 스티커 두 줄과 주황 스티커 한 줄이 있는 종이, 가운데 줄만 가리고 두 줄에 창을 낸 갈색 덮개, 초록 두 줄과 합친 동전 더미가 있는 카드가 화살표로 이어진 삽화|창을 낸 덮개를 올리면 결제 완료 줄만 보입니다. 마스크가 True인 행만 남기는 모습과 같습니다.}}
+<p><strong>그림 읽기</strong> — 왼쪽에서 오른쪽으로 화살표를 따라갑니다. 왼쪽 종이에는 초록 스티커 두 줄과 주황 스티커 한 줄이 있습니다. 가운데는 같은 종이에 갈색 덮개를 올린 모습입니다. 초록 줄 자리에만 창이 있어, 주황 줄은 덮개 아래로 가려집니다. 오른쪽 카드에는 보였던 초록 두 줄만 옮겨 적었고, 옆에는 두 줄의 동전을 합친 더미가 있습니다.</p>
+<h3>이 절에서 쓰는 말</h3>
+<table><thead><tr><th>용어</th><th>뜻</th><th>이 절에서 보이는 모습</th></tr></thead><tbody>
+<tr><td>CSV(comma-separated values)</td><td>한 줄에 값을 쉼표로 나눠 적은 글 파일. 첫 줄에는 보통 열 이름을 적습니다</td><td><code>orders.csv</code>의 첫 줄 <code>order_id,status,amount</code></td></tr>
+<tr><td>데이터프레임(DataFrame)</td><td>행과 열로 된 pandas의 표</td><td><code>pd.read_csv()</code>로 읽은 <code>orders</code>, 3행 3열</td></tr>
+<tr><td>행(row)과 열(column)</td><td>행은 가로 한 줄로 주문 하나, 열은 세로 한 줄로 같은 종류의 값</td><td>주문 <code>O101</code> 한 줄, 금액 열 <code>amount</code></td></tr>
+<tr><td>인덱스(index)</td><td>표가 행마다 붙이는 번호. 0부터 셉니다</td><td>출력 왼쪽의 <code>0</code>, <code>1</code>, <code>2</code></td></tr>
+<tr><td>자료형(dtype)</td><td>열에 담긴 값의 종류</td><td><code>int64</code>(정수), <code>str</code>(글자)</td></tr>
+<tr><td>시리즈(Series)</td><td>표에서 꺼낸 열 하나. 인덱스와 값을 짝지어 담습니다</td><td><code>orders["status"]</code></td></tr>
+<tr><td>불리언 마스크(boolean mask)</td><td>행마다 고를지 말지를 참·거짓으로 적은 시리즈</td><td><code>True</code>, <code>False</code>, <code>True</code></td></tr>
+</tbody></table>
+<h3>파일에서 표로, 표에서 열로</h3>
+<p>함수 <code>pd.read_csv()</code>는 CSV 파일을 읽어 표 하나를 반환합니다. 첫 줄은 열 이름이 되고, 다음 줄부터 행이 됩니다. 표는 행마다 0부터 번호를 붙이는데, 이 번호가 인덱스입니다.</p>
+<p>표 이름 뒤 대괄호에 열 이름을 넣으면 열 하나를 꺼냅니다. 꺼낸 열이 시리즈입니다. Ch 2 03절에서 딕셔너리의 키로 값을 읽던 모양과 같습니다.</p>
+<p>이 절의 import 줄은 <code>import pandas as pd</code>입니다. 키워드 <code>as</code>는 불러온 모듈에 짧은 별명을 붙입니다. 그래서 코드는 <code>pandas.read_csv()</code> 대신 <code>pd.read_csv()</code>로 씁니다.</p>
+{{mermaid:01-1-주문-표-읽기|orders.csv 파일이 pd.read_csv로 인덱스와 order_id, status, amount 열을 가진 3행 3열 표가 되고, status 열을 꺼내면 paid, pending, paid 시리즈가 되는 흐름도|파일에서 표로, 표에서 열로. 금액 열만 정수 int64이고, 꺼낸 상태 열은 시리즈가 됩니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 읽습니다. 초록 상자는 파일, 표의 열, 꺼낸 시리즈처럼 값이 담긴 자리입니다. 화살표 옆 글자는 실행한 코드나 한 일입니다.</p>
+<p>가운데 칸이 3행 3열 표입니다. 회색 상자 「인덱스 0·1·2」는 파일에 없던 번호라 다른 색으로 두었습니다. 금액 열만 자료형이 <code>int64</code>이고, 나머지 두 열은 <code>str</code>입니다. 맨 아래 상자는 상태 열을 꺼낸 시리즈입니다.</p>
+<h3>자료형이 계산의 뜻을 정합니다</h3>
+<p>같은 32000이라도 정수이면 더하기는 숫자 더하기입니다. 글자이면 두 글을 이어 붙입니다. Ch 3 01절에서 <code>"git " + command</code>가 글을 이어 붙였던 것과 같습니다.</p>
+<p>함수 <code>pd.read_csv()</code>는 숫자로 보이는 열을 숫자로 읽습니다. 하지만 인자 <code>dtype=str</code>로 모든 열을 글자로 읽게 하면 금액 열도 글자 열이 됩니다. 그래서 합계를 내기 전에 <code>dtypes</code>로 열의 자료형을 먼저 봅니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>노트북은 임시 폴더에 <code>orders.csv</code>를 만들고 pandas로 읽습니다. 표의 크기와 자료형을 본 뒤, 상태 열로 마스크를 만들어 결제 완료 주문만 고릅니다. 마지막으로 같은 일을 조회 함수 <code>fetch_orders()</code>로 묶고, 상태 인자 하나만 바꿔 다시 부릅니다.</p>
+<p>모델을 부르지 않으므로 API 키가 필요 없고 비용도 들지 않습니다. 교재 출력은 실습 폴더에 고정한 pandas 3.0.5로 만들었습니다. 다른 버전에서는 자료형 이름 같은 출력 모양이 다를 수 있습니다.</p>
+{{notebook:01-Pandas로-표-다루기|example}}
+<p class="look"><b>확인할 점</b> — 마스크 출력에서 0번과 2번 행이 <code>True</code>인지 봅니다. 고른 표의 인덱스가 <code>0</code>과 <code>2</code>로 남았는지도 확인합니다. 함수의 반환값은 표가 아니라 딕셔너리 목록이어야 합니다.</p>
+<h3>마스크로 행을 고르고 합계 내기</h3>
+<p>상태 열을 <code>"paid"</code>와 비교하면 행마다 참·거짓이 나옵니다. 표 뒤에 <code>.loc[마스크]</code>를 붙이면 참인 행만 남습니다. 대괄호 안에 쉼표와 열 이름을 더 적으면, 고른 행에서 그 열만 꺼냅니다.</p>
+{{mermaid:01-2-조건으로-행-고르기|status 열 paid, pending, paid를 paid와 비교해 마스크 True, False, True를 만들고, loc로 O101과 O103 행을 고른 뒤 금액 32000과 27000을 더해 59000이 되는 흐름도|마스크로 고른 두 행의 금액만 더합니다. 결제 완료 합계는 59000입니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 읽습니다. 초록 상자는 단계마다 만든 값이고, 화살표 옆 글자는 그 값을 만든 코드입니다.</p>
+<p>상태 열 paid·pending·paid가 비교를 거쳐 마스크 True·False·True가 됩니다. 마스크로 고른 행은 O101과 O103입니다. 두 행의 금액 32000과 27000을 더한 노란 상자가 출력 <code>결제 완료 합계: 59000</code>입니다.</p>
+<h3>입력 두 개, 반환 목록 하나</h3>
+<p>함수 <code>fetch_orders()</code>는 파일 이름과 상태를 받아, 그 상태의 주문을 딕셔너리 목록으로 반환합니다. 메서드 <code>to_dict(orient="records")</code>가 행 하나를 딕셔너리 하나로 바꿉니다. 인덱스는 빠지고 열 이름이 키가 됩니다.</p>
+<p>반환값을 딕셔너리 목록으로 정한 이유가 있습니다. Ch 2 03절의 주문 딕셔너리와 같은 모양이라, pandas를 모르는 코드도 결과를 읽을 수 있습니다. 정의 줄의 <code>-&gt; list</code>는 목록을 반환한다는 타입힌트입니다.</p>
+{{mermaid:01-3-조회-함수|입력 orders.csv와 paid가 fetch_orders 함수로 들어가 딕셔너리 2개 O101, O103이 나오고, 점선으로 pending을 넣으면 딕셔너리 1개 O102가 나오는 그림|같은 함수에 상태만 바꿔 넣습니다. paid는 두 건, pending은 한 건을 반환했습니다.}}
+<p><strong>도식 읽기</strong> — 왼쪽에서 오른쪽으로 읽습니다. 가운데 파란 상자는 우리가 정의한 함수이고, 상자 안에 적은 순서대로 일을 합니다. 왼쪽 초록 상자는 넣은 인자, 오른쪽 노란 상자는 출력으로 확인한 반환값입니다.</p>
+<p>실선은 상태 <code>paid</code>로 부른 호출이고, 반환값은 딕셔너리 두 개 O101·O103입니다. 점선은 값 바꿔 보기에서 상태만 <code>pending</code>으로 바꾼 호출입니다. 이때는 딕셔너리 하나 O102가 나왔고, 출력은 <code>주문 수: 1</code>이었습니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before에서는 주문 번호처럼 계산하지 않는 값을 글자로 지키려고, 파일의 모든 열을 글자로 읽었다고 해 봅니다. 앞자리 0이 있는 번호(예: <code>01234</code>)는 숫자로 읽히면 0이 사라지기 때문입니다. 이번 파일에는 그런 번호가 없어 실행하지 않았습니다. 인자 <code>dtype=str</code>을 주고 읽은 표로 금액 합계를 냅니다.</p>
+<p>After에서는 같은 표의 금액 열을 <code>pd.to_numeric()</code>으로 숫자로 바꾼 뒤 합계를 냅니다. 이어서 숫자로 바꿀 수 없는 「미정」이 섞인 목록도 넣어 봅니다.</p>
+{{notebook:01-Pandas로-표-다루기|failure}}
+<p>Before 셀의 표 출력은 앞의 표와 같아 보였습니다. 하지만 자료형 목록에서 금액 열은 <code>str</code>였고, 합계는 <code>320001800027000</code>이 나왔습니다. 세 금액 글자를 이어 붙인 값이고, 셀은 오류 없이 끝났습니다.</p>
+<p>After에서는 금액 열의 자료형이 <code>int64</code>로 바뀌었고, 합계는 <code>77000</code>이었습니다. 「미정」이 섞인 목록은 <code>Unable to parse string "미정" at position 1</code> 오류를 냈습니다. 숫자로 바꿀 수 없는 값을 넘기지 않고 오류로 알린 것입니다.</p>
+{{mermaid:01-4-글자-합계-비교|Before는 dtype=str로 읽은 금액 열의 sum이 320001800027000이라는 빨간 결과로 이어지고, After는 pd.to_numeric 뒤 sum이 77000과 assert 통과로, 미정이 섞인 목록은 ValueError 출력으로 이어지는 비교 그림|모든 열을 글자로 읽은 Before와 금액 열을 숫자로 바꾼 After. 같은 세 금액의 합계가 달라졌습니다.}}
+<p><strong>도식 읽기</strong> — 위 칸이 Before, 아래 칸이 After이고, 칸마다 왼쪽에서 오른쪽으로 읽습니다. 파란 상자는 실행한 코드입니다.</p>
+<p>위 칸 끝의 빨간 상자는 틀린 합계 320001800027000입니다. 아래 칸 첫 줄은 숫자로 바꾼 뒤 77000을 얻고 <code>assert</code>를 통과한 흐름입니다. 둘째 줄은 「미정」이 섞인 목록을 따로 넣어 본 실험입니다. 이 오류는 코드가 받아서 출력했으므로 노란 상자로 두었습니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul><li>합계를 내기 전에 <code>dtypes</code>로 금액 열의 자료형을 확인합니다. 노트북에서 본 것처럼 표 출력만으로는 글자인지 숫자인지 구별되지 않았습니다.</li>
+<li>인자 <code>dtype=str</code>은 모든 열을 글자로 읽습니다. 글자로 둘 열만 따로 정하는 방법도 있지만, 이번에는 실행하지 않았습니다.</li>
+<li>금액 칸에 「미정」 같은 글자가 들어 있는 파일은 이번에 읽어 보지 않았습니다. 목록으로 확인한 것은 <code>pd.to_numeric()</code>이 그 값에서 오류를 낸다는 것까지입니다.</li>
+<li>함수 <code>fetch_orders()</code>는 없는 파일이나 없는 상태 이름을 따로 검사하지 않습니다. 그런 입력의 출력은 이번에 확인하지 않았습니다.</li>
+<li>실습 폴더 <code>data_tools.py</code>에도 같은 이름의 함수 <code>fetch_orders(csv_path, *, status=None)</code>가 있습니다. 첫 인자로 CSV 파일 경로를 받고, 상태는 키워드 인자 <code>status=</code>로 받습니다. 가운데 별표 <code>*</code>는 그 뒤 인자를 이름을 붙여서만 넘기게 하는 표시이고, 이 절에서는 쓰지 않았습니다. Ch 19 01절이 도구로 다시 쓰는 것은 이 실습 폴더 판입니다.</li>
+<li>실제 주문 파일에는 고객 이름 같은 개인 정보가 들어갈 수 있습니다. 저장소에 올리기 전에 Ch 3 01절처럼 <code>git status --short</code>로 목록을 확인하고, 필요하면 무시 규칙에 적습니다.</li>
+<li>교재 출력은 Linux의 pandas 3.0.5, Python 3.12.13으로 만들었습니다. 다른 운영체제와 pandas 2 이하에서는 실행하지 않았습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>함수 <code>pd.read_csv()</code>는 CSV 파일을 표로 읽습니다. 속성 <code>dtypes</code>로 열마다 자료형을 먼저 확인합니다.</li><li>열 하나(시리즈)를 조건과 비교해 마스크를 만들고, <code>표.loc[마스크]</code>로 필요한 행만 고릅니다.</li><li>글자 금액 열의 <code>sum()</code>은 글자를 이어 붙입니다. 합계 전에 <code>pd.to_numeric()</code>으로 숫자로 바꿉니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 02절에서는 주문 표에 고객 번호 열을 더합니다. 그 번호로 고객 표와 주문 표를 연결하고, 연결 뒤에도 주문 행 수가 그대로인지 확인합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary>
+<p class="quiz-q">1. 노트북의 표 출력에서 주문 하나와 금액은 각각 표의 무엇에 해당하나요? · 기초</p><p class="quiz-a"><b>해설</b> — 주문 하나는 가로 한 줄인 행이고, 금액은 세로 한 줄인 열 <code>amount</code>입니다. 출력 왼쪽의 0, 1, 2는 행마다 붙은 인덱스입니다.</p>
+<p class="quiz-q">2. 결제 완료 주문만 고르는 마스크는 어떻게 만들고, 어디에 넣나요? · 기초</p><p class="quiz-a"><b>해설</b> — 상태 열을 꺼내 <code>"paid"</code>와 <code>==</code>로 비교하면 마스크가 됩니다. 이 마스크를 <code>orders.loc[paid_mask]</code>처럼 대괄호에 넣으면 참인 행만 남습니다.</p>
+<p class="quiz-q">3. 마스크로 고른 표 <code>paid_orders</code>의 인덱스가 0과 2인 이유는 무엇인가요? · 적용</p><p class="quiz-a"><b>해설</b> — 행을 고를 때 번호를 새로 매기지 않기 때문입니다. 그래서 O101과 O103이 원래 표에서 가졌던 0과 2가 남습니다. 원래 표도 그대로 3행입니다.</p>
+<p class="quiz-q">4. 함수 <code>fetch_orders()</code>가 표 대신 딕셔너리 목록을 반환하게 한 이유는 무엇인가요? · 적용</p><p class="quiz-a"><b>해설</b> — 목록 안의 딕셔너리는 열 이름을 키로 가져, Ch 2 03절의 주문 딕셔너리와 모양이 같습니다. 그래서 pandas를 모르는 코드도 결과를 읽을 수 있습니다.</p>
+<p class="quiz-q">5. 모든 열을 글자로 읽은 표에서 금액 합계가 320001800027000으로 나왔습니다. 오류가 없었는데 왜 틀렸고, 무엇을 확인했어야 하나요? · 분석</p><p class="quiz-a"><b>해설</b> — 금액 열의 자료형이 <code>str</code>이라 <code>sum()</code>이 글자를 이어 붙였습니다. 합계 전에 <code>dtypes</code>로 자료형을 확인하고, <code>pd.to_numeric()</code>으로 숫자로 바꿨어야 합니다. 바꿀 수 없는 값이 있으면 이 함수가 <code>ValueError</code>로 알립니다.</p>
+</details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul><li><a href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html">pandas 공식 문서: pandas.read_csv</a> · 확인 2026-09-16 · 실행 pandas 3.0.5</li><li><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.loc.html">pandas 공식 문서: DataFrame.loc</a> · 확인 2026-09-16 · 실행 pandas 3.0.5</li><li><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_dict.html">pandas 공식 문서: DataFrame.to_dict</a> · 확인 2026-09-16 · 실행 pandas 3.0.5</li><li><a href="https://pandas.pydata.org/docs/reference/api/pandas.to_numeric.html">pandas 공식 문서: pandas.to_numeric</a> · 확인 2026-09-16 · 실행 pandas 3.0.5</li></ul>

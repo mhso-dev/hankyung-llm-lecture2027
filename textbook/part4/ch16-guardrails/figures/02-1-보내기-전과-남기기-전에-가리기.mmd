@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q["받은 질문<br>가짜 개인정보 넷"]:::tool
+  v["입력 검사<br>validate_query"]:::flow
+  m["가리기 mask_pii<br>정규식 넷을 차례로"]:::flow
+  mq["가린 질문<br>표식 넷과 종류별 개수"]:::measure
+  ask["모델 gpt-5.4-mini<br>가린 메시지만 받음"]:::model
+  logline["기록 한 줄<br>가린 질문과 개수"]:::measure
+  q --> v
+  v --> m
+  m --> mq
+  mq --> ask
+  mq --> logline

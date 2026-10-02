@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph cell["4·5절 셀 하나"]
+    direction TB
+    s1["start_worker<br>first-run 단계로 띄움"]:::flow
+    s2["자식 프로세스<br>first를 마치고<br>second에 들어감<br>신호 파일을 만들고 30초 쉼"]:::flow
+    s3["wait_for_signal<br>신호 파일이 생겼는가 True"]:::measure
+    s4["stop_worker<br>kill 뒤 종료 코드 -9"]:::measure
+    s1 --> s2
+    s2 --> s3
+    s3 --> s4
+  end
+  s5["read_saved<br>새 연결로 SQLite 파일을 읽음"]:::flow
+  s6["start_worker<br>resume 단계로 다시 띄우고<br>wait로 끝날 때까지 기다림"]:::flow
+  cell --> s5
+  s5 --> s6

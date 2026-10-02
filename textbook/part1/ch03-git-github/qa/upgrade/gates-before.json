@@ -1,0 +1,391 @@
+{
+  "chapter": "ch03-git-github",
+  "label": "before",
+  "totals": {
+    "G1": 17,
+    "G2": 3,
+    "G3": 0,
+    "G4": 0,
+    "G5": 43,
+    "G6": 155,
+    "G7": 15
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-커밋과-gitignore",
+      "code_cells": 6,
+      "sentences": 117,
+      "counts": {
+        "G1": 2,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 9,
+        "G6": 32,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:varargs_def",
+          "cell2:multiple_defs_in_cell"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_after_missing",
+          "cell3:explanation_before_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:`git add app.py`를 실행하면 그 순간의 파일 상태가 다음 커밋 후보인 색인(index) , 즉 스테이징 영역(staging area) 에 올라갑니다",
+          "long:구체적으로 `app.py`가 주문 2건을 출력하는 상태를 add한 뒤 작업 폴더에서 3건으로 다시 고치면, 색인에는 2건이 남고 작업 폴더에는 3건이 있습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 목적이 분명한 커밋을 기능 브랜치에 쌓고, 원격에 게시한 변경을 PR 단위로 비교하고 검토합니다",
+          "long:**색인(index)** 은 다음 커밋에 넣을 파일 상태를 골라 두는 자리이며, 스테이징 영역(staging area)이라고도 합니다",
+          "english_start:Git을 사용할 때 첫 판단은 “어떤 변경을 함께 설명할 것인가”와 “어",
+          "english_start:Git의 커밋(commit) 도 선택한 파일 상태와 설명을 묶은 기록입니",
+          "english_start:`git add app.py`를 실행하면 그 순간의 파일 상태가 다음 커",
+          "english_start:`git commit -m \"feat: 주문 요약 추가\"`를 실행하면 색",
+          "english_start:`git diff`는 작업 폴더와 색인의 차이를, `git diff --",
+          "english_start:`git log`가 보여 주는 연속된 기록은 파일 사본의 목록이 아니라 ",
+          "english_start:`git status --short --ignored`는 `git` 프로",
+          "english_start:`git commit -m \"메시지\"`의 `-m` 뒤 문자열은 커밋 제목",
+          "english_start:`git diff -- app.py`의 `--`는 뒤의 값을 옵션이 아닌",
+          "english_start:`.env`는 규칙과 일치해 스테이징 대상에서 제외됩니다",
+          "english_start:`git diff`의 빼기 줄과 더하기 줄을 읽으면 변경 범위가 한 줄임",
+          "english_start:`debug.log`를 먼저 커밋한 다음 `*.log`를 무시 규칙에 추",
+          "english_start:`.gitignore`는 이미 커밋한 파일의 추적 상태를 자동으로 없애지",
+          "english_start:`git check-ignore -v`는 어떤 규칙이 해당 파일에 적용됐",
+          "english_start:`.gitignore`는 보안 도구가 아닙니다",
+          "english_start:`git add .`를 사용하기 전에 `git status --short",
+          "english_start:`git rm --cached`는 다음 커밋에서 저장소의 파일을 제거합니",
+          "english_start:`.gitignore`는 새 파일의 추적을 예방하며 이미 추적 중인 파일",
+          "english_start:`debug.log`는 이미 추적 중이므로 상태가 유지됩니다",
+          "english_start:`--cached`가 색인에서만 제거하도록 지정합니다",
+          "english_start:Git은 파일을 세 자리에서 봅니다",
+          "english_start:`.env`는 작업 폴더에는 있지만 `.gitignore` 규칙 때문에 ",
+          "english_start:Git이 요구하는 필수 문법이 아니며 저장소마다 다른 규칙을 사용할 수 ",
+          "english_start:`git add .gitignore`는 그 파일만 색인에 올리고, `gi",
+          "english_start:`.env`가 `!!`로 보이고 두 메시지가 역시간순으로 나오면 작업 폴",
+          "english_start:`git diff -- app.py`는 작업 폴더와 색인의 차이를 보여 ",
+          "dense_paragraph:여행 사진 한 장에는 같은 순간을 설명하는 장면을 담습니다. 점심 식사와 다음 날의 기차표를 한 사진에 억지",
+          "dense_paragraph:Git은 파일을 세 자리에서 봅니다. **작업 폴더(working tree)** 는 지금 편집하는 파일이 있"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-GitHub-Flow와-PR-리뷰",
+      "code_cells": 6,
+      "sentences": 122,
+      "counts": {
+        "G1": 2,
+        "G2": 2,
+        "G3": 0,
+        "G4": 0,
+        "G5": 8,
+        "G6": 31,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:varargs_def",
+          "cell2:multiple_defs_in_cell"
+        ],
+        "G2": [
+          "cell7:method_chain_3plus",
+          "cell11:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_after_missing",
+          "cell3:explanation_before_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell11:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:풀 리퀘스트(Pull Request, PR) 는 한 브랜치의 변경을 다른 브랜치에 합치자고 제안하며 변경 이유와 검증 결과를 함께 검토하는 GitHub 협업 단위입니다",
+          "long:이 절에서는 직접 편집하는 작업 폴더가 없는 로컬 bare 저장소를 원격처럼 사용해 게시와 병합을 실제로 수행하고 PR 화면이 담당하는 절차를 파일과 명령 출력으로 재현합니다",
+          "long:GitHub Flow 는 배포 가능한 기본 브랜치를 유지하고, 짧게 사용하는 기능 브랜치에서 변경한 뒤 Pull Request로 검토하고 다시 기본 브랜치에 병합하는 작업 방식입니다",
+          "long:`git push -u origin feature/order-summary`에서 `push`는 로컬 커밋과 브랜치 위치를 보내고, `-u`는 이후 push와 pull이 참조할 추적 관계를 설정하며, 마지막 인자는 보낼 브랜치입니다",
+          "long:리베이스(rebase) 는 한 브랜치의 커밋을 다른 기준 커밋 위에서 다시 만들어 직선 이력으로 정리하므로 커밋 해시가 달라집니다",
+          "long:코드 리뷰(code review) 는 작성자와 다른 사람이 변경 내용을 읽고 결함, 이해하기 어려운 부분, 테스트 누락을 확인하는 과정입니다",
+          "long:`git remote -v`의 경로 앞부분은 실행마다 달라지는 임시 폴더이며, 확인할 값은 원격 이름 `origin`과 가져오기·보내기 경로가 같은 `team.git`을 가리킨다는 사실입니다",
+          "long:리뷰 의견은 “`count`가 빈 문자열이면 주문 건수가 비어 보입니다”처럼 입력, 관찰 결과, 기대 조건을 함께 적어야 작성자가 문제를 재현할 수 있습니다",
+          "long:GitHub에서라면 보호 규칙과 리뷰 상태를 확인한 뒤 병합 버튼을 사용하지만, 이 실습은 Git 명령으로 동일한 브랜치 결합만 확인합니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 기능 브랜치와 `main`이 같은 줄을 다르게 수정했을 때 Git이 자동 병합을 중단하는 이유와 해결 절차를 확인합니다",
+          "long:정답: 네트워크와 GitHub 계정을 사용하지 않고 로컬 bare 저장소와 Git 명령만 사용하므로 PR 번호, 댓글, 승인 상태가 만들어지지 않습니다",
+          "long:**색인(index)** 은 다음 커밋에 넣을 파일 상태를 골라 두는 자리이며, 스테이징 영역(staging area)이라고도 합니다",
+          "long:**풀 리퀘스트(Pull Request, PR)** 는 이 차이와 변경 이유를 사람에게 검토해 달라고 요청하는 GitHub의 협업 단위입니다",
+          "long:GitHub Flow의 합치기 단계에는 merge, squash merge, rebase merge 같은 선택이 있을 수 있습니다",
+          "english_start:`origin`은 최초 복제한 원격에 관례적으로 붙는 이름일 뿐 특별한 ",
+          "english_start:`origin/main`은 원격 서버를 실시간으로 읽는 이름이 아니라 마",
+          "english_start:`git fetch origin`을 실행하면 원격의 새 객체와 원격 추적",
+          "english_start:`git diff --stat origin/main...HEAD`의 점 ",
+          "english_start:`--stat`은 파일별 줄 수 요약만 보여 주므로 리뷰에서는 이어서 실",
+          "english_start:`git remote -v`의 경로 앞부분은 실행마다 달라지는 임시 폴더",
+          "english_start:GitHub가 PR에 표시할 핵심 변경 범위를 로컬 Git으로 확인한 결",
+          "english_start:`isinstance(count, int)`는 현재 `count`가 정수",
+          "english_start:Git은 파일을 세 자리에서 봅니다",
+          "english_start:`git clone 원격경로 author`는 원격의 이력과 브랜치를 받아",
+          "english_start:`git push -u origin main`은 현재 `main` 커밋을",
+          "english_start:push는 작업 폴더의 미커밋 파일을 보내지 않고 커밋과 참조를 전송합니",
+          "english_start:`git diff --stat origin/main...HEAD`의 점 ",
+          "english_start:`--stat`은 실제 코드 대신 바뀐 파일과 줄 수를 요약합니다",
+          "english_start:`--no-ff`는 이 단순 이동이 가능해도 부모가 둘인 병합 커밋을 만",
+          "english_start:`isinstance(count, int)`는 현재 `count`가 정수",
+          "dense_paragraph:Git은 파일을 세 자리에서 봅니다. **작업 폴더(working tree)** 는 지금 편집하는 파일이 있"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-병합-충돌-해결",
+      "code_cells": 6,
+      "sentences": 106,
+      "counts": {
+        "G1": 3,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 9,
+        "G6": 29,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:varargs_def",
+          "cell2:multiple_defs_in_cell",
+          "cell11:generator_expression"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_after_missing",
+          "cell3:explanation_before_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Alice는 원격 `main`의 같은 줄을 “오늘 출고”로 바꾸고, Bob은 이전 커밋에서 시작한 로컬 `main`을 “내일 출고”로 바꿉니다",
+          "long:Alice와 Bob이 같은 출발 커밋의 같은 줄을 다르게 바꾸면 어느 문장이 맞는지 알 수 없어 병합 충돌(merge conflict) 로 멈춥니다",
+          "long:이 실습은 `policy.txt`의 두 출고 조건을 읽고 “14시 이전 결제는 오늘 출고, 14시 이후 결제는 내일 출고”라는 새 문장으로 합칩니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 병합 뒤 공개된 잘못된 변경을 새 커밋으로 되돌리고, 로컬에서 보이지 않게 된 커밋을 reflog로 찾아 복구합니다",
+          "long:**색인(index)** 은 다음 커밋에 넣을 파일 상태를 골라 두는 자리이며, 스테이징 영역(staging area)이라고도 합니다",
+          "long:같은 파일의 같은 줄을 서로 다르게 바꾸면 어느 내용을 선택할지 알 수 없어 **병합 충돌(merge conflict)** 로 멈춥니다",
+          "english_start:Git은 서로 다른 파일이나 서로 떨어진 줄의 변경을 대체로 자동으로 합",
+          "english_start:Alice는 원격 `main`의 같은 줄을 “오늘 출고”로 바꾸고, Bo",
+          "english_start:Git은 두 이력이 함께 출발한 공통 조상(merge base) , 현재",
+          "english_start:Alice와 Bob이 같은 출발 커밋의 같은 줄을 다르게 바꾸면 어느 문",
+          "english_start:Bob의 커밋과 Alice의 커밋은 서로 다른 자손이라 단순 이동으로 합",
+          "english_start:`git pull --no-rebase origin main`은 두 단계",
+          "english_start:`--no-rebase`는 Bob의 커밋을 Alice 커밋 위에서 다시 ",
+          "english_start:`git commit`은 Alice 쪽 부모와 Bob 쪽 부모를 함께 가",
+          "english_start:Bob의 push 거부와 pull 충돌 뒤에는 `policy.txt`의 ",
+          "english_start:Bob의 첫 push 종료 코드는 0이 아니며 아직 원격 변경을 통합하지",
+          "english_start:Bob의 로컬 `main`에서 `git pull --no-rebase o",
+          "english_start:`git status --short`의 `UU`는 양쪽에서 수정된 파일이",
+          "english_start:`--ours`와 `--theirs`는 파일 전체를 한쪽 버전으로 선택합",
+          "english_start:Git은 공통 조상과 두 이력의 변경을 비교하며 자동 선택할 수 없는 부",
+          "english_start:Git이 변경을 자동 결합할 수 있으면 충돌하지 않습니다",
+          "english_start:Git은 파일을 세 자리에서 봅니다",
+          "english_start:`policy.txt`는 정답을 자동 생성하는 파일이 아니라 사람이 최종",
+          "english_start:Alice가 정책을 반영한 안내를 먼저 원격에 게시합니다",
+          "english_start:Bob은 Alice가 두 번째 커밋을 push하기 전에 복제한 공통 `m",
+          "english_start:Bob의 push가 `non-fast-forward`로 거절되는 이유는 ",
+          "english_start:`--no-rebase`는 가져온 커밋 위로 Bob의 커밋을 다시 만들지",
+          "english_start:Bob이 원격 변경을 가져와 병합하면 같은 줄의 차이에서 충돌합니다",
+          "dense_paragraph:Git은 파일을 세 자리에서 봅니다. **작업 폴더(working tree)** 는 지금 편집하는 파일이 있"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-revert-reflog-worktree",
+      "code_cells": 6,
+      "sentences": 119,
+      "counts": {
+        "G1": 3,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 9,
+        "G6": 29,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:varargs_def",
+          "cell2:multiple_defs_in_cell",
+          "cell11:generator_expression"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_after_missing",
+          "cell3:explanation_before_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:팀이 이미 받은 커밋의 효과를 취소해야 할 수도 있고, 내 컴퓨터에서 실수로 브랜치 이름을 옮겨 커밋이 보이지 않을 수도 있습니다",
+          "long:`git reset --hard HEAD~1`에서 `HEAD~1`은 현재 커밋의 첫 번째 부모 한 단계 전이며, `--hard`는 브랜치뿐 아니라 색인과 작업 폴더까지 그 커밋 상태로 맞춥니다",
+          "long:공유된 잘못된 커밋의 효과를 취소하려면 revert, 로컬에서 보이지 않게 된 커밋의 위치를 찾으려면 reflog, 두 브랜치를 동시에 편집하려면 worktree를 선택합니다",
+          "long:실습은 복구 결과를 검사하기 위해 원래 커밋 해시를 별도 변수에 보관하지만, 실제 복구 명령은 reflog 출력에서 찾은 후보를 사용해야 합니다",
+          "long:**색인(index)** 은 다음 커밋에 넣을 파일 상태를 골라 두는 자리이며, 스테이징 영역(staging area)이라고도 합니다",
+          "english_start:`worktree`로 한 저장소의 서로 다른 브랜치를 별도 작업 폴더에서",
+          "english_start:`Path`와 임시 폴더를 사용하므로 실제 프로젝트 파일은 수정하지 않습",
+          "english_start:`reset --hard`는 실패 재현용 임시 브랜치에서만 실행합니다",
+          "english_start:`discount=10`을 90으로 바꾼 커밋을 revert하면 작업 파",
+          "english_start:reflog는 만료될 수 있는 로컬 복구 단서이며 원격 백업을 대신하지 ",
+          "english_start:`git reflog --format=%H%x09%gs -5`는 최근 5",
+          "english_start:`reflog.splitlines()`는 행 목록을 반환하고, `next",
+          "english_start:`line.split(\"\\t\", 1)[0]`은 첫 번째 탭에서 최대 한 ",
+          "english_start:revert가 항상 자동 성공하는 것은 아닙니다",
+          "english_start:reflog는 각 로컬 저장소의 참조 이동 기록입니다",
+          "english_start:`reset --hard`는 커밋하지 않은 작업 폴더 변경까지 덮어쓸 수",
+          "english_start:`git worktree remove`와 `git worktree pru",
+          "english_start:`revert`는 기존 커밋 효과를 취소하는 새 커밋을 만들어 공유 이력",
+          "english_start:`reflog`는 로컬 참조 이동을 기록하며 보이지 않게 된 커밋을 찾는",
+          "english_start:`worktree`는 한 저장소의 여러 브랜치를 서로 다른 작업 폴더에 ",
+          "english_start:Git은 파일을 세 자리에서 봅니다",
+          "english_start:`git reflog --format=%H%x09%gs -5`는 최근 5",
+          "english_start:`reflog.splitlines()`는 출력 문자열을 행 목록으로 반환",
+          "english_start:`next(...)`는 메시지에 `commit: experiment: 복",
+          "english_start:`line.split(\"\\t\", 1)[0]`은 첫 번째 탭에서 행을 최대",
+          "banned:돌립니다: 여기서는 직선 이력에서 할인율을 잘못 바꾼 커밋을 만들고 그 효과를 되돌",
+          "banned:돌립니다: `discount=90` 커밋은 이력에 남고 새 커밋이 그 패치를 반대로",
+          "dense_paragraph:Git은 파일을 세 자리에서 봅니다. **작업 폴더(working tree)** 는 지금 편집하는 파일이 있",
+          "dense_paragraph:정상 설정 파일과 첫 커밋을 만듭니다. 이 절의 세 도구는 같은 종류의 기능이 아닙니다. **revert**"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-시크릿-이력-정리와-예방",
+      "code_cells": 6,
+      "sentences": 131,
+      "counts": {
+        "G1": 7,
+        "G2": 1,
+        "G3": 0,
+        "G4": 0,
+        "G5": 8,
+        "G6": 34,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:varargs_def",
+          "cell2:multiple_defs_in_cell",
+          "cell11:conditional_expression",
+          "cell11:conditional_expression",
+          "cell11:generator_expression",
+          "cell11:generator_expression",
+          "cell11:generator_expression"
+        ],
+        "G2": [
+          "cell11:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_after_missing",
+          "cell3:explanation_before_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell11:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 절은 실제로 사용할 수 없는 더미 문자열과 임시 원격만 사용해 파일 삭제가 부족한 이유를 관찰하고, 예방과 대응의 순서를 구분합니다",
+          "long:값의 권한을 없앤 뒤 저장소 관리자와 이력 재작성 범위를 정하고, 호스팅 서비스의 캐시·포크·열린 PR에 대한 제거 절차를 확인합니다",
+          "long:이 노트북은 외부 서비스의 폐기·교체를 실행하지 않으며, 더미 문자열의 경로·값이 격리된 원격의 검사 범위에서 사라졌는지만 확인합니다",
+          "long:`objects.splitlines()`가 행 목록을 만들고 `line.endswith(\" .env\")`가 경로가 정확히 `.env`로 끝나는지 검사하며, `any(...)`는 일치 행이 하나라도 있을 때만 `True`를 반환합니다",
+          "long:출력 `False`와 더미 값 커밋 0건은 검사한 참조 범위에서 경로와 값에 도달하지 못한다는 뜻이며 외부 포크·캐시·로그 삭제를 증명하지 않습니다",
+          "long:다음 학습과 이어지는 지점 — Ch 4는 별도의 실습 프로젝트와 제공 데이터로 시작하며, CSV·JSON·API 데이터를 처리하는 함수를 만듭니다",
+          "long:Ch 3의 임시 저장소를 입력으로 사용하지는 않지만, 시크릿을 제외하고 diff를 확인하는 습관은 Ch 4 프로젝트의 변경을 검토할 때도 적용합니다",
+          "long:후반 AI 페어 개발에서는 Git 커밋이 자동 생성 변경을 되돌릴 수 있는 지점이 되고, Ch 38에서는 커밋 전 시크릿 검사를 게이트로 자동화합니다",
+          "long:정답: 커밋 해시가 달라지고 원격을 강제로 갱신하므로 협업자가 이전 이력을 다시 push하거나 새 이력과 섞지 않도록 작업을 옮기는 절차가 필요합니다",
+          "long:정답: 이미 추적한 파일과 과거 이력에는 소급 적용되지 않으며, 다른 파일·로그·노트북 출력에 적힌 값도 검사하지 못하기 때문입니다",
+          "long:**색인(index)** 은 다음 커밋에 넣을 파일 상태를 골라 두는 자리이며, 스테이징 영역(staging area)이라고도 합니다",
+          "long:이후 출력의 “0건”은 이 임시 저장소에서 검사한 참조에 더미 값이 없다는 뜻이며 외부 캐시나 다른 복제본까지 삭제했다는 뜻은 아닙니다",
+          "english_start:`.env`를 작업 폴더에서 삭제하고 다음 커밋에 기록해도 이전 커밋 객",
+          "english_start:`.gitignore`는 아직 추적하지 않는 파일이 기본 add 대상에 ",
+          "english_start:`git check-ignore -v .env`의 `-v`는 적용된 규칙",
+          "english_start:`git ls-files .env`가 비어 있으면 색인에 등록되지 않았다",
+          "english_start:`git-filter-repo`는 이를 수행하는 도구입니다",
+          "english_start:`git clone --mirror`는 일반 작업 폴더 없이 브랜치와 태",
+          "english_start:`--force`는 협업자의 기존 이력과 충돌할 수 있으므로 실제 저장소",
+          "english_start:`.gitignore`로 흔한 환경 파일을 제외하고, 값이 비어 있는 `",
+          "english_start:`git ls-files .env`가 빈 문자열이므로 색인에 포함되지 않",
+          "english_start:`git rev-list --objects --all`의 각 행은 객체 ",
+          "english_start:`objects.splitlines()`가 행 목록을 만들고 `line.",
+          "english_start:`.gitignore`는 예방의 한 층입니다",
+          "english_start:Git은 파일을 세 자리에서 봅니다",
+          "english_start:`git ls-files .env`는 색인에 등록된 경로를 찾으며, 빈 ",
+          "english_start:`.gitignore`는 아직 추적하지 않는 경로를 기본 `git add",
+          "english_start:`git diff --cached -- settings.example`은",
+          "english_start:`git filter-repo --force`의 `--force`는 새로",
+          "english_start:`git rev-list --objects --all`의 각 행은 객체 ",
+          "english_start:`objects.splitlines()`가 행 목록을 만들고, `line",
+          "english_start:`any(...)`는 그런 행이 하나라도 있으면 `True`, 하나도 없",
+          "dense_paragraph:API 키나 접근 토큰을 커밋한 뒤 현재 파일에서 삭제하면 작업 폴더에는 보이지 않습니다. 그러나 이전 커밋",
+          "dense_paragraph:Git은 파일을 세 자리에서 봅니다. **작업 폴더(working tree)** 는 지금 편집하는 파일이 있"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

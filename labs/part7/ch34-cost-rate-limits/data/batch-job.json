@@ -1,0 +1,22 @@
+{
+ "endpoint": "/v1/chat/completions",
+ "completion_window": "24h",
+ "model": "gpt-5.4-mini-2026-03-17",
+ "status": "completed",
+ "request_counts": {
+  "completed": 4,
+  "failed": 1,
+  "total": 5
+ },
+ "usage": {
+  "input_tokens": 173,
+  "input_tokens_details": {
+   "cached_tokens": 0
+  },
+  "output_tokens": 18,
+  "output_tokens_details": {
+   "reasoning_tokens": 0
+  },
+  "total_tokens": 191
+ }
+}

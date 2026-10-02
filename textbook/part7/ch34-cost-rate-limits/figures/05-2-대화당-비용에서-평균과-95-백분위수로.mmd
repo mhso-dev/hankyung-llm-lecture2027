@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  tokens["정한 토큰 수 스무 벌<br>입력 · 캐시 입력 · 출력"]:::tool
+  prices["요금표 2026-09-29<br>0.75 · 0.075 · 4.5"]:::tool
+  est["estimate_cost<br>도구 파일 cost_tools.py"]:::flow
+  costs["대화당 비용 스무 개<br>가장 큰 값 0.011616"]:::measure
+  avg["average<br>평균 0.003366"]:::measure
+  p95["nearest_rank 95<br>자리 19 · 0.008544"]:::measure
+  above["평균보다 비싼 대화 다섯<br>95 백분위수보다<br>비싼 대화 하나"]:::measure
+  tokens --> est
+  prices --> est
+  est --> costs
+  costs --> avg
+  costs --> p95
+  avg --> above
+  p95 --> above

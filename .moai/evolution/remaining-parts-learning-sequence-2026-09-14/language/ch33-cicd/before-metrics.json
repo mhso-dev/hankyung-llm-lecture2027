@@ -1,0 +1,31 @@
+{
+  "version": "v1.6",
+  "genre": "essay",
+  "char_count": 21007,
+  "metrics": {
+    "comma_inclusion_rate": 0.24543610547667344,
+    "comma_usage_rate": 0.4077079107505071,
+    "ending_comma_rate": 0.31851851851851853,
+    "comma_segment_length": 6.753602305475504,
+    "conclusion_pivot_count": 1,
+    "safe_balance_count": 0,
+    "hanja_nominalizer_density": 0.005973970556859398,
+    "lexical_diversity": 0.34435673138468104
+  },
+  "z_scores": {
+    "comma_inclusion_rate": -0.10175054448920814,
+    "comma_usage_rate": -1.0101987262230667,
+    "ending_comma_rate": 3.5285253467071653,
+    "comma_segment_length": 1.1418538268292182,
+    "hanja_nominalizer_density": -1.8008676481046866,
+    "lexical_diversity": -6.1128653723063815
+  },
+  "risk_band": "medium",
+  "risk_score": 5,
+  "evidence": {
+    "conclusion_pivots": [
+      "따라서"
+    ],
+    "safe_balances": []
+  }
+}

@@ -1,0 +1,17 @@
+sequenceDiagram
+  participant L as 이벤트 루프
+  participant P as 연필<br>ask_warehouse
+  participant N as 노트<br>ask_warehouse
+  participant T as 다른 스레드
+  L->>P: 실행 시작
+  Note over P: 확인 시작: 연필
+  P->>T: lookup_stock<br>연필 0.2초 맡김
+  P-->>L: await (기다림)
+  L->>N: 실행 시작
+  Note over N: 확인 시작: 노트
+  N->>T: lookup_stock<br>노트 0.1초 맡김
+  N-->>L: await (기다림)
+  T-->>N: 0.1초 뒤<br>노트 재고 있음
+  Note over N: 확인 끝: 노트
+  T-->>P: 0.2초 뒤<br>연필 재고 있음
+  Note over P: 확인 끝: 연필<br>걸린 시간(초): 0.2

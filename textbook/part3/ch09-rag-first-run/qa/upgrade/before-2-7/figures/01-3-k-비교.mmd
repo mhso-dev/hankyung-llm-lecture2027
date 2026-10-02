@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  q["질문 한 문장<br>정기 휴관일 · 공휴일"]:::tool
+  s2["similarity_search<br>k=2"]:::flow
+  s1["similarity_search<br>k=1"]:::flow
+  r2["1위 E01 p.1 표지 45자<br>2위 E01 p.2 498자<br>휴관 문장이 든 문서 청크"]:::measure
+  r1["E01 p.1 표지만<br>휴관 문장이 든<br>2쪽 문서 청크는 빠짐"]:::measure
+  q --> s2
+  q --> s1
+  s2 --> r2
+  s1 --> r1

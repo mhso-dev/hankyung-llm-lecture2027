@@ -1,0 +1,43 @@
+{
+  "snapshot": "ch13-source-candidate-2026-09-10.txt",
+  "sha256": "d715f52655853caa17fe520592945525158f752cc31e251997c3dc4544dfc652",
+  "sections": 7,
+  "files": [
+    {
+      "path": "textbook/part4/ch13-langgraph-basics/_src/01-StateGraph와-노드-엣지.html",
+      "source_sha256": "bcdc0a6677f2b779115036d4aa277afbb0d83d88651296e8847dfb86e6e69b0d",
+      "prose_characters": 2994
+    },
+    {
+      "path": "textbook/part4/ch13-langgraph-basics/_src/02-State-갱신.html",
+      "source_sha256": "925efb0effdf2054659096989ac6d93f8655f2453948f05288f56163622d7102",
+      "prose_characters": 2852
+    },
+    {
+      "path": "textbook/part4/ch13-langgraph-basics/_src/03-조건부-엣지.html",
+      "source_sha256": "220101e8dcc02783362832fd32ed982a28bcbab746509f8fe9352d863af4261d",
+      "prose_characters": 2847
+    },
+    {
+      "path": "textbook/part4/ch13-langgraph-basics/_src/04-add_messages-리듀서.html",
+      "source_sha256": "c089e7c59a00cb976062dbf772824dfdd3022cd4c864a92715022fa75ea08b42",
+      "prose_characters": 2844
+    },
+    {
+      "path": "textbook/part4/ch13-langgraph-basics/_src/05-Send-동적-팬아웃.html",
+      "source_sha256": "cdc2ac42ecefbcc04c7d08f8c138266b752a08120fb27002ccdd2051d282a6f4",
+      "prose_characters": 2671
+    },
+    {
+      "path": "textbook/part4/ch13-langgraph-basics/_src/06-Command-갱신과-이동.html",
+      "source_sha256": "48b02b7c9bb3b9aef956636877aca4d702c393c1ee4698fbaffd6fcb3d7dd595",
+      "prose_characters": 2694
+    },
+    {
+      "path": "textbook/part4/ch13-langgraph-basics/_src/07-RAG-통합과-시각화.html",
+      "source_sha256": "89ab75c3b89c47204dd099d4611a97264b25caa64870085ec3100df04692a316",
+      "prose_characters": 3687
+    }
+  ],
+  "note": "Read-only extraction. Code, preformatted output, scripts, styles, and notebook placeholders are excluded."
+}

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  run["개발 분할 15문항 실행"]:::tool
+  settings["실행 설정<br>후보 50 자르는 자리 5"]:::flow
+  metrics["지표<br>0.867 0.173 0.751"]:::measure
+  finger["입력 지문<br>평가셋 9544b332d5"]:::measure
+  record["기록 한 줄"]:::flow
+  file["runs 폴더 파일 한 개"]:::tool
+  run --> settings
+  run --> metrics
+  run --> finger
+  settings --> record
+  metrics --> record
+  finger --> record
+  record --> file

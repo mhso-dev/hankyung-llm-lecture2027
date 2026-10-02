@@ -1,0 +1,14 @@
+flowchart LR
+  %% classes
+  PR["price<br>3000"]:::tool
+  CO["count<br>2"]:::tool
+  MU["곱셈 줄<br>price * count"]:::flow
+  TO["total<br>6000"]:::tool
+  PD["prediction<br>6000"]:::tool
+  CM{"total ==<br>prediction"}:::measure
+  RS["True"]:::measure
+  PR --> MU
+  CO --> MU
+  MU --> TO --> CM
+  PD --> CM
+  CM --> RS

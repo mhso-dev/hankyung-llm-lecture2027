@@ -1,0 +1,394 @@
+{
+  "chapter": "ch04-data-tools",
+  "label": "before",
+  "totals": {
+    "G1": 12,
+    "G2": 6,
+    "G3": 0,
+    "G4": 0,
+    "G5": 35,
+    "G6": 169,
+    "G7": 15
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-Pandas로-표-다루기",
+      "code_cells": 6,
+      "sentences": 130,
+      "counts": {
+        "G1": 2,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 42,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell6:list_comprehension",
+          "cell8:list_comprehension"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:파일 전체를 모델에 전달하면 관련 없는 정보까지 입력에 포함되고 금액이 문자열인지 숫자인지 구별하지 못하면 합계도 틀릴 수 있습니다",
+          "long:초록 상자는 원본 주문 세 행, 파란 상자는 상태 Series를 비교해 마스크를 만들고 `loc`에 전달하는 흐름, 노란 상자는 O101과 O103의 합계 59,000을 뜻합니다",
+          "long:확인할 점 — `orders[\"status\"]`가 Series를 만들고, 비교 결과가 각 행의 선택 여부가 되며, `loc`가 그 결과로 DataFrame을 줄이는 순서를 확인합니다",
+          "long:예를 들어 paid, pending, cancelled 외의 상태가 들어오면 새 업무 상태인지 오타인지 원천 시스템에서 확인합니다",
+          "english_start:DataFrame의 행·열과 자료형을 확인할 수 있습니다",
+          "english_start:`import pandas as pd`는 pandas 라이브러리를 `pd",
+          "english_start:`pd.read_csv(경로)`는 CSV 파일의 첫 줄을 열 이름으로, ",
+          "english_start:Series는 같은 열의 값과 각 값의 인덱스를 함께 가진 1차원 자료구",
+          "english_start:`DataFrame.loc[행 조건, 열 선택]`은 레이블을 기준으로 행",
+          "english_start:`dtypes`는 열마다 자료형을 보여 주는 Series입니다",
+          "english_start:`pd.to_numeric(..., errors=\"raise\")`는 Se",
+          "english_start:`to_csv(..., index=False)`의 `index=False",
+          "english_start:`pd.read_csv`는 파일을 읽어 새 DataFrame을 반환하고,",
+          "english_start:`fetch_orders`의 입력은 CSV 경로와 선택할 상태입니다",
+          "english_start:DataFrame은 분석 코드에서 열 연산을 이어 가기 좋고 사전 목록은",
+          "english_start:`to_string(index=False)`는 행 인덱스를 생략한 표 문",
+          "english_start:`orders.dtypes`는 열마다 자료형을 담은 Series이고, 여",
+          "english_start:`str | Path`는 문자열 경로나 Path 객체를 받을 수 있다는 ",
+          "english_start:`str | None = None`은 문자열 또는 값 없음을 허용하며, ",
+          "english_start:`-> list[dict]`는 사전을 항목으로 담은 목록을 반환한다는 표",
+          "english_start:`tolist()`는 Series의 값들을 Python 목록으로 반환합니",
+          "english_start:`[row[\"order_id\"] for row in paid]`는 `pa",
+          "english_start:Before는 금액 열을 문자열로 바꾼 뒤 `sum()`을 호출합니다",
+          "english_start:After는 `to_numeric`으로 금액을 정수로 변환하고 같은 세 ",
+          "english_start:`orders.astype({\"amount\": \"string\"})`는 a",
+          "english_start:`assign(amount=...)`은 오른쪽 계산 결과로 amount ",
+          "english_start:CSV의 주문 번호가 숫자로만 보여도 식별자는 문자열로 읽는 편이 안전합",
+          "english_start:DataFrame은 레코드를 행과 열로 표현합니다",
+          "english_start:`import pandas as pd`는 pandas를 `pd`라는 이름",
+          "english_start:`pd.DataFrame(사전 목록)`은 사전의 키를 열 이름으로 사용한",
+          "english_start:`to_csv`는 표를 CSV 파일에 쓰고 `pd.read_csv(경로)",
+          "english_start:`to_string(index=False)`는 행 인덱스를 생략한 표 문",
+          "english_start:`orders.dtypes`는 열마다 자료형을 담은 Series이고, 여",
+          "english_start:`frame[\"status\"]`는 상태 열의 `Series`입니다",
+          "english_start:`loc`는 그 마스크가 참인 행을 선택해 새 DataFrame을 반환하",
+          "english_start:`str | Path`는 문자열 경로나 Path 객체를 받을 수 있다는 ",
+          "english_start:`str | None = None`은 문자열 또는 값 없음을 허용하며, ",
+          "english_start:`-> list[dict]`는 사전을 항목으로 담은 목록을 반환한다는 표",
+          "english_start:`tolist()`는 Series의 값들을 Python 목록으로 반환합니",
+          "english_start:`[row[\"order_id\"] for row in paid]`는 `pa",
+          "english_start:`orders.astype({\"amount\": \"string\"})`는 a",
+          "english_start:`assign(amount=...)`은 오른쪽 계산 결과로 amount "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-관계형-테이블과-키",
+      "code_cells": 6,
+      "sentences": 90,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 8,
+        "G6": 23,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Ch 12에서 벡터 데이터베이스의 스키마를 읽을 때도 어떤 열이 레코드를 구분하고 어떤 열이 다른 테이블을 가리키는지 판단해야 합니다",
+          "long:Ch 2의 사전과 목록으로도 같은 데이터를 나타낼 수 있지만 두 표를 연결하려면 공통 열의 뜻과 값의 유일성을 추가로 확인해야 합니다",
+          "long:데이터베이스에서는 값이 없거나 알려지지 않은 상태를 NULL 이라고 하며, pandas에서는 문자열 열의 결측값이 `NaN` 또는 `&lt;NA&gt;`처럼 표시될 수 있습니다",
+          "long:정규화(normalization) 는 반복되는 사실을 주제별 테이블로 나누어 한 사실을 한 곳에서 관리하도록 구조를 정리하는 원칙입니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 같은 관계를 SQLite 테이블로 만들고 SQL의 JOIN과 WHERE로 고객 주문을 조회합니다",
+          "english_start:DataFrame의 `merge()` 메서드는 두 표를 조인한 새 Dat",
+          "english_start:`on`은 양쪽에서 비교할 키 열을 지정하고, 생략된 `how=\"inne",
+          "english_start:`validate=\"many_to_one\"`은 왼쪽 주문 키의 반복은 허",
+          "english_start:`pd.concat([표1, 표2])`는 표를 지정한 축으로 이어 붙인 ",
+          "english_start:`indicator=True`는 각 결과 행의 출처를 나타내는 `_mer",
+          "english_start:Before는 `concat`으로 고객 C001을 한 행 더 추가합니다",
+          "english_start:`validate=\"many_to_one\"`을 추가하면 같은 입력을 `M",
+          "english_start:After의 `drop_duplicates(\"customer_id\", k",
+          "english_start:`is_unique`는 Series의 값이 모두 유일한지 불리언으로 알려",
+          "english_start:`fixed.iloc[0]`은 결과의 첫 번째 행을 위치로 선택하고 `[",
+          "english_start:DataFrame의 `merge()` 메서드는 두 표를 입력으로 받아 키",
+          "english_start:`on`은 비교할 키, 기본 내부 조인은 양쪽에 모두 있는 키만 남긴다는",
+          "english_start:`validate=\"many_to_one\"`은 왼쪽 주문 키의 반복은 허",
+          "english_start:`pd.concat([표1, 표2])`는 표2의 행을 표1 아래에 이어 ",
+          "english_start:`indicator=True`가 만든 `_merge` 열의 `left_o",
+          "english_start:`concat`으로 C001 고객을 한 행 더 추가합니다",
+          "english_start:`is_unique`는 고객 번호가 모두 유일한지 검사합니다",
+          "english_start:`fixed.iloc[0][\"name\"]`은 위치가 첫 번째인 행에서 이"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-SQL로-조회-함수-만들기",
+      "code_cells": 6,
+      "sentences": 96,
+      "counts": {
+        "G1": 2,
+        "G2": 3,
+        "G3": 0,
+        "G4": 0,
+        "G5": 7,
+        "G6": 38,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell6:list_comprehension",
+          "cell8:list_comprehension"
+        ],
+        "G2": [
+          "cell4:semicolon",
+          "cell4:semicolon",
+          "cell4:semicolon"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Ch 19에서 이 함수를 도구로 등록할 때는 실행 환경에서 데이터베이스 경로를 정하고 모델이 고객 번호를 전달하도록 입력 범위를 설계합니다",
+          "long:SQLite는 Python 표준 라이브러리 `sqlite3`로 사용할 수 있어 별도 데이터베이스 서버 없이 같은 관계를 SQL로 조회할 수 있습니다",
+          "long:먼저 `FROM/JOIN`으로 행의 원천을 만들고, `WHERE`로 행을 줄인 뒤, `SELECT`로 반환 열을 정하고, `ORDER BY`로 정렬하며, 마지막에 `LIMIT`로 행 수를 제한합니다",
+          "long:Python sqlite3에서는 물음표 자리표시자와 값 튜플을 사용하므로 입력 전체가 SQL 문법이 아닌 하나의 값으로 처리됩니다",
+          "long:파란 상자는 테이블 연결, 행 선택, 열 선택, 정렬의 처리 흐름이고 빨간 상자는 입력을 문자열에 직접 붙여 조건식의 구조가 바뀌는 실패를 보여 줍니다",
+          "long:조회 셀에서는 SQL의 물음표 수와 값의 수, 한 원소 튜플의 쉼표, 테이블 별칭, `USING`의 연결 열, `AS`로 정한 반환 키, `with`의 트랜잭션 처리와 `close()`의 연결 정리를 구분합니다",
+          "english_start:SQL은 어떤 열을 반환하고 어떤 테이블을 연결하며 어떤 조건과 순서로 ",
+          "english_start:SQLite는 Python 표준 라이브러리 `sqlite3`로 사용할 수",
+          "english_start:`SELECT`는 반환할 열, `FROM`과 `JOIN`은 읽고 연결할 ",
+          "english_start:SQL은 보통 `SELECT → FROM/JOIN → WHERE → OR",
+          "english_start:`LIMIT`는 최대 몇 행을 반환할지 정하며 이번 함수에는 사용하지 않",
+          "english_start:`sqlite3.Row`를 사용하면 열 이름으로 값에 접근할 수 있고 `",
+          "english_start:`import sqlite3`는 Python 표준 라이브러리의 SQLit",
+          "english_start:`TemporaryDirectory()`는 실습이 끝나면 정리할 임시 폴",
+          "english_start:`sqlite3.connect(database)`는 해당 파일에 연결한 ",
+          "english_start:`connection.row_factory = sqlite3.Row`는 ",
+          "english_start:`execute()`는 SQL 문장 하나를, `executescript(",
+          "english_start:`PRAGMA foreign_keys = ON`은 현재 연결에서 외래 키",
+          "english_start:`commit()`은 테이블 생성과 입력 내용을 파일에 확정하고 `clo",
+          "english_start:`find_customer_orders`의 입력은 데이터베이스 경로와 고",
+          "english_start:`orders o`는 `orders` 테이블에 짧은 별칭 `o`를, `c",
+          "english_start:`USING(customer_id)`은 양쪽 테이블에 이름이 같은 `cu",
+          "english_start:C001은 O101·O103, C002는 O102를 반환합니다",
+          "english_start:Before는 `C001' OR 1=1 --`을 문자열 보간으로 SQL에",
+          "english_start:After는 SQL을 고정하고 입력을 값 튜플로 전달합니다",
+          "english_start:`import sqlite3`는 Python 표준 라이브러리의 SQLit",
+          "english_start:`TemporaryDirectory()`는 실습 뒤 정리할 임시 폴더 객",
+          "english_start:`row_factory = sqlite3.Row`는 조회 행을 열 이름으",
+          "english_start:`execute(\"PRAGMA foreign_keys = ON\")`은 이",
+          "english_start:`execute()`는 SQL 문장 하나를 실행하고 `executescr",
+          "english_start:`commit()`은 준비한 테이블과 행을 파일에 확정하고 `close(",
+          "english_start:SQL은 `SELECT → FROM/JOIN → WHERE → ORDER",
+          "english_start:`orders o`와 `customers c`는 긴 테이블 이름에 각각 ",
+          "english_start:`USING(customer_id)`은 두 테이블에서 이름이 같은 `cu",
+          "english_start:`with db:`는 정상 종료 시 진행 중인 트랜잭션을 커밋하고 예외가",
+          "english_start:SQL의 물음표 자리표시자와 값 튜플을 분리해 전달합니다",
+          "dense_paragraph:Before는 `C001' OR 1=1 --`을 문자열 보간으로 SQL에 붙입니다. 입력의 `OR 1=1`이",
+          "dense_paragraph:함수 입력은 데이터베이스 경로와 고객 번호입니다. `orders o`와 `customers c`는 긴 테이블"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-REST와-페이지네이션",
+      "code_cells": 6,
+      "sentences": 107,
+      "counts": {
+        "G1": 6,
+        "G2": 3,
+        "G3": 0,
+        "G4": 0,
+        "G5": 7,
+        "G6": 31,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:class_def",
+          "cell4:varargs_def",
+          "cell10:list_comprehension",
+          "cell10:list_comprehension",
+          "cell12:list_comprehension",
+          "cell12:list_comprehension"
+        ],
+        "G2": [
+          "cell4:over_15_lines",
+          "cell4:nested_call_2plus",
+          "cell12:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:네트워크 요청, 쿼리 매개변수, 상태 코드, JSON 변환, 페이지 종료를 재현하면서 외부 서비스의 변경과 비용 없이 결과를 고정합니다",
+          "long:이 절의 클라이언트는 `GET /articles?page=1`을 요청하고 서버는 상태 코드 200, JSON이라는 본문 형식을 알리는 헤더, 기사 목록이 든 본문을 반환합니다",
+          "long:JSON(JavaScript Object Notation) 은 문자열·숫자·참과 거짓·null·배열·객체를 텍스트로 표현하는 형식입니다",
+          "long:`do_GET`은 GET 요청이 왔을 때 실행할 메서드이고, `send_response`와 `send_header`는 상태 코드와 헤더를 작성하며, `wfile.write`는 JSON 본문 바이트를 응답으로 보냅니다",
+          "long:확인할 점 — 보조 서버 코드는 실행 환경 준비로 구분하고, 학습 대상은 첫 요청의 입력 `page=1`, 응답 상태 200, `items`와 `next_page=2`의 연결입니다",
+          "long:`json`은 Python 값을 JSON 본문으로 바꾸고, `threading`은 서버가 요청을 기다리는 동안 다음 셀을 실행할 수 있도록 별도 실행 흐름을 제공합니다",
+          "english_start:Python의 HTTP 서버를 localhost 임의 포트에서 실행하고 ",
+          "english_start:HTTPX의 `response.json()`은 JSON 본문을 Pytho",
+          "english_start:JSON의 `null`은 Python에서 `None`이 됩니다",
+          "english_start:`raise_for_status()`는 4xx·5xx 응답을 성공 데이터",
+          "english_start:`do_GET`은 GET 요청이 왔을 때 실행할 메서드이고, `send_",
+          "english_start:`threading.Thread(..., daemon=True)`는 서버",
+          "english_start:`timeout=2.0`은 최대 대기 시간을 초 단위로 지정합니다",
+          "english_start:`httpx.Client`는 여러 요청에 재사용할 클라이언트 객체를 반환",
+          "english_start:`extend()`는 현재 페이지의 기사들을 기존 목록 뒤에 추가합니다",
+          "english_start:`finally`의 `client.close()`는 요청 도중 오류가 발",
+          "english_start:A03은 두 번째 페이지에 있어 누락됩니다",
+          "english_start:`json`은 Python 값을 JSON 본문으로 바꾸고, `thread",
+          "english_start:`class Handler(BaseHTTPRequestHandler)`의",
+          "english_start:`do_GET`은 GET 요청을 처리하고, `send_response`와",
+          "english_start:`Thread(...).start()`는 서버 대기를 별도 실행 흐름에서",
+          "english_start:`raise_for_status()`로 오류 상태를 먼저 검사하고 `re",
+          "english_start:JSON의 `null`은 Python에서 `None`으로 변환되므로 `n",
+          "english_start:`httpx.Client(timeout=timeout)`은 여러 요청에 ",
+          "english_start:`client.get(주소, params=값)`은 GET 요청을 보내 `",
+          "english_start:`items.extend(현재_목록)`은 현재 페이지의 각 기사를 기존 ",
+          "english_start:`payload.get(...)`은 다음 페이지 번호를 반환하며 키가 없",
+          "english_start:`None`이 될 때까지 요청한 뒤 기사 목록을 반환합니다",
+          "english_start:`finally`의 `client.close()`는 오류가 발생해도 연결",
+          "dense_paragraph:노트북의 기본 `fetch_articles`는 `base_url`과 `timeout`을 입력받습니다. `ht",
+          "dense_paragraph:Before 함수는 page=1을 한 번만 요청해 A01과 A02를 반환합니다. HTTP 요청과 JSON 변"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-문서-파싱과-스크래핑",
+      "code_cells": 7,
+      "sentences": 104,
+      "counts": {
+        "G1": 2,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 7,
+        "G6": 35,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:generator_expression",
+          "cell14:conditional_expression"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:`article`은 이름이 article인 요소, `.summary`는 class 속성에 summary가 포함된 요소, `article time`은 article 안에 있는 time 요소를 뜻합니다",
+          "long:확인할 점 — 경로 탐색은 실행 환경 준비, CSS 선택자 비교는 파싱 개념 예제, robots.txt는 접근 경로 주의 실습으로 구분합니다",
+          "long:다음 학습과 이어지는 지점 — 추출한 제목과 요약은 `data/article-text.json`에 원본 경로와 함께 보존되며, Ch 5 01절이 이 파일을 직접 읽어 토큰 수를 측정합니다",
+          "english_start:robots.txt와 별도로 이용 조건·저작권·개인정보·호출 간격을 확인",
+          "english_start:robots.txt는 크롤러의 접근 경로를 알리는 규칙이며 접근 허가서나",
+          "english_start:HTML은 값을 사전의 키 대신 태그의 계층과 속성으로 표현합니다",
+          "english_start:`&lt;article data-id=\"A10\"&gt;`은 기사 영역을 ",
+          "english_start:`article`은 이름이 article인 요소, `.summary`는 ",
+          "english_start:`select_one()`은 첫 번째 일치 노드를 반환하고 일치 항목이 ",
+          "english_start:`article[\"data-id\"]`와 `article.time[\"dat",
+          "english_start:`next(...)`는 그중 첫 경로를 꺼냅니다",
+          "english_start:`read_text(encoding=\"utf-8\")`는 HTML 파일을 ",
+          "english_start:`BeautifulSoup(html, \"lxml\")`이 문자열을 요소 트",
+          "english_start:`json.loads`는 다시 읽은 JSON 문자열을 Python 사전으",
+          "english_start:robots.txt는 파싱 기본 예제와 분리한 주의 실습입니다",
+          "english_start:`RobotFileParser()`는 규칙 판독 객체를 만듭니다",
+          "english_start:`parse(문장 목록)`은 robots.txt 규칙 문장들을 이 객체에",
+          "english_start:`can_fetch`는 사용자 에이전트와 주소를 입력으로 받아 경로 규칙",
+          "english_start:`/articles/`는 `True`, `/private/`는 `Fals",
+          "english_start:Before는 문서에 없는 `.subtitle`을 선택하고 바로 `get",
+          "english_start:After는 요소가 있는지 확인하고 없는 선택 필드를 None으로 반환합",
+          "english_start:robots.txt와 이용 조건·권리·개인정보·호출 제한은 서로 다른 확",
+          "english_start:robots.txt는 크롤러 접근 경로 규칙이며 이용 약관과 저작권을 별",
+          "english_start:`Path.cwd()`는 현재 작업 폴더를 반환하고 `.parents`는",
+          "english_start:`path for path in ... if ...`는 조건에 맞는 경로",
+          "english_start:`read_text`는 파일을 문자열로 반환합니다",
+          "english_start:`BeautifulSoup(html, \"lxml\")`은 문자열을 요소 트",
+          "english_start:`select_one`은 첫 번째 일치 노드 또는 `None`을 반환합니",
+          "english_start:`json.dumps`는 Python 사전을 JSON 문자열로 바꾸고 `",
+          "english_start:`json.loads`는 다시 읽은 JSON 문자열을 Python 사전으",
+          "english_start:`RobotFileParser()`는 규칙 판독 객체를 만듭니다",
+          "english_start:`parse(문장 목록)`은 robots.txt 규칙 문장들을 이 객체에",
+          "english_start:`can_fetch`는 사용자 에이전트와 주소를 입력으로 받아 robot",
+          "banned:돌립니다: `json.loads`는 다시 읽은 JSON 문자열을 Python 사전으",
+          "dense_paragraph:HTML 문자열은 태그의 부모·자식 관계를 담고 있습니다. `BeautifulSoup(html, \"lxml\""
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

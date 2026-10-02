@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  rule["완료 조건 is_complete<br>필요한 두 분야의 담당 답이<br>모였고 마지막 답이 있는가"]:::flow
+  subgraph ok ["완료 조건 True"]
+    direction LR
+    s["서브에이전트<br>담당 답 둘<br>중앙의 최종 답"]:::measure
+    r["라우터<br>답 칸 두 줄<br>종합 칸"]:::measure
+  end
+  subgraph no ["완료 조건 False"]
+    direction LR
+    h["핸드오프<br>받은 담당 요청이 거절됨"]:::measure
+    m["호출 한도 1<br>담당 답 둘<br>마지막 응답은 한도 글"]:::measure
+  end
+  b["핑퐁 그래프 실행 한도 4<br>GraphRecursionError<br>결과 없음"]:::measure
+  rule --> no
+  rule --> ok
+  no ~~~ b

@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  blk["async with engine.begin()<br>블록 안 두 줄<br>2번에 더하기 · 1번에서 빼기"]:::flow
+  ok["블록이 오류 없이 끝남<br>두 줄을 함께 확정"]
+  ng["블록 안에서 오류<br>두 줄을 함께 취소"]
+  r1["이체 100 뒤<br>1번 400 · 2번 600"]:::measure
+  r2["이체 600 뒤<br>1번 500 · 2번 500"]:::measure
+  blk -.-> ok
+  blk -.-> ng
+  ok --> r1
+  ng --> r2

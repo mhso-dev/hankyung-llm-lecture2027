@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  INPUTS["질문 두 개 · 문서 세 개<br>노트북에서 정한 재료"]:::tool
+  PICK["pick_document()<br>02절 유사도로 문서 고르기<br>칸: 고른 문서, 유사도"]:::flow
+  SYSTEM["시스템 지시 system_text<br>실행 1·2에서 바꾸는 값"]:::tool
+  BUILD["make_input(), encode()<br>04절 채팅 템플릿과 조각 수<br>칸: 입력 조각 수, 남는 칸"]:::flow
+  ASK["언어 모델 Qwen<br>ask_model() 05·07·08절<br>06절 뽑기 끔<br>칸: 답"]:::model
+  JUDGE["find_new_numbers()<br>보류 문장 in 답<br>07절 판정 규칙<br>칸: 새 숫자, 보류 문장 있음"]:::flow
+  REPORT["기록장 report<br>칸 일곱 개"]:::measure
+  INPUTS --> PICK
+  PICK -->|고른 문서와 질문| BUILD
+  SYSTEM --> BUILD
+  BUILD -->|입력 글| ASK
+  ASK -->|답| JUDGE
+  JUDGE --> REPORT

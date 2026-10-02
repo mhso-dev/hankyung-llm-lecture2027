@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  dist["첫 자리 거리 0.74"]:::measure
+  limit["거리 기준값 0.65"]:::flow
+  judge["거리가 기준값보다 큼"]:::measure
+  retry["보정 질문으로 다시 검색"]:::flow
+  count["다시 검색한 횟수 하나"]:::measure
+  cap["다시 검색 횟수 상한 하나"]:::flow
+  stop["상한과 같아 더 하지 않음"]:::measure
+  dist --> judge
+  limit --> judge
+  judge -.-> retry
+  retry --> count
+  count --> stop
+  cap --> stop

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  job["과제 글 · 공통 사실"]:::tool
+  plan["gpt-5.4-mini 계획 요청<br>작업 목록을 씀"]:::model
+  pick["pick_tasks<br>칸 둘 검사 · 최대 작업 수 4"]:::flow
+  work["gpt-5.4-mini 작업 요청들<br>작업 수만큼 함께 보냄"]:::model
+  sum["gpt-5.4-mini 종합 요청<br>작업 답을 한 단락으로"]:::model
+  out["안내문 · 주소와 숫자 검사"]:::measure
+  stop["멈춤 · 작업 요청 없음<br>이번에 실행하지 않음"]
+  job --> plan
+  plan --> pick
+  pick -.->|작업 둘 이상| work
+  pick -.->|둘보다 적음| stop
+  work --> sum
+  sum --> out

@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  st["처음 1번 500 · 2번 500<br>이체 600"]
+  subgraph one["첫째 begin 블록"]
+    dep["2번에 600 더하기"]:::flow
+  end
+  ok["블록 끝 확정"]
+  subgraph two["둘째 begin 블록"]
+    wd["1번에서 600 빼기"]:::flow
+  end
+  err["받은 오류 IntegrityError<br>SQLSTATE 23514<br>1번 -100은 CHECK에 걸림"]:::measure
+  res["남은 잔액<br>1번 500 · 2번 1100<br>합계 1600"]:::fail
+  st --> one --> ok --> two --> err --> res

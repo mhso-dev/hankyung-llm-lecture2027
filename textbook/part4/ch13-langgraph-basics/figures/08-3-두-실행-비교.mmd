@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph run1["기준값 5.0을 넣은 실행"]
+    direction TB
+    a1["넣은 기준값<br>5.0"]:::tool
+    a2["판단 이유 칸<br>자료가 넉넉함"]:::measure
+    a3["마지막에 지난 노드<br>make_reply"]:::measure
+    a1 ~~~ a2
+    a2 ~~~ a3
+  end
+  subgraph run2["기준값 9.0을 넣은 실행"]
+    direction TB
+    b1["넣은 기준값<br>9.0"]:::tool
+    b2["판단 이유 칸<br>자료가 모자람"]:::measure
+    b3["마지막에 지난 노드<br>ask_more"]:::measure
+    b1 ~~~ b2
+    b2 ~~~ b3
+  end
+  same["두 실행 모두<br>점수 칸 7.64와<br>보고 자리 칸이 같음"]
+  run1 ~~~ run2
+  run2 ~~~ same

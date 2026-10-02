@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  q["같은 질문<br>O101 주문과 O103 주문의<br>금액을 알려 줘."]:::tool
+  subgraph many["여럿 담기 · True"]
+    direction TB
+    m1["응답마다 도구 호출 요청<br>2건 다음 0건"]:::measure
+    m2["모델 요청 2<br>입력 토큰 515<br>출력 토큰 84"]:::measure
+    m1 ~~~ m2
+  end
+  subgraph one["하나씩 · False"]
+    direction TB
+    o1["응답마다 도구 호출 요청<br>1건 · 1건 · 0건"]:::measure
+    o2["모델 요청 3<br>입력 토큰 771<br>출력 토큰 71"]:::measure
+    o1 ~~~ o2
+  end
+  same["두 흐름 공통<br>답 글에 32000 · 27000 있음"]
+  q --> many
+  q --> one
+  many ~~~ same
+  one ~~~ same

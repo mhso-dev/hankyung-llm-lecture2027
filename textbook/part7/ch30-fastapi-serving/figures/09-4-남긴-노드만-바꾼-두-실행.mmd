@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  same["같은 스트림 사건 목록<br>5절에서 한 번 모음<br>도구를 한 번 부른 실행"]
+  subgraph r1["실행 1 · 앱 138행 조건"]
+    direction TB
+    a1["남길 노드<br>model"]:::tool
+    a2["도구 결과 글로 시작<br>False"]:::measure
+    a1 --> a2
+  end
+  subgraph r2["실행 2 · 값 하나만 바꿈"]
+    direction TB
+    b1["남길 노드<br>model과 tools"]:::flow
+    b2["도구 결과 글로 시작 True<br>실행 1 글 앞에 09:00~18:00<br>글자 수 차이 11"]:::measure
+    b1 --> b2
+  end
+  same --> r1
+  same --> r2

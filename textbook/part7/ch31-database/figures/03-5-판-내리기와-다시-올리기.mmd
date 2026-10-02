@@ -1,0 +1,8 @@
+flowchart TB
+  %% classes
+  s1["판 20260929_02<br>owner 민지 · 미정 · 미정"]:::measure
+  dn["command.downgrade<br>목표 -1 · 칸 owner 빼기"]:::flow
+  s2["판 20260911_01<br>칸 id · question · 줄 셋"]:::measure
+  up2["try_upgrade<br>같은 판 파일로 다시 올리기"]:::flow
+  s3["판 20260929_02<br>owner 미정 · 미정 · 미정"]:::measure
+  s1 --> dn --> s2 --> up2 --> s3

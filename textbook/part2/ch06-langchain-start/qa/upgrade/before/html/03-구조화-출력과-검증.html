@@ -1,0 +1,442 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>구조화 출력과 검증 — Ch 6 · LangChain 시작</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 2 · LangChain과 프롬프트 · Ch 6 · LangChain 시작</p>
+<h1>구조화 출력과 검증</h1><div class="meta"><span>강의 1h · 구조화 출력과 범위 검사</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h · 구조화 출력과 범위 검사 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><p>이 절을 마치면 다음을 할 수 있습니다.</p><ul><li>Pydantic으로 응답의 필드·타입·허용 범위를 선언할 수 있습니다.</li><li>구조화 출력의 파싱 결과와 원본 메시지를 구분할 수 있습니다.</li><li>검증 오류를 처리하고 형식 검증과 내용의 사실 확인을 구분할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>모델이 “AIMessage는 모델의 답변입니다. 난이도는 초급입니다”라고 답했다고 생각해 봅니다. 사람은 읽을 수 있지만, 프로그램이 개념 이름·설명·난이도를 각각 저장하려면 어디서 문장을 나눌지 결정해야 합니다. 응답 표현이 바뀔 때마다 문자열을 나누는 규칙을 추가하면 유지하기 어렵습니다.</p>
+<p>이번 절에서는 받을 항목을 먼저 정의합니다. 모델의 응답을 <strong>개념 이름, 설명, 1~3의 난이도</strong>로 받고 Python 객체에서 각 값을 읽습니다. 데이터의 모양이 어긋났을 때 어느 값이 문제인지 확인하는 과정까지 실행합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>앞 절의 <code>init_chat_model</code>과 <code>invoke</code>를 그대로 사용하되 이번에는 OpenAI 한 모델에 집중합니다. Ch 2의 딕셔너리와 <code>class 이름:</code> 문법을 사용하며, 10절 B 경로에서 다룬 <code>BaseModel</code>·<code>Field</code>·엄격 검증을 모델 응답에 연결합니다. B 경로를 건너뛴 학생도 여기서는 같은 항목을 가진 학습 카드의 형식을 한 번 정의하는 코드로 읽으면 됩니다. 클래스의 내부 동작을 새로 구현하지 않습니다.</p>
+<p>새 Python 3.12 커널에서 설치·키 확인·모델 준비 셀을 실행합니다. 이 절에 필요한 Pydantic도 실습 환경에 설치됩니다. <code>StudyCard</code>와 모델 객체는 이 노트북 안에서 준비하므로 앞 절의 변수에 의존하지 않습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>빈칸이 정해진 학습 카드</h3>
+<p>양식이 없는 메모와 이름·설명·난이도 칸이 인쇄된 카드를 비교해 봅니다. 양식이 있는 카드에서는 무엇을 적을지 미리 알 수 있고, 비어 있는 칸도 찾을 수 있습니다. <strong>구조화 출력(structured output)</strong>은 이처럼 프로그램이 받을 항목과 형식을 정해 응답을 받는 방법입니다.</p>
+<p><strong>스키마(schema)</strong>는 필요한 항목과 값의 형식을 정의한 것입니다. 각 항목을 <strong>필드(field)</strong>라고 합니다. 실습의 <code>concept</code>와 <code>explanation</code>은 문자열이고, <code>difficulty</code>는 정수입니다. 이 이름을 그대로 사용해야 프로그램이 어느 값을 읽을지 알 수 있습니다.</p>
+<p><strong>Pydantic</strong>은 선언한 타입과 제약에 맞게 데이터를 읽고 검사하는 Python 라이브러리입니다. <code>BaseModel</code>을 상속한 <code>StudyCard</code>에 세 필드를 선언합니다. <code>Field</code>의 <code>description</code>은 항목의 뜻을 설명합니다. <code>ge=1</code>은 1 이상, <code>le=3</code>은 3 이하라는 조건입니다. 설명 문장에 “1~3”을 적는 것과 실제 범위 제약을 선언하는 것을 구분합니다.</p>
+<figure><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 410" role="img" aria-labelledby="title desc"><title id="title">스키마가 생성과 검증에 적용되는 위치</title><desc id="desc">스키마가 모델 출력 형식을 제시하고 응답을 검증한 뒤 StudyCard 객체로 만듭니다.</desc><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#5B5B55"/></marker></defs><rect width="800" height="410" fill="#fff"/><text x="400" y="32" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="700">스키마가 생성과 검증에 적용되는 위치</text><rect x="25" y="150" width="135" height="62" rx="11" fill="#DDEDE8" stroke="#5B5B55" stroke-width="2"/><text x="92.5" y="181.0" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#252522">자연어 요청</text><rect x="230" y="150" width="140" height="62" rx="11" fill="#E9E0F3" stroke="#5B5B55" stroke-width="2"/><text x="300.0" y="181.0" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#252522">채팅 모델</text><rect x="440" y="150" width="150" height="62" rx="11" fill="#F7EDC7" stroke="#5B5B55" stroke-width="2"/><text x="515.0" y="181.0" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#252522">파싱 · 필드 검증</text><rect x="650" y="150" width="125" height="62" rx="11" fill="#E9E0F3" stroke="#5B5B55" stroke-width="2"/><text x="712.5" y="181.0" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#252522">StudyCard</text><rect x="335" y="55" width="150" height="58" rx="11" fill="#F7EDC7" stroke="#5B5B55" stroke-width="2"/><text x="410.0" y="84.0" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#252522">Pydantic 스키마</text><path d="M160 181 L230 181" stroke="#5B5B55" stroke-width="2.5"  marker-end="url(#arr)"/><path d="M370 181 L440 181" stroke="#5B5B55" stroke-width="2.5"  marker-end="url(#arr)"/><path d="M590 181 L650 181" stroke="#5B5B55" stroke-width="2.5"  marker-end="url(#arr)"/><path d="M410 113 L300 150" stroke="#5B5B55" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#arr)"/><path d="M410 113 L515 150" stroke="#5B5B55" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#arr)"/><rect x="25" y="365" width="15" height="15" fill="#DDEDE8"/><text x="46" y="379" font-size="15">입력·맥락</text><rect x="155" y="365" width="15" height="15" fill="#DDEAF4"/><text x="176" y="379" font-size="15">프로그램 흐름</text><rect x="320" y="365" width="15" height="15" fill="#E9E0F3"/><text x="341" y="379" font-size="15">모델·응답</text><rect x="465" y="365" width="15" height="15" fill="#F7EDC7"/><text x="486" y="379" font-size="15">측정·검증</text><rect x="620" y="365" width="15" height="15" fill="#F4D9D5"/><text x="641" y="379" font-size="15">오류</text></svg></div><figcaption>응답 형식과 허용 범위를 먼저 선언하고, 생성된 값을 그 기준으로 검사합니다. 스키마는 요청과 검증에 사용되는 기준이며 모델이 작성한 사실의 근거는 아닙니다.</figcaption></figure>
+<p>도식에서 학생이 정한 필드와 제약을 먼저 확인합니다. 모델이 응답을 만드는 보라색 단계 이후에 노란색 검증 결과를 읽습니다. 실습에서는 <code>difficulty=7</code>인 자료가 범위를 벗어나고 <code>difficulty=2</code>인 자료는 범위에 들어갑니다. 검증을 통과해도 설명 문장이 사실인지까지 확인된 것은 아닙니다.</p>
+<h3>문자열을 객체로 읽는 것과 오류를 읽는 것</h3>
+<p><strong>파싱(parsing)</strong>은 응답 내용을 프로그램이 다룰 구조로 읽는 처리입니다. <code>model.with_structured_output(StudyCard)</code>는 모델에 이 형식을 적용한 호출 객체를 만듭니다. 성공 결과는 일반 호출의 <code>AIMessage</code> 대신 <code>StudyCard</code> 객체로 읽습니다. <code>model_dump()</code>를 호출하면 세 필드를 딕셔너리로 확인할 수 있습니다.</p>
+<p><strong>검증 오류(ValidationError)</strong>는 값이 선언한 조건을 만족하지 못할 때 발생합니다. 오류를 숨기고 빈 카드로 바꾸면, 다음 코드가 정상 데이터로 오해할 수 있습니다. 어느 필드가 어떤 제약에 걸렸는지 확인한 뒤 입력이나 정의를 고쳐야 합니다.</p>
+<p><code>include_raw=True</code>를 사용하면 결과에 <code>raw</code>, <code>parsed</code>, <code>parsing_error</code>가 들어갑니다. <code>raw</code>는 원본 응답, <code>parsed</code>는 읽고 검증한 결과, <code>parsing_error</code>는 파싱이나 검증에서 발생한 오류입니다. 오류가 없으면 마지막 값은 <code>None</code>입니다. API 자체가 인증 오류나 통신 오류로 실패한 경우까지 이 옵션이 정상 결과로 바꾸는 것은 아닙니다.</p>
+<!-- learning-sequence-20260914-03 -->
+<h3>with_structured_output의 준비와 실행 구분</h3>
+<p>이 메서드는 이 절에서 처음 배웁니다. <code>model.with_structured_output(StudyCard)</code>에서 점 앞의 <code>model</code>은 준비한 채팅 모델이고, 괄호 안의 <code>StudyCard</code>는 만들어 달라는 카드의 형식입니다. <code>StudyCard()</code>처럼 빈 카드 객체를 만드는 호출이 아니라 클래스 자체를 전달합니다. LangChain이 필드 설명과 제약을 읽어 모델 호출에 적용할 수 있도록 하기 위한 것입니다.</p>
+<p>반환된 <code>structured_model</code>은 나중에 실행할 수 있는 호출 객체입니다. 이 줄만으로 학습 카드가 생성되지 않습니다. 다음 <code>structured_model.invoke(&quot;AIMessage를 설명하세요&quot;)</code>가 요청을 실행하고, 성공하면 읽고 검증한 <code>StudyCard</code> 인스턴스를 반환합니다. 따라서 <code>card.difficulty</code>로 필드 값을 읽고 <code>card.model_dump()</code>로 딕셔너리 표현을 얻습니다. <code>invoke()</code>의 입력은 카드에 넣을 내용을 요청하는 문장이고, 스키마 자체와 역할이 다릅니다.</p>
+<p>학습 카드와 주문 입력을 비교하면 같은 원리가 더 분명해집니다. 카드에서는 난이도 범위가 중요하고 주문에서는 품명이 비어 있지 않은지와 수량이 양수인지가 중요합니다. 아래 주문 예시는 개발자가 직접 만든 JSON을 읽어 검증합니다. 주문을 모델이 추출했다고 가정하지 않으며, 필드 규칙을 바꿔도 실제 재고나 주문의 존재 여부까지 확인되는 것은 아닙니다.</p>
+<h3>스키마 표현은 다음 코드가 무엇을 요구하는지에 맞춥니다</h3>
+<p>같은 세 필드라도 Pydantic 모델, <code>TypedDict</code>, JSON Schema로 표현할 수 있습니다. 선택 기준은 문법의 길이보다 결과를 어디에서 검증하고 누구와 공유하는가입니다. Python 프로그램 안에서 범위 검증과 오류 위치가 필요하면 Pydantic이 알맞습니다. 타입 힌트와 고정된 키만 필요하면 <code>TypedDict</code>가 가볍습니다. Python 밖의 서비스와 같은 정의를 교환해야 하면 언어에 덜 종속적인 JSON Schema가 유리합니다.</p>
+<div class="tw"><table><thead><tr><th>상황</th><th>스키마 선택</th><th>얻는 것</th><th>추가로 확인할 것</th></tr></thead><tbody>
+<tr><td>학습 카드의 난이도를 1~3으로 제한</td><td>Pydantic</td><td>타입·범위의 실행 시점 검증</td><td>타입 변환 허용 여부</td></tr>
+<tr><td>뉴스 제목과 URL 키만 Python 코드에 표시</td><td><code>TypedDict</code></td><td>간결한 타입 힌트</td><td>반환값의 별도 실행 시점 검증</td></tr>
+<tr><td>웹 프런트엔드와 주문 추출 형식을 공유</td><td>JSON Schema</td><td>언어 사이에서 교환 가능한 정의</td><td>검증을 수행할 프로그램과 오류 처리</td></tr>
+<tr><td>중첩된 강좌·차시·자료 목록</td><td>중첩 Pydantic 모델</td><td>하위 항목까지 이어지는 오류 위치</td><td>선택 필드와 빈 목록의 의미</td></tr>
+</tbody></table></div>
+<h3>생성 방식의 엄격함과 Pydantic의 엄격함은 다른 층입니다</h3>
+<p><code>with_structured_output()</code>의 <code>method</code>는 모델이 구조를 생성하도록 요청하는 방법을 고릅니다. <code>json_schema</code>는 제공자의 전용 구조화 출력 기능을 사용하고, <code>function_calling</code>은 스키마에서 도구 호출 형식을 만들어 결과를 받으며, <code>json_mode</code>는 유효한 JSON 생성을 요청하되 필요한 스키마 설명을 프롬프트에도 제공해야 합니다. 어느 방법을 지원하는지는 제공자·모델·통합 버전에 따라 다릅니다.</p>
+<p>고정 환경에서 <code>ChatOpenAI.with_structured_output()</code>은 세 방법과 <code>strict</code> 인자를 제공하고 기본 방법은 <code>json_schema</code>입니다. 같은 환경의 Anthropic 통합은 <code>function_calling</code>과 <code>json_schema</code>를, Google 통합은 세 방법을 시그니처에 표시합니다. 시그니처에 이름이 있다는 사실만으로 선택한 모델과 계정에서 항상 성공한다고 단정하지 않습니다. 수업의 OpenAI 기본 경로처럼 한 조합을 실제로 실행해 확인해야 합니다.</p>
+<p>여기서 구조화 출력의 <code>strict</code>와 Pydantic의 엄격 모드(strict mode)를 섞지 않습니다. 앞의 설정은 제공자 API가 스키마를 얼마나 엄격히 따르게 할지에 관한 옵션입니다. 뒤의 설정은 Python이 이미 받은 값을 다른 타입으로 변환해 받아들일지에 관한 검증 규칙입니다. 예를 들어 기본 Pydantic 검증은 정수 필드에 문자열 <code>"2"</code>가 들어오면 정수 <code>2</code>로 변환할 수 있지만, <code>strict=True</code>는 Python 입력의 타입이 맞지 않으면 거부합니다. <code>ConfigDict(extra="forbid")</code>는 선언하지 않은 필드가 추가됐을 때 오류를 냅니다. 타입 변환, 추가 필드, 값의 범위는 서로 다른 검사이므로 필요한 규칙을 각각 정합니다.</p>
+<p>설문 분석을 예로 들면, 응답 번호 <code>"2"</code>를 정수로 받아도 되는 CSV 가져오기 단계에서는 변환이 편리합니다. 이미 정수만 전달하기로 정한 내부 API 경계에서는 문자열이 들어온 사실을 조기에 찾기 위해 엄격 검증이 더 적합합니다. 반대로 모델이 설명용 <code>confidence_reason</code> 필드를 새로 반환했을 때 이를 버려도 되는지, 입력 형식 변화로 보고 거부해야 하는지는 데이터 사용 목적에 따라 결정합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>먼저 AIMessage에 관한 카드를 만들고 각 필드와 객체 타입을 확인합니다. 다음에는 주제만 SystemMessage로 바꾸고 같은 스키마를 사용합니다. 설명 문구는 달라질 수 있지만, 프로그램은 같은 필드 이름으로 값을 읽을 수 있습니다.</p>
+<p>이어지는 로컬 셀은 문자열 <code>"2"</code>가 기본 검증에서는 정수로 변환되지만 <code>strict=True</code>에서는 <code>int_type</code> 오류로 거부되는 차이와, <code>extra="forbid"</code>가 선언하지 않은 <code>source</code> 필드를 <code>extra_forbidden</code> 오류로 거부하는 결과를 확인합니다. 주문 예시에서는 잘못된 JSON의 <code>JSONDecodeError</code>와 수량 0의 <code>greater_than_equal</code> 오류를 구분합니다. JSON 파싱과 Pydantic 검증을 모두 통과해도 실제 상품명·수량·주문 여부가 사실인지는 원자료와 별도로 대조해야 합니다.</p>
+<section class="notebook" data-notebook="03-구조화-출력과-검증" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="03-구조화-출력과-검증.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyAwMy4g6rWs7KGw7ZmUIOy2nOugpeqzvCDqsoDspp1cbiIsCiAgICAiXG4iLAogICAgIuuqqOuNuOydmCDsnpDsl7DslrQg64u17J2EIO2UhOuhnOq3uOueqOydtCDqsoDsgqztlaAg7IiYIOyeiOuKlCDtlYTrk5zroZwg7Ja065a76rKMIOuwm+ydhOq5jOyalD8iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIlB5dGhvbiAzLjEyIOyDiCDsu6TrhJDsl5DshJwg7Yyo7YKk7KeA7JmAIEFQSSDtgqQg7KG07J6sIOyXrOu2gOulvCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNDozNjo1My40Njk1OTZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNDozNjo1My40Njk0NDdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNDozNjo1NC4xNjQ3MTRaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA0OjM2OjU0LjE2NDAzMloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJOb3RlOiB5b3UgbWF5IG5lZWQgdG8gcmVzdGFydCB0aGUga2VybmVsIHRvIHVzZSB1cGRhdGVkIHBhY2thZ2VzLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIO2YhOyerCDsu6TrhJDsl5Ag6rWs7KGw7ZmUIOy2nOugpSDsi6TsirXsnZgg6rOg7KCVIO2MqO2CpOyngCDrsoTsoITsnYQg7ISk7LmY7ZWp64uI64ukLlxuIiwKICAgICIjIO2YhOyerCDsu6TrhJDsl5Ag7IiY7JeF7JeQ7IScIOqygOymne2VnCDrsoTsoITsnYQg7ISk7LmY7ZWp64uI64ukLlxuIiwKICAgICIlcGlwIGluc3RhbGwgLXEgXCJsYW5nY2hhaW49PTEuNC4wXCIgXCJsYW5nY2hhaW4tb3BlbmFpPT0xLjYuMFwiIFwibGFuZ2NoYWluLWFudGhyb3BpYz09MS43LjFcIiBcImxhbmdjaGFpbi1nb29nbGUtZ2VuYWk9PTQuNC4wXCIgXCJweWRhbnRpYz09Mi4xMy41XCIgXCJweXRob24tZG90ZW52PT0xLjIuM1wiIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNDozNjo1NC4xNjY0MDdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNDozNjo1NC4xNjYyNzZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNDozNjo1NC4xNzE2ODVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA0OjM2OjU0LjE3MTMxOVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJPUEVOQUlfQVBJX0tFWSDtmZXsnbgg7JmE66OMXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7IOB7JyEIO2PtOuNlOyXkOyEnCAuZW5266W8IOywvuqzoCBPcGVuQUkg7YKkIOusuOyekOyXtOydgCDtmZTrqbTsl5Ag7ZGc7Iuc7ZWY7KeAIOyViuyKteuLiOuLpC5cbiIsCiAgICAiZnJvbSBkb3RlbnYgaW1wb3J0IGZpbmRfZG90ZW52LCBsb2FkX2RvdGVudlxuIiwKICAgICJpbXBvcnQgb3NcbiIsCiAgICAiXG4iLAogICAgImVudl9wYXRoID0gZmluZF9kb3RlbnYodXNlY3dkPVRydWUpXG4iLAogICAgImlmIG5vdCBlbnZfcGF0aDpcbiIsCiAgICAiICAgIHJhaXNlIEZpbGVOb3RGb3VuZEVycm9yKFwi7ZiE7J6sIO2PtOuNlOydmCDsg4HsnIQg6rK966Gc7JeQ7IScIC5lbnbrpbwg7LC+7KeAIOuqu+2WiOyKteuLiOuLpC5cIilcbiIsCiAgICAibG9hZF9kb3RlbnYoZW52X3BhdGgpXG4iLAogICAgImlmIG5vdCBvcy5nZXRlbnYoXCJPUEVOQUlfQVBJX0tFWVwiKTpcbiIsCiAgICAiICAgIHJhaXNlIFJ1bnRpbWVFcnJvcihcIi5lbnbsl5AgT1BFTkFJX0FQSV9LRVnqsIAg7JeG7Iq164uI64ukLlwiKVxuIiwKICAgICJwcmludChcIk9QRU5BSV9BUElfS0VZIO2ZleyduCDsmYTro4xcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA0OjM2OjU0LjE3MjY0M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA0OjM2OjU0LjE3MjU4NVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA0OjM2OjU0Ljg3NjI2NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDQ6MzY6NTQuODc1ODY1WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIkNoYXRPcGVuQUlcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDqtazsobDtmZQg7Lac66ClIO2YuOy2nOyXkOuPhCDsoIHsmqntlaAg7YOA7J6E7JWE7JuD6rO8IOy1nOuMgCDsnqzsi5zrj4TCt+y2nOugpSDthqDtgbAg7IOB7ZWc7J2EIOuRoeuLiOuLpC5cbiIsCiAgICAiZnJvbSBsYW5nY2hhaW4uY2hhdF9tb2RlbHMgaW1wb3J0IGluaXRfY2hhdF9tb2RlbFxuIiwKICAgICJcbiIsCiAgICAiIyBwcm92aWRlcjptb2RlbOydgCDthrXtlakg7Yyo7YKk7KeA7JmAIOuqqOuNuOydhCDtlajqu5gg7KeA7KCV7ZWp64uI64ukLlxuIiwKICAgICIjIHRpbWVvdXTsnYAg7ZWcIOyalOyyreydmCDstZzrjIAg64yA6riwIOy0iCwgbWF4X3JldHJpZXPripQgU0RL7J2YIOy2lOqwgCDsi5zrj4Qg7IOB7ZWc7J6F64uI64ukLlxuIiwKICAgICIjIG1heF90b2tlbnPripQg7IOd7ISx7ZWgIOy2nOugpSDthqDtgbAg7IiY7J2YIOyDge2VnOyeheuLiOuLpC5cbiIsCiAgICAibW9kZWwgPSBpbml0X2NoYXRfbW9kZWwoXG4iLAogICAgIiAgICBcIm9wZW5haTpncHQtNS40LW1pbmlcIixcbiIsCiAgICAiICAgIHJlYXNvbmluZ19lZmZvcnQ9XCJub25lXCIsXG4iLAogICAgIiAgICBtYXhfdG9rZW5zPTE4MCxcbiIsCiAgICAiICAgIHRpbWVvdXQ9MzAsXG4iLAogICAgIiAgICBtYXhfcmV0cmllcz0xLFxuIiwKICAgICIpXG4iLAogICAgInByaW50KHR5cGUobW9kZWwpLl9fbmFtZV9fKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDYiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyBQeWRhbnRpYyDsiqTtgqTrp4hcbiIsCiAgICAiXG4iLAogICAgIkNoIDLsnZgg7YG0656Y7IqkIOusuOuyleydhCDsgqzsmqntlZjrqbAsIDEw7KCIIEIg6rK966Gc7JeQ7IScIOuLpOujrCBgQmFzZU1vZGVsYMK3YEZpZWxkYMK37JeE6rKp7ZWcIOqygOymneydhCDrqqjrjbgg7J2R64u17JeQIOyXsOqysO2VqeuLiOuLpC4gQiDqsr3roZzrpbwg6rG064SI65u0IO2VmeyDneuPhCDrlLDrnbzsmKTrj4TroZ0g7ZWE7JqU7ZWcIOq3nOy5meydhCDri6Tsi5wg7ZmV7J247ZWp64uI64ukLlxuIiwKICAgICJcbiIsCiAgICAi7Iqk7YKk66eI64qUIOuwm+ydhCDtla3rqqnqs7wg7ZiV7Iud7J2YIOygleydmOyeheuLiOuLpC4gYGNsYXNzIFN0dWR5Q2FyZChCYXNlTW9kZWwpOmDripQgUHlkYW50aWPsnZgg6rKA7KadIOq4sOuKpeydhCDrrLzroKTrsJvsnYAg7YG0656Y7Iqk7J6F64uI64ukLiBgY29uY2VwdDogc3RyYOydgCDrrLjsnpDsl7Qg7ZWE65OcLCBgZGlmZmljdWx0eTogaW50YOuKlCDsoJXsiJgg7ZWE65Oc7J2066mwIGBGaWVsZChnZT0xLCBsZT0zKWDripQgMSDsnbTsg4EgMyDsnbTtlZjrnbzripQg67KU7JyE66W8IOyEoOyWuO2VqeuLiOuLpC4gYGRlc2NyaXB0aW9uYOydgCDtlYTrk5wg7J2Y66+466W8IOyEpOuqhe2VmOuKlCDrrLjsnpDsl7TsnoXri4jri6QuIENoIDLsnZgg7ISg7YOdIEIg6rK966Gc66W8IOydveyngCDslYrslZjrjZTrnbzrj4Qg7J20IOyEoOyWuOydhCDsubTrk5zsnZgg6rCBIOy5uOqzvCDtl4jsmqnqsJLsnLzroZwg7J297J2EIOyImCDsnojsirXri4jri6QuXG4iLAogICAgIlxuIiwKICAgICJgbW9kZWwud2l0aF9zdHJ1Y3R1cmVkX291dHB1dChTdHVkeUNhcmQpYOuKlCDsnbQg7KCI7JeQ7IScIOyymOydjCDsgqzsmqntlZjripQg66mU7ISc65Oc7J6F64uI64ukLiDsubTrk5wg7J247Iqk7YS07Iqk6rCAIOyVhOuLjCDtgbTrnpjsiqQgYFN0dWR5Q2FyZGDrpbwg64SY6rKoIOy2nOugpSDtmJXsi53snYQg7ISk7KCV7ZWcIO2YuOy2nCDqsJ3ssrTrpbwg66eM65Ot64uI64ukLiDsi6TsoJwg7IOd7ISx7J2AIOuLpOydjCDshYDsnZggYHN0cnVjdHVyZWRfbW9kZWwuaW52b2tlKC4uLilg7JeQ7IScIOydtOujqOyWtOynkeuLiOuLpC4g7ISx6rO17ZWY66m0IGBBSU1lc3NhZ2VgIOuMgOyLoCBgU3R1ZHlDYXJkYOulvCDrsJvsnLzrqbAsIGBtb2RlbF9kdW1wKClg66GcIOq3uCDtlYTrk5zrk6TsnYQg65SV7IWU64SI66as66GcIOydveyKteuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgIuqwmeydgCDshYDsnZggYGRpYWdub3N0aWNfbW9kZWxg7J2AIOuSpOydmCDsmKTrpZgg6rSA7LCw7JeQIOyCrOyaqe2VoCDrkZAg67KI7Ke4IO2YuOy2nCDqsJ3ssrTsnoXri4jri6QuIGBpbmNsdWRlX3Jhdz1UcnVlYOulvCDso7zrqbQg7J207ZuEIO2YuOy2nCDqsrDqs7zqsIAgYHJhd2DCt2BwYXJzZWRgwrdgcGFyc2luZ19lcnJvcmAg7YKk66W8IOqwgOynhCDrlJXshZTrhIjrpqzqsIAg65Cp64uI64ukLiDrqLzsoIAg6riw67O4IGBzdHJ1Y3R1cmVkX21vZGVsYOydmCDsubTrk5wg67CY7ZmY7J2EIOydveqzoCwg6re464uk7J2MIOybkOuzuCDsnZHri7Xqs7wg7Jik66WY66W8IO2VqOq7mCDtmZXsnbjtlZjripQg7ZmV7J6lIOqyveuhnOulvCDruYTqtZDtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNDozNjo1NC44NzcwNjBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNDozNjo1NC44NzcwMTNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNDozNjo1NC44ODIxMjNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA0OjM2OjU0Ljg4MTc1NVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsiqTtgqTrp4gg7KSA67mEIOyZhOujjFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIFN0dWR5Q2FyZCDtlYTrk5zsmYAgZGlmZmljdWx0eeydmCDtl4jsmqkg67KU7JyEIDF+M+ydhCDshKDslrjtlanri4jri6QuXG4iLAogICAgImZyb20gcHlkYW50aWMgaW1wb3J0IEJhc2VNb2RlbCwgRmllbGRcbiIsCiAgICAiXG4iLAogICAgImNsYXNzIFN0dWR5Q2FyZChCYXNlTW9kZWwpOlxuIiwKICAgICIgICAgY29uY2VwdDogc3RyID0gRmllbGQoZGVzY3JpcHRpb249XCLqsJzrhZAg7J2066aEXCIpXG4iLAogICAgIiAgICBleHBsYW5hdGlvbjogc3RyID0gRmllbGQoZGVzY3JpcHRpb249XCLtlZwg66y47J6lIOyEpOuqhVwiKVxuIiwKICAgICIgICAgZGlmZmljdWx0eTogaW50ID0gRmllbGQoZ2U9MSwgbGU9MywgZGVzY3JpcHRpb249XCIx67aA7YSwIDPquYzsp4DsnZgg64Kc7J2064+EXCIpXG4iLAogICAgIlxuIiwKICAgICJzdHJ1Y3R1cmVkX21vZGVsID0gbW9kZWwud2l0aF9zdHJ1Y3R1cmVkX291dHB1dChTdHVkeUNhcmQpXG4iLAogICAgImRpYWdub3N0aWNfbW9kZWwgPSBtb2RlbC53aXRoX3N0cnVjdHVyZWRfb3V0cHV0KFN0dWR5Q2FyZCwgaW5jbHVkZV9yYXc9VHJ1ZSlcbiIsCiAgICAicHJpbnQoXCLsiqTtgqTrp4gg7KSA67mEIOyZhOujjFwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogImNlbGwtMDgiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDQ6MzY6NTQuODgyODE1WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDQ6MzY6NTQuODgyNzY4WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDQ6MzY6NTcuMzE3NTAzWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNDozNjo1Ny4zMTY3NDBaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAieydjb25jZXB0JzogJ0xhbmdDaGFpbuydmCBBSU1lc3NhZ2UnLCAnZXhwbGFuYXRpb24nOiAnTGFuZ0NoYWlu7JeQ7IScIEFJTWVzc2FnZeuKlCBBSSDrqqjrjbjsnbQg7IOd7ISx7ZWcIOydkeuLtSDrgrTsmqnsnYQg64u064qUIOuplOyLnOyngCDqsJ3ssrTsnoXri4jri6QuJywgJ2RpZmZpY3VsdHknOiAxfVxuIiwKICAgICAgIuqygOymneuQnCDtg4DsnoU6IFN0dWR5Q2FyZFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGludm9rZeqwgCDrsJjtmZjtlZwgU3R1ZHlDYXJk66W8IOuUleyFlOuEiOumrOuhnCDrsJTqvrjqs6Ag7Iuk7KCcIO2DgOyeheydhCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgImNhcmQgPSBzdHJ1Y3R1cmVkX21vZGVsLmludm9rZShcIkxhbmdDaGFpbuydmCBBSU1lc3NhZ2Xrpbwg7LSI6riJIO2VmeyKtSDsubTrk5zroZwg66eM65Oc7IS47JqULlwiKVxuIiwKICAgICJwcmludChjYXJkLm1vZGVsX2R1bXAoKSlcbiIsCiAgICAicHJpbnQoXCLqsoDspp3rkJwg7YOA7J6FOlwiLCB0eXBlKGNhcmQpLl9fbmFtZV9fKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDkiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDqsJIg7ZWY64KYIOuzgOqyvVxuIiwKICAgICJcbiIsCiAgICAi7KO87KCc66eMIGBTeXN0ZW1NZXNzYWdlYOuhnCDrsJTqvrjqs6Ag6rCZ7J2AIOyKpO2CpOuniOulvCDsoIHsmqntlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA2LAogICAiaWQiOiAiY2VsbC0xMCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNDozNjo1Ny4zMTg5NThaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNDozNjo1Ny4zMTg4MjZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNDozNjo1OC42NTM5OTNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA0OjM2OjU4LjY1MzM2M1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJ7J2NvbmNlcHQnOiAnU3lzdGVtTWVzc2FnZScsICdleHBsYW5hdGlvbic6ICfrjIDtmZTtmJUgQUnsl5Dqsowg7Jet7ZWgLCDqt5zsuZksIOunkO2IrCDqsJnsnYAg6riw67O4IOyngOy5qOydhCDsspjsnYzsl5Ag7JWM66Ck7KO864qUIOuplOyLnOyngOyeheuLiOuLpC4nLCAnZGlmZmljdWx0eSc6IDF9XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7KO87KCc66eMIOuwlOq+vCDrkZAg67KI7Ke4IOqwneyytOqwgCDqsJnsnYAgZGlmZmljdWx0eSDrspTsnITrpbwg7KeA7YKk64qU7KeAIOqygOyCrO2VqeuLiOuLpC5cbiIsCiAgICAic2Vjb25kID0gc3RydWN0dXJlZF9tb2RlbC5pbnZva2UoXCJTeXN0ZW1NZXNzYWdl66W8IOy0iOq4iSDtlZnsirUg7Lm065Oc66GcIOunjOuTnOyEuOyalC5cIilcbiIsCiAgICAicHJpbnQoc2Vjb25kLm1vZGVsX2R1bXAoKSlcbiIsCiAgICAiYXNzZXJ0IDEgPD0gc2Vjb25kLmRpZmZpY3VsdHkgPD0gMyIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDquajsp4DripQg7J6F66Cl7J2EIOyLpOygnCDrqqjrjbjsl5Ag7KCE64usXG4iLAogICAgIlxuIiwKICAgICLrgpzsnbTrj4QgOeulvCDsmpTqtaztlZjrqbTshJwg7Iqk7YKk66eIIOuylOychOuKlCAxfjPsnLzroZwg7Jyg7KeA7ZWp64uI64ukLiDrqqjrjbjsnbQg67KU7JyE66W8IOqzoOy5mOuptCDsi6TtjKgg66+46rSA7LCw66GcIOq4sOuhne2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDcsCiAgICJpZCI6ICJjZWxsLTEyIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA0OjM2OjU4LjY1NTgyOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA0OjM2OjU4LjY1NTY3OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjY4NjA4OVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDQ6MzY6NTkuNjg1MzkwWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInJhdyDtg4DsnoU6IEFJTWVzc2FnZVxuIiwKICAgICAgInBhcnNlZDogY29uY2VwdD0nQUlNZXNzYWdlJyBleHBsYW5hdGlvbj0nQUlNZXNzYWdl64qUIOuMgO2ZlO2YlSBBSSDsi5zsiqTthZzsl5DshJwg66qo64247J20IOyDneyEse2VnCDsnZHri7Ug66mU7Iuc7KeA66W8IO2RnO2YhO2VmOuKlCDqsJ3ssrTroZwsIOuztO2GtSDsgqzsmqnsnpAg7J6F66Cl7JeQIOuMgO2VnCBhc3Npc3RhbnTsnZgg64u167OAIOuCtOyaqeqzvCDrqZTtg4DrjbDsnbTthLDrpbwg64u064qU64ukLicgZGlmZmljdWx0eT0zXG4iLAogICAgICAicGFyc2luZ19lcnJvcjogTm9uZVxuIiwKICAgICAgIuqygOymnSDsi6TtjKgg6rSA7LCwOiBGYWxzZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGluY2x1ZGVfcmF3IOqysOqzvOydmCByYXfCt3BhcnNlZMK3cGFyc2luZ19lcnJvcuulvCDqsIHqsIEg7Lac66Cl7ZW0IOyLpO2MqCDrr7jqtIDssLDrj4Qg64Ko6rmB64uI64ukLlxuIiwKICAgICJkaWFnbm9zdGljID0gZGlhZ25vc3RpY19tb2RlbC5pbnZva2UoXG4iLAogICAgIiAgICBcIkFJTWVzc2FnZSDtlZnsirUg7Lm065Oc66W8IOunjOuTnOyEuOyalC4gZGlmZmljdWx0eeuKlCDrsJjrk5zsi5wgOeuhnCDsk7DshLjsmpQuXCJcbiIsCiAgICAiKVxuIiwKICAgICJwcmludChcInJhdyDtg4DsnoU6XCIsIHR5cGUoZGlhZ25vc3RpY1tcInJhd1wiXSkuX19uYW1lX18pXG4iLAogICAgInByaW50KFwicGFyc2VkOlwiLCBkaWFnbm9zdGljW1wicGFyc2VkXCJdKVxuIiwKICAgICJwcmludChcInBhcnNpbmdfZXJyb3I6XCIsIGRpYWdub3N0aWNbXCJwYXJzaW5nX2Vycm9yXCJdKVxuIiwKICAgICJwcmludChcIuqygOymnSDsi6TtjKgg6rSA7LCwOlwiLCBkaWFnbm9zdGljW1wicGFyc2luZ19lcnJvclwiXSBpcyBub3QgTm9uZSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb2VyY2lvbi1pbnRybyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOq4sOuzuCDrs4DtmZjqs7wg7JeE6rKp7ZWcIOqygOymnVxuIiwKICAgICJcbiIsCiAgICAiUHlkYW50aWPsnYAg6riw67O4IOqygOymneyXkOyEnCDsiKvsnpAg66y47J6Q7Je0IGBcIjJcImDrpbwg7KCV7IiYIGAyYOuhnCDrs4DtmZjtlanri4jri6QuIOydtOuyiCBQeXRob24g65SV7IWU64SI66asIOyeheugpeyXkOyEnOuKlCBgc3RyaWN0PVRydWVg6rCAIOusuOyekOyXtCBgXCIyXCJg66W8IGBpbnRg66GcIOuwlOq+uOyngCDslYrqs6Ag6rGw67aA7ZWp64uI64ukLiBQeXRob24g7J6F66Cl6rO8IEpTT04g7J6F66Cl7J2YIOyXhOqyqe2VnCDqsoDspp0g64+Z7J6R7J2AIOydvOu2gCDtg4DsnoXsl5DshJwg64uk66W8IOyImCDsnojsirXri4jri6QuIOyVhOuemCDqsJLsnYAg65GQIOuwqeyLneydhCDruYTqtZDtlZjquLAg7JyE7ZW0IOyekeyEse2VnCDroZzsu6wg7YWM7Iqk7Yq4IOuNsOydtO2EsOyeheuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDgsCiAgICJpZCI6ICJjb2VyY2lvbi1kZWZhdWx0IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjY4NzQ1M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjY4NzM0N1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjY4OTk3NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDQ6MzY6NTkuNjg5NDI1WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuuzgO2ZmOuQnCDqsJI6IDJcbiIsCiAgICAgICLrs4DtmZgg7ZuEIO2DgOyehTogaW50XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg6riw67O4IOqygOymneydgCDsoJXsiJjroZwg7ZGc7ZiE7ZWgIOyImCDsnojripQg66y47J6Q7Je07J2EIOuzgO2ZmO2VqeuLiOuLpC5cbiIsCiAgICAibG9jYWxfY2FyZCA9IHtcbiIsCiAgICAiICAgIFwiY29uY2VwdFwiOiBcIkFJTWVzc2FnZVwiLFxuIiwKICAgICIgICAgXCJleHBsYW5hdGlvblwiOiBcIuuqqOuNuCDsnZHri7XsnYQg64u064qUIOuplOyLnOyngFwiLFxuIiwKICAgICIgICAgXCJkaWZmaWN1bHR5XCI6IFwiMlwiLFxuIiwKICAgICJ9XG4iLAogICAgImNvbnZlcnRlZF9jYXJkID0gU3R1ZHlDYXJkLm1vZGVsX3ZhbGlkYXRlKGxvY2FsX2NhcmQpXG4iLAogICAgInByaW50KFwi67OA7ZmY65CcIOqwkjpcIiwgY29udmVydGVkX2NhcmQuZGlmZmljdWx0eSlcbiIsCiAgICAicHJpbnQoXCLrs4DtmZgg7ZuEIO2DgOyehTpcIiwgdHlwZShjb252ZXJ0ZWRfY2FyZC5kaWZmaWN1bHR5KS5fX25hbWVfXylcbiIsCiAgICAiYXNzZXJ0IGNvbnZlcnRlZF9jYXJkLmRpZmZpY3VsdHkgPT0gMiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogOSwKICAgImlkIjogImNvZXJjaW9uLXN0cmljdCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNDozNjo1OS42OTEyMzZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNDozNjo1OS42OTExMjhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNDozNjo1OS42OTM3NjZaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjY5MzMwMloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsl4TqsqntlZwg6rKA7KadIO2VhOuTnDogZGlmZmljdWx0eVxuIiwKICAgICAgIuyXhOqyqe2VnCDqsoDspp0g7Jik66WYOiBpbnRfdHlwZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyXhOqyqe2VnCDqsoDspp3snYAg6rCS7J2EIOuzgO2ZmO2VmOyngCDslYrqs6Ag7J6Y66q765CcIO2DgOyeheydhCDqsbDrtoDtlanri4jri6QuXG4iLAogICAgImZyb20gcHlkYW50aWMgaW1wb3J0IFZhbGlkYXRpb25FcnJvclxuIiwKICAgICJcbiIsCiAgICAidHJ5OlxuIiwKICAgICIgICAgU3R1ZHlDYXJkLm1vZGVsX3ZhbGlkYXRlKGxvY2FsX2NhcmQsIHN0cmljdD1UcnVlKVxuIiwKICAgICJleGNlcHQgVmFsaWRhdGlvbkVycm9yIGFzIGVycm9yOlxuIiwKICAgICIgICAgc3RyaWN0X2Vycm9yID0gZXJyb3IuZXJyb3JzKClbMF1cbiIsCiAgICAiICAgIHByaW50KFwi7JeE6rKp7ZWcIOqygOymnSDtlYTrk5w6XCIsIHN0cmljdF9lcnJvcltcImxvY1wiXVswXSlcbiIsCiAgICAiICAgIHByaW50KFwi7JeE6rKp7ZWcIOqygOymnSDsmKTrpZg6XCIsIHN0cmljdF9lcnJvcltcInR5cGVcIl0pXG4iLAogICAgIiAgICBhc3NlcnQgc3RyaWN0X2Vycm9yW1widHlwZVwiXSA9PSBcImludF90eXBlXCJcbiIsCiAgICAiZWxzZTpcbiIsCiAgICAiICAgIHJhaXNlIEFzc2VydGlvbkVycm9yKFwi7JeE6rKp7ZWcIOqygOymneydgCDrrLjsnpDsl7QgJzIn66W8IOqxsOu2gO2VtOyVvCDtlanri4jri6QuXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiZXh0cmEtZm9yYmlkLWludHJvIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7JiI7IOB7ZWY7KeAIOyViuydgCDtlYTrk5wg6rGw67aAXG4iLAogICAgIlxuIiwKICAgICLquLDrs7gg7ISk7KCV7J2AIOyKpO2CpOuniOyXkCDsl4bripQg7ZWE65Oc66W8IOygnOyZuO2VoCDsiJgg7J6I7Iq164uI64ukLiDsnoXroKXsl5Ag7ZeI7Jqp7ZWcIO2VhOuTnOunjCDrsJvslYTslbwg7ZWc64uk66m0IGBleHRyYT0nZm9yYmlkJ2Drpbwg7ISk7KCV7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMTAsCiAgICJpZCI6ICJleHRyYS1mb3JiaWQtZXhhbXBsZSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNDozNjo1OS42OTQ4MjFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNDozNjo1OS42OTQ3MzJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNDozNjo1OS42OTc5NTVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjY5NzQzNloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLqsbDrtoDrkJwg7ZWE65OcOiBzb3VyY2VcbiIsCiAgICAgICLqsoDspp0g7Jik66WYOiBleHRyYV9mb3JiaWRkZW5cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtl4jsmqntlZjsp4Ag7JWK7J2AIHNvdXJjZSDtlYTrk5zqsIAg7Y+s7ZWo65CY66m0IOqygOymneydtCDsi6TtjKjtlanri4jri6QuXG4iLAogICAgImZyb20gcHlkYW50aWMgaW1wb3J0IENvbmZpZ0RpY3RcbiIsCiAgICAiXG4iLAogICAgImNsYXNzIENsb3NlZFN0dWR5Q2FyZChTdHVkeUNhcmQpOlxuIiwKICAgICIgICAgbW9kZWxfY29uZmlnID0gQ29uZmlnRGljdChleHRyYT1cImZvcmJpZFwiKVxuIiwKICAgICJcbiIsCiAgICAiZXh0cmFfZGF0YSA9IHtcbiIsCiAgICAiICAgIFwiY29uY2VwdFwiOiBcIkFJTWVzc2FnZVwiLCBcImV4cGxhbmF0aW9uXCI6IFwi66qo6424IOydkeuLtVwiLFxuIiwKICAgICIgICAgXCJkaWZmaWN1bHR5XCI6IDIsIFwic291cmNlXCI6IFwi66Gc7LusIOuplOuqqFwiLFxuIiwKICAgICJ9XG4iLAogICAgInRyeTpcbiIsCiAgICAiICAgIENsb3NlZFN0dWR5Q2FyZC5tb2RlbF92YWxpZGF0ZShleHRyYV9kYXRhKVxuIiwKICAgICJleGNlcHQgVmFsaWRhdGlvbkVycm9yIGFzIGVycm9yOlxuIiwKICAgICIgICAgZXh0cmFfZXJyb3IgPSBlcnJvci5lcnJvcnMoKVswXVxuIiwKICAgICIgICAgcHJpbnQoXCLqsbDrtoDrkJwg7ZWE65OcOlwiLCBleHRyYV9lcnJvcltcImxvY1wiXVswXSlcbiIsCiAgICAiICAgIHByaW50KFwi6rKA7KadIOyYpOulmDpcIiwgZXh0cmFfZXJyb3JbXCJ0eXBlXCJdKVxuIiwKICAgICIgICAgYXNzZXJ0IGV4dHJhX2Vycm9yW1widHlwZVwiXSA9PSBcImV4dHJhX2ZvcmJpZGRlblwiXG4iLAogICAgImVsc2U6XG4iLAogICAgIiAgICByYWlzZSBBc3NlcnRpb25FcnJvcihcIuy2lOqwgCDtlYTrk5zripQg6rGw67aA65CY7Ja07JW8IO2VqeuLiOuLpC5cIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJvcmRlci1ib3VuZGFyeS1pbnRybyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIEpTT04g66y467KV6rO8IOyKpO2CpOuniCDqsJIg7KCc7JW9XG4iLAogICAgIlxuIiwKICAgICJganNvbi5sb2Fkc2DripQgSlNPTiDrrLjrspXsnYQsIFB5ZGFudGlj7J2AIO2MjOyLseuQnCDqsJ3ssrTsnZgg7ZWE65Ocwrftg4DsnoXCt+uylOychOulvCDqsoDsgqztlanri4jri6QuIOuRmOydhCDthrXqs7ztlbTrj4Qg7KO866y47J20IOyLpOygnOuhnCDsobTsnqztlZjripTsp4Drgpgg7ZKI66qF7J20IOyCrOyLpOyduOyngOuKlCDrs4Trj4TroZwg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMTEsCiAgICJpZCI6ICJvcmRlci12YWxpZC1leGFtcGxlIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjY5ODkyOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjY5ODg1OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjcwMTU2NloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDQ6MzY6NTkuNzAxMTM5WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIkpTT04g7ZiV7IudOiDthrXqs7xcbiIsCiAgICAgICLso7zrrLgg64K07JqpOiB7J3Byb2R1Y3RfbmFtZSc6ICfrhbjtirgnLCAncXVhbnRpdHknOiAyfVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOygleyDgSBKU09O7J2EIO2MjOyLse2VnCDrkqQg7KO866y4IOuCtOyaqSDqt5zsuZnsnYQg6rKA7Kad7ZWp64uI64ukLlxuIiwKICAgICJpbXBvcnQganNvblxuIiwKICAgICJcbiIsCiAgICAiY2xhc3MgT3JkZXJJdGVtKEJhc2VNb2RlbCk6XG4iLAogICAgIiAgICBwcm9kdWN0X25hbWU6IHN0ciA9IEZpZWxkKG1pbl9sZW5ndGg9MSwgZGVzY3JpcHRpb249XCLtkojrqoVcIilcbiIsCiAgICAiICAgIHF1YW50aXR5OiBpbnQgPSBGaWVsZChnZT0xLCBkZXNjcmlwdGlvbj1cIjEg7J207IOB7J2YIOyImOufiVwiKVxuIiwKICAgICJcbiIsCiAgICAidmFsaWRfdGV4dCA9ICd7XCJwcm9kdWN0X25hbWVcIjogXCLrhbjtirhcIiwgXCJxdWFudGl0eVwiOiAyfSdcbiIsCiAgICAicGFyc2VkX29yZGVyID0ganNvbi5sb2Fkcyh2YWxpZF90ZXh0KVxuIiwKICAgICJ2YWxpZF9vcmRlciA9IE9yZGVySXRlbS5tb2RlbF92YWxpZGF0ZShwYXJzZWRfb3JkZXIpXG4iLAogICAgInByaW50KFwiSlNPTiDtmJXsi506IO2GteqzvFwiKVxuIiwKICAgICJwcmludChcIuyjvOusuCDrgrTsmqk6XCIsIHZhbGlkX29yZGVyLm1vZGVsX2R1bXAoKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEyLAogICAiaWQiOiAib3JkZXItaW52YWxpZC1leGFtcGxlcyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNDozNjo1OS43MDI1MDNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNDozNjo1OS43MDI0MzBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNDozNjo1OS43MDQ5OTFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjcwNDUwNVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJKU09OIO2YleyLnSDsmKTrpZg6IEpTT05EZWNvZGVFcnJvclxuIiwKICAgICAgIuyjvOusuCDrgrTsmqkg7Jik66WYOiBncmVhdGVyX3RoYW5fZXF1YWxcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBKU09OIO2YleyLnSDsmKTrpZjsmYAg7KO866y4IOuCtOyaqSDsmKTrpZjrpbwg6rCB6rCBIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiYnJva2VuX3RleHQgPSAne1wicHJvZHVjdF9uYW1lXCI6IFwi64W47Yq4XCIsIFwicXVhbnRpdHlcIjogMidcbiIsCiAgICAidHJ5OlxuIiwKICAgICIgICAganNvbi5sb2Fkcyhicm9rZW5fdGV4dClcbiIsCiAgICAiZXhjZXB0IGpzb24uSlNPTkRlY29kZUVycm9yIGFzIGVycm9yOlxuIiwKICAgICIgICAgcHJpbnQoXCJKU09OIO2YleyLnSDsmKTrpZg6XCIsIHR5cGUoZXJyb3IpLl9fbmFtZV9fKVxuIiwKICAgICJcbiIsCiAgICAid3JvbmdfY29udGVudCA9ICd7XCJwcm9kdWN0X25hbWVcIjogXCLrhbjtirhcIiwgXCJxdWFudGl0eVwiOiAwfSdcbiIsCiAgICAicGFyc2VkX3dyb25nID0ganNvbi5sb2Fkcyh3cm9uZ19jb250ZW50KVxuIiwKICAgICJ0cnk6XG4iLAogICAgIiAgICBPcmRlckl0ZW0ubW9kZWxfdmFsaWRhdGUocGFyc2VkX3dyb25nKVxuIiwKICAgICJleGNlcHQgVmFsaWRhdGlvbkVycm9yIGFzIGVycm9yOlxuIiwKICAgICIgICAgY29udGVudF9lcnJvciA9IGVycm9yLmVycm9ycygpWzBdXG4iLAogICAgIiAgICBwcmludChcIuyjvOusuCDrgrTsmqkg7Jik66WYOlwiLCBjb250ZW50X2Vycm9yW1widHlwZVwiXSlcbiIsCiAgICAiICAgIGFzc2VydCBjb250ZW50X2Vycm9yW1widHlwZVwiXSA9PSBcImdyZWF0ZXJfdGhhbl9lcXVhbFwiXG4iLAogICAgImVsc2U6XG4iLAogICAgIiAgICByYWlzZSBBc3NlcnRpb25FcnJvcihcIuyImOufiSAw7J2AIOqxsOu2gOuQmOyWtOyVvCDtlanri4jri6QuXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7YyoIOyerO2YhCIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMTMsCiAgICJpZCI6ICJjZWxsLTE0IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjcwNTk0OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjcwNTg4NVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjcwODAyOVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDQ6MzY6NTkuNzA3NjE4WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi6rSA7LCw7ZWcIOqygOymnSDsmKTrpZg6IGxlc3NfdGhhbl9lcXVhbFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOuylOychCDrsJYgN+ydhCDsp4HsoJEg64Sj7Ja0IOyYiOyDge2VnCBQeWRhbnRpYyBWYWxpZGF0aW9uRXJyb3Ig7Jyg7ZiV66eMIOyymOumrO2VqeuLiOuLpC5cbiIsCiAgICAiZnJvbSBweWRhbnRpYyBpbXBvcnQgVmFsaWRhdGlvbkVycm9yXG4iLAogICAgIlxuIiwKICAgICJiYWRfZGF0YSA9IHtcImNvbmNlcHRcIjogXCJBSU1lc3NhZ2VcIiwgXCJleHBsYW5hdGlvblwiOiBcIuuqqOuNuCDsnZHri7VcIiwgXCJkaWZmaWN1bHR5XCI6IDd9XG4iLAogICAgInRyeTpcbiIsCiAgICAiICAgIFN0dWR5Q2FyZC5tb2RlbF92YWxpZGF0ZShiYWRfZGF0YSlcbiIsCiAgICAiZXhjZXB0IFZhbGlkYXRpb25FcnJvciBhcyBlcnJvcjpcbiIsCiAgICAiICAgIHByaW50KFwi6rSA7LCw7ZWcIOqygOymnSDsmKTrpZg6XCIsIGVycm9yLmVycm9ycygpWzBdW1widHlwZVwiXSlcbiIsCiAgICAiZWxzZTpcbiIsCiAgICAiICAgIHJhaXNlIEFzc2VydGlvbkVycm9yKFwi67KU7JyE66W8IOuyl+yWtOuCnCDqsJLsnYAg6rGw67aA65CY7Ja07JW8IO2VqeuLiOuLpC5cIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTE1IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyImOyglSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMTQsCiAgICJpZCI6ICJjZWxsLTE2IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjcwODg4N1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjcwODgyOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA0OjM2OjU5LjcxMDY3MFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDQ6MzY6NTkuNzEwMzQyWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJ7J2NvbmNlcHQnOiAnQUlNZXNzYWdlJywgJ2V4cGxhbmF0aW9uJzogJ+uqqOuNuCDsnZHri7UnLCAnZGlmZmljdWx0eSc6IDJ9XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg64uk66W4IO2VhOuTnOuKlCDsnKDsp4DtlZjqs6AgZGlmZmljdWx0eeunjCAy66GcIOqzoOyzkCDqsoDspp3rkJwg6rCd7LK066W8IOunjOuTreuLiOuLpC5cbiIsCiAgICAiZml4ZWRfZGF0YSA9IHtcImNvbmNlcHRcIjogXCJBSU1lc3NhZ2VcIiwgXCJleHBsYW5hdGlvblwiOiBcIuuqqOuNuCDsnZHri7VcIiwgXCJkaWZmaWN1bHR5XCI6IDJ9XG4iLAogICAgImZpeGVkX2NhcmQgPSBTdHVkeUNhcmQubW9kZWxfdmFsaWRhdGUoZml4ZWRfZGF0YSlcbiIsCiAgICAicHJpbnQoZml4ZWRfY2FyZC5tb2RlbF9kdW1wKCkpXG4iLAogICAgImFzc2VydCBmaXhlZF9jYXJkLmRpZmZpY3VsdHkgPT0gMiIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAicGFpcmVkIiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogMTQsCiAgICJjb2RlX3NoYTI1NiI6ICIyMTRlYjczMWVlMTY1ZTczZDg2Y2UxZWUxNDkyZTE5Y2UyODA5MGQ3ZWI2OWM2NzhmOTY0YTgxZDIzMWNlYjEzIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDQ6MzY6NTkuODI0NjkyKzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICIwNGZmNTc1NDE0ZGFlZGM1OWEyYmMyMThmYTQzOTg1MmYyMGQ0MmNhMGJiZGQ1ODY3Mzg5Y2Q4ZDIwODIyMDY2IiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>03. 구조화 출력과 검증</h2>
+<p>모델의 자연어 답을 프로그램이 검사할 수 있는 필드로 어떻게 받을까요?</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>Python 3.12 새 커널에서 패키지와 API 키 존재 여부를 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 현재 커널에 구조화 출력 실습의 고정 패키지 버전을 설치합니다.
+# 현재 커널에 수업에서 검증한 버전을 설치합니다.
+%pip install -q &quot;langchain==1.4.0&quot; &quot;langchain-openai==1.6.0&quot; &quot;langchain-anthropic==1.7.1&quot; &quot;langchain-google-genai==4.4.0&quot; &quot;pydantic==2.13.5&quot; &quot;python-dotenv==1.2.3&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 상위 폴더에서 .env를 찾고 OpenAI 키 문자열은 화면에 표시하지 않습니다.
+from dotenv import find_dotenv, load_dotenv
+import os
+
+env_path = find_dotenv(usecwd=True)
+if not env_path:
+    raise FileNotFoundError(&quot;현재 폴더의 상위 경로에서 .env를 찾지 못했습니다.&quot;)
+load_dotenv(env_path)
+if not os.getenv(&quot;OPENAI_API_KEY&quot;):
+    raise RuntimeError(&quot;.env에 OPENAI_API_KEY가 없습니다.&quot;)
+print(&quot;OPENAI_API_KEY 확인 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">OPENAI_API_KEY 확인 완료
+</pre></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 구조화 출력 호출에도 적용할 타임아웃과 최대 재시도·출력 토큰 상한을 둡니다.
+from langchain.chat_models import init_chat_model
+
+# provider:model은 통합 패키지와 모델을 함께 지정합니다.
+# timeout은 한 요청의 최대 대기 초, max_retries는 SDK의 추가 시도 상한입니다.
+# max_tokens는 생성할 출력 토큰 수의 상한입니다.
+model = init_chat_model(
+    &quot;openai:gpt-5.4-mini&quot;,
+    reasoning_effort=&quot;none&quot;,
+    max_tokens=180,
+    timeout=30,
+    max_retries=1,
+)
+print(type(model).__name__)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">ChatOpenAI
+</pre></div>
+<div class="nb-markdown"><h3>Pydantic 스키마</h3>
+<p>Ch 2의 클래스 문법을 사용하며, 10절 B 경로에서 다룬 <code>BaseModel</code>·<code>Field</code>·엄격한 검증을 모델 응답에 연결합니다. B 경로를 건너뛴 학생도 따라오도록 필요한 규칙을 다시 확인합니다.</p>
+<p>스키마는 받을 항목과 형식의 정의입니다. <code>class StudyCard(BaseModel):</code>는 Pydantic의 검증 기능을 물려받은 클래스입니다. <code>concept: str</code>은 문자열 필드, <code>difficulty: int</code>는 정수 필드이며 <code>Field(ge=1, le=3)</code>는 1 이상 3 이하라는 범위를 선언합니다. <code>description</code>은 필드 의미를 설명하는 문자열입니다. Ch 2의 선택 B 경로를 읽지 않았더라도 이 선언을 카드의 각 칸과 허용값으로 읽을 수 있습니다.</p>
+<p><code>model.with_structured_output(StudyCard)</code>는 이 절에서 처음 사용하는 메서드입니다. 카드 인스턴스가 아닌 클래스 <code>StudyCard</code>를 넘겨 출력 형식을 설정한 호출 객체를 만듭니다. 실제 생성은 다음 셀의 <code>structured_model.invoke(...)</code>에서 이루어집니다. 성공하면 <code>AIMessage</code> 대신 <code>StudyCard</code>를 받으며, <code>model_dump()</code>로 그 필드들을 딕셔너리로 읽습니다.</p>
+<p>같은 셀의 <code>diagnostic_model</code>은 뒤의 오류 관찰에 사용할 두 번째 호출 객체입니다. <code>include_raw=True</code>를 주면 이후 호출 결과가 <code>raw</code>·<code>parsed</code>·<code>parsing_error</code> 키를 가진 딕셔너리가 됩니다. 먼저 기본 <code>structured_model</code>의 카드 반환을 읽고, 그다음 원본 응답과 오류를 함께 확인하는 확장 경로를 비교합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># StudyCard 필드와 difficulty의 허용 범위 1~3을 선언합니다.
+from pydantic import BaseModel, Field
+
+class StudyCard(BaseModel):
+    concept: str = Field(description=&quot;개념 이름&quot;)
+    explanation: str = Field(description=&quot;한 문장 설명&quot;)
+    difficulty: int = Field(ge=1, le=3, description=&quot;1부터 3까지의 난이도&quot;)
+
+structured_model = model.with_structured_output(StudyCard)
+diagnostic_model = model.with_structured_output(StudyCard, include_raw=True)
+print(&quot;스키마 준비 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">스키마 준비 완료
+</pre></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># invoke가 반환한 StudyCard를 딕셔너리로 바꾸고 실제 타입을 확인합니다.
+card = structured_model.invoke(&quot;LangChain의 AIMessage를 초급 학습 카드로 만드세요.&quot;)
+print(card.model_dump())
+print(&quot;검증된 타입:&quot;, type(card).__name__)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;concept&#x27;: &#x27;LangChain의 AIMessage&#x27;, &#x27;explanation&#x27;: &#x27;LangChain에서 AIMessage는 AI 모델이 생성한 응답 내용을 담는 메시지 객체입니다.&#x27;, &#x27;difficulty&#x27;: 1}
+검증된 타입: StudyCard
+</pre></div>
+<div class="nb-markdown"><h3>값 하나 변경</h3>
+<p>주제만 <code>SystemMessage</code>로 바꾸고 같은 스키마를 적용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 주제만 바꾼 두 번째 객체가 같은 difficulty 범위를 지키는지 검사합니다.
+second = structured_model.invoke(&quot;SystemMessage를 초급 학습 카드로 만드세요.&quot;)
+print(second.model_dump())
+assert 1 &lt;= second.difficulty &lt;= 3</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;concept&#x27;: &#x27;SystemMessage&#x27;, &#x27;explanation&#x27;: &#x27;대화형 AI에게 역할, 규칙, 말투 같은 기본 지침을 처음에 알려주는 메시지입니다.&#x27;, &#x27;difficulty&#x27;: 1}
+</pre></div>
+<div class="nb-markdown"><h3>깨지는 입력을 실제 모델에 전달</h3>
+<p>난이도 9를 요구하면서 스키마 범위는 1~3으로 유지합니다. 모델이 범위를 고치면 실패 미관찰로 기록합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># include_raw 결과의 raw·parsed·parsing_error를 각각 출력해 실패 미관찰도 남깁니다.
+diagnostic = diagnostic_model.invoke(
+    &quot;AIMessage 학습 카드를 만드세요. difficulty는 반드시 9로 쓰세요.&quot;
+)
+print(&quot;raw 타입:&quot;, type(diagnostic[&quot;raw&quot;]).__name__)
+print(&quot;parsed:&quot;, diagnostic[&quot;parsed&quot;])
+print(&quot;parsing_error:&quot;, diagnostic[&quot;parsing_error&quot;])
+print(&quot;검증 실패 관찰:&quot;, diagnostic[&quot;parsing_error&quot;] is not None)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">raw 타입: AIMessage
+parsed: concept=&#x27;AIMessage&#x27; explanation=&#x27;AIMessage는 대화형 AI 시스템에서 모델이 생성한 응답 메시지를 표현하는 객체로, 보통 사용자 입력에 대한 assistant의 답변 내용과 메타데이터를 담는다.&#x27; difficulty=3
+parsing_error: None
+검증 실패 관찰: False
+</pre></div>
+<div class="nb-markdown"><h3>기본 변환과 엄격한 검증</h3>
+<p>Pydantic은 기본 검증에서 숫자 문자열 <code>&quot;2&quot;</code>를 정수 <code>2</code>로 변환합니다. 이번 Python 딕셔너리 입력에서는 <code>strict=True</code>가 문자열 <code>&quot;2&quot;</code>를 <code>int</code>로 바꾸지 않고 거부합니다. Python 입력과 JSON 입력의 엄격한 검증 동작은 일부 타입에서 다를 수 있습니다. 아래 값은 두 방식을 비교하기 위해 작성한 로컬 테스트 데이터입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [8]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 기본 검증은 정수로 표현할 수 있는 문자열을 변환합니다.
+local_card = {
+    &quot;concept&quot;: &quot;AIMessage&quot;,
+    &quot;explanation&quot;: &quot;모델 응답을 담는 메시지&quot;,
+    &quot;difficulty&quot;: &quot;2&quot;,
+}
+converted_card = StudyCard.model_validate(local_card)
+print(&quot;변환된 값:&quot;, converted_card.difficulty)
+print(&quot;변환 후 타입:&quot;, type(converted_card.difficulty).__name__)
+assert converted_card.difficulty == 2</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">변환된 값: 2
+변환 후 타입: int
+</pre></div>
+<div class="nb-cell"><div class="nb-prompt">In [9]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 엄격한 검증은 값을 변환하지 않고 잘못된 타입을 거부합니다.
+from pydantic import ValidationError
+
+try:
+    StudyCard.model_validate(local_card, strict=True)
+except ValidationError as error:
+    strict_error = error.errors()[0]
+    print(&quot;엄격한 검증 필드:&quot;, strict_error[&quot;loc&quot;][0])
+    print(&quot;엄격한 검증 오류:&quot;, strict_error[&quot;type&quot;])
+    assert strict_error[&quot;type&quot;] == &quot;int_type&quot;
+else:
+    raise AssertionError(&quot;엄격한 검증은 문자열 &#x27;2&#x27;를 거부해야 합니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">엄격한 검증 필드: difficulty
+엄격한 검증 오류: int_type
+</pre></div>
+<div class="nb-markdown"><h3>예상하지 않은 필드 거부</h3>
+<p>기본 설정은 스키마에 없는 필드를 제외할 수 있습니다. 입력에 허용한 필드만 받아야 한다면 <code>extra=&#x27;forbid&#x27;</code>를 설정합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [10]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 허용하지 않은 source 필드가 포함되면 검증이 실패합니다.
+from pydantic import ConfigDict
+
+class ClosedStudyCard(StudyCard):
+    model_config = ConfigDict(extra=&quot;forbid&quot;)
+
+extra_data = {
+    &quot;concept&quot;: &quot;AIMessage&quot;, &quot;explanation&quot;: &quot;모델 응답&quot;,
+    &quot;difficulty&quot;: 2, &quot;source&quot;: &quot;로컬 메모&quot;,
+}
+try:
+    ClosedStudyCard.model_validate(extra_data)
+except ValidationError as error:
+    extra_error = error.errors()[0]
+    print(&quot;거부된 필드:&quot;, extra_error[&quot;loc&quot;][0])
+    print(&quot;검증 오류:&quot;, extra_error[&quot;type&quot;])
+    assert extra_error[&quot;type&quot;] == &quot;extra_forbidden&quot;
+else:
+    raise AssertionError(&quot;추가 필드는 거부되어야 합니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">거부된 필드: source
+검증 오류: extra_forbidden
+</pre></div>
+<div class="nb-markdown"><h3>JSON 문법과 스키마 값 제약</h3>
+<p><code>json.loads</code>는 JSON 문법을, Pydantic은 파싱된 객체의 필드·타입·범위를 검사합니다. 둘을 통과해도 주문이 실제로 존재하는지나 품명이 사실인지는 별도로 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [11]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 정상 JSON을 파싱한 뒤 주문 내용 규칙을 검증합니다.
+import json
+
+class OrderItem(BaseModel):
+    product_name: str = Field(min_length=1, description=&quot;품명&quot;)
+    quantity: int = Field(ge=1, description=&quot;1 이상의 수량&quot;)
+
+valid_text = &#x27;{&quot;product_name&quot;: &quot;노트&quot;, &quot;quantity&quot;: 2}&#x27;
+parsed_order = json.loads(valid_text)
+valid_order = OrderItem.model_validate(parsed_order)
+print(&quot;JSON 형식: 통과&quot;)
+print(&quot;주문 내용:&quot;, valid_order.model_dump())</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">JSON 형식: 통과
+주문 내용: {&#x27;product_name&#x27;: &#x27;노트&#x27;, &#x27;quantity&#x27;: 2}
+</pre></div>
+<div class="nb-cell"><div class="nb-prompt">In [12]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># JSON 형식 오류와 주문 내용 오류를 각각 확인합니다.
+broken_text = &#x27;{&quot;product_name&quot;: &quot;노트&quot;, &quot;quantity&quot;: 2&#x27;
+try:
+    json.loads(broken_text)
+except json.JSONDecodeError as error:
+    print(&quot;JSON 형식 오류:&quot;, type(error).__name__)
+
+wrong_content = &#x27;{&quot;product_name&quot;: &quot;노트&quot;, &quot;quantity&quot;: 0}&#x27;
+parsed_wrong = json.loads(wrong_content)
+try:
+    OrderItem.model_validate(parsed_wrong)
+except ValidationError as error:
+    content_error = error.errors()[0]
+    print(&quot;주문 내용 오류:&quot;, content_error[&quot;type&quot;])
+    assert content_error[&quot;type&quot;] == &quot;greater_than_equal&quot;
+else:
+    raise AssertionError(&quot;수량 0은 거부되어야 합니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">JSON 형식 오류: JSONDecodeError
+주문 내용 오류: greater_than_equal
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<p class="look"><b>확인할 점</b> 일반 호출과 구조화 호출의 반환 타입을 구분합니다. <code>card.model_dump()</code>의 세 필드가 스키마와 대응하는지 읽고 난이도가 허용 범위에 있는지 확인합니다. 자연스러운 설명 문장만 보고 형식 검증이 성공했다고 추측하지 않습니다.</p>
+<p>이후 실제 모델에 “difficulty는 반드시 9로 쓰세요”라는 요구를 보냅니다. 1~3이라는 스키마 제약과 맞지 않는 입력입니다. 결과의 <code>parsed</code>와 <code>parsing_error</code>를 함께 읽습니다. 저장된 실행에서는 모델이 허용 범위의 값을 반환해 <code>parsing_error</code>가 <code>None</code>이었습니다. 따라서 이 호출에서 구조화 출력의 검증 실패를 관찰했다고 말할 수 없습니다. 충돌하는 입력을 보내도 어떤 응답이 나오는지는 모델과 형식 지원에 따라 달라집니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>모델 호출에서 오류가 나지 않았더라도 프로그램의 오류 처리 경로를 확인할 수 있습니다. 아래 비교는 <strong>직접 만든 딕셔너리에 Pydantic 검증을 적용하는 로컬 실습</strong>입니다. 이 자료를 모델이 생성한 것으로 표시하지 않습니다.</p>
+<section class="notebook" data-notebook="03-구조화-출력과-검증" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [13]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 범위 밖 7을 직접 넣어 예상한 Pydantic ValidationError 유형만 처리합니다.
+from pydantic import ValidationError
+
+bad_data = {&quot;concept&quot;: &quot;AIMessage&quot;, &quot;explanation&quot;: &quot;모델 응답&quot;, &quot;difficulty&quot;: 7}
+try:
+    StudyCard.model_validate(bad_data)
+except ValidationError as error:
+    print(&quot;관찰한 검증 오류:&quot;, error.errors()[0][&quot;type&quot;])
+else:
+    raise AssertionError(&quot;범위를 벗어난 값은 거부되어야 합니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">관찰한 검증 오류: less_than_equal
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [14]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 다른 필드는 유지하고 difficulty만 2로 고쳐 검증된 객체를 만듭니다.
+fixed_data = {&quot;concept&quot;: &quot;AIMessage&quot;, &quot;explanation&quot;: &quot;모델 응답&quot;, &quot;difficulty&quot;: 2}
+fixed_card = StudyCard.model_validate(fixed_data)
+print(fixed_card.model_dump())
+assert fixed_card.difficulty == 2</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;concept&#x27;: &#x27;AIMessage&#x27;, &#x27;explanation&#x27;: &#x27;모델 응답&#x27;, &#x27;difficulty&#x27;: 2}
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<p>Before는 난이도 7을 넣어 <code>less_than_equal</code> 오류를 확인합니다. 이 이름은 값이 설정된 상한 이하여야 한다는 조건을 뜻합니다. After는 개념 이름과 설명을 유지하고 난이도만 2로 바꿉니다. 같은 스키마로 객체가 만들어졌다면 바꾼 값이 범위 검증에 영향을 주었다고 확인할 수 있습니다.</p>
+<p>오류 처리 코드는 예상한 <code>ValidationError</code>만 잡습니다. 모든 예외를 같은 검증 오류로 처리하면 인터넷 연결 문제와 데이터 문제를 구분하기 어렵습니다. 실제 프로그램에서는 잘못된 값의 원본과 제약을 확인하고 수정 가능한 입력인지 판단합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<p>Pydantic은 기본 설정에서 일부 입력을 선언된 타입으로 변환합니다. 타입 이름을 적었다는 이유만으로 원래 입력의 타입까지 엄격하게 제한했다고 생각하지 않습니다. 엄격 모드를 기존 프로그램에 적용하면 이전에 변환되어 통과하던 값이 실패할 수 있으므로 입력 출처별로 먼저 관찰합니다.</p>
+<p>형식이 맞는 답에도 잘못된 정보가 들어갈 수 있습니다. 필드의 존재·타입·범위 검증과 내용의 사실 확인은 다른 작업입니다. 이 장에서 만든 형식 검증 경험은 Ch 7의 출력 프롬프트 설계와 Ch 11의 평가 기준을 구분하는 데 사용합니다. 에이전트의 자동 출력 전략은 아직 구현하지 않습니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>스키마에 필드·타입·값의 범위를 선언하고 구조화된 객체를 받습니다.</li><li>원본 응답, 파싱한 값, 오류를 나누어 읽으면 실패한 위치를 찾을 수 있습니다.</li><li>직접 만든 자료의 범위 검증과 실제 모델 응답의 형식 검증은 다른 실험입니다.</li></ul>
+<p>다음 절에서는 응답을 다 받을 때까지 기다리는 대신 도착하는 조각을 읽습니다. 조각이 아직 완성되지 않았을 때와 최종 결과를 검사할 때를 구분하는 데 이번 절의 파싱·검증 개념을 사용합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz"><summary>문제 1 · 설명과 제약</summary><p class="quiz-q"><code>description="난이도는 1~3"</code>만 적는 것과 <code>ge=1, le=3</code>도 선언하는 것은 어떻게 다른가요?</p><p class="quiz-a"><b>해설</b> 전자는 필드 뜻에 관한 설명이고 후자는 검증할 수치 범위입니다. 프로그램이 값의 상한·하한을 검사하도록 하려면 해당 제약을 선언합니다.</p></details>
+<details class="quiz"><summary>문제 2 · 미관찰 결과</summary><p class="quiz-q">난이도 9를 요구했는데 유효한 카드가 반환됐습니다. 검증 실패가 재현됐다고 적어도 되나요?</p><p class="quiz-a"><b>해설</b> 안 됩니다. 실제 파싱 오류가 없었다면 그 실행에서 검증 실패를 관찰하지 못한 것입니다. 충돌 입력과 실제 응답을 함께 기록합니다.</p></details>
+<details class="quiz"><summary>문제 3 · 로컬 오류 처리</summary><p class="quiz-q">Before와 After에서 고정한 것과 바꾼 것은 무엇인가요?</p><p class="quiz-a"><b>해설</b> 스키마·개념 이름·설명은 고정하고 난이도만 7에서 2로 바꿨습니다. 이 비교는 Pydantic의 범위 검증을 보여 주며 모델의 오류 발생률을 측정하지 않습니다.</p></details>
+<details class="quiz"><summary>문제 4 · 내용 확인</summary><p class="quiz-q">스키마를 통과한 카드에 잘못된 개념 설명이 있습니다. 검증 라이브러리가 고장 난 것인가요?</p><p class="quiz-a"><b>해설</b> 형식과 내용은 별도로 확인해야 합니다. 필드와 값 범위는 맞아도 설명은 틀릴 수 있습니다. 공식 자료나 정해 둔 정답 기준과 설명을 대조합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<p>확인 날짜: 2026-09-11. Python 3.12, LangChain 1.4.0, langchain-core 1.6.2, langchain-openai 1.6.0, Pydantic 2.13.5의 고정 환경을 확인했습니다. 온라인 문서는 이후 릴리스의 지원 범위를 포함할 수 있으므로 제공자별 메서드 시그니처는 실습 가상 환경의 설치 소스와 대조했습니다.</p><ul><li><a href="https://docs.langchain.com/oss/python/langchain/models">LangChain 모델의 구조화 출력·스키마 종류·생성 방법</a></li><li><a href="https://docs.pydantic.dev/latest/concepts/models/">Pydantic 모델과 검증</a></li><li><a href="https://docs.pydantic.dev/latest/concepts/fields/">Pydantic 필드와 제약</a></li><li><a href="https://docs.pydantic.dev/latest/concepts/strict_mode/">Pydantic 엄격 모드</a></li><li><a href="https://docs.pydantic.dev/latest/api/config/#pydantic.config.ConfigDict.extra">Pydantic 추가 필드 처리</a></li><li><a href="https://github.com/langchain-ai/langchain/blob/master/LICENSE">LangChain MIT 라이선스</a> — 학습 카드와 입력 문장은 이 교재의 예제로 새로 작성했습니다.</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="02-메시지와-제공자-전환.html">← 메시지와 제공자 전환</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="04-스트리밍과-content-blocks.html">스트리밍과 content blocks →</a></span></div></div></body></html>

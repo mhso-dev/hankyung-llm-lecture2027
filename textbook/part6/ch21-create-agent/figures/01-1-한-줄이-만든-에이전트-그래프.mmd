@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  inp["모델 객체 · 도구 목록<br>시스템 메시지 글"]:::tool
+  mk["create_agent 한 줄"]
+  subgraph g["에이전트 그래프 agent · CompiledStateGraph"]
+    direction TB
+    s(["가상 시작점 START"])
+    m["모델 노드 model<br>create_agent가 만듦"]
+    t["도구 실행 노드 tools<br>ToolNode"]
+    e(["가상 끝점 END"])
+    s --> m
+    m -.->|model_to_tools · 요청 있음| t
+    m -.->|model_to_tools · 요청 없음| e
+    t -.->|tools_to_model · 되돌아가는 엣지| m
+  end
+  inp --> mk
+  mk --> g

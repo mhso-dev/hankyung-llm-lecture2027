@@ -1,0 +1,22 @@
+flowchart TB
+  %% classes
+  q["같은 대출 질문<br>같은 모델과 도구<br>바꾼 것은<br>response_format 하나"]:::tool
+  subgraph ra["ToolStrategy"]
+    direction TB
+    a1["메시지 다섯<br>모델 요청 두 번<br>도구 메시지 둘<br>양식 값은<br>도구 호출 요청의 인자<br>입력 토큰 572"]:::measure
+  end
+  subgraph rb["ProviderStrategy"]
+    direction TB
+    b1["메시지 넷<br>모델 요청 두 번<br>도구 메시지 하나<br>양식 값은<br>마지막 응답의 내용 글<br>입력 토큰 768"]:::measure
+  end
+  subgraph rc["바꾼 값 · 양식 클래스 그대로"]
+    direction TB
+    c1["그래프 갈 곳은<br>도구 전략과 같음<br>메시지 넷<br>모델 요청 두 번<br>도구 메시지 하나"]:::measure
+  end
+  same["세 결과 공통<br>structured_response<br>종류 PolicyAnswer<br>호출 ID 짝 True"]
+  q --> ra
+  q --> rb
+  q --> rc
+  ra ~~~ same
+  rb ~~~ same
+  rc ~~~ same

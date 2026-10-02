@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  file["서버 파일 course_server.py<br>함수 셋과 서버 객체 mcp"]:::tool
+  load["runpy.run_path<br>서버 객체 교육센터 자료실"]:::flow
+  client["Client server<br>같은 노트북 안 메모리 연결"]:::flow
+  subgraph parts["서버가 내놓은 구성 요소 셋"]
+    direction TB
+    tool["도구 tools<br>lookup_policy"]:::measure
+    res["자료 resources<br>policy://handbook"]:::measure
+    prm["메시지 틀 prompts<br>explain_policy"]:::measure
+    tool ~~~ res ~~~ prm
+  end
+  file --> load --> client --> parts

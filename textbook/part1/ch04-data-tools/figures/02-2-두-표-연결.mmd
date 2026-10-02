@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  ORD["주문 표 orders<br>3행 · customer_id 열"]:::tool
+  CUS["고객 표 customers<br>2행 · 고객 번호 모두 다름"]:::tool
+  MRG["orders.merge(customers,<br>on=customer_id)"]:::flow
+  JND["연결한 표 joined · 3행<br>O101 김하나 · O102 이두리<br>O103 김하나"]:::tool
+  CNT["주문 표의 행 수 3<br>연결한 표의 행 수 3"]:::measure
+  SUM["이름 김하나 마스크 → loc<br>주문 합계 59000"]:::measure
+  ORD --> MRG
+  CUS --> MRG
+  MRG --> JND
+  JND --> CNT
+  JND --> SUM

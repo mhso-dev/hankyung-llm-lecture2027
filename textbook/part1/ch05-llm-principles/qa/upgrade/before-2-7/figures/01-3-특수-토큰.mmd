@@ -1,0 +1,8 @@
+flowchart LR
+  %% classes
+  GT["GPT-2 · tokenize()<br>조각 39개"]:::measure
+  GE["GPT-2 · encode()<br>ID 39개"]:::measure
+  KT["KLUE · tokenize()<br>조각 9개"]:::measure
+  KE["KLUE · encode()<br>ID 11개<br>[CLS] + 조각 9개 + [SEP]"]:::measure
+  GT -- "더 붙은 표시 없음" --> GE
+  KT -- "앞뒤에 특수 토큰 2개" --> KE

@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  q["문의 글 한 줄<br>반납 날짜를 늘리려면"]:::tool
+  s["중앙 에이전트 supervisor<br>create_agent · 도구 하나"]
+  t["도구 ask_loan_desk<br>글 한 줄을 맡기는 함수"]:::flow
+  r["교재용 대출·반납 규정<br>시스템 메시지 글에 넣음"]:::tool
+  d["전문 에이전트 loan_desk<br>대출 규정 담당 · 도구 없음"]
+  m["모델 gpt-5.4-mini<br>두 에이전트가 함께 씀"]:::model
+  q --> s
+  s -->|도구 요청| t
+  t -->|새 목록 한 줄로 invoke| d
+  r --> d
+  s --- m
+  d --- m

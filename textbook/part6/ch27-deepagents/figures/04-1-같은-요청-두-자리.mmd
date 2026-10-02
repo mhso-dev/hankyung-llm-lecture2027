@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  req["손으로 만든 요청<br>write_file · /drafts/memo.md"]:::tool
+  subgraph diskSide[디스크 백엔드 FilesystemBackend]
+    direction TB
+    d1["상태 칸 files<br>빈 목록"]:::measure
+    d2["임시 폴더 안<br>drafts 폴더와 파일이 생김"]:::measure
+    d1 ~~~ d2
+  end
+  subgraph stateSide[기본 백엔드 StateBackend]
+    direction TB
+    s1["상태 칸 files에<br>/drafts/memo.md"]:::measure
+    s2["임시 폴더 안<br>drafts 없음"]:::measure
+    s1 ~~~ s2
+  end
+  req --> stateSide
+  req --> diskSide

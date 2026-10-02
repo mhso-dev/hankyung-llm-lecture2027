@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph SRC["원본 파일 · 형식 여섯 가지"]
+    direction LR
+    f1["PDF 21건<br>easy 6 · medium 6<br>hard 6 · scanned 3"]:::tool
+    f2["형식 견본 5건<br>docx · html · csv<br>hwp · hwpx"]:::tool
+    f1 ~~~ f2
+  end
+  R["형식마다 다른 읽기<br>02~04절"]:::flow
+  T["본문 글<br>page_content"]:::tool
+  M["다섯 칸 출처 기록<br>doc_id · source · file_type<br>parser · page"]:::tool
+  N["문서 청크 · 색인<br>Ch 9에서 배움 · 05~08절"]
+  SRC --> R
+  R --> T
+  R --> M
+  T --> N
+  M --> N

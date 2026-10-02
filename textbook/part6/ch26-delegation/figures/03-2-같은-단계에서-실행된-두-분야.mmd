@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  c0["체크포인트 단계 0<br>다음 노드 classify"]:::measure
+  c1["체크포인트 단계 1<br>다음 노드 loan_desk · facility_desk"]:::measure
+  l["loan_desk<br>단계 2에서 실행"]:::flow
+  f["facility_desk<br>단계 2에서 실행"]:::flow
+  x["interlibrary_desk<br>Send 없음 · 실행되지 않음"]
+  c2["체크포인트 단계 2<br>다음 노드 join_answers"]:::measure
+  c3["체크포인트 단계 3<br>다음 노드 없음"]:::measure
+  c0 --> c1
+  c1 --> l
+  c1 --> f
+  c1 -.- x
+  l --> c2
+  f --> c2
+  c2 --> c3

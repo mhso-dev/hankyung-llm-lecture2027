@@ -1,0 +1,21 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant AL as 반복문의 ask_library
+  participant CE as choose_evidence
+  participant MI as gpt-5.4-mini
+  AL->>CE: 휴관 계획 · 입력 가용분 440
+  CE-->>AL: 근거 본문 E01 p.2 · 종류 본문
+  AL->>MI: 추정 184 · 검사 통과 · 휴관 invoke
+  MI-->>AL: 응답 객체
+  Note over AL,MI: 요청 기록 · 실제 입력 198 · 출력 70 · 출처 표시 2
+  AL->>CE: 대출 연장 계획 · 입력 가용분 440
+  CE-->>AL: 근거 본문 E01 p.3 · 종류 본문
+  AL->>MI: 추정 217 · 검사 통과 · 대출 연장 invoke
+  MI-->>AL: 응답 객체
+  Note over AL,MI: 요청 기록 · 실제 입력 231 · 출력 61 · 출처 표시 1
+  AL->>CE: 주차 계획 · 입력 가용분 440
+  CE-->>AL: 근거 본문 E01 p.5 · 종류 본문
+  AL->>MI: 추정 197 · 검사 통과 · 주차 invoke
+  MI-->>AL: 응답 객체
+  Note over AL,MI: 요청 기록 · 실제 입력 211 · 출력 30 · 출처 표시 1
+  Note over AL,MI: 반복이 끝난 뒤 출력 · 요청 전 표 · 요청 뒤 표 · 비용 합계

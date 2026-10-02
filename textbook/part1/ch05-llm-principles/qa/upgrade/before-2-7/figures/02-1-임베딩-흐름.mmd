@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  SENT["문장 네 개<br>주문한 상품을 취소하고 싶습니다. 외 3개"]:::tool
+  TOKENS["조각 8 · 8 · 9 · 7개<br>ID 10 · 10 · 11 · 9개"]:::measure
+  MODEL["임베딩 모델<br>MiniLM-L12-v2"]:::model
+  TABLE["벡터 표 · (4, 384)<br>문장마다 숫자 384개"]:::measure
+  FUNC["cosine_similarity()<br>직접 만든 함수"]:::flow
+  SCORE["0번과 3번 유사도 0.8987"]:::measure
+  SENT -- "tokenize() · encode()" --> TOKENS
+  TOKENS --> MODEL
+  MODEL -- "encode()" --> TABLE
+  TABLE --> FUNC
+  FUNC --> SCORE

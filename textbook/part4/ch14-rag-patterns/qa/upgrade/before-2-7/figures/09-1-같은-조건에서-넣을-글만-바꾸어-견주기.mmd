@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  data["문서 열두 건과 질문 셋"]:::tool
+  fixed["같게 두기 · 임베딩과<br>답 모델과 재는 문서 열둘"]:::flow
+  base["기준선<br>질문 글 그대로"]:::flow
+  write["답 모델이 변형 질문과<br>가상 문서 쓰기"]:::model
+  other["넣을 글만 바꾸어 검색"]:::flow
+  row["견주기 표 · 자리와<br>서비스 요청 수"]:::measure
+  data --> fixed
+  fixed --> base
+  fixed --> write
+  write --> other
+  base --> row
+  other --> row

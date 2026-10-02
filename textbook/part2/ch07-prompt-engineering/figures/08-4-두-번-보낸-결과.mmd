@@ -1,0 +1,22 @@
+flowchart LR
+  %% classes
+  subgraph P1["v1 · 입력 100"]
+    direction TB
+    A1["첫 실행<br>출력 128 · 10줄"]:::measure
+    A2["두 번째<br>출력 141 · 14줄"]:::measure
+    A1 --> A2
+  end
+  subgraph P2["v2 · 입력 134"]
+    direction TB
+    B1["첫 실행<br>출력 94 · 3줄"]:::measure
+    B2["두 번째<br>출력 83 · 3줄"]:::measure
+    B1 --> B2
+  end
+  subgraph P3["v3 · 입력 225"]
+    direction TB
+    C1["첫 실행<br>출력 77 · 3줄"]:::measure
+    C2["두 번째<br>출력 77 · 답 글자까지 같음"]:::measure
+    C1 --> C2
+  end
+  P1 ~~~ P2
+  P2 ~~~ P3

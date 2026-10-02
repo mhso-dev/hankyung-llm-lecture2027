@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  base["빈 자리<br>판 없음"]
+  r1["첫 판 20260911_01<br>실습 폴더 판 파일<br>표 tickets 만들기"]
+  r2["둘째 판 20260929_02<br>노트북이 사본에 쓴 판 파일<br>칸 owner 더하기"]:::flow
+  ver["판 기록 표 alembic_version<br>첫 판 뒤 20260911_01<br>After 뒤 20260929_02"]:::measure
+  base -->|판 올리기| r1
+  r1 -->|판 올리기| r2
+  r2 -.->|판 내리기| r1
+  r2 ~~~ ver

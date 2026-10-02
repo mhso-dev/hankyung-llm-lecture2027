@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph first["4~7절 과제 글"]
+    direction TB
+    a1["적용 날짜 · 까닭 · 등록 방법<br>문의처를 따로따로"]:::tool
+    a2["gpt-5.4-mini 계획 요청<br>작업 목록을 씀"]:::model
+    a3["작업 넷 · 요청 수 6<br>적용 안내 · 도입 이유<br>등록 방법 · 문의처"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  subgraph second["10절 과제 글"]
+    direction TB
+    b1["등록 방법만 짧게"]:::tool
+    b2["gpt-5.4-mini 계획 요청<br>작업 목록을 씀"]:::model
+    b3["작업 셋 · 요청 수 5<br>등록 방법 작성<br>문의처 표기<br>공지 요지를 정리하는 작업"]:::measure
+    b1 --> b2
+    b2 --> b3
+  end
+  same["두 칸 모두 같은 차례<br>같은 설정 값과 공통 사실<br>4~7절은 셀로 실행<br>10절은 흐름 함수로 실행<br>run_orchestrator"]
+  first ~~~ same
+  second ~~~ same

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  q["질문 Q001<br>정답 문서 ID E01"]:::tool
+  idx["색인: 글이 있는 쪽 90개<br>문서 17건"]:::tool
+  search["검색 개수 50<br>후보 쪽 50개"]:::flow
+  dedupe["문서 ID 중복 빼기<br>자르기보다 먼저"]:::flow
+  uniq["고유 문서 14개<br>정답 문서 자리 1"]:::measure
+  cut["자르는 자리에서<br>앞부분만 남기기"]:::flow
+  rec["재현율 = 찾은 정답 문서 수<br>나누기 정답 문서 수"]:::flow
+  q --> search
+  idx --> search
+  search --> dedupe
+  dedupe --> uniq
+  uniq --> cut
+  cut --> rec

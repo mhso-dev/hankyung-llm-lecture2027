@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  CHG["changed_orders<br>O103의 고객 번호<br>C001 → C003"]:::tool
+  subgraph LEFTJ["how=left · 왼쪽 조인"]
+    L1["merge(on=customer_id,<br>how=left)"]:::flow
+    L2["연결한 표 3행<br>C003 행의 name NaN"]:::measure
+    L1 --> L2
+  end
+  subgraph INNER["기본값 · 내부 조인"]
+    I1["merge(on=customer_id)"]:::flow
+    I2["연결한 표 2행<br>O101 · O102만 남음"]:::measure
+    I1 --> I2
+  end
+  CHG --> L1
+  CHG --> I1

@@ -1,0 +1,196 @@
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/07-cross-encoder-리랭킹.ipynb =====
+[markdown cell 1]
+# CrossEncoder로 후보를 다시 정렬하기
+
+이 노트북은 공개 PDF 6건과 Ch11의 30문항을 사용합니다. 첫 셀부터 순서대로 실행합니다.
+
+[markdown cell 2]
+## 입력 준비
+
+문자 단위 TF-IDF로 작은 후보 목록을 먼저 만듭니다. 리랭커는 이 목록 밖의 문서를 볼 수 없습니다.
+
+[markdown cell 4]
+## 작은 성공 예제
+
+Q009 한 문항에서 상위 8개 청크를 만들고 순서를 확인합니다.
+
+[markdown cell 6]
+## 실제 CrossEncoder 추론
+
+질문과 후보 본문을 한 쌍으로 넣어 관련성 점수를 계산합니다.
+
+[markdown cell 8]
+## 후보 밖 문서는 회복되는가?
+
+후보 수를 2개로 줄여 정답 문서가 빠지면 리랭커가 추가할 수 없는지 확인합니다.
+
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/08-후보-수와-리랭커-비교.ipynb =====
+[markdown cell 1]
+# 후보 수와 리랭커 두 모델 비교
+
+이 노트북은 공개 PDF 6건과 Ch11의 30문항을 사용합니다. 첫 셀부터 순서대로 실행합니다.
+
+[markdown cell 2]
+## 입력과 모델 준비
+
+동일한 30문항과 후보 순서를 유지하고 CrossEncoder 모델과 후보 수만 바꿉니다.
+
+[markdown cell 5]
+## 평가 함수
+
+고정 후보에서 정답 부모 문서의 포함 여부와 상위 5개 순위의 nDCG@5, 실제 추론 시간을 기록합니다.
+
+[markdown cell 7]
+## 두 모델과 세 후보 수 비교
+
+총 6개 조건을 실행합니다. 결과는 이 컴퓨터에서 관찰한 값이며 다른 장치에서는 시간이 달라집니다.
+
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/09-Parent-document-검색.ipynb =====
+[markdown cell 1]
+# 자식 청크로 찾고 부모 문서를 반환하기
+
+이 노트북은 공개 PDF 6건과 Ch11의 30문항을 사용합니다. 첫 셀부터 순서대로 실행합니다.
+
+[markdown cell 2]
+## 입력 준비
+
+검색 점수는 자식 청크에서 계산하고, 반환 단계에서 parent_id로 원문 전체를 찾습니다.
+
+[markdown cell 4]
+## 작은 성공 예제
+
+한 질문에서 가장 가까운 자식 청크와 그 부모 문서를 나란히 봅니다.
+
+[markdown cell 6]
+## 직접 구현
+
+여러 자식이 같은 부모를 가리킬 때 부모는 한 번만 반환합니다.
+
+[markdown cell 8]
+## 청크 수 변경
+
+child_k만 바꾸어 반환되는 부모 ID가 어떻게 달라지는지 확인합니다.
+
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/10-MMR-다양성-선택.ipynb =====
+[markdown cell 1]
+# MMR로 관련성과 다양성을 함께 고려해 선택하기
+
+이 노트북은 공개 PDF 6건과 Ch11의 30문항을 사용합니다. 첫 셀부터 순서대로 실행합니다.
+
+[markdown cell 2]
+## 입력 준비
+
+최대 주변 관련성(Maximal Marginal Relevance, MMR)을 수식 그대로 직접 구현합니다.
+
+[markdown cell 4]
+## MMR 함수
+
+λ가 1에 가까우면 질문 관련성을, 0에 가까우면 이미 고른 청크와의 차이를 더 크게 봅니다.
+
+[markdown cell 6]
+## λ 값 비교
+
+같은 질문과 같은 후보 행렬에서 λ만 바꿉니다.
+
+[markdown cell 8]
+## 관련성 점수도 함께 읽기
+
+다양성이 커져도 질문과 무관한 결과가 선택될 수 있으므로 점수를 확인합니다.
+
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/11-질문-재작성과-검색.ipynb =====
+[markdown cell 1]
+# 대화 질문을 독립 검색어로 재작성하기
+
+이 노트북은 공개 PDF 6건과 Ch11의 30문항을 사용합니다. 첫 셀부터 순서대로 실행합니다.
+
+[markdown cell 2]
+## 입력과 API 키 준비
+
+프로젝트 루트의 .env를 읽고 키의 존재만 확인합니다. 실제 값은 출력하지 않습니다.
+
+[markdown cell 4]
+## 실제 모델 호출
+
+대화 맥락이 필요한 후속 질문을 문서 검색용 한 문장으로 바꿉니다.
+
+[markdown cell 6]
+## 원문과 재작성 질문의 검색 결과 비교
+
+검색 함수는 그대로 두고 질문 문자열만 바꿉니다.
+
+[markdown cell 8]
+## 원문과 재작성문의 순위 결합
+
+두 질문을 따로 검색한 뒤 RRF로 결합합니다. 원문 결과를 지우지 않으므로 재작성에서 빠진 표현도 후보에 남길 수 있습니다.
+
+[markdown cell 10]
+## 모든 질문을 재작성할 필요는 없습니다
+
+이미 기관명과 대상이 있는 Q009에는 재작성을 추가하지 않아도 되는지 비교합니다.
+
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/12-종합-튜닝과-실험-로그.ipynb =====
+[markdown cell 1]
+# 30문항으로 36개 검색 설정 평가하기
+
+이 노트북은 공개 PDF 6건과 Ch11의 30문항을 사용합니다. 첫 셀부터 순서대로 실행합니다.
+
+[markdown cell 2]
+## 입력 준비
+
+Ch11의 30문항과 정답 문서 ID를 읽습니다. 각 로그 행에는 설정과 세 지표를 함께 저장합니다.
+
+[markdown cell 4]
+## 지표와 평가 함수
+
+Recall@50은 후보 포함 여부, Precision@5와 nDCG@5는 상위 순서를 확인합니다.
+
+[markdown cell 6]
+## MMR 선택 함수
+
+각 실험에서 같은 직접 구현을 사용합니다.
+
+[markdown cell 8]
+## 설정 한 개 평가
+
+개발 문항과 시험 문항을 섞지 않도록 평가 대상을 인자로 받습니다.
+
+[markdown cell 10]
+## 36개 개발 설정 실행
+
+문자 분석기, n-gram, 보고 순위, MMR λ를 조합합니다. 후보 수는 50으로 고정합니다. 개발 문항으로 설정을 고른 뒤 시험 문항은 한 번만 평가합니다.
+
+[markdown cell 12]
+## 로그 저장과 개발 설정 선택
+
+원자료를 JSONL로 보존하고 개발 nDCG@5가 가장 높은 행을 확인합니다.
+
+[markdown cell 14]
+## 제공 PDF 6건 통합 실행
+
+앞의 36개 행은 TF-IDF와 MMR 설정 실험입니다. 마지막에는 PDF 로딩부터 검색·리랭킹·부모 반환·답변까지 한 질문으로 연결합니다.
+
+[markdown cell 16]
+## Dense 검색과 Kiwi BM25
+
+OpenAI 임베딩과 한국어 형태소 기반 BM25를 같은 175개 청크에서 각각 실행합니다.
+
+[markdown cell 18]
+## 직접 RRF와 CrossEncoder
+
+두 순위의 상위 50개를 RRF로 합친 뒤 다국어 리랭커가 상위 10개만 다시 점수화합니다.
+
+[markdown cell 20]
+## 부모 원문과 출처를 답변에 전달
+
+같은 부모를 한 번만 선택하고, 모델에는 doc_id·page·chunk_id와 부모 원문을 함께 전달합니다.
+
+[markdown cell 23]
+## 통합 결과 저장
+
+질문, 검색한 출처, 실제 응답, 전체 시간을 한 JSON 파일로 보존합니다.

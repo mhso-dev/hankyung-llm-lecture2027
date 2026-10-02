@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  talk["대화 기록과<br>대상 빠진 후속 질문"]:::tool
+  writer["재작성 모델<br>gpt-5.4-mini"]:::model
+  standalone["독립 질문 한 문장"]:::model
+  first["1차 검색<br>문서 청크 175개에서 후보 8개"]:::flow
+  uniq["고유 부모 수"]:::measure
+  prec["문서 청크 정밀도 자리 5"]:::measure
+  rec["부모 문서 재현율 자리 3"]:::measure
+  talk --> writer
+  writer --> standalone
+  standalone --> first
+  first --> uniq
+  first --> prec
+  first --> rec

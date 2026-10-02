@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  q["일상 말로 짧게 적은<br>원 질문"]:::tool
+  s1["우리가 적은<br>거리 검색"]:::flow
+  dist["첫 자리 거리 0.74"]:::measure
+  judge["거리 기준값 0.65와<br>견주기"]:::flow
+  model["답 모델 gpt-5.4-mini"]:::model
+  s2["보정 질문으로<br>다시 거리 검색"]:::flow
+  gold["정답 문서 FAC-002가<br>첫 자리"]:::measure
+  q --> s1
+  s1 --> dist
+  dist --> judge
+  judge -.-> model
+  model --> s2
+  s2 --> gold

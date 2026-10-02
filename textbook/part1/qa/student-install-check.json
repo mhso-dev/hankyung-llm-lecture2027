@@ -1,0 +1,15 @@
+{
+  "date": "2026-09-09",
+  "chapter": "ch04-data-tools",
+  "setup": "11 explicitly selected public files copied to a fresh temporary directory; uv created a new environment from uv.lock.",
+  "command": "uv run --locked python -m pytest -q",
+  "exit_code": 0,
+  "result": "........                                                                 [100%]\n8 passed in 11.72s",
+  "repository_imports_required": false,
+  "verified_files": {
+    "data_tools.py": "4f142fd7bf8b4bcb6976880db748fd96235abfa7f67d380e3de21f4a322405d9",
+    "tests/test_data_tools.py": "9f1bc438cf8b6753bf280f44090ec0ef87bbb8bebf67276134e17d0c55f8450a",
+    "pyproject.toml": "ff2282f527b74ff952992a6d66fe304375968c61519389012ae5e1dcb7461892",
+    "uv.lock": "ab3602b22fe4ba6e4ed4b3afd82281852a64445fd37d4cbde8e3545cd71fa257"
+  }
+}

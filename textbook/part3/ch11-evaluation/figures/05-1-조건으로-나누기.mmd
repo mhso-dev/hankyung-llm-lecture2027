@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  q["개발 분할 15문항"]:::tool
+  calc["질문마다 세 지표 내기"]:::flow
+  whole["전체 평균<br>nDCG 0.751"]:::measure
+  split["난이도로 나누기"]:::flow
+  easy["easy 묶음<br>nDCG 0.726"]:::measure
+  medium["medium 묶음<br>nDCG 0.926"]:::measure
+  hard["hard 묶음<br>nDCG 0.6"]:::measure
+  q --> calc
+  calc --> whole
+  calc --> split
+  split --> easy
+  split --> medium
+  split --> hard

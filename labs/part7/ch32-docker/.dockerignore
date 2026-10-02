@@ -1,0 +1,7 @@
+.venv
+.env
+__pycache__
+*.ipynb
+qa
+secrets/*.txt
+!secrets/*.txt.example

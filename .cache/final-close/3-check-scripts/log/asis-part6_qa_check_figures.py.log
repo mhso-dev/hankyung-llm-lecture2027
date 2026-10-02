@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part6/qa/check_figures.py", line 42, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part6/qa/check_figures.py", line 21, in main
+    assert drawing.is_file(), f'Missing editable source: {path.name}'
+AssertionError: Missing editable source: 01-1-한-줄이-만든-에이전트-그래프.svg

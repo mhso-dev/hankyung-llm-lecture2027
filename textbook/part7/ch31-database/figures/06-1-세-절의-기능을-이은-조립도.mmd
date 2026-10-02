@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  asks["문의 셋<br>환불 10분 · 배송 30분<br>결제 10분"]:::tool
+  send["send_inquiry<br>graph.invoke<br>스레드는 문의 이름"]:::flow
+  node["노드 book_inquiry<br>begin 블록 하나 · 02절"]:::flow
+  pool["엔진의 연결 풀<br>풀 크기 1<br>대기 제한 0.2초 · 04절"]
+  saver["체크포인터<br>PostgresSaver<br>따로 연 연결 · 05절"]
+  space["이름 공간 ch31_practice<br>schedule · bookings<br>체크포인터 표 넷"]
+  asks --> send
+  send --> node
+  node -- 연결 빌림과 반납 --> pool
+  send -- 단계마다 상태 저장 --> saver
+  pool --> space
+  saver --> space

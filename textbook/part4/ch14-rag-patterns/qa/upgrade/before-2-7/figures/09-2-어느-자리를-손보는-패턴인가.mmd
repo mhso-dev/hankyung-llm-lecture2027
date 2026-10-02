@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  src["질문 하나와 문서 열두 건"]:::tool
+  pre["검색 앞에서<br>넣을 글 바꾸기<br>이번에 견줌"]:::flow
+  post["검색 뒤에<br>다시 검색할지 정하기"]
+  after["답을 만든 뒤에<br>고칠지 정하기"]
+  before["질문을 받기 전에<br>자료를 묶어 두기"]
+  src --> pre
+  src --> post
+  src --> after
+  src --> before

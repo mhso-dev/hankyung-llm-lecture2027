@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  root["정답 자리가 다른 질문 두 개"]:::measure
+  q1["질문 C01<br>정답 LIB-001"]:::tool
+  q2["질문 C02<br>정답 LIB-002"]:::tool
+  a1["벡터 거리 자리 2<br>낱말 겹침 자리 3"]:::measure
+  a2["벡터 거리 자리 7<br>낱말 겹침 자리 1"]:::measure
+  note["두 질문의 갈래는 모두 semantic"]
+  root --> q1
+  root --> q2
+  q1 --> a1
+  q2 --> a2
+  a1 --> note
+  a2 --> note

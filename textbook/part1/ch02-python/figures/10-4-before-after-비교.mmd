@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · Field(ge=1, le=10)"]
+    direction LR
+    b1["int() 줄 빠뜨림<br>count_text '3'<br>자료형 str"]:::tool --> b2["기본 모드<br>글자를 정수로 바꿔 받음"]:::flow --> b3["인스턴스 count=3<br>모델이 알렸나요? False"]:::fail
+  end
+  subgraph AFTER["After · Field(strict=True, ge=1, le=10)"]
+    direction LR
+    a1["int() 줄 빠뜨림<br>count_text '3'<br>자료형 str"]:::tool --> a2["엄격 모드<br>글자면 바로 오류"]:::flow --> a3["오류 종류: int_type<br>모델이 알렸나요? True"]:::measure
+  end
+  BEFORE ~~~ AFTER

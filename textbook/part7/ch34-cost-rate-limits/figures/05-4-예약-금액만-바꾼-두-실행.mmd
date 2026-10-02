@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  same["두 실행 공통<br>같은 대화 스무 개와 차례<br>비용 상한 0.04 · 호출 한도 20"]
+  subgraph run1["실행 1 · 예약 금액은 평균"]
+    direction TB
+    a1["예약 금액 0.003366"]:::tool
+    b1["받은 대화 열하나<br>막힌 대화 아홉<br>예약보다 비싼 대화 넷"]:::measure
+    c1["비용 합 0.044481<br>비용 상한을 넘음 True"]:::measure
+    a1 --> b1
+    b1 --> c1
+  end
+  subgraph run2["실행 2 · 값 하나만 바꿈"]
+    direction TB
+    a2["예약 금액 0.008544<br>95 백분위수"]:::flow
+    b2["받은 대화 넷<br>막힌 대화 열여섯<br>예약보다 비싼 대화 없음"]:::measure
+    c2["비용 합 0.015109<br>비용 상한을 넘음 False"]:::measure
+    a2 --> b2
+    b2 --> c2
+  end
+  same --> run1
+  same --> run2

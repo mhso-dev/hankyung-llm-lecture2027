@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph got[받은 개수로 나누기]
+    direction TB
+    g1["나누는 수는 받은 개수 2"]:::flow
+    g2["값 0.5"]:::measure
+    g1 --> g2
+  end
+  subgraph fix[자르는 자리로 나누기]
+    direction TB
+    f1["나누는 수는 자르는 자리 5<br>빈 자리 세 개도 자리로 셈"]:::flow
+    f2["값 0.2"]:::measure
+    f1 --> f2
+  end
+  common["두 칸 모두에 해당<br>손으로 만든 짧은 목록 2개<br>그 안에 정답 문서 1개"]
+  got --> common
+  fix --> common

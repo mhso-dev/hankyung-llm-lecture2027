@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · get에 기본값 없음"]
+    direction LR
+    b1["꺼낸 질문<br>None"]:::tool
+    b2["invoke가 튜플을<br>메시지 객체로 바꿈"]:::flow
+    b3["ValidationError<br>요청 전에 거부"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph AFTER["After · get에 기본값 있음"]
+    direction LR
+    a1["꺼낸 질문<br>AIMessage라고만 답하세요."]:::tool
+    a2["gpt-5.4-mini"]:::model
+    a3["응답 객체 종류 AIMessage<br>assert 통과"]:::measure
+    a1 --> a2 --> a3
+  end
+  BEFORE --> AFTER

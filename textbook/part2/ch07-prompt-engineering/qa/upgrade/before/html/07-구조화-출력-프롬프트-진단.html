@@ -1,0 +1,308 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>구조화 출력 프롬프트 진단 — Ch 7 · 프롬프트 엔지니어링</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 2 · LangChain과 프롬프트 · Ch 7 · 프롬프트 엔지니어링</p>
+<h1>구조화 출력 프롬프트 진단</h1><div class="meta"><span>강의 0.5h</span><span>실습 0.5h</span><span>새 용어 6개</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 0.5h | 실습 0.5h | 코드 Jupyter Notebook | 새 용어 6개 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>JSON 파싱 성공과 필요한 필드 충족을 서로 다른 검사로 설명할 수 있습니다.</li><li>같은 과제에서 출력 지시의 구체성만 바꾼 세 프롬프트를 비교할 수 있습니다.</li><li>응답 원문을 보존하면서 <code>json.loads()</code>와 필드 존재 검사를 수행할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>모델이 “JSON으로 답하라”는 요청을 따르면 프로그램이 바로 사용할 수 있을 것처럼 보입니다. 그러나 올바른 JSON 문법으로 작성되었다는 사실과 프로그램이 기대한 필드 이름·자료형·허용값을 지켰다는 사실은 다릅니다. 예를 들어 <code>{"분류": "교환"}</code>은 문법상 올바른 JSON이지만 프로그램이 <code>category</code>를 읽으면 키를 찾지 못합니다. 다음 행동이 문자열이어야 하는데 목록으로 생성되어도 파싱 자체는 성공할 수 있습니다.</p><p>이번 절은 프롬프트 문장만으로 구조를 요청했을 때 무엇을 진단해야 하는지 보여 줍니다. Ch 6에서 배운 Pydantic 기반 구조화 출력은 스키마와 모델 호출을 직접 연결하는 방법입니다. 여기서는 그 기능을 대체하려 하지 않고, 프롬프트 지시와 문자열 파싱만 사용한 경로의 한계를 관찰합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch 6의 ‘구조화 출력과 검증’ 절에서는 Pydantic 모델로 필드 이름, 타입, 허용 범위를 선언하고 <code>with_structured_output(..., include_raw=True)</code>의 <code>raw</code>, <code>parsed</code>, <code>parsing_error</code>를 확인했습니다. 이번 챕터에서는 역할별 메시지, 과업 제약, 관련 예시가 출력에 미치는 영향을 비교했습니다. 이번 실습은 모델과 고객 문의를 고정하고 JSON을 요구하는 user 메시지의 구체성만 세 단계로 바꿉니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>파싱, 필드, 자료형</h3><p>파싱(parsing)은 문자열을 프로그램이 다룰 수 있는 자료 구조로 읽는 과정입니다. Python의 <code>json.loads()</code>는 JSON 문자열을 사전이나 목록 같은 객체로 변환합니다. JSON 문법이 깨져 있으면 <code>JSONDecodeError</code>가 발생합니다. 파싱 성공은 중괄호, 따옴표, 쉼표 같은 문법을 읽을 수 있었다는 뜻입니다.</p><p>필드(field)는 객체 안에서 값을 찾는 이름입니다. 이번 프로그램은 <code>category</code>, <code>next_action</code>, <code>customer_message</code> 세 필드를 요구합니다. 필드 존재 검사(field presence check)는 각 이름이 파싱된 객체에 있는지 확인합니다. 스키마(schema)는 필요한 필드, 자료형, 허용값 같은 구조 규칙을 모아 둔 정의입니다. 실습의 <code>schema</code> 프롬프트는 세 필드와 <code>category</code>의 허용값, 모든 필드가 문자열이라는 조건을 자연어로 적습니다. 자연어 스키마는 설명일 뿐이므로 Python 검증 코드가 자동으로 생기지는 않습니다.</p><h3>세 단계 진단</h3><p><code>brief</code>는 JSON이라는 형식만 요구합니다. <code>fields</code>는 세 필드 이름을 추가합니다. <code>schema</code>는 코드 울타리나 부가 설명을 금지하고 필드 이름, 허용 분류, 문자열 자료형을 지정합니다. 비교할 때는 첫째로 원문이 JSON 문법인지, 둘째로 세 필드가 있는지, 셋째로 각 값의 자료형과 내용이 요구 조건에 맞는지 확인합니다. 이번 코드가 자동 검사하는 범위는 첫째와 둘째입니다. 셋째는 원문 정독으로 확인하며, 운영 코드에서는 Pydantic 같은 검증기를 사용해야 합니다.</p><p>구문 오류(syntax error)는 JSON 문법을 읽지 못한 상태입니다. 구조 오류는 파싱되었지만 필요한 필드나 자료형이 맞지 않는 상태입니다. 내용 오류는 구조가 맞아도 분류나 고객 안내가 업무 규정과 맞지 않는 상태입니다. 오류 층을 나누면 프롬프트를 고칠지, 스키마 검증을 추가할지, 업무 자료를 보완할지 결정할 수 있습니다.</p><h3>도식 읽기</h3><figure><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 340" role="img"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#516076"/></marker></defs><rect width="980" height="340" rx="18" fill="#F8FAFC"/><path d="M200 65 L275 130" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><path d="M200 155 L275 150" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><path d="M200 245 L275 175" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><path d="M425 150 L500 90" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><path d="M425 150 L500 220" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><path d="M660 90 L740 135" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><path d="M660 220 L740 175" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><rect x="20" y="35" width="180" height="60" rx="12" fill="#4F86C6" opacity="0.14" stroke="#4F86C6" stroke-width="3"/><text x="110.0" y="65.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">간단 JSON 지시</text><rect x="20" y="125" width="180" height="60" rx="12" fill="#4F86C6" opacity="0.14" stroke="#4F86C6" stroke-width="3"/><text x="110.0" y="155.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">필드 이름 지시</text><rect x="20" y="215" width="180" height="60" rx="12" fill="#4F86C6" opacity="0.14" stroke="#4F86C6" stroke-width="3"/><text x="110.0" y="245.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">형식·열거형 지시</text><rect x="275" y="105" width="150" height="95" rx="12" fill="#7C3AED" opacity="0.14" stroke="#7C3AED" stroke-width="3"/><text x="350.0" y="152.5" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">모델 원문</text><rect x="500" y="55" width="160" height="70" rx="12" fill="#F4B942" opacity="0.14" stroke="#F4B942" stroke-width="3"/><text x="580.0" y="78.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">json.loads</text><text x="580.0" y="103.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">파싱 검사</text><rect x="500" y="185" width="160" height="70" rx="12" fill="#F4B942" opacity="0.14" stroke="#F4B942" stroke-width="3"/><text x="580.0" y="208.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">필드 존재</text><text x="580.0" y="233.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">내용 정독</text><rect x="740" y="105" width="190" height="95" rx="12" fill="#4F86C6" opacity="0.14" stroke="#4F86C6" stroke-width="3"/><text x="835.0" y="140.5" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">진단 기록</text><text x="835.0" y="165.5" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">성공 축 분리</text></svg></div><figcaption>세 프롬프트가 각각 응답 원문을 만들고, 모든 원문이 먼저 <code>json.loads()</code>를 거친 뒤 필드 존재 검사로 이어집니다. 파싱 성공과 필드 충족은 서로 다른 판정 상자로 표시됩니다.<span class="gaze">파싱 성공 화살표가 곧바로 ‘업무에 사용 가능’으로 이어지지 않는지 확인합니다.</span></figcaption></figure>
+<!-- learning-sequence-20260914-07 -->
+<h3>JSON을 읽는 것과 필요한 필드를 검증하는 것</h3>
+<p><code>json.loads(result[&quot;text&quot;])</code>는 모델 응답인 문자열을 Python 값으로 읽습니다. JSON에는 객체뿐 아니라 목록, 문자열, 숫자도 있으므로 파싱이 성공했다고 딕셔너리가 만들어졌다고 가정하면 안 됩니다. 아래 저장 원문은 객체였지만 실제 프로그램에서는 먼저 기대한 자료형인지 검사해야 합니다. 자연어로 JSON을 요청하는 방식과 Ch 6의 구조화 출력 호출도 같은 기능으로 취급하지 않습니다.</p>
+<p>진단 코드의 <code>f in parsed</code>는 현재 객체에 필요한 키가 있는지를 확인합니다. 예를 들어 category 키의 값이 빈 문자열이어도 키는 존재합니다. 값이 “알 수 없음”이어도 허용 라벨 검사 없이 키 존재 결과만 참이 됩니다. 따라서 파싱 성공, 객체 여부, 필드 존재, 값의 타입, 허용 범위, 업무 사실은 차례로 다른 질문입니다.</p>
+<p>일정 추출에 적용하면 “일시”와 “장소”가 담긴 JSON이 문법상 유효해도 프로그램이 요구한 <code>starts_at</code>과 <code>location</code> 키는 없을 수 있습니다. 키를 맞춰도 날짜 형식이나 장소의 실제 존재는 아직 확인하지 않았습니다. 이런 사례를 층별로 나누어 보면 프롬프트를 더 구체화할 부분과 코드로 검증할 부분을 구별할 수 있습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p><code>prompts</code> 사전은 같은 고객 문의를 세 가지 JSON 지시와 결합합니다. 사전 컴프리헨션은 같은 system 메시지로 각 조건을 한 번씩 호출합니다. 진단 셀은 응답 원문에 <code>json.loads()</code>를 실제 적용하고, 성공한 객체에서 세 영문 필드가 존재하는지 확인합니다. 예외가 발생하면 오류 유형을 기록하며 예상 오류 문구를 임의로 만들지 않습니다. 마지막 셀은 진단 결과와 사용량, 지연, 응답 원문을 함께 출력합니다.</p><section class="notebook" data-notebook="07-구조화-출력-프롬프트-진단" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-09</span><button type="button" class="copy-all">전체 코드 복사</button><a download="07-구조화-출력-프롬프트-진단.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZTVlOTRmNyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMg6rWs7KGw7ZmUIOy2nOugpSDtlITroaztlITtirgg7KeE64uoXG4iLAogICAgIlxuIiwKICAgICLqsJnsnYAgSlNPTiDsmpTqtazrpbwg7IS4IOqwgOyngCDtlITroaztlITtirjroZwg7ZGc7ZiE7ZaI7J2EIOuVjCDtjIzsi7Hqs7wg7ZWE65OcIOyhtOyerCDsl6zrtoDripQg7Ja065a76rKMIOuLrOudvOyniOq5jOyalD8iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJkYjJmODBhNyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIO2MqO2CpOyngCDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIuyyqyDsi6Ttlonsl5DshJwg7IiY7JeFIOq4sOykgCDrsoTsoITsnYQg7ISk7LmY7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogIjk1NjU5ZTEwIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDEzOjMwOjM2LjgxNTg3M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDEzOjMwOjM2LjgxNTcyNVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDEzOjMwOjM3LjIxOTk0NloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTM6MzA6MzcuMjE5MzE3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIk5vdGU6IHlvdSBtYXkgbmVlZCB0byByZXN0YXJ0IHRoZSBrZXJuZWwgdG8gdXNlIHVwZGF0ZWQgcGFja2FnZXMuXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7ZiE7J6sIOy7pOuEkOyXkCDsiJjsl4Ug6riw7KSAIO2MqO2CpOyngCDrsoTsoITsnYQg7ISk7LmY7ZWp64uI64ukLlxuIiwKICAgICIlcGlwIGluc3RhbGwgLXEgbGFuZ2NoYWluPT0xLjQuMCBsYW5nY2hhaW4tb3BlbmFpPT0xLjYuMCBweXRob24tZG90ZW52PT0xLjIuMyIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjY0ZGYwZDBiIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgQVBJIO2CpOyZgCDrqqjrjbgg7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLsg4HsnIQg7Y+0642U7J2YIGAuZW52YOulvCDssL7qs6Ag7YKk7J2YIOyhtOyerOunjCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiNzA1YWYzNTQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTM6MzA6MzcuMjIxMTcwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTM6MzA6MzcuMjIxMDYwWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTM6MzA6MzcuNzUzMjEyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxMzozMDozNy43NTI2NzJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFtdLAogICAic291cmNlIjogWwogICAgIiMgZmluZF9kb3RlbnbripQg7Iuk7ZaJIO2PtOuNlOu2gO2EsCDsg4HsnIQg7Y+0642U7J2YIC5lbnbrpbwg7LC+6rOgIO2CpCDqsJLsnYAg7Lac66Cl7ZWY7KeAIOyViuyKteuLiOuLpC5cbiIsCiAgICAiaW1wb3J0IGpzb24sIG9zLCB0aW1lXG4iLAogICAgImZyb20gZG90ZW52IGltcG9ydCBmaW5kX2RvdGVudiwgbG9hZF9kb3RlbnZcbiIsCiAgICAiZnJvbSBsYW5nY2hhaW4uY2hhdF9tb2RlbHMgaW1wb3J0IGluaXRfY2hhdF9tb2RlbFxuIiwKICAgICJcbiIsCiAgICAiZW52X3BhdGggPSBmaW5kX2RvdGVudih1c2Vjd2Q9VHJ1ZSlcbiIsCiAgICAiaWYgZW52X3BhdGg6XG4iLAogICAgIiAgICBsb2FkX2RvdGVudihlbnZfcGF0aClcbiIsCiAgICAiaWYgbm90IG9zLmdldGVudihcIk9QRU5BSV9BUElfS0VZXCIpOlxuIiwKICAgICIgICAgcmFpc2UgUnVudGltZUVycm9yKFwi7ZSE66Gc7KCd7Yq4IOujqO2KuOydmCAuZW527JeQIE9QRU5BSV9BUElfS0VZ6rCAIO2VhOyalO2VqeuLiOuLpC5cIilcbiIsCiAgICAibW9kZWwgPSBpbml0X2NoYXRfbW9kZWwoXCJvcGVuYWk6Z3B0LTUuNC1taW5pXCIsIG1heF90b2tlbnM9MjIwKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNiODJlZmE3IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rOg7KCVIOqzvOygnFxuIiwKICAgICJcbiIsCiAgICAi66qo65OgIOygiOyXkOyEnCDqsJnsnYAg6rOg6rCdIOusuOydmOyZgCDtmZXsnbgg64uo7Ja066W8IOyCrOyaqe2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJmOTZlODRjZCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxMzozMDozNy43NTQxMDZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxMzozMDozNy43NTQwNDlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxMzozMDozNy43NTU4MTVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDEzOjMwOjM3Ljc1NTM5NVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogW10sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBUQVNL64qUIOuqqOuToCDruYTqtZDsl5DshJwg67CU6r647KeAIOyViuuKlCDtlanshLEg66y47J2Y7J206rOgIE1FTlRJT05T64qUIO2SiOyniCDsoJDsiJjqsIAg7JWE64uZ64uI64ukLlxuIiwKICAgICJUQVNLID0gXCJcIlwi6rOg6rCdIOusuOydmDog7Ja07KCcIOuwm+ydgCDthYDruJTrn6wg65qc6ruR7J20IOq5qOyhjOyKteuLiOuLpC4g7KO866y467KI7Zi464qUIEEtMTA0MuyeheuLiOuLpC5cbiIsCiAgICAi7IOIIOyDge2SiOycvOuhnCDrsJTqvrjqs6Ag7Iu27Iq164uI64ukLiDtmozsgqwg6rec7KCV7IOBIOq1kO2ZmCDsoJHsiJjsl5DripQg7YyM7IaQIOyCrOynhOydtCDtlYTsmpTtlanri4jri6QuXG4iLAogICAgIuuLteuzgOyXkOuKlCDrtoTrpZgsIO2VhOyalO2VnCDri6TsnYwg7ZaJ64+ZLCDqs6DqsJ3sl5Dqsowg67O064K8IO2VnCDrrLjsnqXsnYQg7Y+s7ZWo7ZWY7IS47JqULlwiXCJcIlxuIiwKICAgICJNRU5USU9OUyA9IFtcIuq1kO2ZmFwiLCBcIkEtMTA0MlwiLCBcIuyCrOynhFwiXSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjE0NjEyOTE2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Lih7KCVIO2VqOyImFxuIiwKICAgICJcbiIsCiAgICAi64uo7Ja0IO2PrO2VqCDtkZzsi5zripQg7JuQ66y4IOygleuPheydhCDrj5XripQg7ZGc7Iuc7J2066mwIO2SiOyniCDsoJDsiJjqsIAg7JWE64uZ64uI64ukLlxuIiwKICAgICJcbiIsCiAgICAiYHJ1bihtZXNzYWdlcylg64qUIOydtCDrhbjtirjrtoHsl5DshJwg7J6R7ISx7ZWY64qUIOuztOyhsCDtlajsiJjsnoXri4jri6QuIOyXre2VoMK364K07JqpIOuqqeuhneydhCDrsJvslYQgYG1vZGVsLmludm9rZSgpYOulvCDtlZwg67KIIOyLpO2Wie2VmOqzoCwg64u1IOusuOyekOyXtMK37IKs7Jqp65+Jwrfqsr3qs7wg7LSI66W8IOuLtOydgCDrlJXshZTrhIjrpqzrpbwg67CY7ZmY7ZWp64uI64ukLiBgZGVmYCDshYDsnYAg7ZWo7IiY66W8IOygleydmO2VoCDrv5DsnbTrqbAg65Kk7JeQ7IScIGBydW4oLi4uKWDsnYQg7Zi47Lac7ZWgIOuVjCDrqqjrjbgg7JqU7LKt7J20IOyLnOyekeuQqeuLiOuLpC4gYG1lbnRpb25fZmxhZ3ModGV4dClg64qUIOyngOyglSDri6jslrTqsIAg66y47J6Q7Je07JeQIOyeiOuKlOyngCDtkZzsi5ztlZwg65SV7IWU64SI66as66W8IOuwmO2ZmO2VqeuLiOuLpC4g64u17J2YIOucu+ydhCDtjJDri6jtlZjripQg66qo6424IO2YuOy2nOydgCDtj6ztlajtlZjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImMzZTllMDg1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDEzOjMwOjM3Ljc1NjQ3MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDEzOjMwOjM3Ljc1NjQxOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDEzOjMwOjM3Ljc1ODI1N1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTM6MzA6MzcuNzU3ODg3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOuqqOuNuCDsnZHri7XsnZgg7JuQ66y4LCDsgqzsmqnrn4ksIOqyveqzvCDsi5zqsITsnYQg7ZWcIOugiOy9lOuTnOuhnCDrs7TsobTtlanri4jri6QuXG4iLAogICAgImRlZiBydW4obWVzc2FnZXMpOlxuIiwKICAgICIgICAgc3RhcnRlZCA9IHRpbWUucGVyZl9jb3VudGVyKClcbiIsCiAgICAiICAgIGFuc3dlciA9IG1vZGVsLmludm9rZShtZXNzYWdlcylcbiIsCiAgICAiICAgIHJldHVybiB7XCJ0ZXh0XCI6IGFuc3dlci50ZXh0LCBcInVzYWdlXCI6IGFuc3dlci51c2FnZV9tZXRhZGF0YSxcbiIsCiAgICAiICAgICAgICAgICAgXCJsYXRlbmN5X3NcIjogcm91bmQodGltZS5wZXJmX2NvdW50ZXIoKSAtIHN0YXJ0ZWQsIDMpfVxuIiwKICAgICJcbiIsCiAgICAiZGVmIG1lbnRpb25fZmxhZ3ModGV4dCk6XG4iLAogICAgIiAgICByZXR1cm4ge3dvcmQ6IHdvcmQgaW4gdGV4dCBmb3Igd29yZCBpbiBNRU5USU9OU30iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICIyNzJlYTIwOSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyEuCDtlITroaztlITtirgg7KGw6rG0IOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAi7KeI66y46rO8IO2VhOyalO2VnCDtlYTrk5zripQg6rCZ6rOgIEpTT04g7KeA7Iuc7J2YIOq1rOyytOyEseunjCDri6TrpoXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiMjI5YWZkNDkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTM6MzA6MzcuNzU4ODkwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTM6MzA6MzcuNzU4ODM0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTM6MzA6NDEuNDgzOTY3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxMzozMDo0MS40ODI5OTJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFtdLAogICAic291cmNlIjogWwogICAgIiMg7KeI66y47J2AIOqzoOygle2VmOqzoCBKU09OIOyngOyLnOydmCDqtazssrTshLHrp4wg7IS4IOuLqOqzhOuhnCDrsJTqv4nri4jri6QuXG4iLAogICAgInByb21wdHMgPSB7XG4iLAogICAgIiAgICBcImJyaWVmXCI6IFwiSlNPTuycvOuhnCDri7XtlZjshLjsmpQuIFwiICsgVEFTSyxcbiIsCiAgICAiICAgIFwiZmllbGRzXCI6IFwiSlNPTiDqsJ3ssrTroZwg64u17ZWY7IS47JqULiDtlYTrk5zripQgY2F0ZWdvcnksIG5leHRfYWN0aW9uLCBjdXN0b21lcl9tZXNzYWdl7J6F64uI64ukLiBcIiArIFRBU0ssXG4iLAogICAgIiAgICBcInNjaGVtYVwiOiBcIuyEpOuqheydtOuCmCDsvZTrk5wg7Jq47YOA66asIOyXhuydtCBKU09OIOqwneyytCDtlZjrgpjrp4wg64u17ZWY7IS47JqULiBcIlxuIiwKICAgICIgICAgICAgICAgICAgIFwiY2F0ZWdvcnnripQg67Cw7IahL+q1kO2ZmC/tmZjrtogg7KSRIO2VmOuCmOydtOqzoCDrqqjrk6Ag7ZWE65Oc64qUIOusuOyekOyXtOyeheuLiOuLpC4gXCJcbiIsCiAgICAiICAgICAgICAgICAgICBcIu2VhOuTnDogY2F0ZWdvcnksIG5leHRfYWN0aW9uLCBjdXN0b21lcl9tZXNzYWdlLiBcIiArIFRBU0ssXG4iLAogICAgIn1cbiIsCiAgICAicmVzdWx0cyA9IHtuYW1lOiBydW4oWyhcInN5c3RlbVwiLCBcIuqzoOqwnSDsp4Dsm5Ag642w7J207YSw66W8IOunjOuTreuLiOuLpC5cIiksIChcInVzZXJcIiwgdGV4dCldKVxuIiwKICAgICIgICAgICAgICAgIGZvciBuYW1lLCB0ZXh0IGluIHByb21wdHMuaXRlbXMoKX0iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI3NDU5YWIyMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpOygnCDtjIzsi7Hqs7wg7ZWE65OcIOqygOyCrFxuIiwKICAgICJcbiIsCiAgICAi7YyM7IuxIOyLpO2MqOulvCDqsIDsoJXtlZjsp4Ag7JWK6rOgIOqwgSDsm5DrrLjsl5AgYGpzb24ubG9hZHNg66W8IOyLpOygnCDsoIHsmqntlanri4jri6QuXG4iLAogICAgIlxuIiwKICAgICJganNvbi5sb2FkcygpYOydmCDsnoXroKXsnYAg7J2R64u1IOusuOyekOyXtOydtOqzoCDrsJjtmZjqsJLsnYAgSlNPTiDrgrTsmqnsl5Ag64yA7J2R7ZWY64qUIFB5dGhvbiDqsJLsnoXri4jri6QuIEpTT04g6rCd7LK064qUIOuUleyFlOuEiOumrCwg67Cw7Je07J2AIOuqqeuhneydtCDrkKnri4jri6QuIO2MjOyLsSDshLHqs7Xrp4zsnLzroZwg7JuQ7ZWY64qUIOqwneyytOuCmCDtlYTrk5zrpbwg67Cb7JWY64uk6rOgIOuzvCDsiJgg7JeG7Iq164uI64ukLiDsnbTrsojsl5Ag7KCA7J6l65CcIOyEuCDsnZHri7XsnYAg6rCd7LK07J207KeA66eMIOydvOuwmCDsnoXroKXsl5Ag64yA7ZWcIOyekOujjO2YlSDqsoDspp3quYzsp4Ag7J20IOy9lOuTnOqwgCDsiJjtlontlZjripQg6rKD7J2AIOyVhOuLmeuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgImB7ZjogZiBpbiBwYXJzZWQgZm9yIGYgaW4gZmllbGRzfWDripQg7ZWE7JqU7ZWcIO2VhOuTnOuzhOuhnCDtgqTqsIAg7J6I64qU7KeAIO2RnOyLnO2VmOuKlCDsgqzsoIQg7ZGc7ZiE7Iud7J6F64uI64ukLiDtgqQg6rCS7J2YIO2DgOyehcK37ZeI7Jqp6rCSwrfruYgg66y47J6Q7Je0wrfsl4XrrLQg7IKs7Iuk7J2AIOqygOyCrO2VmOyngCDslYrsirXri4jri6QuIOyYiOulvCDrk6TslrQg67mIIGNhdGVnb3J564+EIO2CpCDsnpDssrTqsIAg7J6I7Jy866m0IOydtCDqsoDsgqzsl5DshJzripQg7LC47J6F64uI64ukLlxuIiwKICAgICJcbiIsCiAgICAi7J287KCVIOyekOujjOydmCDigJzsnbzsi5zigJ3rpbwg7ZSE66Gc6re4656o7J20IOq4sOuMgO2VmOuKlCBgc3RhcnRzX2F0YOycvOuhnCDrsJTqvrjripQg66y47KCc7JmAIOuCoOynnOqwgCDsi6TsoJzroZwg66ee64qU7KeAIO2ZleyduO2VmOuKlCDrrLjsoJzrj4Qg64uk66aF64uI64ukLiDslYTrnpgg6rKw6rO87JeQ7ISc64qUIO2MjOyLsSDshLHqs7Xqs7wg7JiB66y4IO2VhOuTnCDstqnsobHrtoDthLAg65Sw66GcIOydveqzoCwg7KCE7LK0IOqygOymneydtCDrgZ3rgqzri6Tqs6Ag7ZW07ISd7ZWY7KeAIOyViuyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDYsCiAgICJpZCI6ICI0OTZiNTcyMiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxMzozMDo0MS40ODg5NTRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxMzozMDo0MS40ODg2NDZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxMzozMDo0MS41MDI5MzhaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDEzOjMwOjQxLjUwMTk3OFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJ7XG4iLAogICAgICAiICBcImJyaWVmXCI6IHtcbiIsCiAgICAgICIgICAgXCJwYXJzZWRcIjogdHJ1ZSxcbiIsCiAgICAgICIgICAgXCJmaWVsZHNcIjoge1xuIiwKICAgICAgIiAgICAgIFwiY2F0ZWdvcnlcIjogZmFsc2UsXG4iLAogICAgICAiICAgICAgXCJuZXh0X2FjdGlvblwiOiBmYWxzZSxcbiIsCiAgICAgICIgICAgICBcImN1c3RvbWVyX21lc3NhZ2VcIjogZmFsc2VcbiIsCiAgICAgICIgICAgfVxuIiwKICAgICAgIiAgfSxcbiIsCiAgICAgICIgIFwiZmllbGRzXCI6IHtcbiIsCiAgICAgICIgICAgXCJwYXJzZWRcIjogdHJ1ZSxcbiIsCiAgICAgICIgICAgXCJmaWVsZHNcIjoge1xuIiwKICAgICAgIiAgICAgIFwiY2F0ZWdvcnlcIjogdHJ1ZSxcbiIsCiAgICAgICIgICAgICBcIm5leHRfYWN0aW9uXCI6IHRydWUsXG4iLAogICAgICAiICAgICAgXCJjdXN0b21lcl9tZXNzYWdlXCI6IHRydWVcbiIsCiAgICAgICIgICAgfVxuIiwKICAgICAgIiAgfSxcbiIsCiAgICAgICIgIFwic2NoZW1hXCI6IHtcbiIsCiAgICAgICIgICAgXCJwYXJzZWRcIjogdHJ1ZSxcbiIsCiAgICAgICIgICAgXCJmaWVsZHNcIjoge1xuIiwKICAgICAgIiAgICAgIFwiY2F0ZWdvcnlcIjogdHJ1ZSxcbiIsCiAgICAgICIgICAgICBcIm5leHRfYWN0aW9uXCI6IHRydWUsXG4iLAogICAgICAiICAgICAgXCJjdXN0b21lcl9tZXNzYWdlXCI6IHRydWVcbiIsCiAgICAgICIgICAgfVxuIiwKICAgICAgIiAgfVxuIiwKICAgICAgIn1cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBqc29uLmxvYWRzIO2MjOyLsSDshLHqs7Xqs7wg7ZWE7JqU7ZWcIOyYgeusuCDtlYTrk5wg7KG07J6s66W8IOuzhOuPhOuhnCDquLDroZ3tlanri4jri6QuXG4iLAogICAgImRpYWdub3N0aWNzID0ge31cbiIsCiAgICAiZm9yIG5hbWUsIHJlc3VsdCBpbiByZXN1bHRzLml0ZW1zKCk6XG4iLAogICAgIiAgICB0cnk6XG4iLAogICAgIiAgICAgICAgcGFyc2VkID0ganNvbi5sb2FkcyhyZXN1bHRbXCJ0ZXh0XCJdKVxuIiwKICAgICIgICAgICAgIGZpZWxkcyA9IFtcImNhdGVnb3J5XCIsIFwibmV4dF9hY3Rpb25cIiwgXCJjdXN0b21lcl9tZXNzYWdlXCJdXG4iLAogICAgIiAgICAgICAgZGlhZ25vc3RpY3NbbmFtZV0gPSB7XCJwYXJzZWRcIjogVHJ1ZSwgXCJmaWVsZHNcIjoge2Y6IGYgaW4gcGFyc2VkIGZvciBmIGluIGZpZWxkc319XG4iLAogICAgIiAgICBleGNlcHQgKGpzb24uSlNPTkRlY29kZUVycm9yLCBUeXBlRXJyb3IpIGFzIGVycm9yOlxuIiwKICAgICIgICAgICAgIGRpYWdub3N0aWNzW25hbWVdID0ge1wicGFyc2VkXCI6IEZhbHNlLCBcImVycm9yXCI6IHR5cGUoZXJyb3IpLl9fbmFtZV9ffVxuIiwKICAgICJwcmludChqc29uLmR1bXBzKGRpYWdub3N0aWNzLCBlbnN1cmVfYXNjaWk9RmFsc2UsIGluZGVudD0yKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICIxMTg2NWYwZSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOybkOusuMK37IKs7Jqp65+Jwrfsp4Tri6gg7ZWo6ruYIOuztOq4sFxuIiwKICAgICJcbiIsCiAgICAi66qo65GQIOyEseqzte2WiOuLpOuptCDsnbTrsogg7ZGc67O47JeQ7IScIO2MjOyLsSDsi6TtjKjrpbwg6rSA7LCw7ZWY7KeAIOuqu+2WiOuLpOqzoCDquLDroZ3tlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA3LAogICAiaWQiOiAiODhjZGE1NjAiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTM6MzA6NDEuNTA0NjkwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTM6MzA6NDEuNTA0NTc1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTM6MzA6NDEuNTA4NDcyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxMzozMDo0MS41MDc1ODlaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiXG4iLAogICAgICAiIGJyaWVmIHsncGFyc2VkJzogVHJ1ZSwgJ2ZpZWxkcyc6IHsnY2F0ZWdvcnknOiBGYWxzZSwgJ25leHRfYWN0aW9uJzogRmFsc2UsICdjdXN0b21lcl9tZXNzYWdlJzogRmFsc2V9fSB7J2lucHV0X3Rva2Vucyc6IDk4LCAnb3V0cHV0X3Rva2Vucyc6IDE0NiwgJ3RvdGFsX3Rva2Vucyc6IDI0NCwgJ2lucHV0X3Rva2VuX2RldGFpbHMnOiB7J2F1ZGlvJzogMCwgJ2NhY2hlX3JlYWQnOiAwfSwgJ291dHB1dF90b2tlbl9kZXRhaWxzJzogeydhdWRpbyc6IDAsICdyZWFzb25pbmcnOiAwfX0gMS4zOFxuIiwKICAgICAgIntcbiIsCiAgICAgICIgIFwi67aE66WYXCI6IFwi7IOB7ZKIIO2MjOyGkOycvOuhnCDsnbjtlZwg6rWQ7ZmYIOyalOyyrVwiLFxuIiwKICAgICAgIiAgXCLtlYTsmpTtlZwg64uk7J2MIO2WieuPmVwiOiBbXG4iLAogICAgICAiICAgIFwi7YyM7IaQ65CcIO2FgOu4lOufrCDrmpzqu5HsnZgg7IKs7KeE7J2EIOyyqOu2gO2VtCDso7zshLjsmpQuXCIsXG4iLAogICAgICAiICAgIFwi7KO866y467KI7Zi4IEEtMTA0MuulvCDtmZXsnbjtlZwg65KkIOq1kO2ZmCDsoJHsiJjrpbwg7KeE7ZaJ7ZWY6rKg7Iq164uI64ukLlwiXG4iLAogICAgICAiICBdLFxuIiwKICAgICAgIiAgXCLqs6DqsJ3sl5Dqsowg67O064K8IO2VnCDrrLjsnqVcIjogXCLslrTsoJwg67Cb7Jy87IugIO2FgOu4lOufrCDrmpzqu5Eg7YyM7IaQ7Jy866GcIOu2iO2OuOydhCDrk5zroKQg7KOE7Iah7ZWp64uI64ukLiDso7zrrLjrsojtmLggQS0xMDQy7J2YIOq1kO2ZmCDsoJHsiJjrpbwg7JyE7ZW0IO2MjOyGkCDsgqzsp4TsnYQg67O064K07KO87Iuc66m0IOuwlOuhnCDsg4gg7IOB7ZKIIOq1kO2ZmOydhCDrj4TsmYDrk5zrpqzqsqDsirXri4jri6QuXCJcbiIsCiAgICAgICJ9XG4iLAogICAgICAiXG4iLAogICAgICAiIGZpZWxkcyB7J3BhcnNlZCc6IFRydWUsICdmaWVsZHMnOiB7J2NhdGVnb3J5JzogVHJ1ZSwgJ25leHRfYWN0aW9uJzogVHJ1ZSwgJ2N1c3RvbWVyX21lc3NhZ2UnOiBUcnVlfX0geydpbnB1dF90b2tlbnMnOiAxMTAsICdvdXRwdXRfdG9rZW5zJzogODksICd0b3RhbF90b2tlbnMnOiAxOTksICdpbnB1dF90b2tlbl9kZXRhaWxzJzogeydhdWRpbyc6IDAsICdjYWNoZV9yZWFkJzogMH0sICdvdXRwdXRfdG9rZW5fZGV0YWlscyc6IHsnYXVkaW8nOiAwLCAncmVhc29uaW5nJzogMH19IDEuMTk5XG4iLAogICAgICAie1wiY2F0ZWdvcnlcIjpcIuq1kO2ZmC/tjIzshpBcIixcIm5leHRfYWN0aW9uXCI6XCLqs6DqsJ3sl5Dqsowg7YyM7IaQ65CcIOuanOq7keydmCDsgqzsp4Qg7KCc7Lac7J2EIOyalOyyre2VmOqzoCwg7KO866y467KI7Zi4IEEtMTA0MuuhnCDqtZDtmZgg7KCR7IiY66W8IOynhO2Wie2VnOuLpC5cIixcImN1c3RvbWVyX21lc3NhZ2VcIjpcIuyjvOusuOuyiO2YuCBBLTEwNDIg7ZmV7J247ZaI7Iq164uI64ukLiDtjIzshpDrkJwg7YWA67iU65+sIOuanOq7keydmCDsgqzsp4TsnYQg67O064K07KO87Iuc66m0IOq1kO2ZmCDsoJHsiJjrpbwg64+E7JmA65Oc66as6rKg7Iq164uI64ukLlwifVxuIiwKICAgICAgIlxuIiwKICAgICAgIiBzY2hlbWEgeydwYXJzZWQnOiBUcnVlLCAnZmllbGRzJzogeydjYXRlZ29yeSc6IFRydWUsICduZXh0X2FjdGlvbic6IFRydWUsICdjdXN0b21lcl9tZXNzYWdlJzogVHJ1ZX19IHsnaW5wdXRfdG9rZW5zJzogMTM3LCAnb3V0cHV0X3Rva2Vucyc6IDEwNiwgJ3RvdGFsX3Rva2Vucyc6IDI0MywgJ2lucHV0X3Rva2VuX2RldGFpbHMnOiB7J2F1ZGlvJzogMCwgJ2NhY2hlX3JlYWQnOiAwfSwgJ291dHB1dF90b2tlbl9kZXRhaWxzJzogeydhdWRpbyc6IDAsICdyZWFzb25pbmcnOiAwfX0gMS4xNDJcbiIsCiAgICAgICJ7XCJjYXRlZ29yeVwiOlwi6rWQ7ZmYXCIsXCJuZXh0X2FjdGlvblwiOlwi7YyM7IaQ65CcIOuanOq7keydmCDsgqzsp4Tqs7wg7KO866y467KI7Zi4IEEtMTA0MuulvCDtlajqu5gg67O064K07KO87Iuc66m0IOq1kO2ZmCDsoJHsiJjrpbwg7KeE7ZaJ7ZWY6rKg7Iq164uI64ukLlwiLFwiY3VzdG9tZXJfbWVzc2FnZVwiOlwi7Ja07KCcIOuwm+ycvOyLoCDthYDruJTrn6wg65qc6ruRIO2MjOyGkCDqsbTsnLzroZwg67aI7Y647J2EIOuTnOugpCDso4TshqHtlanri4jri6QuIOyDiCDsg4HtkojsnLzroZwg6rWQ7ZmY7J2EIOybkO2VmOyLnOuptCDtjIzshpAg7IKs7KeE6rO8IOyjvOusuOuyiO2YuCBBLTEwNDLrpbwg67O064K07KO87Iuc66m0IOuwlOuhnCDsoJHsiJgg64+E7JmA65Oc66as6rKg7Iq164uI64ukLlwifVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOqwgSDsobDqsbTsnZggcmF3IOydkeuLteydhCDsg53rnrXtlZjsp4Ag7JWK6rOgIOuLqOyWtCDtkZzsi5zsmYAg7IKs7Jqp65+JIOyYhuyXkCDstpzroKXtlanri4jri6QuXG4iLAogICAgImZvciBuYW1lLCByZXN1bHQgaW4gcmVzdWx0cy5pdGVtcygpOlxuIiwKICAgICIgICAgcHJpbnQoXCJcXG5cIiwgbmFtZSwgZGlhZ25vc3RpY3NbbmFtZV0sIHJlc3VsdFtcInVzYWdlXCJdLCByZXN1bHRbXCJsYXRlbmN5X3NcIl0pXG4iLAogICAgIiAgICBwcmludChyZXN1bHRbXCJ0ZXh0XCJdKSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAiZXhwZXJpbWVudCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDcsCiAgICJjb2RlX3NoYTI1NiI6ICIzZjAzYWUzMzllMWE4NWI4Y2JmZTBhNDRjODM0YTM0ZjEyMTM5OGM1NDg4MzVmYTI5MjIzNWMxZTBlNDlmZmYwIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMDlUMTM6MzA6NDEuNjI5NDE3KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICI0MjI5NzBkMDBiZmMxYjBiMjJhNTdhYzFkYjA3OGUzOWM1N2Y0ODUxNWI4MGRkZjNmNzJlNzhiZDUyNzZhMjhjIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>구조화 출력 프롬프트 진단</h2>
+<p>같은 JSON 요구를 세 가지 프롬프트로 표현했을 때 파싱과 필드 존재 여부는 어떻게 달라질까요?</p></div>
+<div class="nb-markdown"><h3>패키지 준비</h3>
+<p>첫 실행에서 수업 기준 버전을 설치합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 현재 커널에 수업 기준 패키지 버전을 설치합니다.
+%pip install -q langchain==1.4.0 langchain-openai==1.6.0 python-dotenv==1.2.3</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-markdown"><h3>API 키와 모델 준비</h3>
+<p>상위 폴더의 <code>.env</code>를 찾고 키의 존재만 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># find_dotenv는 실행 폴더부터 상위 폴더의 .env를 찾고 키 값은 출력하지 않습니다.
+import json, os, time
+from dotenv import find_dotenv, load_dotenv
+from langchain.chat_models import init_chat_model
+
+env_path = find_dotenv(usecwd=True)
+if env_path:
+    load_dotenv(env_path)
+if not os.getenv(&quot;OPENAI_API_KEY&quot;):
+    raise RuntimeError(&quot;프로젝트 루트의 .env에 OPENAI_API_KEY가 필요합니다.&quot;)
+model = init_chat_model(&quot;openai:gpt-5.4-mini&quot;, max_tokens=220)</code></pre></div></div>
+<div class="nb-markdown"><h3>고정 과제</h3>
+<p>모든 절에서 같은 고객 문의와 확인 단어를 사용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># TASK는 모든 비교에서 바꾸지 않는 합성 문의이고 MENTIONS는 품질 점수가 아닙니다.
+TASK = &quot;&quot;&quot;고객 문의: 어제 받은 텀블러 뚜껑이 깨졌습니다. 주문번호는 A-1042입니다.
+새 상품으로 바꾸고 싶습니다. 회사 규정상 교환 접수에는 파손 사진이 필요합니다.
+답변에는 분류, 필요한 다음 행동, 고객에게 보낼 한 문장을 포함하세요.&quot;&quot;&quot;
+MENTIONS = [&quot;교환&quot;, &quot;A-1042&quot;, &quot;사진&quot;]</code></pre></div></div>
+<div class="nb-markdown"><h3>측정 함수</h3>
+<p>단어 포함 표시는 원문 정독을 돕는 표시이며 품질 점수가 아닙니다.</p>
+<p><code>run(messages)</code>는 이 노트북에서 작성하는 보조 함수입니다. 역할·내용 목록을 받아 <code>model.invoke()</code>를 한 번 실행하고, 답 문자열·사용량·경과 초를 담은 딕셔너리를 반환합니다. <code>def</code> 셀은 함수를 정의할 뿐이며 뒤에서 <code>run(...)</code>을 호출할 때 모델 요청이 시작됩니다. <code>mention_flags(text)</code>는 지정 단어가 문자열에 있는지 표시한 딕셔너리를 반환합니다. 답의 뜻을 판단하는 모델 호출은 포함하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 모델 응답의 원문, 사용량, 경과 시간을 한 레코드로 보존합니다.
+def run(messages):
+    started = time.perf_counter()
+    answer = model.invoke(messages)
+    return {&quot;text&quot;: answer.text, &quot;usage&quot;: answer.usage_metadata,
+            &quot;latency_s&quot;: round(time.perf_counter() - started, 3)}
+
+def mention_flags(text):
+    return {word: word in text for word in MENTIONS}</code></pre></div></div>
+<div class="nb-markdown"><h3>세 프롬프트 조건 준비</h3>
+<p>질문과 필요한 필드는 같고 JSON 지시의 구체성만 다릅니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 질문은 고정하고 JSON 지시의 구체성만 세 단계로 바꿉니다.
+prompts = {
+    &quot;brief&quot;: &quot;JSON으로 답하세요. &quot; + TASK,
+    &quot;fields&quot;: &quot;JSON 객체로 답하세요. 필드는 category, next_action, customer_message입니다. &quot; + TASK,
+    &quot;schema&quot;: &quot;설명이나 코드 울타리 없이 JSON 객체 하나만 답하세요. &quot;
+              &quot;category는 배송/교환/환불 중 하나이고 모든 필드는 문자열입니다. &quot;
+              &quot;필드: category, next_action, customer_message. &quot; + TASK,
+}
+results = {name: run([(&quot;system&quot;, &quot;고객 지원 데이터를 만듭니다.&quot;), (&quot;user&quot;, text)])
+           for name, text in prompts.items()}</code></pre></div></div>
+<div class="nb-markdown"><h3>실제 파싱과 필드 검사</h3>
+<p>파싱 실패를 가정하지 않고 각 원문에 <code>json.loads</code>를 실제 적용합니다.</p>
+<p><code>json.loads()</code>의 입력은 응답 문자열이고 반환값은 JSON 내용에 대응하는 Python 값입니다. JSON 객체는 딕셔너리, 배열은 목록이 됩니다. 파싱 성공만으로 원하는 객체나 필드를 받았다고 볼 수 없습니다. 이번에 저장된 세 응답은 객체이지만 일반 입력에 대한 자료형 검증까지 이 코드가 수행하는 것은 아닙니다.</p>
+<p><code>{f: f in parsed for f in fields}</code>는 필요한 필드별로 키가 있는지 표시하는 사전 표현식입니다. 키 값의 타입·허용값·빈 문자열·업무 사실은 검사하지 않습니다. 예를 들어 빈 category도 키 자체가 있으면 이 검사에서는 참입니다.</p>
+<p>일정 자료의 “일시”를 프로그램이 기대하는 <code>starts_at</code>으로 바꾸는 문제와 날짜가 실제로 맞는지 확인하는 문제도 다릅니다. 아래 결과에서는 파싱 성공과 영문 필드 충족부터 따로 읽고, 전체 검증이 끝났다고 해석하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># json.loads 파싱 성공과 필요한 영문 필드 존재를 별도로 기록합니다.
+diagnostics = {}
+for name, result in results.items():
+    try:
+        parsed = json.loads(result[&quot;text&quot;])
+        fields = [&quot;category&quot;, &quot;next_action&quot;, &quot;customer_message&quot;]
+        diagnostics[name] = {&quot;parsed&quot;: True, &quot;fields&quot;: {f: f in parsed for f in fields}}
+    except (json.JSONDecodeError, TypeError) as error:
+        diagnostics[name] = {&quot;parsed&quot;: False, &quot;error&quot;: type(error).__name__}
+print(json.dumps(diagnostics, ensure_ascii=False, indent=2))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{
+  &quot;brief&quot;: {
+    &quot;parsed&quot;: true,
+    &quot;fields&quot;: {
+      &quot;category&quot;: false,
+      &quot;next_action&quot;: false,
+      &quot;customer_message&quot;: false
+    }
+  },
+  &quot;fields&quot;: {
+    &quot;parsed&quot;: true,
+    &quot;fields&quot;: {
+      &quot;category&quot;: true,
+      &quot;next_action&quot;: true,
+      &quot;customer_message&quot;: true
+    }
+  },
+  &quot;schema&quot;: {
+    &quot;parsed&quot;: true,
+    &quot;fields&quot;: {
+      &quot;category&quot;: true,
+      &quot;next_action&quot;: true,
+      &quot;customer_message&quot;: true
+    }
+  }
+}
+</pre></div>
+<div class="nb-markdown"><h3>원문·사용량·진단 함께 보기</h3>
+<p>모두 성공했다면 이번 표본에서 파싱 실패를 관찰하지 못했다고 기록합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 각 조건의 raw 응답을 생략하지 않고 단어 표시와 사용량 옆에 출력합니다.
+for name, result in results.items():
+    print(&quot;\n&quot;, name, diagnostics[name], result[&quot;usage&quot;], result[&quot;latency_s&quot;])
+    print(result[&quot;text&quot;])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">
+ brief {&#x27;parsed&#x27;: True, &#x27;fields&#x27;: {&#x27;category&#x27;: False, &#x27;next_action&#x27;: False, &#x27;customer_message&#x27;: False}} {&#x27;input_tokens&#x27;: 98, &#x27;output_tokens&#x27;: 146, &#x27;total_tokens&#x27;: 244, &#x27;input_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;cache_read&#x27;: 0}, &#x27;output_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;reasoning&#x27;: 0}} 1.38
+{
+  &quot;분류&quot;: &quot;상품 파손으로 인한 교환 요청&quot;,
+  &quot;필요한 다음 행동&quot;: [
+    &quot;파손된 텀블러 뚜껑의 사진을 첨부해 주세요.&quot;,
+    &quot;주문번호 A-1042를 확인한 뒤 교환 접수를 진행하겠습니다.&quot;
+  ],
+  &quot;고객에게 보낼 한 문장&quot;: &quot;어제 받으신 텀블러 뚜껑 파손으로 불편을 드려 죄송합니다. 주문번호 A-1042의 교환 접수를 위해 파손 사진을 보내주시면 바로 새 상품 교환을 도와드리겠습니다.&quot;
+}
+
+ fields {&#x27;parsed&#x27;: True, &#x27;fields&#x27;: {&#x27;category&#x27;: True, &#x27;next_action&#x27;: True, &#x27;customer_message&#x27;: True}} {&#x27;input_tokens&#x27;: 110, &#x27;output_tokens&#x27;: 89, &#x27;total_tokens&#x27;: 199, &#x27;input_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;cache_read&#x27;: 0}, &#x27;output_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;reasoning&#x27;: 0}} 1.199
+{&quot;category&quot;:&quot;교환/파손&quot;,&quot;next_action&quot;:&quot;고객에게 파손된 뚜껑의 사진 제출을 요청하고, 주문번호 A-1042로 교환 접수를 진행한다.&quot;,&quot;customer_message&quot;:&quot;주문번호 A-1042 확인했습니다. 파손된 텀블러 뚜껑의 사진을 보내주시면 교환 접수를 도와드리겠습니다.&quot;}
+
+ schema {&#x27;parsed&#x27;: True, &#x27;fields&#x27;: {&#x27;category&#x27;: True, &#x27;next_action&#x27;: True, &#x27;customer_message&#x27;: True}} {&#x27;input_tokens&#x27;: 137, &#x27;output_tokens&#x27;: 106, &#x27;total_tokens&#x27;: 243, &#x27;input_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;cache_read&#x27;: 0}, &#x27;output_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;reasoning&#x27;: 0}} 1.142
+{&quot;category&quot;:&quot;교환&quot;,&quot;next_action&quot;:&quot;파손된 뚜껑의 사진과 주문번호 A-1042를 함께 보내주시면 교환 접수를 진행하겠습니다.&quot;,&quot;customer_message&quot;:&quot;어제 받으신 텀블러 뚜껑 파손 건으로 불편을 드려 죄송합니다. 새 상품으로 교환을 원하시면 파손 사진과 주문번호 A-1042를 보내주시면 바로 접수 도와드리겠습니다.&quot;}
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 세 조건이 모두 파싱되었는지 먼저 확인한 뒤, <code>brief</code>의 실제 키와 자료형을 읽습니다. 파싱 성공과 요구 필드 충족이 다른 결과임을 출력에서 찾습니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>이번 실행에서는 <code>brief</code>, <code>fields</code>, <code>schema</code> 세 응답 모두 <code>json.loads()</code>로 파싱되었습니다. 따라서 이 세 표본에서는 JSON 구문 오류를 관찰하지 못했습니다. 그러나 <code>brief</code> 응답은 ‘분류’, ‘필요한 다음 행동’, ‘고객에게 보낼 한 문장’이라는 한국어 키를 사용했습니다. 프로그램이 요구한 <code>category</code>, <code>next_action</code>, <code>customer_message</code>는 모두 없었습니다. 또한 ‘필요한 다음 행동’ 값은 문자열이 아니라 두 항목의 목록이었습니다.</p><p><code>fields</code>와 <code>schema</code> 응답은 요구한 세 영문 필드를 모두 포함했습니다. <code>schema</code> 응답의 <code>category</code>는 허용값 중 하나인 ‘교환’이었고 세 값도 문자열로 보였습니다. 입력 토큰은 지시가 구체해지면서 98, 110, 137토큰으로 늘었습니다. 전체 토큰은 각각 244, 199, 243토큰이어서 입력이 길어진 순서와 같지 않았습니다. 출력 길이도 함께 달라졌기 때문입니다.</p><p>세 번의 성공은 자연어 스키마가 항상 지켜진다는 증거가 아닙니다. 호출은 조건마다 한 번뿐이며 자동 진단 코드도 필드의 존재까지만 검사합니다. 허용값, 자료형, 추가 필드, 빈 문자열, 업무 내용의 정확성을 강제하려면 명시적인 스키마 검증이 필요합니다. 구조가 맞아도 파손 사진이 필요한 규정을 잘못 설명할 수 있으므로 내용 평가는 별도로 수행합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>응답을 정규식으로 잘라 JSON처럼 보이는 부분만 파싱하면 앞뒤의 오류나 지시 위반이 사라질 수 있습니다. 진단 단계에서는 원문 전체를 보존합니다.</li><li>필드가 있다는 사실만 검사하면 값의 자료형과 허용 범위를 놓칩니다. 운영 경로에서는 Pydantic 스키마로 필드 설명과 제약을 선언합니다.</li><li>파싱 실패 원문에 고객 개인정보가 포함될 수 있습니다. 로그 저장 범위와 마스킹 규칙을 먼저 정합니다.</li><li>모델별 구조화 출력 지원 방식이 다를 수 있습니다. LangChain 공통 인터페이스를 사용해도 제공자 문서와 고정 환경에서 실제 지원 범위를 확인합니다.</li><li>재시도로 우연히 성공한 결과만 남기지 않습니다. 첫 실패 원문과 재시도 횟수, 추가 비용을 함께 기록해야 원인을 진단할 수 있습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>JSON 파싱 성공은 문법을 읽었다는 뜻이며 필요한 필드와 자료형을 보장하지 않습니다.</li><li>출력 지시에 필드와 허용값을 적으면 이번 표본에서는 구조가 더 구체적으로 나타났습니다.</li><li>프로그램에서 사용할 값은 명시적인 스키마와 내용 평가로 다시 확인해야 합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 프롬프트 문구와 변경 이유를 버전별 아티팩트로 저장하고, 동일한 평가 조건으로 세 버전을 비교합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제 1</summary><p class="quiz-q"><code>brief</code> 응답은 파싱에 성공했는데 왜 프로그램의 요구를 충족하지 못했나요?</p><p class="quiz-a"><b>해설</b> — JSON 문법은 맞았지만 프로그램이 찾는 세 영문 필드가 없었고 다음 행동의 자료형도 목록이었습니다.</p></details><details class="quiz"><summary>문제 2</summary><p class="quiz-q">필드 존재 검사만으로 <code>category</code>가 허용값인지 확인할 수 있나요?</p><p class="quiz-a"><b>해설</b> — 확인할 수 없습니다. 필드가 존재하는지와 값이 ‘배송’, ‘교환’, ‘환불’ 중 하나인지는 별도의 검사입니다.</p></details><details class="quiz"><summary>문제 3</summary><p class="quiz-q">세 응답이 모두 파싱된 결과를 다른 질문에도 일반화하면 안 되는 이유는 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 각 조건을 한 번만 호출했고 입력과 생성 결과가 바뀌면 코드 울타리, 부가 설명, 잘못된 자료형이 나타날 수 있기 때문입니다.</p></details><details class="quiz"><summary>문제 4</summary><p class="quiz-q">구조 검증을 통과한 응답에도 내용 평가가 필요한 이유는 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 필드와 자료형이 맞아도 분류가 틀리거나 업무 규정에 없는 안내를 생성할 수 있기 때문입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.langchain.com/oss/python/langchain/models">LangChain Models — structured output</a> · 확인 2026-09-09 · LangChain 1.4.0, langchain-core 1.6.2 환경에서 관련 API 확인</li><li><a href="https://docs.langchain.com/oss/python/langchain/structured-output">LangChain Structured output</a> · 확인 2026-09-09 · 에이전트 API는 Ch 20 이후에 다룸</li><li><a href="https://docs.python.org/3.12/library/json.html">Python 3.12 <code>json</code> 문서</a> · 확인 2026-09-09</li><li><a href="https://github.com/langchain-ai/langchain/blob/master/LICENSE">LangChain LICENSE</a> · MIT · 확인 2026-09-09 · 예제는 수업 도메인과 변수명으로 새로 작성</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="06-Self-Consistency와-표본-합의.html">← Self Consistency와 표본 합의</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="08-프롬프트-버전과-AB-비교.html">프롬프트 버전과 AB 비교 →</a></span></div></div></body></html>

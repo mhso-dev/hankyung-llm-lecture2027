@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  req["요청 본문<br>질문 반납 기한을 알려 주세요<br>thread_id sse-1"]:::tool
+  runs["처리 함수 chat_stream이<br>astream 모드 custom을 부름"]:::tool
+  prog["진행 값 여섯<br>칸 token 하나씩"]:::measure
+  tok["진행 값마다 yield<br>사건 이름 token<br>사건 번호 sse-1:0에서 sse-1:5"]:::tool
+  fin["끝에 yield<br>사건 이름 done 하나<br>사건 번호 없음"]:::tool
+  lib["라이브러리가 사건마다<br>줄 event data id로 적음"]
+  out["응답 본문 SSE 사건 일곱<br>text/event-stream"]:::measure
+  req --> runs --> prog --> tok --> fin --> lib --> out

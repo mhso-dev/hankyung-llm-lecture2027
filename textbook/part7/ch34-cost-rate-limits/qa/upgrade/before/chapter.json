@@ -1,0 +1,40 @@
+{
+  "part": 7,
+  "part_title": "Part 7 · 서비스화와 운영",
+  "chapter": "ch34-cost-rate-limits",
+  "title": "비용 · Rate Limit 엔지니어링",
+  "hours": "총 8h · 강의 3h · 실습 5h",
+  "objectives": [
+    "캐시 읽기와 일반 입력 토큰을 분리해 비용을 계산할 수 있습니다.",
+    "Batch 입력과 모델 라우팅으로 품질·비용 조건을 비교할 수 있습니다.",
+    "백오프·큐·동시성 제한과 대화당 비용 p95 예산 가드를 구현할 수 있습니다."
+  ],
+  "lab_path": "labs/part7/ch34-cost-rate-limits",
+  "sections": [
+    {
+      "slug": "01-프롬프트-캐시-계측",
+      "title": "프롬프트 캐시 계측",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-Batch-API",
+      "title": "Batch API",
+      "format": "paired"
+    },
+    {
+      "slug": "03-모델-라우팅",
+      "title": "모델 라우팅",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-백오프-큐-동시성",
+      "title": "백오프 큐 동시성",
+      "format": "paired"
+    },
+    {
+      "slug": "05-예산-가드와-p95",
+      "title": "예산 가드와 p95",
+      "format": "experiment"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 목록 위치를 그대로 적음"]
+    direction LR
+    b1["고른 목록 위치 1<br>두 번째 쪽"]:::tool
+    b2["page 칸에 1"]:::flow
+    b3["출처 표시 E01 p.1<br>본문은 905자<br>1쪽 본문은 45자"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 위치에 1을 더해 적음"]
+    direction LR
+    a1["고른 목록 위치 1<br>두 번째 쪽"]:::tool
+    a2["page 칸에 2<br>1 더하기 1"]:::flow
+    a3["출처 표시 E01 p.2<br>본문 905자와<br>같은 쪽"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  note["두 기록 모두<br>오류를 내지 않음"]
+  BEFORE ~~~ AFTER
+  AFTER ~~~ note

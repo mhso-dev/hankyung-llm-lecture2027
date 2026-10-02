@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph left["도구 단계 둘을 더한 환불 절차"]
+    direction TB
+    a1["도구가 한 단계<br>셋에서 다섯으로"]:::tool
+    a2["모델이 고른 단계 없음<br>워크플로우 그대로"]:::measure
+    a1 --> a2
+  end
+  subgraph right["형식 검사 한 줄만 바꾼 요약 절차"]
+    direction TB
+    b1["고른 쪽 한 줄<br>코드에서 모델로"]:::tool
+    b2["모델이 고른 단계 하나<br>에이전트 후보"]:::measure
+    b1 --> b2
+  end
+  same["가르는 함수는<br>칸 고른 쪽만 셉니다"]
+  left ~~~ same
+  right ~~~ same

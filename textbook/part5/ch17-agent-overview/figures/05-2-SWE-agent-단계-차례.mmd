@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  a["단계 1~5<br>파일 목록 · 설치<br>결함을 다시 만드는 글 쓰기"]:::tool
+  b["단계 6 · 그 글 실행<br>observed 344"]:::measure
+  c["단계 7~9<br>고칠 자리 찾기"]:::tool
+  d["단계 10<br>들여쓰기 없이 고쳐 쓰기<br>failure"]:::measure
+  e["단계 11<br>들여쓰기를 넣어<br>다시 고쳐 쓰기"]:::tool
+  f["단계 12 · 다시 실행<br>observed 345"]:::measure
+  g["단계 13 · 14<br>글을 지우고<br>고친 내용 내기"]:::tool
+  note["자료에 적힌 코드의 경계<br>문법 검사기가<br>고쳐 쓰기를 막음<br>submit 도구가<br>끝을 표시"]
+  a --> b
+  b --> c
+  c --> d
+  d --> e
+  e --> f
+  f --> g
+  d ~~~ note

@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  cm["두 방식 같음<br>charge 안에서 끊김<br>다음 노드 charge<br>체크포인트 셋<br>끊기 전 결제 기록 키 한 줄"]
+  subgraph bf["Before · naive"]
+    direction TB
+    b1["다시 실행한 charge<br>검사 없이 한 줄 더"]:::flow
+    b2["같은 키 두 줄<br>되풀이 다섯 번 모두 두 줄"]:::fail
+    b1 --> b2
+  end
+  subgraph af["After · idempotent"]
+    direction TB
+    a1["다시 실행한 charge<br>키를 찾아 건너뜀"]:::flow
+    a2["키 한 줄 · 칸 notes에 건너뜀<br>되풀이 다섯 번 모두 한 줄"]:::measure
+    a1 --> a2
+  end
+  cm --> bf
+  cm --> af

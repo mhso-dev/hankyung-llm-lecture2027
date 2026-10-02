@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  base["기준 목록<br>휴관 기록 E01 p.2<br>추정 136"]:::tool
+  conf["혼란 목록<br>필요 없는 기록<br>3개 더함 · 추정 235"]:::tool
+  clash["충돌 목록<br>상담 메모 더함<br>추정 170"]:::tool
+  poison["오염 목록 · Before<br>상담 메모만<br>추정 124"]:::tool
+  dist["산만<br>아주 긴 컨텍스트<br>실행하지 않음"]
+  base --> conf
+  base --> clash
+  base --> poison
+  base -.-> dist

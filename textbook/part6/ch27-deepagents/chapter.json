@@ -1,0 +1,61 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 개발",
+  "chapter": "ch27-deepagents",
+  "title": "DeepAgents — Harness 계층",
+  "hours": "총 24h · 강의 8h · 실습 16h",
+  "objectives": [
+    "함수 create_deep_agent가 미리 붙이는 기본 미들웨어 다섯과 도구 아홉을 조립 결과로 확인하고, 인자를 줘야 붙는 선택 기능과 가를 수 있습니다.",
+    "할 일 목록·파일 도구와 백엔드·긴 도구 결과 옮겨 두기·서브에이전트 위임을 실제 모델로 실행하되, 호출 한도를 두 곳에 주고 요청 수를 셈으로 설명할 수 있습니다.",
+    "주어진 자료로 답하게 한 조사에서 출처를 코드로 확인하고, 권한 규칙과 사람 승인을 붙인 에이전트의 운영 한계를 말할 수 있습니다.",
+    "실습에서 파일 도구와 사람 승인을 한 에이전트에 모으고, 승인 설정 하나를 바꾼 두 실행을 멈춘 자리와 요청 수로 견줄 수 있습니다."
+  ],
+  "lab_path": "labs/part6/ch27-deepagents",
+  "sections": [
+    {
+      "slug": "01-하네스와-일곱-기능",
+      "title": "하네스와 일곱 기능",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-create-deep-agent와-도구",
+      "title": "create deep agent와 도구",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-플래닝과-시스템-프롬프트",
+      "title": "플래닝과 시스템 프롬프트",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-파일시스템과-중간-결과",
+      "title": "파일시스템과 중간 결과",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-컨텍스트-관리와-오프로딩",
+      "title": "컨텍스트 관리와 오프로딩",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-서브에이전트-위임",
+      "title": "서브에이전트 위임",
+      "format": "experiment"
+    },
+    {
+      "slug": "07-출처-검증형-deep-research",
+      "title": "출처 검증형 deep research",
+      "format": "experiment"
+    },
+    {
+      "slug": "08-통합-실행과-운영-한계",
+      "title": "통합 실행과 운영 한계",
+      "format": "experiment"
+    },
+    {
+      "slug": "09-DeepAgents-실습",
+      "title": "DeepAgents 실습: 메모 파일 쓰기에 사람 승인을 켜고 끄기",
+      "format": "experiment"
+    }
+  ]
+}

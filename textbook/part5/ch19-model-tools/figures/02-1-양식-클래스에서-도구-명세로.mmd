@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  subgraph query["양식 클래스 OrderQuery"]
+    q1["상태 칸 status<br>Literal · 세 글 가운데 하나"]:::flow
+    q2["최대 개수 칸 limit<br>Field · 1 이상 10 이하"]:::flow
+  end
+  deco["@tool<br>args_schema=OrderQuery<br>도구 search_orders"]
+  t1["입력 형식<br>양식 클래스의 칸과<br>같은가 True"]:::measure
+  t2["명세의 status 칸<br>enum 세 글<br>paid · pending · cancelled"]:::measure
+  t3["명세의 limit 칸<br>minimum 1 · maximum 10"]:::measure
+  q1 --> deco
+  q2 --> deco
+  deco --> t1
+  deco --> t2
+  deco --> t3

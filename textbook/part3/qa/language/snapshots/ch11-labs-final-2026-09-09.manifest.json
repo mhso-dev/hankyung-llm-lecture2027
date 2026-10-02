@@ -1,0 +1,51 @@
+{
+  "snapshot": "ch11-labs-final-2026-09-09.txt",
+  "sha256": "eeb4f2506cceb1feb79cc9a02471410730e7b8e9982c8fdd68f5bc086e235862",
+  "files": 7,
+  "prose_characters": 3478,
+  "items": [
+    {
+      "path": "labs/part3/ch11-evaluation/README.md",
+      "source_sha256": "793e22a550c53ee3e33154ff9c1678b2a3a0994e676d5fc2d7865ed08a0cdb9e",
+      "prose_characters": 522,
+      "kind": "readme"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/01-질의셋과-정답-문서-ID.ipynb",
+      "source_sha256": "37adc2e2e82ea854fb4d27df041c0e46b60c7142dd14dde0e42be9571967c205",
+      "prose_characters": 486,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/02-Recall-at-50.ipynb",
+      "source_sha256": "a9d637f89ca4d37298b30c78f6deaada1deb7533d527289386c944260dc54a70",
+      "prose_characters": 575,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/03-Precision-at-5.ipynb",
+      "source_sha256": "7968389f14cfbae65b1d12153d88e278b55a6c84fe870cf653eb91781d8a8704",
+      "prose_characters": 479,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/04-nDCG-at-5.ipynb",
+      "source_sha256": "2f48695ec1bd6295386e5710ffb1495b9ef4fe3e8ad0d134aff1332d783894f7",
+      "prose_characters": 467,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/05-조건별-평가와-오류-분류.ipynb",
+      "source_sha256": "a4c6dee718b1ee573a823c36305d02ab5f2d712e8fc3a9d15d0b9f7f32c1154c",
+      "prose_characters": 475,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/06-실험-로그와-자동-실행.ipynb",
+      "source_sha256": "35639aa99431f691b4b5ca16eed7852f0d28095ca6a024d5de38f0c4023fe6f6",
+      "prose_characters": 474,
+      "kind": "notebook_markdown"
+    }
+  ],
+  "note": "Read-only extraction. Notebook code cells, outputs, metadata, and fenced README code blocks are excluded."
+}

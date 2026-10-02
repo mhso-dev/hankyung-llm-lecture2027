@@ -1,0 +1,24 @@
+flowchart TB
+  %% classes
+  subgraph one["기준선"]
+    direction TB
+    o1["질문마다 서비스 요청 한 번"]:::measure
+    o2["자리 일곱과 하나와 하나"]:::measure
+    o1 ~~~ o2
+  end
+  subgraph two["변형 질문"]
+    direction TB
+    t1["질문마다 서비스 요청 네 번"]:::measure
+    t2["네 번 실행에서 갈린 칸 하나"]:::measure
+    t1 ~~~ t2
+  end
+  subgraph hyde["가상 문서"]
+    direction TB
+    h1["질문마다 서비스 요청 두 번"]:::measure
+    h2["네 번 실행에서 갈린 칸 둘"]:::measure
+    h1 ~~~ h2
+  end
+  same["세 패턴 모두 같은 문서와<br>같은 질문 벌과<br>같은 정답 문서"]
+  one ~~~ two
+  two ~~~ hyde
+  hyde ~~~ same

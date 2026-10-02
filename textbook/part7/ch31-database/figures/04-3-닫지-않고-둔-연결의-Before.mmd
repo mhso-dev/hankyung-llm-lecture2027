@@ -1,0 +1,8 @@
+flowchart TB
+  %% classes
+  leak["Before 셀<br>conn = await<br>engine.connect()<br>조회 뒤 닫지 않음"]:::flow
+  req["다음 요청 ask_database<br>async with로 빌리려 함"]:::flow
+  err["받은 오류 TimeoutError<br>timeout 0.20"]:::measure
+  res["다음 요청은 연결을 받지 못함<br>빌려 간 연결 하나<br>쉬고 있는 연결 없음"]:::fail
+  still["닫지 않은 conn으로 조회<br>받은 이름 ch31_lab<br>Current Checked out<br>connections: 1"]:::measure
+  leak --> req --> err --> res --> still

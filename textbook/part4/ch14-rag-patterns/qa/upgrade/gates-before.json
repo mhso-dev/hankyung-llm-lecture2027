@@ -1,0 +1,787 @@
+{
+  "chapter": "ch14-rag-patterns",
+  "label": "before",
+  "totals": {
+    "G1": 97,
+    "G2": 89,
+    "G3": 9,
+    "G4": 0,
+    "G5": 81,
+    "G6": 198,
+    "G7": 27
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-대화-히스토리와-질문-재작성",
+      "code_cells": 8,
+      "sentences": 106,
+      "counts": {
+        "G1": 8,
+        "G2": 7,
+        "G3": 1,
+        "G4": 0,
+        "G5": 9,
+        "G6": 21,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:conditional_expression",
+          "cell7:generator_expression",
+          "cell9:list_comprehension",
+          "cell11:long_function",
+          "cell11:list_comprehension",
+          "cell11:list_comprehension",
+          "cell11:multiple_defs_in_cell",
+          "cell17:generator_expression"
+        ],
+        "G2": [
+          "cell7:one_letter_name:p",
+          "cell9:one_letter_name:d",
+          "cell11:over_15_lines",
+          "cell11:one_letter_arg:k",
+          "cell11:one_letter_name:q",
+          "cell11:one_letter_name:d",
+          "cell17:one_letter_name:d"
+        ],
+        "G3": [
+          "cell3:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_quotes_no_output",
+          "cell17:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:대화 히스토리 질문 재작성은 대화 기록과 마지막 발화를 입력으로 받아, 마지막 발화만 읽어도 뜻이 통하는 검색 질문을 만드는 처리입니다",
+          "long:쇼핑 상담에서 ‘그 제품은 반품돼?’를 ‘무선 키보드 K2는 개봉 후 반품할 수 있나요?’로 바꾸는 데도 같은 원리를 적용할 수 있습니다",
+          "long:재작성 결과에 없던 날짜나 상품명을 보태면 검색은 선명해져도 사용자의 뜻이 달라질 수 있으므로 원문과 재작성문을 함께 기록합니다",
+          "long:LangChain 모델 문서 — docs.langchain.com/oss/python/langchain/models · 확인 2026-09-10 · `init_chat_model`, `invoke`, `AIMessage.text` 사용법.",
+          "long:OpenAI 임베딩 문서 — platform.openai.com/docs/guides/embeddings · 확인 2026-09-10 · 실행 모델 `text-embedding-3-small`, 256차원.",
+          "long:OpenAI GPT-4.1 mini 모델 문서 — developers.openai.com/api/docs/models/gpt-4.1-mini · 확인 2026-09-10 · 입력 100만 토큰당 0.40달러, 캐시 입력 0.10달러, 출력 1.60달러를 추정 비용 계산에 사용했습니다",
+          "long:**다른 상황에 적용.** 쇼핑 상담에서 ‘그 제품은 반품돼?’를 ‘무선 키보드 K2는 개봉 후 반품할 수 있나요?’로 바꾸는 데도 같은 원리를 적용할 수 있습니다",
+          "long:재작성 결과에 없던 날짜나 상품명을 보태면 검색은 선명해져도 사용자의 뜻이 달라질 수 있으므로 원문과 재작성문을 함께 기록합니다",
+          "english_start:Ch9의 기본 RAG는 검색 한 번과 생성 한 번으로 구성되었습니다",
+          "english_start:`init_chat_model`로 모델을 만들고 `invoke`의 반환값",
+          "english_start:LIB-004가 2위에서 1위로 올라 후속 질문의 대상을 복원한 효과가 ",
+          "english_start:Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`embed_documents(texts)`는 여러 문장을 입력받아 문장",
+          "english_start:`init_chat_model(...)`은 채팅 모델 객체를 만들며, 이",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`embed_query(text)`는 검색 질문 한 개를 벡터 하나로 반",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "dense_paragraph:**이 셀의 코드 읽기.** `OpenAIEmbeddings(...)`는 문자열을 수치 벡터로 변환할 임베딩"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-Multi-Query",
+      "code_cells": 8,
+      "sentences": 110,
+      "counts": {
+        "G1": 9,
+        "G2": 9,
+        "G3": 1,
+        "G4": 0,
+        "G5": 9,
+        "G6": 25,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:conditional_expression",
+          "cell7:generator_expression",
+          "cell9:list_comprehension",
+          "cell11:long_function",
+          "cell11:list_comprehension",
+          "cell11:list_comprehension",
+          "cell11:multiple_defs_in_cell",
+          "cell15:list_comprehension",
+          "cell17:lambda"
+        ],
+        "G2": [
+          "cell7:one_letter_name:p",
+          "cell9:one_letter_name:d",
+          "cell11:over_15_lines",
+          "cell11:one_letter_arg:k",
+          "cell11:one_letter_name:q",
+          "cell11:one_letter_name:d",
+          "cell15:one_letter_name:x",
+          "cell17:one_letter_name:q",
+          "cell17:one_letter_arg:x"
+        ],
+        "G3": [
+          "cell3:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_quotes_no_output",
+          "cell17:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 절을 마치면 Multi-Query, 검색 관점, 후보 병합, 중복 제거의 역할을 코드의 입력·처리·출력으로 구분할 수 있습니다",
+          "long:Multi-Query Multi-Query는 원문 질문을 보존한 채 검색용 변형 질문을 몇 개 만들고, 각 결과의 문서 ID를 기준으로 중복을 제거해 합치는 패턴입니다",
+          "long:LangChain 모델 문서 — docs.langchain.com/oss/python/langchain/models · 확인 2026-09-10 · `init_chat_model`, `invoke`, `AIMessage.text` 사용법.",
+          "long:OpenAI 임베딩 문서 — platform.openai.com/docs/guides/embeddings · 확인 2026-09-10 · 실행 모델 `text-embedding-3-small`, 256차원.",
+          "long:OpenAI GPT-4.1 mini 모델 문서 — developers.openai.com/api/docs/models/gpt-4.1-mini · 확인 2026-09-10 · 입력 100만 토큰당 0.40달러, 캐시 입력 0.10달러, 출력 1.60달러를 추정 비용 계산에 사용했습니다",
+          "long:**호출 표기와 실행 시점.** Multi-Query는 원 질문에서 의미가 비슷한 검색 질문 여러 개를 만들고 각 질문의 후보를 합칩니다",
+          "long:**다른 상황에 적용.** ‘육아휴직 급여’라는 질문을 지급 조건, 신청 절차, 기간의 관점으로 바꾸면 서로 다른 문서에 흩어진 근거를 모을 수 있습니다",
+          "english_start:Ch9의 기본 RAG는 검색 한 번과 생성 한 번으로 구성되었습니다",
+          "english_start:Multi-Query는 원 질문에서 의미가 비슷한 검색 질문 여러 개를 ",
+          "english_start:RRF는 이 절에서 구현하지 않으며 09절의 패턴 비교에서 사용합니다",
+          "english_start:Multi-Query는 표현 차이를 넓히지만 하나의 질문에 여러 사실이 ",
+          "english_start:`init_chat_model`로 모델을 만들고 `invoke`의 반환값",
+          "english_start:RRF는 이 절에서 구현하지 않으며 09절의 패턴 비교에서 사용합니다",
+          "english_start:Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`embed_documents(texts)`는 여러 문장을 입력받아 문장",
+          "english_start:`init_chat_model(...)`은 채팅 모델 객체를 만들며, 이",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`embed_query(text)`는 검색 질문 한 개를 벡터 하나로 반",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "dense_paragraph:Multi-Query Multi-Query는 원문 질문을 보존한 채 검색용 변형 질문을 몇 개 만들고, 각 ",
+          "dense_paragraph:**이 셀의 코드 읽기.** `OpenAIEmbeddings(...)`는 문자열을 수치 벡터로 변환할 임베딩"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-질의-분해",
+      "code_cells": 8,
+      "sentences": 109,
+      "counts": {
+        "G1": 9,
+        "G2": 9,
+        "G3": 1,
+        "G4": 0,
+        "G5": 9,
+        "G6": 19,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:conditional_expression",
+          "cell7:generator_expression",
+          "cell9:list_comprehension",
+          "cell11:long_function",
+          "cell11:list_comprehension",
+          "cell11:list_comprehension",
+          "cell11:multiple_defs_in_cell",
+          "cell15:list_comprehension",
+          "cell17:set_comprehension"
+        ],
+        "G2": [
+          "cell7:one_letter_name:p",
+          "cell9:one_letter_name:d",
+          "cell11:over_15_lines",
+          "cell11:one_letter_arg:k",
+          "cell11:one_letter_name:q",
+          "cell11:one_letter_name:d",
+          "cell13:nested_call_2plus",
+          "cell15:one_letter_name:x",
+          "cell17:one_letter_name:d"
+        ],
+        "G3": [
+          "cell3:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_quotes_no_output",
+          "cell17:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:LangChain 모델 문서 — docs.langchain.com/oss/python/langchain/models · 확인 2026-09-10 · `init_chat_model`, `invoke`, `AIMessage.text` 사용법.",
+          "long:OpenAI 임베딩 문서 — platform.openai.com/docs/guides/embeddings · 확인 2026-09-10 · 실행 모델 `text-embedding-3-small`, 256차원.",
+          "long:OpenAI GPT-4.1 mini 모델 문서 — developers.openai.com/api/docs/models/gpt-4.1-mini · 확인 2026-09-10 · 입력 100만 토큰당 0.40달러, 캐시 입력 0.10달러, 출력 1.60달러를 추정 비용 계산에 사용했습니다",
+          "long:**다른 상황에 적용.** ‘법인카드 발급 조건과 분실 시 절차’를 발급 조건 질문과 분실 처리 질문으로 나누면 서로 다른 규정 절을 찾을 수 있습니다",
+          "long:**비교와 경계.** Multi-Query는 같은 정보에 도달하는 표현을 여러 개 만들고, 질의 분해는 서로 다른 정보 요구를 나눕니다",
+          "english_start:Ch9의 기본 RAG는 검색 한 번과 생성 한 번으로 구성되었습니다",
+          "english_start:Multi-Query는 같은 정보에 도달하는 표현을 여러 개 만들고, 질",
+          "english_start:`init_chat_model`로 모델을 만들고 `invoke`의 반환값",
+          "english_start:Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`embed_documents(texts)`는 여러 문장을 입력받아 문장",
+          "english_start:`init_chat_model(...)`은 채팅 모델 객체를 만들며, 이",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`embed_query(text)`는 검색 질문 한 개를 벡터 하나로 반",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "dense_paragraph:**이 셀의 코드 읽기.** `OpenAIEmbeddings(...)`는 문자열을 수치 벡터로 변환할 임베딩"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-Step-back",
+      "code_cells": 8,
+      "sentences": 108,
+      "counts": {
+        "G1": 9,
+        "G2": 9,
+        "G3": 1,
+        "G4": 0,
+        "G5": 9,
+        "G6": 22,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:conditional_expression",
+          "cell7:generator_expression",
+          "cell9:list_comprehension",
+          "cell11:long_function",
+          "cell11:list_comprehension",
+          "cell11:list_comprehension",
+          "cell11:multiple_defs_in_cell",
+          "cell17:dict_comprehension",
+          "cell17:generator_expression"
+        ],
+        "G2": [
+          "cell7:one_letter_name:p",
+          "cell9:one_letter_name:d",
+          "cell11:over_15_lines",
+          "cell11:one_letter_arg:k",
+          "cell11:one_letter_name:q",
+          "cell11:one_letter_name:d",
+          "cell17:one_letter_name:d",
+          "cell17:one_letter_name:k",
+          "cell17:one_letter_name:v"
+        ],
+        "G3": [
+          "cell3:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_quotes_no_output",
+          "cell17:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Step-back Step-back prompting은 세부 질문에서 바로 답을 만들기 전에 더 일반적인 원리나 규칙을 묻는 질문을 생성하는 방법입니다",
+          "long:‘2026년 추석 연휴 고객센터 운영 시간’에서 ‘연휴 기간 고객센터 운영 원칙’을 만들면 특정 공지와 공통 운영 규정을 함께 찾을 수 있습니다",
+          "long:LangChain 모델 문서 — docs.langchain.com/oss/python/langchain/models · 확인 2026-09-10 · `init_chat_model`, `invoke`, `AIMessage.text` 사용법.",
+          "long:OpenAI 임베딩 문서 — platform.openai.com/docs/guides/embeddings · 확인 2026-09-10 · 실행 모델 `text-embedding-3-small`, 256차원.",
+          "long:OpenAI GPT-4.1 mini 모델 문서 — developers.openai.com/api/docs/models/gpt-4.1-mini · 확인 2026-09-10 · 입력 100만 토큰당 0.40달러, 캐시 입력 0.10달러, 출력 1.60달러를 추정 비용 계산에 사용했습니다",
+          "long:**호출 표기와 실행 시점.** Step-back은 세부 질문에서 한 단계 일반화한 질문을 만들고 원 질문 검색과 넓은 질문 검색을 함께 사용합니다",
+          "long:**다른 상황에 적용.** ‘2026년 추석 연휴 고객센터 운영 시간’에서 ‘연휴 기간 고객센터 운영 원칙’을 만들면 특정 공지와 공통 운영 규정을 함께 찾을 수 있습니다",
+          "english_start:Ch9의 기본 RAG는 검색 한 번과 생성 한 번으로 구성되었습니다",
+          "english_start:Step-back은 세부 질문에서 한 단계 일반화한 질문을 만들고 원 질",
+          "english_start:Step-back은 질문 범위를 넓히지만 상위 질문이 원 질문을 대체하지",
+          "english_start:`init_chat_model`로 모델을 만들고 `invoke`의 반환값",
+          "english_start:Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`embed_documents(texts)`는 여러 문장을 입력받아 문장",
+          "english_start:`init_chat_model(...)`은 채팅 모델 객체를 만들며, 이",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`embed_query(text)`는 검색 질문 한 개를 벡터 하나로 반",
+          "english_start:FAC-003의 순위와 유사도를 기준선으로 기록합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "dense_paragraph:**이 셀의 코드 읽기.** `OpenAIEmbeddings(...)`는 문자열을 수치 벡터로 변환할 임베딩"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-HyDE",
+      "code_cells": 8,
+      "sentences": 109,
+      "counts": {
+        "G1": 9,
+        "G2": 8,
+        "G3": 1,
+        "G4": 0,
+        "G5": 9,
+        "G6": 23,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:conditional_expression",
+          "cell7:generator_expression",
+          "cell9:list_comprehension",
+          "cell11:long_function",
+          "cell11:list_comprehension",
+          "cell11:list_comprehension",
+          "cell11:multiple_defs_in_cell",
+          "cell17:generator_expression",
+          "cell17:generator_expression"
+        ],
+        "G2": [
+          "cell7:one_letter_name:p",
+          "cell9:one_letter_name:d",
+          "cell11:over_15_lines",
+          "cell11:one_letter_arg:k",
+          "cell11:one_letter_name:q",
+          "cell11:one_letter_name:d",
+          "cell17:one_letter_name:d",
+          "cell17:one_letter_name:d"
+        ],
+        "G3": [
+          "cell3:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_quotes_no_output",
+          "cell17:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:HyDE HyDE(Hypothetical Document Embeddings)는 생성 모델이 만든 가상 문서의 임베딩으로 실제 문서를 검색합니다",
+          "long:전문 용어가 적은 사용자 질문에서 실제 매뉴얼과 비슷한 문체의 가상 안내문을 만들면 관련 문서와의 벡터 거리가 달라질 수 있습니다",
+          "long:확인할 점 — 생성된 가상 문서, 기준선과 HyDE의 상위 세 문서, 정답 ACC-003의 순위가 1위에서 3위로 바뀐 결과를 확인합니다",
+          "long:HyDE에서는 FAC-004가 0.487로 1위, ACC-001이 0.456으로 2위, 정답 ACC-003은 0.423으로 3위가 되었습니다",
+          "long:Precise Zero-Shot Dense Retrieval without Relevance Labels — · HyDE 원전 · 확인 2026-09-10.",
+          "long:LangChain 모델 문서 — docs.langchain.com/oss/python/langchain/models · 확인 2026-09-10 · `init_chat_model`, `invoke`, `AIMessage.text` 사용법.",
+          "long:OpenAI 임베딩 문서 — platform.openai.com/docs/guides/embeddings · 확인 2026-09-10 · 실행 모델 `text-embedding-3-small`, 256차원.",
+          "long:OpenAI GPT-4.1 mini 모델 문서 — developers.openai.com/api/docs/models/gpt-4.1-mini · 확인 2026-09-10 · 입력 100만 토큰당 0.40달러, 캐시 입력 0.10달러, 출력 1.60달러를 추정 비용 계산에 사용했습니다",
+          "long:**다른 상황에 적용.** 전문 용어가 적은 사용자 질문에서 실제 매뉴얼과 비슷한 문체의 가상 안내문을 만들면 관련 문서와의 벡터 거리가 달라질 수 있습니다",
+          "english_start:HyDE는 질문에 답할 법한 문서를 먼저 가상으로 만든 뒤 그 문서를 임",
+          "english_start:Ch9의 기본 RAG는 검색 한 번과 생성 한 번으로 구성되었습니다",
+          "english_start:HyDE는 질문에 대한 가상 문서를 먼저 생성하고 그 문장의 임베딩으로 ",
+          "english_start:`init_chat_model`로 모델을 만들고 `invoke`의 반환값",
+          "english_start:Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`embed_documents(texts)`는 여러 문장을 입력받아 문장",
+          "english_start:`init_chat_model(...)`은 채팅 모델 객체를 만들며, 이",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`embed_query(text)`는 검색 질문 한 개를 벡터 하나로 반",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "dense_paragraph:**이 셀의 코드 읽기.** `OpenAIEmbeddings(...)`는 문자열을 수치 벡터로 변환할 임베딩"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "06-CRAG",
+      "code_cells": 8,
+      "sentences": 109,
+      "counts": {
+        "G1": 8,
+        "G2": 6,
+        "G3": 1,
+        "G4": 0,
+        "G5": 9,
+        "G6": 20,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:conditional_expression",
+          "cell7:generator_expression",
+          "cell9:list_comprehension",
+          "cell11:long_function",
+          "cell11:list_comprehension",
+          "cell11:list_comprehension",
+          "cell11:multiple_defs_in_cell",
+          "cell17:conditional_expression"
+        ],
+        "G2": [
+          "cell7:one_letter_name:p",
+          "cell9:one_letter_name:d",
+          "cell11:over_15_lines",
+          "cell11:one_letter_arg:k",
+          "cell11:one_letter_name:q",
+          "cell11:one_letter_name:d"
+        ],
+        "G3": [
+          "cell3:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_quotes_no_output",
+          "cell17:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:검색 품질을 먼저 수치로 확인하고 기준보다 낮을 때 다른 검색 질문으로 한 번 더 시도하면 실패 처리 과정을 코드에서 볼 수 있습니다",
+          "long:상품 검색에서 최고 유사도가 낮으면 모델명과 제조사를 보완해 한 번 더 검색하고, 충분하면 첫 후보를 그대로 사용할 수 있습니다",
+          "long:LangChain 모델 문서 — docs.langchain.com/oss/python/langchain/models · 확인 2026-09-10 · `init_chat_model`, `invoke`, `AIMessage.text` 사용법.",
+          "long:OpenAI 임베딩 문서 — platform.openai.com/docs/guides/embeddings · 확인 2026-09-10 · 실행 모델 `text-embedding-3-small`, 256차원.",
+          "long:OpenAI GPT-4.1 mini 모델 문서 — developers.openai.com/api/docs/models/gpt-4.1-mini · 확인 2026-09-10 · 입력 100만 토큰당 0.40달러, 캐시 입력 0.10달러, 출력 1.60달러를 추정 비용 계산에 사용했습니다",
+          "long:**호출 표기와 실행 시점.** 이 절의 CRAG식 흐름은 첫 검색의 최고 점수를 임계값과 비교하고, 낮을 때만 질문을 한 번 보정해 재검색합니다",
+          "long:**다른 상황에 적용.** 상품 검색에서 최고 유사도가 낮으면 모델명과 제조사를 보완해 한 번 더 검색하고, 충분하면 첫 후보를 그대로 사용할 수 있습니다",
+          "english_start:Ch9의 기본 RAG는 검색 한 번과 생성 한 번으로 구성되었습니다",
+          "english_start:`init_chat_model`로 모델을 만들고 `invoke`의 반환값",
+          "english_start:Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`embed_documents(texts)`는 여러 문장을 입력받아 문장",
+          "english_start:`init_chat_model(...)`은 채팅 모델 객체를 만들며, 이",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`embed_query(text)`는 검색 질문 한 개를 벡터 하나로 반",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "dense_paragraph:CRAG 이 절의 구현은 CRAG 논문 전체가 아니라 CRAG식 단순화입니다. 첫 결과의 최고 코사인 유사도",
+          "dense_paragraph:**이 셀의 코드 읽기.** `OpenAIEmbeddings(...)`는 문자열을 수치 벡터로 변환할 임베딩"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "07-Self-RAG",
+      "code_cells": 8,
+      "sentences": 108,
+      "counts": {
+        "G1": 9,
+        "G2": 7,
+        "G3": 1,
+        "G4": 0,
+        "G5": 9,
+        "G6": 18,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:conditional_expression",
+          "cell7:generator_expression",
+          "cell9:list_comprehension",
+          "cell11:long_function",
+          "cell11:list_comprehension",
+          "cell11:list_comprehension",
+          "cell11:multiple_defs_in_cell",
+          "cell13:generator_expression",
+          "cell15:conditional_expression"
+        ],
+        "G2": [
+          "cell7:one_letter_name:p",
+          "cell9:one_letter_name:d",
+          "cell11:over_15_lines",
+          "cell11:one_letter_arg:k",
+          "cell11:one_letter_name:q",
+          "cell11:one_letter_name:d",
+          "cell13:one_letter_name:d"
+        ],
+        "G3": [
+          "cell3:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_quotes_no_output",
+          "cell17:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Self-RAG 원 논문은 검색 필요성, 관련성, 답의 유용성을 나타내는 reflection token을 학습한 모델을 사용합니다",
+          "long:LangChain 모델 문서 — docs.langchain.com/oss/python/langchain/models · 확인 2026-09-10 · `init_chat_model`, `invoke`, `AIMessage.text` 사용법.",
+          "long:OpenAI 임베딩 문서 — platform.openai.com/docs/guides/embeddings · 확인 2026-09-10 · 실행 모델 `text-embedding-3-small`, 256차원.",
+          "long:OpenAI GPT-4.1 mini 모델 문서 — developers.openai.com/api/docs/models/gpt-4.1-mini · 확인 2026-09-10 · 입력 100만 토큰당 0.40달러, 캐시 입력 0.10달러, 출력 1.60달러를 추정 비용 계산에 사용했습니다",
+          "long:**호출 표기와 실행 시점.** 이 절은 답변 초안을 만든 뒤 근거 문서와 얼마나 맞는지 점수를 요청하고, 기준 미만이면 한 번 수정합니다",
+          "long:**다른 상황에 적용.** 보고서 요약에서 숫자와 날짜가 원문에 있는지 평가하고 근거가 약하면 해당 문장을 삭제해 다시 생성할 수 있습니다",
+          "english_start:Ch9의 기본 RAG는 검색 한 번과 생성 한 번으로 구성되었습니다",
+          "english_start:`init_chat_model`로 모델을 만들고 `invoke`의 반환값",
+          "english_start:Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`embed_documents(texts)`는 여러 문장을 입력받아 문장",
+          "english_start:`init_chat_model(...)`은 채팅 모델 객체를 만들며, 이",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`embed_query(text)`는 검색 질문 한 개를 벡터 하나로 반",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "dense_paragraph:**이 셀의 코드 읽기.** `OpenAIEmbeddings(...)`는 문자열을 수치 벡터로 변환할 임베딩"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "08-RAPTOR-계층-요약",
+      "code_cells": 8,
+      "sentences": 112,
+      "counts": {
+        "G1": 14,
+        "G2": 13,
+        "G3": 1,
+        "G4": 0,
+        "G5": 9,
+        "G6": 22,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:conditional_expression",
+          "cell7:generator_expression",
+          "cell9:list_comprehension",
+          "cell11:long_function",
+          "cell11:list_comprehension",
+          "cell11:list_comprehension",
+          "cell11:multiple_defs_in_cell",
+          "cell13:dict_comprehension",
+          "cell15:list_comprehension",
+          "cell15:list_comprehension",
+          "cell15:generator_expression",
+          "cell17:generator_expression",
+          "cell17:list_comprehension",
+          "cell17:list_comprehension"
+        ],
+        "G2": [
+          "cell7:one_letter_name:p",
+          "cell9:one_letter_name:d",
+          "cell11:over_15_lines",
+          "cell11:one_letter_arg:k",
+          "cell11:one_letter_name:q",
+          "cell11:one_letter_name:d",
+          "cell15:one_letter_name:s",
+          "cell15:one_letter_name:d",
+          "cell17:one_letter_name:q",
+          "cell17:one_letter_name:s",
+          "cell17:one_letter_name:s",
+          "cell17:one_letter_name:d",
+          "cell17:one_letter_name:s"
+        ],
+        "G3": [
+          "cell3:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_quotes_no_output",
+          "cell17:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:사내 위키를 부서별 요약→문서별 원문 계층으로 만들면 넓은 질문은 부서 요약에서, 세부 규정은 해당 부서 문서에서 찾을 수 있습니다",
+          "long:확인할 점 — 세 범주의 요약과 680토큰의 오프라인 비용, facility 오선택, 선택한 요약의 하위 문서 ID를 확인합니다",
+          "long:LangChain 모델 문서 — docs.langchain.com/oss/python/langchain/models · 확인 2026-09-10 · `init_chat_model`, `invoke`, `AIMessage.text` 사용법.",
+          "long:OpenAI 임베딩 문서 — platform.openai.com/docs/guides/embeddings · 확인 2026-09-10 · 실행 모델 `text-embedding-3-small`, 256차원.",
+          "long:OpenAI GPT-4.1 mini 모델 문서 — developers.openai.com/api/docs/models/gpt-4.1-mini · 확인 2026-09-10 · 입력 100만 토큰당 0.40달러, 캐시 입력 0.10달러, 출력 1.60달러를 추정 비용 계산에 사용했습니다",
+          "long:**호출 표기와 실행 시점.** 계층 검색은 원문 청크를 묶어 상위 요약 노드를 만들고, 먼저 요약에서 관련 범주를 찾은 뒤 그 범주의 원문으로 내려갑니다",
+          "long:**다른 상황에 적용.** 사내 위키를 부서별 요약→문서별 원문 계층으로 만들면 넓은 질문은 부서 요약에서, 세부 규정은 해당 부서 문서에서 찾을 수 있습니다",
+          "english_start:Ch9의 기본 RAG는 검색 한 번과 생성 한 번으로 구성되었습니다",
+          "english_start:`init_chat_model`로 모델을 만들고 `invoke`의 반환값",
+          "english_start:Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`embed_documents(texts)`는 여러 문장을 입력받아 문장",
+          "english_start:`init_chat_model(...)`은 채팅 모델 객체를 만들며, 이",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`embed_query(text)`는 검색 질문 한 개를 벡터 하나로 반",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`embed_query(text)`는 검색 질문 한 개를 벡터 하나로 반",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "dense_paragraph:**이 셀의 코드 읽기.** `OpenAIEmbeddings(...)`는 문자열을 수치 벡터로 변환할 임베딩"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "09-패턴-비교와-선택",
+      "code_cells": 9,
+      "sentences": 117,
+      "counts": {
+        "G1": 22,
+        "G2": 21,
+        "G3": 1,
+        "G4": 0,
+        "G5": 9,
+        "G6": 28,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:conditional_expression",
+          "cell7:generator_expression",
+          "cell9:list_comprehension",
+          "cell11:long_function",
+          "cell11:list_comprehension",
+          "cell11:list_comprehension",
+          "cell11:multiple_defs_in_cell",
+          "cell13:list_comprehension",
+          "cell13:generator_expression",
+          "cell13:list_comprehension",
+          "cell13:generator_expression",
+          "cell13:generator_expression",
+          "cell13:generator_expression",
+          "cell13:generator_expression",
+          "cell13:generator_expression",
+          "cell13:list_comprehension",
+          "cell15:list_comprehension",
+          "cell17:list_comprehension",
+          "cell17:generator_expression",
+          "cell17:generator_expression",
+          "cell17:generator_expression",
+          "cell17:generator_expression"
+        ],
+        "G2": [
+          "cell7:one_letter_name:p",
+          "cell9:one_letter_name:d",
+          "cell11:over_15_lines",
+          "cell11:one_letter_arg:k",
+          "cell11:one_letter_name:q",
+          "cell11:one_letter_name:d",
+          "cell13:over_15_lines",
+          "cell13:one_letter_name:q",
+          "cell13:one_letter_name:d",
+          "cell13:one_letter_name:d",
+          "cell13:one_letter_name:x",
+          "cell13:one_letter_name:x",
+          "cell13:one_letter_name:x",
+          "cell13:one_letter_name:x",
+          "cell13:one_letter_name:x",
+          "cell13:one_letter_name:x",
+          "cell17:one_letter_name:r",
+          "cell17:one_letter_name:r",
+          "cell17:one_letter_name:r",
+          "cell17:one_letter_name:r",
+          "cell17:one_letter_name:r"
+        ],
+        "G3": [
+          "cell3:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell15:result_reading_quotes_no_output",
+          "cell17:result_reading_quotes_no_output",
+          "cell19:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:축소 표본 세 건에서 기준선 Recall@3은 0.667, 평균 129토큰, 약 905.4ms, 추정 0.000206달러였습니다",
+          "long:RRF로 후보를 합친 Multi-Query는 Recall@3 0.667, 평균 188토큰, 약 1863.2ms, 추정 0.000379달러였습니다",
+          "long:질문 세 건의 단일 실행으로 패턴의 우열을 정하지 말고, 운영 데이터에서 반복 실행해 분산과 답변 품질을 추가로 측정해야 합니다",
+          "long:같은 질문·정답·문서와 패턴 이름을 입력하면 검색 후보, 답, 순위, 토큰, 지연 시간, 추정 비용이 담긴 실행 행을 출력합니다",
+          "long:LangChain 모델 문서 — docs.langchain.com/oss/python/langchain/models · 확인 2026-09-10 · `init_chat_model`, `invoke`, `AIMessage.text` 사용법.",
+          "long:OpenAI 임베딩 문서 — platform.openai.com/docs/guides/embeddings · 확인 2026-09-10 · 실행 모델 `text-embedding-3-small`, 256차원.",
+          "long:OpenAI GPT-4.1 mini 모델 문서 — developers.openai.com/api/docs/models/gpt-4.1-mini · 확인 2026-09-10 · 입력 100만 토큰당 0.40달러, 캐시 입력 0.10달러, 출력 1.60달러를 추정 비용 계산에 사용했습니다",
+          "long:**다른 상황에 적용.** 새로운 고객지원 데이터에서도 기준선, Multi-Query, HyDE를 같은 실패 질문 묶음에 적용할 수 있습니다",
+          "english_start:Ch9의 기본 RAG는 검색 한 번과 생성 한 번으로 구성되었습니다",
+          "english_start:`init_chat_model`로 모델을 만들고 `invoke`의 반환값",
+          "english_start:RRF로 후보를 합친 Multi-Query는 Recall@3 0.667,",
+          "english_start:HyDE는 Recall@3 1.0, 평균 197.7토큰, 약 1945.0",
+          "english_start:Multi-Query는 비용이 늘었지만 Recall이 개선되지 않았습니다",
+          "english_start:Multi-Query는 기준선과 Recall이 같으면서 토큰·시간·비용이",
+          "english_start:Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`embed_documents(texts)`는 여러 문장을 입력받아 문장",
+          "english_start:`init_chat_model(...)`은 채팅 모델 객체를 만들며, 이",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`embed_query(text)`는 검색 질문 한 개를 벡터 하나로 반",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`sha256(bytes)`는 같은 입력인지 비교할 해시 객체를 만들며 ",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "dense_paragraph:Recall@3 통제 비교는 비교하려는 조건 외의 입력을 같게 유지하는 실험입니다. 이 절은 Ch12 문서 ",
+          "dense_paragraph:**이 셀의 코드 읽기.** `OpenAIEmbeddings(...)`는 문자열을 수치 벡터로 변환할 임베딩"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q["원 질문 하나"]:::tool
+  a["변형 질문<br>같은 것을 묻기"]
+  b["하위 질문<br>다른 것을 묻기"]
+  c["한 단계 넓히기"]:::flow
+  v["넓힌 질문 한 줄"]:::measure
+  r["정답 문서 FAC-004가<br>첫 자리"]:::measure
+  q --> a
+  q --> b
+  q --> c
+  c --> v
+  v --> r

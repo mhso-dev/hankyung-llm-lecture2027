@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["git add 전 · 상태 줄 M app.py (둘째 칸)"]
+    direction LR
+    bw["작업 폴더<br>주문 3건"]:::tool
+    bi["색인<br>주문 2건"]:::tool
+    bw <-- "git diff<br>-주문 2건 +주문 3건" --> bi
+  end
+  subgraph AFTER["git add 뒤 · 상태 줄 M app.py (첫 칸)"]
+    direction LR
+    aw["작업 폴더<br>주문 3건"]:::tool
+    ai["색인<br>주문 3건"]:::tool
+    ac["마지막 커밋 HEAD<br>주문 2건"]:::tool
+    aw <-- "git diff<br>출력 없음" --> ai
+    ai <-- "git diff --cached<br>-주문 2건 +주문 3건" --> ac
+  end
+  BEFORE -- "git add app.py" --> AFTER

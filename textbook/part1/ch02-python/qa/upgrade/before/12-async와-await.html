@@ -1,0 +1,331 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>async와 await — Ch 2 · 파이썬 프로그래밍</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 2 · 파이썬 프로그래밍</p>
+<h1>async와 await</h1><div class="meta"><span>강의 1h</span><span>실습 3h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 3h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li><code>async def</code>가 만드는 코루틴을 <code>await</code>로 실행할 수 있습니다.</li><li>태스크의 완료 순서와 <code>gather</code>의 반환 순서를 구분할 수 있습니다.</li><li>동기 <code>time.sleep</code>이 이벤트 루프를 막는 현상을 관찰하고 <code>asyncio.to_thread</code>로 수정할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>LLM API, 파일 저장소, 데이터베이스에 요청을 보내면 프로그램은 응답을 기다리는 시간이 생깁니다. 한 요청을 기다리는 동안 다른 요청을 시작할 수 있다면 전체 대기 시간을 줄일 가능성이 있습니다. Python의 <code>asyncio</code>는 여러 대기 작업이 한 이벤트 루프에서 번갈아 진행되도록 합니다. 하지만 비동기 함수 안에서 오래 걸리는 동기 함수를 직접 호출하면 다른 작업도 멈춥니다. 이 절은 A·B 경로 모두의 필수 학습이며 A 경로 01~08절을 마친 뒤 시작합니다. 특히 04절의 함수와 07절의 타입힌트를 사용하며 B 경로 09~11절의 선택 지식은 요구하지 않습니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>02절에서 문장이 기본적으로 위에서 아래로 실행되는 과정을 배웠고, 04절에서는 일반 함수의 호출과 반환을 배웠습니다. 07절에서는 <code>name: str</code>과 <code>-&gt; str</code>처럼 매개변수와 반환값의 예상 타입을 읽었습니다. 이 절의 비동기 함수도 같은 타입힌트를 사용합니다. 새 차이는 함수를 호출하면 본문을 끝까지 실행한 결과 대신 코루틴 객체를 먼저 반환한다는 점입니다. 09절의 데코레이터와 <code>with</code>, 10절의 Pydantic, 11절의 fixture와 패키징은 필요하지 않습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>쉬운 예</h3><p>두 문서의 응답을 기다린다고 생각해 봅니다. 첫 요청을 보내고 응답이 올 때까지 멈춘 뒤 둘째 요청을 보내면 대기 시간이 이어집니다. 두 요청을 모두 시작하면 첫 요청이 기다리는 동안 둘째 요청도 진행될 수 있습니다. 비동기 실행은 계산을 동시에 두 개 수행한다는 뜻이 아니라, 한 작업이 파일·네트워크 응답이나 타이머를 기다릴 때 다른 작업이 실행될 수 있는 구조입니다.</p><h3>정의와 표기 읽기</h3><p><strong>코루틴(coroutine)</strong>은 실행을 잠시 멈췄다가 이어갈 수 있는 함수 실행 단위입니다. <code>async def fetch_label(name: str, delay: float) -&gt; str:</code>는 비동기 함수를 정의합니다. 입력은 문자열 이름과 초 단위 실수 대기 시간이고 최종 반환값은 문자열입니다. <code>fetch_label("문서-A", 0.01)</code>을 호출한 직후에는 본문 결과가 아니라 코루틴 객체가 반환됩니다. <code>result = await pending</code>은 코루틴이 아직 완료되지 않았다면 기다리는 동안 다른 작업이 실행될 수 있게 하고, 완료되면 최종 문자열을 <code>result</code>에 연결합니다. 이미 완료된 작업을 기다릴 때는 다른 작업으로 전환할 필요가 없을 수 있습니다.</p><p><strong>이벤트 루프(event loop)</strong>는 실행 가능한 코루틴과 대기가 끝난 작업을 확인하며 실행 순서를 조정합니다. <strong>태스크(Task)</strong>는 코루틴을 이벤트 루프에 예약한 객체입니다. <code>asyncio.create_task(record_heartbeat(events, started))</code>는 하트비트 코루틴을 예약하고 태스크를 즉시 반환합니다. <code>await task</code>는 예약된 작업의 완료와 반환값을 기다립니다.</p><p><strong>이벤트(Event)</strong>는 코루틴 사이에서 사건의 발생 여부를 알리는 신호 객체입니다. <code>started.set()</code>은 신호를 켜고, <code>await started.wait()</code>는 신호가 켜질 때까지 기다립니다. <code>record_heartbeat()</code>는 사건 목록과 신호를 인자로 받아 시작 신호를 켠 뒤 하트비트를 목록에 기록합니다. 함수 밖에서 만든 목록도 인자로 전달하면 함수가 같은 목록 객체를 수정할 수 있습니다.</p><p><code>asyncio.gather(first(), second())</code>는 전달받은 여러 코루틴을 예약해 함께 진행하고 모두 완료된 뒤 결과 목록을 반환합니다. 각 작업은 대기 시간이 끝나는 순서대로 완료될 수 있지만 반환 목록의 위치는 <code>gather</code> 괄호에 적은 입력 순서를 따릅니다. <strong>차단 호출(blocking call)</strong>은 반환될 때까지 현재 실행 흐름을 점유하는 호출입니다. <strong>스레드(thread)</strong>는 한 프로세스 안에서 나뉜 실행 흐름입니다. <code>time.sleep</code>을 이벤트 루프와 같은 스레드에서 호출하면 다른 태스크가 실행되지 못합니다. <code>asyncio.to_thread(time.sleep, 0.05)</code>는 동기 함수를 다른 스레드에서 호출하고 그 완료를 기다릴 수 있게 합니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:900px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 880" width="900" height="880" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-12-concept desc-12-concept">
+<title id="title-12-concept">대기 방식과 작업 실행 순서를 나누어 확인합니다</title>
+<desc id="desc-12-concept">위에서 아래로 읽습니다. 위쪽은 순차·동시 대기, 아래쪽은 같은 동기 대기를 호출하는 위치의 비교입니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="900" height="880" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">대기 방식과 작업 실행 순서를 나누어 확인합니다</tspan></text>
+<rect x="40" y="80" width="370" height="100" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="225.0" y="108.4" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="225.0" dy="0.0">순차 await</tspan><tspan x="225.0" dy="21.6">A: 0.04초 대기 후</tspan><tspan x="225.0" dy="21.6">B: 0.04초 대기</tspan></text>
+<rect x="490" y="80" width="370" height="100" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="675.0" y="108.4" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="675.0" dy="0.0">gather</tspan><tspan x="675.0" dy="21.6">A와 B의 대기를 함께 시작</tspan><tspan x="675.0" dy="21.6">두 작업이 끝나면 결과 반환</tspan></text>
+<text x="450" y="235.0" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450" dy="0.0">별도 완료 순서 실습: 느린 작업 0.03초 · 빠른 작업 0.01초</tspan></text>
+<rect x="40" y="280" width="370" height="90" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="225.0" y="314.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="225.0" dy="0.0">실제 완료 기록</tspan><tspan x="225.0" dy="21.6">빠른 작업 → 느린 작업</tspan></text>
+<rect x="490" y="280" width="370" height="90" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="675.0" y="314.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="675.0" dy="0.0">gather 결과 목록</tspan><tspan x="675.0" dy="21.6">느린 작업 → 빠른 작업</tspan></text>
+<rect x="40" y="455" width="820" height="105" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="450.0" y="485.9" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">Before: 이벤트 루프에서 time.sleep(0.05) 호출</tspan><tspan x="450.0" dy="21.6">관찰: block-start → block-end → heartbeat</tspan><tspan x="450.0" dy="21.6">동기 대기가 끝날 때까지 하트비트 실행이 지연됩니다.</tspan></text>
+<rect x="40" y="635" width="820" height="105" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="450.0" y="665.9" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">After: to_thread로 같은 동기 대기를 별도 스레드에서 실행</tspan><tspan x="450.0" dy="21.6">관찰: wait-start → heartbeat → wait-end</tspan><tspan x="450.0" dy="21.6">스레드 작업을 기다리는 동안 하트비트가 실행되었습니다.</tspan></text>
+<polyline points="450,560 450,635" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="408.3" y="570.5" width="83.4" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="450.0" y="582.5" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">호출 위치 변경</tspan></text>
+<text x="450" y="790.0" font-size="15" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450" dy="0.0">대기 시간은 실습 설정값입니다. 실행 시간과 사건 간격은 환경에 따라 달라집니다.</tspan></text>
+<text x="450.0" y="854.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg></div><p>도식의 위쪽은 <code>await</code>를 두 번 차례로 만나는 순차 실행과, 두 코루틴을 <code>gather</code>에 한꺼번에 전달하는 실행을 비교합니다. 가운데는 0.01초 작업이 먼저 완료 기록에 추가되지만 결과 목록은 입력한 0.03초 작업부터 놓이는 차이를 보여 줍니다. 아래쪽은 <code>time.sleep</code>이 하트비트의 실행을 막은 Before와 <code>to_thread</code>로 옮긴 뒤 하트비트가 먼저 기록된 After를 보여 줍니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p><code>fetch_label</code>은 문자열 이름과 초 단위 대기 시간을 입력받습니다. 함수 본문은 <code>await asyncio.sleep(delay)</code>에서 타이머를 기다린 뒤 <code>완료:이름</code> 문자열을 반환합니다. 먼저 함수 호출 결과를 <code>pending</code>에 저장해 자료형 이름 <code>coroutine</code>을 확인합니다. 이어서 <code>await pending</code>을 실행한 시점에 본문이 완료되고 <code>완료:문서-A</code>가 반환됩니다.</p><p>다음 셀은 두 <code>tracked()</code> 호출을 <code>gather</code>에 입력합니다. 각 함수는 대기가 끝나면 이름을 <code>progress</code>에 추가하고 같은 이름을 반환합니다. 따라서 <code>progress</code>는 실제 완료 순서인 빠른 작업·느린 작업이고, <code>gathered</code>는 입력 순서인 느린 작업·빠른 작업입니다. 마지막 셀은 같은 0.04초 대기 두 건을 각각 <code>await</code>한 경우와 한 번의 <code>gather</code>로 기다린 경우를 측정합니다.</p><section class="notebook" data-notebook="12-async와-await" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="12-async와-await.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI3ZDY1OTI1MyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMgYXN5bmPsmYAgYXdhaXRcbiIsCiAgICAiXG4iLAogICAgIuy9lOujqO2LtOqzvCDtg5zsiqTtgazsnZgg7Iuk7ZaJIOyInOyEnOulvCDqtIDssLDtlZjqs6Ag7J2067Kk7Yq4IOujqO2UhOulvCDrp4nripQg64+Z6riwIOuMgOq4sOulvCDslYjsoITtlZjqsowg7Jiu6rmB64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImJiNGE2NTljIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIlB5dGhvbiAzLjEyIO2RnOykgCDrnbzsnbTruIzrn6zrpqzsmYAgSnVweXRlcuydmCDstZzsg4HsnIQgYGF3YWl0YOulvCDsgqzsmqntlanri4jri6QuIOydtCDsoIjsnYAgQcK3QiDqsr3roZzqsIAg64uk7IucIO2VqeyzkOyngOuKlCDtlYTsiJgg7KCI7J6F64uI64ukLiBBIOqyveuhnOydmCAwMX4wOOygiCDqsIDsmrTrjbAg7Yq57Z6IIDA07KCI7J2YIO2VqOyImCDtmLjstpzCt+uwmO2ZmOqzvCAwN+ygiOydmCDtg4DsnoXtnoztirjrpbwg7IKs7Jqp7ZWp64uI64ukLiBCIOqyveuhnOydmCAwOeygiCDrjbDsvZTroIjsnbTthLDsmYAgYHdpdGhgLCAxMOygiCBQeWRhbnRpYywgMTHsoIggZml4dHVyZeyZgCDtjKjtgqTsp5XsnYAg7ZWE7JqU7ZWY7KeAIOyViuyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICJkZjg3ZDUyOSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxNC4wNzUwNTRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoxNC4wNzQ4ODlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoxNC4wODE0OTJaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjE0LjA4MDY4MloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJhc3luY2lvIOykgOu5hCDsmYTro4xcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDruYTrj5nquLAg7Iuk7ZaJIOyInOyEnOyZgCDsi5zqsITsnYQg6rSA7LCw7ZWgIO2RnOykgCDrj4Tqtazrpbwg6rCA7KC47Ji164uI64ukLlxuIiwKICAgICJpbXBvcnQgYXN5bmNpb1xuIiwKICAgICJpbXBvcnQgdGltZVxuIiwKICAgICJwcmludChcImFzeW5jaW8g7KSA67mEIOyZhOujjFwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjRmYjQ0YTM1IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6riw67O4IOyLpO2WiTog7L2U66Oo7Yu0IOunjOuTpOqzoCDquLDri6TrpqzquLBcbiIsCiAgICAiXG4iLAogICAgImBhc3luYyBkZWYgZmV0Y2hfbGFiZWwobmFtZTogc3RyLCBkZWxheTogZmxvYXQpIC0+IHN0cmDripQg66y47J6Q7Je0IOydtOumhOqzvCDstIgg64uo7JyEIOyLpOyImCDrjIDquLAg7Iuc6rCE7J2EIOyeheugpeuwm+yVhCDstZzsooXsoIHsnLzroZwg66y47J6Q7Je07J2EIOuwmO2ZmO2VmOuKlCDruYTrj5nquLAg7ZWo7IiY66W8IOygleydmO2VqeuLiOuLpC4g7J20IO2DgOyehe2ejO2KuCDtkZzquLDripQgMDfsoIjsl5DshJwg67Cw7Jug7Iq164uI64ukLiDtmLjstpwg7KeB7ZuE7JeQ64qUIOuzuOusuCDqsrDqs7zqsIAg7JWE64uI6528IOy9lOujqO2LtCDqsJ3ssrTqsIAg67CY7ZmY65Cp64uI64ukLiBKdXB5dGVyIOyFgOydmCBgcmVzdWx0ID0gYXdhaXQgcGVuZGluZ2DsnYAg7L2U66Oo7Yu07J20IOyVhOyngSDsmYTro4zrkJjsp4Ag7JWK7JWY64uk66m0IOq4sOuLpOumrOuKlCDrj5nslYgg64uk66W4IOyekeyXheyXkCDsi6Ttlokg6riw7ZqM66W8IOyjvOqzoCwg7JmE66OM65CY66m0IOy1nOyihSDrrLjsnpDsl7TsnYQg67Cb7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImYwMWIwMzZhIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjIyOjE0LjA4MzIyOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjIyOjE0LjA4MzA4NloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjIyOjE0LjA5NzIzMloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjI6MTQuMDk2NjA4WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgImNvcm91dGluZVxuIiwKICAgICAgIuyZhOujjDrrrLjshJwtQVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIEp1cHl0ZXIg7IWA7JeQ7IScIOy9lOujqO2LtOydhCDrp4zrk6Tqs6Ag7LWc7IOB7JyEIGF3YWl066GcIOq4sOuLpOumveuLiOuLpC5cbiIsCiAgICAiYXN5bmMgZGVmIGZldGNoX2xhYmVsKG5hbWU6IHN0ciwgZGVsYXk6IGZsb2F0KSAtPiBzdHI6XG4iLAogICAgIiAgICAjIOyLpOygnCDrhKTtirjsm4ztgawg64yA7IugIOyngOygle2VnCDsi5zqsITrp4wg6riw64uk66as64qUIOuqqOydmCBJL0/snoXri4jri6QuXG4iLAogICAgIiAgICBhd2FpdCBhc3luY2lvLnNsZWVwKGRlbGF5KVxuIiwKICAgICIgICAgcmV0dXJuIGZcIuyZhOujjDp7bmFtZX1cIlxuIiwKICAgICJcbiIsCiAgICAicGVuZGluZyA9IGZldGNoX2xhYmVsKFwi66y47IScLUFcIiwgMC4wMSlcbiIsCiAgICAicHJpbnQodHlwZShwZW5kaW5nKS5fX25hbWVfXylcbiIsCiAgICAicmVzdWx0ID0gYXdhaXQgcGVuZGluZ1xuIiwKICAgICJwcmludChyZXN1bHQpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiMzhkMjA0MzIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDtg5zsiqTtgazsmYAgZ2F0aGVyOiDsmYTro4wg7Iic7ISc7JmAIOuwmO2ZmCDsiJzshJxcbiIsCiAgICAiXG4iLAogICAgIuydtOuypO2KuCDro6jtlITripQg64yA6riwIOykkeyduCDsvZTro6jti7Qg7IKs7J207JeQ7IScIOyLpO2WiSDsiJzshJzrpbwg7KGw7KCV7ZWp64uI64ukLiDtg5zsiqTtgazripQg7L2U66Oo7Yu07J2EIOydtOuypO2KuCDro6jtlITsl5Ag7JiI7JW97ZWcIOqwneyytOyeheuLiOuLpC4gYHRyYWNrZWQoKWDripQg7IS4IOuyiOynuCDsnbjsnpDroZwg67Cb7J2AIGBwcm9ncmVzc2Ag66qp66Gd7JeQIOyZhOujjOuQnCDsnbTrpoTsnYQg7LaU6rCA7ZWp64uI64ukLiDtlajsiJgg67CW7JeQ7IScIOunjOuToCDrqqnroZ3rj4Qg7ZWo7IiYIOyduOyekOuhnCDsoITri6ztlZjrqbQg6rCZ7J2AIOuqqeuhnSDqsJ3ssrTrpbwg7IiY7KCV7ZWgIOyImCDsnojsirXri4jri6QuIGBnYXRoZXJg64qUIOy9lOujqO2LtOuTpOydhCDtlajqu5gg7KeE7ZaJ7ZWY6rOgIOuqqOuRkCDrgZ3rgpwg65KkIOyeheugpSDsiJzshJzsnZgg6rKw6rO8IOuqqeuhneydhCDrsJjtmZjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiNTcwNWIyYjciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MjI6MTQuMDk4NTQ0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MjI6MTQuMDk4NDMxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MjI6MTQuMTM0MTY2WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoyMjoxNC4xMzM1MjBaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7JmE66OMIOyInOyEnDogWyfruaDrpbgg7J6R7JeFJywgJ+uKkOumsCDsnpHsl4UnXVxuIiwKICAgICAgIuuwmO2ZmCDsiJzshJw6IFsn64qQ66awIOyekeyXhScsICfruaDrpbgg7J6R7JeFJ11cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsmYTro4wg7Iic7ISc7JmAIGdhdGhlcuqwgCDrsJjtmZjtlZjripQg7J6F66ClIOyInOyEnOulvCDrlLDroZwg6riw66Gd7ZWp64uI64ukLlxuIiwKICAgICJwcm9ncmVzczogbGlzdFtzdHJdID0gW11cbiIsCiAgICAiXG4iLAogICAgImFzeW5jIGRlZiB0cmFja2VkKG5hbWU6IHN0ciwgZGVsYXk6IGZsb2F0LCBwcm9ncmVzczogbGlzdFtzdHJdKSAtPiBzdHI6XG4iLAogICAgIiAgICBhd2FpdCBhc3luY2lvLnNsZWVwKGRlbGF5KVxuIiwKICAgICIgICAgcHJvZ3Jlc3MuYXBwZW5kKG5hbWUpXG4iLAogICAgIiAgICByZXR1cm4gbmFtZVxuIiwKICAgICJcbiIsCiAgICAiZ2F0aGVyZWQgPSBhd2FpdCBhc3luY2lvLmdhdGhlcihcbiIsCiAgICAiICAgIHRyYWNrZWQoXCLripDrprAg7J6R7JeFXCIsIDAuMDMsIHByb2dyZXNzKSxcbiIsCiAgICAiICAgIHRyYWNrZWQoXCLruaDrpbgg7J6R7JeFXCIsIDAuMDEsIHByb2dyZXNzKSxcbiIsCiAgICAiKVxuIiwKICAgICJwcmludChcIuyZhOujjCDsiJzshJw6XCIsIHByb2dyZXNzKVxuIiwKICAgICJwcmludChcIuuwmO2ZmCDsiJzshJw6XCIsIGdhdGhlcmVkKVxuIiwKICAgICJhc3NlcnQgcHJvZ3Jlc3MgPT0gW1wi67mg66W4IOyekeyXhVwiLCBcIuuKkOumsCDsnpHsl4VcIl1cbiIsCiAgICAiYXNzZXJ0IGdhdGhlcmVkID09IFtcIuuKkOumsCDsnpHsl4VcIiwgXCLruaDrpbgg7J6R7JeFXCJdIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiYWNhZjAyYWUiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsiJzssKgg64yA6riw7JmAIOuPmeyLnCDrjIDquLAg7Iuc6rCEIOu5hOq1kFxuIiwKICAgICJcbiIsCiAgICAi7LKrIOy4oeygleydgCBgYXdhaXQgZmV0Y2hfbGFiZWwoLi4uKWDsnYQg65GQIOuyiCDssKjroYDroZwg7Zi47Lac7ZWY66+A66GcIOyyqyDrsJjtmZgg65Kk7JeQIOuRmOynuCDtmLjstpzsnbQg7Iuc7J6R65Cp64uI64ukLiDri6TsnYwg7Lih7KCV7J2AIOuRkCDsvZTro6jti7TsnYQg7ZWcIOuyiOydmCBgZ2F0aGVyYOyXkCDsnoXroKXtlZjrr4DroZwg65GQIOuMgOq4sOqwgCDtlajqu5gg7KeE7ZaJ65Cp64uI64ukLiDsi5zqsITsnYAg7ZiE7J6sIOy7tO2TqO2EsOyXkOyEnCDsuKHsoJXtlZwg6rCS7J2066mwIOuztO2OuOyggeyduCDsho3rj4Qg7Zal7IOBIOu5hOycqOydhCDrnLvtlZjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImM0Y2YwNjcwIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjIyOjE0LjEzNTcyNloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjIyOjE0LjEzNTU3OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjIyOjE0LjI2NTA1MVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjI6MTQuMjY0MDIyWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyInOywqCAwLjA4M+y0iCAvIOuPmeyLnCAwLjA0Muy0iFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOqwmeydgCDrqqjsnZggSS9PIOyngOyXsOydhCDsiJzssKgg7Iuk7ZaJ6rO8IOuPmeyLnCDsi6TtlonsnLzroZwg7Lih7KCV7ZWp64uI64ukLlxuIiwKICAgICJzdGFydCA9IHRpbWUucGVyZl9jb3VudGVyKClcbiIsCiAgICAiYXdhaXQgZmV0Y2hfbGFiZWwoXCJBXCIsIDAuMDQpXG4iLAogICAgImF3YWl0IGZldGNoX2xhYmVsKFwiQlwiLCAwLjA0KVxuIiwKICAgICJzZXF1ZW50aWFsID0gdGltZS5wZXJmX2NvdW50ZXIoKSAtIHN0YXJ0XG4iLAogICAgIlxuIiwKICAgICJzdGFydCA9IHRpbWUucGVyZl9jb3VudGVyKClcbiIsCiAgICAiYXdhaXQgYXN5bmNpby5nYXRoZXIoXG4iLAogICAgIiAgICBmZXRjaF9sYWJlbChcIkFcIiwgMC4wNCksIGZldGNoX2xhYmVsKFwiQlwiLCAwLjA0KVxuIiwKICAgICIpXG4iLAogICAgImNvbmN1cnJlbnQgPSB0aW1lLnBlcmZfY291bnRlcigpIC0gc3RhcnRcbiIsCiAgICAicHJpbnQoZlwi7Iic7LCoIHtzZXF1ZW50aWFsOi4zZn3stIggLyDrj5nsi5wge2NvbmN1cnJlbnQ6LjNmfey0iFwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjhlNzAxOWM2IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6ICIjIyBCZWZvcmU6IOuPmeq4sCBzbGVlcOydtCDsnbTrsqTtirgg66Oo7ZSE66W8IOunieydjFxuXG5gYXN5bmNpby5FdmVudCgpYOuKlCDsvZTro6jti7Qg7IKs7J207JeQ7IScIO2VnCDsgqzqsbTsnZgg67Cc7IOdIOyXrOu2gOulvCDslYzrpqzripQg7Iug7Zi4IOqwneyytOyeheuLiOuLpC4gYHN0YXJ0ZWQuc2V0KClg7J2AIOyLoO2YuOulvCDsvJzqs6AsIGBhd2FpdCBzdGFydGVkLndhaXQoKWDripQg7Iug7Zi46rCAIOy8nOyniCDrlYzquYzsp4Ag6riw64uk66a964uI64ukLiBgY3JlYXRlX3Rhc2socmVjb3JkX2hlYXJ0YmVhdChldmVudHMsIHN0YXJ0ZWQpKWDqsIAg7ZWY7Yq467mE7Yq466W8IOyYiOyVve2VnCDrkqQg7Iuc7J6RIOyLoO2YuOulvCDtmZXsnbjtlanri4jri6QuIOydtOyWtOyEnCDrj5nquLAgYHRpbWUuc2xlZXBg7J20IOydtOuypO2KuCDro6jtlITrpbwg7Iuk7ZaJ7ZWY64qUIO2VnCDsnpHsl4Ug7Z2Q66aE7J2EIOygkOycoO2VmOuvgOuhnCDtlZjtirjruYTtirjripQg7J20IO2YuOy2nOydtCDrsJjtmZjrkJwg65Kk7JeQ7JW8IOydtOyWtOynkeuLiOuLpC4iCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiMzU4YWFiNWEiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MjI6MTQuMjY3MDkzWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MjI6MTQuMjY2OTE5WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MjI6MTQuMzI1NDA5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoyMjoxNC4zMjQzOThaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJbJ2Jsb2NrLXN0YXJ0JywgJ2Jsb2NrLWVuZCcsICdoZWFydGJlYXQnXVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIO2VmO2KuOu5hO2KuOuKlCDtlYTsmpTtlZwg66qp66Gd6rO8IOyLoO2YuOulvCDsnbjsnpDroZwg67Cb7JWEIOyCrOyaqe2VqeuLiOuLpC5cbiIsCiAgICAiYXN5bmMgZGVmIHJlY29yZF9oZWFydGJlYXQoZXZlbnRzLCBzdGFydGVkKTpcbiIsCiAgICAiICAgIHN0YXJ0ZWQuc2V0KClcbiIsCiAgICAiICAgIGF3YWl0IGFzeW5jaW8uc2xlZXAoMC4wMSlcbiIsCiAgICAiICAgIGV2ZW50cy5hcHBlbmQoXCJoZWFydGJlYXRcIilcbiIsCiAgICAiXG4iLAogICAgIiMg7Iuc7J6RIOyLoO2YuCDrkqQg64+Z6riwIHNsZWVw7J20IO2VmO2KuOu5hO2KuOulvCDsp4Dsl7Dsi5ztgqTripQg7Iic7ISc66W8IOu0heuLiOuLpC5cbiIsCiAgICAiYXN5bmMgZGVmIGJsb2NrZWRfcHJvYmUoKSAtPiBsaXN0W3N0cl06XG4iLAogICAgIiAgICBldmVudHM6IGxpc3Rbc3RyXSA9IFtdXG4iLAogICAgIiAgICBzdGFydGVkID0gYXN5bmNpby5FdmVudCgpXG4iLAogICAgIiAgICB0YXNrID0gYXN5bmNpby5jcmVhdGVfdGFzayhyZWNvcmRfaGVhcnRiZWF0KGV2ZW50cywgc3RhcnRlZCkpXG4iLAogICAgIiAgICBhd2FpdCBzdGFydGVkLndhaXQoKVxuIiwKICAgICIgICAgZXZlbnRzLmFwcGVuZChcImJsb2NrLXN0YXJ0XCIpXG4iLAogICAgIiAgICB0aW1lLnNsZWVwKDAuMDUpXG4iLAogICAgIiAgICBldmVudHMuYXBwZW5kKFwiYmxvY2stZW5kXCIpXG4iLAogICAgIiAgICBhd2FpdCB0YXNrXG4iLAogICAgIiAgICByZXR1cm4gZXZlbnRzXG4iLAogICAgIlxuIiwKICAgICJibG9ja2VkX2V2ZW50cyA9IGF3YWl0IGJsb2NrZWRfcHJvYmUoKVxuIiwKICAgICJwcmludChibG9ja2VkX2V2ZW50cylcbiIsCiAgICAiYXNzZXJ0IGJsb2NrZWRfZXZlbnRzLmluZGV4KFwiaGVhcnRiZWF0XCIpID4gYmxvY2tlZF9ldmVudHMuaW5kZXgoXCJibG9jay1lbmRcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI3YzM0YTdlNCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyBBZnRlcjogdG9fdGhyZWFk66GcIOuPmeq4sCDsnpHsl4XsnYQg7J2067Kk7Yq4IOujqO2UhCDrsJbsl5DshJwg7Iuk7ZaJ7ZWoXG4iLAogICAgIlxuIiwKICAgICLsiqTroIjrk5zripQg7ZWcIO2UhOuhnOyEuOyKpCDslYjsl5DshJwg7Iuk7ZaJIO2dkOumhOydhCDrgpjriITripQg64uo7JyE7J6F64uI64ukLiBgYXN5bmNpby50b190aHJlYWQodGltZS5zbGVlcCwgMC4wNSlg64qUIOuPmeq4sCDtlajsiJjsmYAg7J247J6Q66W8IOydtOuypO2KuCDro6jtlITsmYAg64uk66W4IOyKpOugiOuTnOyXkOyEnCDtmLjstpztlanri4jri6QuIOydtCDtmLjstpzsnbQg7JmE66OM65CY7KeAIOyViuydgCDrj5nslYgg7ZiE7J6sIOy9lOujqO2LtOydtCDquLDri6TrpqzrqbQg7ZWY7Yq467mE7Yq4IO2DnOyKpO2BrOqwgCDsi6TtlonrkKAg7IiYIOyeiOyKteuLiOuLpC4g7Lac66Cl7J2YIGBUcnVlYOuKlCDsnbTrsogg7Iuk7ZaJ7JeQ7IScIGBoZWFydGJlYXRg6rCAIGB3YWl0LWVuZGDrs7Tri6Qg66i87KCAIOq4sOuhneuQkOuLpOuKlCDqtIDssLDsnoXri4jri6QuIOuniOyngOuniSBgYXNzZXJ0YOuKlCDsiJzshJzrpbwg6rCV7KCc7ZWY7KeAIOyViuqzoCDshLgg7IKs6rG07J20IOuqqOuRkCDquLDroZ3rkJDripTsp4Drp4wg6rKA7IKs7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImM5MThkYTJhIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjIyOjE0LjMyNzQyOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjIyOjE0LjMyNzI2NloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjIyOjE0LjM4NzQ1N1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjI6MTQuMzg2NDYyWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJbJ3dhaXQtc3RhcnQnLCAnaGVhcnRiZWF0JywgJ3dhaXQtZW5kJ11cbiIsCiAgICAgICLtlZjtirjruYTtirjqsIAg66i87KCAOiBUcnVlXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg6rCZ7J2AIO2VmO2KuOu5hO2KuCDtlajsiJjsl5Ag66qp66Gd6rO8IOyLoO2YuOulvCDsoITri6ztlbQg6rSA7LCwIOyInOyEnOulvCDruYTqtZDtlanri4jri6QuXG4iLAogICAgImFzeW5jIGRlZiByZXNwb25zaXZlX3Byb2JlKCkgLT4gbGlzdFtzdHJdOlxuIiwKICAgICIgICAgZXZlbnRzOiBsaXN0W3N0cl0gPSBbXVxuIiwKICAgICIgICAgc3RhcnRlZCA9IGFzeW5jaW8uRXZlbnQoKVxuIiwKICAgICIgICAgdGFzayA9IGFzeW5jaW8uY3JlYXRlX3Rhc2socmVjb3JkX2hlYXJ0YmVhdChldmVudHMsIHN0YXJ0ZWQpKVxuIiwKICAgICIgICAgYXdhaXQgc3RhcnRlZC53YWl0KClcbiIsCiAgICAiICAgIGV2ZW50cy5hcHBlbmQoXCJ3YWl0LXN0YXJ0XCIpXG4iLAogICAgIiAgICBhd2FpdCBhc3luY2lvLnRvX3RocmVhZCh0aW1lLnNsZWVwLCAwLjA1KVxuIiwKICAgICIgICAgZXZlbnRzLmFwcGVuZChcIndhaXQtZW5kXCIpXG4iLAogICAgIiAgICBhd2FpdCB0YXNrXG4iLAogICAgIiAgICByZXR1cm4gZXZlbnRzXG4iLAogICAgIlxuIiwKICAgICJyZXNwb25zaXZlX2V2ZW50cyA9IGF3YWl0IHJlc3BvbnNpdmVfcHJvYmUoKVxuIiwKICAgICJwcmludChyZXNwb25zaXZlX2V2ZW50cylcbiIsCiAgICAicHJpbnQoXCLtlZjtirjruYTtirjqsIAg66i87KCAOlwiLCByZXNwb25zaXZlX2V2ZW50cy5pbmRleChcImhlYXJ0YmVhdFwiKSA8IHJlc3BvbnNpdmVfZXZlbnRzLmluZGV4KFwid2FpdC1lbmRcIikpXG4iLAogICAgImFzc2VydCBzZXQocmVzcG9uc2l2ZV9ldmVudHMpID09IHtcIndhaXQtc3RhcnRcIiwgXCJoZWFydGJlYXRcIiwgXCJ3YWl0LWVuZFwifSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAicGFpcmVkIiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNiwKICAgImNvZGVfc2hhMjU2IjogIjk0OTI1MGE2NDkyZTU4YjEzNTkyYmI0YjUyZmVlMDkzZGY2MjY2YTVlZGNiZDE2MWY5MjhiOWZjMDQ2NjBlNzEiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxNC41MDYxNDYrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjQwMDY1ZThhNTFlZDIwMjZmZjMyYmUzNzIzOWNiMDA5MDEwMzU0YTBhNGNiYTczYThjYmMwNzAyOTZjOTM3YmQiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>async와 await</h2>
+<p>코루틴과 태스크의 실행 순서를 관찰하고 이벤트 루프를 막는 동기 대기를 안전하게 옮깁니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>Python 3.12 표준 라이브러리와 Jupyter의 최상위 <code>await</code>를 사용합니다. 이 절은 A·B 경로가 다시 합쳐지는 필수 절입니다. A 경로의 01~08절 가운데 특히 04절의 함수 호출·반환과 07절의 타입힌트를 사용합니다. B 경로의 09절 데코레이터와 <code>with</code>, 10절 Pydantic, 11절 fixture와 패키징은 필요하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 비동기 실행 순서와 시간을 관찰할 표준 도구를 가져옵니다.
+import asyncio
+import time
+print(&quot;asyncio 준비 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">asyncio 준비 완료
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행: 코루틴 만들고 기다리기</h3>
+<p><code>async def fetch_label(name: str, delay: float) -&gt; str</code>는 문자열 이름과 초 단위 실수 대기 시간을 입력받아 최종적으로 문자열을 반환하는 비동기 함수를 정의합니다. 이 타입힌트 표기는 07절에서 배웠습니다. 호출 직후에는 본문 결과가 아니라 코루틴 객체가 반환됩니다. Jupyter 셀의 <code>result = await pending</code>은 코루틴이 아직 완료되지 않았다면 기다리는 동안 다른 작업에 실행 기회를 주고, 완료되면 최종 문자열을 받습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># Jupyter 셀에서 코루틴을 만들고 최상위 await로 기다립니다.
+async def fetch_label(name: str, delay: float) -&gt; str:
+    # 실제 네트워크 대신 지정한 시간만 기다리는 모의 I/O입니다.
+    await asyncio.sleep(delay)
+    return f&quot;완료:{name}&quot;
+
+pending = fetch_label(&quot;문서-A&quot;, 0.01)
+print(type(pending).__name__)
+result = await pending
+print(result)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">coroutine
+완료:문서-A
+</pre></div>
+<div class="nb-markdown"><h3>태스크와 gather: 완료 순서와 반환 순서</h3>
+<p>이벤트 루프는 대기 중인 코루틴 사이에서 실행 순서를 조정합니다. 태스크는 코루틴을 이벤트 루프에 예약한 객체입니다. <code>tracked()</code>는 세 번째 인자로 받은 <code>progress</code> 목록에 완료된 이름을 추가합니다. 함수 밖에서 만든 목록도 함수 인자로 전달하면 같은 목록 객체를 수정할 수 있습니다. <code>gather</code>는 코루틴들을 함께 진행하고 모두 끝난 뒤 입력 순서의 결과 목록을 반환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 완료 순서와 gather가 반환하는 입력 순서를 따로 기록합니다.
+progress: list[str] = []
+
+async def tracked(name: str, delay: float, progress: list[str]) -&gt; str:
+    await asyncio.sleep(delay)
+    progress.append(name)
+    return name
+
+gathered = await asyncio.gather(
+    tracked(&quot;느린 작업&quot;, 0.03, progress),
+    tracked(&quot;빠른 작업&quot;, 0.01, progress),
+)
+print(&quot;완료 순서:&quot;, progress)
+print(&quot;반환 순서:&quot;, gathered)
+assert progress == [&quot;빠른 작업&quot;, &quot;느린 작업&quot;]
+assert gathered == [&quot;느린 작업&quot;, &quot;빠른 작업&quot;]</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">완료 순서: [&#x27;빠른 작업&#x27;, &#x27;느린 작업&#x27;]
+반환 순서: [&#x27;느린 작업&#x27;, &#x27;빠른 작업&#x27;]
+</pre></div>
+<div class="nb-markdown"><h3>순차 대기와 동시 대기 시간 비교</h3>
+<p>첫 측정은 <code>await fetch_label(...)</code>을 두 번 차례로 호출하므로 첫 반환 뒤에 둘째 호출이 시작됩니다. 다음 측정은 두 코루틴을 한 번의 <code>gather</code>에 입력하므로 두 대기가 함께 진행됩니다. 시간은 현재 컴퓨터에서 측정한 값이며 보편적인 속도 향상 비율을 뜻하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 같은 모의 I/O 지연을 순차 실행과 동시 실행으로 측정합니다.
+start = time.perf_counter()
+await fetch_label(&quot;A&quot;, 0.04)
+await fetch_label(&quot;B&quot;, 0.04)
+sequential = time.perf_counter() - start
+
+start = time.perf_counter()
+await asyncio.gather(
+    fetch_label(&quot;A&quot;, 0.04), fetch_label(&quot;B&quot;, 0.04)
+)
+concurrent = time.perf_counter() - start
+print(f&quot;순차 {sequential:.3f}초 / 동시 {concurrent:.3f}초&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">순차 0.083초 / 동시 0.042초
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — <code>await</code>는 코루틴의 최종 반환값을 받는 호출 지점이고, <code>gather</code>는 여러 입력의 반환값을 목록으로 모으는 호출 지점입니다. 측정값은 현재 환경의 모의 대기 결과이며 실제 네트워크 API나 CPU 계산의 보편적인 속도 향상을 뜻하지 않습니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p><code>asyncio.Event()</code>는 코루틴 사이에서 사건 발생을 알리는 신호 객체입니다. 하트비트의 <code>started.set()</code>이 신호를 켜고, <code>await started.wait()</code>는 그 신호가 켜질 때까지 기다립니다. Before는 시작 신호를 받은 뒤 같은 실행 흐름에서 <code>time.sleep(0.05)</code>를 호출합니다. 이번 실행에서 하트비트는 <code>block-end</code> 뒤에 기록됐고, Before의 단언문은 이 관찰 순서를 검사합니다.</p><p>After는 같은 <code>time.sleep(0.05)</code>를 <code>asyncio.to_thread</code>로 다른 스레드에서 호출합니다. 출력의 <code>True</code>는 이번 실행에서 하트비트가 <code>wait-end</code>보다 먼저 기록되었다는 관찰입니다. After의 마지막 <code>assert</code>는 이 순서를 강제하지 않으며 <code>wait-start</code>, <code>heartbeat</code>, <code>wait-end</code> 세 사건이 모두 완료되었는지만 검사합니다. 이 결과는 보편적인 속도 향상이나 항상 같은 작업 순서를 보장하지 않습니다.</p><section class="notebook" data-notebook="12-async와-await" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>Before: 동기 sleep이 이벤트 루프를 막음</h3>
+<p><code>asyncio.Event()</code>는 코루틴 사이에서 한 사건의 발생 여부를 알리는 신호 객체입니다. <code>started.set()</code>은 신호를 켜고, <code>await started.wait()</code>는 신호가 켜질 때까지 기다립니다. <code>create_task(record_heartbeat(events, started))</code>가 하트비트를 예약한 뒤 시작 신호를 확인합니다. 이어서 동기 <code>time.sleep</code>이 이벤트 루프를 실행하는 한 작업 흐름을 점유하므로 하트비트는 이 호출이 반환된 뒤에야 이어집니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 하트비트는 필요한 목록과 신호를 인자로 받아 사용합니다.
+async def record_heartbeat(events, started):
+    started.set()
+    await asyncio.sleep(0.01)
+    events.append(&quot;heartbeat&quot;)
+
+# 시작 신호 뒤 동기 sleep이 하트비트를 지연시키는 순서를 봅니다.
+async def blocked_probe() -&gt; list[str]:
+    events: list[str] = []
+    started = asyncio.Event()
+    task = asyncio.create_task(record_heartbeat(events, started))
+    await started.wait()
+    events.append(&quot;block-start&quot;)
+    time.sleep(0.05)
+    events.append(&quot;block-end&quot;)
+    await task
+    return events
+
+blocked_events = await blocked_probe()
+print(blocked_events)
+assert blocked_events.index(&quot;heartbeat&quot;) &gt; blocked_events.index(&quot;block-end&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[&#x27;block-start&#x27;, &#x27;block-end&#x27;, &#x27;heartbeat&#x27;]
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>After: to_thread로 동기 작업을 이벤트 루프 밖에서 실행함</h3>
+<p>스레드는 한 프로세스 안에서 실행 흐름을 나누는 단위입니다. <code>asyncio.to_thread(time.sleep, 0.05)</code>는 동기 함수와 인자를 이벤트 루프와 다른 스레드에서 호출합니다. 이 호출이 완료되지 않은 동안 현재 코루틴이 기다리면 하트비트 태스크가 실행될 수 있습니다. 출력의 <code>True</code>는 이번 실행에서 <code>heartbeat</code>가 <code>wait-end</code>보다 먼저 기록됐다는 관찰입니다. 마지막 <code>assert</code>는 순서를 강제하지 않고 세 사건이 모두 기록됐는지만 검사합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 같은 하트비트 함수에 목록과 신호를 전달해 관찰 순서를 비교합니다.
+async def responsive_probe() -&gt; list[str]:
+    events: list[str] = []
+    started = asyncio.Event()
+    task = asyncio.create_task(record_heartbeat(events, started))
+    await started.wait()
+    events.append(&quot;wait-start&quot;)
+    await asyncio.to_thread(time.sleep, 0.05)
+    events.append(&quot;wait-end&quot;)
+    await task
+    return events
+
+responsive_events = await responsive_probe()
+print(responsive_events)
+print(&quot;하트비트가 먼저:&quot;, responsive_events.index(&quot;heartbeat&quot;) &lt; responsive_events.index(&quot;wait-end&quot;))
+assert set(responsive_events) == {&quot;wait-start&quot;, &quot;heartbeat&quot;, &quot;wait-end&quot;}</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[&#x27;wait-start&#x27;, &#x27;heartbeat&#x27;, &#x27;wait-end&#x27;]
+하트비트가 먼저: True
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li><code>async def</code> 함수를 호출만 하고 await하거나 태스크로 예약하지 않으면 함수 본문이 완료되지 않습니다. 실행기에서 경고가 나타날 수도 있습니다.</li><li><code>gather</code>의 결과 순서는 완료 순서가 아니라 입력 순서입니다. 진행 상황이 필요하면 별도 기록으로 확인합니다.</li><li>Jupyter는 셀에서 최상위 <code>await</code>를 지원합니다. 일반 <code>.py</code> 파일에서는 보통 <code>asyncio.run(main())</code>으로 최상위 진입점을 만듭니다.</li><li><strong>I/O(input/output)</strong>는 파일, 네트워크, 데이터베이스처럼 프로그램 밖과 데이터를 주고받는 작업입니다. <code>to_thread</code>는 바꿀 수 없는 동기 I/O 함수가 이벤트 루프를 막지 않게 옮길 때 주로 사용합니다. 계산 자체를 빠르게 만드는 기능으로 해석하지 않습니다.</li><li>실제 API에는 동시 요청 제한, 재시도, 시간 제한이 있습니다. 무제한으로 태스크를 만들지 않고 Ch 18에서 제공자 정책과 함께 다룹니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>비동기 함수 호출은 코루틴을 만들며 <code>await</code>가 완료 결과를 받습니다.</li><li>여러 대기 작업은 함께 진행될 수 있지만 완료 순서와 <code>gather</code> 반환 순서는 다릅니다.</li><li>동기 차단 호출은 이벤트 루프를 멈추므로 변경할 수 없는 I/O 함수는 <code>to_thread</code>로 옮길 수 있습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — Ch 3에서는 이 절보다 앞에서 배운 파일과 외부 명령 실행을 Git 작업에 적용하고, Ch 4에서는 동기 방식의 데이터 처리를 먼저 익힙니다. Ch 18의 API 호출과 Ch 30의 FastAPI 서비스에서 여러 대기 작업을 처리할 때 이 절의 실행 순서와 차단 호출 구분을 다시 사용합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. <code>async def</code> 함수를 호출하면 즉시 최종 반환값을 받나요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> 아닙니다. 코루틴 객체를 받으며, await하거나 태스크로 예약해야 본문이 진행되고 최종 결과를 얻습니다.</p></details><details class="quiz"><summary>2. 빠른 작업이 먼저 끝나도 <code>gather</code> 결과가 입력 순서인 이유는 무엇인가요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> <code>gather</code>는 전달받은 코루틴과 태스크의 위치에 맞춰 결과 목록을 구성하기 때문입니다. 완료 순서는 별도 기록으로 확인해야 합니다.</p></details><details class="quiz"><summary>3. 비동기 함수 안의 <code>time.sleep</code>이 문제가 되는 이유는 무엇인가요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> 이벤트 루프와 같은 실행 흐름을 점유하여 대기 중인 다른 태스크가 실행되지 못하게 하기 때문입니다.</p></details><details class="quiz"><summary>4. After 출력의 <code>True</code>와 마지막 <code>assert</code>는 각각 무엇을 확인하나요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> <code>True</code>는 이번 실행에서 하트비트가 먼저 기록된 순서 관찰입니다. 마지막 단언문은 순서를 강제하지 않고 세 사건이 모두 기록되었는지만 확인합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.python.org/3.12/library/asyncio.html">Python 3.12 asyncio</a> · 확인 2026-09-09 · 기준 Python 3.12</li><li><a href="https://docs.python.org/3.12/library/asyncio-task.html">Python 3.12 코루틴과 Task</a> · 확인 2026-09-09 · 기준 Python 3.12</li><li><a href="https://docs.python.org/3.12/library/asyncio-task.html#asyncio.to_thread">Python 3.12 asyncio.to_thread</a> · 확인 2026-09-09 · 기준 Python 3.12</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="11-패키징과-테스트-격리.html">← 패키징과 테스트 격리</a></span><span><a href="index.html">챕터 목차</a></span><span>챕터 끝</span></div></div></body></html>

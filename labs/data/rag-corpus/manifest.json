@@ -1,0 +1,216 @@
+[
+ {
+  "doc_id": "E01",
+  "tier": "easy",
+  "title": "미르시립도서관 이용 안내",
+  "file": "pdf/easy/E01.pdf",
+  "pages": 5,
+  "org": "미르시립도서관",
+  "genre": "이용 안내",
+  "difficulty_reason": "단일 단, 문단당 사실 1개, 명확한 제목"
+ },
+ {
+  "doc_id": "E02",
+  "tier": "easy",
+  "title": "별빛제과 신입사원 온보딩 핸드북",
+  "file": "pdf/easy/E02.pdf",
+  "pages": 5,
+  "org": "별빛제과",
+  "genre": "핸드북",
+  "difficulty_reason": "단일 단, 짧은 문단, 표 2개(단순)"
+ },
+ {
+  "doc_id": "E03",
+  "tier": "easy",
+  "title": "도우미봇 R2 빠른 시작 가이드",
+  "file": "pdf/easy/E03.pdf",
+  "pages": 5,
+  "org": "오로라 로보틱스",
+  "genre": "사용자 가이드",
+  "difficulty_reason": "단일 단, 짧은 절, 표 단순. M01(사양서)과 배터리 수치가 다른 것이 의도된 혼동 요소"
+ },
+ {
+  "doc_id": "E04",
+  "tier": "easy",
+  "title": "청담해운 임직원 복지제도 안내",
+  "file": "pdf/easy/E04.pdf",
+  "pages": 4,
+  "org": "청담해운",
+  "genre": "복지 안내",
+  "difficulty_reason": "단일 단, 육상/해상 구분이 있어 조건 있는 질문에 약간의 주의 필요"
+ },
+ {
+  "doc_id": "E05",
+  "tier": "easy",
+  "title": "강릉 바다마을 2박 3일 여행 상품 안내",
+  "file": "pdf/easy/E05.pdf",
+  "pages": 4,
+  "org": "파도여행",
+  "genre": "상품 안내",
+  "difficulty_reason": "표 기반 가격 조회 + 조건(성수기·인원)이 있는 단순 계산 질문 가능"
+ },
+ {
+  "doc_id": "E06",
+  "tier": "easy",
+  "title": "누리테크 고객지원 FAQ 모음",
+  "file": "pdf/easy/E06.pdf",
+  "pages": 5,
+  "org": "누리테크",
+  "genre": "FAQ",
+  "difficulty_reason": "Q&A 쌍 구조 — 청킹 시 질문·답변 분리 여부가 관건"
+ },
+ {
+  "doc_id": "H01",
+  "tier": "hard",
+  "title": "부품 공급 기본계약서 (오로라 로보틱스–누리테크)",
+  "file": "pdf/hard/H01.pdf",
+  "pages": 7,
+  "org": "오로라 로보틱스 / 누리테크",
+  "genre": "계약서",
+  "difficulty_reason": "예외의 예외(제9조 제2항 단서), 별첨 우선 규칙(제19조), 서명면이 이미지(OCR 필요), 단가표 신·구 시점, 조문 간 상호참조"
+ },
+ {
+  "doc_id": "H02",
+  "tier": "hard",
+  "title": "한빛 화재공제 약관",
+  "file": "pdf/hard/H02.pdf",
+  "pages": 5,
+  "org": "한빛공제조합",
+  "genre": "약관(2단)",
+  "difficulty_reason": "2단 레이아웃(파서가 열을 섞으면 문장이 깨짐), 면책의 예외의 예외(제5조 제2항 단서), 비례보상 산식, 별표 참조"
+ },
+ {
+  "doc_id": "H03",
+  "tier": "hard",
+  "title": "제312회 미르시의회 예산결산특별위원회 회의록 제3호",
+  "file": "pdf/hard/H03.pdf",
+  "pages": 6,
+  "org": "미르시의회",
+  "genre": "회의록",
+  "difficulty_reason": "발언자-발언 구조(누가 말했는지가 답의 일부), 질의와 답변이 떨어져 있음, 숫자가 대화 속에 흩어짐, 최종 결정은 계수조정에만"
+ },
+ {
+  "doc_id": "H04",
+  "tier": "hard",
+  "title": "2025년 3분기 물류센터 안전사고 조사 보고서 (오로라 로지스틱스)",
+  "file": "pdf/hard/H04.pdf",
+  "pages": 5,
+  "org": "오로라 로지스틱스",
+  "genre": "사고조사 보고서",
+  "difficulty_reason": "오로라 로보틱스와 유사한 회사명(검색 혼동), 수치가 차트 이미지 안에만 존재(비전/OCR 필요), 가로 페이지 병합 셀 교차표"
+ },
+ {
+  "doc_id": "H05",
+  "tier": "hard",
+  "title": "청담 5호 출항 전 안전점검표 (2025. 11. 14.)",
+  "file": "pdf/hard/H05.pdf",
+  "pages": 3,
+  "org": "청담해운",
+  "genre": "점검표(스캔본 전용)",
+  "difficulty_reason": "배포본은 텍스트 레이어가 없는 스캔 이미지(OCR 필수), 손글씨 스타일 기입, 기호(✓△✗)가 답을 좌우",
+  "note": "배포본은 텍스트 레이어 없는 스캔 이미지 PDF. 텍스트판은 build/answer_keys/H05-text.pdf"
+ },
+ {
+  "doc_id": "H06",
+  "tier": "hard",
+  "title": "HACCP 내부감사 보고서 (2026년 1차, 강릉 1공장)",
+  "file": "pdf/hard/H06.pdf",
+  "pages": 6,
+  "org": "별빛제과",
+  "genre": "감사 보고서",
+  "difficulty_reason": "모든 페이지 머리글이 청크에 섞임, 본문 §5 표준값과 부록 B 승인값이 상충하고 부록이 우선한다는 규칙이 본문 앞쪽에 작게 있음"
+ },
+ {
+  "doc_id": "M01",
+  "tier": "medium",
+  "title": "도우미봇 R2 기술 사양서",
+  "file": "pdf/medium/M01.pdf",
+  "pages": 6,
+  "org": "오로라 로보틱스",
+  "genre": "기술 사양서",
+  "difficulty_reason": "표 10개, 조건부 수치(대기 vs 주행), E03과 상충하는 '8시간' 상충값, 절 참조(§4.2·§8)"
+ },
+ {
+  "doc_id": "M02",
+  "tier": "medium",
+  "title": "청담해운 국내 연안 화물운송 약관",
+  "file": "pdf/medium/M02.pdf",
+  "pages": 7,
+  "org": "청담해운",
+  "genre": "약관",
+  "difficulty_reason": "조문 상호참조(제20조↔제10조·별표), '큰 금액' 계산, 특칙·면책 예외, 부칙의 구 약관 수치(시점에 따라 값이 다름)"
+ },
+ {
+  "doc_id": "M03",
+  "tier": "medium",
+  "title": "알레르기 유발물질 및 원재료 표시 대장",
+  "file": "pdf/medium/M03.pdf",
+  "pages": 6,
+  "org": "별빛제과",
+  "genre": "관리 대장",
+  "difficulty_reason": "36행×16열 기호(●△) 표 — 셀↔헤더 매핑, 세트 합산·제외 승인 등 표 밖 규칙과 결합 필요"
+ },
+ {
+  "doc_id": "M04",
+  "tier": "medium",
+  "title": "2025년 하반기 문화행사 추진 계획",
+  "file": "pdf/medium/M04.pdf",
+  "pages": 5,
+  "org": "미르시 문화예술과",
+  "genre": "계획 보고서",
+  "difficulty_reason": "각주(개정 전후 수치), 예산표 비율 계산, 일정표 21행 — 조건(대상·무료) 필터 질문"
+ },
+ {
+  "doc_id": "M05",
+  "tier": "medium",
+  "title": "인사규정 개정 신구조문 대비표",
+  "file": "pdf/medium/M05.pdf",
+  "pages": 4,
+  "org": "누리테크",
+  "genre": "신구조문 대비표",
+  "difficulty_reason": "같은 조문의 두 버전이 한 행에 공존 — 시점 조건 없는 질문은 답이 둘, 부칙 경과조치와 결합 필요"
+ },
+ {
+  "doc_id": "M06",
+  "tier": "medium",
+  "title": "한빛공제조합 공제상품 종합 안내",
+  "file": "pdf/medium/M06.pdf",
+  "pages": 5,
+  "org": "한빛공제조합",
+  "genre": "상품 안내",
+  "difficulty_reason": "이름이 비슷한 6개 상품(F1/F2, S1/S2) — 상품 코드 구분·요율표 계산·할인 중복 규칙"
+ },
+ {
+  "doc_id": "S01",
+  "tier": "scanned",
+  "title": "미르시립도서관 이용 안내 (스캔본)",
+  "file": "pdf/scanned/S01-E01-scan.pdf",
+  "pages": 5,
+  "org": "미르시립도서관",
+  "genre": "이용 안내·스캔",
+  "difficulty_reason": "쉬운 내용·스캔 형식(기울기 1°, 노이즈)",
+  "source_doc": "E01"
+ },
+ {
+  "doc_id": "S02",
+  "tier": "scanned",
+  "title": "알레르기 유발물질 및 원재료 표시 대장 (스캔본)",
+  "file": "pdf/scanned/S02-M03-scan.pdf",
+  "pages": 6,
+  "org": "별빛제과",
+  "genre": "관리 대장·스캔",
+  "difficulty_reason": "기호 표(●△)를 OCR로 읽어야 함",
+  "source_doc": "M03"
+ },
+ {
+  "doc_id": "S03",
+  "tier": "scanned",
+  "title": "부품 공급 기본계약서 (오로라 로보틱스–누리테크) (스캔본)",
+  "file": "pdf/scanned/S03-H01-scan.pdf",
+  "pages": 7,
+  "org": "오로라 로보틱스 / 누리테크",
+  "genre": "계약서·스캔",
+  "difficulty_reason": "팩스 품질 스캔, 서명면 포함",
+  "source_doc": "H01"
+ }
+]

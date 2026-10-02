@@ -1,0 +1,14 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant RUN as run_index
+  participant STORE as 색인
+  participant EMB as 임베딩 모델 small
+  RUN->>STORE: PDF 문서 청크 6개 넣기
+  STORE->>EMB: 문서 청크 6개 임베딩 요청
+  EMB-->>STORE: 벡터 6개
+  Note over STORE: 저장 항목 6개
+  RUN->>STORE: 질문과 검색 개수 5
+  STORE->>EMB: 질문 임베딩 요청
+  EMB-->>STORE: 질문 벡터
+  STORE-->>RUN: 상위 다섯 줄 모두 [E01 p.2]
+  Note over RUN: 1위 147자 · 점수 0.33

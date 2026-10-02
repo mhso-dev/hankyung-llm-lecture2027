@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-09-09T14:08:21.249737+00:00",
+  "container": "hankyung-part3-pgvector",
+  "host": "127.0.0.1",
+  "port": 55432,
+  "database": "rag_lab",
+  "image": "pgvector/pgvector:0.8.2-pg17",
+  "image_digest": "sha256:feb68f4f15446397d8cac7f4fe48fe4586de83160d1fc48b46283312d1a33966",
+  "postgres_version": "17.10 (Debian 17.10-1.pgdg12+1)",
+  "pgvector_version": "0.8.2",
+  "docker_server_version": "29.4.1",
+  "final_container_status": "exited",
+  "stopped_after_validation": true
+}

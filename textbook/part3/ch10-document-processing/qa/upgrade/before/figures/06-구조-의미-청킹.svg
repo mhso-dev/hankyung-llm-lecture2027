@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 455" width="900" height="455" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title desc">
+<title id="title">구조 청킹과 의미 청킹 — 경계를 정하는 신호가 다르다</title>
+<desc id="desc">제목 계층을 따라 나누는 구조 청킹과 문장 임베딩 거리의 임계값을 따라 나누는 의미 청킹의 비교</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a9eed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ef4444"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#757575"/></marker>
+</defs>
+<rect width="900" height="455" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="18" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">구조 청킹과 의미 청킹 — 경계를 정하는 신호가 다르다</tspan></text>
+<rect x="45" y="70" width="380" height="300" rx="12" fill="#d3f9d8" fill-opacity="0.35" stroke="#22c55e" stroke-width="1"/>
+<text x="59" y="88.0" font-size="15" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="59" dy="0.0">구조 청킹</tspan></text>
+<rect x="80" y="125" width="145" height="70" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="152.5" y="150.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="152.5" dy="0.0">제목 계층</tspan><tspan x="152.5" dy="18.9">H1 → H2 → H3</tspan></text>
+<polyline points="225,160 280,160" fill="none" stroke="#22c55e" stroke-width="2" marker-end="url(#m-green)"/>
+<rect x="233.2" y="137.5" width="38.6" height="21.0" fill="#ffffff" fill-opacity="0.94" rx="4"/>
+<text x="252.5" y="148.0" font-size="14" fill="#166534" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="252.5" dy="0.0">경계</tspan></text>
+<rect x="280" y="125" width="110" height="70" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="335.0" y="150.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="335.0" dy="0.0">절 단위</tspan><tspan x="335.0" dy="18.9">청크</tspan></text>
+<text x="80" y="245.0" font-size="14" fill="#15803d" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="80" dy="0.0">장점: 출처와 문서 논리가 선명합니다.</tspan></text>
+<text x="80" y="280.0" font-size="14" fill="#595959" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="80" dy="0.0">조건: 제목 구조가 일관되어야 합니다.</tspan></text>
+<rect x="475" y="70" width="380" height="300" rx="12" fill="#fff8dc" fill-opacity="0.35" stroke="#f59e0b" stroke-width="1"/>
+<text x="489" y="88.0" font-size="15" fill="#92400e" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="489" dy="0.0">의미 청킹</tspan></text>
+<rect x="510" y="125" width="145" height="70" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="582.5" y="150.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="582.5" dy="0.0">인접 문장</tspan><tspan x="582.5" dy="18.9">임베딩 거리</tspan></text>
+<polyline points="655,160 710,160" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#m-yellow)"/>
+<rect x="636.6" y="137.5" width="91.8" height="21.0" fill="#ffffff" fill-opacity="0.94" rx="4"/>
+<text x="682.5" y="148.0" font-size="14" fill="#92400e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="682.5" dy="0.0">임계값 초과</tspan></text>
+<rect x="710" y="125" width="110" height="70" rx="10" fill="#fff3bf" stroke="#f59e0b" stroke-width="2"/>
+<text x="765.0" y="150.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="765.0" dy="0.0">의미 전환</tspan><tspan x="765.0" dy="18.9">경계</tspan></text>
+<text x="510" y="245.0" font-size="14" fill="#b45309" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="510" dy="0.0">장점: 제목이 없는 본문의 전환을 찾습니다.</tspan></text>
+<text x="510" y="280.0" font-size="14" fill="#595959" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="510" dy="0.0">설정: 임베딩 모델과 나누는 기준값을 정합니다.</tspan></text>
+<text x="450" y="415.0" font-size="15" fill="#595959" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450" dy="0.0">두 방법은 모델의 답변 판단이 아니라, 학생이 선택한 규칙과 측정 기준으로 청크 경계를 만듭니다.</tspan></text>
+</svg>

@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  RUN1["6절 temperature 1.0<br>시드 11~55 답 5개"]:::measure
+  RUN2["8절 같은 시드로 다시<br>같은 답 수 5 / 5"]:::measure
+  ZERO["9절 뽑기를 켠 채<br>temperature 0.0"]:::tool
+  ERR["ValueError<br>0보다 큰 실수여야 함"]:::measure
+  GREEDY["안내: 뽑기 끄기<br>5절 설정"]:::tool
+  RUN1 -- "같은 시드 set_seed" --> RUN2
+  ZERO -- "generate() 호출" --> ERR
+  ERR -- "메시지 끝" --> GREEDY

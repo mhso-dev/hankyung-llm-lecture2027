@@ -1,0 +1,162 @@
+[
+  {
+    "metric": "cosine",
+    "qid": "C01",
+    "ranked": [
+      "LIB-004",
+      "LIB-001",
+      "LIB-003"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "cosine",
+    "qid": "C02",
+    "ranked": [
+      "LIB-003",
+      "LIB-004",
+      "LIB-001"
+    ],
+    "hit": false
+  },
+  {
+    "metric": "cosine",
+    "qid": "C03",
+    "ranked": [
+      "LIB-003",
+      "ACC-002",
+      "LIB-004"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "cosine",
+    "qid": "C04",
+    "ranked": [
+      "FAC-001",
+      "FAC-004",
+      "LIB-001"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "cosine",
+    "qid": "C05",
+    "ranked": [
+      "FAC-003",
+      "LIB-002",
+      "FAC-004"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "cosine",
+    "qid": "C06",
+    "ranked": [
+      "ACC-001",
+      "ACC-003",
+      "LIB-002"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "cosine",
+    "qid": "C07",
+    "ranked": [
+      "ACC-002",
+      "ACC-004",
+      "ACC-003"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "cosine",
+    "qid": "C08",
+    "ranked": [
+      "ACC-003",
+      "ACC-001",
+      "FAC-002"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "l2",
+    "qid": "C01",
+    "ranked": [
+      "LIB-004",
+      "LIB-001",
+      "LIB-003"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "l2",
+    "qid": "C02",
+    "ranked": [
+      "LIB-003",
+      "LIB-004",
+      "LIB-001"
+    ],
+    "hit": false
+  },
+  {
+    "metric": "l2",
+    "qid": "C03",
+    "ranked": [
+      "LIB-003",
+      "ACC-002",
+      "LIB-004"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "l2",
+    "qid": "C04",
+    "ranked": [
+      "FAC-001",
+      "FAC-004",
+      "LIB-001"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "l2",
+    "qid": "C05",
+    "ranked": [
+      "FAC-003",
+      "LIB-002",
+      "FAC-004"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "l2",
+    "qid": "C06",
+    "ranked": [
+      "ACC-001",
+      "ACC-003",
+      "LIB-002"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "l2",
+    "qid": "C07",
+    "ranked": [
+      "ACC-002",
+      "ACC-004",
+      "ACC-003"
+    ],
+    "hit": true
+  },
+  {
+    "metric": "l2",
+    "qid": "C08",
+    "ranked": [
+      "ACC-003",
+      "ACC-001",
+      "FAC-002"
+    ],
+    "hit": true
+  }
+]

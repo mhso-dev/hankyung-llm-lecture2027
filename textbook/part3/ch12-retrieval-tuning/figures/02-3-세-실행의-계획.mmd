@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  sql["같은 검색 SQL 한 문장<br>ORDER BY 거리 LIMIT 3"]:::flow
+  run_one["실행 1<br>색인 없는 표"]:::flow
+  run_two["실행 2<br>색인 있는 표"]:::flow
+  run_three["실행 3<br>enable_seqscan을 off로"]:::flow
+  plan_one["계획 줄 Seq Scan"]:::measure
+  plan_two["계획 줄 Seq Scan"]:::measure
+  plan_three["계획 줄 Index Scan"]:::measure
+  same["세 실행의 상위 세 개가 같았음<br>LIB-004 · LIB-001 · LIB-003"]:::measure
+  sql --> run_one --> plan_one --> same
+  sql --> run_two --> plan_two --> same
+  sql --> run_three --> plan_three --> same

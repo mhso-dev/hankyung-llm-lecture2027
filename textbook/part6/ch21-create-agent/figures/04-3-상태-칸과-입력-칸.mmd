@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph og["옛 그래프 old_agent"]
+    direction TB
+    oc["상태 칸<br>messages"]:::measure
+    om["그래프가 채우는 값<br>remaining_steps"]:::measure
+    oi["입력 칸<br>messages<br>remaining_steps"]:::measure
+    ox["소스 확인 · 남은 단계가<br>둘보다 적은데<br>도구 요청이 오면<br>멈추는 글을 남김"]
+    oc ~~~ om
+    om ~~~ oi
+    om ~~~ ox
+  end
+  subgraph ng["새 그래프 new_agent"]
+    direction TB
+    nc["상태 칸<br>messages · jump_to<br>structured_response"]:::measure
+    nm["그래프가 채우는 값<br>없음"]:::measure
+    ni["입력 칸<br>messages"]:::measure
+    nc ~~~ nm
+    nm ~~~ ni
+  end
+  og ~~~ ng

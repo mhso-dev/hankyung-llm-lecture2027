@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph one["첫 실행 · 문서 둘"]
+    direction TB
+    o1["넘긴 문서 E01 · E99<br>의심 문서 E99"]:::measure
+    o2["격리 ValueError<br>모델을 부르기 전에 멈춤"]:::measure
+    o3["예약한 호출 없음<br>기록 blocked_document"]:::measure
+    o1 --> o2
+    o2 --> o3
+  end
+  subgraph two["둘째 실행 · E99를 뺀 문서"]
+    direction TB
+    t1["넘긴 문서<br>E01 하나"]:::measure
+    t2["모델 gpt-5.4-mini<br>요청 한 번"]:::model
+    t3["예약한 호출 하나<br>기록 rag_answer"]:::measure
+    t1 --> t2
+    t2 --> t3
+  end
+  same["두 칸 모두 같은 질문<br>호출 한도 둘 · 같은 감사 기록"]
+  one ~~~ same
+  two ~~~ same

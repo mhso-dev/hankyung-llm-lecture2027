@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  val["넣은 값 topic 주차<br>글이지만 규정에 없는 주제"]:::tool
+  subgraph nb["노트북의 두 도구"]
+    direction TB
+    p1["Before · After 모두<br>입력 검사를 지나 몸통까지"]:::flow
+    p2["받은 글<br>lookup_policy: 주차<br>몸통에 들어온 값 주차 두 번"]:::measure
+    p1 --> p2
+  end
+  subgraph sf["서버 파일의 도구"]
+    direction TB
+    f1["입력 형식 topic type string<br>몸통 첫 줄이 주제를 검사"]:::flow
+    f2["받은 글<br>topic은 대출, 운영, 연체 중<br>하나여야 합니다"]:::measure
+    f1 --> f2
+  end
+  val --> nb
+  val --> sf

@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  a1["kill_at_second<br>스크립트를 띄워<br>charge에서 강제 종료"]:::flow
+  a2["끊긴 뒤<br>다음 노드 charge<br>체크포인트 셋<br>결제 기록 키 한 줄"]:::measure
+  a3["start_worker resume<br>새 자식 프로세스"]:::flow
+  a4["저장된 다음 노드부터<br>charge를 처음부터 다시 실행"]:::flow
+  a5["다시 실행한 뒤<br>종료 코드 0 · 체크포인트 넷"]:::measure
+  a1 --> a2
+  a2 --> a3
+  a3 --> a4
+  a4 --> a5

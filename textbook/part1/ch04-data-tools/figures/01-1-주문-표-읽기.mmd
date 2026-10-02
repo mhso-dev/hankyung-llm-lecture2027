@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  CSV["orders.csv<br>열 이름 한 줄 · 주문 세 줄"]:::tool
+  subgraph DF["표 orders · 3행 3열"]
+    direction LR
+    IDX["인덱스<br>0 · 1 · 2"]
+    COL1["order_id 열<br>str"]:::tool
+    COL2["status 열<br>str"]:::tool
+    COL3["amount 열<br>int64"]:::tool
+  end
+  SER["시리즈 orders[#quot;status#quot;]<br>paid · pending · paid"]:::tool
+  CSV -- "pd.read_csv()" --> DF
+  COL2 -- "열 하나 꺼내기" --> SER

@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  body["응답 본문 글<br>text/event-stream"]:::measure
+  sp["split_sse<br>빈 줄로 나눠<br>SSE 사건 일곱"]:::flow
+  first["첫 SSE 사건 글<br>event: token<br>data: JSON 글<br>id: sse-1:0"]:::measure
+  pa["parse_sse<br>처음 쌍점과 공백에서<br>한 번만 나눔"]:::flow
+  names["칸 이름 셋<br>event data id"]:::measure
+  lo["json.loads로<br>칸 data를 읽음"]:::flow
+  val["읽은 값 dict<br>처리 함수가 내놓은<br>값과 같음 True"]:::measure
+  body --> sp --> first --> pa --> names --> lo --> val

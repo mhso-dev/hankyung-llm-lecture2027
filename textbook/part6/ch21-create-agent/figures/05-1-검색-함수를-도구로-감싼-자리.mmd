@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  docs["Ch 14 문서 열두 건<br>documents.json · 읽기만"]:::tool
+  emb["임베딩 모델 text-embedding-3-small<br>벡터 크기 256<br>문서 벡터 열두 개<br>임베딩 요청 한 번"]:::model
+  hits["검색 함수 search_hits<br>Ch 14 06절 · 도구 파일"]:::flow
+  wrap["검색 도구 search_documents<br>인자 query · 문서 세 건의 글"]:::flow
+  mk["create_agent<br>모델 객체 · 도구 하나<br>시스템 메시지 글"]
+  g["에이전트 그래프<br>모델 노드 · 도구 실행 노드<br>01절과 같은 모양"]
+  docs --> emb
+  emb --> hits
+  hits --> wrap
+  wrap --> mk
+  mk --> g

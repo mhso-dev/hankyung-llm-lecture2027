@@ -1,0 +1,15 @@
+flowchart TD
+  %% classes
+  A["amount<br>42000"]:::tool
+  C1{"amount #gt;= 50000"}:::measure
+  C2{"amount #gt;= 30000"}:::measure
+  F0["shipping_fee = 0"]
+  F2["shipping_fee = 2000"]:::flow
+  F3["shipping_fee = 3000"]
+  R["출력<br>배송비: 2000"]:::measure
+  A --> C1
+  C1 -- "참" --> F0
+  C1 -- "거짓" --> C2
+  C2 -- "참" --> F2
+  C2 -- "거짓" --> F3
+  F2 --> R

@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph D["기본값 ToolNode tools"]
+    direction TB
+    d1["주차 요청<br>ValueError로 멈춤"]:::fail
+    d2["인자 이름이 틀린 요청<br>도구 메시지 error<br>모델이 topic 대출로<br>다시 요청"]:::measure
+    d1 ~~~ d2
+  end
+  subgraph P["오류 처리 함수 · 받을 오류 표시 ValueError"]
+    direction TB
+    p1["주차 요청<br>도구 메시지 error"]:::measure
+    p2["인자 이름이 틀린 요청<br>ToolInvocationError로 멈춤"]:::measure
+    p1 ~~~ p2
+  end
+  same["노드가 감싼<br>ToolInvocationError는<br>ValueError가 아님<br>두 요청에서 받은 오류가<br>서로 엇갈림"]
+  D ~~~ same
+  P ~~~ same

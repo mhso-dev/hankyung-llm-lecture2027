@@ -1,0 +1,24 @@
+flowchart TB
+  %% classes
+  subgraph ka["같은 파일 · 같은 스레드"]
+    direction TB
+    a1["chat.sqlite<br>conversation-a<br>셋째 질문"]:::tool
+    a2["메시지 여섯<br>3번째 질문을<br>받았습니다<br>표의 줄 아홉"]:::measure
+    a1 --> a2
+  end
+  subgraph kb["같은 파일 · 다른 스레드"]
+    direction TB
+    b1["chat.sqlite<br>conversation-b<br>같은 글의 질문"]:::tool
+    b2["메시지 둘<br>1번째 질문을<br>받았습니다<br>표의 줄 셋"]:::measure
+    b1 --> b2
+  end
+  subgraph kc["다른 파일 · 같은 스레드"]
+    direction TB
+    c1["other.sqlite<br>conversation-a<br>입력 없이<br>읽기만"]:::tool
+    c2["저장된 칸 값<br>빈 딕셔너리<br>다음 노드 없음"]:::measure
+    c1 --> c2
+  end
+  cm["세 칸 모두<br>같은 설계 객체 builder<br>같은 노드 reply"]
+  ka ~~~ cm
+  kb ~~~ cm
+  kc ~~~ cm

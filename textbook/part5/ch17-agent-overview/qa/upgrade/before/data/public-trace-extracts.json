@@ -1,0 +1,193 @@
+[
+  {
+    "product": "SWE-agent v0.7.0 demonstration",
+    "repository": "SWE-agent/SWE-agent",
+    "commit": "3ea751c087f32b16e039a2233dd6eefecef325d5",
+    "license": "MIT",
+    "license_url": "https://github.com/SWE-agent/SWE-agent/blob/3ea751c087f32b16e039a2233dd6eefecef325d5/LICENSE",
+    "raw_url": "https://raw.githubusercontent.com/SWE-agent/SWE-agent/3ea751c087f32b16e039a2233dd6eefecef325d5/trajectories/demonstrations/replay__marshmallow-code__marshmallow-1867__default__t-0.20__p-0.95__c-2.00__install-1___install_from_source/marshmallow-code__marshmallow-1867.traj",
+    "sha256": "8856076ec31832f20aefa7f0a2714e3ad6bc752f14815d94d2e852e50213a459",
+    "artifact_format": "SWE-agent .traj JSON; action-observation turns",
+    "events": [
+      {
+        "step": 1,
+        "action": "ls",
+        "outcome": "success",
+        "evidence": "repository listing"
+      },
+      {
+        "step": 2,
+        "action": "open setup.py",
+        "outcome": "success",
+        "evidence": "94-line file opened"
+      },
+      {
+        "step": 3,
+        "action": "install dev dependencies",
+        "outcome": "success",
+        "evidence": "editable install output"
+      },
+      {
+        "step": 4,
+        "action": "create reproduction",
+        "outcome": "success",
+        "evidence": "reproduce.py created"
+      },
+      {
+        "step": 5,
+        "action": "write reproduction",
+        "outcome": "success",
+        "evidence": "9-line script"
+      },
+      {
+        "step": 6,
+        "action": "run reproduction",
+        "outcome": "success",
+        "evidence": "observed 344"
+      },
+      {
+        "step": 7,
+        "action": "list files",
+        "outcome": "success",
+        "evidence": "reproduce.py present"
+      },
+      {
+        "step": 8,
+        "action": "find fields.py",
+        "outcome": "success",
+        "evidence": "one match"
+      },
+      {
+        "step": 9,
+        "action": "open target lines",
+        "outcome": "success",
+        "evidence": "TimeDelta serialization lines"
+      },
+      {
+        "step": 10,
+        "action": "edit without indentation",
+        "outcome": "failure",
+        "evidence": "E999 IndentationError; edit rejected"
+      },
+      {
+        "step": 11,
+        "action": "edit with indentation",
+        "outcome": "success",
+        "evidence": "file updated"
+      },
+      {
+        "step": 12,
+        "action": "rerun reproduction",
+        "outcome": "success",
+        "evidence": "observed 345"
+      },
+      {
+        "step": 13,
+        "action": "remove reproduction",
+        "outcome": "success",
+        "evidence": "temporary file removed"
+      },
+      {
+        "step": 14,
+        "action": "submit patch",
+        "outcome": "success",
+        "evidence": "exit_status submitted; one-line patch"
+      }
+    ],
+    "recovery_pairs": [
+      [
+        10,
+        11,
+        "편집 거부 뒤 들여쓰기를 고쳐 다시 편집"
+      ]
+    ],
+    "hardcoded_boundary": "도구 문법 검사기가 들여쓰기 오류가 있는 편집을 거부하고 submit 도구가 종료를 표시합니다.",
+    "interpretation_limit": "저장된 demonstration을 분석했으며 현재 버전의 SWE-agent를 다시 실행하지 않았습니다."
+  },
+  {
+    "product": "mini-SWE-agent GitHub issue fixture",
+    "repository": "SWE-agent/mini-swe-agent",
+    "commit": "04d809ceab9df28f9adaed044884180159172930",
+    "license": "MIT",
+    "license_url": "https://github.com/SWE-agent/mini-swe-agent/blob/04d809ceab9df28f9adaed044884180159172930/LICENSE.md",
+    "raw_url": "https://raw.githubusercontent.com/SWE-agent/mini-swe-agent/04d809ceab9df28f9adaed044884180159172930/tests/test_data/github_issue.traj.json",
+    "sha256": "86d060a4881efc19b59b4ee6667b1c80b2b769544d4f6cecb42521e09e95c6a0",
+    "artifact_format": "mini-SWE-agent message trajectory; assistant command and user tool-result pairs",
+    "events": [
+      {
+        "step": 1,
+        "action": "read absolute path",
+        "outcome": "failure",
+        "evidence": "returncode 1; file not found"
+      },
+      {
+        "step": 2,
+        "action": "list repository",
+        "outcome": "success",
+        "evidence": "returncode 0"
+      },
+      {
+        "step": 3,
+        "action": "list tests",
+        "outcome": "success",
+        "evidence": "returncode 0"
+      },
+      {
+        "step": 4,
+        "action": "read target file",
+        "outcome": "success",
+        "evidence": "returncode 0; missing colon visible"
+      },
+      {
+        "step": 5,
+        "action": "add missing colon",
+        "outcome": "success",
+        "evidence": "returncode 0"
+      },
+      {
+        "step": 6,
+        "action": "read edited file",
+        "outcome": "success",
+        "evidence": "returncode 0"
+      },
+      {
+        "step": 7,
+        "action": "run script",
+        "outcome": "success",
+        "evidence": "returncode 0; output 8.2"
+      },
+      {
+        "step": 8,
+        "action": "run issue input",
+        "outcome": "failure",
+        "evidence": "returncode 1; ZeroDivisionError"
+      },
+      {
+        "step": 9,
+        "action": "add zero check",
+        "outcome": "success",
+        "evidence": "returncode 0"
+      },
+      {
+        "step": 10,
+        "action": "submit plus git diff",
+      "outcome": "unconfirmed",
+      "evidence": "diff is present but no returncode wrapper; completion status not verified"
+      }
+    ],
+    "recovery_pairs": [
+      [
+        1,
+        2,
+        "잘못된 절대 경로 뒤 현재 저장소를 목록으로 확인"
+      ],
+      [
+        8,
+        9,
+        "ZeroDivisionError 뒤 0 검사 추가"
+      ]
+    ],
+    "hardcoded_boundary": "시스템 지시는 응답당 명령 하나와 단독 완료 명령을 요구하지만 마지막 행동은 완료 명령에 git 명령을 결합했습니다.",
+    "interpretation_limit": "테스트 fixture를 분석했으며 패치의 요구 범위 적합성이나 외부 평가 통과는 확인하지 않았습니다."
+  }
+]

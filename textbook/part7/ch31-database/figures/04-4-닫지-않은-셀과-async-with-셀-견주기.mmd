@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  same["두 셀 같음<br>풀 크기 하나<br>대기 제한 0.2초<br>SELECT<br>current_database()<br>받은 이름 ch31_lab"]
+  subgraph bf["Before · 닫지 않음"]
+    direction TB
+    b1["conn = await<br>engine.connect()<br>조회 뒤 셀을 끝냄"]:::flow
+    b2["셀 뒤 빌려 간 연결 하나<br>쉬고 있는 연결 없음"]:::fail
+    b3["다음 요청 받은 오류<br>TimeoutError"]:::measure
+    b1 --> b2 --> b3
+  end
+  subgraph af["After · 닫고 async with"]
+    direction TB
+    a1["await conn.close() 뒤<br>async with<br>engine.connect()"]:::flow
+    a2["셀 뒤 빌려 간 연결 없음<br>쉬고 있는 연결 하나"]:::measure
+    a3["다음 요청 받은 이름<br>ch31_lab"]:::measure
+    a1 --> a2 --> a3
+  end
+  same --> bf
+  same --> af

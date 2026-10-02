@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  lines["입력 파일<br>요청 다섯 줄"]:::tool
+  subgraph keep["과정 표준 설정 줄 넷"]
+    direction TB
+    std["inquiry-1 · 3 · 4 · 5<br>temperature 0<br>reasoning_effort none"]:::tool
+    ok["결과 파일 네 줄<br>상태 코드 200"]:::measure
+    std --> ok
+  end
+  subgraph changed["설정을 바꾼 줄 하나"]
+    direction TB
+    low["inquiry-2<br>temperature 0<br>reasoning_effort low"]:::tool
+    bad["오류 파일 한 줄<br>상태 코드 400<br>unsupported_value"]:::measure
+    low --> bad
+  end
+  lines --> keep
+  lines --> changed

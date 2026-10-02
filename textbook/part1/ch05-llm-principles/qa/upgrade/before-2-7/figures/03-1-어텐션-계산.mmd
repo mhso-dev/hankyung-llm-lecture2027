@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  QUESTION["B 질문 벡터<br>[0, 1, 1]"]:::tool
+  PIECES["조각 벡터 네 개<br>A는 · 파란색 · B는 · 노란색"]:::tool
+  SCORES["어텐션 점수<br>[0, 1, 1, 2]"]:::measure
+  WEIGHTS["비중 · 합 1.0<br>0.0723 · 0.1966<br>0.1966 · 0.5344"]:::measure
+  NEWVEC["B 질문 조각의 새 벡터<br>[0.2689, 0.7311, 0.7311]"]:::measure
+  QUESTION -- "dot_product()" --> SCORES
+  PIECES -- "dot_product()" --> SCORES
+  SCORES -- "softmax()" --> WEIGHTS
+  WEIGHTS -- "weighted_sum()" --> NEWVEC
+  PIECES -. "섞을 벡터" .-> NEWVEC

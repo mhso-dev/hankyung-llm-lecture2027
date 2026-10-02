@@ -1,0 +1,17 @@
+%%{init: {"sequence": {"messageAlign": "left", "width": 130, "actorMargin": 40}}}%%
+sequenceDiagram
+  participant U as 우리 코드
+  participant G as 에이전트 그래프
+  box Lavender
+  participant M as 모델<br>gpt-5.4-mini
+  end
+  participant S as MCP 서버<br>자식 프로세스
+  U->>G: await ainvoke 질문 한 줄
+  G->>M: 요청 1
+  M-->>G: 도구 요청 lookup_policy
+  G->>S: 도구 실행 노드가 부름
+  S-->>G: ToolMessage success
+  G->>M: 요청 2
+  M-->>G: 도구 요청 없음
+  G-->>U: 결과 메시지 넷
+  Note over U,G: 요청 수 2<br>= 도구를 요청한 응답 수 1 + 1<br>실행 뒤 자식 프로세스 0

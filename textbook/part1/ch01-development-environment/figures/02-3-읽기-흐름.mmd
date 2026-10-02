@@ -1,0 +1,9 @@
+flowchart LR
+  %% classes
+  B["base_folder<br>practice"]:::tool
+  R["relative_path<br>data/message.txt"]:::tool
+  P["basic_path<br>…/practice/<br>data/message.txt"]:::tool
+  M["basic_message<br>안녕, 터미널!"]:::tool
+  B -- "/ 로 이어 붙이기" --> P
+  R -- "/ 로 이어 붙이기" --> P
+  P -- "read_text()" --> M

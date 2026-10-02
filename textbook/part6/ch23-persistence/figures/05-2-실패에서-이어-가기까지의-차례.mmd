@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  a1["3절 graph.invoke<br>기본값으로 실행"]:::flow
+  a2["받은 오류 TimeoutError<br>부른 횟수<br>good 한 번 flaky 한 번"]:::measure
+  a3["get_state<br>다음 노드 flaky 하나<br>체크포인트 둘"]:::measure
+  a4["4절 표 writes<br>good 줄 results<br>flaky 줄 __error__"]:::measure
+  a5["5절 칸 fail을 False로<br>graph.invoke None"]:::flow
+  a6["부른 횟수<br>good 한 번 flaky 두 번<br>결과 글 둘 모두 있음"]:::measure
+  a1 --> a2
+  a2 --> a3
+  a3 --> a4
+  a4 --> a5
+  a5 --> a6

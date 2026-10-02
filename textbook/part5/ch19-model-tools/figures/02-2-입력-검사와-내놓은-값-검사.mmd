@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  a1["인자 딕셔너리<br>status paid · limit 2"]:::tool
+  a2["도구가 OrderQuery로<br>입력 검사 · 통과"]
+  a3["몸통 실행<br>fetch_orders로 읽고<br>두 개까지 자름"]:::flow
+  a4["내놓은 주문 두 줄<br>O101 · O103"]:::measure
+  a5["코드가 줄마다<br>OrderRecord<br>.model_validate"]:::flow
+  a6["검사를 통과한 줄 수 2<br>첫 줄 금액의 자료형 int"]:::measure
+  spec["명세의 칸 셋<br>name · description<br>parameters<br>명세에 amount 글자 False"]:::measure
+  a1 --> a2
+  a2 --> a3
+  a3 --> a4
+  a4 --> a5
+  a5 --> a6
+  a2 ~~~ spec

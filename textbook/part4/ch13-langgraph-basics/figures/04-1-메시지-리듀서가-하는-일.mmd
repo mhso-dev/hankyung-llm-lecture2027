@@ -1,0 +1,9 @@
+flowchart LR
+  %% classes
+  now["메시지 칸에<br>있던 목록"]:::tool
+  new["노드가 낸<br>새 메시지 하나"]:::flow
+  red["메시지 리듀서<br>add_messages"]
+  after["합쳐진<br>메시지 목록"]:::tool
+  now --> red
+  new --> red
+  red --> after

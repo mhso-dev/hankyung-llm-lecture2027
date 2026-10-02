@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  o["E01 원문 다섯 쪽<br>사람이 읽고 답이 든 쪽을 봄"]:::tool
+  f["find_missing_words<br>기록 8개마다 말 찾기"]:::flow
+  r1["휴관 지킬 말 세 개가<br>모두 든 기록<br>E01 p.2 498자 하나"]:::measure
+  r2["와이파이 네 말이 든 기록<br>하나도 없음"]:::measure
+  a["정답 출처<br>휴관일 질문 E01 p.2<br>와이파이 질문 빈 목록"]:::tool
+  o --> f
+  f --> r1
+  f --> r2
+  r1 --> a
+  r2 --> a

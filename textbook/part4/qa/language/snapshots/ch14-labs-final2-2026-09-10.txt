@@ -1,0 +1,384 @@
+
+===== labs/part4/ch14-rag-patterns/README.md =====
+# Ch 14 RAG 패턴 확장 실습
+
+Python 3.12와 uv를 사용합니다. 각 노트북은 빈 커널에서 독립 실행됩니다. 프로젝트 루트 `.env`의 `OPENAI_API_KEY`가 필요하며 키 값은 출력하지 않습니다.
+
+
+실습은 Ch12의 교육용 문서 12건과 질문 8건을 그대로 복제해 사용합니다. 원본은 `labs/part3/ch12-retrieval-tuning/data/core-*.json`입니다. Ch11에서 사용한 정답 문서 ID 방식으로 `Recall@3`을 계산합니다. 이 축소 표본은 패턴의 중간 결과를 읽기 위한 자료이며 실제 서비스 품질을 대표하지 않습니다.
+
+모든 생성 호출은 `gpt-4.1-mini`, 임베딩은 `text-embedding-3-small` 256차원을 사용합니다. 아홉 노트북을 한 번씩 실행할 때 예상 비용은 0.10달러 미만입니다. 각 절은 변형 질문 수와 재시도 수를 코드에서 제한합니다. 실행 시간은 네트워크와 API 상태에 따라 달라집니다.
+
+06절은 CRAG 논문의 학습된 검색 평가기와 웹 검색을 재현하지 않고, 검색 점수 임계값에 따른 한 번의 보정 검색만 구현합니다. 07절은 reflection token을 학습한 Self-RAG 모델을 재현하지 않고, 생성 뒤 근거 점수를 확인하는 교육용 흐름입니다. 08절은 범주가 주어진 작은 자료에서 한 단계 요약 노드를 직접 만듭니다. RAPTOR 논문의 반복 군집화와 전체 트리 구축을 재현한 구현이 아닙니다.
+
+
+===== labs/part4/ch14-rag-patterns/notebooks/01-대화-히스토리와-질문-재작성.ipynb =====
+[markdown cell 1]
+# 대화 히스토리와 질문 재작성
+
+대명사가 들어간 후속 질문을 독립 검색 질문으로 바꾸면 검색 결과가 달라지는지 확인합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+고정한 Python 패키지를 확인합니다.
+
+[markdown cell 4]
+## .env 찾기
+
+가까운 .env에서 키를 읽고 존재 여부만 표시합니다.
+
+[markdown cell 6]
+## 공통 데이터
+
+Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다.
+
+[markdown cell 8]
+## 모델과 임베딩
+
+모델과 256차원 문서 벡터를 준비합니다.
+
+[markdown cell 10]
+## 검색·생성 함수
+
+검색 점수, 토큰, 시간, 추정 비용을 같은 방식으로 기록합니다.
+
+[markdown cell 12]
+## 히스토리가 없는 검색
+
+[markdown cell 14]
+## 모델로 독립 질문 만들기
+
+[markdown cell 16]
+## 검색 결과로 답하기
+
+
+===== labs/part4/ch14-rag-patterns/notebooks/02-Multi-Query.ipynb =====
+[markdown cell 1]
+# Multi-Query
+
+표현이 다른 여러 질문의 후보를 합치면 두 근거를 함께 찾는지 확인합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+고정한 Python 패키지를 확인합니다.
+
+[markdown cell 4]
+## .env 찾기
+
+가까운 .env에서 키를 읽고 존재 여부만 표시합니다.
+
+[markdown cell 6]
+## 공통 데이터
+
+Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다.
+
+[markdown cell 8]
+## 모델과 임베딩
+
+모델과 256차원 문서 벡터를 준비합니다.
+
+[markdown cell 10]
+## 검색·생성 함수
+
+검색 점수, 토큰, 시간, 추정 비용을 같은 방식으로 기록합니다.
+
+[markdown cell 12]
+## 기준선 검색
+
+[markdown cell 14]
+## 세 검색 질문 생성
+
+[markdown cell 16]
+## 후보 합치기
+
+
+===== labs/part4/ch14-rag-patterns/notebooks/03-질의-분해.ipynb =====
+[markdown cell 1]
+# 질의 분해
+
+두 조건을 묻는 질문을 하위 질문으로 나누어 각 근거를 찾습니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+고정한 Python 패키지를 확인합니다.
+
+[markdown cell 4]
+## .env 찾기
+
+가까운 .env에서 키를 읽고 존재 여부만 표시합니다.
+
+[markdown cell 6]
+## 공통 데이터
+
+Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다.
+
+[markdown cell 8]
+## 모델과 임베딩
+
+모델과 256차원 문서 벡터를 준비합니다.
+
+[markdown cell 10]
+## 검색·생성 함수
+
+검색 점수, 토큰, 시간, 추정 비용을 같은 방식으로 기록합니다.
+
+[markdown cell 12]
+## 복합 질문 검색
+
+[markdown cell 14]
+## 하위 질문 생성
+
+[markdown cell 16]
+## 각 질문을 따로 검색
+
+
+===== labs/part4/ch14-rag-patterns/notebooks/04-Step-back.ipynb =====
+[markdown cell 1]
+# Step-back
+
+구체 질문과 한 단계 넓힌 질문의 결과를 함께 사용합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+고정한 Python 패키지를 확인합니다.
+
+[markdown cell 4]
+## .env 찾기
+
+가까운 .env에서 키를 읽고 존재 여부만 표시합니다.
+
+[markdown cell 6]
+## 공통 데이터
+
+Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다.
+
+[markdown cell 8]
+## 모델과 임베딩
+
+모델과 256차원 문서 벡터를 준비합니다.
+
+[markdown cell 10]
+## 검색·생성 함수
+
+검색 점수, 토큰, 시간, 추정 비용을 같은 방식으로 기록합니다.
+
+[markdown cell 12]
+## 구체 질문 검색
+
+[markdown cell 14]
+## 넓은 질문 생성
+
+[markdown cell 16]
+## 두 문맥으로 답하기
+
+
+===== labs/part4/ch14-rag-patterns/notebooks/05-HyDE.ipynb =====
+[markdown cell 1]
+# HyDE
+
+가상의 정답 문서를 임베딩하면 검색 순위가 달라지는지 확인합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+고정한 Python 패키지를 확인합니다.
+
+[markdown cell 4]
+## .env 찾기
+
+가까운 .env에서 키를 읽고 존재 여부만 표시합니다.
+
+[markdown cell 6]
+## 공통 데이터
+
+Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다.
+
+[markdown cell 8]
+## 모델과 임베딩
+
+모델과 256차원 문서 벡터를 준비합니다.
+
+[markdown cell 10]
+## 검색·생성 함수
+
+검색 점수, 토큰, 시간, 추정 비용을 같은 방식으로 기록합니다.
+
+[markdown cell 12]
+## 질문 임베딩 기준선
+
+[markdown cell 14]
+## 가상 문서 생성
+
+[markdown cell 16]
+## 결과 범위 확인
+
+
+===== labs/part4/ch14-rag-patterns/notebooks/06-CRAG.ipynb =====
+[markdown cell 1]
+# CRAG식 교정 검색
+
+검색 점수가 기준보다 낮을 때만 질문을 보정해 다시 검색합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+고정한 Python 패키지를 확인합니다.
+
+[markdown cell 4]
+## .env 찾기
+
+가까운 .env에서 키를 읽고 존재 여부만 표시합니다.
+
+[markdown cell 6]
+## 공통 데이터
+
+Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다.
+
+[markdown cell 8]
+## 모델과 임베딩
+
+모델과 256차원 문서 벡터를 준비합니다.
+
+[markdown cell 10]
+## 검색·생성 함수
+
+검색 점수, 토큰, 시간, 추정 비용을 같은 방식으로 기록합니다.
+
+[markdown cell 12]
+## 첫 검색과 품질 점수
+
+[markdown cell 14]
+## 임계값에 따른 보정
+
+[markdown cell 16]
+## 반복 상한
+
+
+===== labs/part4/ch14-rag-patterns/notebooks/07-Self-RAG.ipynb =====
+[markdown cell 1]
+# Self-RAG에서 영감 받은 근거 검사
+
+초안의 근거 점수를 평가하고 기준 미만일 때 한 번 수정합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+고정한 Python 패키지를 확인합니다.
+
+[markdown cell 4]
+## .env 찾기
+
+가까운 .env에서 키를 읽고 존재 여부만 표시합니다.
+
+[markdown cell 6]
+## 공통 데이터
+
+Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다.
+
+[markdown cell 8]
+## 모델과 임베딩
+
+모델과 256차원 문서 벡터를 준비합니다.
+
+[markdown cell 10]
+## 검색·생성 함수
+
+검색 점수, 토큰, 시간, 추정 비용을 같은 방식으로 기록합니다.
+
+[markdown cell 12]
+## 검색하고 초안 생성
+
+[markdown cell 14]
+## 근거 충실도 평가
+
+[markdown cell 16]
+## 한 번만 수정
+
+
+===== labs/part4/ch14-rag-patterns/notebooks/08-RAPTOR-계층-요약.ipynb =====
+[markdown cell 1]
+# RAPTOR 축소 계층 요약
+
+원문을 범주별로 묶고 요약 노드를 직접 만들어 계층 검색을 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+고정한 Python 패키지를 확인합니다.
+
+[markdown cell 4]
+## .env 찾기
+
+가까운 .env에서 키를 읽고 존재 여부만 표시합니다.
+
+[markdown cell 6]
+## 공통 데이터
+
+Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다.
+
+[markdown cell 8]
+## 모델과 임베딩
+
+모델과 256차원 문서 벡터를 준비합니다.
+
+[markdown cell 10]
+## 검색·생성 함수
+
+검색 점수, 토큰, 시간, 추정 비용을 같은 방식으로 기록합니다.
+
+[markdown cell 12]
+## 범주별 묶음
+
+[markdown cell 14]
+## 요약 노드 직접 생성
+
+[markdown cell 16]
+## 계층 검색
+
+
+===== labs/part4/ch14-rag-patterns/notebooks/09-패턴-비교와-선택.ipynb =====
+[markdown cell 1]
+# 패턴 비교와 선택
+
+같은 질문·문서·정답·모델로 기준선, Multi-Query, HyDE를 비교합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+고정한 Python 패키지를 확인합니다.
+
+[markdown cell 4]
+## .env 찾기
+
+가까운 .env에서 키를 읽고 존재 여부만 표시합니다.
+
+[markdown cell 6]
+## 공통 데이터
+
+Ch12의 축소 데이터와 Ch11 방식의 정답 문서 ID를 사용합니다.
+
+[markdown cell 8]
+## 모델과 임베딩
+
+모델과 256차원 문서 벡터를 준비합니다.
+
+[markdown cell 10]
+## 검색·생성 함수
+
+검색 점수, 토큰, 시간, 추정 비용을 같은 방식으로 기록합니다.
+
+[markdown cell 12]
+## 비교 함수
+
+[markdown cell 14]
+## 세 패턴 실행
+
+[markdown cell 16]
+## Recall·토큰·시간 집계
+
+[markdown cell 18]
+## 공개 실행 로그 저장

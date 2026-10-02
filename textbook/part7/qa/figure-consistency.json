@@ -1,0 +1,972 @@
+[
+  {
+    "file": "ch30-fastapi-serving/figures/01-1-방식과-주소의-짝과-처리-함수.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/01-2-처리-함수-한-번의-차례.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/01-3-파일에서-읽은-두-형식.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 5,
+    "arrows": 2,
+    "boxes": 4,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/01-4-빈-질문에서-Before와-After.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/01-5-공백-한-칸을-넣은-두-앱.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 3,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/02-1-요청마다-불리는-제공-함수.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/02-2-재정의-딕셔너리로-바꿔-낀-함수.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/02-3-실습-앱-chat이-받는-의존성-셋.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 4,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/02-4-남은-재정의와-비운-재정의.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/02-5-2초-재정의가-남은-다음-테스트.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 5,
+    "arrows": 2,
+    "boxes": 4,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/03-1-요청에서-응답까지-한-번의-ainvoke.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 5,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/03-2-부르기만-한-코루틴과-await.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 5,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/03-3-비동기-노드-answer.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 4,
+    "arrows": 3,
+    "boxes": 4,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/03-4-invoke와-ainvoke로-부른-결과.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/03-5-def-노드-그래프도-답한-처리-함수.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 2,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/04-1-진행-값에서-이어-붙인-글까지.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/04-2-부르기만-한-astream과-async-for.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/04-3-사건-수는-답의-낱말-수.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 5,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/04-4-모드-하나와-모드-목록의-사건-자리.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 7,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/05-1-진행-값에서-SSE-사건까지.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/05-2-SSE-사건-하나의-칸.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/05-3-처리-함수가-내놓은-값과-응답-글.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 6,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/05-4-response-class-유무와-응답-모양.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/06-1-끊긴-뒤-번호로-이어-받기.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/06-2-요청-머리-Last-Event-ID를-읽는-갈래.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/06-3-Last-Event-ID가-있을-때와-없을-때.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/06-4-상태-코드만-본-판정과-마지막-사건을-본-판정.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/07-1-요청이-처리-함수-몸통에-닿기까지.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/07-2-사전-요청과-CORS-응답-머리.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 4,
+    "arrows": 3,
+    "boxes": 4,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/07-3-모든-출처-허용과-출처를-적은-설정.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/07-4-두-가지-401-응답.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 2,
+    "boxes": 4,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/08-1-앱-객체에서-생성-SDK까지.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/08-2-요청-주소-v1-chat의-칸.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/08-3-요청-주소와-생성-함수.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/08-4-의존성-하나만-바꾼-두-응답-문서.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 6,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/09-1-두-요청-주소와-실제-에이전트.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 7,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/09-2-스트림-청크를-SSE-사건으로.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/09-3-도구를-한-번-부른-실행의-사건-차례.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 5,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/09-4-남긴-노드만-바꾼-두-실행.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/10-1-세-절-기능을-이은-요청-흐름.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 7,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/10-2-실행-1의-단계-차례.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch30-fastapi-serving/figures/10-3-접근-토큰만-바꾼-두-실행.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/01-1-엔진과-연결-풀.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/01-2-이름-공간-준비와-확정.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/01-3-연결-하나로-차례로-기다린-실행-1.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 5,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/01-4-차례로와-함께-견주기.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 6,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/02-1-한-묶음-작업의-두-갈래.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 5,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/02-2-계좌-표-준비와-이체-100.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/02-3-블록-둘로-따로-확정한-Before.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/02-4-블록-둘과-블록-하나-견주기.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/03-1-판-사슬과-판-기록-표.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 3,
+    "boxes": 4,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/03-2-사본으로-첫-판-올리기.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/03-3-기본값-없는-NOT-NULL-칸의-Before.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/03-4-기본값-없는-판과-서버-기본값-판-견주기.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/03-5-판-내리기와-다시-올리기.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 5,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/04-1-연결을-빌리고-풀에-다시-넣기.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/04-2-연결-하나를-빌린-채-둘째-빌리기.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/04-3-닫지-않고-둔-연결의-Before.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 5,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/04-4-닫지-않은-셀과-async-with-셀-견주기.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/05-1-한-이름-공간에-두-가지-표.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 4,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/05-2-백업-명령-자리와-덤프-파일.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 6,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/05-3-확장-없이-복원한-실행-1.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/05-4-확장-만들기-하나를-바꾼-두-실행.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 7,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/06-1-세-절의-기능을-이은-조립도.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 6,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/06-2-실행-1의-실제-차례.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch31-database/figures/06-3-처음-상담-시간만-바꾼-두-실행.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 7,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch32-docker/figures/01-이미지-레이어.excalidraw",
+    "labels": 5,
+    "arrows": 3,
+    "boxes": 4,
+    "matched": true
+  },
+  {
+    "file": "ch32-docker/figures/02-멀티스테이지.excalidraw",
+    "labels": 4,
+    "arrows": 2,
+    "boxes": 3,
+    "matched": true
+  },
+  {
+    "file": "ch32-docker/figures/03-캐시-크기.excalidraw",
+    "labels": 5,
+    "arrows": 3,
+    "boxes": 4,
+    "matched": true
+  },
+  {
+    "file": "ch32-docker/figures/04-compose-pgvector.excalidraw",
+    "labels": 5,
+    "arrows": 3,
+    "boxes": 4,
+    "matched": true
+  },
+  {
+    "file": "ch32-docker/figures/05-운영신호.excalidraw",
+    "labels": 5,
+    "arrows": 3,
+    "boxes": 4,
+    "matched": true
+  },
+  {
+    "file": "ch33-cicd/figures/01-흐름.excalidraw",
+    "labels": 4,
+    "arrows": 3,
+    "boxes": 4,
+    "matched": true
+  },
+  {
+    "file": "ch33-cicd/figures/02-흐름.excalidraw",
+    "labels": 4,
+    "arrows": 3,
+    "boxes": 4,
+    "matched": true
+  },
+  {
+    "file": "ch33-cicd/figures/03-흐름.excalidraw",
+    "labels": 4,
+    "arrows": 3,
+    "boxes": 4,
+    "matched": true
+  },
+  {
+    "file": "ch33-cicd/figures/04-흐름.excalidraw",
+    "labels": 4,
+    "arrows": 3,
+    "boxes": 4,
+    "matched": true
+  },
+  {
+    "file": "ch33-cicd/figures/05-흐름.excalidraw",
+    "labels": 4,
+    "arrows": 3,
+    "boxes": 4,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/01-1-요청-글의-두-차례.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 2,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/01-2-실행-1의-두-요청.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/01-3-사용량-칸이-옮겨지는-자리.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/01-4-문의-글의-자리만-바꾼-두-실행.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 4,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/02-1-일괄-처리를-맡기고-받는-차례.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/02-2-다섯-줄이-간-곳.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/02-3-차례대로-짝지은-결과.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 4,
+    "arrows": 3,
+    "boxes": 4,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/02-4-차례와-이름표로-짝지은-두-결과.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/03-1-모델-라우터가-고르는-두-갈래.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 10,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/03-2-실행-1의-모델-배정.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 7,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/03-3-모델마다-다른-요금표.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/03-4-기준-길이만-바꾼-두-실행.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 4,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/04-1-다시-보내기가-놓이는-두-곳.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 5,
+    "arrows": 3,
+    "boxes": 4,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/04-2-모델-객체-한-번의-요청-수.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/04-3-Before에서-요청-아홉이-나오는-차례.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/04-4-두-곳과-한-곳의-다시-보내기.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 4,
+    "boxes": 5,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/04-5-한꺼번에-보내는-수만-바꾼-두-실행.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 8,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/05-1-보내기-전에-예약하는-예산-가드.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/05-2-대화당-비용에서-평균과-95-백분위수로.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 7,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/05-3-실행-1에서-받은-대화와-막힌-대화.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 6,
+    "arrows": 5,
+    "boxes": 6,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/05-4-예약-금액만-바꾼-두-실행.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/06-1-세-절의-기능을-이은-조립도.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/06-2-실행-1의-실제-차례.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 7,
+    "arrows": 7,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  },
+  {
+    "file": "ch34-cost-rate-limits/figures/06-3-기준-길이만-바꾼-두-실행.svg",
+    "editable_source": "mmd",
+    "kind": "flowchart",
+    "labels": 9,
+    "arrows": 6,
+    "boxes": 7,
+    "render_current": true,
+    "matched": true
+  }
+]

@@ -1,0 +1,17 @@
+flowchart TD
+  %% classes
+  BA["before_agent"]:::flow
+  BM["before_model"]:::flow
+  subgraph WM["wrap_model_call"]
+    M["모델 호출"]:::model
+  end
+  AM["after_model"]:::flow
+  Q{"도구를 요청했나?"}
+  subgraph WT["wrap_tool_call"]
+    T["도구 실행"]:::tool
+  end
+  AA["after_agent"]:::flow
+  BA --> BM --> M --> AM --> Q
+  Q -- "예" --> T
+  T --> BM
+  Q -- "아니요" --> AA

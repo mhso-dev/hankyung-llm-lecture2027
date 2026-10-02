@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  chunk["E01.pdf 2쪽 글 905자<br>재귀 방식 문서 청크 6개<br>185 · 147 · 86 · 164 · 130 · 188자"]:::tool
+  emb["text-embedding-3-small<br>기본 설정"]:::model
+  embs["text-embedding-3-small<br>차원 수 256을 준 설정"]:::model
+  vec["벡터 6개<br>숫자 1536개씩"]:::measure
+  short["벡터 1개<br>숫자 256개"]:::measure
+  store["벡터 캐시 폴더<br>저장 파일 6개"]:::tool
+  again["두 번째 요청<br>저장 파일 6개 그대로<br>두 벡터 목록이 같음"]:::measure
+  chunk --> emb
+  chunk --> embs
+  emb --> vec
+  embs --> short
+  vec --> store
+  store --> again

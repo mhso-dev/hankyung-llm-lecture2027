@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph plain["규칙이 없는 실행 흔적 칸"]
+    direction TB
+    p1["받은 갱신 둘<br>normalize 다음 make_query"]:::flow
+    p2["남은 값<br>make_query 하나"]:::measure
+    p1 ~~~ p2
+  end
+  subgraph rule["규칙을 적은 실행 흔적 칸"]
+    direction TB
+    r1["받은 갱신 둘<br>normalize 다음 make_query"]:::flow
+    r2["남은 값<br>normalize 다음 make_query"]:::measure
+    r1 ~~~ r2
+  end
+  same["두 칸이 받은 갱신은 같았음"]
+  plain ~~~ rule
+  rule ~~~ same

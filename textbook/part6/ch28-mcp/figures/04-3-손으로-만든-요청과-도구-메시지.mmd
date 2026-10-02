@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  req["손으로 만든 AIMessage<br>call_a 운영 · call_b 주차"]:::flow
+  tn["ToolNode 그래프<br>await ainvoke"]:::flow
+  srv["서버 도구 lookup_policy<br>자식 프로세스로 띄움"]:::tool
+  ok["ToolMessage call_a<br>status success<br>운영 규정 글"]:::measure
+  ng["ToolMessage call_b<br>status error<br>서버 오류 글"]:::measure
+  after0["실행 뒤<br>자식 프로세스 0"]:::measure
+  req --> tn --> srv
+  srv -.-> ok
+  srv -.-> ng
+  ok ~~~ after0
+  ng ~~~ after0

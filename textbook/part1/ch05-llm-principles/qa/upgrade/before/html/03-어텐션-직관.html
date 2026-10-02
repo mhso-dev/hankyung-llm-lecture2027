@@ -1,0 +1,245 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>어텐션 직관 — Ch 5 · LLM 동작 원리</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 5 · LLM 동작 원리</p>
+<h1>어텐션 직관</h1><div class="meta"><span>강의 1h · 실습 0.5h</span><span>장르 산문</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h · 실습 0.5h | 코드 Jupyter Notebook | 장르 산문 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>어텐션을 입력 토큰 사이의 관련성을 반영하는 처리로 설명합니다.</li><li>질문이 바뀌면 관련 있는 입력 부분도 달라질 수 있음을 설명합니다.</li><li>교재용 가중치와 실제 모델의 어텐션 측정을 구분합니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>문장에 상품 A와 B의 정보가 함께 있을 때 B의 색을 물으면 B와 색상 표현을 연결해야 합니다. 모델이 모든 입력을 같은 비중으로 섞는다면 관계를 구분하기 어렵습니다. 어텐션은 현재 처리하는 토큰에 따라 입력 토큰의 관련성을 다르게 반영하는 기법입니다. 이 절은 수식과 Transformer 구현을 다루지 않고, 정보가 어떻게 연결되는지 직관으로 범위를 한정합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>앞서 토큰이 모델의 입력 단위임을 확인했고, 임베딩이 토큰과 문장을 숫자 벡터로 표현한다는 것을 배웠습니다. 어텐션은 이 표현들 사이의 관계를 반영하여 새로운 표현을 만드는 과정으로 이어집니다. 실습은 Ch 2에서 배운 리스트와 <code>for</code> 반복문을 사용합니다. <code>zip()</code>은 Ch 2의 선수 지식으로 가정하지 않고 이 절에서 처음 설명합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>정의와 관찰</h3><p>어텐션(attention)은 현재 토큰의 표현을 만들 때 다른 토큰에서 가져올 정보의 비중을 계산하는 방식입니다. '상품 A는 파란색이고 상품 B는 빨간색입니다'에서 B를 처리할 때 B와 빨간색의 관계가 중요합니다. A를 처리할 때는 A와 파란색의 관계가 중요해집니다. 같은 입력이어도 현재 처리 위치에 따라 비중이 달라질 수 있습니다.</p><p>이 절의 입력은 설명을 위해 토큰이라고 가정한 문자열 목록과 각 조각에 대응하는 비중 목록입니다. <code>zip(tokens, weights)</code>은 같은 위치의 토큰과 비중을 한 쌍씩 꺼내 반복문에 전달합니다. 반복문은 각 쌍을 한 줄로 출력하고, <code>sum(weights)</code>는 비중의 합 1.0을 반환합니다. 이 작은 계산은 어텐션 구현이 아니라 가중치를 읽는 연습입니다.</p><p>가중치(weight)는 여러 입력을 반영할 때 각 입력에 주는 상대적인 비중입니다. 합이 1인 목록에서 0.45는 전체 비중의 45%를 뜻합니다. 이 교재용 표는 질문을 B에서 A로 바꿀 때 큰 값의 위치도 함께 바꾸어, 현재 확인하려는 대상에 따라 관련 정보가 달라질 수 있음을 보여 줍니다.</p><p>어텐션 가중치는 보통 여러 계층과 여러 헤드에서 계산됩니다. 헤드(head)는 서로 다른 관계를 병렬로 반영하는 처리 단위로 이해할 수 있습니다. 어느 헤드는 이름과 색상, 다른 헤드는 문장 구조와 위치 관계를 반영할 수 있습니다. 단일 가중치 표만으로 모델 전체의 처리를 설명하면 중요한 맥락을 놓칠 수 있습니다.</p><p>어텐션 가중치가 크다고 해서 그 토큰이 모델 답변의 '이유'라고 단정할 수는 없습니다. 가중치는 모델 내부 계산의 한 부분이고, 여러 계층에서 추가 계산이 계속 적용됩니다. 따라서 실무에서는 출력 정확도를 별도의 평가 자료로 확인합니다. 어텐션 시각화는 탐색 도구로 사용하되, 검증 결과로 대체하지 않습니다.</p><p>실습의 여섯 문자열은 실제 tokenizer의 출력이 아니라 설명을 위해 토큰이라고 가정한 조각입니다. 가중치도 교재 제작자가 직접 정했습니다. B 질문에서는 '빨간색입니다'에 0.45, 'B는'에 0.30을 놓았고 A 질문에서는 '파란색이고'에 0.45, 'A는'에 0.30을 놓았습니다. 이 숫자는 Qwen이나 다른 실제 모델에서 추출한 값이 아닙니다.</p>
+<figure><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 210" role="img" aria-labelledby="title desc">
+<title id="title">03-concept 개념 도식</title>
+<desc id="desc">네 단계를 왼쪽에서 오른쪽으로 읽는 흐름</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#475569"/></marker></defs>
+<rect x="20" y="55" width="165" height="90" rx="14" fill="#dcfce7" stroke="#334155" stroke-width="2"/>
+<text x="102.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">입력 토큰</text>
+<line x1="185" y1="100" x2="210" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="215" y="55" width="165" height="90" rx="14" fill="#dbeafe" stroke="#334155" stroke-width="2"/>
+<text x="297.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">관련성 비중</text>
+<line x1="380" y1="100" x2="405" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="410" y="55" width="165" height="90" rx="14" fill="#dcfce7" stroke="#334155" stroke-width="2"/>
+<text x="492.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">정보 표현</text>
+<line x1="575" y1="100" x2="600" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="605" y="55" width="165" height="90" rx="14" fill="#fee2e2" stroke="#334155" stroke-width="2"/>
+<text x="687.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">가중치=이유 아님</text>
+</svg></div><figcaption>파란색은 학습자가 따라갈 입력 흐름, 녹색은 도구와 자료, 보라색은 모델의 처리, 노란색은 측정 결과, 빨간색은 확인할 제한을 뜻합니다. 화살표를 왼쪽에서 오른쪽으로 읽습니다.</figcaption></figure>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>설명용 토큰 목록과 비중 목록을 <code>zip()</code>으로 같은 위치끼리 묶어 출력합니다. <code>{token:12}</code>는 문자열을 12칸에 맞추고, <code>{weight:.2f}</code>는 소수점 둘째 자리까지 표시합니다. <code>int(weight * 20)</code>은 비중을 막대 칸 수로 바꿉니다. 질문 대상을 B에서 A로 바꾼 두 번째 셀에서는 토큰은 유지하고 비중 목록만 바꿉니다.</p><p>노트북을 새 Python 3.12 커널에서 첫 셀부터 순서대로 실행합니다.</p><section class="notebook" data-notebook="03-어텐션-직관" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="03-어텐션-직관.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDslrTthZDshZgg7KeB6rSAXG4iLAogICAgIlxuIiwKICAgICLrqqjrjbjsnYAg64uk7J2MIO2GoO2BsOydhCDsmIjsuKHtlaAg65WMIOyeheugpeydmCDslrTripAg67aA67aE7J2EIOq0gOugqCDsnojri6Tqs6Ag67O86rmM7JqUP1xuIiwKICAgICJcbiIsCiAgICAiUHl0aG9uIDMuMTLsmYAg7J6g6ri0IO2MqO2CpOyngOulvCDsgqzsmqntlanri4jri6QuIOyyqyDsi6Ttlonsl5DshJzripQg66Gc7LusIOuqqOuNuOydhCDri6TsmrTroZzrk5ztlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOq1kOyerOyaqSDqsIDspJHsuZgg7J296riwXG4iLAogICAgIlxuIiwKICAgICIqKuyeheugpSoq7J2AIOyEpOuqheydhCDsnITtlbQg7Yag7YGw7J2065286rOgIOqwgOygle2VnCDrrLjsnpDsl7Qg66qp66Gd6rO8IOqwmeydgCDquLjsnbTsnZgg67mE7KSRIOuqqeuhneyeheuLiOuLpC4gYHppcCgpYOydgCDqsJnsnYAg7JyE7LmY7J2YIO2GoO2BsOqzvCDruYTspJHsnYQg7ZWcIOyMjeyUqSDrsJjtmZjtlanri4jri6QuIGB7dG9rZW46MTJ9YOuKlCDthqDtgbDsnYQgMTLsubjsl5Ag66ee7LaU6rOgIGB7d2VpZ2h0Oi4yZn1g64qUIOu5hOykkeydhCDshozsiJjsoJAg65GY7Ke4IOyekOumrOq5jOyngCDtkZzsi5ztlanri4jri6QuIGBcIuKWoFwiICogaW50KHdlaWdodCAqIDIwKWDsnYAg67mE7KSR7J2EIOunieuMgCDsubgg7IiY66GcIOuwlOq/ieuLiOuLpC4gYHN1bSgpYOydgCDruYTspJHsnZgg7ZWp7J2EIOuwmO2ZmO2VqeuLiOuLpC4g7J20IOqwkuydgCDsi6TsoJwg66qo64247JeQ7IScIOy2lOy2nO2VnCDslrTthZDshZjsnbQg7JWE64uI6528IOqwgOykkey5mOulvCDsnb3ripQg67KV7J2EIOydte2eiOuKlCDqtZDsnqzsmqkg7JiI7J6F64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MzQ6MTkuMjM4MjkxWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MzQ6MTkuMjM4MTExWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MzQ6MTkuMjQ1MDkwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjozNDoxOS4yNDQ1MTFaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7KeI66y4OiDsg4HtkoggQuydmCDsg4nsnYA/XG4iLAogICAgICAi7IOB7ZKIICAgICAgICAgICAwLjA1IOKWoFxuIiwKICAgICAgIkHripQgICAgICAgICAgIDAuMDUg4pagXG4iLAogICAgICAi7YyM656A7IOJ7J206rOgICAgICAgICAwLjA1IOKWoFxuIiwKICAgICAgIuyDge2SiCAgICAgICAgICAgMC4xMCDilqDilqBcbiIsCiAgICAgICJC64qUICAgICAgICAgICAwLjMwIOKWoOKWoOKWoOKWoOKWoOKWoFxuIiwKICAgICAgIuu5qOqwhOyDieyeheuLiOuLpC4gICAgICAwLjQ1IOKWoOKWoOKWoOKWoOKWoOKWoOKWoOKWoOKWoFxuIiwKICAgICAgIu2VqeqzhDogMS4wXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7JyEIOyEpOuqheydmCDsobDqsbTsnYQg7Iuk7ZaJ7ZWY6rOgIOyLpOygnCDstpzroKXsnYQg7ZmV7J247ZWp64uI64ukLlxuIiwKICAgICJ0b2tlbnMgPSBbXCLsg4HtkohcIiwgXCJB64qUXCIsIFwi7YyM656A7IOJ7J206rOgXCIsIFwi7IOB7ZKIXCIsIFwiQuuKlFwiLCBcIuu5qOqwhOyDieyeheuLiOuLpC5cIl1cbiIsCiAgICAid2VpZ2h0c19mb3JfYiA9IFswLjA1LCAwLjA1LCAwLjA1LCAwLjEwLCAwLjMwLCAwLjQ1XVxuIiwKICAgICJwcmludChcIuyniOusuDog7IOB7ZKIIELsnZgg7IOJ7J2AP1wiKVxuIiwKICAgICJmb3IgdG9rZW4sIHdlaWdodCBpbiB6aXAodG9rZW5zLCB3ZWlnaHRzX2Zvcl9iKTpcbiIsCiAgICAiICAgIHByaW50KGZcInt0b2tlbjoxMn0ge3dlaWdodDouMmZ9IFwiICsgXCLilqBcIiAqIGludCh3ZWlnaHQgKiAyMCkpXG4iLAogICAgInByaW50KFwi7ZWp6rOEOlwiLCBzdW0od2VpZ2h0c19mb3JfYikpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyniOusuOydtCDrsJTrgIzrqbQg67mE7KSR64+EIOuwlOuAneuLiOuLpFxuIiwKICAgICJcbiIsCiAgICAi66y47J6lIO2GoO2BsOydgCDqt7jrjIDroZwg65GQ6rOgIOyniOusuCDrjIDsg4HsnYQgQuyXkOyEnCBB66GcIOuwlOq+vCDsg4HtmansnYQg64KY7YOA64OF64uI64ukLiDsspjrpqwg7KGw6rG07J20IOuwlOuAjOuptCDtgbAg67mE7KSR7J2YIOychOy5mOuPhCDrsJTrgJDri6TripQg7KCQ7J2EIOuRkCDsl7Tsl5DshJwg67mE6rWQ7ZWp64uI64ukLiDsnbQg7IWA7J2YIO2ZlOuptCDstpzroKXsnLzroZwg7Iuk7KCcIFF3ZW7snZgg64u17J2064KYIOuCtOu2gCDslrTthZDshZjsnYQg7ISk66qF7ZWgIOyImOuKlCDsl4bsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjozNDoxOS4yNDY2MjhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjozNDoxOS4yNDY0NjFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjozNDoxOS4yNDk0NTJaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjM0OjE5LjI0ODg2NloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsg4HtkoggICAgICAgICAgIELsp4jrrLg9MC4wNSBB7KeI66y4PTAuMTBcbiIsCiAgICAgICJB64qUICAgICAgICAgICBC7KeI66y4PTAuMDUgQeyniOusuD0wLjMwXG4iLAogICAgICAi7YyM656A7IOJ7J206rOgICAgICAgICBC7KeI66y4PTAuMDUgQeyniOusuD0wLjQ1XG4iLAogICAgICAi7IOB7ZKIICAgICAgICAgICBC7KeI66y4PTAuMTAgQeyniOusuD0wLjA1XG4iLAogICAgICAiQuuKlCAgICAgICAgICAgQuyniOusuD0wLjMwIEHsp4jrrLg9MC4wNVxuIiwKICAgICAgIuu5qOqwhOyDieyeheuLiOuLpC4gICAgICBC7KeI66y4PTAuNDUgQeyniOusuD0wLjA1XG4iLAogICAgICAi7J20IOu5hOq1kOuKlCDqsJzrhZAg7ISk66qF7Jqp7J2066mwIOyLpOygnCDrqqjrjbjsnYQg7Lih7KCV7ZWY7KeAIOyViuyVmOyKteuLiOuLpC5cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnIQg7ISk66qF7J2YIOyhsOqxtOydhCDsi6TtlontlZjqs6Ag7Iuk7KCcIOy2nOugpeydhCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgIndlaWdodHNfZm9yX2EgPSBbMC4xMCwgMC4zMCwgMC40NSwgMC4wNSwgMC4wNSwgMC4wNV1cbiIsCiAgICAiZm9yIHRva2VuLCBiZWZvcmUsIGFmdGVyIGluIHppcCh0b2tlbnMsIHdlaWdodHNfZm9yX2IsIHdlaWdodHNfZm9yX2EpOlxuIiwKICAgICIgICAgcHJpbnQoZlwie3Rva2VuOjEyfSBC7KeI66y4PXtiZWZvcmU6LjJmfSBB7KeI66y4PXthZnRlcjouMmZ9XCIpXG4iLAogICAgInByaW50KFwi7J20IOu5hOq1kOuKlCDqsJzrhZAg7ISk66qF7Jqp7J2066mwIOyLpOygnCDrqqjrjbjsnYQg7Lih7KCV7ZWY7KeAIOyViuyVmOyKteuLiOuLpC5cIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rWs7KGwIOqygOymnVxuIiwKICAgICJcbiIsCiAgICAi7JiI7IOB7ZWcIOyLpO2XmCDsobDqsbTqs7wg7Lac66ClIOq1rOyhsOqwgCDsnKDsp4DrkJjsl4jripTsp4Ag7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MzQ6MTkuMjUwNzg2WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MzQ6MTkuMjUwNjQwWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MzQ6MTkuMjUzMTUwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjozNDoxOS4yNTI1NjBaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi6rKA7KadOiDsp4jrrLgg64yA7IOB7JeQIOuUsOudvCDtgbAg6rWQ7J6s7JqpIOu5hOykkeydmCDsnITsuZjqsIAg7J2064+Z7ZaI7Iq164uI64ukLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJhc3NlcnQgYWJzKHN1bSh3ZWlnaHRzX2Zvcl9hKSAtIDEuMCkgPCAxZS05IGFuZCBhYnMoc3VtKHdlaWdodHNfZm9yX2IpIC0gMS4wKSA8IDFlLTlcbiIsCiAgICAiYXNzZXJ0IHdlaWdodHNfZm9yX2IuaW5kZXgobWF4KHdlaWdodHNfZm9yX2IpKSA9PSA1XG4iLAogICAgImFzc2VydCB3ZWlnaHRzX2Zvcl9hLmluZGV4KG1heCh3ZWlnaHRzX2Zvcl9hKSkgPT0gMlxuIiwKICAgICJwcmludChcIuqygOymnTog7KeI66y4IOuMgOyDgeyXkCDrlLDrnbwg7YGwIOq1kOyerOyaqSDruYTspJHsnZgg7JyE7LmY6rCAIOydtOuPme2WiOyKteuLiOuLpC5cIikiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogImV4cGVyaW1lbnQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiAzLAogICAiY29kZV9zaGEyNTYiOiAiY2JjMWM4MTllOGE5MzAzY2UxN2ZkNGRlZjA0ZTkwMWZlOGY0MTg0OTg1ZmVhZGY3NTM3Y2Y5YzZlMmFmMDA2YiIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTExVDA2OjM0OjE5LjM3MDg1NSswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiZmNjYzJiY2M4NjE4NGYyYWIxY2YwM2I4ZWUyMmI2YjhjMzAzMTM5MzZjMWEzMGZmZjc0MmUzNWJhMjlkNGUzOSIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>어텐션 직관</h2>
+<p>모델은 다음 토큰을 예측할 때 입력의 어느 부분을 관련 있다고 볼까요?</p>
+<p>Python 3.12와 잠긴 패키지를 사용합니다. 첫 실행에서는 로컬 모델을 다운로드합니다.</p></div>
+<div class="nb-markdown"><h3>교재용 가중치 읽기</h3>
+<p><strong>입력</strong>은 설명을 위해 토큰이라고 가정한 문자열 목록과 같은 길이의 비중 목록입니다. <code>zip()</code>은 같은 위치의 토큰과 비중을 한 쌍씩 반환합니다. <code>{token:12}</code>는 토큰을 12칸에 맞추고 <code>{weight:.2f}</code>는 비중을 소수점 둘째 자리까지 표시합니다. <code>&quot;■&quot; * int(weight * 20)</code>은 비중을 막대 칸 수로 바꿉니다. <code>sum()</code>은 비중의 합을 반환합니다. 이 값은 실제 모델에서 추출한 어텐션이 아니라 가중치를 읽는 법을 익히는 교재용 예입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 위 설명의 조건을 실행하고 실제 출력을 확인합니다.
+tokens = [&quot;상품&quot;, &quot;A는&quot;, &quot;파란색이고&quot;, &quot;상품&quot;, &quot;B는&quot;, &quot;빨간색입니다.&quot;]
+weights_for_b = [0.05, 0.05, 0.05, 0.10, 0.30, 0.45]
+print(&quot;질문: 상품 B의 색은?&quot;)
+for token, weight in zip(tokens, weights_for_b):
+    print(f&quot;{token:12} {weight:.2f} &quot; + &quot;■&quot; * int(weight * 20))
+print(&quot;합계:&quot;, sum(weights_for_b))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">질문: 상품 B의 색은?
+상품           0.05 ■
+A는           0.05 ■
+파란색이고        0.05 ■
+상품           0.10 ■■
+B는           0.30 ■■■■■■
+빨간색입니다.      0.45 ■■■■■■■■■
+합계: 1.0
+</pre></div>
+<div class="nb-markdown"><h3>질문이 바뀌면 비중도 바뀝니다</h3>
+<p>문장 토큰은 그대로 두고 질문 대상을 B에서 A로 바꾼 상황을 나타냅니다. 처리 조건이 바뀌면 큰 비중의 위치도 바뀐다는 점을 두 열에서 비교합니다. 이 셀의 화면 출력으로 실제 Qwen의 답이나 내부 어텐션을 설명할 수는 없습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 위 설명의 조건을 실행하고 실제 출력을 확인합니다.
+weights_for_a = [0.10, 0.30, 0.45, 0.05, 0.05, 0.05]
+for token, before, after in zip(tokens, weights_for_b, weights_for_a):
+    print(f&quot;{token:12} B질문={before:.2f} A질문={after:.2f}&quot;)
+print(&quot;이 비교는 개념 설명용이며 실제 모델을 측정하지 않았습니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">상품           B질문=0.05 A질문=0.10
+A는           B질문=0.05 A질문=0.30
+파란색이고        B질문=0.05 A질문=0.45
+상품           B질문=0.10 A질문=0.05
+B는           B질문=0.30 A질문=0.05
+빨간색입니다.      B질문=0.45 A질문=0.05
+이 비교는 개념 설명용이며 실제 모델을 측정하지 않았습니다.
+</pre></div>
+<div class="nb-markdown"><h3>구조 검증</h3>
+<p>예상한 실험 조건과 출력 구조가 유지되었는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">assert abs(sum(weights_for_a) - 1.0) &lt; 1e-9 and abs(sum(weights_for_b) - 1.0) &lt; 1e-9
+assert weights_for_b.index(max(weights_for_b)) == 5
+assert weights_for_a.index(max(weights_for_a)) == 2
+print(&quot;검증: 질문 대상에 따라 큰 교재용 비중의 위치가 이동했습니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">검증: 질문 대상에 따라 큰 교재용 비중의 위치가 이동했습니다.
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 두 비중 목록의 합이 모두 1인가요? 질문 대상이 바뀌었을 때 가장 큰 값 0.45가 빨간색 조각에서 어느 조각으로 이동했나요?</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>질문을 B에서 A로 바꾸면 가장 큰 교재용 비중이 '빨간색입니다'에서 '파란색이고'로 이동했습니다. 대상 표지의 비중도 'B는'에서 'A는'으로 이동했습니다. 이 조작은 처리하는 대상에 따라 관련 정보가 달라질 수 있다는 개념을 보여 줍니다. 실제 모델이 이 비중을 갖는지, 빨간색을 예측하는지, 그 예측의 원인이 무엇인지는 이 실습으로 측정하지 않았습니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>이 절의 숫자를 실제 어텐션 가중치로 인용하지 않습니다.</li><li>어텐션 가중치와 출력의 정확성은 다른 개념입니다. 정확성은 평가 집합으로 측정합니다.</li><li>Transformer의 어텐션을 직접 구현하는 내용은 이 과정의 선수 지식이 아니므로 다루지 않습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>어텐션은 토큰 사이의 관련성을 비중으로 반영합니다.</li><li>처리 위치와 질문이 바뀌면 관련 정보도 달라질 수 있습니다.</li><li>가중치 표는 답변의 이유나 정확성을 단독으로 증명하지 않습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 모델이 한 요청에서 다루는 토큰 길이 범위인 컨텍스트 윈도와 토큰 예산을 계산합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 이 절의 가중치는 실제 모델에서 측정했나요?</p><p class="quiz-a"><strong>해설</strong> — 아닙니다. 어텐션 직관을 위한 교재용 숫자입니다.</p><p class="quiz-q">2. 어텐션 가중치가 크면 모델의 판단 이유라고 할 수 있나요?</p><p class="quiz-a"><strong>해설</strong> — 단정할 수 없습니다. 여러 계층과 잔차 연결 등 다른 처리가 함께 작용합니다.</p><p class="quiz-q">3. 질문이 바뀌면 비중은 왜 달라질 수 있나요?</p><p class="quiz-a"><strong>해설</strong> — 현재 처리하는 대상에 따라 관련 있는 입력 토큰이 달라질 수 있기 때문입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li>Hugging Face Transformers 공식 문서 · <a href="https://huggingface.co/docs/transformers/">https://huggingface.co/docs/transformers/</a> · 확인 2026-09-09 · transformers 4.56.2</li><li>Vaswani et al., Attention Is All You Need · <a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a> · 확인 2026-09-09</li></ul><script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="02-임베딩과-의미-유사도.html">← 임베딩과 의미 유사도</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="04-컨텍스트-윈도.html">컨텍스트 윈도 →</a></span></div></div></body></html>

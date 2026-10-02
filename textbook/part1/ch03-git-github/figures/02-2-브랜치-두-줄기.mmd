@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  M["main<br>짝 origin/main"]
+  F["* feature/order-summary<br>짝 origin/<br>feature/order-summary"]
+  subgraph HIST["작성자 저장소 · git branch -vv"]
+    direction LR
+    C1["chore: 저장소와<br>PR 템플릿 시작"]:::tool
+    C2["feat: 주문 요약<br>함수 추가"]:::tool
+    C1 --> C2
+  end
+  M -. "가리킴" .-> C1
+  F -. "가리킴" .-> C2

@@ -1,0 +1,12 @@
+flowchart LR
+  %% classes
+  cand["아직 고르지 않은<br>후보 하나"]:::flow
+  rel["질문과의 유사도<br>× 관련성 비중"]:::flow
+  sim["이미 고른 것과<br>가장 닮은 정도<br>× 나머지 비중"]:::flow
+  score["MMR 점수<br>위의 값 − 아래 값"]:::flow
+  best["점수가 가장 큰<br>후보를 고름"]:::flow
+  cand --> rel
+  cand --> sim
+  rel --> score
+  sim --> score
+  score --> best

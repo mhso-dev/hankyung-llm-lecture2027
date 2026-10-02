@@ -1,0 +1,12 @@
+flowchart TD
+  %% classes
+  B2["기준이 임시 폴더일 때<br>practice/data/message.txt"]:::flow
+  W["임시 폴더"]:::tool
+  P["practice 폴더"]:::tool
+  B1["기준이 practice일 때<br>data/message.txt"]:::flow
+  D["data 폴더"]:::tool
+  M["message.txt<br>안녕, 터미널!"]:::tool
+  B2 -. "여기서 출발" .-> W
+  W --> P
+  B1 -. "여기서 출발" .-> P
+  P --> D --> M

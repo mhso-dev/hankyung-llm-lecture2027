@@ -1,0 +1,18 @@
+flowchart TB
+  %% classes
+  subgraph cell["한 셀 안에서 적은 시각 넷"]
+    direction TB
+    t0["첫 시각"]
+    t1["둘째 시각"]
+    t2["셋째 시각"]
+    t3["넷째 시각"]
+    t0 -- 요청 글 만들기 --> t1
+    t1 -- 모델 요청 --> t2
+    t2 -- JSON 읽기 --> t3
+  end
+  steps["make_steps<br>이웃한 두 시각을 빼서<br>단계 기록 셋"]:::flow
+  total["make_trace<br>넷째 시각에서 첫 시각을 빼서<br>전체 걸린 초"]:::flow
+  seen["요청 글 만들기 0.0초<br>JSON 읽기 0.0초<br>가장 긴 단계 모델 요청"]:::measure
+  cell --> steps
+  cell --> total
+  steps --> seen

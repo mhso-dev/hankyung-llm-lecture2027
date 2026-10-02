@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  limit["기준 길이 30"]:::tool
+  plan["모델 배정<br>nano · nano · mini"]:::measure
+  held["예약됨 셋<br>예약 합 0.00382<br>비용 상한 0.006 안"]:::measure
+  nano["gpt-5.4-nano<br>요청 1 대화 1<br>요청 2 대화 2"]:::model
+  mini["gpt-5.4-mini<br>요청 3 대화 3"]:::model
+  sent["보낸 요청 세 번<br>대화 1 캐시 입력 0"]:::measure
+  sum["받은 대화의 비용 합<br>예약 합보다 적음"]:::measure
+  limit --> plan
+  plan --> held
+  held --> nano
+  held --> mini
+  nano --> sent
+  mini --> sent
+  sent --> sum

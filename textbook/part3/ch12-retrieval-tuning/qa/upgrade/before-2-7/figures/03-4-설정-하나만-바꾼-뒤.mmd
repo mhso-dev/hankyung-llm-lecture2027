@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph off_case["반복 탐색 off"]
+    direction TB
+    off_sql["같은 필터 검색 SQL"]:::flow
+    off_out["받아 온 줄 수 0"]:::fail
+  end
+  subgraph strict_case["반복 탐색 strict_order"]
+    direction TB
+    strict_sql["같은 필터 검색 SQL"]:::flow
+    strict_out["받아 온 줄 수 3<br>LIB-004 · LIB-001 · LIB-003"]:::measure
+  end
+  off_sql --> off_out
+  strict_sql --> strict_out
+  off_out --> same["두 칸의 SQL과 넘긴 값은 같음<br>받아 온 줄 수만 갈림"]
+  strict_out --> same

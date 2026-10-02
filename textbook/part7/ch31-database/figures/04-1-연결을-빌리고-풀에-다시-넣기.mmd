@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  url["접속 글<br>127.0.0.1:55431/ch31_lab"]:::tool
+  eng["create_async_engine<br>pool_size=1<br>max_overflow=0<br>pool_timeout=0.2"]:::flow
+  pool["연결 풀<br>AsyncAdaptedQueuePool<br>풀에 둘 연결 하나<br>대기 제한 0.2초"]
+  borrow["async with<br>engine.connect()<br>연결 하나를 빌려<br>SELECT<br>current_database()"]:::flow
+  inside["블록 안<br>빌려 간 연결 하나<br>받은 이름 ch31_lab"]:::measure
+  outside["블록이 끝난 뒤 반납<br>빌려 간 연결 없음<br>쉬고 있는 연결 하나"]:::measure
+  url --> eng --> pool --> borrow --> inside --> outside

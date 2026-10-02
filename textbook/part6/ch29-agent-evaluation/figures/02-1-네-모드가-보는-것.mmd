@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  ref["기준 궤적의 도구 요청<br>search_documents<br>check_source"]:::tool
+  act["실제 궤적의<br>도구 요청"]:::tool
+  subgraph msg["메시지를 하나씩 견줌"]
+    direction TB
+    st["strict<br>메시지 수와 차례,<br>도구 요청이 모두<br>같아야 참"]:::flow
+  end
+  subgraph pair["도구 요청만 모아 짝지음"]
+    direction TB
+    un["unordered<br>두 쪽 요청이 모두<br>짝을 찾으면 참"]:::flow
+    sb["subset<br>실제 요청이 모두<br>짝을 찾으면 참"]:::flow
+    sp["superset<br>기준 요청이 모두<br>짝을 찾으면 참"]:::flow
+    un ~~~ sb ~~~ sp
+  end
+  ref --> msg
+  act --> msg
+  ref --> pair
+  act --> pair

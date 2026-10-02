@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  p1["01절 도구<br>lookup_policy<br>규정 글 하나를 찾음"]:::flow
+  p2["02절 양식 클래스<br>LoanAnswer<br>도구 전략으로 감쌈"]:::flow
+  p3["03절 도구<br>check_my_loan<br>실행 정보 형식<br>MemberContext"]:::flow
+  mk["create_agent 한 번<br>tools · response_format<br>context_schema"]
+  q["문의 하나<br>실행 정보 M-0317<br>overdue_days 0 또는 3"]:::tool
+  g["에이전트 그래프<br>노드 model · tools"]
+  out["칸 structured_response<br>종류 LoanAnswer"]:::measure
+  p1 --> mk
+  p2 --> mk
+  p3 --> mk
+  mk --> g
+  q -->|invoke| g
+  g --> out

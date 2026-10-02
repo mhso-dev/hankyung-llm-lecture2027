@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  table["표 ch12_core_filter<br>412행"]:::tool
+  pick["색인이 가까운 후보부터 고르기<br>후보 목록 크기 40"]:::flow
+  check["범주 조건을 나중에 검사"]:::flow
+  keep["조건을 통과한 줄만 남기기"]:::flow
+  fewer["받아 온 줄 수가<br>받아 올 줄 수보다 적어짐"]:::measure
+  table --> pick
+  pick --> check
+  check --> keep
+  keep --> fewer

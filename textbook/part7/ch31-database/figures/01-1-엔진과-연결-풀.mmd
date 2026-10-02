@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  url["접속 글<br>postgresql+asyncpg<br>127.0.0.1:55431/ch31_lab"]:::tool
+  eng["create_async_engine<br>pool_size=3<br>max_overflow=0"]:::flow
+  pool["엔진의 연결 풀<br>AsyncAdaptedQueuePool<br>풀에 둘 연결 수 셋"]
+  conn["async with<br>engine.connect()<br>연결 하나를 빌림"]:::flow
+  pg["PostgreSQL 서버<br>데이터베이스 ch31_lab"]
+  seen["블록 안 빌려 간 연결 하나<br>블록 밖 쉬고 있는 연결 하나"]:::measure
+  url --> eng --> pool --> conn --> pg
+  conn --> seen

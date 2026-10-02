@@ -1,0 +1,323 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>커밋과 gitignore — Ch 3 · Git &amp; GitHub 협업</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 3 · Git &amp; GitHub 협업</p>
+<h1>커밋과 gitignore</h1><div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>작업 폴더, 스테이징 영역, 커밋의 차이를 실제 상태 출력으로 설명할 수 있습니다.</li><li>한 가지 목적이 드러나는 커밋을 만들고 메시지로 변경 이유를 기록할 수 있습니다.</li><li><code>.gitignore</code> 규칙을 적용하고 이미 추적 중인 파일을 색인에서만 제거할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>프로그램을 수정하다 보면 소스 코드뿐 아니라 실행 로그, 캐시, 개인 설정 파일도 함께 생깁니다. 이 파일을 모두 저장하면 리뷰할 변경이 흐려지고 컴퓨터마다 다른 값이 저장소에 섞입니다. 반대로 필요한 소스까지 빠뜨리면 다른 사람이 같은 결과를 만들 수 없습니다. Git을 사용할 때 첫 판단은 “어떤 변경을 함께 설명할 것인가”와 “어떤 파일을 애초에 추적하지 않을 것인가”입니다. 이 절에서는 파일 상태를 눈으로 확인한 뒤 필요한 변경만 커밋하고, 무시 규칙이 적용되는 시점을 구분합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch 1에서 터미널의 현재 폴더를 확인하고 Git 설치 여부를 검사했습니다. Ch 2에서는 <code>Path.write_text()</code>로 파일을 만들고 <code>subprocess.run()</code>으로 외부 명령을 실행했습니다. 이번 노트북은 이 두 기능으로 임시 Git 저장소를 만듭니다. Git 작성자 이름과 전자우편 주소는 임시 저장소의 로컬 설정에만 기록하므로 개인 설정을 바꾸지 않습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>사진을 찍기 전에 대상을 고릅니다</h3><p>여행 사진 한 장에는 같은 순간을 설명하는 장면을 담습니다. 점심 식사와 다음 날의 기차표를 한 사진에 억지로 담으면 제목을 붙이기 어렵습니다. Git의 <strong>커밋(commit)</strong>도 선택한 파일 상태와 설명을 묶은 기록입니다. 편집기에서 저장한 <code>app.py</code>는 <strong>작업 폴더(working tree)</strong>에 있습니다. <code>git add app.py</code>를 실행하면 그 순간의 파일 상태가 다음 커밋 후보인 <strong>색인(index)</strong>, 즉 <strong>스테이징 영역(staging area)</strong>에 올라갑니다. 예제 메시지의 <code>feat</code>, <code>fix</code>, <code>chore</code>는 변경 목적을 구분하는 팀 관례이며 Git의 필수 문법이 아닙니다. <code>git commit -m "feat: 주문 요약 추가"</code>를 실행하면 색인에 고른 상태가 새 커밋으로 기록됩니다.</p><p>구체적으로 <code>app.py</code>가 주문 2건을 출력하는 상태를 add한 뒤 작업 폴더에서 3건으로 다시 고치면, 색인에는 2건이 남고 작업 폴더에는 3건이 있습니다. 이때 커밋하면 2건 상태가 기록됩니다. <code>git diff</code>는 작업 폴더와 색인의 차이를, <code>git diff --cached</code>는 색인과 현재 커밋의 차이를 보여 줍니다. 어느 두 자리를 비교하는지 먼저 말할 수 있어야 출력의 <code>-</code>와 <code>+</code>를 올바르게 읽을 수 있습니다.</p><p><strong>HEAD</strong>는 현재 체크아웃한 커밋을 가리킵니다. 보통 HEAD는 <code>main</code> 같은 브랜치 이름을 가리키고, 브랜치는 최신 커밋을 가리킵니다. 새 커밋을 만들면 현재 브랜치가 새 커밋으로 이동합니다. <code>git log</code>가 보여 주는 연속된 기록은 파일 사본의 목록이 아니라 부모 커밋으로 연결된 스냅샷의 이력입니다.</p><h3>명령과 기호를 왼쪽부터 읽습니다</h3><p><code>git status --short --ignored</code>는 <code>git</code> 프로그램의 <code>status</code> 하위 명령을 실행하며, <code>--short</code>는 짧은 형식, <code>--ignored</code>는 무시된 파일도 표시하라는 옵션입니다. <code>git commit -m "메시지"</code>의 <code>-m</code> 뒤 문자열은 커밋 제목입니다. <code>git diff -- app.py</code>의 <code>--</code>는 뒤의 값을 옵션이 아닌 파일 경로로 구분합니다. 옵션을 외우기 전에 명령, 옵션, 대상 경로를 나누어 읽습니다.</p><p><strong><code>.gitignore</code></strong>는 아직 추적하지 않은 파일 중 Git 상태 목록에서 제외할 경로 패턴을 기록합니다. <code>.env</code> 한 줄은 해당 이름의 환경 설정 파일을, <code>__pycache__/</code>는 Python 캐시 폴더를 제외합니다. 이 규칙 자체는 팀이 공유해야 하므로 커밋합니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 475" width="720" height="475" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-01-commit-ignore desc-01-commit-ignore">
+<title id="title-01-commit-ignore">파일 상태가 커밋으로 기록되는 순서</title>
+<desc id="desc-01-commit-ignore">새 파일은 무시 규칙을 먼저 확인합니다. 추적할 파일을 git add로 선택하고 git commit으로 기록하며 .env는 스테이징 대상에서 제외합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="720" height="475" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">파일 상태가 커밋으로 기록되는 순서</tspan></text>
+<rect x="30" y="80" width="270" height="70" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="165.0" y="104.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="165.0" dy="0.0">작업 폴더의 새 파일</tspan><tspan x="165.0" dy="21.6">app.py · .env</tspan></text>
+<rect x="30" y="200" width="270" height="75" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="165.0" y="226.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="165.0" dy="0.0">.gitignore 확인</tspan><tspan x="165.0" dy="21.6">app.py는 추적 가능</tspan></text>
+<rect x="410" y="200" width="280" height="75" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="550.0" y="226.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="550.0" dy="0.0">.env는 규칙과 일치</tspan><tspan x="550.0" dy="21.6">스테이징에서 제외</tspan></text>
+<rect x="30" y="330" width="270" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="165.0" y="351.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="165.0" dy="0.0">git add app.py</tspan><tspan x="165.0" dy="21.6">스테이징에서 선택</tspan></text>
+<rect x="410" y="330" width="280" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="550.0" y="351.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="550.0" dy="0.0">git commit</tspan><tspan x="550.0" dy="21.6">선택한 변경 기록</tspan></text>
+<polyline points="165,150 165,200" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<polyline points="300,237 410,237" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="320.0" y="210.0" width="70.0" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="355.0" y="222.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="355.0" dy="0.0">.env</tspan></text>
+<polyline points="165,275 165,330" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<polyline points="300,363 410,363" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<text x="360.0" y="449.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg></div><p>작업 폴더의 새 <code>app.py</code>와 <code>.env</code>는 먼저 <code>.gitignore</code> 규칙을 확인합니다. 추적할 <code>app.py</code>는 <code>git add</code>를 거쳐 스테이징 영역에서 선택되고 <code>git commit</code>으로 기록됩니다. <code>.env</code>는 규칙과 일치해 스테이징 대상에서 제외됩니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>준비 셀은 운영체제의 임시 폴더 아래에 <code>orders</code> 저장소를 만들고 기본 브랜치를 <code>main</code>으로 정합니다. 기본 실행 셀은 <code>.gitignore</code>만 스테이징해 생성 파일을 무시하는 첫 커밋을 만들고, 이어 <code>app.py</code>를 두 번째 커밋에 기록합니다. 함께 만든 <code>.env</code>는 <code>!! .env</code>로 표시되어 무시 규칙이 동작했음을 확인할 수 있습니다. 이 파일의 값은 자격 증명이 아닌 <code>APP_MODE=demo</code>입니다.</p><p>다음 셀에서는 주문 숫자만 2에서 3으로 바꿉니다. <code>git diff</code>의 빼기 줄과 더하기 줄을 읽으면 변경 범위가 한 줄임을 알 수 있습니다. 커밋 메시지 <code>fix: 주문 건수 수정</code>은 파일 이름 대신 변경 이유를 설명합니다. 실제 팀에서는 저장소가 정한 메시지 규칙을 따르되, 제목만 읽어도 의도를 파악할 수 있게 씁니다.</p><section class="notebook" data-notebook="01-커밋과-gitignore" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="01-커밋과-gitignore.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiAiIyDsu6TrsIvqs7wgLmdpdGlnbm9yZVxuXG7rqqjrk6Ag7KCA7J6l7IaM64qUIOyehOyLnCDtj7TrjZTsl5Ag66eM65Ok66mwIOyLpOygnCBHaXRIdWIg6rOE7KCV7J2064KYIOybkOqyqSDsoIDsnqXshozrpbwg67OA6rK97ZWY7KeAIOyViuyKteuLiOuLpC5cblxuIyMg66qF66C57J2EIOyLpO2Wie2VmOq4sCDsoITsl5Ag7JWM7JWE65GYIEdpdCDsg4Htg5xcblxuR2l07J2AIO2MjOydvOydhCDshLgg7J6Q66as7JeQ7IScIOu0heuLiOuLpC4gKirsnpHsl4Ug7Y+0642UKHdvcmtpbmcgdHJlZSkqKiDripQg7KeA6riIIO2OuOynke2VmOuKlCDtjIzsnbzsnbQg7J6I64qUIOyekOumrOyeheuLiOuLpC4gKirsg4nsnbgoaW5kZXgpKiog7J2AIOuLpOydjCDsu6TrsIvsl5Ag64Sj7J2EIO2MjOydvCDsg4Htg5zrpbwg6rOo6528IOuRkOuKlCDsnpDrpqzsnbTrqbAsIOyKpO2FjOydtOynlSDsmIHsl60oc3RhZ2luZyBhcmVhKeydtOudvOqzoOuPhCDtlanri4jri6QuICoq7Luk67CLKGNvbW1pdCkqKiDsnYAg7IOJ7J247JeQIOqzoOuluCDsg4Htg5zrpbwg7KCA7J6l7IaMIOydtOugpeyXkCDquLDroZ3tlZwg6rKw6rO87J6F64uI64ukLiDrlLDrnbzshJwgYGdpdCBhZGQgYXBwLnB5YOuKlCDtjIzsnbzsnYQg7JiB6rWsIOyggOyepe2VmOuKlCDrqoXroLnsnbQg7JWE64uI6528IO2YhOyerCBgYXBwLnB5YOulvCDsg4nsnbjsl5Ag7Jis66as64qUIOuqheugueyeheuLiOuLpC4g7J207Ja07IScIGBnaXQgY29tbWl0IC1tIFwi66mU7Iuc7KeAXCJg66W8IOyLpO2Wie2VtOyVvCDqt7gg7IOB7YOc6rCAIOy7pOuwi+ycvOuhnCDquLDroZ3rkKnri4jri6QuXG5cbioqSEVBRCoqIOuKlCDtmITsnqwg7LK07YGs7JWE7JuD7ZWcIOy7pOuwi+ydhCDqsIDrpqztgrXri4jri6QuIOuztO2GtSBIRUFE64qUIGBtYWluYCDqsJnsnYAgKirruIzrnpzsuZgoYnJhbmNoKSoqIOydtOumhOydhCDqsIDrpqztgqTqs6AsIOu4jOuenOy5mCDsnbTrpoTsnYAg64uk7IucIOy1nOyLoCDsu6TrsIvsnYQg6rCA66as7YK164uI64ukLiDsg4gg7Luk67CL7J2EIOunjOuTpOuptCDtmITsnqwg67iM656c7LmY6rCAIOyDiCDsu6TrsIvsnLzroZwg7J2064+Z7ZWp64uI64ukLiDsnbQg7KCI7JeQ7ISc64qUIEhFQUTqsIAg7ZiE7J6sIOy7pOuwi+ydhCDqsIDrpqztgqjri6TripQg6rSA6rOE6rmM7KeA66eMIOyCrOyaqe2VqeuLiOuLpC5cblxu66qF66C57J2AIOyZvOyqveu2gO2EsCBgZ2l0YCDihpIg7ZWY7JyEIOuqheuguSDihpIg7Ji17IWYIOKGkiDrjIDsg4HsnLzroZwg7J297Iq164uI64ukLiDsmIjrpbwg65Ok7Ja0IGBnaXQgc3RhdHVzIC0tc2hvcnRg7JeQ7IScIGBzdGF0dXNg64qUIOyDge2DnOulvCDrs7Tqs6AsIGAtLXNob3J0YOuKlCDsp6fsnYAg7ZiV7Iud7Jy866GcIO2RnOyLnO2VmOudvOuKlCDsmLXshZjsnoXri4jri6QuIOy9lOuTnOydmCBgZ2l0KFwic3RhdHVzXCIsIFwiLS1zaG9ydFwiLCBjd2Q9cmVwbylg64qUIO2EsOuvuOuEkOyXkOyEnCDqsJnsnYAg66qF66C57J2EIOyLpO2Wie2VmOuPhOuhnSDsnbjsnpDrpbwg64KY64iIIFB5dGhvbiDtkZztmITsnoXri4jri6QuXG4iCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogIiMjIOykgOu5hFxuXG7snoTsi5wg7KCA7J6l7IaM66W8IOunjOuTpOqzoCDsnbQg64W47Yq467aB7JeQ66eMIOyggeyaqeuQmOuKlCDsnpHshLHsnpAg7KCV67O066W8IOyEpOygle2VqeuLiOuLpC4gYGdpdCBpbml0IC1iIG1haW5g7JeQ7IScIGBpbml0YOydgCDtmITsnqwg7Y+0642U66W8IEdpdCDsoIDsnqXshozroZwg66eM65Ok6rOgLCBgLWIgbWFpbmDsnYAg7LKrIOu4jOuenOy5mCDsnbTrpoTsnYQgYG1haW5g7Jy866GcIOygle2VqeuLiOuLpC4g7JWE7KeBIOy7pOuwi+ydtCDsl4bsnLzrr4DroZwg67iM656c7LmYIOydtOumhOunjCDspIDruYTrkJwg7IOB7YOc7J6F64uI64ukLlxuXG7snbQg7KCI7JeQ7ISc64qUIGBhcHAucHlg6rCAIOyekeyXhSDtj7TrjZQsIOyDieyduCwg7Luk67CL7J2EIOywqOuhgOuhnCDsnbTrj5ntlZjripQg66qo7Iq17J2EIO2ZleyduO2VqeuLiOuLpC4gYC5lbnZg64qUIOyekeyXhSDtj7TrjZTsl5DripQg7J6I7KeA66eMIGAuZ2l0aWdub3JlYCDqt5zsuZkg65WM66y47JeQIOyDieyduOyXkCDsmKzrnbzqsIDsp4Ag7JWK7Iq164uI64ukLiDrkZAg7YyM7J287J20IOqwmeydgCDtj7TrjZTsl5Ag7J6I7Ja064+EIEdpdOydmCDstpTsoIEg7IOB7YOc64qUIOuLpOulvCDsiJgg7J6I7Iq164uI64ukLiIKICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICJjZWxsLTAzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjM0MzIyN1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjM0Mjk4NVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjM1MTc1N1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MTc6MDguMzUwOTkxWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyFgOydtCDrp4zrk6Ag7KCA7J6l7IaM66eMIOyCrOyaqe2VmOuKlCDsnoTsi5wg7J6R7JeFIO2PtOuNlOulvCDspIDruYTtlanri4jri6QuXG4iLAogICAgImltcG9ydCBzdWJwcm9jZXNzXG4iLAogICAgImltcG9ydCBzeXNcbiIsCiAgICAiaW1wb3J0IHRlbXBmaWxlXG4iLAogICAgImZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aFxuIiwKICAgICJ3b3Jrc3BhY2UgPSB0ZW1wZmlsZS5UZW1wb3JhcnlEaXJlY3RvcnkocHJlZml4PVwiZ2l0LWxlc3Nvbi1cIilcbiIsCiAgICAicm9vdCA9IFBhdGgod29ya3NwYWNlLm5hbWUpXG4iLAogICAgIiMgY3dk64qUIOuqheugueydhCDsi6TtlontlaAg7Y+0642U7J2066mwIGNoZWNrPVRydWXripQg66qF66C5IOyLpO2MqOulvCDsmIjsmbjroZwg7JWM66a964uI64ukLlxuIiwKICAgICJkZWYgZ2l0KCphcmdzOiBzdHIsIGN3ZDogUGF0aCB8IE5vbmUgPSBOb25lLCBjaGVjazogYm9vbCA9IFRydWUpIC0+IHN0cjpcbiIsCiAgICAiICAgIFwiXCJcIuyngOygle2VnCDsnoTsi5wg7KCA7J6l7IaM7JeQ7IScIEdpdCDrqoXroLnsnYQg7Iuk7ZaJ7ZWp64uI64ukLlwiXCJcIlxuIiwKICAgICIgICAgcmVzdWx0ID0gc3VicHJvY2Vzcy5ydW4oW1wiZ2l0XCIsICphcmdzXSwgY3dkPWN3ZCBvciByb290LFxuIiwKICAgICIgICAgICAgICAgICAgICAgICAgICAgICAgICAgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlLCBjaGVjaz1jaGVjaylcbiIsCiAgICAiICAgIHJldHVybiByZXN1bHQuc3Rkb3V0LnN0cmlwKCkgb3IgcmVzdWx0LnN0ZGVyci5zdHJpcCgpXG4iLAogICAgImRlZiBjb25maWd1cmUocmVwbzogUGF0aCkgLT4gTm9uZTpcbiIsCiAgICAiICAgIFwiXCJcIuyLpOyKtSDsoIDsnqXshozsl5Drp4wg7J6R7ISx7J6QIOygleuztOulvCDshKTsoJXtlanri4jri6QuXCJcIlwiXG4iLAogICAgIiAgICBnaXQoXCJjb25maWdcIiwgXCJ1c2VyLm5hbWVcIiwgXCJHaXQgTGVhcm5lclwiLCBjd2Q9cmVwbylcbiIsCiAgICAiICAgIGdpdChcImNvbmZpZ1wiLCBcInVzZXIuZW1haWxcIiwgXCJsZWFybmVyQGV4YW1wbGUuaW52YWxpZFwiLCBjd2Q9cmVwbykiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjM1MzQ3OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjM1MzMxM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjQxNDIzMVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MTc6MDguNDEzNzkxWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIm9yZGVycyBtYWluXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7KCA7J6l7IaM66W8IG1haW4g67iM656c7LmY66GcIOy0iOq4sO2ZlO2VqeuLiOuLpC5cbiIsCiAgICAicmVwbyA9IHJvb3QgLyBcIm9yZGVyc1wiXG4iLAogICAgInJlcG8ubWtkaXIoKVxuIiwKICAgICJnaXQoXCJpbml0XCIsIFwiLWJcIiwgXCJtYWluXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJjb25maWd1cmUocmVwbylcbiIsCiAgICAicHJpbnQocmVwby5uYW1lLCBnaXQoXCJicmFuY2hcIiwgXCItLXNob3ctY3VycmVudFwiLCBjd2Q9cmVwbykpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogIiMjIOq4sOuzuCDsi6Ttlolcblxu7Luk67CLIOuplOyLnOyngCDslZ7snZggYGZlYXRgLCBgZml4YCwgYGNob3JlYOuKlCDsnbQg6rWQ7J6s6rCAIOuzgOqyvSDrqqnsoIHsnYQg6rWs67aE7ZWY66Ck6rOgIOyCrOyaqe2VnCDtjIAg6rSA66GA7J6F64uI64ukLiBHaXTsnbQg7JqU6rWs7ZWY64qUIO2VhOyImCDrrLjrspXsnbQg7JWE64uI66mwIOyggOyepeyGjOuniOuLpCDri6Trpbgg6rec7LmZ7J2EIOyCrOyaqe2VoCDsiJgg7J6I7Iq164uI64ukLlxuXG7rrLTsi5wg6rec7LmZ7J2EIOyyqyDsu6TrsIvsl5AsIO2UhOuhnOq3uOueqOydhCDri6TsnYwg7Luk67CL7JeQIOq4sOuhne2VqeuLiOuLpC4gYGdpdCBhZGQgLmdpdGlnbm9yZWDripQg6re4IO2MjOydvOunjCDsg4nsnbjsl5Ag7Jis66as6rOgLCBgZ2l0IGNvbW1pdCAtbSAuLi5g7J2YIGAtbWDsnYAg7Luk67CLIOuplOyLnOyngOulvCDrqoXroLnspITsl5DshJwg7KeA7KCV7ZWp64uI64ukLiDri6TsnYwgYGdpdCBhZGQgYXBwLnB5YOuKlCDsg4gg7IOJ7J247J2EIOq1rOyEse2VmOuvgOuhnCDrkZAg7Luk67CL7J2AIOyEnOuhnCDri6Trpbgg66qp7KCB7J2EIOqwluyKteuLiOuLpC5cblxu7Iuk7ZaJIOuSpCBgZ2l0IHN0YXR1cyAtLXNob3J0IC0taWdub3JlZGDsl5DshJwg7JWe7J2YIGAhIWDripQg66y07Iuc65CcIO2MjOydvCwgYGdpdCBsb2cgLTIgLS1wcmV0dHk9JXNg7J2YIGAtMmDripQg7LWc6re8IOuRkCDsu6TrsIssIGAlc2DripQg7KCc66qp66eMIOy2nOugpe2VmOudvOuKlCDrnLvsnoXri4jri6QuIGAuZW52YOqwgCBgISFg66GcIOuztOydtOqzoCDrkZAg66mU7Iuc7KeA6rCAIOyXreyLnOqwhOyInOycvOuhnCDrgpjsmKTrqbQg7J6R7JeFIO2PtOuNlOydmCDrqqjrk6Ag7YyM7J287J20IOyekOuPmeycvOuhnCDsu6TrsIvrkJjripQg6rKD7J20IOyVhOuLmOydhCDtmZXsnbjtlZwg6rKD7J6F64uI64ukLiIKICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjQxNTE2MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjQxNTA3OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjQ4MjA4NloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MTc6MDguNDgxNzkxWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIiEhIC5lbnZcbiIsCiAgICAgICJmZWF0OiDso7zrrLgg7JqU7JW9IOy2lOqwgFxuIiwKICAgICAgImNob3JlOiDsg53shLEg7YyM7J28IOy2lOyggSDsoJzsmbhcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDrrLTsi5wg6rec7LmZ6rO8IOq4sOuKpSDsvZTrk5zrpbwg64KY64iE7Ja0IOq4sOuhne2VmOqzoCDrkZAg7Luk67CL7J2YIOuplOyLnOyngOulvCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgIihyZXBvIC8gXCJhcHAucHlcIikud3JpdGVfdGV4dCgncHJpbnQoXCLso7zrrLggMuqxtFwiKVxcbicsIGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAiKHJlcG8gLyBcIi5naXRpZ25vcmVcIikud3JpdGVfdGV4dChcIi5lbnZcXG5fX3B5Y2FjaGVfXy9cXG5cIiwgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICIocmVwbyAvIFwiLmVudlwiKS53cml0ZV90ZXh0KFwiQVBQX01PREU9ZGVtb1xcblwiLCBlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgImdpdChcImFkZFwiLCBcIi5naXRpZ25vcmVcIiwgY3dkPXJlcG8pXG4iLAogICAgImdpdChcImNvbW1pdFwiLCBcIi1tXCIsIFwiY2hvcmU6IOyDneyEsSDtjIzsnbwg7LaU7KCBIOygnOyZuFwiLCBjd2Q9cmVwbylcbiIsCiAgICAiZ2l0KFwiYWRkXCIsIFwiYXBwLnB5XCIsIGN3ZD1yZXBvKVxuIiwKICAgICJnaXQoXCJjb21taXRcIiwgXCItbVwiLCBcImZlYXQ6IOyjvOusuCDsmpTslb0g7LaU6rCAXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJwcmludChnaXQoXCJzdGF0dXNcIiwgXCItLXNob3J0XCIsIFwiLS1pZ25vcmVkXCIsIGN3ZD1yZXBvKSlcbiIsCiAgICAicHJpbnQoZ2l0KFwibG9nXCIsIFwiLTJcIiwgXCItLXByZXR0eT0lc1wiLCBjd2Q9cmVwbykpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogIiMjIOqwkiDtlZjrgpjrpbwg67CU6r+UIOu5hOq1kFxuXG7stpzroKUg7Iir7J6Q66eMIDLsl5DshJwgM+ycvOuhnCDrsJTqvrjqs6Ag7LCo7J2066W8IO2ZleyduO2VqeuLiOuLpC4g7J2065WMIOuzgOqyveydgCDrqLzsoIAg7J6R7JeFIO2PtOuNlOyXkOunjCDsobTsnqztlanri4jri6QuIGBnaXQgZGlmZiAtLSBhcHAucHlg64qUIOyekeyXhSDtj7TrjZTsmYAg7IOJ7J247J2YIOywqOydtOulvCDrs7Tsl6wg7KO866+A66GcIGAtYCDspITsnZggMuyZgCBgK2Ag7KSE7J2YIDPsnYQg7J297Iq164uI64ukLiBgZ2l0IGFkZGAg65Kk7JeQ64qUIOqwmeydgCDrqoXroLnsnZgg7Lac66Cl7J20IOyCrOudvOyngOqzoCDrs4Dqsr3snbQg7IOJ7J247Jy866GcIOydtOuPme2VqeuLiOuLpC4g66eI7KeA66eJIOy7pOuwiyDrkqTsl5DripQg7J6R7JeFIO2PtOuNlMK37IOJ7J24wrdIRUFEIOy7pOuwi+ydtCDri6Tsi5wg6rCZ7J2AIO2MjOydvCDsg4Htg5zrpbwg6rCA66as7YK164uI64ukLiIKICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjQ4Mjk1NFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjQ4Mjg3OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjUyMjgzN1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MTc6MDguNTIyNDA3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgImRpZmYgLS1naXQgYS9hcHAucHkgYi9hcHAucHlcbiIsCiAgICAgICJpbmRleCAwYmRlNDU2Li40MzMzNzYxIDEwMDY0NFxuIiwKICAgICAgIi0tLSBhL2FwcC5weVxuIiwKICAgICAgIisrKyBiL2FwcC5weVxuIiwKICAgICAgIkBAIC0xICsxIEBAXG4iLAogICAgICAiLXByaW50KFwi7KO866y4IDLqsbRcIilcbiIsCiAgICAgICIrcHJpbnQoXCLso7zrrLggM+qxtFwiKVxuIiwKICAgICAgIjgxYjBiOWEgZml4OiDso7zrrLgg6rG07IiYIOyImOyglVxuIiwKICAgICAgImI1MTBmMGYgZmVhdDog7KO866y4IOyalOyVvSDstpTqsIBcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtjIzsnbzsnZgg7Lac66ClIOyIq+yekCDtlZjrgpjrpbwg67CU6r68IOuSpCBkaWZm66GcIOyLpOygnCDrs4Dqsr3snYQg7J297Iq164uI64ukLlxuIiwKICAgICIocmVwbyAvIFwiYXBwLnB5XCIpLndyaXRlX3RleHQoJ3ByaW50KFwi7KO866y4IDPqsbRcIilcXG4nLCBlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgInByaW50KGdpdChcImRpZmZcIiwgXCItLVwiLCBcImFwcC5weVwiLCBjd2Q9cmVwbykpXG4iLAogICAgImdpdChcImFkZFwiLCBcImFwcC5weVwiLCBjd2Q9cmVwbylcbiIsCiAgICAiZ2l0KFwiY29tbWl0XCIsIFwiLW1cIiwgXCJmaXg6IOyjvOusuCDqsbTsiJgg7IiY7KCVXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJwcmludChnaXQoXCJsb2dcIiwgXCItLW9uZWxpbmVcIiwgXCItMlwiLCBjd2Q9cmVwbykpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wOSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiAiIyMg7Iuk7YyoIOyerO2YhFxuXG7snbTrr7gg7LaU7KCBIOykkeyduCDtjIzsnbzsnYAg64KY7KSR7JeQIOustOyLnCDqt5zsuZnsnYQg7LaU6rCA7ZW064+EIOy2lOyggSDsg4Htg5zqsIAg7Jyg7KeA65Cp64uI64ukLiBgKi5sb2dg7JeQ7IScIOuzhO2RnCBgKmDripQg7YyM7J28IOydtOumhOydmCDsnoTsnZgg66y47J6Q7Je06rO8IOydvOy5mO2VmOuvgOuhnCBgZGVidWcubG9nYCwgYHNlcnZlci5sb2dg7LKY65+8IGAubG9nYOuhnCDrgZ3rgpjripQg7YyM7J287J2EIOustOyLnO2VqeuLiOuLpC4iCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiY2VsbC0xMCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoxNzowOC41MjM3NjlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoxNzowOC41MjM2OTlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoxNzowOC41NjU0ODFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjU2NTA1OVoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuy2lOyggSDsl6zrtoA6IGRlYnVnLmxvZ1xuIiwKICAgICAgIuuzgOqyvSDsg4Htg5w6IE0gLmdpdGlnbm9yZVxuIiwKICAgICAgIiBNIGRlYnVnLmxvZ1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOydtOuvuCDstpTsoIHtlZjripQgZGVidWcubG9n64qUIOustOyLnCDqt5zsuZnsnYQg7LaU6rCA7ZW064+EIOuzgOqyvSDrjIDsg4HsnLzroZwg64Ko7Iq164uI64ukLlxuIiwKICAgICJ0cmFja2VkID0gcmVwbyAvIFwiZGVidWcubG9nXCJcbiIsCiAgICAidHJhY2tlZC53cml0ZV90ZXh0KFwiZmlyc3QgcnVuXFxuXCIsIGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAiZ2l0KFwiYWRkXCIsIFwiZGVidWcubG9nXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJnaXQoXCJjb21taXRcIiwgXCItbVwiLCBcImNob3JlOiDrlJTrsoTqt7gg66Gc6re4IOq4sOuhnVwiLCBjd2Q9cmVwbylcbiIsCiAgICAid2l0aCAocmVwbyAvIFwiLmdpdGlnbm9yZVwiKS5vcGVuKFwiYVwiLCBlbmNvZGluZz1cInV0Zi04XCIpIGFzIGZpbGU6XG4iLAogICAgIiAgICBmaWxlLndyaXRlKFwiKi5sb2dcXG5cIilcbiIsCiAgICAidHJhY2tlZC53cml0ZV90ZXh0KFwic2Vjb25kIHJ1blxcblwiLCBlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgInByaW50KFwi7LaU7KCBIOyXrOu2gDpcIiwgZ2l0KFwibHMtZmlsZXNcIiwgXCJkZWJ1Zy5sb2dcIiwgY3dkPXJlcG8pKVxuIiwKICAgICJwcmludChcIuuzgOqyvSDsg4Htg5w6XCIsIGdpdChcInN0YXR1c1wiLCBcIi0tc2hvcnRcIiwgY3dkPXJlcG8pKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiAiIyMg7IiY7KCVXG5cbuyDieyduOyXkOyEnOunjCDtjIzsnbzsnYQg7KCc6rGw7ZWY66m0IOyekeyXhSDtj7TrjZTsnZgg7YyM7J287J2AIOuCqOqzoCDsnbTtm4Qg67OA6rK97J2AIOustOyLnOuQqeuLiOuLpC4iCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA2LAogICAiaWQiOiAiY2VsbC0xMiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoxNzowOC41NjYzNzZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoxNzowOC41NjYzMDdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoxNzowOC42MTk1OTFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjYxOTExOFoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7YyM7J28IOyhtOyerDogVHJ1ZVxuIiwKICAgICAgIuy2lOyggSDqsrDqs7w6IOyXhuydjFxuIiwKICAgICAgIuustOyLnCDqt5zsuZk6IC5naXRpZ25vcmU6MzoqLmxvZ1x0ZGVidWcubG9nXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgLS1jYWNoZWTripQg7IOJ7J247JeQ7ISc66eMIOygnOqxsO2VmOuvgOuhnCDsnpHsl4Ug7Y+0642U7J2YIOuhnOq3uCDtjIzsnbzsnYAg7Jyg7KeA65Cp64uI64ukLlxuIiwKICAgICJnaXQoXCJybVwiLCBcIi0tY2FjaGVkXCIsIFwiZGVidWcubG9nXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJnaXQoXCJhZGRcIiwgXCIuZ2l0aWdub3JlXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJnaXQoXCJjb21taXRcIiwgXCItbVwiLCBcImNob3JlOiDroZzqt7gg7YyM7J28IOy2lOyggSDsoJzsmbhcIiwgY3dkPXJlcG8pXG4iLAogICAgInRyYWNrZWQud3JpdGVfdGV4dChcInRoaXJkIHJ1blxcblwiLCBlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgInByaW50KFwi7YyM7J28IOyhtOyerDpcIiwgdHJhY2tlZC5leGlzdHMoKSlcbiIsCiAgICAicHJpbnQoXCLstpTsoIEg6rKw6rO8OlwiLCBnaXQoXCJscy1maWxlc1wiLCBcImRlYnVnLmxvZ1wiLCBjd2Q9cmVwbykgb3IgXCLsl4bsnYxcIilcbiIsCiAgICAicHJpbnQoXCLrrLTsi5wg6rec7LmZOlwiLCBnaXQoXCJjaGVjay1pZ25vcmVcIiwgXCItdlwiLCBcImRlYnVnLmxvZ1wiLCBjd2Q9cmVwbykpXG4iLAogICAgImFzc2VydCB0cmFja2VkLmV4aXN0cygpIGFuZCBub3QgZ2l0KFwibHMtZmlsZXNcIiwgXCJkZWJ1Zy5sb2dcIiwgY3dkPXJlcG8pIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJwYWlyZWQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA2LAogICAiY29kZV9zaGEyNTYiOiAiMTNmYmJjMjA3YzQzNzU1NDU0Njc5ZjFlY2U0YzhiMDQ1NmUzZDEzMDk3NTIwNWI0YzkzMjAwZGE0YTYwMGE4MiIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTExVDA2OjE3OjA4LjczNDI0OCswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiODM3YTA4NmJiZDNkZjg5NmVhYWYxZjRlNTcwZjNlYTNjMmIxZWYxNjlkZDc3MTJhMzM2ZTgwMmY3NTZiYjk2YyIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>커밋과 .gitignore</h2>
+<p>모든 저장소는 임시 폴더에 만들며 실제 GitHub 계정이나 원격 저장소를 변경하지 않습니다.</p>
+<h3>명령을 실행하기 전에 알아둘 Git 상태</h3>
+<p>Git은 파일을 세 자리에서 봅니다. <strong>작업 폴더(working tree)</strong> 는 지금 편집하는 파일이 있는 자리입니다. <strong>색인(index)</strong> 은 다음 커밋에 넣을 파일 상태를 골라 두는 자리이며, 스테이징 영역(staging area)이라고도 합니다. <strong>커밋(commit)</strong> 은 색인에 고른 상태를 저장소 이력에 기록한 결과입니다. 따라서 <code>git add app.py</code>는 파일을 영구 저장하는 명령이 아니라 현재 <code>app.py</code>를 색인에 올리는 명령입니다. 이어서 <code>git commit -m &quot;메시지&quot;</code>를 실행해야 그 상태가 커밋으로 기록됩니다.</p>
+<p><strong>HEAD</strong> 는 현재 체크아웃한 커밋을 가리킵니다. 보통 HEAD는 <code>main</code> 같은 <strong>브랜치(branch)</strong> 이름을 가리키고, 브랜치 이름은 다시 최신 커밋을 가리킵니다. 새 커밋을 만들면 현재 브랜치가 새 커밋으로 이동합니다. 이 절에서는 HEAD가 현재 커밋을 가리킨다는 관계까지만 사용합니다.</p>
+<p>명령은 왼쪽부터 <code>git</code> → 하위 명령 → 옵션 → 대상으로 읽습니다. 예를 들어 <code>git status --short</code>에서 <code>status</code>는 상태를 보고, <code>--short</code>는 짧은 형식으로 표시하라는 옵션입니다. 코드의 <code>git(&quot;status&quot;, &quot;--short&quot;, cwd=repo)</code>는 터미널에서 같은 명령을 실행하도록 인자를 나눈 Python 표현입니다.</p></div>
+<div class="nb-markdown"><h3>준비</h3>
+<p>임시 저장소를 만들고 이 노트북에만 적용되는 작성자 정보를 설정합니다. <code>git init -b main</code>에서 <code>init</code>은 현재 폴더를 Git 저장소로 만들고, <code>-b main</code>은 첫 브랜치 이름을 <code>main</code>으로 정합니다. 아직 커밋이 없으므로 브랜치 이름만 준비된 상태입니다.</p>
+<p>이 절에서는 <code>app.py</code>가 작업 폴더, 색인, 커밋을 차례로 이동하는 모습을 확인합니다. <code>.env</code>는 작업 폴더에는 있지만 <code>.gitignore</code> 규칙 때문에 색인에 올라가지 않습니다. 두 파일이 같은 폴더에 있어도 Git의 추적 상태는 다를 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 셀이 만든 저장소만 사용하는 임시 작업 폴더를 준비합니다.
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+workspace = tempfile.TemporaryDirectory(prefix=&quot;git-lesson-&quot;)
+root = Path(workspace.name)
+# cwd는 명령을 실행할 폴더이며 check=True는 명령 실패를 예외로 알립니다.
+def git(*args: str, cwd: Path | None = None, check: bool = True) -&gt; str:
+    &quot;&quot;&quot;지정한 임시 저장소에서 Git 명령을 실행합니다.&quot;&quot;&quot;
+    result = subprocess.run([&quot;git&quot;, *args], cwd=cwd or root,
+                            text=True, capture_output=True, check=check)
+    return result.stdout.strip() or result.stderr.strip()
+def configure(repo: Path) -&gt; None:
+    &quot;&quot;&quot;실습 저장소에만 작성자 정보를 설정합니다.&quot;&quot;&quot;
+    git(&quot;config&quot;, &quot;user.name&quot;, &quot;Git Learner&quot;, cwd=repo)
+    git(&quot;config&quot;, &quot;user.email&quot;, &quot;learner@example.invalid&quot;, cwd=repo)</code></pre></div></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 저장소를 main 브랜치로 초기화합니다.
+repo = root / &quot;orders&quot;
+repo.mkdir()
+git(&quot;init&quot;, &quot;-b&quot;, &quot;main&quot;, cwd=repo)
+configure(repo)
+print(repo.name, git(&quot;branch&quot;, &quot;--show-current&quot;, cwd=repo))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">orders main
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p>커밋 메시지 앞의 <code>feat</code>, <code>fix</code>, <code>chore</code>는 이 교재가 변경 목적을 구분하려고 사용한 팀 관례입니다. Git이 요구하는 필수 문법이 아니며 저장소마다 다른 규칙을 사용할 수 있습니다.</p>
+<p>무시 규칙을 첫 커밋에, 프로그램을 다음 커밋에 기록합니다. <code>git add .gitignore</code>는 그 파일만 색인에 올리고, <code>git commit -m ...</code>의 <code>-m</code>은 커밋 메시지를 명령줄에서 지정합니다. 다음 <code>git add app.py</code>는 새 색인을 구성하므로 두 커밋은 서로 다른 목적을 갖습니다.</p>
+<p>실행 뒤 <code>git status --short --ignored</code>에서 앞의 <code>!!</code>는 무시된 파일, <code>git log -2 --pretty=%s</code>의 <code>-2</code>는 최근 두 커밋, <code>%s</code>는 제목만 출력하라는 뜻입니다. <code>.env</code>가 <code>!!</code>로 보이고 두 메시지가 역시간순으로 나오면 작업 폴더의 모든 파일이 자동으로 커밋되는 것이 아님을 확인한 것입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 무시 규칙과 기능 코드를 나누어 기록하고 두 커밋의 메시지를 확인합니다.
+(repo / &quot;app.py&quot;).write_text(&#x27;print(&quot;주문 2건&quot;)\n&#x27;, encoding=&quot;utf-8&quot;)
+(repo / &quot;.gitignore&quot;).write_text(&quot;.env\n__pycache__/\n&quot;, encoding=&quot;utf-8&quot;)
+(repo / &quot;.env&quot;).write_text(&quot;APP_MODE=demo\n&quot;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;.gitignore&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;chore: 생성 파일 추적 제외&quot;, cwd=repo)
+git(&quot;add&quot;, &quot;app.py&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;feat: 주문 요약 추가&quot;, cwd=repo)
+print(git(&quot;status&quot;, &quot;--short&quot;, &quot;--ignored&quot;, cwd=repo))
+print(git(&quot;log&quot;, &quot;-2&quot;, &quot;--pretty=%s&quot;, cwd=repo))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">!! .env
+feat: 주문 요약 추가
+chore: 생성 파일 추적 제외
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 비교</h3>
+<p>출력 숫자만 2에서 3으로 바꾸고 차이를 확인합니다. 이때 변경은 먼저 작업 폴더에만 존재합니다. <code>git diff -- app.py</code>는 작업 폴더와 색인의 차이를 보여 주므로 <code>-</code> 줄의 2와 <code>+</code> 줄의 3을 읽습니다. <code>git add</code> 뒤에는 같은 명령의 출력이 사라지고 변경이 색인으로 이동합니다. 마지막 커밋 뒤에는 작업 폴더·색인·HEAD 커밋이 다시 같은 파일 상태를 가리킵니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 파일의 출력 숫자 하나를 바꾼 뒤 diff로 실제 변경을 읽습니다.
+(repo / &quot;app.py&quot;).write_text(&#x27;print(&quot;주문 3건&quot;)\n&#x27;, encoding=&quot;utf-8&quot;)
+print(git(&quot;diff&quot;, &quot;--&quot;, &quot;app.py&quot;, cwd=repo))
+git(&quot;add&quot;, &quot;app.py&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;fix: 주문 건수 수정&quot;, cwd=repo)
+print(git(&quot;log&quot;, &quot;--oneline&quot;, &quot;-2&quot;, cwd=repo))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">diff --git a/app.py b/app.py
+index 0bde456..4333761 100644
+--- a/app.py
++++ b/app.py
+@@ -1 +1 @@
+-print(&quot;주문 2건&quot;)
++print(&quot;주문 3건&quot;)
+81b0b9a fix: 주문 건수 수정
+b510f0f feat: 주문 요약 추가
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 첫 상태 출력의 <code>!!</code>는 무시된 파일을 뜻합니다. 첫 두 커밋의 짧은 해시는 실행할 때마다 달라질 수 있지만, 최신 메시지 순서는 동일합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p><code>debug.log</code>를 먼저 커밋한 다음 <code>*.log</code>를 무시 규칙에 추가합니다. 별표 <code>*</code>는 파일 이름의 임의 문자열과 일치하므로 <code>debug.log</code>, <code>server.log</code>처럼 <code>.log</code>로 끝나는 파일을 뜻합니다. 파일을 다시 수정하면 <code>git status</code>에 변경 파일로 나타납니다. <code>.gitignore</code>는 이미 커밋한 파일의 추적 상태를 자동으로 없애지 않습니다.</p><p>수정 셀의 <code>git rm --cached debug.log</code>는 색인에서만 경로를 제거합니다. 작업 폴더의 실제 파일은 남아 있으며 <code>tracked.exists()</code>가 <code>True</code>로 출력됩니다. 제거와 무시 규칙을 함께 커밋한 뒤 로그 내용을 바꾸어도 추적 파일 목록에는 나타나지 않습니다. <code>git check-ignore -v</code>는 어떤 규칙이 해당 파일에 적용됐는지 줄 번호와 함께 보여 줍니다.</p><section class="notebook" data-notebook="01-커밋과-gitignore" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>이미 추적 중인 파일은 나중에 무시 규칙을 추가해도 추적 상태가 유지됩니다. <code>*.log</code>에서 별표 <code>*</code>는 파일 이름의 임의 문자열과 일치하므로 <code>debug.log</code>, <code>server.log</code>처럼 <code>.log</code>로 끝나는 파일을 무시합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이미 추적하는 debug.log는 무시 규칙을 추가해도 변경 대상으로 남습니다.
+tracked = repo / &quot;debug.log&quot;
+tracked.write_text(&quot;first run\n&quot;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;debug.log&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;chore: 디버그 로그 기록&quot;, cwd=repo)
+with (repo / &quot;.gitignore&quot;).open(&quot;a&quot;, encoding=&quot;utf-8&quot;) as file:
+    file.write(&quot;*.log\n&quot;)
+tracked.write_text(&quot;second run\n&quot;, encoding=&quot;utf-8&quot;)
+print(&quot;추적 여부:&quot;, git(&quot;ls-files&quot;, &quot;debug.log&quot;, cwd=repo))
+print(&quot;변경 상태:&quot;, git(&quot;status&quot;, &quot;--short&quot;, cwd=repo))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">추적 여부: debug.log
+변경 상태: M .gitignore
+ M debug.log
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>색인에서만 파일을 제거하면 작업 폴더의 파일은 남고 이후 변경은 무시됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># --cached는 색인에서만 제거하므로 작업 폴더의 로그 파일은 유지됩니다.
+git(&quot;rm&quot;, &quot;--cached&quot;, &quot;debug.log&quot;, cwd=repo)
+git(&quot;add&quot;, &quot;.gitignore&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;chore: 로그 파일 추적 제외&quot;, cwd=repo)
+tracked.write_text(&quot;third run\n&quot;, encoding=&quot;utf-8&quot;)
+print(&quot;파일 존재:&quot;, tracked.exists())
+print(&quot;추적 결과:&quot;, git(&quot;ls-files&quot;, &quot;debug.log&quot;, cwd=repo) or &quot;없음&quot;)
+print(&quot;무시 규칙:&quot;, git(&quot;check-ignore&quot;, &quot;-v&quot;, &quot;debug.log&quot;, cwd=repo))
+assert tracked.exists() and not git(&quot;ls-files&quot;, &quot;debug.log&quot;, cwd=repo)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">파일 존재: True
+추적 결과: 없음
+무시 규칙: .gitignore:3:*.log	debug.log
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li><code>.gitignore</code>는 보안 도구가 아닙니다. 실수로 커밋한 자격 증명을 이 파일에 추가해도 과거 이력은 남습니다. 이 문제는 05절에서 따로 다룹니다.</li><li><code>git add .</code>를 사용하기 전에 <code>git status --short</code>와 <code>git diff</code>를 읽습니다. 예상하지 않은 생성 파일과 디버그 문장이 포함됐는지 확인합니다.</li><li>서식 변경과 기능 변경이 섞이면 리뷰어가 실제 동작 차이를 찾기 어렵습니다. 가능한 경우 목적별 커밋으로 나눕니다.</li><li><code>git rm --cached</code>는 다음 커밋에서 저장소의 파일을 제거합니다. 팀원이 필요한 공용 설정이라면 무시하지 말고 민감한 값만 비운 예시 파일을 제공합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>작업 폴더에서 수정한 내용 중 다음 기록에 포함할 상태를 스테이징 영역에서 고릅니다.</li><li>커밋은 한 가지 변경 목적과 그 목적을 설명하는 메시지를 함께 기록합니다.</li><li><code>.gitignore</code>는 새 파일의 추적을 예방하며 이미 추적 중인 파일에는 소급 적용되지 않습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 목적이 분명한 커밋을 기능 브랜치에 쌓고, 원격에 게시한 변경을 PR 단위로 비교하고 검토합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. <code>git add</code>와 <code>git commit</code>은 각각 어느 상태를 바꿉니까?</p><p class="quiz-a"><strong>정답:</strong> <code>git add</code>는 현재 파일 내용을 스테이징 영역에 선택하고, <code>git commit</code>은 선택된 상태를 새 이력으로 기록합니다.</p><p class="quiz-q">2. 노트북에서 <code>.env</code>가 <code>!!</code>로 표시된 이유는 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> <code>.gitignore</code>의 <code>.env</code> 규칙과 일치해 Git이 무시한 파일이기 때문입니다.</p><p class="quiz-q">3. 이미 커밋한 <code>debug.log</code>가 <code>*.log</code> 추가 뒤에도 변경 파일로 나타나는 이유는 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> 무시 규칙은 아직 추적하지 않은 파일에 적용됩니다. <code>debug.log</code>는 이미 추적 중이므로 상태가 유지됩니다.</p><p class="quiz-q">4. 작업 폴더의 로그 파일을 보존하면서 추적만 중단한 명령은 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> <code>git rm --cached debug.log</code>입니다. <code>--cached</code>가 색인에서만 제거하도록 지정합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://git-scm.com/docs/git-add">Git 공식 문서: git-add</a> · 확인 2026-09-09 · 기준 Git 2.50.1</li><li><a href="https://git-scm.com/docs/git-commit">Git 공식 문서: git-commit</a> · 확인 2026-09-09 · 기준 Git 2.50.1</li><li><a href="https://git-scm.com/docs/gitignore">Git 공식 문서: gitignore</a> · 확인 2026-09-09 · 기준 Git 2.50.1</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span>&nbsp;</span><span><a href="index.html">챕터 목차</a></span><span><a href="02-GitHub-Flow와-PR-리뷰.html">GitHub Flow와 PR 리뷰 →</a></span></div></div></body></html>

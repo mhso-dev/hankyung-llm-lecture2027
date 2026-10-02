@@ -1,0 +1,120 @@
+<!--meta: 강의 1h | 실습 2h | 코드 01-문서와-메타데이터.ipynb | 새 용어 4 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 이 챕터가 읽을 문서 폴더를 열어 파일 수와 형식 가짓수를 셀 수 있습니다.</li>
+<li>이 절을 마치면 PDF 한 쪽을 두 가지 방법으로 읽어 글자 수와 문장을 견줄 수 있습니다.</li>
+<li>이 절을 마치면 다섯 칸 출처 기록을 만들고 쪽 번호를 1부터 세어 적을 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>Ch 9는 PDF 한 종류만 읽었습니다. 로더 함수가 쪽마다 <code>Document</code> 하나를 만들고, 메타데이터에 <code>doc_id</code>·<code>page</code>·<code>source</code> 세 칸을 적었습니다. 세 칸으로 넉넉했던 까닭은 파일 형식도 하나였고 읽는 방법도 하나였기 때문입니다.</p>
+<p>이 챕터는 형식이 여섯 가지입니다. 여섯 가지는 PDF, DOCX, HTML, CSV, HWP, HWPX입니다. 같은 PDF 안에서도 읽는 방법이 여럿이고, 방법을 바꾸면 뽑히는 글이 달라집니다. 그래서 기록에 파일 형식과 읽은 방법을 적는 칸을 더합니다.</p>
+<p>이 두 칸이 없으면 나중에 되짚을 수 없습니다. 검색 결과가 나빠졌을 때 어느 도구로 읽은 글이 색인에 들어갔는지 알 수 없기 때문입니다. 01절은 기록의 칸을 정하고, 02~04절은 형식마다 파일을 실제로 읽습니다.</p>
+<p>이 절이 쓰는 파일은 두 곳에 있습니다. 폴더 <code>labs/data/rag-corpus/</code>의 PDF 21건과 <code>labs/part3/ch10-document-processing/fixtures/</code>의 형식 견본 5건입니다. PDF 21건 가운데 18건은 글자를 뽑을 수 있고, 3건은 글자 층이 없는 스캔본입니다.</p>
+
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<ul>
+<li><strong>문서 객체(Document)</strong> — Ch 9 01절에서 배웠습니다. 본문 글 <code>page_content</code>와 설명 값 <code>metadata</code> 두 자리를 가집니다.</li>
+<li><strong>로더 함수</strong> — Ch 9 02절의 <code>load_pdf_pages()</code>는 PDF 경로와 문서 이름을 받습니다. 쪽마다 <code>Document</code> 하나를 만들고 쪽 번호를 1부터 세어 적습니다.</li>
+<li><strong>출처 표시</strong> — Ch 9 03절의 <code>make_source_mark()</code>는 <code>doc_id</code>와 <code>page</code> 두 칸만 읽습니다. 그 두 값으로 <code>[E01 p.2]</code> 모양의 글을 만듭니다.</li>
+<li><strong>문서 청크</strong> — Ch 9 01절에서 정한 말입니다. 긴 글을 검색 단위로 나눈 조각을 가리키며, 이 챕터 05~08절이 이어받습니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유 — 접수대에서 같은 모양 봉투로 옮기기</h3>
+<p>한 기관의 접수대에 신청서가 들어온다고 생각해 보세요. 어떤 것은 두꺼운 책자이고, 어떤 것은 한 장짜리 표이며, 어떤 것은 접힌 종이입니다. 담당자는 원본을 창고에 두고 처리 부서에는 같은 모양의 봉투로 넘깁니다.</p>
+<p>봉투 앞면에는 늘 같은 자리에 같은 항목을 적습니다. 접수 번호, 원본 종류, 옮겨 적은 사람, 원본의 몇 쪽인지입니다. 처리 부서는 봉투만 보고 일하고, 원본이 필요하면 적힌 항목을 따라 창고에서 찾습니다. 로더가 하는 일도 이와 같습니다.</p>
+{{img:01-5-서류와-봉투|다섯 줄 세 칸으로 놓인 평면 그림으로 왼쪽 칸에는 두께와 모양이 다른 서류 다섯 가지가 줄마다 하나씩 있고 가운데 칸에는 돋보기와 자와 핀셋과 붓과 종이집게가 줄마다 하나씩 있으며 오른쪽 칸에는 크기와 모양이 똑같은 흰 봉투 다섯 개가 줄마다 하나씩 놓여 있고 봉투마다 앞면 같은 자리에 짧은 빈 가로줄이 그려져 있음|원본 모양은 제각각이지만 다음 자리로 넘기는 봉투는 모두 같은 모양이고 앞면의 빈 줄도 같은 자리에 있습니다}}
+<p><strong>그림 읽기</strong> — 다섯 줄을 한 줄씩 왼쪽에서 오른쪽으로 봅니다. 왼쪽 칸의 서류는 두께와 모양이 모두 다르고, 가운데 칸의 도구도 줄마다 다릅니다. 오른쪽 칸의 봉투 다섯 개는 크기와 모양이 같고 앞면의 짧은 빈 줄도 같은 자리에 있습니다. 왼쪽이 원본 파일, 가운데가 형식마다 다른 읽기, 오른쪽이 다섯 칸 출처 기록입니다.</p>
+
+<h3>이 절에서 쓰는 말</h3>
+<table><thead><tr><th>용어</th><th>뜻과 일상 예</th><th>이 절에서 보이는 모습</th></tr></thead><tbody>
+<tr><td>파서(parser)</td><td>파일 안의 구조를 풀어 본문과 표 같은 내용을 꺼내는 프로그램. 같은 원본을 옮겨 적는 사람이 둘이면 옮긴 글이 달라지는 것과 같음</td><td>4절의 기본 읽기와 레이아웃 읽기, <code>parser</code> 칸의 <code>pypdf-plain</code></td></tr>
+<tr><td>파일 형식(file type)</td><td>파일을 저장한 방식의 이름. 문서함에서 종이 묶음과 표 묶음을 나누어 두는 것과 같음</td><td>2절 견본 폴더의 확장자 다섯 가지, <code>file_type</code> 칸의 <code>pdf</code></td></tr>
+<tr><td>출처 기록</td><td>본문 글이 어디에서 왔는지 적어 두는 다섯 칸짜리 딕셔너리. 봉투 앞면에 적는 항목과 같음</td><td>5절 <code>make_source_record()</code>가 만든 값, <code>메타데이터 칸 수: 5</code></td></tr>
+<tr><td>출처 계보(provenance)</td><td>검색된 글을 원본 파일의 몇 쪽까지 거슬러 찾아갈 수 있게 남긴 자취. 택배 상자에 붙은 배송 이력과 같음</td><td>다섯 칸 가운데 <code>source</code>·<code>parser</code>·<code>page</code></td></tr>
+</tbody></table>
+<p>문서 객체·메타데이터·문서 청크·출처 표시는 Ch 9와 같은 뜻입니다. 메타데이터는 내용 옆에 적어 두는 설명 값이고, 문서 청크는 검색 단위로 자른 문서의 한 부분입니다. 출처 표시 모양도 Ch 9와 같은 <code>[E01 p.2]</code>입니다.</p>
+
+<h3>도식 — 형식이 달라도 다음 단계에 넘기는 것은 둘뿐입니다</h3>
+{{mermaid:01-1-형식과-기록|위 칸 원본 파일 형식 여섯 가지에 초록 상자 PDF 21건과 형식 견본 5건이 나란히 있고 그 아래로 파란 상자 형식마다 다른 읽기가 이어지며 거기서 초록 상자 본문 글과 초록 상자 다섯 칸 출처 기록 둘로 갈라진 뒤 회색 상자 문서 청크와 색인으로 다시 모이는 흐름도|원본 형식은 여섯 가지지만 읽고 난 뒤에는 본문 글과 다섯 칸 출처 기록 두 가지로 모입니다}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 봅니다. 맨 위 칸의 초록 상자 두 개가 이 챕터가 읽을 파일입니다. 노트북 2절 출력에서 <code>easy | 6</code>·<code>medium | 6</code>·<code>hard | 6</code>·<code>scanned | 3</code>을 세어 21건을 얻었고, 견본 폴더에서 확장자 다섯 가지를 보았습니다.</p>
+<p>가운데 파란 상자가 02~04절에서 형식마다 다르게 하는 읽기입니다. 그 아래 초록 상자 두 개가 읽고 난 결과입니다. 맨 아래 회색 상자는 Ch 9에서 배운 단계이며, 이 절에서는 실행하지 않습니다.</p>
+
+<h3>다섯 칸에 무엇을 적는가</h3>
+<p>칸 이름은 형식이 달라도 같게 둡니다. 쪽 번호는 늘 <code>page</code>, 파일 이름은 늘 <code>source</code>입니다. 문서 이름 <code>doc_id</code>는 같은 문서를 다시 읽어도 바뀌지 않는 값을 씁니다. 이 챕터의 교육용 문서는 파일 이름 앞의 <code>E01</code>·<code>M03</code>·<code>H06</code>이 곧 문서 이름입니다.</p>
+<table>
+<tr><th>칸</th><th>예시</th><th>어디서 오는가</th><th>주의할 점</th></tr>
+<tr><td><code>doc_id</code></td><td><code>E01</code></td><td>경로의 <code>stem</code></td><td>Ch 11이 정답표와 맞춰 보는 값이라 다시 읽어도 같아야 합니다.</td></tr>
+<tr><td><code>source</code></td><td><code>E01.pdf</code></td><td>경로의 <code>name</code></td><td>이 실습은 파일 이름만 적습니다. 같은 이름이 여러 폴더에 있으면 경로도 따로 적습니다.</td></tr>
+<tr><td><code>file_type</code></td><td><code>pdf</code></td><td>경로의 <code>suffix</code></td><td>확장자만 믿지 않고 실제로 읽은 결과와 함께 봅니다.</td></tr>
+<tr><td><code>parser</code></td><td><code>pypdf-plain</code></td><td>사람이 정해 넣음</td><td>도구 이름과 설정을 함께 적습니다. 나중에 같은 조건으로 다시 읽을 때 씁니다.</td></tr>
+<tr><td><code>page</code></td><td><code>2</code></td><td>사람이 정해 넣음</td><td>0부터 세는지 1부터 세는지 정해 두고 어기지 않습니다.</td></tr>
+</table>
+<p>세 칸은 경로에서 바로 얻습니다. 클래스 <code>Path</code>에 경로 글을 넣어 만들면 <code>name</code>·<code>stem</code>·<code>suffix</code> 세 값을 읽을 수 있습니다. 점 뒤에 괄호가 없으면 저장된 값을 읽는 표기이고, <code>exists()</code>처럼 괄호가 있으면 검사를 실행하는 메서드 호출입니다.</p>
+<p>나머지 두 칸은 사람이 정해 넣습니다. 읽은 방법 이름과 쪽 번호입니다. 이 두 칸에서 실수가 나면 코드가 알려 주지 않으므로 6절에서 한 번 겪어 봅니다.</p>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>내려받은 실습 폴더에서 노트북을 열고 위에서 아래로 실행합니다. API 키는 필요하지 않고 인터넷 서비스에 요청을 한 번도 보내지 않습니다. 먼저 문서 폴더의 파일 수와 형식을 세고, Ch 9 로더로 E01.pdf를 읽습니다.</p>
+<p>이 페이지의 출력은 2026-09-18에 실행한 결과입니다. 모델을 부르지 않으므로 같은 판에서 다시 실행해도 같은 값이 나왔습니다. 새 커널로 두 번 실행해 열여덟 개 코드 셀의 출력이 모두 같은 것을 확인했습니다.</p>
+<p>강의 시간에는 노트북 2~6절을 설명합니다. 문서 폴더 살펴보기, Ch 9 로더, 두 가지 읽기, 다섯 칸 출처 기록입니다. 7절 값 바꿔 보기와 Before·After는 함께 실행하고 실습 시간에 다시 읽습니다.</p>
+<p>이어서 같은 2쪽을 두 가지 방법으로 읽습니다. 라이브러리 pypdf의 <code>extract_text()</code>는 글자 자리를 버리고 글자를 이어 붙입니다. 같은 메서드에 <code>extraction_mode="layout"</code>을 주면 빈칸과 줄 자리를 살립니다.</p>
+{{mermaid:01-2-두-읽기|초록 상자 E01.pdf 2쪽에서 파란 상자 기본 읽기와 파란 상자 레이아웃 읽기로 갈라지고 각각 노란 상자 905자 26줄과 노란 상자 1396자 51줄로 이어진 뒤 노란 상자 세 칸 기록은 둘이 같음으로 다시 모이는 흐름도|2쪽을 두 방법으로 읽으면 905자와 1396자가 나오지만 Ch 9의 세 칸 기록은 둘이 똑같습니다}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 봅니다. 맨 위 초록 상자가 읽은 파일이고, 파란 상자 두 개가 노트북 4절이 실행한 두 방법입니다. 노란 상자 두 개는 출력으로 확인한 값입니다.</p>
+<p>왼쪽 값은 <code>기본 읽기 글자 수: 905</code>와 <code>기본 읽기 줄 수: 26</code>입니다. 오른쪽 값은 <code>레이아웃 읽기 글자 수: 1396</code>과 <code>레이아웃 읽기 줄 수: 51</code>입니다. 두 글에서 Ch 8이 쓴 문장을 찾아보면 기본 읽기는 <code>False</code>, 레이아웃 읽기는 <code>True</code>였습니다. 기본 읽기에서는 「휴관일」과 「입니다」 사이에 빈칸이 들어갔기 때문입니다.</p>
+<p>맨 아래 노란 상자가 이 절이 칸을 늘리는 까닭입니다. 본문은 다른데 Ch 9의 세 칸 기록은 두 결과에 똑같이 붙습니다. 그래서 읽은 방법을 적는 <code>parser</code> 칸과 형식을 적는 <code>file_type</code> 칸을 더합니다.</p>
+{{mermaid:01-3-다섯-칸-기록|초록 상자 고른 경로에서 파란 상자 Path 속성 읽기로 내려오고 오른쪽 파란 상자 읽은 방법과 쪽 번호를 더함이 함께 초록 상자 다섯 칸 출처 기록으로 모인 뒤 파란 상자 make_source_mark 함수를 거쳐 노란 상자 출처 표시 E01 p.2로 이어지는 흐름도|경로에서 얻은 세 칸에 읽은 방법과 쪽 번호를 더하면 다섯 칸이 되고 Ch 9 함수가 그대로 출처 표시를 만듭니다}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 봅니다. 왼쪽 줄기가 경로에서 바로 얻는 세 칸이고, 오른쪽에서 들어오는 줄기가 사람이 정해 넣는 두 칸입니다. 노트북 5절 출력은 <code>name: E01.pdf</code>·<code>stem: E01</code>·<code>suffix: .pdf</code>였습니다.</p>
+<p>가운데 초록 상자가 다 채운 기록입니다. 그 아래 파란 상자는 Ch 9 03절과 같은 코드입니다. 이 함수는 <code>doc_id</code>와 <code>page</code> 두 칸만 읽으므로 칸이 늘어도 그대로 동작합니다. 노트북 6절 출력은 <code>출처 표시: [E01 p.2]</code>였고, Ch 9 04~07절이 답에서 찾던 글과 같습니다.</p>
+{{notebook:01-문서와-메타데이터|example}}
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>다섯 칸 가운데 <code>page</code>는 사람이 정해 넣는 칸입니다. Python 목록은 자리를 0부터 세고, 사람이 보는 PDF 쪽 번호는 1부터 셉니다. 속성 <code>reader.pages</code>도 목록이라 두 번째 쪽의 자리는 <code>1</code>입니다.</p>
+<p>Before 셀은 그 자리 값을 그대로 쪽 번호로 적습니다. After 셀은 자리 값에 <code>1</code>을 더해 적습니다.</p>
+{{mermaid:01-4-쪽-번호|위 칸 Before에는 초록 상자 고른 목록 위치 1과 파란 상자 page 칸에 1과 빨간 상자 출처 표시 E01 p.1 본문은 905자가 왼쪽에서 오른쪽으로 있고 아래 칸 After에는 초록 상자 고른 목록 위치 1과 파란 상자 page 칸에 2와 노란 상자 출처 표시 E01 p.2가 같은 방향으로 있으며 맨 아래에 회색 상자 두 기록 모두 오류를 내지 않음이 있는 비교 흐름도|같은 자리 값 1로 만든 두 기록이 서로 다른 쪽을 가리키고 둘 다 오류를 내지 않습니다}}
+<p><strong>도식 읽기</strong> — 위 칸이 Before, 아래 칸이 After이고 칸마다 왼쪽에서 오른쪽으로 봅니다. 두 칸의 초록 상자는 같은 값 <code>1</code>입니다. 파란 상자에서 갈라집니다.</p>
+<p>위 칸의 빨간 상자가 Before 결과입니다. 출력은 <code>출처 표시: [E01 p.1]</code>인데 <code>본문 글자 수: 905</code>는 2쪽 글자 수입니다. 출력 <code>1쪽 본문 글자 수: 45</code>와 견주면 다른 쪽임이 드러납니다. 아래 칸의 노란 상자는 After 결과이며 <code>출처 표시와 본문이 같은 쪽인가: True</code>였습니다.</p>
+<p>맨 아래 회색 상자는 두 실행에 모두 해당합니다. 쪽 번호 <code>1</code>은 1 이상이라 값 검사에도 걸리지 않습니다. 사람이 원문 1쪽을 펼쳐 볼 때까지 어긋남이 드러나지 않습니다.</p>
+{{notebook:01-문서와-메타데이터|failure}}
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>문서 이름과 제목을 나눕니다.</strong> 제목은 사람이 읽으려고 붙인 값이라 고쳐질 수 있습니다. 칸 <code>doc_id</code>는 제목이나 파일 이름이 바뀌어도 같은 문서면 같은 값이어야 합니다.</li>
+<li><strong>쪽 번호 기준을 한 가지로 둡니다.</strong> 라이브러리마다 첫 쪽을 0으로 주기도 하고 1로 주기도 합니다. 교재와 출처 표시는 사람이 보는 1부터로 맞춥니다.</li>
+<li><strong>읽은 방법 이름에 설정까지 적습니다.</strong> 이 절은 <code>pypdf-plain</code>으로 적었습니다. 같은 도구라도 설정이 다르면 글이 달라지므로 도구 이름만으로는 되짚기 어렵습니다.</li>
+<li><strong>실습 폴더 모듈에 같은 이름의 함수가 있습니다.</strong> <code>labs/part3/ch10-document-processing/document_processing.py</code>의 <code>normalize_metadata()</code>가 같은 다섯 칸을 만듭니다. 받는 인자 모양은 노트북 함수와 다르고, 쪽 번호가 1보다 작으면 오류를 냅니다. 이번 노트북에서는 그 모듈을 부르지 않았습니다.</li>
+<li><strong>원본을 그대로 둡니다.</strong> 뽑은 글만 남기면 읽기를 잘못했을 때 다시 확인할 수 없습니다. 다섯 칸 기록이 원본까지 가는 길입니다.</li>
+<li><strong>배포용 기록에서 뺄 값을 정합니다.</strong> 작성자 계정, 내부 서버 경로, 임시 폴더 이름은 검색에 필요하지 않으면 빼 둡니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul>
+<li>이 챕터가 읽을 파일은 PDF 21건과 형식 견본 5건이고, 형식은 모두 여섯 가지입니다.</li>
+<li>같은 쪽을 두 방법으로 읽으면 905자와 1396자로 달랐고, 찾은 문장도 달랐습니다.</li>
+<li>그래서 Ch 9의 세 칸에 <code>file_type</code>과 <code>parser</code>를 더해 다섯 칸으로 적습니다.</li>
+<li>Ch 9 03절의 <code>make_source_mark()</code>는 두 칸만 읽으므로 고치지 않고 그대로 씁니다.</li>
+</ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 02절에서는 같은 PDF를 pypdf가 아닌 다른 라이브러리로도 읽습니다. 표의 행과 열이 남는지, 스캔본에서 글자가 아예 나오지 않는지 확인합니다. 그때 <code>parser</code> 칸에 적을 이름이 하나 더 늘어납니다.</p>
+<p>03·04절은 DOCX·HTML·CSV와 HWPX를 읽어 같은 다섯 칸에 담습니다. 05~08절은 그 결과를 문서 청크로 나누어 색인합니다. Ch 11은 <code>doc_id</code>를 정답표와 맞춰 봅니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. [하] Ch 9의 세 칸에 <code>file_type</code>과 <code>parser</code>를 더한 까닭은 무엇입니까?</p>
+<p class="quiz-a">이 챕터는 파일 형식이 여섯 가지이고 같은 형식에도 읽는 방법이 여럿이기 때문입니다. 노트북 4절에서 같은 2쪽을 두 방법으로 읽었더니 905자와 1396자가 나왔지만, 세 칸 기록은 두 결과에 똑같이 붙었습니다. 두 칸을 더해야 어느 방법으로 읽은 글인지 되짚을 수 있습니다.</p>
+<p class="quiz-q">2. [중] 파일 이름을 그대로 문서 제목으로 쓰고 <code>doc_id</code>에도 같은 값을 넣으면 어떤 문제가 생깁니까?</p>
+<p class="quiz-a">제목은 사람이 고칠 수 있고 여러 문서에서 겹칠 수도 있습니다. 제목이 바뀌면 같은 문서를 새 문서로 세고, 제목이 겹치면 다른 문서의 글이 한 문서로 묶입니다. 바뀌지 않는 업무 문서 번호나 경로와 내용 해시를 함께 쓴 값이 필요합니다.</p>
+<p class="quiz-q">3. [중] 경로가 <code>.../easy/E01.pdf</code>일 때 <code>name</code>·<code>stem</code>·<code>suffix</code>는 각각 무엇입니까?</p>
+<p class="quiz-a">속성 <code>name</code>은 <code>E01.pdf</code>, <code>stem</code>은 <code>E01</code>, <code>suffix</code>는 <code>.pdf</code>입니다. 이 세 값이 다섯 칸 가운데 <code>source</code>·<code>doc_id</code>·<code>file_type</code> 세 칸이 됩니다.</p>
+<p class="quiz-q">4. [상] 두 번째 쪽의 목록 자리 <code>1</code>을 그대로 <code>page</code> 칸에 적으면 어떤 일이 벌어집니까?</p>
+<p class="quiz-a">출처 표시가 <code>[E01 p.1]</code>이 되어 본문과 다른 쪽을 가리킵니다. 노트북 8절에서 본문 글자 수는 905자인데 1쪽 본문은 45자였습니다. 코드는 오류를 내지 않고, 쪽 번호가 1 이상이라 값 검사에도 걸리지 않습니다. 사람이 원문 1쪽을 펼쳐 볼 때까지 어긋남이 드러나지 않습니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul>
+<li><div><a href="https://pypdf.readthedocs.io/en/stable/user/extract-text.html">pypdf 공식 문서 Extract Text from a PDF</a></div>확인 2026-09-18 · 기본 추출과 레이아웃 추출의 차이 참고.</li>
+<li><div><a href="https://reference.langchain.com/python/langchain-core/documents">LangChain 공식 API Document</a></div>확인 2026-09-18 · <code>page_content</code>와 <code>metadata</code> 구조 참고.</li>
+<li><div><a href="https://docs.python.org/3/library/pathlib.html">Python 공식 문서 pathlib</a></div>확인 2026-09-18 · <code>name</code>·<code>stem</code>·<code>suffix</code> 속성 참고.</li>
+<li>실습 문서 모음 설명서 — <code>labs/data/rag-corpus/README.md</code> · 텍스트 PDF 18건과 스캔본 3건의 구성 참고.</li>
+<li>기준 버전은 Python 3.12.13과 pypdf 6.18.0입니다. 함께 쓰는 판은 langchain-core 1.6.2이고, 실습 폴더의 잠금 파일을 기준으로 삼습니다.</li>
+</ul>

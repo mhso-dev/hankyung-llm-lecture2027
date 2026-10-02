@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph O[바깥 목록 · 중앙 에이전트]
+    direction TB
+    o1["HumanMessage<br>문의 글"]:::measure
+    o2["AIMessage<br>도구 요청 ask_loan_desk"]:::measure
+    o3["ToolMessage<br>담당의 마지막 답 글"]:::measure
+    o4["AIMessage<br>도구 요청 없음"]:::measure
+    o1 ~~~ o2 ~~~ o3 ~~~ o4
+  end
+  subgraph I[안쪽 목록 · 전문 에이전트]
+    direction TB
+    i1["HumanMessage<br>넘긴 글 한 줄"]:::measure
+    i2["AIMessage<br>도구 요청 없음"]:::measure
+    i1 ~~~ i2
+  end
+  c["안쪽 첫 글과 넘긴 글<br>같은가 True<br>도구 메시지와 안쪽 답 글<br>같은가 True<br>시스템 메시지 0 · 0"]:::measure
+  O ~~~ c
+  I ~~~ c

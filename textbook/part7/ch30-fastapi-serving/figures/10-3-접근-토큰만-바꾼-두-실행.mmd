@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  same["두 실행 같음<br>출처·질문·끊기는 자리<br>사전 요청 200<br>첫 요청의 허용 출처<br>http://localhost:5173"]
+  subgraph r1["실행 1"]
+    direction TB
+    t1["접근 토큰<br>Bearer local-demo-token"]:::tool
+    o1["첫 요청 200 · 기록 네 단계<br>done True<br>기준 글과 같음 True"]:::measure
+    t1 --> o1
+  end
+  subgraph r2["실행 2 · 값 하나만 바꿈"]
+    direction TB
+    t2["접근 토큰<br>Bearer wrong-token"]:::flow
+    o2["첫 요청 401 · 기록 두 단계<br>이어 받기 보내지 않음<br>done False"]:::measure
+    t2 --> o2
+  end
+  same --> r1
+  same --> r2

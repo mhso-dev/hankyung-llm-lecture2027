@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  job["과제 글<br>적용 날짜 · 까닭 · 등록 방법<br>문의처를 따로따로"]:::tool
+  plan["gpt-5.4-mini 계획 요청 1번<br>작업 넷을 씀 · 입력 토큰 232"]:::model
+  pick["pick_tasks<br>거른 뒤 작업 수 4"]:::flow
+  work["gpt-5.4-mini 작업 요청 넷<br>함께 보냄<br>적용 안내 · 도입 이유<br>등록 방법 · 문의처"]:::model
+  sum["gpt-5.4-mini 종합 요청 1번<br>작업 답 넷을 한 단락으로"]:::model
+  rec["기록 줄 여섯<br>요청 수 6 = 1 + 4 + 1<br>계획이 첫 줄 · 종합이 끝 줄<br>작업 줄은 응답이 도착한 차례"]:::measure
+  job --> plan
+  plan --> pick
+  pick --> work
+  work --> sum
+  sum --> rec

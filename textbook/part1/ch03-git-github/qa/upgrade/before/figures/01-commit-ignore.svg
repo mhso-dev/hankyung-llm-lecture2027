@@ -1,0 +1,30 @@
+<svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 475" width="720" height="475" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-01-commit-ignore desc-01-commit-ignore">
+<title id="title-01-commit-ignore">파일 상태가 커밋으로 기록되는 순서</title>
+<desc id="desc-01-commit-ignore">새 파일은 무시 규칙을 먼저 확인합니다. 추적할 파일을 git add로 선택하고 git commit으로 기록하며 .env는 스테이징 대상에서 제외합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="720" height="475" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">파일 상태가 커밋으로 기록되는 순서</tspan></text>
+<rect x="30" y="80" width="270" height="70" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="165.0" y="104.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="165.0" dy="0.0">작업 폴더의 새 파일</tspan><tspan x="165.0" dy="21.6">app.py · .env</tspan></text>
+<rect x="30" y="200" width="270" height="75" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="165.0" y="226.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="165.0" dy="0.0">.gitignore 확인</tspan><tspan x="165.0" dy="21.6">app.py는 추적 가능</tspan></text>
+<rect x="410" y="200" width="280" height="75" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="550.0" y="226.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="550.0" dy="0.0">.env는 규칙과 일치</tspan><tspan x="550.0" dy="21.6">스테이징에서 제외</tspan></text>
+<rect x="30" y="330" width="270" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="165.0" y="351.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="165.0" dy="0.0">git add app.py</tspan><tspan x="165.0" dy="21.6">스테이징에서 선택</tspan></text>
+<rect x="410" y="330" width="280" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="550.0" y="351.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="550.0" dy="0.0">git commit</tspan><tspan x="550.0" dy="21.6">선택한 변경 기록</tspan></text>
+<polyline points="165,150 165,200" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<polyline points="300,237 410,237" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="320.0" y="210.0" width="70.0" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="355.0" y="222.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="355.0" dy="0.0">.env</tspan></text>
+<polyline points="165,275 165,330" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<polyline points="300,363 410,363" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<text x="360.0" y="449.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg>

@@ -1,0 +1,19 @@
+flowchart LR
+  %% classes
+  subgraph row["입력 파일 첫 줄 · 네 칸"]
+    direction TB
+    k1["custom_id<br>old-Q002"]:::tool
+    k2["method<br>POST"]:::tool
+    k3["url<br>/v1/chat/completions"]:::tool
+    k4["body<br>요청 본문"]:::tool
+    k1 ~~~ k2
+    k2 ~~~ k3
+    k3 ~~~ k4
+  end
+  subgraph inside["body 칸 안"]
+    direction TB
+    b1["model gpt-5.4-mini<br>temperature 0<br>reasoning_effort none<br>02~07절 모델 설정과<br>같은 값"]:::tool
+    b2["messages<br>사용자 메시지 하나<br>판정 요청 글 3161자"]:::tool
+    b1 ~~~ b2
+  end
+  row --> inside

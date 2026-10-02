@@ -1,0 +1,71 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Part 7 · 서비스화와 배포</title><style>/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+
+    *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;
+    line-height:1.8;word-break:keep-all;color:#202020;background:#fff}
+    a{color:#2456a6;overflow-wrap:anywhere}h1{font-size:30px;line-height:1.4}
+    h2{font-size:24px;margin-top:40px}li{margin:8px 0}p,li{font-size:16px}
+    .intro{padding:18px;background:#f5f7fa;border:1px solid #cbd5e1;border-radius:8px}
+    </style></head>
+    <body><main class="page"><header class="top"><p><a href="../index.html">전체 교재</a></p>
+    <h1>Part 7 · 서비스화와 배포</h1>
+    <p>Ch 30–34 · 32절 · 총 88시간 · 강의 28시간 · 실습 60시간</p></header>
+    <div class="intro">
+<p>앞에서는 노트북에서 에이전트를 실행하고 답변과 처리 경로를 확인했습니다. 이번에는 다른 프로그램이 HTTP 요청으로 에이전트를 호출할 수 있게 만들고, 요청이 늘거나 프로세스가 종료되어도 상태와 비용을 관리하는 방법을 배웁니다.</p>
+<p>Ch30의 요청·응답 형식에서 시작해 Ch31의 데이터 저장, Ch32의 실행 환경, Ch33의 변경 검사와 배포, Ch34의 사용량 관리로 이어집니다. 각 챕터의 작은 실습을 먼저 확인한 뒤, 자신의 Agent API에 같은 기준을 적용합니다.</p>
+</div>
+<p><a href="../downloads/part7-practice.zip" download>Part 7 실습 파일 받기</a> · <a href="../part6/index.html">앞에서 배운 Agent 개발</a></p>
+<h2>실습을 준비합니다</h2>
+<p>압축을 풀고 해당 챕터의 README에서 준비할 프로그램을 확인합니다. Python 예제는 챕터 폴더에서 <code>uv sync --locked</code>로 환경을 만든 뒤 같은 폴더의 <code>.venv</code>를 노트북 커널로 선택합니다. 노트북은 절마다 커널을 새로 시작하고 준비 셀부터 실행합니다.</p>
+<p>Docker와 PostgreSQL을 사용하는 절은 Python 커널 외에 별도 프로세스가 필요합니다. README에 적힌 실습용 이름·포트·종료 절차를 확인합니다. API를 호출하는 절은 본인의 키를 <code>.env</code>에 넣고, 공개 저장소나 이미지에 키를 포함하지 않습니다.</p>
+<h2>결과를 읽는 기준</h2>
+<p>실습 결과에서는 무엇을 실행했는지 먼저 확인합니다. 로컬 서버가 응답한 사실, 컨테이너가 실행된 사실, 외부 클라우드에 배포된 사실은 각각 별도의 증거가 필요합니다. 이 교재의 작은 표본과 한 번의 실행 시간을 자신의 서비스 성능 목표에 그대로 대입하지 않습니다.</p>
+<p>이미지 크기와 대화 비용을 절반 이하로 줄이는 활동은 비교 과제입니다. 개선 전후에 같은 기능과 평가 질문을 유지하고, 측정값과 함께 줄어든 기능·달라진 지연·품질을 기록합니다. 개선하지 못한 경우에도 관찰한 값과 다음에 확인할 원인을 적습니다.</p>
+<section><h2><a href="ch30-fastapi-serving/index.html">Ch 30 · FastAPI로 Agent 서빙</a></h2><p>처리 함수의 입력 형식과 의존성 재정의에서 시작해 ainvoke·astream과 SSE 사건의 이어 받기·오류 사건을 보고, CORS·접근 토큰·시간 제한과 응답 문서·생성 SDK를 확인한 뒤, 실제 에이전트를 HTTP로 부르고 한 요청 흐름을 잇는 실습을 합니다.</p><p>강의 10시간 · 실습 22시간 · 10절</p><ol><li><a href="ch30-fastapi-serving/01-비동기-라우팅과-스키마.html">비동기 라우팅과 스키마</a></li><li><a href="ch30-fastapi-serving/02-의존성으로-Agent-주입.html">의존성으로 Agent 주입</a></li><li><a href="ch30-fastapi-serving/03-ainvoke-요청-응답.html">ainvoke 요청 응답</a></li><li><a href="ch30-fastapi-serving/04-astream과-응답-스트림.html">astream과 응답 스트림</a></li><li><a href="ch30-fastapi-serving/05-POST-SSE-이벤트-설계.html">POST SSE 이벤트 설계</a></li><li><a href="ch30-fastapi-serving/06-fetch-재연결과-오류-이벤트.html">fetch 재연결과 오류 이벤트</a></li><li><a href="ch30-fastapi-serving/07-인증-CORS-타임아웃.html">인증 CORS 타임아웃</a></li><li><a href="ch30-fastapi-serving/08-OpenAPI와-TS-SDK.html">OpenAPI와 TS SDK</a></li><li><a href="ch30-fastapi-serving/09-실제-Agent-HTTP-통합.html">실제 Agent HTTP 통합</a></li><li><a href="ch30-fastapi-serving/10-FastAPI-서빙-실습.html">FastAPI 서빙 실습: 끊긴 SSE 응답을 이어 받는 흐름에서 접근 토큰 하나만 바꾸기</a></li></ol></section><section><h2><a href="ch31-database/index.html">Ch 31 · DB &amp; 상태 영속화</a></h2><p>비동기 엔진과 연결 풀, 한 묶음 작업과 취소, Alembic 판 올리기·내리기, 반납과 대기 제한을 보고, pgvector 색인·체크포인터 표의 백업과 복원을 확인한 뒤, 세 기능을 상담 예약 그래프 하나로 잇는 실습을 합니다.</p><p>강의 5시간 · 실습 11시간 · 6절</p><ol><li><a href="ch31-database/01-SQLAlchemy-비동기-PostgreSQL.html">SQLAlchemy 비동기 PostgreSQL</a></li><li><a href="ch31-database/02-트랜잭션과-원자성.html">트랜잭션과 원자성</a></li><li><a href="ch31-database/03-Alembic-적용과-롤백.html">Alembic 적용과 롤백</a></li><li><a href="ch31-database/04-커넥션-풀-고갈과-대응.html">커넥션 풀 고갈과 대응</a></li><li><a href="ch31-database/05-pgvector-체크포인터-공존과-백업.html">pgvector 체크포인터 공존과 백업</a></li><li><a href="ch31-database/06-DB와-상태-영속화-실습.html">DB와 상태 영속화 실습: 상담 예약 그래프에서 처음 상담 시간 하나만 바꾸기</a></li></ol></section><section><h2><a href="ch32-docker/index.html">Ch 32 · Docker와 컨테이너</a></h2><p>서비스 이미지를 빌드하고 데이터베이스와 함께 실행하며 크기·캐시·상태를 측정합니다.</p><p>강의 5시간 · 실습 11시간 · 5절</p><ol><li><a href="ch32-docker/01-이미지와-레이어.html">이미지와 레이어</a></li><li><a href="ch32-docker/02-uv-멀티스테이지-빌드.html">uv 멀티스테이지 빌드</a></li><li><a href="ch32-docker/03-빌드-캐시와-이미지-크기.html">빌드 캐시와 이미지 크기</a></li><li><a href="ch32-docker/04-Compose와-pgvector-스택.html">Compose와 pgvector 스택</a></li><li><a href="ch32-docker/05-환경변수-시크릿-헬스체크-로그.html">환경변수 시크릿 헬스체크 로그</a></li></ol></section><section><h2><a href="ch33-cicd/index.html">Ch 33 · CI/CD와 배포 운영</a></h2><p>테스트와 평가 회귀를 자동으로 확인하고 배포·모니터링·롤백 절차를 구성합니다.</p><p>강의 5시간 · 실습 11시간 · 5절</p><ol><li><a href="ch33-cicd/01-테스트-린트-빌드와-GitHub-Actions.html">테스트·린트·빌드와 GitHub Actions</a></li><li><a href="ch33-cicd/02-평가-회귀를-CI에-연결하기.html">평가 회귀를 CI에 연결하기</a></li><li><a href="ch33-cicd/03-레지스트리-다이제스트와-클라우드-배포.html">레지스트리·다이제스트와 클라우드 배포</a></li><li><a href="ch33-cicd/04-모니터링과-알림.html">모니터링과 알림</a></li><li><a href="ch33-cicd/05-롤백과-복구-검증.html">롤백과 복구 검증</a></li></ol></section><section><h2><a href="ch34-cost-rate-limits/index.html">Ch 34 · 비용 · Rate Limit 엔지니어링</a></h2><p>공통 앞부분 뒤에 둔 요청의 캐시 입력과 요금을 세고, 일괄 처리 결과를 요청 이름표로 짝지으며, 모델 라우터와 모델마다 요금표, 겹친 다시 보내기와 한꺼번에 보내는 수, 예산 가드의 예약과 95 백분위수를 본 뒤, 세 기능을 문의 셋의 흐름 하나로 잇는 실습을 합니다.</p><p>강의 3시간 · 실습 5시간 · 6절</p><ol><li><a href="ch34-cost-rate-limits/01-프롬프트-캐시-계측.html">프롬프트 캐시 계측</a></li><li><a href="ch34-cost-rate-limits/02-Batch-API.html">Batch API</a></li><li><a href="ch34-cost-rate-limits/03-모델-라우팅.html">모델 라우팅</a></li><li><a href="ch34-cost-rate-limits/04-백오프-큐-동시성.html">백오프 큐 동시성</a></li><li><a href="ch34-cost-rate-limits/05-예산-가드와-p95.html">예산 가드와 p95</a></li><li><a href="ch34-cost-rate-limits/06-비용과-Rate-Limit-실습.html">비용과 Rate Limit 실습: 문의 셋을 모델 라우터와 예산 가드로 보내고 기준 길이 바꾸기</a></li></ol></section>
+    </main></body></html>

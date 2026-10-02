@@ -1,0 +1,13 @@
+flowchart TD
+  %% classes
+  top["test_items.py 맨 위<br>items = [] 한 번"]:::tool
+  t1["test_add_note<br>노트를 담음"]:::flow
+  s1["items ['노트']<br>기대값과 같음 · 점 ."]:::measure
+  t2["test_add_pencil<br>연필을 담음"]:::flow
+  s2["E 줄 assert<br>['노트', '연필'] == ['연필']<br>.F · 1 failed, 1 passed<br>종료 코드 1"]:::fail
+  solo["test_items.py::<br>test_add_pencil<br>하나만 실행<br>1 passed · 종료 코드 0"]:::measure
+  top --> t1
+  t1 --> s1
+  s1 -->|"같은 목록"| t2
+  t2 --> s2
+  top -.->|"따로 실행"| solo

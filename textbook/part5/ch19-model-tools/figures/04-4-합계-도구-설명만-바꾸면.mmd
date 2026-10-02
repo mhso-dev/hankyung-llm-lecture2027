@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph shortSide["짧은 판 · 6절"]
+    direction TB
+    sDesc["tool_c 설명<br>주문 금액을 봅니다."]:::flow
+    sPick["건수 질문<br>세 번 모두 tool_a"]:::measure
+    sDesc --> sPick
+  end
+  subgraph mixSide["합계 도구만 바꾼 판 · 8절"]
+    direction TB
+    mDesc["tool_c 설명<br>자세한 판 네 문장<br>개수나 합계를 물을 때"]:::flow
+    mPick["건수 질문<br>세 번 모두 tool_c"]:::measure
+    mDesc --> mPick
+  end
+  same["두 판 공통<br>tool_a · tool_b 설명은<br>짧은 판 그대로<br>목록 질문 tool_a<br>한 건 질문 tool_b"]
+  shortSide ~~~ same
+  mixSide ~~~ same

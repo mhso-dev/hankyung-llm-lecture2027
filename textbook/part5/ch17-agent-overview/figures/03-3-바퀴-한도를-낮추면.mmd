@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  lim["바꾼 값<br>바퀴 한도 2"]:::tool
+  loop["run_loop<br>바퀴를 두 번까지만 돎"]:::flow
+  first["gpt-5.4-mini<br>첫 바퀴의 다음 행동"]:::model
+  reg["환불 요청 등록을 고르면<br>첫 바퀴에<br>사람 확인으로 멈춤"]
+  look["주문 조회 다음<br>환불 규정 확인을 고름<br>바퀴 한도로 멈춤<br>모델 요청 2"]:::measure
+  both["두 갈래 모두<br>모델 요청은 두 번 이하<br>멈춘 쪽은 코드"]:::measure
+  lim --> loop
+  loop --> first
+  first -.->|등록| reg
+  first -.->|조회| look
+  reg --> both
+  look --> both

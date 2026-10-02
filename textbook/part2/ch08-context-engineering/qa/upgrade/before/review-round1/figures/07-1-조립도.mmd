@@ -1,0 +1,15 @@
+%%{init: {"flowchart": {"wrappingWidth": 360}}}%%
+flowchart TB
+  %% classes
+  mat["재료<br>문서 세 개 · 06절<br>줄인 기록 세 개 · 02절 03절<br>질문 계획 세 개"]:::tool
+  cho["choose_evidence<br>본문 목록 추정이 입력 가용분을 넘으면<br>줄인 기록 · 01절 03절 06절"]:::flow
+  ask["ask_library<br>목록 만들기 · 추정 입력 · 04절<br>넣기 전 지킬 말 검사 · 03절 04절"]:::flow
+  mdl["gpt-5.4-mini<br>출력 상한 120"]:::model
+  add["add_answer_items<br>실제 토큰 · 출처 표시 수<br>예상 비용 · 05절 06절"]:::flow
+  tab["print_records<br>요청 전 표 · 요청 뒤 표"]:::measure
+  mat --> cho
+  cho --> ask
+  ask -->|검사 통과 · 요청 보냄| mdl
+  mdl --> add
+  add --> tab
+  ask -->|빠진 지킬 말 있음 · 요청 보내지 않음| tab

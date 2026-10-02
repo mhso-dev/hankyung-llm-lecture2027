@@ -1,0 +1,4 @@
+- 설명 대상 문장: try 블록에서 오류가 나면 남은 줄은 건너뛰고 except 블록으로 넘어갑니다.
+- 캡션: try와 except의 실행 차례. missing.txt를 읽다 난 FileNotFoundError를 except 블록이 받아, 셀이 마지막 줄까지 실행됩니다.
+- 읽는 법: 위에서 아래로 읽습니다. 파란 상자 try 블록이 missing.txt를 읽다가 노란 상자의 FileNotFoundError가 납니다. 노란색은 except 블록이 받을 오류라는 뜻입니다. 점선 화살표 끝의 회색 상자는 건너뛴 출력 줄입니다. 실선 화살표는 파란 except 블록을 거쳐 맨 아래 노란 상자의 셀 마지막 줄로 이어집니다.
+- alt: try 블록에서 read_items('missing.txt')가 FileNotFoundError를 내고, 읽은 줄 목록 출력은 건너뛰며, except FileNotFoundError as error 블록이 오류 메시지를 출력한 뒤 셀의 마지막 줄까지 실행되는 흐름도

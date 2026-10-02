@@ -1,0 +1,25 @@
+{
+  "audit_date": "2026-09-09",
+  "scope": {
+    "source_html": "textbook/part1/ch03-git-github/_src/*.html",
+    "notebook_markdown_only": "labs/part1/ch03-git-github/notebooks/*.ipynb",
+    "readme": "labs/part1/ch03-git-github/README.md"
+  },
+  "invariants": {
+    "notebooks": {
+      "01-커밋과-gitignore.ipynb": {"code_cells": 6, "markdown_cells": 6, "code_sha256": "f584282cf7103e8ee6788644e4bf8dff804ae036478c8b7fdfca8b83c4ded9cf", "outputs_sha256": "32fc5570ab9eb0c0aca34f89c43bb04e9a58b98f3326597524e94cbcafb7fdd7", "markdown_sha256": "65af9c9280db4b70388d510226c920eb506b18e389ad6fe4054d2fed080587cd"},
+      "02-GitHub-Flow와-PR-리뷰.ipynb": {"code_cells": 6, "markdown_cells": 6, "code_sha256": "279f78fd4007dc0e924b83da9459826feae15bd2a841caf44070c10325aca0a7", "outputs_sha256": "e16a54f8608f1deba1e9eb71da38b281ab1da542a71d9d90d101a745a034b779", "markdown_sha256": "b8c07d692315d8ac58ce2efda1584ce9198985d29f8effeea3ae7486a6c1d6ef"},
+      "03-병합-충돌-해결.ipynb": {"code_cells": 6, "markdown_cells": 6, "code_sha256": "c943c0ddd4715f1cd944fc3d9390e4b4a7122dec944b693c3568f68143580398", "outputs_sha256": "e9048c3d4ffd624f021261e65adafa714366f268dd8fe746940baf1dcfd46034", "markdown_sha256": "9704240869dc6a99493ebdff9e835c9fcda7d342f9edfe7a1e7bc9832ce43020"},
+      "04-revert-reflog-worktree.ipynb": {"code_cells": 6, "markdown_cells": 6, "code_sha256": "c79905ed98be18a420359fc669cbc913f80ed67fdd55abe225083aedc889f234", "outputs_sha256": "14bc9c4fb638e4d20801242148c2bc032f8b696f8cd32dbf2e9ec68fef64855a", "markdown_sha256": "7ac714c19f35ce2735040cc16a8a76aa7cc61a354ceb2bf2a777c0ddbc60cd10"},
+      "05-시크릿-이력-정리와-예방.ipynb": {"code_cells": 6, "markdown_cells": 6, "code_sha256": "56cdf5a8faa1ba0fd839d55cbfff6d3a429c983db2c303251ff1f1fd815de15c", "outputs_sha256": "75994812f0150273e5c10e6f95bcef0cac635f494b4f6e8ea3642fbe5e1a7659", "markdown_sha256": "3a330a3ba681290faec95872795b1d8a10913eb76406e9a1e744039690a314d0"}
+    },
+    "source_html_sha256": {
+      "01-커밋과-gitignore.html": "f26e1c89304b2cc81333785e47c9adb664825a2a39d4c250ce40a4b39104da2",
+      "02-GitHub-Flow와-PR-리뷰.html": "7deeb6c03c1f22f248dadb4f22454beceb7861d2700dbd662939518a732af808",
+      "03-병합-충돌-해결.html": "212e9bddcb97f40cc5fe36ba235979c3fd217edf4a0b9dc2f612d82329e13d47",
+      "04-revert-reflog-worktree.html": "a5baca53496220cd2de5f731346fc7e11146df9792cfa29129262f6d54042830",
+      "05-시크릿-이력-정리와-예방.html": "f41f88c6977196f4bfc4d95720d8c49c4ab82c3b00a0417964c39c99799392bc"
+    },
+    "readme_sha256": "078e1800d9de20b61307b681ddb5eb082cf21b749ad91c7e7242796e6db455e3"
+  }
+}

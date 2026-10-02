@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  docs["교육용 문서 12개<br>제목과 본문"]:::tool
+  vectors["문서 벡터 12개<br>숫자 256개씩"]:::tool
+  question["질문 벡터 1개<br>숫자 256개"]:::tool
+  measure["모든 문서와 거리 재기<br>빠뜨리는 문서 없음"]:::flow
+  order["작은 거리부터 정렬"]:::flow
+  result["상위 3개와 정답 자리"]:::measure
+  later["02절 근사 검색은<br>일부만 살펴봅니다"]
+  docs -->|임베딩 요청 1번| vectors
+  vectors --> measure
+  question --> measure
+  measure --> order
+  order --> result
+  result -.-> later

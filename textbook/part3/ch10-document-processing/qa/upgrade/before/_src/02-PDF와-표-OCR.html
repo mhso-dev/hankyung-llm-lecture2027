@@ -1,0 +1,83 @@
+<!--meta: 강의 1h | 실습 2h | 코드 02-PDF와-표-OCR.ipynb | 새 용어 5 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 디지털 PDF와 스캔 PDF의 차이를 설명하고, 텍스트 추출과 OCR 적용 조건을 구분할 수 있습니다.</li>
+<li>이 절을 마치면 제공된 PDF를 <code>PdfReader</code>로 열고 쪽 객체·본문 길이·본문 앞부분을 확인할 수 있습니다.</li>
+<li>이 절을 마치면 같은 쪽의 기본 텍스트와 레이아웃 텍스트, 표 목록을 비교하고 선택한 쪽을 바꿀 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>Ch 9에서는 <code>pypdf</code>의 기본 텍스트 추출로 PDF 기반 RAG 흐름을 확인했습니다. 이번 노트북은 앞 장의 함수를 가져오지 않고 제공된 PDF를 직접 엽니다. 중간 난이도 문서의 표와 어려운 문서의 두 단 레이아웃에서는 글자가 추출되어도 의미가 보존되지 않을 수 있습니다. 스캔 변형본 세 건은 이미지 안에 글자가 있으므로 추출 결과가 비어 있습니다. 파일을 열 수 있다는 사실과 검색에 사용할 수 있는 본문을 얻었다는 사실을 구분해야 합니다.</p>
+<p>PDF는 화면이나 인쇄 결과를 정확히 배치하기 위한 형식입니다. 일부 PDF는 태그나 구조 정보를 가질 수 있지만, 일반적인 텍스트 추출이 문단·표·머리말이라는 의미 구조를 항상 복원할 수 있는 것은 아닙니다. 글자가 쪽의 절대 좌표에 놓여 있으면 추출기는 어느 글자가 같은 행과 열인지 추정해야 합니다. 따라서 파서의 성공 여부를 “문자열이 반환되었다” 하나로 판정해서는 안 됩니다. 원본에서 중요했던 구조가 검색 가능한 표현으로 남았는지 확인해야 합니다.</p>
+
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<ul>
+<li><strong>목록 위치</strong> — Python 목록은 0부터 시작하므로 <code>pages[1]</code>은 두 번째 쪽 객체입니다.</li>
+<li><strong>문자열 길이</strong> — <code>len()</code>은 추출한 문자열의 글자 수를 반환하며, <code>text[:120]</code>은 앞부분을 확인합니다.</li>
+<li><strong>01절 경로 확인</strong> — 상위 폴더를 순서대로 살펴 제공된 파일을 찾고, 파일이 없으면 파싱 전에 중단합니다. 앞 장의 로더 함수는 사용하지 않습니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유 — 좌석 배치도와 참석자 명단</h3>
+<p>회의장 좌석 배치도에는 사람 이름이 공간에 놓여 있습니다. 글자를 위에서 아래로만 읽으면 왼쪽 열과 오른쪽 열의 이름이 섞일 수 있습니다. 표도 같습니다. 사람은 선과 간격을 보고 같은 행을 알아보지만, 텍스트 추출기는 좌표를 읽기 순서로 바꾸는 규칙이 필요합니다. OCR은 사진 속 이름표를 문자로 바꾸는 일입니다. 문자로 바꾼 뒤에도 어느 좌석에 해당하는지 정리하는 작업은 별도로 남습니다.</p>
+<h3>정의</h3>
+<dl class="term">
+<dt>텍스트 레이어 (text layer)</dt><dd>PDF 안에서 선택·검색할 수 있는 문자 정보입니다. 스캔 PDF는 페이지 이미지밖에 없어 텍스트 레이어가 없을 수 있습니다.</dd>
+<dt>레이아웃 (layout)</dt><dd>글자·문단·열·표가 쪽 위에 배치된 공간 관계입니다. 문자열 추출 과정에서 이 관계의 일부가 사라질 수 있습니다.</dd>
+<dt>읽기 순서 (reading order)</dt><dd>사람이 문서 내용을 따라가는 순서입니다. 두 단 문서에서는 왼쪽 단을 끝까지 읽은 뒤 오른쪽 단으로 가야 하지만, 좌표 해석에 따라 줄별로 섞일 수 있습니다.</dd>
+<dt>표 추출 (table extraction)</dt><dd>표의 셀 경계와 행·열 관계를 찾아 구조화된 값으로 복원하는 처리입니다. 일반 텍스트 추출과 별도의 검출 전략이 필요할 수 있습니다.</dd>
+<dt>광학 문자 인식 (optical character recognition, OCR)</dt><dd>페이지 이미지의 글자 모양을 문자로 인식하는 처리입니다. OCR은 오탈자를 만들 수 있으며 표 구조를 자동으로 보장하지 않습니다.</dd>
+</dl>
+
+<figure>{{svg:02-표-구조}}<figcaption>셀 텍스트만 나열하면 머리글과 행의 대응이 사라집니다. 각 행에 머리글을 포함하여 직렬화하면 검색된 조각만으로도 값의 의미를 읽을 수 있습니다.</figcaption></figure>
+<p>이번 실습은 <code>pypdf</code>의 기본 텍스트와 <code>pdfplumber</code>에서 <code>layout=True</code>로 얻은 레이아웃 텍스트·표 목록을 같은 쪽에서 비교합니다. 서로 다른 두 라이브러리의 결과를 비교하므로, 한 라이브러리에서 옵션 하나만 바꾼 효과를 측정하는 실험은 아닙니다. 두 반환값이 존재한다는 사실만으로 읽기 순서나 표의 행·열 관계가 정확하다고 확정할 수도 없습니다. PyMuPDF의 <code>Page.find_tables()</code>처럼 선이나 텍스트 위치로 표 후보를 찾는 기능은 다음 비교 단계의 후보이며, 검출 전략과 허용오차에 따라 결과가 달라집니다.</p>
+<p>OCR 적용 여부는 파일 단위보다 쪽 단위로 결정하는 편이 안전합니다. 디지털 PDF 전체를 이미지로 바꿔 OCR하면 원래 PDF에 있던 글꼴·인코딩 정보가 사라지고, 비슷한 문자를 잘못 인식할 수 있습니다. 처리 시간도 늘어납니다. 먼저 추출 문자열 길이, 한글 비율, 대체 문자 수를 기록하고, 값이 낮은 쪽을 사람 검토 대상으로 표시합니다. OCR을 적용한 쪽에는 <code>ocr_used=true</code>와 사용한 엔진·언어 설정을 메타데이터에 남깁니다.</p>
+<table><tr><th>검사</th><th>확인하는 문제</th><th>자동 판정의 한계</th></tr>
+<tr><td>추출 글자 수</td><td>빈 스캔 쪽, 지나치게 짧은 결과</td><td>표지처럼 실제로 짧은 쪽도 있습니다.</td></tr>
+<tr><td>한글 비율</td><td>글꼴 인코딩 오류, OCR 언어 설정 오류</td><td>영문 사양표에는 낮은 값이 정상일 수 있습니다.</td></tr>
+<tr><td>표 머리글과 값의 인접성</td><td>행·열 관계 손실</td><td>문자열 규칙만으로 병합 셀을 확정하기 어렵습니다.</td></tr>
+<tr><td>원본 쪽 대조</td><td>누락·순서·표 구조</td><td>사람 검토가 필요하지만 대표 쪽에 한정할 수 있습니다.</td></tr></table>
+
+<h3>텍스트 추출과 OCR의 경계</h3>
+<p><code>PdfReader(path)</code>는 PDF 구조를 읽는 객체를 만들고, 실제 쪽 텍스트는 <code>reader.pages[n].extract_text()</code>를 호출할 때 문자열 또는 <code>None</code>으로 반환됩니다. <code>pdfplumber.open(path)</code>는 글자 위치와 표 후보를 함께 다룰 수 있으며, 이 노트북의 <code>selected.extract_tables()</code>는 표 목록을 반환합니다. 각 표는 행 목록이고 각 행은 셀 목록이므로 반환 구조는 표→행→셀의 세 단계 중첩 목록입니다. 두 라이브러리의 반환값은 원래 페이지 모양을 그대로 보존한 화면이 아닙니다.</p>
+<p>스캔 PDF에서 빈 문자열이 나온 것은 파일이 비었다는 뜻이 아니라 검색 가능한 텍스트 층이 없을 수 있다는 신호입니다. OCR은 페이지 이미지를 글자로 인식하는 별도 처리이며 이 노트북은 수행하지 않습니다. 디지털 영수증의 표는 좌표 기반 추출을 먼저 시도할 수 있지만, 촬영한 영수증은 OCR과 표 구조 복원이 모두 필요합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>첫 셀에서 <code>pypdf</code>와 <code>pdfplumber</code>를 설치합니다. API 키는 필요하지 않습니다. 제공된 디지털 PDF와 스캔 PDF의 위치·크기를 먼저 확인한 뒤, PDF 객체, 선택한 쪽, 본문 길이와 앞부분을 차례대로 관찰합니다. 같은 쪽을 <code>pdfplumber</code>로 읽어 레이아웃 문자열과 표 목록을 비교하고, 마지막으로 선택값을 2쪽에서 1쪽으로 바꾸어 글자 수 차이를 확인합니다.</p>
+{{notebook:02-PDF와-표-OCR|example}}
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before 셀은 스캔 PDF의 모든 쪽에서 텍스트가 바로 추출된다고 가정해 실패합니다. After 셀은 각 쪽의 문자열 길이를 검사해 OCR 후보 번호만 반환합니다. 이 실습은 OCR 엔진을 설치하거나 실행하지 않으며, 후보 분류 결과를 OCR 성공으로 해석하지 않습니다.</p>
+{{notebook:02-PDF와-표-OCR|failure}}
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>PDF는 의미 구조를 항상 보장하지 않습니다.</strong> 태그가 있는 PDF도 있지만, 일반 텍스트 추출이 표·문단 구조를 안정적으로 복원한다고 전제하지 않습니다.</li>
+<li><strong>OCR 엔진은 별도 의존성입니다.</strong> PyMuPDF의 통합 OCR도 Tesseract 설치가 필요합니다. 설치·언어 데이터·버전을 실행 환경에 기록합니다.</li>
+<li><strong>메모리를 확인합니다.</strong> 압축된 콘텐츠 스트림이 매우 크게 풀리는 PDF가 있으므로 파일 크기만으로 처리 비용을 판단하지 않습니다.</li>
+<li><strong>라이선스를 확인합니다.</strong> PyMuPDF/MuPDF는 AGPL 또는 상용 라이선스 체계입니다. 교육 실습과 제품 배포의 조건을 별도로 검토합니다.</li>
+<li><strong>상용 API 가격은 확인일과 함께 적습니다.</strong> Upstage의 Parse only 가격은 2026-09-08 기준 페이지당 미화 0.01달러로 표시되지만 변경될 수 있습니다. LlamaParse는 티어와 파서 버전을 실행 기록에 고정합니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>디지털 PDF의 문자 추출, 표 구조 복원, 스캔 이미지 OCR은 서로 다른 문제입니다.</li>
+<li><code>pypdf</code> 기본 텍스트와 <code>pdfplumber</code>의 <code>layout=True</code> 레이아웃 텍스트·표 목록을 비교합니다. 두 라이브러리가 다르므로 옵션 하나의 단독 효과 비교가 아니며, 어느 쪽도 원본 구조의 정확성을 자동으로 보장하지 않습니다.</li>
+<li>텍스트 품질을 쪽 단위로 검사하고 필요한 쪽만 OCR 후보로 보내며, 표와 읽기 순서는 원본과 대조합니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 이 실습에서 확인한 쪽 번호·본문 길이·표 개수·OCR 후보는 문서 처리 결과를 설명하는 메타데이터가 됩니다. 이번 실행은 S01의 5쪽을 후보로 분류하며 OCR은 실행하지 않습니다. 다음 03절에서는 DOCX·HTML·CSV 객체가 보존하는 구조를 직접 확인합니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. [하] 텍스트 추출과 OCR의 차이는 무엇입니까?</p><p class="quiz-a">텍스트 추출은 PDF에 이미 저장된 문자 정보를 읽습니다. OCR은 페이지 이미지의 글자 모양을 새 문자로 인식합니다.</p>
+<p class="quiz-q">2. [중] PDF에서 모든 숫자가 추출되었는데도 표 질의에 답하지 못하는 이유는 무엇입니까?</p><p class="quiz-a">숫자와 행·열 머리글의 관계가 사라질 수 있기 때문입니다. 표 질의에는 값 자체뿐 아니라 그 값이 어떤 조건과 항목에 해당하는지 필요합니다.</p>
+<p class="quiz-q">3. [중] <code>pages[page_number - 1]</code>처럼 1을 빼는 이유는 무엇입니까?</p><p class="quiz-a">사람이 보는 쪽 번호는 1부터 시작하지만 Python 목록 위치는 0부터 시작하기 때문입니다. 2쪽은 목록 위치 1에 있습니다.</p>
+<p class="quiz-q">4. [상] 두 단 PDF의 읽기 순서가 잘못된 상태에서 청크 크기만 조정하면 해결되지 않는 이유는 무엇입니까?</p><p class="quiz-a">청킹은 입력 문자열의 순서를 신뢰합니다. 파서가 서로 다른 단의 문장을 이미 섞었다면 청크 크기를 바꾸어도 잘못 연결된 문장 관계가 남으므로 파서나 레이아웃 처리 단계에서 고쳐야 합니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul>
+<li>pypdf 공식 문서 「Extract Text from a PDF」 — <a href="https://pypdf.readthedocs.io/en/stable/user/extract-text.html">pypdf.readthedocs.io/en/stable/user/extract-text.html</a> · 확인 2026-09-08 · pypdf 6.18.0.</li>
+<li>PyMuPDF 공식 문서 「Page.find_tables」·「OCR」·「License and Copyright」 — <a href="https://pymupdf.readthedocs.io/en/latest/page.html#Page.find_tables">표 검출</a> · <a href="https://pymupdf.readthedocs.io/en/latest/recipes-ocr.html">OCR</a> · <a href="https://pymupdf.readthedocs.io/en/latest/about.html#license-and-copyright">라이선스</a> · 확인 2026-09-08.</li>
+<li>pdfplumber 공식 저장소 문서·라이선스 — <a href="https://github.com/jsvine/pdfplumber/blob/stable/README.md">README</a> · <a href="https://github.com/jsvine/pdfplumber/blob/stable/LICENSE.txt">MIT License</a> · 확인 2026-09-08 · 기계 생성 PDF의 표 추출 기준선.</li>
+<li>Upstage API Pricing — <a href="https://www.upstage.ai/pricing/api">upstage.ai/pricing/api</a> · 확인 2026-09-08 · 가격은 변경 가능.</li>
+<li>LlamaIndex API 「Parse File」 — <a href="https://developers.api.llamaindex.ai/api/python/resources/parsing/methods/create/">developers.api.llamaindex.ai</a> · 확인 2026-09-08 · 티어와 날짜 버전 기록 기준.</li>
+</ul>

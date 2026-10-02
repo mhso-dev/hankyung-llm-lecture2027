@@ -1,0 +1,12 @@
+flowchart BT
+  %% classes
+  C1["chore: 저장소와<br>PR 템플릿 시작"]:::tool
+  C2["feat: 주문 요약<br>함수 추가"]:::tool
+  C3["fix: 빈 주문 건수<br>입력 확인"]:::tool
+  C4["merge: 주문 요약<br>부모 커밋 둘"]:::tool
+  M["main · origin/main"]
+  C1 -- "main 줄기" --> C4
+  C1 -- "기능 브랜치 줄기" --> C2
+  C2 --> C3
+  C3 --> C4
+  M -. "가리킴" .-> C4

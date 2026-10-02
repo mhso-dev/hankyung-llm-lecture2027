@@ -1,0 +1,79 @@
+{
+  "html_pages": 42,
+  "notebooks": 35,
+  "code_cells": 194,
+  "max_cell_lines": 24,
+  "quiz_questions": 135,
+  "local_links": 277,
+  "missing_links": [],
+  "exposed_credentials": [],
+  "diagrams": [
+    {
+      "chapter": "ch01-development-environment",
+      "svg": 5,
+      "excalidraw": 5
+    },
+    {
+      "chapter": "ch02-python",
+      "svg": 12,
+      "excalidraw": 12
+    },
+    {
+      "chapter": "ch03-git-github",
+      "svg": 5,
+      "excalidraw": 5
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "svg": 5,
+      "excalidraw": 5
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "svg": 8,
+      "excalidraw": 8
+    }
+  ],
+  "hours": [
+    {
+      "chapter": "ch01-development-environment",
+      "lecture": 5.0,
+      "practice": 3.0
+    },
+    {
+      "chapter": "ch02-python",
+      "lecture": 12.0,
+      "practice": 28.0
+    },
+    {
+      "chapter": "ch03-git-github",
+      "lecture": 5.0,
+      "practice": 11.0
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "lecture": 5.0,
+      "practice": 11.0
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "lecture": 10.0,
+      "practice": 6.0
+    }
+  ],
+  "existing_files_unchanged": 36,
+  "archives": [
+    {
+      "file": "part1-practice.zip",
+      "entries": 61,
+      "part1_notebooks": 35,
+      "sha256": "2acd47549b74633b5050c6dbbfd3bfa7ac60ab48b8e2c1c19ed3dd7571cc247d"
+    },
+    {
+      "file": "llm-practice.zip",
+      "entries": 171,
+      "part1_notebooks": 35,
+      "sha256": "7dbf801c874426b9cb166b39a23bb1f4bef0b197102151fa8dabee0c96298d3a"
+    }
+  ]
+}

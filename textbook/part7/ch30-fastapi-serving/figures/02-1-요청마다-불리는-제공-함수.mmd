@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  req["요청 GET /limit<br>두 번 보냄"]:::tool
+  lib["라이브러리가 요청마다<br>제공 함수를 부름"]
+  prov["제공 함수 get_limit<br>내놓는 값 2.0"]:::flow
+  fn["처리 함수 show_limit<br>매개변수 limit: LimitDep"]:::flow
+  ok["응답 두 번<br>200 limit 2.0"]:::measure
+  log["불린 기록<br>get_limit 두 번"]:::measure
+  req --> lib --> prov --> fn --> ok
+  prov --> log

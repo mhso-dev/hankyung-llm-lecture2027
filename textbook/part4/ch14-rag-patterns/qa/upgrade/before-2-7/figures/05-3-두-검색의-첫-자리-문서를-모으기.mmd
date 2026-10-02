@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  q1["원 질문"]:::tool
+  q2["가상 문서"]:::measure
+  s["글마다 거리 검색"]:::flow
+  a["첫 자리 문서 FAC-003"]:::measure
+  b["첫 자리 문서 LIB-004"]:::measure
+  u["겹치는 문서 빼기"]:::flow
+  r["근거 문서 목록에 문서 둘"]:::measure
+  q1 --> s
+  q2 --> s
+  s --> a
+  s --> b
+  a --> u
+  b --> u
+  u --> r

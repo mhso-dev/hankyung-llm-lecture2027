@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  sc["모델이 낸 근거 점수"]:::measure
+  lim["근거 점수 기준값 0.9"]:::flow
+  small["점수가 기준값보다 작음"]:::measure
+  fix["답을 한 번 고쳐 쓰기"]:::flow
+  cnt["고친 횟수 하나"]:::measure
+  cap["고쳐 쓰기 상한 하나"]:::flow
+  stop["상한과 같아<br>더 고치지 않음"]:::measure
+  sc --> small
+  lim --> small
+  small -.-> fix
+  fix --> cnt
+  cnt --> stop
+  cap --> stop

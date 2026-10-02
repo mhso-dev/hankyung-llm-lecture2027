@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  a["model.invoke<br>first_messages<br>도구 없음"]:::flow
+  b["mcp_model.invoke<br>first_messages<br>MCP 도구 하나 명세 252자"]:::flow
+  ma["gpt-5.4-mini<br>첫 요청 한 번"]:::model
+  mb["gpt-5.4-mini<br>첫 요청 한 번"]:::model
+  ta["입력 토큰 56"]:::measure
+  tb["입력 토큰 187"]:::measure
+  d["도구 정의 몫 131<br>= 187 − 56"]:::measure
+  a --> ma --> ta
+  b --> mb --> tb
+  ta --> d
+  tb --> d

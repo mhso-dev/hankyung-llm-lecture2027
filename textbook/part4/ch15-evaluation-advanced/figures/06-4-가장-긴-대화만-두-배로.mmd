@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph orig["원래 목록"]
+    direction TB
+    o1["대화-100 요청 60번<br>비용 0.06달러"]:::tool
+    o2["평균 0.0042달러"]:::measure
+    o1 --> o2
+  end
+  subgraph chg["바꾼 목록"]
+    direction TB
+    c1["대화-100 요청 120번<br>비용 0.12달러"]:::tool
+    c2["평균 0.0048달러"]:::measure
+    c1 --> c2
+  end
+  same["두 목록에서 같음<br>p50 0.003 · p95 0.006<br>p99 0.025<br>나머지 대화 아흔아홉 개<br>요청 한 번 0.001달러"]
+  orig ~~~ same
+  chg ~~~ same

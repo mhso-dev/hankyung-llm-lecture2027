@@ -1,0 +1,45 @@
+{
+  "run_id": "ch06-provider-20260909T172541476581Z",
+  "run_date": "2026-09-09",
+  "source_chapter": "ch06",
+  "conditions": {
+    "repetitions": 1,
+    "max_tokens": 180,
+    "same_messages": true
+  },
+  "records": [
+    {
+      "provider": "openai",
+      "model_id": "openai:gpt-5.4-mini",
+      "status": "executed",
+      "text": "`AIMessage`는 **대화에서 AI(모델)가 생성한 응답 내용을 나타내는 메시지 객체**입니다.",
+      "latency_ms": 1341.4,
+      "usage": {
+        "input_tokens": 18,
+        "output_tokens": 31,
+        "total_tokens": 49,
+        "input_token_details": {
+          "audio": 0,
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "audio": 0,
+          "reasoning": 0
+        }
+      },
+      "cache_read_tokens": 0,
+      "estimated_cost_usd": 0.000153,
+      "pricing_date": "2026-09-09"
+    },
+    {
+      "provider": "anthropic",
+      "model_id": "anthropic:claude-haiku-4-5",
+      "status": "skipped: ANTHROPIC_API_KEY 필요"
+    },
+    {
+      "provider": "google",
+      "model_id": "google_genai:gemini-2.5-flash-lite",
+      "status": "skipped: GOOGLE_API_KEY 필요"
+    }
+  ]
+}

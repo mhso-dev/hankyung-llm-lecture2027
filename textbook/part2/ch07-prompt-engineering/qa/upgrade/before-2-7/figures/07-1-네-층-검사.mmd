@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  P["1 parse_json_answer<br>json.loads로 읽기"]:::flow
+  K["2 find_missing_keys<br>없는 키 찾기"]:::flow
+  V["3 find_value_problems<br>값 규칙 검사"]:::flow
+  H["사람이 원문 읽기<br>내용 확인"]:::flow
+  E1["코드 블록 표시<br>구문 오류"]:::measure
+  E2["한국어 키<br>없는 키 세 개"]:::measure
+  E3["다른 값<br>값 규칙 문제 두 개"]:::measure
+  P -->|읽음| K
+  K -->|없는 키 없음| V
+  V -->|문제 없음| H
+  P -.-> E1
+  K -.-> E2
+  V -.-> E3

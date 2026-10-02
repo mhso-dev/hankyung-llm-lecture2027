@@ -1,0 +1,7 @@
+flowchart TB
+  %% classes
+  DOCS["같은 조건 9개<br>문서 · 질문 · 출력 몫 32"]:::tool
+  WITHOUT["6절 시스템 메시지 없음<br>앞 3개 중 3개<br>가운데 3개 중 0개<br>끝 3개 중 2개"]:::measure
+  WITH["8절 04절 시스템 지시<br>앞 3개 중 3개<br>가운데 3개 중 3개<br>끝 3개 중 3개"]:::measure
+  DOCS -- "영어 기본 지시가 들어감" --> WITHOUT
+  DOCS -- "우리 지시가 들어감" --> WITH

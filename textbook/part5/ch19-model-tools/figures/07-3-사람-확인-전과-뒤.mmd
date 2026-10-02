@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  v["바꾼 값 하나<br>person_confirmed"]:::tool
+  subgraph one["실행 1 · 사람 확인 False"]
+    direction TB
+    a1["명세 get_order_by_id<br>첫 요청 입력 토큰 203"]:::measure
+    a2["요청한 도구<br>get_order_by_id<br>결과 상태 success<br>요청 수 2"]:::measure
+    a1 ~~~ a2
+  end
+  subgraph two["실행 2 · 사람 확인 True"]
+    direction TB
+    b1["명세 get_order_by_id<br>request_cancel<br>첫 요청 입력 토큰 319"]:::measure
+    b2["요청한 도구<br>get_order_by_id<br>request_cancel<br>결과 상태 success 둘<br>요청 수 3"]:::measure
+    b1 ~~~ b2
+  end
+  c["두 실행 공통<br>같은 문의 · 같은 두 도구<br>바퀴 한도 5<br>흐름 끝 도구 호출 요청 0건<br>CSV의 O102 상태 pending"]
+  v --> one
+  v --> two
+  one ~~~ c
+  two ~~~ c

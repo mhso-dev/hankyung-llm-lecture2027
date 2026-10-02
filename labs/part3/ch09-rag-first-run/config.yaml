@@ -1,0 +1,32 @@
+# Ch 9 실험 하네스 — 바꿀 수 있는 것은 전부 여기에 있다.
+# 코드는 이 파일을 읽을 뿐, 설정값을 코드 안에 적지 않는다.
+
+name: baseline
+
+corpus:
+  tiers: [easy, medium, hard]      # labs/data/rag-corpus/pdf/ 아래 폴더
+
+split:
+  chunk_size: 500                  # 글자 수 (토큰 아님 — 02절 주의할 점 참고)
+  chunk_overlap: 50
+
+embedding:
+  model: text-embedding-3-small    # 2026-09-17 모델 안내 확인 — 01~07절 노트북과 같은 모델
+
+retrieval:
+  k: 4
+
+generation:
+  model: openai:gpt-5.4-mini
+  prompt: strict                   # strict | helpful  (prompts.py 참고)
+
+queries:
+  file: ../../data/rag-corpus/queries.jsonl
+  tiers: [easy]
+  types: [single]
+  limit: 8                         # 처음엔 적게 — 한 번 도는 시간을 먼저 잰다
+
+# 2026-09-07 developers.openai.com/api/docs/pricing 확인 (standard, USD / 1M tokens)
+prices:
+  text-embedding-3-small: {input: 0.02, output: 0}
+  openai:gpt-5.4-mini: {input: 0.75, output: 4.50}

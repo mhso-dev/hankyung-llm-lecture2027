@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · range(1, order_count)"]
+    direction LR
+    b1["번호<br>1, 2"]:::flow --> b2["읽은 금액<br>42000 · 65000"]:::tool --> b3["2건 · 107000<br>항목 수와 같은가<br>False"]:::fail
+    b1 -. "위치 0 건너뜀" .-> b0["18000<br>읽지 않음"]
+  end
+  subgraph AFTER["After · enumerate(order_amounts)"]
+    direction LR
+    a1["번호<br>0, 1, 2"]:::flow --> a2["읽은 금액<br>18000 · 42000<br>65000"]:::tool --> a3["3건 · 125000<br>항목 수와 같은가<br>True"]:::measure
+  end
+  BEFORE ~~~ AFTER

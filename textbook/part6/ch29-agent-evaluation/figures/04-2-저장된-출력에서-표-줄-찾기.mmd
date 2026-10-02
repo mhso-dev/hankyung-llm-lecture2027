@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  nb["Ch 18 06절 노트북 파일<br>셀 쉰여덟 · 실행하지 않음"]:::tool
+  fn["printed_lines_of<br>코드 셀의 stream 출력만<br>한 줄씩 모음"]:::flow
+  pl["저장된 출력 줄 예순아홉"]:::measure
+  ft["칸 구분이 든 줄만 남기고<br>머리 줄 pattern은 뺌"]:::flow
+  tl["표 줄 다섯<br>chaining · routing<br>parallel<br>orchestrator_worker<br>generator_evaluator"]:::measure
+  sp["split_row · ch18_row<br>상태 칸 ok 세기"]:::flow
+  ok["상태가 ok인 줄 다섯<br>assert 통과"]:::measure
+  nb --> fn
+  fn --> pl
+  pl --> ft
+  ft --> tl
+  tl --> sp
+  sp --> ok

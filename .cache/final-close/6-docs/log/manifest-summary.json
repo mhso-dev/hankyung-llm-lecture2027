@@ -1,0 +1,176 @@
+{
+ "by_cat": {
+  "connected|옛그림": [
+   527,
+   5827302
+  ],
+  "connected|게이트작업기록": [
+   362,
+   408527
+  ],
+  "connected|파이썬캐시": [
+   120,
+   8699380
+  ],
+  "connected|개별항목": [
+   15,
+   1688598
+  ],
+  "connected|실습venv": [
+   18,
+   2362926825
+  ],
+  "connected|캐시": [
+   199,
+   29151565181
+  ],
+  "device|기기": [
+   104,
+   2581827826
+  ]
+ },
+ "total": {
+  "connected": [
+   1241,
+   31531115813
+  ],
+  "device": [
+   104,
+   2581827826
+  ]
+ },
+ "held": [
+  {
+   "path": "/tmp/libs",
+   "type": "폴더",
+   "bytes": 52607,
+   "why": "Ch 12 화면 재촬영 — 브라우저가 쓰는 libXdamage(LD_LIBRARY_PATH)"
+  },
+  {
+   "path": "/tmp/pw",
+   "type": "폴더",
+   "bytes": 18722087,
+   "why": "Ch 12 화면 재촬영(visual.cjs) — 사람 결정 뒤 다시 찍을 때 필요"
+  },
+  {
+   "path": "/tmp/pw-browsers",
+   "type": "폴더",
+   "bytes": 280926484,
+   "why": "Ch 12 화면 재촬영(visual.cjs) — 사람 결정 뒤 다시 찍을 때 필요"
+  },
+  {
+   "path": "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/tmp/fc5-part3",
+   "type": "폴더",
+   "bytes": 50107058,
+   "why": "finalize_continuity_evidence.py가 읽는 temporary_extraction — finalize 뒤에 지울 것(다시 만들면 모델 요청)"
+  }
+ ],
+ "skipped": [
+  {
+   "path": "textbook/part6/ch22-middleware/figures/01-미들웨어와-6개-훅-흐름.caption.md",
+   "bytes": 66,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/01-미들웨어와-6개-훅-흐름.excalidraw",
+   "bytes": 11586,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/02-PII-마스킹-이식-흐름.caption.md",
+   "bytes": 74,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/02-PII-마스킹-이식-흐름.excalidraw",
+   "bytes": 9160,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/03-요약-압축과-Compress-흐름.caption.md",
+   "bytes": 92,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/03-요약-압축과-Compress-흐름.excalidraw",
+   "bytes": 11646,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/04-호출-한도와-재시도-폴백-흐름.caption.md",
+   "bytes": 80,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/04-호출-한도와-재시도-폴백-흐름.excalidraw",
+   "bytes": 11702,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/05-커스텀-예산-미들웨어-흐름.caption.md",
+   "bytes": 86,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/05-커스텀-예산-미들웨어-흐름.excalidraw",
+   "bytes": 9181,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/06-커스텀-감사-미들웨어-흐름.caption.md",
+   "bytes": 76,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/06-커스텀-감사-미들웨어-흐름.excalidraw",
+   "bytes": 11680,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/07-순서와-합성-흐름.caption.md",
+   "bytes": 69,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/07-순서와-합성-흐름.excalidraw",
+   "bytes": 9056,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/08-컨텍스트-분리와-Isolate-흐름.caption.md",
+   "bytes": 67,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "textbook/part6/ch22-middleware/figures/08-컨텍스트-분리와-Isolate-흐름.excalidraw",
+   "bytes": 11688,
+   "why": "같은 줄기의 .svg가 챕터 공개 목록에 있어 짝(.excalidraw·.caption.md)도 함께 남김"
+  },
+  {
+   "path": "/tmp/hsperfdata_root",
+   "bytes": 4096,
+   "why": "시스템·도구가 스스로 관리하는 폴더(이번 작업물 아님)"
+  },
+  {
+   "path": "/tmp/systemd-private-a600a531327b4a72a86ef512c5006dda-systemd-logind.service-EaZvfJ",
+   "bytes": 4096,
+   "why": "시스템·도구가 스스로 관리하는 폴더(이번 작업물 아님)"
+  },
+  {
+   "path": "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/tmp/data-gym-cache",
+   "bytes": 5299144,
+   "why": "시스템·도구가 스스로 관리하는 폴더(이번 작업물 아님)"
+  },
+  {
+   "path": "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/tmp/generator-cli-4LkCgY",
+   "bytes": 4096,
+   "why": "시스템·도구가 스스로 관리하는 폴더(이번 작업물 아님)"
+  },
+  {
+   "path": "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/tmp/node-compile-cache",
+   "bytes": 1409448,
+   "why": "시스템·도구가 스스로 관리하는 폴더(이번 작업물 아님)"
+  }
+ ],
+ "lines": 1345
+}

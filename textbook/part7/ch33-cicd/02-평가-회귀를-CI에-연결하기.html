@@ -1,0 +1,263 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>평가 회귀를 CI에 연결하기 — Ch 33 · CI/CD와 배포 운영</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 프로덕션 엔지니어링 · Ch 33 · CI/CD와 배포 운영</p>
+<h1>평가 회귀를 CI에 연결하기</h1><div class="meta"><span>강의 1h</span><span>실습 2.2h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2.2h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>승인된 평가 기준선과 현재 결과의 역할을 구분할 수 있습니다.</li><li>Groundedness와 추가 도구 호출 수를 독립 기준으로 판정할 수 있습니다.</li><li>허용 범위를 벗어난 결과를 0이 아닌 종료 코드로 CI에 전달할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>단위 테스트가 모두 통과해도 에이전트의 답변에서 근거가 빠지거나 도구 호출이 늘 수 있습니다. 이런 변화는 함수 반환값만 검사하는 테스트로 찾기 어렵습니다. 이 절에서는 Ch15의 Groundedness와 Ch29의 궤적 기준을 후보 함수의 실제 출력에 적용해, 품질 저하가 생긴 변경을 종료 코드 1로 중단합니다.</p>
+<p>실습은 네 평가 사례를 후보 함수에 다시 입력합니다. 정상 코드에서는 Groundedness 1.00과 추가 호출 0회를 확인하고, 임시 복사본의 답변과 궤적 코드를 손상했을 때 두 기준이 FAIL로 바뀌는지 비교합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>Ch15에서 근거성 평가와 기준선을, Ch29에서 최종 답뿐 아니라 도구 호출 궤적을 확인했습니다. 앞 절에서 CI가 종료 코드로 다음 단계 진행 여부를 결정한다는 점을 배웠습니다. 이 절은 두 평가 기준을 그 종료 코드에 연결합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>승인한 견본과 새 결과 비교</h3><p>인쇄소는 새 인쇄물을 승인된 견본과 나란히 놓고 색과 위치를 각각 검사합니다. 평가 회귀도 승인된 기준선과 현재 결과를 비교하되, 답의 근거성과 도구 호출 효율을 한 점수로 섞지 않습니다.</p>
+<h3>정의</h3><p>회귀(regression)는 새로운 변경 뒤에 이전에 만족하던 동작이나 품질 기준이 깨지는 현상입니다. 단위 테스트가 함수의 정해진 출력을 검사한다면 평가 회귀는 Groundedness, 궤적의 추가 도구 호출 수처럼 확률적 시스템의 품질과 비용을 검사합니다. 기준선(baseline)은 비교할 이전 결과이며, 허용치(tolerance)는 실행 변동을 고려해 받아들일 범위입니다. Ch15의 생성 품질과 Ch29의 궤적 효율을 한 점수로 합치면 원인을 찾기 어려우므로 두 검사를 분리해 표시하고, 모두 통과할 때만 전체 종료 코드 0을 반환합니다.</p>
+<p>앞 절에서 CI의 작업과 종료 코드를 확인했습니다. 여기서는 테스트 단계 뒤에 <code>evaluate_regression.py</code>를 추가합니다. 스크립트는 커밋된 점수를 읽는 데 그치지 않고 <code>run_candidate()</code>를 실행해 답변과 도구 목록을 새로 계산합니다.</p>
+<h3>코드 읽기와 개념 경계</h3><p>평가 회귀 검사는 현재 결과를 저장된 기준선과 비교해 배포 가능 여부를 종료 코드로 바꿉니다. 이 예제는 근거성 점수와 추가 도구 호출 수를 함께 검사합니다. 임시 복사본에서 답과 도구 호출을 악화시키면 평가 스크립트가 0이 아닌 코드를 반환하고, 원래 구현에서는 0을 반환합니다.</p><p>기준선은 영원한 정답이 아니라 승인된 비교점입니다. 질문 집합이나 평가 방식이 바뀌면 점수 변화가 모델 회귀인지 평가 변경인지 분리해야 합니다. 평균 점수만 보면 특정 중요 질문의 큰 하락이 가려질 수 있으므로 핵심 사례별 하한과 전체 집계를 함께 둡니다.</p><h3>도식 읽기</h3><figure><img src="figures/02-흐름.svg" alt="평가 회귀를 CI에 연결하기 단계 도식"><figcaption>기준선과 현재 결과가 두 비교기로 들어가 Groundedness와 추가 호출 수를 각각 판정한 뒤 하나의 종료 코드로 합쳐지는 흐름입니다.</figcaption></figure>
+<p>기준선 변경과 모델 변경이 동시에 일어나면 실패 원인을 구분하기 어렵습니다. 기준선은 별도 리뷰로 갱신하고, 같은 평가 입력에서 후보 변경만 비교합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>공개 고정 자료에서 기준선과 현재 결과를 읽습니다. Groundedness는 기준선보다 0.02를 초과해 낮아지지 않아야 하고, 추가 도구 호출 수는 기준선 이하여야 합니다. 정상 자료로 성공을 확인한 뒤 임시 폴더에서 두 값을 나쁘게 바꾸어 실제 회귀 검사 프로세스가 실패하는지 확인합니다.</p><section class="notebook" data-notebook="02-평가-회귀를-CI에-연결하기" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="02-평가-회귀를-CI에-연결하기.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtj4nqsIAg7ZqM6reA66W8IENJ7JeQIOyXsOqysO2VmOq4sFxuIiwKICAgICJcbiIsCiAgICAiQ2gxNeyZgCBDaDI57JeQ7IScIOuwsOyatCDshJzroZwg64uk66W4IO2PieqwgCDquLDspIDsnYQg7ZWY64KY7J2YIOyiheujjCDsvZTrk5zroZwg7Jew6rKw7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogInByZXAtMzMtMDItMCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg7KSA67mEIOyFgOydtCDtlZjripQg7J28XG4iLAogICAgIlxuIiwKICAgICLssqsg7IWA7J2YIGBQYXRoYCDtg5Dsg4nsnYAg7Ja064qQIOyDgeychCDtj7TrjZTsl5DshJwg7Je07Ja064+EIENoMzPsnZggYHB5cHJvamVjdC50b21sYOydhCDquLDspIDsnLzroZwg7Iuk7Iq1IO2PtOuNlOulvCDssL7sirXri4jri6QuIOuSpOydmCBgc3VicHJvY2Vzcy5ydW4oLi4uLCBjd2Q9bGFiLCBjYXB0dXJlX291dHB1dD1UcnVlKWDsnYAg66qF66C57J2EIOuzhOuPhCDtlITroZzshLjsiqTroZwg7Iuk7ZaJ7ZWY6rOgIO2ZlOuptCDrrLjqtazsmYAg7KKF66OMIOy9lOuTnOulvCDtlajqu5gg67CY7ZmY7ZWp64uI64ukLiDsnbQg67O07KGwIOy9lOuTnOuKlCBDSeulvCDtnYnrgrQg64K064qUIOqzte2GtSDsi6Ttlokg6rK96rOE7J2066mwLCDqsIEg7KCI7J2YIO2MkOygleydgCDri6TsnYwg7IWA7JeQ7IScIO2VtOuLuSDrqoXroLnsnZgg7Iuk7KCcIOuwmO2ZmOqwkuydhCDsnb3slrQg6rKw7KCV7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTk6MjQuOTc4Njg5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTk6MjQuOTc4NjEyWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTk6MjQuOTgxNjAxWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxOToyNC45ODEzMTlaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAieydzb3VyY2UnOiBbJ0NoMTUnLCAnQ2gyOSddLCAnc291cmNlX2ZpbGVzJzogeydsYWJzL3BhcnQ0L2NoMTUtZXZhbHVhdGlvbi1hZHZhbmNlZC9kYXRhL2V2YWx1YXRpb24tY2FzZXMuanNvbic6ICdkYzQ4YjFiYzQ5ZDI2ZDUxMWNhMjE0MWIxMDJjZWZiYWUxYjM5NWEwNmZhYWE4ZDIxYTYxYzIxNzRlYzNiMmQxJywgJ2xhYnMvcGFydDYvY2gyOS1hZ2VudC1ldmFsdWF0aW9uL25vdGVib29rcy8wNC3smrTsmIEt7KeA7ZGc7JmALUNoMTgt6rak7KCBLeu5hOq1kC5pcHluYic6ICc3MWZhNTZlZmI5NTZiNTIxODczMmM3NWJjZjAzMGNjZjQwMWUyMzM1MjE3ZDZiMjNmYmY2YzJmZjIzMjJkOTNhJ30sICdub3RlJzogJ+ybkOuzuOydmCDtj4nqsIAg7ZWt66qp7J2EIENJIOyXsOqysCDsl7DsirXsl5Ag66ee6rKMIOy2leyVve2VnCDqtZDsnKHsmqkg6riw7KSA7ISg7J2066mwIOybkOuzuCDsuKHsoJXqsJIg67Cc7LeM6rCAIOyVhOuLmeuLiOuLpC4nLCAnZ3JvdW5kZWRuZXNzJzogMC45LCAndHJhamVjdG9yeV9leHRyYV9jYWxscyc6IDEsICdjYXNlcyc6IDR9XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aFxuIiwKICAgICJpbXBvcnQganNvbiwgc3VicHJvY2Vzcywgc3lzXG4iLAogICAgImxhYiA9IG5leHQoKHAgZm9yIHAgaW4gW1BhdGguY3dkKCksICpQYXRoLmN3ZCgpLnBhcmVudHNdIGlmIHAubmFtZSA9PSBcImNoMzMtY2ljZFwiIGFuZCAocCAvIFwicHlwcm9qZWN0LnRvbWxcIikuaXNfZmlsZSgpKSwgUGF0aChcImxhYnMvcGFydDcvY2gzMy1jaWNkXCIpKS5yZXNvbHZlKClcbiIsCiAgICAiYmFzZWxpbmUgPSBqc29uLmxvYWRzKChsYWIgLyBcImRhdGEvcmVncmVzc2lvbi1iYXNlbGluZS5qc29uXCIpLnJlYWRfdGV4dCgpKVxuIiwKICAgICJwcmludChiYXNlbGluZSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTMzLTAyLWEiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg67CU66GcIOuLpOydjCDsvZTrk5zrpbwg7J2964qUIOuwqeuylVxuIiwKICAgICJcbiIsCiAgICAi7Y+J6rCAIO2ajOq3gCDqsoDsgqzripQg7ZiE7J6sIOqysOqzvOulvCDsoIDsnqXrkJwg6riw7KSA7ISg6rO8IOu5hOq1kO2VtCDrsLDtj6wg6rCA64qlIOyXrOu2gOulvCDsooXro4wg7L2U65Oc66GcIOuwlOq/ieuLiOuLpC4g7J20IOyYiOygnOuKlCDqt7zqsbDshLEg7KCQ7IiY7JmAIOy2lOqwgCDrj4Tqtawg7Zi47LacIOyImOulvCDtlajqu5gg6rKA7IKs7ZWp64uI64ukLiDsnoTsi5wg67O17IKs67O47JeQ7IScIOuLteqzvCDrj4Tqtawg7Zi47Lac7J2EIOyVhe2ZlOyLnO2CpOuptCDtj4nqsIAg7Iqk7YGs66a97Yq46rCAIDDsnbQg7JWE64uMIOy9lOuTnOulvCDrsJjtmZjtlZjqs6AsIOybkOuemCDqtaztmITsl5DshJzripQgMOydhCDrsJjtmZjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoxOToyNC45ODIzNjlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoxOToyNC45ODIzMTJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoxOToyNS4wMDM2NThaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjE5OjI1LjAwMzI1OVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJncm91bmRlZG5lc3M9MS4wMCByZXF1aXJlZD0wLjkwXG4iLAogICAgICAidHJhamVjdG9yeV9leHRyYV9jYWxscz0wIGFsbG93ZWQ9MVxuIiwKICAgICAgImdyb3VuZGVkbmVzczogUEFTU1xuIiwKICAgICAgInRyYWplY3Rvcnk6IFBBU1NcbiIsCiAgICAgICJleGl0X2NvZGU9IDBcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAicmVzdWx0ID0gc3VicHJvY2Vzcy5ydW4oW3N5cy5leGVjdXRhYmxlLCBcInNjcmlwdHMvZXZhbHVhdGVfcmVncmVzc2lvbi5weVwiXSwgY3dkPWxhYiwgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlKVxuIiwKICAgICJwcmludChyZXN1bHQuc3Rkb3V0LnN0cmlwKCkpXG4iLAogICAgInByaW50KFwiZXhpdF9jb2RlPVwiLCByZXN1bHQucmV0dXJuY29kZSlcbiIsCiAgICAiYXNzZXJ0IHJlc3VsdC5yZXR1cm5jb2RlID09IDAiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TtjKgg7J6s7ZiEXG4iLAogICAgIlxuIiwKICAgICLsnoTsi5wg7KCA7J6l7IaM7JeQIEdyb3VuZGVkbmVzc+yZgCDstpTqsIAg7Zi47LacIOyImOqwgCDrqqjrkZAg64KY67mg7KeEIO2YhOyerCDqsrDqs7zrpbwg65Gh64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTk6MjUuMDA0NDg3WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTk6MjUuMDA0NDIzWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTk6MjUuMDI5MzcyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxOToyNS4wMjkwNTJaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJncm91bmRlZG5lc3M9MC43NSByZXF1aXJlZD0wLjkwXG4iLAogICAgICAidHJhamVjdG9yeV9leHRyYV9jYWxscz04IGFsbG93ZWQ9MVxuIiwKICAgICAgImdyb3VuZGVkbmVzczogRkFJTFxuIiwKICAgICAgInRyYWplY3Rvcnk6IEZBSUwgZXhpdF9jb2RlPSAxXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImltcG9ydCB0ZW1wZmlsZSwgc2h1dGlsXG4iLAogICAgIndpdGggdGVtcGZpbGUuVGVtcG9yYXJ5RGlyZWN0b3J5KCkgYXMgdGVtcDpcbiIsCiAgICAiICAgIHQgPSBQYXRoKHRlbXApXG4iLAogICAgIiAgICBzaHV0aWwuY29weXRyZWUobGFiIC8gXCJzY3JpcHRzXCIsIHQgLyBcInNjcmlwdHNcIilcbiIsCiAgICAiICAgIHNodXRpbC5jb3B5dHJlZShsYWIgLyBcImRhdGFcIiwgdCAvIFwiZGF0YVwiKVxuIiwKICAgICIgICAgc291cmNlID0gKGxhYiAvIFwiY2ljZF9kZW1vLnB5XCIpLnJlYWRfdGV4dCgpXG4iLAogICAgIiAgICBzb3VyY2UgPSBzb3VyY2UucmVwbGFjZShcIjfqtozquYzsp4AgMTTsnbxcIiwgXCI46raM6rmM7KeAIDEw7J28XCIpXG4iLAogICAgIiAgICBzb3VyY2UgPSBzb3VyY2UucmVwbGFjZShcInJldHVybiByZXNwb25zZXNbcWlkXSwgdG9vbHNcIiwgXCJyZXR1cm4gcmVzcG9uc2VzW3FpZF0sIHRvb2xzICsgWydyZXRyaWV2ZScsICdyZXRyaWV2ZSddXCIpXG4iLAogICAgIiAgICAodCAvIFwiY2ljZF9kZW1vLnB5XCIpLndyaXRlX3RleHQoc291cmNlKVxuIiwKICAgICIgICAgZmFpbGVkID0gc3VicHJvY2Vzcy5ydW4oW3N5cy5leGVjdXRhYmxlLCBcInNjcmlwdHMvZXZhbHVhdGVfcmVncmVzc2lvbi5weVwiXSwgY3dkPXQsIHRleHQ9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSlcbiIsCiAgICAiICAgIHByaW50KGZhaWxlZC5zdGRvdXQuc3RyaXAoKSwgXCJleGl0X2NvZGU9XCIsIGZhaWxlZC5yZXR1cm5jb2RlKVxuIiwKICAgICIgICAgYXNzZXJ0IGZhaWxlZC5yZXR1cm5jb2RlICE9IDAiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyImOyglVxuIiwKICAgICJcbiIsCiAgICAi6riw7KSA7J2EIOunjOyhse2VmOuKlCDqsrDqs7zroZwg67CU6r6466m0IOuRkCDqsoDsgqzqsIAg66qo65GQIO2GteqzvO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTMzLTAyLWIiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDri6jqs4Tsl5DshJwg6rWs67aE7ZWgIOuylOychFxuIiwKICAgICJcbiIsCiAgICAi6riw7KSA7ISg7J2AIOyYgeybkO2VnCDsoJXri7XsnbQg7JWE64uI6528IOyKueyduOuQnCDruYTqtZDsoJDsnoXri4jri6QuIOyniOusuCDsp5HtlansnbTrgpgg7Y+J6rCAIOuwqeyLneydtCDrsJTrgIzrqbQg7KCQ7IiYIOuzgO2ZlOqwgCDrqqjrjbgg7ZqM6reA7J247KeAIO2PieqwgCDrs4Dqsr3snbjsp4Ag67aE66as7ZW07JW8IO2VqeuLiOuLpC4g7Y+J6regIOygkOyImOunjCDrs7TrqbQg7Yq57KCVIOykkeyalCDsp4jrrLjsnZgg7YGwIO2VmOudveydtCDqsIDroKTsp4gg7IiYIOyeiOycvOuvgOuhnCDtlbXsi6wg7IKs66GA67OEIO2VmO2VnOqzvCDsoITssrQg7KeR6rOE66W8IO2VqOq7mCDrkaHri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoxOToyNS4wMzAyNTlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoxOToyNS4wMzAxNzBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoxOToyNS4wNTUxMzNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjE5OjI1LjA1NDY5MFoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiZ3JvdW5kZWRuZXNzPTEuMDAgcmVxdWlyZWQ9MC45MFxuIiwKICAgICAgInRyYWplY3RvcnlfZXh0cmFfY2FsbHM9MCBhbGxvd2VkPTFcbiIsCiAgICAgICJncm91bmRlZG5lc3M6IFBBU1NcbiIsCiAgICAgICJ0cmFqZWN0b3J5OiBQQVNTIGV4aXRfY29kZT0gMFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJ3aXRoIHRlbXBmaWxlLlRlbXBvcmFyeURpcmVjdG9yeSgpIGFzIHRlbXA6XG4iLAogICAgIiAgICB0ID0gUGF0aCh0ZW1wKVxuIiwKICAgICIgICAgc2h1dGlsLmNvcHl0cmVlKGxhYiAvIFwic2NyaXB0c1wiLCB0IC8gXCJzY3JpcHRzXCIpXG4iLAogICAgIiAgICBzaHV0aWwuY29weXRyZWUobGFiIC8gXCJkYXRhXCIsIHQgLyBcImRhdGFcIilcbiIsCiAgICAiICAgIHNodXRpbC5jb3B5KGxhYiAvIFwiY2ljZF9kZW1vLnB5XCIsIHQgLyBcImNpY2RfZGVtby5weVwiKVxuIiwKICAgICIgICAgcGFzc2VkID0gc3VicHJvY2Vzcy5ydW4oW3N5cy5leGVjdXRhYmxlLCBcInNjcmlwdHMvZXZhbHVhdGVfcmVncmVzc2lvbi5weVwiXSwgY3dkPXQsIHRleHQ9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSlcbiIsCiAgICAiICAgIHByaW50KHBhc3NlZC5zdGRvdXQuc3RyaXAoKSwgXCJleGl0X2NvZGU9XCIsIHBhc3NlZC5yZXR1cm5jb2RlKVxuIiwKICAgICIgICAgYXNzZXJ0IHBhc3NlZC5yZXR1cm5jb2RlID09IDAiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogInBhaXJlZCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDQsCiAgICJjb2RlX3NoYTI1NiI6ICI2MWM3NjY0ZmY4ODcxOWZiNmM0YjM1Yzg1MmU4MzNiMTIyYWUzOTRlYWQ4Y2FkNzI4YjY5MWYwODMzN2Q3NTZjIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDI6MTk6MjUuMTcwNjk3KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICJjNTg1YmM5MzIwYTAzODliMGZkYTdiODk3M2RjMjU2ODk0ZmE4ZWUyOTNkZmQ2MTdmNmI4MTlkZDQ2MTliOGJhIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>평가 회귀를 CI에 연결하기</h2>
+<p>Ch15와 Ch29에서 배운 서로 다른 평가 기준을 하나의 종료 코드로 연결합니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>첫 셀의 <code>Path</code> 탐색은 어느 상위 폴더에서 열어도 Ch33의 <code>pyproject.toml</code>을 기준으로 실습 폴더를 찾습니다. 뒤의 <code>subprocess.run(..., cwd=lab, capture_output=True)</code>은 명령을 별도 프로세스로 실행하고 화면 문구와 종료 코드를 함께 반환합니다. 이 보조 코드는 CI를 흉내 내는 공통 실행 경계이며, 각 절의 판정은 다음 셀에서 해당 명령의 실제 반환값을 읽어 결정합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">from pathlib import Path
+import json, subprocess, sys
+lab = next((p for p in [Path.cwd(), *Path.cwd().parents] if p.name == &quot;ch33-cicd&quot; and (p / &quot;pyproject.toml&quot;).is_file()), Path(&quot;labs/part7/ch33-cicd&quot;)).resolve()
+baseline = json.loads((lab / &quot;data/regression-baseline.json&quot;).read_text())
+print(baseline)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;source&#x27;: [&#x27;Ch15&#x27;, &#x27;Ch29&#x27;], &#x27;source_files&#x27;: {&#x27;labs/part4/ch15-evaluation-advanced/data/evaluation-cases.json&#x27;: &#x27;dc48b1bc49d26d511ca2141b102cefbae1b395a06faaa8d21a61c2174ec3b2d1&#x27;, &#x27;labs/part6/ch29-agent-evaluation/notebooks/04-운영-지표와-Ch18-궤적-비교.ipynb&#x27;: &#x27;71fa56efb956b5218732c75bcf030ccf401e2335217d6b23fbf6c2ff2322d93a&#x27;}, &#x27;note&#x27;: &#x27;원본의 평가 항목을 CI 연결 연습에 맞게 축약한 교육용 기준선이며 원본 측정값 발췌가 아닙니다.&#x27;, &#x27;groundedness&#x27;: 0.9, &#x27;trajectory_extra_calls&#x27;: 1, &#x27;cases&#x27;: 4}
+</pre></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>평가 회귀 검사는 현재 결과를 저장된 기준선과 비교해 배포 가능 여부를 종료 코드로 바꿉니다. 이 예제는 근거성 점수와 추가 도구 호출 수를 함께 검사합니다. 임시 복사본에서 답과 도구 호출을 악화시키면 평가 스크립트가 0이 아닌 코드를 반환하고, 원래 구현에서는 0을 반환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">result = subprocess.run([sys.executable, &quot;scripts/evaluate_regression.py&quot;], cwd=lab, text=True, capture_output=True)
+print(result.stdout.strip())
+print(&quot;exit_code=&quot;, result.returncode)
+assert result.returncode == 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">groundedness=1.00 required=0.90
+trajectory_extra_calls=0 allowed=1
+groundedness: PASS
+trajectory: PASS
+exit_code= 0
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 정상 자료의 두 PASS와 종료 코드 0을 확인합니다. 임시 실패 자료에서는 두 FAIL과 0이 아닌 종료 코드가 함께 나오는지 비교합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>실패 자료는 첫 사례의 필수 사실을 답변에서 제거하고 두 번째 사례의 실제 궤적에 불필요한 검색 호출 두 번을 추가합니다. 평가 함수가 원자료를 다시 채점하면 Groundedness와 추가 호출 수가 모두 기준을 벗어납니다. 두 항목은 각각 FAIL로 출력되고 프로세스는 종료 코드 1을 반환합니다. 수정 단계에서는 같은 평가 함수를 원래 네 사례에 실행해 종료 코드 0을 확인합니다. 네 사례의 고정 자료는 연결 방법을 배우기 위한 것이며 실제 모델 전체의 품질을 대표하지 않습니다.</p><section class="notebook" data-notebook="02-평가-회귀를-CI에-연결하기" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>임시 저장소에 Groundedness와 추가 호출 수가 모두 나빠진 현재 결과를 둡니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import tempfile, shutil
+with tempfile.TemporaryDirectory() as temp:
+    t = Path(temp)
+    shutil.copytree(lab / &quot;scripts&quot;, t / &quot;scripts&quot;)
+    shutil.copytree(lab / &quot;data&quot;, t / &quot;data&quot;)
+    source = (lab / &quot;cicd_demo.py&quot;).read_text()
+    source = source.replace(&quot;7권까지 14일&quot;, &quot;8권까지 10일&quot;)
+    source = source.replace(&quot;return responses[qid], tools&quot;, &quot;return responses[qid], tools + [&#x27;retrieve&#x27;, &#x27;retrieve&#x27;]&quot;)
+    (t / &quot;cicd_demo.py&quot;).write_text(source)
+    failed = subprocess.run([sys.executable, &quot;scripts/evaluate_regression.py&quot;], cwd=t, text=True, capture_output=True)
+    print(failed.stdout.strip(), &quot;exit_code=&quot;, failed.returncode)
+    assert failed.returncode != 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">groundedness=0.75 required=0.90
+trajectory_extra_calls=8 allowed=1
+groundedness: FAIL
+trajectory: FAIL exit_code= 1
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>기준을 만족하는 결과로 바꾸면 두 검사가 모두 통과합니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>기준선은 영원한 정답이 아니라 승인된 비교점입니다. 질문 집합이나 평가 방식이 바뀌면 점수 변화가 모델 회귀인지 평가 변경인지 분리해야 합니다. 평균 점수만 보면 특정 중요 질문의 큰 하락이 가려질 수 있으므로 핵심 사례별 하한과 전체 집계를 함께 둡니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">with tempfile.TemporaryDirectory() as temp:
+    t = Path(temp)
+    shutil.copytree(lab / &quot;scripts&quot;, t / &quot;scripts&quot;)
+    shutil.copytree(lab / &quot;data&quot;, t / &quot;data&quot;)
+    shutil.copy(lab / &quot;cicd_demo.py&quot;, t / &quot;cicd_demo.py&quot;)
+    passed = subprocess.run([sys.executable, &quot;scripts/evaluate_regression.py&quot;], cwd=t, text=True, capture_output=True)
+    print(passed.stdout.strip(), &quot;exit_code=&quot;, passed.returncode)
+    assert passed.returncode == 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">groundedness=1.00 required=0.90
+trajectory_extra_calls=0 allowed=1
+groundedness: PASS
+trajectory: PASS exit_code= 0
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>확률적 평가에는 반복과 사람 라벨 점검이 필요합니다. 작은 점수 변동만으로 배포를 항상 중단하면 거짓 경보가 늘어날 수 있습니다.</li><li>평가 자료를 제품 코드와 함께 무심코 바꾸면 기준이 완화될 수 있습니다. 기준선 변경에는 리뷰와 변경 이유를 남깁니다.</li><li>비밀 정보나 실제 고객 대화는 공개 CI 로그와 아티팩트에 포함하지 않습니다.</li></ul>
+<p>네 사례가 통과했다는 결과는 네 사례에 포함되지 않은 질문의 품질을 설명하지 않습니다. 사례와 기준선을 바꾸는 PR에서는 제품 코드 변경과 분리해 검토하고, 기준을 낮춘 이유와 사람 검토 결과를 함께 남깁니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>평가 회귀는 과거 성공 사례가 변경 뒤에도 유지되는지 확인합니다.</li><li>최종 답변 품질과 에이전트 궤적 효율은 분리해 표시합니다.</li><li>회귀 실패는 실제 비정상 종료 코드로 CI를 중단합니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 다음 절은 평가를 통과한 코드를 Docker 이미지로 만들고, 정확한 이미지 ID를 배포 기록에 남깁니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>기준선은 무엇인가요?</summary><p class="quiz-a">현재 변경과 비교할 이전의 승인된 평가 결과입니다.</p></details><details class="quiz"><summary>Groundedness와 추가 호출 수를 왜 분리하나요?</summary><p class="quiz-a">하나는 답변의 근거 충실도이고 다른 하나는 실행 궤적의 효율이므로 실패 원인과 대응이 다릅니다.</p></details><details class="quiz"><summary>허용치가 필요한 이유는 무엇인가요?</summary><p class="quiz-a">모델 평가가 실행마다 조금 달라질 수 있어 의미 없는 변동과 실제 저하를 구분하기 위해서입니다.</p></details><details class="quiz"><summary>기준선 파일 변경 시 무엇을 확인해야 하나요?</summary><p class="quiz-a">평가 기준을 약화한 것인지, 승인된 개선 결과를 반영한 것인지 리뷰해야 합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.github.com/en/actions/get-started/continuous-integration">GitHub Docs, Continuous integration</a> · 확인 2026-09-11</li><li><a href="https://docs.github.com/en/actions/tutorials/build-and-test-code/python">GitHub Docs, Building and testing Python</a> · 확인 2026-09-11</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="01-테스트-린트-빌드와-GitHub-Actions.html">← 테스트·린트·빌드와 GitHub Actions</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="03-레지스트리-다이제스트와-클라우드-배포.html">레지스트리·다이제스트와 클라우드 배포 →</a></span></div></div></body></html>

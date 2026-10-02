@@ -1,0 +1,18 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant NB as 노트북 반복문
+  participant MI as mini_model
+  participant NA as nano_model
+  NB->>MI: 1회차 요청
+  MI-->>NB: 출력 36토큰 · 1.1초
+  NB->>NA: 1회차 요청
+  NA-->>NB: 출력 41토큰 · 0.71초
+  NB->>MI: 2회차 요청
+  MI-->>NB: 출력 43토큰 · 0.8초
+  NB->>NA: 2회차 요청
+  NA-->>NB: 출력 40토큰 · 0.98초
+  NB->>MI: 3회차 요청
+  MI-->>NB: 출력 57토큰 · 1.16초
+  NB->>NA: 3회차 요청
+  NA-->>NB: 출력 39토큰 · 0.67초
+  Note over NB,NA: 응답마다 make_cost_record로 한 줄<br>6절 출력 · 기록한 줄 수 6

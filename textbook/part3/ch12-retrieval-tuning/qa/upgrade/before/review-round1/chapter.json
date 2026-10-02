@@ -1,0 +1,82 @@
+{
+  "part": 3,
+  "part_title": "Part 3 · 검색 기반 생성",
+  "chapter": "ch12-retrieval-tuning",
+  "title": "검색 품질 — 직접 구현하고 튜닝",
+  "hours": "총 40h · 강의 12h · 실습 28h",
+  "objectives": [
+    "벡터 거리와 정확 검색을 기준선으로 삼아 근사 검색의 결과를 비교할 수 있습니다.",
+    "pgvector HNSW의 차원·탐색 설정과 메타데이터 필터의 영향을 실제 SQL로 확인할 수 있습니다.",
+    "Kiwi 형태소와 BM25를 사용해 한국어 sparse 검색을 구성하고 dense 결과와 RRF로 합칠 수 있습니다.",
+    "cross-encoder는 1차 후보만 재정렬하며 후보 밖 문서는 복구하지 못한다는 한계를 설명할 수 있습니다.",
+    "TF-IDF와 MMR을 조합한 36건의 개발 실험을 비교하고, 고정한 통합 검색·생성 설정을 평가 질문에 한 번 실행하여 재현 가능한 로그를 만들 수 있습니다."
+  ],
+  "lab_path": "labs/part3/ch12-retrieval-tuning",
+  "sections": [
+    {
+      "slug": "01-벡터-거리와-정확-검색",
+      "title": "벡터 거리와 정확 검색",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-pgvector와-HNSW",
+      "title": "pgvector와 HNSW",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-메타데이터-필터와-iterative-scan",
+      "title": "메타데이터 필터와 iterative scan",
+      "format": "paired"
+    },
+    {
+      "slug": "04-한국어-Kiwi와-BM25",
+      "title": "한국어 Kiwi와 BM25",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-dense와-sparse-비교",
+      "title": "dense와 sparse 비교",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-RRF-하이브리드-검색",
+      "title": "RRF 하이브리드 검색",
+      "format": "experiment"
+    },
+    {
+      "slug": "07-cross-encoder-리랭킹",
+      "title": "cross encoder 리랭킹",
+      "format": "experiment"
+    },
+    {
+      "slug": "08-후보-수와-리랭커-비교",
+      "title": "후보 수와 리랭커 비교",
+      "format": "experiment"
+    },
+    {
+      "slug": "09-Parent-document-검색",
+      "title": "Parent document 검색",
+      "format": "experiment"
+    },
+    {
+      "slug": "10-MMR-다양성-선택",
+      "title": "MMR 다양성 선택",
+      "format": "experiment"
+    },
+    {
+      "slug": "11-질문-재작성과-검색",
+      "title": "질문 재작성과 검색",
+      "format": "experiment"
+    },
+    {
+      "slug": "12-종합-튜닝과-실험-로그",
+      "title": "종합 튜닝과 실험 로그",
+      "format": "experiment"
+    },
+    {
+      "slug": "13-검색-품질-실습",
+      "title": "검색 품질 실습: 가중치 하나를 바꿔 답까지 보기",
+      "format": "experiment"
+    }
+  ]
+}

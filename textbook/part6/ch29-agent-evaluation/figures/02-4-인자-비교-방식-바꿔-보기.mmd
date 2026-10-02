@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  q["검색어가 다른 궤적<br>검색어 책 빌리는 기간<br>나머지는 기준과 같음"]:::tool
+  subgraph before["기본값 그대로"]
+    direction TB
+    ex["인자 비교 방식<br>exact"]
+    exr["모드 strict<br>False"]:::measure
+    ex --> exr
+  end
+  subgraph after["값 하나만 바꿈"]
+    direction TB
+    ig["인자 비교 방식<br>ignore"]:::flow
+    igr["모드 strict<br>True"]:::measure
+    ig --> igr
+  end
+  q --> before
+  q --> after

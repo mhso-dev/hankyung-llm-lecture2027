@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  mode["쓰기 방식<br>write_plan<br>실행 1 idempotent<br>실행 2 naive"]:::tool
+  p05["05절 실패 흉내<br>failure_plan<br>TimeoutError"]:::flow
+  p06["06절<br>append_key_once<br>도구 파일"]:::flow
+  rec["노드 record_loan<br>대출 키를 적은 뒤<br>알림에서 멈출 수 있음"]:::flow
+  sav["03절<br>SqliteSaver<br>SQLite 파일"]
+  req["대출 신청 한 건<br>스레드 M-0317<br>대출 키 loan-2307"]:::tool
+  gra["SQLite 체크포인터를<br>붙인 그래프<br>노드 receive_request<br>노드 record_loan"]
+  mode --> rec
+  p05 --> rec
+  p06 --> rec
+  rec --> gra
+  req -->|invoke| gra
+  sav --> gra
+  p06 ~~~ sav
+  p06 ~~~ req

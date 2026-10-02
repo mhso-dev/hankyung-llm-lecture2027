@@ -1,0 +1,874 @@
+{
+  "report_type": "retrieval-continuity",
+  "run_date": "2026-09-18",
+  "metrics_policy": "unique-doc-observed-candidates-v1",
+  "requested_split": "dev",
+  "comparison_policy": "질문 목록·문서 집합·평가 단위가 같은 실행만 수치를 직접 비교합니다.",
+  "source_files": [
+    "labs/part3/ch09-rag-first-run/runs/continuity-ch09-search.jsonl",
+    "labs/part3/ch10-document-processing/runs/continuity-ch10-indexing.jsonl"
+  ],
+  "runs": [
+    {
+      "run_id": "20260917T181822-ch09",
+      "source_chapter": "ch09",
+      "settings": {
+        "name": "k2",
+        "corpus": {
+          "tiers": [
+            "easy",
+            "medium",
+            "hard"
+          ]
+        },
+        "split": {
+          "chunk_size": 500,
+          "chunk_overlap": 50
+        },
+        "embedding": {
+          "model": "text-embedding-3-small"
+        },
+        "retrieval": {
+          "k": 2
+        },
+        "generation": {
+          "model": "openai:gpt-5.4-mini"
+        },
+        "inputs": {
+          "corpus_scope": "디지털 PDF 18건",
+          "corpus_manifest_sha256": "27541f4121edb594a598432d8a3ac3539436aadbcce3ca38faa14f74ed7749df",
+          "evaluation_dataset_sha256": "9544b332d5ac120e2af8beeffb148d6fd29387b4dd7f6ca16a927f971e7fe1bd"
+        }
+      },
+      "metrics_policy": "unique-doc-observed-candidates-v1",
+      "evaluation_unit": "unique document ID per question",
+      "query_ids": [
+        "Q001"
+      ],
+      "query_count": 1,
+      "split_counts": {
+        "dev": 1
+      },
+      "metrics": {
+        "recall_at_logged_candidates": 1.0,
+        "recall_at_5": null,
+        "recall_at_50": null,
+        "precision_at_5": null,
+        "ndcg_at_5": null,
+        "logged_candidate_k_min": 2,
+        "logged_candidate_k_max": 2
+      },
+      "slices": {
+        "easy": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": null,
+          "recall_at_50": null,
+          "precision_at_5": null,
+          "ndcg_at_5": null,
+          "logged_candidate_k_min": 2,
+          "logged_candidate_k_max": 2
+        }
+      },
+      "split_slices": {
+        "dev": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": null,
+          "recall_at_50": null,
+          "precision_at_5": null,
+          "ndcg_at_5": null,
+          "logged_candidate_k_min": 2,
+          "logged_candidate_k_max": 2
+        }
+      },
+      "results": [
+        {
+          "qid": "Q001",
+          "tier": "easy",
+          "split": "dev",
+          "type": "single",
+          "gold_doc_ids": [
+            "E01"
+          ],
+          "candidate_count": 1,
+          "candidate_doc_ids": [
+            "E01"
+          ],
+          "returned_count": 2,
+          "logged_candidate_k": 2,
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": null,
+          "recall_at_50": null,
+          "precision_at_5": null,
+          "ndcg_at_5": null,
+          "top_results": [
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch09:6f9f83db90:0",
+              "page": 1,
+              "rank": 1,
+              "score": 0.6492
+            },
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch09:6f9f83db90:1",
+              "page": 2,
+              "rank": 2,
+              "score": 0.5647
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "20260918T061902-ch10-01",
+      "source_chapter": "ch10",
+      "settings": {
+        "chunk_method": "char",
+        "split_config": {
+          "separator": "\n",
+          "chunk_size": 400,
+          "chunk_overlap": 0
+        },
+        "embedding": "text-embedding-3-small",
+        "dimensions": 1536,
+        "k": 5,
+        "inputs": {
+          "corpus_scope": "디지털 PDF 18건",
+          "corpus_manifest_sha256": "27541f4121edb594a598432d8a3ac3539436aadbcce3ca38faa14f74ed7749df",
+          "evaluation_dataset_sha256": "9544b332d5ac120e2af8beeffb148d6fd29387b4dd7f6ca16a927f971e7fe1bd"
+        }
+      },
+      "metrics_policy": "unique-doc-observed-candidates-v1",
+      "evaluation_unit": "unique document ID per question",
+      "query_ids": [
+        "Q001"
+      ],
+      "query_count": 1,
+      "split_counts": {
+        "dev": 1
+      },
+      "metrics": {
+        "recall_at_logged_candidates": 1.0,
+        "recall_at_5": 1.0,
+        "recall_at_50": null,
+        "precision_at_5": 0.2,
+        "ndcg_at_5": 1.0,
+        "logged_candidate_k_min": 5,
+        "logged_candidate_k_max": 5
+      },
+      "slices": {
+        "easy": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "split_slices": {
+        "dev": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "results": [
+        {
+          "qid": "Q001",
+          "tier": "easy",
+          "split": "dev",
+          "type": "single",
+          "gold_doc_ids": [
+            "E01"
+          ],
+          "candidate_count": 2,
+          "candidate_doc_ids": [
+            "E01",
+            "M04"
+          ],
+          "returned_count": 5,
+          "logged_candidate_k": 5,
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "top_results": [
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:char:0000",
+              "page": 1,
+              "rank": 1,
+              "score": 0.649152
+            },
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:char:0001",
+              "page": 2,
+              "rank": 2,
+              "score": 0.595007
+            },
+            {
+              "doc_id": "M04",
+              "chunk_id": "ch10:char:0181",
+              "page": 3,
+              "rank": 3,
+              "score": 0.467451
+            },
+            {
+              "doc_id": "M04",
+              "chunk_id": "ch10:char:0178",
+              "page": 2,
+              "rank": 4,
+              "score": 0.466148
+            },
+            {
+              "doc_id": "M04",
+              "chunk_id": "ch10:char:0182",
+              "page": 3,
+              "rank": 5,
+              "score": 0.463669
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "20260918T061902-ch10-02",
+      "source_chapter": "ch10",
+      "settings": {
+        "chunk_method": "char",
+        "split_config": {
+          "separator": "\n",
+          "chunk_size": 400,
+          "chunk_overlap": 100
+        },
+        "embedding": "text-embedding-3-small",
+        "dimensions": 1536,
+        "k": 5,
+        "inputs": {
+          "corpus_scope": "디지털 PDF 18건",
+          "corpus_manifest_sha256": "27541f4121edb594a598432d8a3ac3539436aadbcce3ca38faa14f74ed7749df",
+          "evaluation_dataset_sha256": "9544b332d5ac120e2af8beeffb148d6fd29387b4dd7f6ca16a927f971e7fe1bd"
+        }
+      },
+      "metrics_policy": "unique-doc-observed-candidates-v1",
+      "evaluation_unit": "unique document ID per question",
+      "query_ids": [
+        "Q001"
+      ],
+      "query_count": 1,
+      "split_counts": {
+        "dev": 1
+      },
+      "metrics": {
+        "recall_at_logged_candidates": 1.0,
+        "recall_at_5": 1.0,
+        "recall_at_50": null,
+        "precision_at_5": 0.2,
+        "ndcg_at_5": 1.0,
+        "logged_candidate_k_min": 5,
+        "logged_candidate_k_max": 5
+      },
+      "slices": {
+        "easy": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "split_slices": {
+        "dev": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "results": [
+        {
+          "qid": "Q001",
+          "tier": "easy",
+          "split": "dev",
+          "type": "single",
+          "gold_doc_ids": [
+            "E01"
+          ],
+          "candidate_count": 3,
+          "candidate_doc_ids": [
+            "E01",
+            "M04",
+            "H03"
+          ],
+          "returned_count": 5,
+          "logged_candidate_k": 5,
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "top_results": [
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:char:0000",
+              "page": 1,
+              "rank": 1,
+              "score": 0.649152
+            },
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:char:0001",
+              "page": 2,
+              "rank": 2,
+              "score": 0.595007
+            },
+            {
+              "doc_id": "M04",
+              "chunk_id": "ch10:char:0194",
+              "page": 3,
+              "rank": 3,
+              "score": 0.467451
+            },
+            {
+              "doc_id": "M04",
+              "chunk_id": "ch10:char:0191",
+              "page": 2,
+              "rank": 4,
+              "score": 0.466156
+            },
+            {
+              "doc_id": "H03",
+              "chunk_id": "ch10:char:0099",
+              "page": 2,
+              "rank": 5,
+              "score": 0.458239
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "20260918T061902-ch10-03",
+      "source_chapter": "ch10",
+      "settings": {
+        "chunk_method": "recursive",
+        "split_config": {
+          "separators": [
+            "\n\n",
+            ". ",
+            "\n",
+            " ",
+            ""
+          ],
+          "chunk_size": 400,
+          "chunk_overlap": 0
+        },
+        "embedding": "text-embedding-3-small",
+        "dimensions": 1536,
+        "k": 5,
+        "inputs": {
+          "corpus_scope": "디지털 PDF 18건",
+          "corpus_manifest_sha256": "27541f4121edb594a598432d8a3ac3539436aadbcce3ca38faa14f74ed7749df",
+          "evaluation_dataset_sha256": "9544b332d5ac120e2af8beeffb148d6fd29387b4dd7f6ca16a927f971e7fe1bd"
+        }
+      },
+      "metrics_policy": "unique-doc-observed-candidates-v1",
+      "evaluation_unit": "unique document ID per question",
+      "query_ids": [
+        "Q001"
+      ],
+      "query_count": 1,
+      "split_counts": {
+        "dev": 1
+      },
+      "metrics": {
+        "recall_at_logged_candidates": 1.0,
+        "recall_at_5": 1.0,
+        "recall_at_50": null,
+        "precision_at_5": 0.2,
+        "ndcg_at_5": 1.0,
+        "logged_candidate_k_min": 5,
+        "logged_candidate_k_max": 5
+      },
+      "slices": {
+        "easy": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "split_slices": {
+        "dev": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "results": [
+        {
+          "qid": "Q001",
+          "tier": "easy",
+          "split": "dev",
+          "type": "single",
+          "gold_doc_ids": [
+            "E01"
+          ],
+          "candidate_count": 3,
+          "candidate_doc_ids": [
+            "E01",
+            "H03",
+            "M04"
+          ],
+          "returned_count": 5,
+          "logged_candidate_k": 5,
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "top_results": [
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:recursive:0000",
+              "page": 1,
+              "rank": 1,
+              "score": 0.64923
+            },
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:recursive:0001",
+              "page": 2,
+              "rank": 2,
+              "score": 0.575823
+            },
+            {
+              "doc_id": "H03",
+              "chunk_id": "ch10:recursive:0100",
+              "page": 2,
+              "rank": 3,
+              "score": 0.454743
+            },
+            {
+              "doc_id": "M04",
+              "chunk_id": "ch10:recursive:0190",
+              "page": 2,
+              "rank": 4,
+              "score": 0.454198
+            },
+            {
+              "doc_id": "H03",
+              "chunk_id": "ch10:recursive:0099",
+              "page": 1,
+              "rank": 5,
+              "score": 0.44973
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "20260918T061902-ch10-04",
+      "source_chapter": "ch10",
+      "settings": {
+        "chunk_method": "recursive",
+        "split_config": {
+          "separators": [
+            "\n\n",
+            ". ",
+            "\n",
+            " ",
+            ""
+          ],
+          "chunk_size": 400,
+          "chunk_overlap": 100
+        },
+        "embedding": "text-embedding-3-small",
+        "dimensions": 1536,
+        "k": 5,
+        "inputs": {
+          "corpus_scope": "디지털 PDF 18건",
+          "corpus_manifest_sha256": "27541f4121edb594a598432d8a3ac3539436aadbcce3ca38faa14f74ed7749df",
+          "evaluation_dataset_sha256": "9544b332d5ac120e2af8beeffb148d6fd29387b4dd7f6ca16a927f971e7fe1bd"
+        }
+      },
+      "metrics_policy": "unique-doc-observed-candidates-v1",
+      "evaluation_unit": "unique document ID per question",
+      "query_ids": [
+        "Q001"
+      ],
+      "query_count": 1,
+      "split_counts": {
+        "dev": 1
+      },
+      "metrics": {
+        "recall_at_logged_candidates": 1.0,
+        "recall_at_5": 1.0,
+        "recall_at_50": null,
+        "precision_at_5": 0.2,
+        "ndcg_at_5": 1.0,
+        "logged_candidate_k_min": 5,
+        "logged_candidate_k_max": 5
+      },
+      "slices": {
+        "easy": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "split_slices": {
+        "dev": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "results": [
+        {
+          "qid": "Q001",
+          "tier": "easy",
+          "split": "dev",
+          "type": "single",
+          "gold_doc_ids": [
+            "E01"
+          ],
+          "candidate_count": 3,
+          "candidate_doc_ids": [
+            "E01",
+            "H03",
+            "M04"
+          ],
+          "returned_count": 5,
+          "logged_candidate_k": 5,
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "top_results": [
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:recursive:0000",
+              "page": 1,
+              "rank": 1,
+              "score": 0.649201
+            },
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:recursive:0001",
+              "page": 2,
+              "rank": 2,
+              "score": 0.575538
+            },
+            {
+              "doc_id": "H03",
+              "chunk_id": "ch10:recursive:0108",
+              "page": 2,
+              "rank": 3,
+              "score": 0.454743
+            },
+            {
+              "doc_id": "M04",
+              "chunk_id": "ch10:recursive:0204",
+              "page": 2,
+              "rank": 4,
+              "score": 0.454265
+            },
+            {
+              "doc_id": "H03",
+              "chunk_id": "ch10:recursive:0107",
+              "page": 1,
+              "rank": 5,
+              "score": 0.44973
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "20260918T061902-ch10-05",
+      "source_chapter": "ch10",
+      "settings": {
+        "chunk_method": "token",
+        "split_config": {
+          "encoding_name": "cl100k_base",
+          "separators": [
+            "\n\n",
+            ". ",
+            "\n",
+            " ",
+            ""
+          ],
+          "chunk_size": 400,
+          "chunk_overlap": 0
+        },
+        "embedding": "text-embedding-3-small",
+        "dimensions": 1536,
+        "k": 5,
+        "inputs": {
+          "corpus_scope": "디지털 PDF 18건",
+          "corpus_manifest_sha256": "27541f4121edb594a598432d8a3ac3539436aadbcce3ca38faa14f74ed7749df",
+          "evaluation_dataset_sha256": "9544b332d5ac120e2af8beeffb148d6fd29387b4dd7f6ca16a927f971e7fe1bd"
+        }
+      },
+      "metrics_policy": "unique-doc-observed-candidates-v1",
+      "evaluation_unit": "unique document ID per question",
+      "query_ids": [
+        "Q001"
+      ],
+      "query_count": 1,
+      "split_counts": {
+        "dev": 1
+      },
+      "metrics": {
+        "recall_at_logged_candidates": 1.0,
+        "recall_at_5": 1.0,
+        "recall_at_50": null,
+        "precision_at_5": 0.2,
+        "ndcg_at_5": 1.0,
+        "logged_candidate_k_min": 5,
+        "logged_candidate_k_max": 5
+      },
+      "slices": {
+        "easy": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "split_slices": {
+        "dev": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "results": [
+        {
+          "qid": "Q001",
+          "tier": "easy",
+          "split": "dev",
+          "type": "single",
+          "gold_doc_ids": [
+            "E01"
+          ],
+          "candidate_count": 3,
+          "candidate_doc_ids": [
+            "E01",
+            "M04",
+            "H03"
+          ],
+          "returned_count": 5,
+          "logged_candidate_k": 5,
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "top_results": [
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:token:0000",
+              "page": 1,
+              "rank": 1,
+              "score": 0.649144
+            },
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:token:0001",
+              "page": 2,
+              "rank": 2,
+              "score": 0.576133
+            },
+            {
+              "doc_id": "M04",
+              "chunk_id": "ch10:token:0182",
+              "page": 2,
+              "rank": 3,
+              "score": 0.456925
+            },
+            {
+              "doc_id": "H03",
+              "chunk_id": "ch10:token:0093",
+              "page": 2,
+              "rank": 4,
+              "score": 0.453363
+            },
+            {
+              "doc_id": "H03",
+              "chunk_id": "ch10:token:0092",
+              "page": 1,
+              "rank": 5,
+              "score": 0.44973
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "20260918T061902-ch10-06",
+      "source_chapter": "ch10",
+      "settings": {
+        "chunk_method": "token",
+        "split_config": {
+          "encoding_name": "cl100k_base",
+          "separators": [
+            "\n\n",
+            ". ",
+            "\n",
+            " ",
+            ""
+          ],
+          "chunk_size": 400,
+          "chunk_overlap": 100
+        },
+        "embedding": "text-embedding-3-small",
+        "dimensions": 1536,
+        "k": 5,
+        "inputs": {
+          "corpus_scope": "디지털 PDF 18건",
+          "corpus_manifest_sha256": "27541f4121edb594a598432d8a3ac3539436aadbcce3ca38faa14f74ed7749df",
+          "evaluation_dataset_sha256": "9544b332d5ac120e2af8beeffb148d6fd29387b4dd7f6ca16a927f971e7fe1bd"
+        }
+      },
+      "metrics_policy": "unique-doc-observed-candidates-v1",
+      "evaluation_unit": "unique document ID per question",
+      "query_ids": [
+        "Q001"
+      ],
+      "query_count": 1,
+      "split_counts": {
+        "dev": 1
+      },
+      "metrics": {
+        "recall_at_logged_candidates": 1.0,
+        "recall_at_5": 1.0,
+        "recall_at_50": null,
+        "precision_at_5": 0.2,
+        "ndcg_at_5": 1.0,
+        "logged_candidate_k_min": 5,
+        "logged_candidate_k_max": 5
+      },
+      "slices": {
+        "easy": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "split_slices": {
+        "dev": {
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "logged_candidate_k_min": 5,
+          "logged_candidate_k_max": 5
+        }
+      },
+      "results": [
+        {
+          "qid": "Q001",
+          "tier": "easy",
+          "split": "dev",
+          "type": "single",
+          "gold_doc_ids": [
+            "E01"
+          ],
+          "candidate_count": 3,
+          "candidate_doc_ids": [
+            "E01",
+            "M04",
+            "H03"
+          ],
+          "returned_count": 5,
+          "logged_candidate_k": 5,
+          "recall_at_logged_candidates": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_50": null,
+          "precision_at_5": 0.2,
+          "ndcg_at_5": 1.0,
+          "top_results": [
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:token:0000",
+              "page": 1,
+              "rank": 1,
+              "score": 0.649201
+            },
+            {
+              "doc_id": "E01",
+              "chunk_id": "ch10:token:0001",
+              "page": 2,
+              "rank": 2,
+              "score": 0.575538
+            },
+            {
+              "doc_id": "M04",
+              "chunk_id": "ch10:token:0196",
+              "page": 2,
+              "rank": 3,
+              "score": 0.456925
+            },
+            {
+              "doc_id": "H03",
+              "chunk_id": "ch10:token:0101",
+              "page": 2,
+              "rank": 4,
+              "score": 0.453363
+            },
+            {
+              "doc_id": "H03",
+              "chunk_id": "ch10:token:0100",
+              "page": 1,
+              "rank": 5,
+              "score": 0.44973
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

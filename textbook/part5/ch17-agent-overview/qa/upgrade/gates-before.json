@@ -1,0 +1,306 @@
+{
+  "chapter": "ch17-agent-overview",
+  "label": "before",
+  "totals": {
+    "G1": 26,
+    "G2": 3,
+    "G3": 0,
+    "G4": 0,
+    "G5": 35,
+    "G6": 69,
+    "G7": 15
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-워크플로우와-에이전트-경계",
+      "code_cells": 5,
+      "sentences": 83,
+      "counts": {
+        "G1": 2,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 7,
+        "G6": 12,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell3:generator_expression",
+          "cell11:generator_expression"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:고객 문의 시스템이 모델로 문의 유형을 분류하더라도, 코드가 준비된 세 경로 가운데 하나만 실행한다면 제한된 라우팅 워크플로우로 설명할 수 있습니다",
+          "long:고정된 네 사례를 분류한 결과 정해진 환불 절차와 문서 요약 뒤 형식 검사는 워크플로우, 여러 파일의 결함 수정과 낯선 장애 원인 조사는 에이전트 후보로 표시됐습니다",
+          "long:실제 시스템에서는 로그에서 모델 출력, 도구 호출 요청, 프로그램 분기, 사람 승인 사건을 함께 읽어야 결정권을 판정할 수 있습니다",
+          "long:모델이 분류값을 출력하고 코드가 그 값으로 정해진 세 갈래 중 하나를 고르는 라우팅은 모델이 일부 결정을 맡는 워크플로우가 될 수 있습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 경로를 미리 적을 수 있는 문제에 워크플로우가 주는 예측 가능성과 검증 이점을 살펴봅니다",
+          "long:고객 문의 시스템이 모델로 문의 유형을 분류하더라도, 코드가 준비된 세 경로 가운데 하나만 실행한다면 제한된 라우팅 워크플로우로 설명할 수 있습니다",
+          "english_start:`decision_owner`는 다음 행동을 고른 주체, `unknown",
+          "english_start:`architecture(case)`는 사례 사전을 입력받아 문자열 하나",
+          "english_start:`decision_owner`는 다음 행동을 고른 주체, `unknown",
+          "english_start:`architecture(case)`는 사례 사전을 입력받아 문자열 하나",
+          "english_start:`decision_owner`는 다음 행동을 정한 주체입니다",
+          "dense_paragraph:공항의 자동 수하물 벨트는 여러 장비를 사용하지만 이동 경로가 정해져 있습니다. 반면 현장 담당자가 막힌 통"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-워크플로우가-충분한-조건",
+      "code_cells": 5,
+      "sentences": 81,
+      "counts": {
+        "G1": 6,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 7,
+        "G6": 14,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell3:generator_expression",
+          "cell5:generator_expression",
+          "cell7:conditional_expression",
+          "cell7:generator_expression",
+          "cell9:conditional_expression",
+          "cell11:dict_comprehension"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:이번에도 같은 원칙을 적용해 현재 워크플로우의 실패를 먼저 기록하고, 추가 구조가 그 실패를 줄이는지 비교할 측정 항목을 정합니다",
+          "long:비용·지연 사전은 실제 측정값이 아니라 ‘모델 판단 단계를 추가하면 관찰 항목도 늘어난다’는 관계를 계산하기 위한 가상 사례입니다",
+          "long:다만 후자도 파일 삭제나 배포는 별도의 승인 단계로 제한할 수 있으므로, 자율성의 수준과 부작용 권한을 한 묶음으로 취급하지 않습니다",
+          "long:교육용 진단에서 사내 규정 질의응답은 6점으로 ‘워크플로우 우선’, 낯선 저장소 장애 수정은 1점으로 ‘제한된 에이전트 검토’가 나왔습니다",
+          "long:현재 증거로 확인할 수 있는 범위는 추가 판단에는 추가 실행이 필요하고, 그 대가를 정당화할 품질 지표가 별도로 필요하다는 것입니다",
+          "long:Ch 20에서 고정 분기와 모델 분기를 실제로 실행해 호출 수·비용·결과 편차를 측정하므로, 이 절의 합성값을 그 결과처럼 인용하지 않습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 에이전트 후보에 필요한 모델·도구·루프를 정리하고 완료·단계·예산·사람 확인 정지 조건을 구분합니다",
+          "long:비용·지연 사전은 실제 측정값이 아니라 ‘모델 판단 단계를 추가하면 관찰 항목도 늘어난다’는 관계를 계산하기 위한 가상 사례입니다",
+          "long:다만 후자도 파일 삭제나 배포는 별도의 승인 단계로 제한할 수 있으므로, 자율성의 수준과 부작용 권한을 한 묶음으로 취급하지 않습니다",
+          "english_start:`criteria`의 각 튜플은 진단 질문과 가중치입니다",
+          "english_start:`True`는 그 조건을 충족한다는 뜻이며, `workflow_score",
+          "english_start:`criteria`의 각 튜플은 진단 질문과 가중치입니다",
+          "english_start:`True`는 그 조건을 충족한다는 뜻이며, `workflow_score",
+          "dense_paragraph:매일 같은 시간에 같은 정류장을 도는 버스는 노선표가 있는 편이 운영과 안내에 유리합니다. 목적지는 같지만 "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-모델-도구-루프와-정지-조건",
+      "code_cells": 5,
+      "sentences": 80,
+      "counts": {
+        "G1": 3,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 7,
+        "G6": 16,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell3:generator_expression",
+          "cell7:generator_expression",
+          "cell7:generator_expression"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:Ch 13에서는 노드와 엣지로 상태가 이동하는 모습을 확인했고, Ch 16에서는 최대 호출 수와 비용 상한을 모델 호출 전에 검사했습니다",
+          "long:탐사팀에서 분석가는 다음 조사 장소를 고르고, 측정 장비는 현장의 값을 가져오며, 기록 담당자는 결과를 다음 판단 자료에 넣습니다",
+          "long:함수는 완료 사건, 사람 확인, 최대 단계, 누적 비용 순서로 검사하므로 여러 조건이 동시에 참이면 먼저 검사한 이유가 반환됩니다",
+          "long:웹 검색 에이전트는 ‘근거 세 개 확보’를 정상 완료로, 검색 다섯 회를 최대 단계로, 유료 데이터 호출 전을 사람 확인으로 둘 수 있습니다",
+          "long:최대 단계는 폭주를 막지만 답이 충분한지는 알려 주지 않고, 완료 판정은 품질 기준을 만족해도 외부 쓰기 권한까지 부여하지 않습니다",
+          "long:확인할 점 — 완료 사건을 제거한 경로가 실행 중 상태로 남는지, 최대 단계·예산·사람 확인이 서로 다른 정지 이유로 기록되는지 확인합니다",
+          "long:별도 사례에서는 여섯 사건에 도달한 경로가 ‘최대 단계’, 누적 비용이 상한에 도달한 경로가 ‘예산’, 확인 사건을 포함한 경로가 ‘사람 확인’으로 기록됐습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 반복 단계가 늘 때 비용·지연·경로 편차·디버깅·평가 범위가 어떻게 넓어지는지 합성 궤적으로 측정합니다",
+          "long:함수는 완료 사건, 사람 확인, 최대 단계, 누적 비용 순서로 검사하므로 여러 조건이 동시에 참이면 먼저 검사한 이유가 반환됩니다",
+          "long:웹 검색 에이전트는 ‘근거 세 개 확보’를 정상 완료로, 검색 다섯 회를 최대 단계로, 유료 데이터 호출 전을 사람 확인으로 둘 수 있습니다",
+          "long:최대 단계는 폭주를 막지만 답이 충분한지는 알려 주지 않고, 완료 판정은 품질 기준을 만족해도 외부 쓰기 권한까지 부여하지 않습니다",
+          "english_start:`stop_reason(events)`는 사건 목록을 입력받고 종료 이유",
+          "english_start:`None`은 성공이 아니라 아직 어떤 종료 조건도 충족하지 않았다는 뜻",
+          "english_start:`stop_reason(events)`는 사건 목록을 입력받고 종료 이유",
+          "english_start:`None`은 성공이 아니라 아직 어떤 종료 조건도 충족하지 않았다는 뜻",
+          "dense_paragraph:탐사팀에서 분석가는 다음 조사 장소를 고르고, 측정 장비는 현장의 값을 가져오며, 기록 담당자는 결과를 다음"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-자율성의-대가",
+      "code_cells": 5,
+      "sentences": 79,
+      "counts": {
+        "G1": 8,
+        "G2": 1,
+        "G3": 0,
+        "G4": 0,
+        "G5": 7,
+        "G6": 10,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell3:generator_expression",
+          "cell7:generator_expression",
+          "cell7:generator_expression",
+          "cell7:generator_expression",
+          "cell9:set_comprehension",
+          "cell9:lambda",
+          "cell9:generator_expression",
+          "cell11:list_comprehension"
+        ],
+        "G2": [
+          "cell9:one_letter_name:e"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:한 요청의 최종 답과 함께 단계 수, 도구 호출 수, 각 사건의 시간, 토큰 또는 비용 단위, 오류, 재시도, 종료 이유를 모읍니다",
+          "long:품질이 같은데 경로가 길어진 사례와 비용이 늘었지만 품질이 좋아진 사례를 분리해야 구조의 대가와 이득을 함께 판단할 수 있습니다",
+          "long:두 고객 지원 흐름이 모두 올바른 환불 안내를 반환했더라도, 한 흐름이 계정 조회를 세 번 반복했다면 최종 답만 보는 평가는 그 낭비를 놓칩니다",
+          "long:다음 학습과 이어지는 지점 — 마지막 절에서는 실제 제품의 공식 공개 추적 단서를 읽고, 자기 중간 프로젝트의 자율성 진단표 한 장을 작성합니다",
+          "long:두 고객 지원 흐름이 모두 올바른 환불 안내를 반환했더라도, 한 흐름이 계정 조회를 세 번 반복했다면 최종 답만 보는 평가는 그 낭비를 놓칩니다",
+          "english_start:`traces`는 두 실행의 사건 목록입니다",
+          "english_start:`max(..., key=...)`는 가장 오래 걸린 사건 하나를 고르고",
+          "english_start:`traces`는 두 실행의 사건 목록입니다",
+          "english_start:`max(..., key=...)`는 가장 오래 걸린 사건 하나를 고르고",
+          "dense_paragraph:택배가 도착했다는 사실만 보면 어느 길을 이용했고 몇 번 되돌아갔는지 알 수 없습니다. 배송 기록을 보면 긴"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-제품-트레이스와-자율성-진단",
+      "code_cells": 5,
+      "sentences": 93,
+      "counts": {
+        "G1": 7,
+        "G2": 2,
+        "G3": 0,
+        "G4": 0,
+        "G5": 7,
+        "G6": 17,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell3:generator_expression",
+          "cell5:list_comprehension",
+          "cell5:generator_expression",
+          "cell5:generator_expression",
+          "cell7:list_comprehension",
+          "cell7:list_comprehension",
+          "cell9:generator_expression"
+        ],
+        "G2": [
+          "cell7:one_letter_name:e",
+          "cell11:nested_call_2plus"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:실패 직후의 다음 행동을 찾아 모델이 환경 피드백에 반응한 자리를 표시하고, 도구 검사·턴 상한·완료 명령처럼 코드가 강제한 경계를 따로 표시합니다",
+          "long:`outcome == &quot;failure&quot;`인 사건 뒤의 다음 사건을 짝지어 보면 실패 후 행동 변화는 확인할 수 있지만, 그 변화가 모델 내부의 어떤 계산에서 생겼는지는 알 수 없습니다",
+          "long:자기 프로젝트를 진단할 때는 요청 ID 하나를 골라 모델 출력, 도구 요청, 도구 결과, 코드 분기, 승인, 종료를 시간순으로 연결합니다",
+          "long:외부 API를 호출하지 않고, 공식 저장소에 공개된 실제 실행 궤적 두 건의 추출본과 제품의 공식 문서에서 정리한 추적 단서를 읽습니다",
+          "long:확인할 점 — SWE-agent와 mini-SWE-agent 궤적에서 실패 뒤 행동이 바뀐 사건을 찾고, 공식 제품 설명과 특정 실행의 원시 로그를 구분했는지 확인합니다",
+          "long:마지막에는 시스템이 단독 완료 명령을 요구했는데 git 명령을 결합했으며 반환 코드를 기록하는 래퍼도 없어 규칙 준수와 완료 증거가 불충분합니다",
+          "long:Ch 20에서는 이 과정에서 처음으로 ToolNode 그래프 루프가 모델의 도구 선택을 받아 실행되며, 고정 분기와 비용·지연·결과 편차를 실제로 비교합니다",
+          "long:SWE-agent · trajectory documentation and demonstration · 커밋 3ea751c · MIT · 확인 2026-09-10",
+          "long:mini-SWE-agent · public trajectory fixture · 커밋 04d809c · MIT · 확인 2026-09-10",
+          "long:`outcome == \"failure\"`인 사건 뒤의 다음 사건을 짝지어 보면 실패 후 행동 변화는 확인할 수 있지만, 그 변화가 모델 내부의 어떤 계산에서 생겼는지는 알 수 없습니다",
+          "long:자기 프로젝트를 진단할 때는 요청 ID 하나를 골라 모델 출력, 도구 요청, 도구 결과, 코드 분기, 승인, 종료를 시간순으로 연결합니다",
+          "english_start:`public-trace-extracts.json`의 각 사건은 공개 원",
+          "english_start:SWE-agent와 mini-SWE-agent의 실제 공개 궤적에서 실패",
+          "english_start:`public-trace-extracts.json`은 공개된 SWE-ag",
+          "english_start:`public-trace-extracts.json`의 각 사건은 공개 원",
+          "dense_paragraph:경기 중계의 하이라이트와 전체 심판 기록은 증거의 깊이가 다릅니다. 하이라이트로 확인한 장면은 말할 수 있지",
+          "dense_paragraph:SWE-agent v0.7.0 공개 demonstration은 14개의 action-observation 사"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

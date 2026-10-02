@@ -1,0 +1,353 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "s08-c00",
+   "metadata": {
+    "html": "skip"
+   },
+   "source": "# OpenAPI와 TS SDK\n\n**이 노트북에서 할 일**\n\n1. 앱 객체가 만든 응답 문서에서 요청 주소와 입력 형식·응답 형식을 찾습니다.\n2. 응답 문서로 만든 TS 코드(생성 SDK)에서 요청 주소마다 만든 함수를 읽습니다.\n3. 인증을 적는 자리 하나만 바꾸면 응답 문서가 어떻게 바뀌는지 실험합니다.\n\n**준비물** — 이 노트북은 모델을 부르지 않습니다.\n모델 요청은 0번이고, API 키 없이 실행합니다.\n예상 비용도 0달러입니다.\n실습 앱의 에이전트 그래프도 이 절에서는 부르지 않습니다.\n그래서 다시 실행해도 같은 값이 나와야 합니다.\n\n요청은 시험용 클라이언트로 같은 노트북 안에서 보냅니다.\n서버 프로그램을 띄우지 않고, 네트워크와 포트를 쓰지 않습니다.\n실습 폴더의 파일을 가져오고 읽기만 하며, 쓰는 파일은 없습니다.\nTS 코드를 만드는 생성기와 TS 검사 도구는 노트북에서 실행하지 않습니다.\n\n걸린 시간은 재지 않았습니다.\n앞 절에서 배운 함수는 이 절에서 쓰지 않아, 도구 파일도 가져오지 않습니다.\n\n**기준 버전** — 첫 셀에서 패키지 여섯을 설치합니다.\n판은 fastapi 0.135.0, httpx 0.28.1, pydantic 2.12.5, starlette 1.6.0입니다.\n패키지 langgraph 1.2.11과 langchain 1.4.0은 실습 앱 파일이 가져오는 패키지입니다.\n여섯 모두 실습 폴더 잠금과 같은 판입니다.\n\n교재 출력은 Linux의 Python 3.12.13으로 만들었습니다.\n다른 판과 Windows·macOS에서는 실행하지 않았습니다.\n\n**강의와 실습 범위** — 강의 시간에는 2~4절을 읽고, 5절 실험의 가설을 함께 세웁니다.\n5절의 두 실행은 실습 시간에 실행합니다.\n\n실습 폴더 `labs/part7/ch30-fastapi-serving`에서 `uv sync --locked`를 실행합니다.\n그다음 `notebooks/` 폴더의 이 노트북을 열고, 실습 폴더의 `.venv` 커널을 고릅니다.\n첫 셀부터 순서대로 실행합니다."
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c01",
+   "metadata": {
+    "html": "skip"
+   },
+   "source": "## 오늘 볼 그림\n\n![위에서 아래로 읽는 흐름도입니다. 초록 상자 실습 앱 객체 app 처리 함수 다섯에서, 회색 상자 FastAPI가 처리 함수와 양식 클래스를 훑어 적음을 지나 노란 상자 응답 문서 딕셔너리 OpenAPI 3.1.0 요청 주소 다섯으로 갑니다. 이어서 노란 상자 실습 폴더 openapi.json 새로 만든 글과 같음 True, 회색 상자 생성기 7.25.0 typescript-fetch 노트북 밖 README 명령을 지나 초록 상자 생성 SDK client/generated 요청 주소마다 함수 하나에 닿는 그림](attachment:08-1-앱-객체에서-생성-SDK까지.png)\n\n위에서 아래로 읽습니다.\n초록 상자는 실습 폴더의 앱과 파일이고, 노란 상자 둘은 노트북 2절과 3절의 출력입니다.\n회색 상자 둘은 라이브러리와 생성기가 하는 일이고, 생성기는 이 노트북에서 실행하지 않았습니다."
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c02",
+   "metadata": {},
+   "source": "## 1. 준비\n\n07절에서는 보안 도구 클래스 `HTTPBearer`를 쓴 새 앱의 응답 문서에만 보안 방식 칸이 있는 것을 봤습니다.\n이 절은 앱 객체가 만드는 응답 문서를 처음부터 읽습니다.\n제목의 OpenAPI는 요청 주소와 입력 형식·응답 형식을 JSON으로 적는 규격의 이름입니다.\n제목의 TS는 TypeScript의 줄임말로, JavaScript에 자료의 형식을 적을 수 있게 한 언어입니다.\n제목의 SDK는 Software Development Kit의 줄임말로, 서비스를 부르는 코드를 묶어 둔 것입니다.\n\n이 절에서는 OpenAPI 규격으로 적은 문서를 응답 문서, 그 문서로 만든 TS 코드 묶음을 생성 SDK라고 부릅니다.\n두 말은 2절과 4절에서 자세히 풉니다.\n첫 셀은 패키지 여섯을 설치하고 설치된 판 번호를 출력합니다.\n설치에는 몇십 초가 걸릴 수 있습니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c03",
+   "metadata": {
+    "lesson_role": "setup"
+   },
+   "outputs": [],
+   "source": "# 이 절에서 쓰는 패키지를 설치하고 버전을 확인합니다\n%pip install -q \"fastapi==0.135.0\" \"httpx==0.28.1\" \"pydantic==2.12.5\" \"starlette==1.6.0\" \"langgraph==1.2.11\" \"langchain==1.4.0\"\nfrom importlib.metadata import version\n\nprint(\"fastapi:\", version(\"fastapi\"))\nprint(\"httpx:\", version(\"httpx\"))\nprint(\"pydantic:\", version(\"pydantic\"))\nprint(\"starlette:\", version(\"starlette\"))\nprint(\"langgraph:\", version(\"langgraph\"))\nprint(\"langchain:\", version(\"langchain\"))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c04",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `fastapi: 0.135.0`과 `starlette: 1.6.0`이 보입니다.\n여섯 모두 실습 폴더 잠금과 같은 판이고, 07절과 같은 목록입니다.\n응답 문서를 만드는 코드는 패키지 fastapi에 들어 있습니다.\n이 절은 모델 객체를 만들지 않아, API 키를 확인하는 셀도 없습니다.\n\n다음 셀은 이 절에서 쓸 이름을 가져옵니다.\n모듈 json은 딕셔너리를 JSON 글로 바꾸고, 파일의 JSON 글을 읽을 때 씁니다.\n클래스 `HTTPBearer`는 07절에서 본 보안 도구 클래스로, 5절 실험에서 씁니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c05",
+   "metadata": {
+    "lesson_role": "setup"
+   },
+   "outputs": [],
+   "source": "# 이 절에서 쓸 이름을 가져옵니다(os와 json은 Python에 들어 있는 모듈입니다)\nimport os\nimport json\nfrom fastapi import Depends, FastAPI\nfrom fastapi.security import HTTPBearer\nfrom fastapi.testclient import TestClient\n\nprint(\"가져온 이름:\", \"json, Depends, FastAPI, HTTPBearer, TestClient\")"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c06",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `가져온 이름: json, Depends, FastAPI, HTTPBearer, TestClient`가 보입니다.\n이 절은 앞 절에서 배운 함수를 쓰지 않아, 도구 파일 `serve_tools.py`를 가져오지 않습니다.\n\n다음 셀은 01절 2절과 같은 파일 위치 셀로, 후보 셋 가운데 실습 폴더를 고릅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c07",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 노트북을 연 자리에서 본 실습 폴더의 위치를 후보 셋 가운데에서 고릅니다\ncandidates = [\"..\", \".\", \"labs/part7/ch30-fastapi-serving\"]\nlab_path = None\nfor candidate in candidates:\n    if os.path.exists(candidate + \"/agent_service/schemas.py\"):\n        lab_path = candidate\n        break\nprint(\"실습 폴더를 찾았는가:\", lab_path is not None)\nassert lab_path is not None, \"notebooks 폴더나 실습 폴더 맨 위에서 노트북을 열어 주세요.\""
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c08",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `실습 폴더를 찾았는가: True`가 보입니다.\n고른 후보는 연 자리마다 달라서 출력하지 않습니다.\n\n다음 셀은 작업 폴더를 실습 폴더로 옮긴 뒤 이름을 가져옵니다.\n앱 파일에서 앱 객체 `app`과 처리 함수 `health`, 제공 함수 `require_token`을 가져옵니다.\n양식 클래스 `ChatRequest`는 01절에서 본 입력 형식의 클래스입니다.\n앱 객체의 속성 `openapi_schema`도 함께 출력합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c09",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 작업 폴더를 실습 폴더로 옮기고, 앱 객체·처리 함수·제공 함수·양식 클래스를 가져옵니다\nos.chdir(lab_path)\nfrom agent_service.app import app, health, require_token\nfrom agent_service.schemas import ChatRequest\nprint(\"가져온 앱 객체의 종류:\", type(app).__name__)\nprint(\"가져온 함수:\", health.__name__, require_token.__name__)\nprint(\"응답 문서를 담아 둘 속성 openapi_schema:\", app.openapi_schema)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c10",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `가져온 앱 객체의 종류: FastAPI`와 `가져온 함수: health require_token`이 보입니다.\n속성 `openapi_schema`는 아직 `None`입니다.\n앱 객체는 응답 문서를 처음 부탁받을 때 만들어, 이 속성에 담아 둡니다.\n그런지는 2절에서 확인합니다.\n\n## 2. 앱 객체가 만드는 응답 문서\n\n응답 문서(OpenAPI 문서)는 앱 객체가 요청 주소마다 받는 요청과 내놓는 응답의 모양을 적은 JSON 문서입니다.\n만들 열차를 작게 줄인 모형이, 칸의 차례와 칸마다 실을 짐의 모양을 보여 주는 것과 같습니다.\n이 앱에서는 앱 객체의 메서드 `openapi`가 이 문서를 딕셔너리로 내놓습니다.\n문서의 모양은 OpenAPI 규격이 정하고, 맨 위 칸 `openapi`에 그 규격의 판이 적힙니다.\n\n다음 셀은 메서드 `openapi`를 불러 응답 문서를 만들고, 맨 위 칸을 봅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c11",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 앱 객체의 메서드 openapi를 불러 응답 문서를 만들고, 맨 위 칸을 봅니다\nopenapi_doc = app.openapi()\nprint(\"받은 값의 종류:\", type(openapi_doc).__name__)\nprint(\"맨 위 칸:\", list(openapi_doc))\nprint(\"OpenAPI 판:\", openapi_doc[\"openapi\"])\nprint(\"칸 info:\", openapi_doc[\"info\"])"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c12",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `OpenAPI 판: 3.1.0`이 보입니다.\n맨 위 칸은 넷이고, 칸 `info`에는 앱 파일 17행에 적은 제목과 판 `1.0.0`이 들어 있습니다.\n판 `1.0.0`은 이 앱에 붙인 판이고, 패키지 fastapi의 판과는 다른 값입니다.\n칸 `paths`는 요청 주소마다 받는 요청과 응답을 적고, 칸 `components`는 여러 곳에서 쓰는 형식을 모아 둡니다.\n\n다음 셀은 칸 `paths`에 적힌 요청 주소와 요청 방식을 한 줄씩 출력합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c13",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 칸 paths에 적힌 요청 주소와, 요청 주소마다 받는 요청 방식을 한 줄씩 출력합니다\nprint(\"요청 주소 수:\", len(openapi_doc[\"paths\"]))\nprint(\"요청 주소 | 요청 방식\")\nfor address in openapi_doc[\"paths\"]:\n    print(address, \"|\", list(openapi_doc[\"paths\"][address]))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c14",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `요청 주소 수: 5`와, 라벨 줄 아래 다섯 줄이 보입니다.\n앱 파일에서 요청 주소 데코레이터 줄로 이은 처리 함수 다섯이 모두 적혔습니다.\n요청 주소 `/openapi.json`은 이 목록에 없습니다.\n설치판 fastapi `applications.py` 1117행이 문서를 내주는 요청 주소를 문서에서 빼기 때문입니다.\n\n다음 셀은 01절부터 써 온 요청 주소 `/v1/chat`의 칸을 꺼냅니다.\n요청 본문과 응답의 형식이 어떻게 적혔는지 봅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c15",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 요청 주소 /v1/chat의 POST 칸에서, 이름표와 요청 본문·응답의 형식이 적힌 자리를 꺼냅니다\nchat_operation = openapi_doc[\"paths\"][\"/v1/chat\"][\"post\"]\nprint(\"POST /v1/chat의 칸:\", list(chat_operation))\nprint(\"operationId:\", chat_operation[\"operationId\"])\nprint(\"요청 본문 형식:\", chat_operation[\"requestBody\"][\"content\"][\"application/json\"][\"schema\"])\nprint(\"응답 코드:\", list(chat_operation[\"responses\"]))\nprint(\"200 응답 형식:\", chat_operation[\"responses\"][\"200\"][\"content\"][\"application/json\"][\"schema\"])\nprint(\"매개변수 이름과 자리:\", chat_operation[\"parameters\"][0][\"name\"], chat_operation[\"parameters\"][0][\"in\"])"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c16",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `응답 코드: ['200', '422']`와 `operationId: chat_v1_chat_post`가 보입니다.\n요청 본문 형식과 200 응답 형식에는 형식 대신 키 `$ref` 하나가 있습니다.\n키 `$ref`는 같은 문서의 다른 자리를 가리키는 표시입니다.\n값 `#/components/schemas/ChatRequest`는 맨 위 칸 `components`에서 `schemas`, `ChatRequest` 차례로 들어간 자리입니다.\n응답 코드 422는 01절에서 본 입력 형식 검사의 응답입니다.\n\n칸 `operationId`는 요청 주소마다 붙는 이름입니다.\n설치판 fastapi `utils.py` 95~100행이 처리 함수 이름과 요청 주소, 요청 방식을 이어 만듭니다.\n매개변수 `authorization`은 07절에서 본 것처럼, 요청 머리에서 읽는 값입니다.\n\n다음 셀은 칸 `components`에 모은 형식 이름과, 입력 형식 `ChatRequest`의 칸 조건을 봅니다.\n마지막 줄은 Ch 19 02절에서 쓴 메서드 `model_json_schema`로 만든 딕셔너리와 견줍니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c17",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 칸 components에 모은 형식 이름과, 입력 형식 ChatRequest에 적힌 칸 조건을 봅니다\nformat_table = openapi_doc[\"components\"][\"schemas\"]\nprint(\"형식 이름:\", list(format_table))\nprint(\"ChatRequest의 꼭 채울 칸:\", format_table[\"ChatRequest\"][\"required\"])\nprint(\"칸 question:\", format_table[\"ChatRequest\"][\"properties\"][\"question\"])\nprint(\"칸 thread_id의 pattern:\", format_table[\"ChatRequest\"][\"properties\"][\"thread_id\"][\"pattern\"])\nprint(\"model_json_schema()로 만든 딕셔너리와 같은가:\", ChatRequest.model_json_schema() == format_table[\"ChatRequest\"])"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c18",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `칸 question:`에 `'maxLength': 500`과 `'minLength': 1`이 보입니다.\n실습 파일 `schemas.py`의 양식 클래스에 `Field`로 적은 글자 수 조건이 그대로 적혔습니다.\n꼭 채울 칸은 `question`과 `thread_id` 둘이고, 칸 `thread_id`에는 글 모양 조건 `pattern`이 있습니다.\n마지막 줄은 `True`로, Ch 19 02절 방법으로 만든 딕셔너리와 같았습니다.\n\n형식 이름 다섯 가운데 `HTTPValidationError`와 `ValidationError`는 422 응답을 적으려고 라이브러리가 더한 형식입니다.\n앱 파일에는 이 두 이름의 클래스가 없습니다.\n\n다음 셀은 JSON 글로 답하는 `/v1/chat`과, SSE 사건으로 답하는 `/v1/chat/stream`의 200 응답을 견줍니다.\n본문 종류와, 그 아래에 적힌 키를 봅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c19",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 요청 주소 /v1/chat과 /v1/chat/stream의 200 응답에서, 본문 종류와 그 아래 키를 견줍니다\nchat_content = chat_operation[\"responses\"][\"200\"][\"content\"]\nstream_operation = openapi_doc[\"paths\"][\"/v1/chat/stream\"][\"post\"]\nstream_content = stream_operation[\"responses\"][\"200\"][\"content\"]\nprint(\"/v1/chat:\", list(chat_content), list(chat_content[\"application/json\"]))\nprint(\"/v1/chat/stream:\", list(stream_content), list(stream_content[\"text/event-stream\"]))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c20",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `/v1/chat/stream: ['text/event-stream'] ['itemSchema']`가 보입니다.\n요청 주소 `/v1/chat`은 본문 종류 `application/json` 아래에 키 `schema`로 응답 형식을 적었습니다.\nSSE 사건으로 답하는 요청 주소는 키 `itemSchema`로, SSE 사건 하나의 형식을 적었습니다.\n05절의 작은 앱에서 본 것처럼, 이 키 아래에 칸 `data`·`event`·`id`·`retry`가 적힙니다.\n이 차이가 4절의 생성 SDK에서 다시 나옵니다.\n\n다음 셀은 메서드 `openapi`를 한 번 더 불러, 처음 받은 딕셔너리와 같은 객체인지 봅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c21",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 메서드 openapi를 한 번 더 불러, 처음 받은 딕셔너리와 같은 객체인지 봅니다\nsecond_doc = app.openapi()\nprint(\"두 번째로 받은 값이 같은 객체인가:\", second_doc is openapi_doc)\nprint(\"속성 openapi_schema가 같은 객체인가:\", app.openapi_schema is openapi_doc)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c22",
+   "metadata": {},
+   "source": "**결과 읽기** — 두 줄 모두 `True`입니다.\n연산자 `is`는 두 이름이 같은 객체를 가리키는지 봅니다.\n앱 객체는 처음 만든 문서를 속성 `openapi_schema`에 담아 두고, 다음부터는 그 객체를 그대로 내놓습니다.\n설치판 fastapi `applications.py` 1083~1084행이 문서가 없을 때만 새로 만듭니다.\n\n그래서 문서를 만든 뒤에 이은 요청 주소는 문서에 나오지 않습니다.\n이 노트북에서는 실행하지 않았고, 노트북 밖에서 한 번 확인했습니다.\n\n다음 셀은 요청 주소 `/openapi.json`으로 같은 문서를 받아 봅니다.\n시험용 클라이언트로 GET을 보냅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c23",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 시험용 클라이언트로 요청 주소 /openapi.json에 GET을 보내, 받은 문서가 같은지 봅니다\nclient = TestClient(app)\ndoc_response = client.get(\"/openapi.json\")\nprint(\"상태 코드:\", doc_response.status_code)\nprint(\"본문 종류:\", doc_response.headers[\"content-type\"])\nprint(\"메서드 openapi가 내놓은 딕셔너리와 같은가:\", doc_response.json() == openapi_doc)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c24",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `상태 코드: 200`과 `본문 종류: application/json`이 보입니다.\n받은 문서를 읽은 딕셔너리는 메서드 `openapi`가 내놓은 딕셔너리와 같았습니다.\n실습 폴더 README는 서버를 띄운 뒤 주소 `/docs`와 `/openapi.json`에서 이 문서를 보라고 적습니다.\n이 절에서는 서버를 띄우지 않아, 그 화면은 열지 않았습니다.\n\n## 3. 응답 문서와 openapi.json\n\n실습 폴더 맨 위에는 파일 `openapi.json`이 있습니다.\n응답 문서를 JSON 글로 적은 파일이고, 4절의 생성 SDK는 이 문서를 생성기에 넣어 만든 코드입니다.\n다음 셀은 응답 문서를 이 파일과 같은 설정의 JSON 글로 바꿔, 파일 글과 견줍니다.\n인자 `ensure_ascii=False`는 한글을 그대로 적게 하고, 인자 `indent`는 칸마다 줄을 바꿔 들여 쓰게 합니다.\n파일은 읽기만 하고 다시 쓰지 않습니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c25",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 응답 문서를 openapi.json과 같은 설정의 JSON 글로 바꾸고, 파일 글과 견줍니다(파일은 읽기만 합니다)\nopenapi_text = json.dumps(openapi_doc, ensure_ascii=False, indent=2)\nwith open(\"openapi.json\", encoding=\"utf-8\") as doc_file:\n    file_text = doc_file.read()\nprint(\"새로 만든 글의 글자 수:\", len(openapi_text))\nprint(\"파일 글의 글자 수:\", len(file_text))\nprint(\"두 글이 같은가:\", openapi_text == file_text)\nprint(\"ensure_ascii를 뺀 글과 같은가:\", json.dumps(openapi_doc, indent=2) == file_text)\nprint(\"파일 첫 세 줄:\", file_text.splitlines()[:3])"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c26",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `두 글이 같은가: True`가 보입니다.\n두 글의 글자 수도 `9987`로 같습니다.\n인자 `ensure_ascii`를 뺀 글은 한글이 유니코드 번호로 적혀, 파일 글과 같지 않았습니다.\n파일 첫 줄은 중괄호이고, 둘째 줄에 규격의 판이 적혀 있습니다.\n\n지금 앱으로 만든 글과 파일 글이 같으므로, 이 노트북은 파일을 다시 쓰지 않습니다.\n파일로 쓸 때는 이 글을 `with open(…, \"w\", encoding=\"utf-8\")`로 연 파일에 적습니다.\n앱 파일의 요청 주소나 양식 클래스를 바꾸면 이 글이 달라집니다.\n그때는 파일과 생성 SDK를 함께 다시 만듭니다.\n\n## 4. 생성 SDK 읽기\n\n생성 SDK는 응답 문서를 생성기에 넣어 만든, 앱을 부르는 코드 묶음입니다.\n차량 공장이 축소 모형만 보고 실제 화물 칸을 만드는 것과 같습니다.\n이 실습 폴더에서는 `client/generated/` 폴더의 파일 열여덟(TS 파일 열하나와 설명 문서 일곱)이 생성 SDK입니다.\n생성기는 OpenAPI Generator의 `typescript-fetch`로, 06절에서 본 함수 `fetch`로 요청을 보내는 코드를 만듭니다.\n생성기는 Java 프로그램이라서, README 명령으로 노트북 밖에서 실행합니다.\n\n다음 셀은 이 절에서 쓸 함수를 정의합니다.\n글 줄 목록에서 낱말이 든 줄을 찾아, 줄 번호와 함께 출력합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c27",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 글 줄 목록에서 word가 든 줄을 찾아, 줄 번호와 앞뒤 공백을 뺀 줄을 한 줄씩 출력합니다\ndef print_lines_with(text_lines, word):\n    print(\"줄 번호 | 줄\")\n    for index in range(len(text_lines)):\n        if word in text_lines[index]:\n            print(index + 1, \"|\", text_lines[index].strip())"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c28",
+   "metadata": {},
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n메서드 `strip`은 줄 앞뒤의 공백을 뺀 글을 내놓습니다.\n줄 번호는 0부터 세는 자리에 1을 더해, 파일을 열었을 때의 줄 번호와 맞춥니다.\n\n다음 셀은 파일 `openapitools.json`에서 생성기 판을 읽습니다.\n그다음 생성 SDK 파일 `DefaultApi.ts`의 머리 주석에서 줄 셋을 찾습니다.\n함수 `json.load`는 연 파일의 JSON 글을 읽어 파이썬 값으로 바꿉니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c29",
+   "metadata": {},
+   "outputs": [],
+   "source": "# openapitools.json에서 생성기 판을 읽고, 생성 SDK 파일 DefaultApi.ts의 머리 주석에서 줄 셋을 찾습니다\nwith open(\"openapitools.json\", encoding=\"utf-8\") as tools_file:\n    generator_config = json.load(tools_file)\nprint(\"생성기 판:\", generator_config[\"generator-cli\"][\"version\"])\nwith open(\"client/generated/apis/DefaultApi.ts\", encoding=\"utf-8\") as ts_file:\n    ts_lines = ts_file.read().splitlines()\nprint_lines_with(ts_lines, \"The version of the OpenAPI document\")\nprint_lines_with(ts_lines, \"auto generated\")\nprint_lines_with(ts_lines, \"Do not edit\")"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c30",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `생성기 판: 7.25.0`이 보입니다.\n7행에는 응답 문서의 칸 `info`에 있던 판 `1.0.0`이 적혔습니다.\n10행과 12행은 이 파일을 생성기가 만들었으니, 손으로 고치지 말라는 주석입니다.\n고칠 일이 있으면 앱 파일을 고치고, 응답 문서와 생성 SDK를 다시 만듭니다.\n\n다음 셀은 같은 파일에서 요청 주소마다 만든 함수를 찾습니다.\n네 칸 들여 쓴 `async`로 시작하고, 이름에 `Raw(`와 `RequestOpts(`가 없는 줄이 앱을 부를 때 쓰는 함수입니다.\n메서드 `rstrip`은 줄 끝의 공백과 `{`를 빼고, 메서드 `split`은 주어진 글에서 나눕니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c31",
+   "metadata": {},
+   "outputs": [],
+   "source": "# DefaultApi.ts에서 요청 주소마다 만든 함수의 이름과, 내놓는 값의 형식을 찾습니다\nprint(\"줄 번호 | 함수 이름 | 내놓는 값\")\nfor index in range(len(ts_lines)):\n    line = ts_lines[index]\n    if line.startswith(\"    async \") and \"Raw(\" not in line and \"RequestOpts(\" not in line:\n        signature = line.strip().rstrip(\" {\")\n        name = signature.split(\"(\")[0]\n        returned = signature.split(\"): \")[-1]\n        print(index + 1, \"|\", name, \"|\", returned)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c32",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 아래 다섯 줄이, 요청 주소 다섯에 하나씩 만든 함수입니다.\nJSON 글로 답하는 요청 주소 셋의 함수는 `Promise<ChatResponse>`나 `Promise<HealthResponse>`를 내놓습니다.\nSSE 사건으로 답하는 요청 주소 둘의 함수는 140행과 278행에서 `Promise<void>`를 내놓습니다.\n형식 `Promise`는 TS에서 await로 기다려 값을 받는 객체이고, `void`는 줄 값이 없다는 표시입니다.\n\n함수 이름은 2절의 칸 `operationId`를 TS 이름 모양으로 바꾼 것입니다.\n예를 들어 `chat_v1_chat_post`가 190행의 `chatV1ChatPost`가 되었습니다.\n이름 앞의 `async`는 TS에서도 비동기 함수라는 표시입니다.\n\n다음 셀은 이 함수들이 받은 응답을 어떻게 감싸는지 찾습니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c33",
+   "metadata": {},
+   "outputs": [],
+   "source": "# DefaultApi.ts에서 받은 응답을 감싸는 줄을 찾습니다 — 본문을 읽지 않는 쪽과 JSON으로 읽는 쪽\nprint_lines_with(ts_lines, \"VoidApiResponse(response\")\nprint_lines_with(ts_lines, \"JSONApiResponse(response\")"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c34",
+   "metadata": {},
+   "source": "**결과 읽기** — 첫 라벨 줄 아래 134행과 272행이 받은 응답을 `VoidApiResponse`로 감쌉니다.\n둘째 라벨 줄 아래 세 줄은 `JSONApiResponse`로 감싸고, 본문 JSON을 `ChatResponse` 같은 형식으로 바꿉니다.\nSSE 사건으로 답하는 요청 주소 둘의 함수는 응답 본문을 읽어 값으로 주지 않는다는 뜻입니다.\n2절에서 본 것처럼, 두 요청 주소는 응답 형식을 키 `schema`가 아니라 `itemSchema`로 적었습니다.\n\n노트북 밖에서 생성기를 실행해 보니, 생성기는 키 `itemSchema`를 뜻밖의 칸이라고 경고했습니다.\nSSE 사건은 06절에서 글로 읽은 TS 파일 `client/stream.ts`가 함수 `fetch`로 읽습니다.\n생성 SDK와 손으로 쓴 이 파일이 요청 주소를 나눠 맡습니다.\n\n다음 셀은 요청 인자의 칸을 적은 TS 선언과, 그 안의 칸 `authorization`을 찾습니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c35",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 요청 인자의 칸을 적은 TS 선언과, 그 안의 칸 authorization이 적힌 줄을 찾습니다\nprint_lines_with(ts_lines, \"export interface\")\nprint_lines_with(ts_lines, \"authorization?:\")"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c36",
+   "metadata": {},
+   "source": "**결과 읽기** — 첫 라벨 줄 아래 네 줄은 요청 인자의 칸을 적은 TS 선언 `interface`입니다.\n둘째 라벨 줄 아래 45·60·71·82행에서, 네 선언 모두 칸 `authorization?: string | null`을 가집니다.\n칸 이름 뒤의 `?`는 넣지 않아도 되는 칸이라는 표시입니다.\n실습 앱이 접근 토큰을 요청 머리 매개변수로 받아서, 생성 SDK도 요청마다 인자로 받습니다.\n요청 주소 `/health`는 접근 토큰을 받지 않아, 요청 인자 선언이 없습니다.\n\n다음 셀은 생성 SDK의 `models/ChatRequest.ts`에서 줄 넷을 찾습니다.\n칸 이름의 줄, JSON 칸 이름으로 옮기는 두 줄, 글자 수 조건의 줄입니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c37",
+   "metadata": {},
+   "outputs": [],
+   "source": "# models/ChatRequest.ts에서 칸 이름의 줄, JSON 칸 이름으로 옮기는 줄, 글자 수 조건의 줄을 찾습니다\nwith open(\"client/generated/models/ChatRequest.ts\", encoding=\"utf-8\") as model_file:\n    model_lines = model_file.read().splitlines()\nprint_lines_with(model_lines, \": string;\")\nprint_lines_with(model_lines, \"json['thread_id']\")\nprint_lines_with(model_lines, \"value['threadId']\")\nprint_lines_with(model_lines, \"Length\")"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c38",
+   "metadata": {},
+   "source": "**결과 읽기** — 첫 라벨 줄 아래 25행과 29행이 입력 형식 `ChatRequest`의 두 칸입니다.\n응답 문서의 칸 이름 `thread_id`가 TS 쪽에서는 `threadId`로 바뀌었습니다.\n52행은 받은 JSON의 `thread_id`를 `threadId`로 옮기고, 68행은 보낼 때 다시 `thread_id`로 적습니다.\n마지막 라벨 줄 아래에는 아무 줄도 없습니다.\n\n생성기 문서는 칸 이름을 바꾸는 설정의 기본값이 낙타 등 모양 이름(camelCase)이라고 적습니다.\nTS 형식에는 칸 이름과 글이라는 형식만 있고, 글자 수 조건은 없습니다.\n그 조건은 서버의 입력 형식 검사가 맡아, 어기면 422로 답합니다.\n\n## 5. 실험: 인증을 적는 자리 바꾸기\n\n07절에서는 `HTTPBearer`를 쓴 새 앱의 응답 문서에만 보안 방식 칸이 있었습니다.\n그런데 07절의 두 앱은 처리 함수와 요청 주소, 요청 방식도 서로 달랐습니다.\n보안 방식 칸이 인증을 적는 방법 때문에 생겼는지 보려면, 다른 것은 같게 두고 그 하나만 바꿔야 합니다.\n이 실험은 새 앱 객체 둘에 같은 처리 함수 `health`를 같은 요청 주소로 잇습니다.\n바꿀 값은 의존성으로 적는 것 하나입니다.\n\n인자 `dependencies`는 처리 함수의 매개변수로 받지 않을 의존성을 적는 자리입니다.\nFastAPI 문서는 여기에 적은 의존성도 보통 의존성처럼 실행되고, 오류로 멈출 수 있다고 적습니다.\n메서드 `add_api_route`는 05절에서 본, 처리 함수를 요청 방식과 요청 주소에 잇는 메서드입니다.\n\n**가설** — 07절의 결과대로라면, 실행 2에만 보안 방식 칸 `securitySchemes`가 생길 것입니다.\n실행 1은 실습 앱처럼, 매개변수 `authorization`이 요청 머리 자리로 적힐 것입니다.\n머리 없는 요청은 두 실행 모두 401을 받을 것입니다.\n\n**실행 1** — 다음 셀은 실습 앱의 제공 함수 `require_token`을 의존성으로 적습니다.\n실행 전에 예상해 봅니다.\n응답 코드 목록에 422가 있을까요?"
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c39",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 실행 1: 실습 앱의 제공 함수 require_token을 의존성으로 적어, 처리 함수 health를 새 앱 객체에 잇습니다\nheader_app = FastAPI()\nheader_app.add_api_route(\"/v1/ping\", health, methods=[\"GET\"], dependencies=[Depends(require_token)])\nheader_doc = header_app.openapi()\nheader_operation = header_doc[\"paths\"][\"/v1/ping\"][\"get\"]\nprint(\"보안 방식 칸이 있는가:\", \"securitySchemes\" in header_doc[\"components\"])\nprint(\"요청 주소에 적힌 칸:\", list(header_operation))\nprint(\"매개변수 이름과 자리:\", header_operation[\"parameters\"][0][\"name\"], header_operation[\"parameters\"][0][\"in\"])\nprint(\"응답 코드:\", list(header_operation[\"responses\"]))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c40",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `보안 방식 칸이 있는가: False`와 `응답 코드: ['200', '422']`가 보입니다.\n제공 함수의 매개변수 `authorization`이 요청 주소의 매개변수로 적혔습니다.\n매개변수가 있으니, 그 값이 맞지 않을 때의 422 응답도 함께 적혔습니다.\n설치판 fastapi `openapi/utils.py` 457~470행이 매개변수나 요청 본문이 있을 때만 422를 적습니다.\n\n**실행 2** — 다음 셀은 값 하나만 바꿔, 의존성에 보안 객체를 적습니다.\n보안 객체 `bearer`는 07절처럼 `HTTPBearer()`로 만듭니다.\n요청 주소와 요청 방식, 처리 함수는 실행 1과 같습니다.\n실행 전에 예상해 봅니다.\n요청 주소에 적힌 칸은 어떻게 바뀔까요?"
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c41",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 실행 2: 값 하나만 바꿔, 의존성에 보안 객체를 적고 같은 처리 함수를 같은 요청 주소에 잇습니다\nbearer = HTTPBearer()\nbearer_app = FastAPI()\nbearer_app.add_api_route(\"/v1/ping\", health, methods=[\"GET\"], dependencies=[Depends(bearer)])\nbearer_doc = bearer_app.openapi()\nbearer_operation = bearer_doc[\"paths\"][\"/v1/ping\"][\"get\"]\nprint(\"보안 방식 칸이 있는가:\", \"securitySchemes\" in bearer_doc[\"components\"])\nprint(\"요청 주소에 적힌 칸:\", list(bearer_operation))\nprint(\"보안 방식:\", bearer_doc[\"components\"][\"securitySchemes\"])\nprint(\"요청 주소의 security 칸:\", bearer_operation[\"security\"])\nprint(\"응답 코드:\", list(bearer_operation[\"responses\"]))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c42",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `보안 방식 칸이 있는가: True`와 `응답 코드: ['200']`이 보입니다.\n칸 `components`에 보안 방식 `HTTPBearer`가 생겼고, 요청 주소에는 칸 `security`가 생겼습니다.\n칸 `parameters`는 없어졌고, 매개변수가 없으니 422도 적히지 않았습니다.\n설치판 `openapi/utils.py` 289~296행이 보안 객체를 찾아 칸 `security`를 적습니다.\n같은 파일 573~575행은 찾은 보안 방식을 칸 `components`에 모읍니다.\n\n다음 셀은 두 앱 객체에 요청을 보내, 상태 코드도 견줍니다.\n머리 없는 요청과, 교재용 접근 토큰을 실은 요청입니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c43",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 두 앱 객체에 머리 없는 요청과 교재용 접근 토큰을 실은 요청을 보내, 상태 코드를 봅니다\nauth_headers = {\"Authorization\": \"Bearer local-demo-token\"}\nheader_client = TestClient(header_app)\nbearer_client = TestClient(bearer_app)\nheader_plain = header_client.get(\"/v1/ping\")\nheader_token = header_client.get(\"/v1/ping\", headers=auth_headers)\nbearer_plain = bearer_client.get(\"/v1/ping\")\nbearer_token = bearer_client.get(\"/v1/ping\", headers=auth_headers)\nprint(\"실행 1:\", header_plain.status_code, header_plain.json(), header_token.status_code)\nprint(\"실행 2:\", bearer_plain.status_code, bearer_plain.json(), bearer_token.status_code)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c44",
+   "metadata": {},
+   "source": "**결과 읽기** — 두 줄 모두 머리 없는 요청은 `401`, 교재용 접근 토큰을 실은 요청은 `200`입니다.\n상태 코드는 같았고, 401 응답 본문의 글만 달랐습니다.\n07절에서 본 것처럼 실행 2의 보안 객체는 접근 토큰 글을 견주지 않습니다.\n이 셀에서는 틀린 글을 보내지 않아, 그 차이는 보지 않았습니다.\n\n다음 셀은 두 실행을 한 표로 모읍니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s08-c45",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 두 실행의 의존성·응답 문서의 칸·상태 코드를 한 표로 모읍니다\nprint(\"견준 것 | 실행 1 | 실행 2\")\nprint(\"의존성에 적은 것 | require_token | HTTPBearer()\")\nprint(\"보안 방식 칸 |\", \"securitySchemes\" in header_doc[\"components\"], \"|\", \"securitySchemes\" in bearer_doc[\"components\"])\nprint(\"security 칸 |\", \"security\" in header_operation, \"|\", \"security\" in bearer_operation)\nprint(\"parameters 칸 |\", \"parameters\" in header_operation, \"|\", \"parameters\" in bearer_operation)\nprint(\"응답 코드 |\", list(header_operation[\"responses\"]), \"|\", list(bearer_operation[\"responses\"]))\nprint(\"머리 없는 요청 |\", header_plain.status_code, \"|\", bearer_plain.status_code)\nprint(\"교재용 접근 토큰 |\", header_token.status_code, \"|\", bearer_token.status_code)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s08-c46",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 아래 일곱 줄이 두 실행을 견줍니다.\n줄 `보안 방식 칸 | False | True`와 `security 칸 | False | True`가 보입니다.\n줄 `parameters 칸 | True | False`에서, 매개변수 칸은 실행 1에만 있습니다.\n상태 코드 두 줄은 `머리 없는 요청 | 401 | 401`과 `교재용 접근 토큰 | 200 | 200`으로 같습니다.\n\n**결론** — 바꾼 값은 인자 `dependencies`에 적은 것 하나였습니다.\n두 요청의 상태 코드는 같았지만, 응답 문서는 달랐습니다.\n보안 객체를 적은 실행 2에만 보안 방식 칸과 칸 `security`가 생겼습니다.\n실습 앱은 실행 1 모양이라, 4절의 생성 SDK도 접근 토큰을 요청마다 인자로 받았습니다.\n이 노트북은 걸린 시간을 재지 않았고, 응답 문서의 칸과 상태 코드만 확인했습니다.\n\n## 정리\n\n1. 메서드 `openapi`가 내놓은 응답 문서는 실습 폴더 `openapi.json`과 글이 같았습니다.\n2. 생성 SDK에서 SSE 사건으로 답하는 요청 주소 둘의 함수는 `Promise<void>`를 내놓았습니다.\n3. 의존성 하나만 보안 객체로 바꾸자, 상태 코드는 같은데 응답 문서에 보안 방식 칸이 생겼습니다.\n\n09절에서는 실제로 모델을 부르는 에이전트를 요청 주소 `/v1/chat/live`로 부릅니다."
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "name": "python",
+   "version": "3.12"
+  },
+  "lesson_format": "experiment",
+  "quality_upgrade": "2026-09-29"
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

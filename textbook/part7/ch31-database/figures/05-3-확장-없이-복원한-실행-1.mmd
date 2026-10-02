@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  call1["restore_copy<br>make_extension=False"]:::flow
+  newdb["새 데이터베이스<br>ch31_restore<br>확장 없음"]
+  restore["pg_restore<br>--dbname=ch31_restore<br>입력은 덤프 파일"]:::flow
+  err["종료 코드 1<br>type public.vector<br>does not exist<br>errors ignored<br>on restore: 5"]:::measure
+  tables["표 넷 · 문서 표 없음<br>checkpoints 줄 셋"]:::measure
+  state["저장된 값 value 12"]:::measure
+  call1 --> newdb --> restore --> err --> tables --> state

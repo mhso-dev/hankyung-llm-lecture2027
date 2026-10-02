@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  quest["질문 Q002 · 정답 부모 E01"]:::tool
+  subgraph first_case["1차 후보 차례"]
+    direction TB
+    f1["1위 E01-P03-C02"]:::measure
+    f3["3위 E01-P03-C01"]:::measure
+  end
+  subgraph second_case["리랭킹 차례"]
+    direction TB
+    s1["1위 E01-P03-C01"]:::measure
+    s2["2위 E01-P03-C02"]:::measure
+  end
+  note["두 차례에 든 문서 청크<br>여덟 개가 같음"]
+  quest --> f1
+  quest --> s1
+  f1 --> f3
+  s1 --> s2
+  f3 --> note
+  s2 --> note

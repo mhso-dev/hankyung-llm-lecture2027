@@ -1,0 +1,660 @@
+{
+  "chapter": "ch12-retrieval-tuning",
+  "label": "after-05",
+  "totals": {
+    "G1": 90,
+    "G2": 29,
+    "G3": 43,
+    "G4": 0,
+    "G5": 57,
+    "G6": 76,
+    "G7": 21
+  },
+  "passed_sections": 5,
+  "sections": [
+    {
+      "slug": "01-벡터-거리와-정확-검색",
+      "code_cells": 31,
+      "sentences": 292,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 0,
+        "G6": 0,
+        "G7": 0
+      },
+      "passed": true,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [],
+        "G6": [],
+        "G7": []
+      }
+    },
+    {
+      "slug": "02-pgvector와-HNSW",
+      "code_cells": 39,
+      "sentences": 348,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 0,
+        "G6": 0,
+        "G7": 0
+      },
+      "passed": true,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [],
+        "G6": [],
+        "G7": []
+      }
+    },
+    {
+      "slug": "03-메타데이터-필터와-iterative-scan",
+      "code_cells": 51,
+      "sentences": 403,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 0,
+        "G6": 0,
+        "G7": 0
+      },
+      "passed": true,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [],
+        "G6": [],
+        "G7": []
+      }
+    },
+    {
+      "slug": "04-한국어-Kiwi와-BM25",
+      "code_cells": 28,
+      "sentences": 302,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 0,
+        "G6": 0,
+        "G7": 0
+      },
+      "passed": true,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [],
+        "G6": [],
+        "G7": []
+      }
+    },
+    {
+      "slug": "05-dense와-sparse-비교",
+      "code_cells": 30,
+      "sentences": 307,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 0,
+        "G6": 0,
+        "G7": 0
+      },
+      "passed": true,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [],
+        "G6": [],
+        "G7": []
+      }
+    },
+    {
+      "slug": "06-RRF-하이브리드-검색",
+      "code_cells": 9,
+      "sentences": 78,
+      "counts": {
+        "G1": 12,
+        "G2": 11,
+        "G3": 9,
+        "G4": 0,
+        "G5": 13,
+        "G6": 18,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell3:generator_expression",
+          "cell5:list_comprehension",
+          "cell5:list_comprehension",
+          "cell5:list_comprehension",
+          "cell5:list_comprehension",
+          "cell5:list_comprehension",
+          "cell5:list_comprehension",
+          "cell5:lambda",
+          "cell5:multiple_defs_in_cell",
+          "cell9:conditional_expression",
+          "cell9:conditional_expression",
+          "cell13:generator_expression"
+        ],
+        "G2": [
+          "cell3:over_15_lines",
+          "cell5:semicolon",
+          "cell5:one_letter_arg:k",
+          "cell5:one_letter_arg:k",
+          "cell5:nested_call_2plus",
+          "cell5:one_letter_name:q",
+          "cell7:semicolon",
+          "cell7:one_letter_arg:k",
+          "cell13:semicolon",
+          "cell15:semicolon",
+          "cell15:one_line_compound"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell3:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell5:first_line_comment_missing",
+          "cell7:first_line_comment_missing",
+          "cell9:first_line_comment_missing",
+          "cell11:first_line_comment_missing",
+          "cell13:first_line_comment_missing",
+          "cell15:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_after_missing",
+          "cell3:explanation_before_missing",
+          "cell3:result_reading_after_missing",
+          "cell4:explanation_before_missing",
+          "cell4:result_reading_after_missing",
+          "cell5:explanation_before_missing",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:sparse 단독이 이미 모든 정답을 top-3에 포함했고, 두 목록을 결합하면서 dense의 다른 후보가 앞쪽으로 이동했습니다",
+          "long:다음 학습과 이어지는 지점 — 07절은 하이브리드 검색이 만든 후보 안에서 질문과 문서를 함께 읽는 cross-encoder로 순서를 다시 정합니다",
+          "long:이번 8개 질문에서 동일 가중치 RRF의 Recall@3는 dense와 같았고, 정답 문서를 포함한 질문 수는 sparse보다 1개 적었음을 보여 줍니다",
+          "long:dense의 코사인 유사도와 BM25 원점수는 척도가 달라 그대로 더할 수 없어 RRF는 각 목록의 순위 `r`를 `weight / (c + r)`로 바꿔 더합니다",
+          "english_start:RRF는 점수 대신 문서가 각 검색기에서 몇 위인지 나타내는 순위를 사용",
+          "english_start:dense는 코사인 유사도 순위, sparse는 BM25 순위를 반환했습",
+          "english_start:RRF는 이 공통 형식만 사용하므로 각 점수의 최소·최대 범위를 맞추는 ",
+          "english_start:RRF는 각 순위를 분모에 넣어 상위 순위의 기여를 크게 계산합니다",
+          "english_start:dense의 코사인 유사도와 BM25의 원점수는 척도가 달라 그대로 더할",
+          "english_start:RRF는 각 목록에서 문서가 나타난 순위 `r`를 받아 `weight /",
+          "english_start:`c`와 가중치는 개발 질문으로 선택하고 시험 질문을 본 뒤 다시 맞추지",
+          "english_start:`LIB-003`은 두 검색기에서 모두 1위이므로 0.03279점을 받아",
+          "english_start:RRF가 이번 작은 자료에서 Recall@3를 개선하지 못했습니다",
+          "english_start:RRF는 서로 다른 원점수 대신 순위를 사용합니다",
+          "english_start:RRF는 공통된 순위를 사용합니다",
+          "english_start:dense의 코사인 유사도와 BM25 원점수는 척도가 달라 그대로 더할 ",
+          "english_start:RRF는 서로 다른 원점수를 더하지 않고 각 검색기의 순위만 사용합니다",
+          "dense_paragraph:상호 순위 융합(RRF) 여러 검색 결과의 순위를 역수 형태로 변환해 같은 문서의 값을 더하는 결합 방법입니"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "07-cross-encoder-리랭킹",
+      "code_cells": 4,
+      "sentences": 79,
+      "counts": {
+        "G1": 6,
+        "G2": 0,
+        "G3": 4,
+        "G4": 0,
+        "G5": 6,
+        "G6": 14,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:generator_expression",
+          "cell2:dict_comprehension",
+          "cell2:list_comprehension",
+          "cell4:generator_expression",
+          "cell6:list_comprehension",
+          "cell8:set_comprehension"
+        ],
+        "G2": [],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:입력 문서·질문 수·평가 단위가 달라서 전반의 Recall@3와 후반의 Recall@5·Precision@5·nDCG@5를 서로 직접 비교하지 않습니다",
+          "long:실제 후보 누락 영향을 측정하려면 정답 부모가 1차 후보 밖에 있는 별도 질문을 골라 후보 Recall과 리랭킹 결과를 함께 비교해야 합니다",
+          "long:Sentence Transformers Retrieve &amp; Re-Rank · 확인 2026-09-09 · Sentence Transformers 6.0.1",
+          "english_start:Q001의 고정 후보로 CrossEncoder 점수와 순서 변화를 비교할",
+          "english_start:CrossEncoder는 질문과 후보 본문을 함께 읽어 같은 후보 안의 ",
+          "english_start:Q001의 후보 수만 줄여 리랭커가 처리할 수 있는 범위를 확인합니다",
+          "english_start:`advanced-documents.json`의 부모 `doc_id`는 ",
+          "english_start:CrossEncoder는 Q001과 후보 본문을 한 쌍씩 함께 읽어 점수",
+          "english_start:`predict()`의 입력은 `(질문, 후보 본문)` 쌍 목록이고 반환",
+          "english_start:Q001의 1차 후보 8개가 CrossEncoder의 입력이 되고, 점수",
+          "english_start:CrossEncoder는 고정된 1차 후보의 순서만 다시 정합니다",
+          "english_start:Q001과 1차 검색이 만든 고정 후보 및 후보 본문을 유지했습니다",
+          "english_start:E01이 후보에 포함된 사실을 근거로 설명해 보세요",
+          "dense_paragraph:01~06절의 `core-documents.json` 12건과 `core-queries.json` 8문항은 "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "08-후보-수와-리랭커-비교",
+      "code_cells": 5,
+      "sentences": 87,
+      "counts": {
+        "G1": 12,
+        "G2": 1,
+        "G3": 5,
+        "G4": 0,
+        "G5": 8,
+        "G6": 10,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:generator_expression",
+          "cell2:dict_comprehension",
+          "cell2:list_comprehension",
+          "cell3:dict_comprehension",
+          "cell5:list_comprehension",
+          "cell5:list_comprehension",
+          "cell6:list_comprehension",
+          "cell6:generator_expression",
+          "cell6:conditional_expression",
+          "cell6:generator_expression",
+          "cell6:set_comprehension",
+          "cell6:multiple_defs_in_cell"
+        ],
+        "G2": [
+          "cell6:over_15_lines"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell3:first_line_comment_missing",
+          "cell5:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_after_missing",
+          "cell3:explanation_before_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_after_missing",
+          "cell6:explanation_before_missing",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:두 요인을 구분하려면 같은 상위 20개 후보와 질문을 두 모델에 주고, 저장한 점수를 후보 5·10·20개 범위로 잘라 비교합니다",
+          "long:그 점수를 재사용해 후보 5·10·20의 여섯 행을 만들므로, 출력 시간은 후보 수별 시간이 아니라 모델별 전체 점수화 시간입니다",
+          "long:후보 수 5·10·20은 리랭커가 볼 수 있는 문서 범위를 바꾸고, 두 CrossEncoder는 같은 질문·후보 쌍에 서로 다른 점수를 냅니다",
+          "long:공정한 비교에서는 먼저 각 모델이 공통 상위 20개 후보를 한 번 점수화하고, 저장한 점수에서 앞 5·10·20개 범위만 잘라 지표를 계산합니다",
+          "long:후보 수를 늘려 지표가 좋아지면 정답이 작은 후보 밖에 있었을 가능성이 있고, 같은 후보에서 모델별 순위가 다르면 점수화 차이를 조사합니다",
+          "long:개발 문항 15개에서 두 모델과 후보 수 5·10·20을 비교한 여섯 행의 Recall과 nDCG@5가 모두 1.000이었습니다",
+          "english_start:Ch11의 `evaluation-queries.jsonl`은 질문마다 `",
+          "english_start:Recall은 정답 문서가 후보 범위에 들어왔는지, nDCG@5는 정답이",
+          "english_start:Recall과 nDCG가 모두 1.000인지 확인해 이 자료에서 차이가 ",
+          "dense_paragraph:다음 값은 실제 API 출력이 아니라 지표 원리를 위한 가정입니다. 정답 G가 1차 검색 7위라면 후보 5에"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "09-Parent-document-검색",
+      "code_cells": 4,
+      "sentences": 73,
+      "counts": {
+        "G1": 5,
+        "G2": 0,
+        "G3": 4,
+        "G4": 0,
+        "G5": 6,
+        "G6": 7,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:generator_expression",
+          "cell2:dict_comprehension",
+          "cell2:list_comprehension",
+          "cell4:generator_expression",
+          "cell8:list_comprehension"
+        ],
+        "G2": [],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:자식 청크가 정답 문서를 찾았는지는 검색 지표로 확인할 수 있지만, 긴 부모 원문이 답변에 도움이 되는지는 생성 단계에서 별도로 평가해야 합니다",
+          "english_start:Ch11의 `evaluation-queries.jsonl`은 질문마다 `",
+          "english_start:Q001의 자식 청크 순위에서 `parent_id`를 추출한 뒤 부모 저",
+          "english_start:`child_k`가 3·8·20으로 늘어도 여러 자식이 같은 부모를 가리",
+          "english_start:`child_k`를 늘리면 살펴본 자식 수는 늘지만 반환 부모 수가 같은",
+          "english_start:`child_k`를 3·8·20으로 바꾸면 발견되는 부모의 수와 순서가 ",
+          "english_start:Q001과 같은 자식·부모 문서를 유지하고 `child_k`만 바꿨습니다"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "10-MMR-다양성-선택",
+      "code_cells": 4,
+      "sentences": 72,
+      "counts": {
+        "G1": 6,
+        "G2": 2,
+        "G3": 4,
+        "G4": 0,
+        "G5": 5,
+        "G6": 11,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:generator_expression",
+          "cell2:dict_comprehension",
+          "cell2:list_comprehension",
+          "cell4:lambda",
+          "cell6:generator_expression",
+          "cell6:list_comprehension"
+        ],
+        "G2": [
+          "cell4:one_letter_arg:k",
+          "cell6:nested_call_2plus"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:최대 주변 관련성(Maximal Marginal Relevance, MMR)은 질문과의 관련성을 유지하면서 이미 고른 결과와 너무 비슷한 후보를 뒤로 보냅니다",
+          "english_start:MMR은 질문 관련성과 선택 결과 사이의 차이를 함께 계산합니다",
+          "english_start:Q001의 후보와 선택 수를 유지하고 λ만 바꾸어 결과를 비교합니다",
+          "english_start:Ch11의 `evaluation-queries.jsonl`은 질문마다 `",
+          "english_start:MMR은 아직 고르지 않은 후보마다 질문 관련성에서 이미 선택한 문서와의",
+          "english_start:`lambda_mult`가 1에 가까우면 질문 관련성 항의 비중이 커지고",
+          "english_start:Q001과 고정 후보 행렬을 유지하고 λ만 1.0·0.5·0.2로 바꿉니",
+          "english_start:MMR은 질문 관련성과 선택 결과 사이의 차이를 결합합니다",
+          "english_start:Q001과 고정 후보 유사도 행렬, 선택 수를 유지하고 λ만 바꿨습니다",
+          "english_start:MMR은 질문 관련성에서 이미 고른 문서와의 최대 유사도를 뺀 점수로 다",
+          "english_start:`lambda_mult`가 1에 가까우면 관련성, 0에 가까우면 기존 선"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "11-질문-재작성과-검색",
+      "code_cells": 5,
+      "sentences": 79,
+      "counts": {
+        "G1": 6,
+        "G2": 4,
+        "G3": 5,
+        "G4": 0,
+        "G5": 7,
+        "G6": 3,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:generator_expression",
+          "cell2:dict_comprehension",
+          "cell2:list_comprehension",
+          "cell6:list_comprehension",
+          "cell8:list_comprehension",
+          "cell10:generator_expression"
+        ],
+        "G2": [
+          "cell2:over_15_lines",
+          "cell2:nested_call_2plus",
+          "cell6:one_letter_arg:k",
+          "cell8:one_letter_arg:k"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing",
+          "cell10:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:같은 재작성 모델을 고정하고 원문과 재작성문의 검색 결과만 비교하며, 두 모델의 답변 품질을 비교하는 실험으로 해석하지 않습니다",
+          "english_start:Ch11의 `evaluation-queries.jsonl`은 질문마다 `",
+          "english_start:`model.invoke()`를 호출할 때 생성이 실행되며 반환 문자열을"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "12-종합-튜닝과-실험-로그",
+      "code_cells": 12,
+      "sentences": 105,
+      "counts": {
+        "G1": 43,
+        "G2": 11,
+        "G3": 12,
+        "G4": 0,
+        "G5": 12,
+        "G6": 13,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell2:list_comprehension",
+          "cell2:generator_expression",
+          "cell2:dict_comprehension",
+          "cell2:list_comprehension",
+          "cell4:list_comprehension",
+          "cell4:conditional_expression",
+          "cell4:conditional_expression",
+          "cell4:list_comprehension",
+          "cell4:conditional_expression",
+          "cell4:generator_expression",
+          "cell4:generator_expression",
+          "cell4:conditional_expression",
+          "cell4:generator_expression",
+          "cell4:multiple_defs_in_cell",
+          "cell6:lambda",
+          "cell8:dict_comprehension",
+          "cell8:dict_comprehension",
+          "cell8:list_comprehension",
+          "cell8:list_comprehension",
+          "cell8:dict_comprehension",
+          "cell8:list_comprehension",
+          "cell8:generator_expression",
+          "cell8:set_comprehension",
+          "cell8:list_comprehension",
+          "cell10:list_comprehension",
+          "cell10:dict_comprehension",
+          "cell12:list_comprehension",
+          "cell12:generator_expression",
+          "cell12:lambda",
+          "cell14:list_comprehension",
+          "cell14:generator_expression",
+          "cell16:list_comprehension",
+          "cell16:generator_expression",
+          "cell16:list_comprehension",
+          "cell16:list_comprehension",
+          "cell16:list_comprehension",
+          "cell18:list_comprehension",
+          "cell18:list_comprehension",
+          "cell18:list_comprehension",
+          "cell20:generator_expression",
+          "cell20:list_comprehension",
+          "cell23:list_comprehension",
+          "cell23:dict_comprehension"
+        ],
+        "G2": [
+          "cell2:over_15_lines",
+          "cell4:nested_call_2plus",
+          "cell6:one_letter_arg:k",
+          "cell8:over_15_lines",
+          "cell8:one_letter_name:c",
+          "cell8:one_letter_name:c",
+          "cell10:over_15_lines",
+          "cell12:over_15_lines",
+          "cell16:over_15_lines",
+          "cell23:over_15_lines",
+          "cell23:one_letter_name:k"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing",
+          "cell10:first_line_comment_missing",
+          "cell12:first_line_comment_missing",
+          "cell14:first_line_comment_missing",
+          "cell16:first_line_comment_missing",
+          "cell18:first_line_comment_missing",
+          "cell20:first_line_comment_missing",
+          "cell21:first_line_comment_missing",
+          "cell23:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_quotes_no_output",
+          "cell16:result_reading_quotes_no_output",
+          "cell18:result_reading_quotes_no_output",
+          "cell20:result_reading_after_missing",
+          "cell21:explanation_before_missing",
+          "cell21:result_reading_quotes_no_output",
+          "cell23:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:다음 도식은 제공 PDF 로딩, dense와 Kiwi BM25 검색, RRF, CrossEncoder, 쪽 본문과 출처 선택, 답변 생성을 연결한 별도의 개발 질문 1건 스모크 실행입니다",
+          "long:별도 통합 실행은 개발 문항 Q002를 사용해 PDF 6건 35쪽을 읽고 dense·Kiwi BM25·RRF·CrossEncoder를 거친 뒤 검색된 쪽 본문으로 답변과 출처를 생성했습니다",
+          "long:별도의 dense·BM25·RRF·CrossEncoder 스모크 실행으로 PDF 로딩부터 답변 생성까지의 입력과 반환 형식을 확인했습니다",
+          "long:마지막은 설정군과 평가 단위가 다른 별도 스모크 실행으로, 개발용 Q002에서 PDF 쪽 본문을 검색·리랭킹·답변 생성에 실제로 전달합니다",
+          "long:통합 예제는 Ch10·Ch12 앞 임베딩 실습과 같은 `text-embedding-3-small`, 256차원을 사용하고, Ch6·Ch9와 같은 `gpt-5.4-mini`로 답변을 생성합니다",
+          "english_start:Ch11의 `evaluation-queries.jsonl`은 질문마다 `",
+          "english_start:`advanced-documents.json`의 부모 `doc_id`는 ",
+          "english_start:`page`와 `chunk_id`는 출처 위치를 보존합니다",
+          "english_start:nDCG@5와 실제 통합 답변, 다른 질문 분포를 추가로 확인합니다",
+          "english_start:Ch11의 30문항과 정답 문서 ID를 직접 읽고 Ch12 배포 복제본과",
+          "english_start:Recall@50은 후보 포함 여부, Precision@5와 nDCG@5",
+          "dense_paragraph:Ch10에서 PDF를 문서와 청크로 나누고 메타데이터에 출처를 보존했습니다. Ch11의 `evaluation",
+          "dense_paragraph:문자 분석기 2종, n-gram 범위 3종, 보고 순위 2종, λ 3종을 조합해 36개 개발 설정을 실행했습"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

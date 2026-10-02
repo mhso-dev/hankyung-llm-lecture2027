@@ -1,0 +1,30 @@
+[project]
+name = "ch10-document-processing"
+version = "0.1.0"
+description = "Ch 10 문서 로딩, 청킹, 임베딩 캐시 실습"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "beautifulsoup4>=4.13,<5",
+    "langchain-core>=1.2,<2",
+    "langchain-classic==1.0.8",
+    "langchain-experimental==0.4.2",
+    "langchain-openai>=1.6,<2",
+    "langchain-text-splitters>=1.1,<2",
+    "openai>=2.8,<3",
+    "pdfplumber>=0.11,<1",
+    "pypdf>=6,<7",
+    "python-docx>=1.2,<2",
+    "python-dotenv>=1.1,<2",
+    "tiktoken>=0.9,<1",
+]
+
+[dependency-groups]
+dev = ["pip==26.2", 
+  "ipykernel==7.3.0", "pytest>=8,<9", "ruff>=0.12,<1"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

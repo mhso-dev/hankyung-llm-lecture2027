@@ -1,0 +1,13 @@
+%%{init: {"flowchart": {"wrappingWidth": 360}}}%%
+flowchart TB
+  %% classes
+  M["재료 · 02절 과업 명세 앞부분<br>텀블러 문의 · 글꼴 문의"]:::tool
+  V["버전 기록 v1 · v2<br>make_rules_format 허용 이름 글만 다름"]:::tool
+  B["build_prompt · 04절 틀<br>system 페르소나 · developer 과업 명세<br>user 빈자리 inquiry"]:::flow
+  G["gpt-5.4-mini"]:::model
+  R["timed_invoke · make_prompt_record<br>01절 기록 한 줄"]:::flow
+  C["check_layers · find_category<br>07절 세 층 검사 · allowed_labels"]:::flow
+  L["기록 한 줄<br>토큰 수 · 검사 결과 · category"]:::measure
+  M --> V --> B
+  B -->|ask_inquiry 문의 하나씩| G
+  G --> R --> C --> L

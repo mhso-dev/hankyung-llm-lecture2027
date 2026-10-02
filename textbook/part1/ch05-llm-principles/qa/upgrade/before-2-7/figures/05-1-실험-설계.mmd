@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  FACT["근거 문장<br>19조각"]:::tool
+  FILLER["무관한 문장<br>19조각"]:::tool
+  QUESTION["질문<br>13조각"]:::tool
+  DOCS["문서 9개<br>무관한 문장 2·20·60개<br>근거 자리 앞·가운데·끝"]:::tool
+  INPUT["채팅 템플릿 입력<br>99·441·1201조각"]:::measure
+  MODEL["언어 모델<br>Qwen2.5-0.5B-Instruct"]:::model
+  JUDGE["답마다<br>314159가 있는가"]:::measure
+  FACT -- "make_document()" --> DOCS
+  FILLER -- "make_document()" --> DOCS
+  DOCS -- "합치기" --> INPUT
+  QUESTION -- "합치기" --> INPUT
+  INPUT -- "generate()" --> MODEL
+  MODEL -- "새 조각을 글로" --> JUDGE

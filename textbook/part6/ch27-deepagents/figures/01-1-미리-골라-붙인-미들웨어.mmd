@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"rankSpacing": 28}}}%%
+flowchart TB
+  %% classes
+  maker["create_deep_agent<br>모델 객체만 넘김"]:::flow
+  subgraph stack[기본 미들웨어 다섯 · 차례는 소스 확인]
+    direction TB
+    fs["FilesystemMiddleware<br>도구 여덟<br>파일 도구 일곱과 execute"]:::measure
+    sa["SubAgentMiddleware<br>도구 task<br>general-purpose 서브에이전트"]:::measure
+    su["Summarization<br>Middleware<br>노드·도구 없음<br>소스로만 확인"]
+    pt["PatchToolCallsMiddleware<br>노드 before_agent"]:::measure
+    ap["AnthropicPrompt<br>CachingMiddleware<br>이 과정 모델에서는<br>하는 일 없음<br>소스로만 확인"]
+    fs ~~~ sa ~~~ su ~~~ pt ~~~ ap
+  end
+  made["create_agent가 만든 그래프<br>CompiledStateGraph<br>실행 한도 9999"]:::measure
+  maker --> stack
+  stack --> made

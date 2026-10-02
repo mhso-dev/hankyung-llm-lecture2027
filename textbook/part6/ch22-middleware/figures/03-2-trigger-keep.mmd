@@ -1,0 +1,7 @@
+flowchart TD
+  %% classes
+  n["대화 메시지 6개"]:::flow --> t{"4개 이상인가?<br>trigger"}
+  t -- "예" --> split["최근 2개는 남기기<br>keep"]:::flow
+  t -- "아니요" --> same["그대로 보냄"]:::flow
+  split --> sum["나머지 4개를 요약"]:::model
+  sum --> out["모델 입력 3개"]:::measure

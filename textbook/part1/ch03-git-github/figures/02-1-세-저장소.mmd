@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  TEAM["team.git<br>팀 원격 저장소<br>bare, 작업 폴더 없음"]:::tool
+  AUTH["author 폴더<br>작성자 Ch3 Student"]:::tool
+  REV["reviewer 폴더<br>리뷰어 Ch3 Reviewer"]:::tool
+  TEAM -- "git clone<br>git fetch" --> AUTH
+  AUTH -- "git push<br>feature/order-summary" --> TEAM
+  TEAM -- "git clone<br>git fetch" --> REV
+  REV -- "git push<br>origin main" --> TEAM

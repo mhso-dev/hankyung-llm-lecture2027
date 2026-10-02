@@ -1,0 +1,650 @@
+{
+  "chapter": "ch22-middleware",
+  "label": "before",
+  "totals": {
+    "G1": 55,
+    "G2": 51,
+    "G3": 50,
+    "G4": 10,
+    "G5": 51,
+    "G6": 145,
+    "G7": 24
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-미들웨어와-6개-훅",
+      "code_cells": 6,
+      "sentences": 81,
+      "counts": {
+        "G1": 7,
+        "G2": 11,
+        "G3": 6,
+        "G4": 2,
+        "G5": 5,
+        "G6": 17,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell7:class_def",
+          "cell7:varargs_def",
+          "cell7:varargs_def",
+          "cell7:conditional_expression",
+          "cell9:class_def",
+          "cell9:conditional_expression",
+          "cell13:generator_expression"
+        ],
+        "G2": [
+          "cell5:semicolon",
+          "cell5:one_line_compound",
+          "cell7:over_15_lines",
+          "cell7:one_line_compound",
+          "cell9:semicolon",
+          "cell9:semicolon",
+          "cell9:over_15_lines",
+          "cell9:one_line_compound",
+          "cell9:one_line_compound",
+          "cell9:one_line_compound",
+          "cell9:one_line_compound"
+        ],
+        "G3": [
+          "cell3:boilerplate_comment",
+          "cell5:boilerplate_comment",
+          "cell7:boilerplate_comment",
+          "cell9:boilerplate_comment",
+          "cell11:boilerplate_comment",
+          "cell13:boilerplate_comment"
+        ],
+        "G4": [
+          "cell5:temperature_missing",
+          "cell7:fake_model"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell13:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Ch20에서는 모델 노드와 ToolNode를 직접 연결했고 Ch21에서는 create_agent가 같은 반복을 컴파일된 그래프로 만든다는 사실을 확인했습니다",
+          "long:Ch16의 guardrails.py는 모델 호출 전후에 validate_query, mask_pii, CallBudget, retry_with_fallback을 직접 호출했습니다",
+          "long:미들웨어도 에이전트 전체에는 before_agent와 after_agent, 각 모델 호출에는 before_model·wrap_model_call·after_model, 각 도구 호출에는 wrap_tool_call을 제공합니다",
+          "long:확인할 점 — before_agent와 after_agent는 한 번씩, 모델 관련 훅은 두 번씩, wrap_tool_call은 한 번 기록됐는지 확인합니다",
+          "long:모델 입력에 사용자 등급을 추가하는 일은 `before_model`, 일시 오류를 재시도하는 일은 `wrap_model_call`, 도구 인자를 검사하는 일은 `wrap_tool_call`이 자연스럽습니다",
+          "long:이 실습의 TRACE 순서는 한 번의 도구 호출 경로에서 관찰한 값이며, 도구가 없거나 병렬 호출이 있으면 횟수와 순서가 달라질 수 있습니다",
+          "long:출력 trace에는 before_agent가 한 번, 모델 관련 세 훅이 두 번, wrap_tool_call이 한 번, after_agent가 한 번 나타납니다",
+          "long:오류는 wrap_model_call 또는 wrap_tool_call에서 예외로 관찰하고 종료는 after_agent에서 관찰합니다",
+          "long:공식 LangChain 1.4.0의 여섯 훅은 before_agent, before_model, wrap_model_call, wrap_tool_call, after_model, after_agent입니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 Ch16의 정규식 기반 mask_pii를 LangChain의 PIIMiddleware로 옮기고 입력과 출력 적용 범위를 비교합니다",
+          "long:모델 입력에 사용자 등급을 추가하는 일은 `before_model`, 일시 오류를 재시도하는 일은 `wrap_model_call`, 도구 인자를 검사하는 일은 `wrap_tool_call`이 자연스럽습니다",
+          "long:이 실습의 TRACE 순서는 한 번의 도구 호출 경로에서 관찰한 값이며, 도구가 없거나 병렬 호출이 있으면 횟수와 순서가 달라질 수 있습니다",
+          "english_start:Ch16의 guardrails.py는 모델 호출 전후에 validate_",
+          "english_start:`wrap_model_call`과 `wrap_tool_call`은 대상 ",
+          "english_start:`SixHookTrace`는 상태를 바꾸지 않고 `TRACE`에 이름만 ",
+          "english_start:`wrap_model_call`과 `wrap_tool_call`은 대상 ",
+          "english_start:`SixHookTrace`는 상태를 바꾸지 않고 `TRACE`에 이름만 "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-PII-마스킹-이식",
+      "code_cells": 6,
+      "sentences": 82,
+      "counts": {
+        "G1": 7,
+        "G2": 4,
+        "G3": 6,
+        "G4": 1,
+        "G5": 7,
+        "G6": 25,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:class_def",
+          "cell5:varargs_def",
+          "cell5:varargs_def",
+          "cell5:conditional_expression",
+          "cell9:list_comprehension",
+          "cell11:list_comprehension",
+          "cell11:generator_expression"
+        ],
+        "G2": [
+          "cell5:over_15_lines",
+          "cell5:one_line_compound",
+          "cell7:semicolon",
+          "cell7:over_15_lines"
+        ],
+        "G3": [
+          "cell3:boilerplate_comment",
+          "cell5:boilerplate_comment",
+          "cell7:boilerplate_comment",
+          "cell9:boilerplate_comment",
+          "cell11:boilerplate_comment",
+          "cell13:boilerplate_comment"
+        ],
+        "G4": [
+          "cell5:fake_model"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Ch16 guardrails.py의 mask_pii는 email, phone, rrn, card 정규식을 순서대로 적용하고 종류별 개수를 반환했습니다",
+          "long:PIIMiddleware의 pii_type은 찾을 유형, strategy는 block·redact·mask·hash 중 처리 방법입니다",
+          "long:apply_to_input은 사용자가 보낸 메시지, apply_to_output은 모델 답변, apply_to_tool_results는 도구 결과에 적용합니다",
+          "long:확인할 점 — Before의 모델 입력에는 원문 이메일이, After의 입력과 답변에는 부분 마스킹된 이메일이 남는지 확인합니다",
+          "long:고객 상담에서는 사용자가 보낸 주민등록번호가 모델로 들어가기 전 마스킹되어야 하고, 모델이 도구 결과에서 읽은 이메일도 최종 응답에서 다시 검사해야 합니다",
+          "long:After의 PIIMiddleware는 create_agent의 실행 흐름 안에서 사용자 이메일과 모델이 만든 이메일을 모두 부분 마스킹합니다",
+          "long:기본 내장 email 검출기의 mask 결과는 도메인을 일부 남길 수 있으므로 완전 삭제가 필요한 정책이라면 redact 또는 block을 선택해야 합니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 길어진 메시지를 줄이는 Ch16의 summarize_history와 SummarizationMiddleware를 비교해 Compress의 보존 범위를 확인합니다",
+          "long:고객 상담에서는 사용자가 보낸 주민등록번호가 모델로 들어가기 전 마스킹되어야 하고, 모델이 도구 결과에서 읽은 이메일도 최종 응답에서 다시 검사해야 합니다",
+          "english_start:PII와 마스킹 전략을 설명할 수 있습니다",
+          "english_start:apply_to_input과 apply_to_output의 적용 범위를 ",
+          "english_start:PIIMiddleware는 이 반복 지점을 설정으로 모읍니다",
+          "english_start:PIIMiddleware의 pii_type은 찾을 유형, strategy",
+          "english_start:apply_to_input은 사용자가 보낸 메시지, apply_to_ou",
+          "english_start:`mask_pii(text)`는 문자열 하나를 받아 정규식과 일치한 부분",
+          "english_start:`PIIMiddleware`는 같은 검사를 에이전트 경계에 등록합니다",
+          "english_start:`strategy=&quot;mask&quot;`는 일부를 가리는 처리 ",
+          "english_start:Before의 Ch16 축소 함수는 호출자가 mask_pii를 호출하지 ",
+          "english_start:After의 PIIMiddleware는 create_agent의 실행 흐",
+          "english_start:PIIMiddleware는 비밀 관리 시스템이 아닙니다",
+          "english_start:PIIMiddleware는 설정한 메시지 경계에서 정한 개인 식별 정보 ",
+          "english_start:Ch16의 PII 마스킹을 PIIMiddleware로 옮기면 적용 지점과",
+          "english_start:`mask_pii(text)`는 문자열 하나를 받아 정규식과 일치한 부분",
+          "english_start:`PIIMiddleware`는 같은 검사를 에이전트 경계에 등록합니다",
+          "english_start:`strategy=\"mask\"`는 일부를 가리는 처리 방식이며, 감지기가"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-요약-압축과-Compress",
+      "code_cells": 7,
+      "sentences": 80,
+      "counts": {
+        "G1": 9,
+        "G2": 6,
+        "G3": 7,
+        "G4": 2,
+        "G5": 8,
+        "G6": 12,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:class_def",
+          "cell5:varargs_def",
+          "cell5:varargs_def",
+          "cell5:conditional_expression",
+          "cell9:class_def",
+          "cell9:generator_expression",
+          "cell11:class_def",
+          "cell11:generator_expression",
+          "cell13:generator_expression"
+        ],
+        "G2": [
+          "cell5:over_15_lines",
+          "cell5:one_line_compound",
+          "cell13:semicolon",
+          "cell13:semicolon",
+          "cell13:one_line_compound",
+          "cell13:one_letter_name:m"
+        ],
+        "G3": [
+          "cell3:boilerplate_comment",
+          "cell5:boilerplate_comment",
+          "cell7:boilerplate_comment",
+          "cell9:boilerplate_comment",
+          "cell11:boilerplate_comment",
+          "cell13:boilerplate_comment",
+          "cell15:boilerplate_comment"
+        ],
+        "G4": [
+          "cell5:fake_model",
+          "cell13:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Ch16 summarize_history는 system 메시지와 최근 대화를 남기고, 오래된 대화를 summarizer 함수에 넘긴 뒤 참고용 요약 메시지로 바꿨습니다",
+          "long:여섯 메시지를 Before 에이전트에 그대로 전달한 뒤, trigger=4·keep=2 조건의 SummarizationMiddleware를 붙입니다",
+          "long:결정적 요약문으로 메시지 구성 변화를 재현하고, 별도 실제 모델 호출로 권수·기간·연장 조건·출처를 보존한 요약문과 사용량을 확인합니다",
+          "long:After에서는 trigger=(messages,4), keep=(messages,2)를 적용해 오래된 대화를 요약 메시지로 바꾸고 최근 두 메시지를 유지합니다",
+          "long:SummarizationMiddleware는 trigger에 도달하면 오래된 메시지를 요약하고 keep 범위는 원문으로 남깁니다",
+          "english_start:trigger와 keep 조건을 설명할 수 있습니다",
+          "english_start:Ch8의 Compress는 필요한 정보를 남기고 반복을 줄이는 전략이었습",
+          "english_start:trigger는 언제 요약을 시작할지, keep은 최근 기록을 얼마나 원",
+          "english_start:SummarizationMiddleware는 before_model 훅에",
+          "english_start:`SummarizationMiddleware`는 트리거 조건을 넘으면 요",
+          "english_start:SummarizationMiddleware는 trigger에 도달하면 오",
+          "english_start:`SummarizationMiddleware`는 트리거 조건을 넘으면 요"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-호출-한도와-재시도-폴백",
+      "code_cells": 7,
+      "sentences": 84,
+      "counts": {
+        "G1": 6,
+        "G2": 3,
+        "G3": 7,
+        "G4": 1,
+        "G5": 7,
+        "G6": 21,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:class_def",
+          "cell5:varargs_def",
+          "cell5:varargs_def",
+          "cell5:conditional_expression",
+          "cell7:class_def",
+          "cell7:varargs_def"
+        ],
+        "G2": [
+          "cell5:over_15_lines",
+          "cell5:one_line_compound",
+          "cell7:one_line_compound"
+        ],
+        "G3": [
+          "cell3:boilerplate_comment",
+          "cell5:boilerplate_comment",
+          "cell7:boilerplate_comment",
+          "cell9:boilerplate_comment",
+          "cell11:boilerplate_comment",
+          "cell13:boilerplate_comment",
+          "cell15:boilerplate_comment"
+        ],
+        "G4": [
+          "cell5:fake_model"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Ch16의 CallBudget과 retry_with_fallback은 호출자가 매번 reserve와 재시도 함수를 직접 사용했습니다",
+          "long:이 절에서는 같은 역할을 ModelCallLimitMiddleware, ModelRetryMiddleware, ModelFallbackMiddleware의 설정과 실행 trace로 확인합니다",
+          "long:ModelCallLimitMiddleware의 run_limit는 현재 invoke, thread_limit는 같은 스레드에 누적된 호출을 제한합니다",
+          "long:create_agent의 첫 인자가 최초 모델을 정하고 ModelFallbackMiddleware에는 실패 뒤 시도할 보조 모델만 전달합니다",
+          "long:일시적 TimeoutError는 빨간 실패 상자에서 파란 재시도 경로로 돌아가고, 정한 횟수 뒤에도 실패하면 보라색 보조 모델로 이동합니다",
+          "long:마지막에는 도구 호출 뒤 두 번째 모델 호출이 필요한 흐름에 run_limit=1을 적용해 한도가 종료 메시지를 반환하는지 봅니다",
+          "long:확인할 점 — 재시도 모델은 두 번 호출되고, 최초 모델과 보조 모델은 각각 한 번 호출되고 폴백은 보조 모델 응답을 반환하며, 한도 에이전트는 모델을 한 번만 호출했는지 확인합니다",
+          "long:해설 — run_limit는 한 invoke 안의 호출 수, thread_limit는 같은 스레드에 누적된 호출 수를 제한합니다",
+          "english_start:run_limit와 thread_limit을 구분할 수 있습니다",
+          "english_start:Ch16의 CallBudget과 retry_with_fallback은 호",
+          "english_start:retry_with_fallback은 TimeoutError만 정해진 횟",
+          "english_start:ModelCallLimitMiddleware의 run_limit는 현재 ",
+          "english_start:ModelRetryMiddleware는 retry_on, 지연, 최대 횟",
+          "english_start:create_agent의 첫 인자가 최초 모델을 정하고 ModelFall",
+          "english_start:`ModelRetryMiddleware`는 같은 요청을 같은 모델에 다시",
+          "english_start:`max_retries=2`는 최초 시도 외에 허용할 재시도 수이며, `",
+          "english_start:`ModelFallbackMiddleware`는 주 모델 호출이 실패했을",
+          "english_start:`ModelRetryMiddleware`는 같은 요청을 같은 모델에 다시",
+          "english_start:`max_retries=2`는 최초 시도 외에 허용할 재시도 수이며, `",
+          "english_start:`ModelFallbackMiddleware`는 주 모델 호출이 실패했을",
+          "dense_paragraph:고객센터 전화를 생각해 봅니다. 한도는 한 통화에서 상담원 연결을 몇 번까지 시도할지 막습니다. 재시도는 연"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-커스텀-예산-미들웨어",
+      "code_cells": 6,
+      "sentences": 77,
+      "counts": {
+        "G1": 6,
+        "G2": 6,
+        "G3": 6,
+        "G4": 1,
+        "G5": 5,
+        "G6": 20,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:class_def",
+          "cell5:varargs_def",
+          "cell5:varargs_def",
+          "cell5:conditional_expression",
+          "cell9:class_def",
+          "cell9:class_def"
+        ],
+        "G2": [
+          "cell5:over_15_lines",
+          "cell5:one_line_compound",
+          "cell7:semicolon",
+          "cell9:semicolon",
+          "cell9:one_line_compound",
+          "cell9:one_line_compound"
+        ],
+        "G3": [
+          "cell3:boilerplate_comment",
+          "cell5:boilerplate_comment",
+          "cell7:boilerplate_comment",
+          "cell9:boilerplate_comment",
+          "cell11:boilerplate_comment",
+          "cell13:boilerplate_comment"
+        ],
+        "G4": [
+          "cell5:fake_model"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell13:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:내장 ModelCallLimitMiddleware는 호출 횟수를 제한하지만 프로젝트가 사용하는 가격표와 예상 토큰으로 비용 상한을 계산하지는 않습니다",
+          "long:에이전트마다 같은 reserve 호출을 넣는 대신 커스텀 미들웨어 하나로 모델 호출 경계를 감싸면 정책 코드를 재사용하고 독립적으로 검사할 수 있습니다",
+          "long:Ch16 CallBudget은 max_calls, max_cost_usd, calls, cost_usd를 보관하고 reserve에서 다음 호출이 한도를 넘는지 검사했습니다",
+          "long:BudgetMiddleware는 estimated_cost_per_call과 max_cost_usd를 받아 같은 인스턴스가 처리한 요청의 예약 비용을 누적합니다",
+          "long:이 예제는 한 인스턴스에 두 번의 invoke를 순차적으로 전달하며, 운영의 동시 요청에서는 상태나 외부 저장소에 실행별 카운터를 분리해야 합니다",
+          "long:After는 같은 미들웨어 인스턴스에 두 번의 invoke를 전달하고, 누적 예산을 넘는 두 번째 요청을 중단하는 커스텀 미들웨어를 사용합니다",
+          "long:사용자별 일일 한도라면 `reserved`를 미들웨어 객체의 메모리에만 두지 않고 사용자 ID와 날짜를 키로 하는 공유 저장소에 기록해야 합니다",
+          "long:여러 프로세스가 동시에 요청을 받으면 읽기와 예약을 하나의 원자적 연산으로 처리해야 두 요청이 같은 남은 예산을 함께 사용하는 일을 막을 수 있습니다",
+          "long:이번 셀의 두 번째 차단은 0.004+0.004가 0.006을 넘는 계산을 검증할 뿐, 실제 모델 비용을 측정하거나 제공자의 청구를 대체하지 않습니다",
+          "long:After에서는 첫 invoke가 0.004달러를 예약하고 성공하지만 같은 인스턴스에 전달한 두 번째 invoke는 0.008달러가 0.006달러 상한을 넘으므로 handler 실행 전에 BudgetExceeded가 발생합니다",
+          "long:사용자별 일일 한도라면 `reserved`를 미들웨어 객체의 메모리에만 두지 않고 사용자 ID와 날짜를 키로 하는 공유 저장소에 기록해야 합니다",
+          "long:여러 프로세스가 동시에 요청을 받으면 읽기와 예약을 하나의 원자적 연산으로 처리해야 두 요청이 같은 남은 예산을 함께 사용하는 일을 막을 수 있습니다",
+          "long:이번 셀의 두 번째 차단은 0.004+0.004가 0.006을 넘는 계산을 검증할 뿐, 실제 모델 비용을 측정하거나 제공자의 청구를 대체하지 않습니다",
+          "english_start:Ch16의 CallBudget은 이 정책을 직접 구현했습니다",
+          "english_start:BudgetMiddleware는 estimated_cost_per_cal",
+          "english_start:`wrap_model_call`은 다음 예약값을 계산한 뒤 허용되면 `h",
+          "english_start:Before는 두 모델 호출을 제한 없이 실행합니다",
+          "english_start:After는 같은 미들웨어 인스턴스에 두 번의 invoke를 전달하고, ",
+          "english_start:BudgetMiddleware는 handler 호출 전에 예상비용을 예약",
+          "english_start:`wrap_model_call`은 다음 예약값을 계산한 뒤 허용되면 `h"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "06-커스텀-감사-미들웨어",
+      "code_cells": 6,
+      "sentences": 80,
+      "counts": {
+        "G1": 7,
+        "G2": 6,
+        "G3": 6,
+        "G4": 1,
+        "G5": 6,
+        "G6": 16,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:class_def",
+          "cell5:varargs_def",
+          "cell5:varargs_def",
+          "cell5:conditional_expression",
+          "cell7:class_def",
+          "cell11:list_comprehension",
+          "cell11:list_comprehension"
+        ],
+        "G2": [
+          "cell5:over_15_lines",
+          "cell5:one_line_compound",
+          "cell7:over_15_lines",
+          "cell9:one_line_compound",
+          "cell11:one_letter_name:e",
+          "cell11:one_letter_name:e"
+        ],
+        "G3": [
+          "cell3:boilerplate_comment",
+          "cell5:boilerplate_comment",
+          "cell7:boilerplate_comment",
+          "cell9:boilerplate_comment",
+          "cell11:boilerplate_comment",
+          "cell13:boilerplate_comment"
+        ],
+        "G4": [
+          "cell5:fake_model"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Ch16의 AuditLogger는 질문을 마스킹하고 소금값을 더한 해시, 이벤트 이름, 안전한 상세 정보만 JSONL에 기록했습니다",
+          "long:Ch16 AuditLogger.record는 query_masked와 query_hash를 만들고 중첩된 문자열에도 mask_pii를 적용했습니다",
+          "long:AuditMiddleware의 before_agent는 실행 시작, wrap_tool_call은 도구 이름과 성공·오류, after_agent는 종료를 기록합니다",
+          "long:입력 지문은 고정 소금값과 실제 메시지 텍스트를 함께 해시한 학습용 예시이며 실제 운영에서는 키 관리와 보존 기간 정책이 필요합니다",
+          "long:초록색 lookup_hours 전후에는 tool_start와 tool_success가 놓이고, 마지막 노란 agent_end는 메시지 수만 기록합니다",
+          "long:도구를 한 번 호출한 뒤 이벤트 이름·순서·키를 출력하고, 입력 원문과 도구 반환 전문이 감사 기록에 없는지, 길이가 같은 다른 텍스트의 지문이 다른지 검사합니다",
+          "long:운영 시간 질문 한 건을 실행하면 agent_start, tool_start, tool_success, agent_end 순서의 네 이벤트가 남습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 여러 미들웨어를 한 목록에 넣었을 때 before, after, wrap의 순서를 실제 trace로 확인합니다",
+          "english_start:Ch16의 AuditLogger는 질문을 마스킹하고 소금값을 더한 해시,",
+          "english_start:AuditMiddleware의 before_agent는 실행 시작, wr",
+          "english_start:`AuditMiddleware`는 에이전트·모델·도구 경계에서 이벤트를 ",
+          "english_start:`sort_keys=True`는 같은 딕셔너리를 일정한 문자열로 만드는 ",
+          "english_start:after_agent는 정상 종료 경로입니다",
+          "english_start:AuditMiddleware는 에이전트 시작·도구 성공 또는 오류·정상 ",
+          "english_start:`AuditMiddleware`는 에이전트·모델·도구 경계에서 이벤트를 ",
+          "english_start:`sort_keys=True`는 같은 딕셔너리를 일정한 문자열로 만드는 "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "07-순서와-합성",
+      "code_cells": 6,
+      "sentences": 82,
+      "counts": {
+        "G1": 5,
+        "G2": 10,
+        "G3": 6,
+        "G4": 1,
+        "G5": 6,
+        "G6": 14,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:class_def",
+          "cell5:varargs_def",
+          "cell5:varargs_def",
+          "cell5:conditional_expression",
+          "cell7:class_def"
+        ],
+        "G2": [
+          "cell5:over_15_lines",
+          "cell5:one_line_compound",
+          "cell7:semicolon",
+          "cell7:one_line_compound",
+          "cell7:one_line_compound",
+          "cell7:one_line_compound",
+          "cell7:one_line_compound",
+          "cell7:one_line_compound",
+          "cell7:one_line_compound",
+          "cell9:one_line_compound"
+        ],
+        "G3": [
+          "cell3:boilerplate_comment",
+          "cell5:boilerplate_comment",
+          "cell7:boilerplate_comment",
+          "cell9:boilerplate_comment",
+          "cell11:boilerplate_comment",
+          "cell13:boilerplate_comment"
+        ],
+        "G4": [
+          "cell5:fake_model"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:wrap 훅은 첫 항목이 가장 바깥쪽이 되어 A before, B before, C before, 모델, C after, B after, A after 순서가 됩니다",
+          "long:서로 독립적인 읽기 전용 기록은 순서 영향이 작지만, 요청이나 상태를 수정하는 미들웨어는 교환해도 같은 결과가 나오는지 확인해야 합니다",
+          "long:before_agent와 before_model은 A·B·C, wrap_model_call 진입은 A·B·C이고 반환은 C·B·A, after_model과 after_agent는 C·B·A입니다",
+          "long:다음 학습과 이어지는 지점 — 마지막 절에서는 wrap_model_call로 업무별 메시지만 선택해 Ch8의 Isolate를 에이전트 구현으로 연결합니다",
+          "long:서로 독립적인 읽기 전용 기록은 순서 영향이 작지만, 요청이나 상태를 수정하는 미들웨어는 교환해도 같은 결과가 나오는지 확인해야 합니다",
+          "english_start:LangChain의 before 훅은 목록의 앞에서 뒤로 실행됩니다",
+          "english_start:`before_agent`와 `before_model` 같은 진입 훅은 ",
+          "english_start:`after_model`과 `after_agent`도 바깥으로 나오며 역",
+          "english_start:`Tagged(name)`은 각 훅에서 태그와 시점을 `ORDER`에 남",
+          "english_start:before_agent와 before_model은 A·B·C, wrap_",
+          "english_start:`before_agent`와 `before_model` 같은 진입 훅은 ",
+          "english_start:`after_model`과 `after_agent`도 바깥으로 나오며 역",
+          "english_start:`Tagged(name)`은 각 훅에서 태그와 시점을 `ORDER`에 남",
+          "dense_paragraph:겹쳐 입은 옷을 생각해 봅니다. 안으로 들어갈 때는 겉옷 A, 중간 옷 B, 안쪽 옷 C 순서로 통과합니다."
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "08-컨텍스트-분리와-Isolate",
+      "code_cells": 6,
+      "sentences": 78,
+      "counts": {
+        "G1": 8,
+        "G2": 5,
+        "G3": 6,
+        "G4": 1,
+        "G5": 7,
+        "G6": 20,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:class_def",
+          "cell5:varargs_def",
+          "cell5:varargs_def",
+          "cell5:list_comprehension",
+          "cell9:generator_expression",
+          "cell11:class_def",
+          "cell11:list_comprehension",
+          "cell11:generator_expression"
+        ],
+        "G2": [
+          "cell5:one_line_compound",
+          "cell5:one_line_compound",
+          "cell5:one_letter_name:m",
+          "cell11:one_line_compound",
+          "cell11:one_letter_name:m"
+        ],
+        "G3": [
+          "cell3:boilerplate_comment",
+          "cell5:boilerplate_comment",
+          "cell7:boilerplate_comment",
+          "cell9:boilerplate_comment",
+          "cell11:boilerplate_comment",
+          "cell13:boilerplate_comment"
+        ],
+        "G4": [
+          "cell5:fake_model"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:create_agent 상태에는 여러 업무의 대화가 누적될 수 있고, 전체 상태를 그대로 모델에 전달하면 관련 없는 자료가 입력을 차지합니다",
+          "long:Ch8 context_lab.py의 assemble_isolated_messages는 업무별 자료를 별도 필드로 조립했고 텍스트 태그는 보안 격리가 아니라고 설명했습니다",
+          "long:IsolateMiddleware는 각 메시지의 additional_kwargs에 있는 topic을 읽어 현재 topic과 같은 메시지만 새 요청에 넣습니다",
+          "long:필터가 필요한 근거까지 제거하면 답변 품질이 낮아질 수 있으므로 업무 ID를 붙이는 시점과 기본 포함 규칙을 명확히 해야 합니다",
+          "long:파란 IsolateMiddleware가 topic=loan인 세 메시지만 선택해 새 파란 요청을 만들고 보라색 모델에 전달합니다",
+          "long:Before는 다섯 메시지를 그대로 모델에 전달하고, After는 topic=loan인 메시지만 담은 새 요청을 만들어 capture 모델이 실제로 받은 내용을 비교합니다",
+          "long:IsolateMiddleware는 저장 상태를 지우지 않고 현재 모델 호출에 전달할 메시지만 request.override로 선택합니다",
+          "long:필터가 필요한 근거까지 제거하면 답변 품질이 낮아질 수 있으므로 업무 ID를 붙이는 시점과 기본 포함 규칙을 명확히 해야 합니다",
+          "english_start:Ch8의 Isolate를 업무별 모델 입력 분리로 설명할 수 있습니다",
+          "english_start:request.override로 메시지를 줄이는 것은 모델 입력 분리이며",
+          "english_start:IsolateMiddleware는 각 메시지의 additional_kwa",
+          "english_start:request.override는 원래 요청 객체를 바꾸지 않고 선택된 m",
+          "english_start:handler는 그 새 요청만 모델에 전달합니다",
+          "english_start:Before는 다섯 메시지를 모두 전달하므로 현재 질문과 무관한 급여 정",
+          "english_start:`IsolateMiddleware(&quot;loan&quot;)`은 모",
+          "english_start:Before는 다섯 메시지를 그대로 모델에 전달하고, After는 top",
+          "english_start:Isolate와 Compress를 함께 쓰면 먼저 업무 범위를 선택한 뒤",
+          "english_start:IsolateMiddleware는 저장 상태를 지우지 않고 현재 모델 호",
+          "english_start:Before는 다섯 메시지를 모두 전달하므로 현재 질문과 무관한 급여 정",
+          "english_start:`IsolateMiddleware(\"loan\")`은 모델 호출 직전 요청"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

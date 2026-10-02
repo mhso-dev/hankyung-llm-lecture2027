@@ -1,0 +1,22 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  subgraph off[5절 할 일 목록 없이]
+    direction TB
+    o1["시스템 글<br>빈 글"]:::measure
+    o2["받은 도구 아홉<br>write_todos 없음"]:::measure
+    o3["결과에 todos 칸 없음"]:::measure
+    o1 ~~~ o2 ~~~ o3
+  end
+  subgraph on[6절 할 일 목록과 우리 글]
+    direction TB
+    n1["시스템 글<br>우리 글 · 빈 줄<br>할 일 설명 글"]:::measure
+    n2["받은 도구 열<br>write_todos 있음"]:::measure
+    n3["결과에 todos 칸 있음"]:::measure
+    n1 ~~~ n2 ~~~ n3
+  end
+  rule["셈<br>요청 수는 도구를 요청한<br>응답 수 더하기 1<br>두 실행 모두 한도 10 안"]
+  parallel["한 응답에 write_todos 여럿이면<br>오류 도구 메시지<br>소스 확인"]
+  off --> rule
+  on --> rule
+  rule ~~~ parallel

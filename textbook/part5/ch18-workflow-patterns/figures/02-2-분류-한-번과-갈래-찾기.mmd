@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  req["분류 요청 글<br>결제 문의"]:::tool
+  cls["gpt-5.4-mini<br>분류 요청 하나"]:::model
+  dec["종류 결제<br>기록 한 줄 · 입력 토큰 126"]:::measure
+  look["갈래 표에서 종류로 찾기<br>모델 요청 없음"]:::flow
+  found["결제 갈래 지시 글<br>결제 문의를 맡은 상담원"]:::measure
+  chk["검사 check_route<br>허용 목록 · 기준값"]:::flow
+  ok["결제 문의 분류의 문제<br>없음 · 빈 목록"]:::measure
+  req --> cls
+  cls --> dec
+  dec --> look
+  look --> found
+  dec --> chk
+  chk --> ok

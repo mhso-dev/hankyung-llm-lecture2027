@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph t1["바퀴 1"]
+    direction TB
+    r1["요청 글<br>머리글 · 도착 문의<br>부른 도구 없음"]:::tool
+    m1["입력 토큰 114<br>고른 이름 주문 조회"]:::measure
+    r1 --> m1
+  end
+  subgraph t2["바퀴 2"]
+    direction TB
+    r2["요청 글<br>머리글 · 도착 문의<br>주문 조회 결과 한 줄"]:::tool
+    m2["입력 토큰 136<br>고른 이름 끝"]:::measure
+    r2 --> m2
+  end
+  sum["모델 요청 2<br>입력 토큰 합 250"]:::measure
+  note["출력 토큰과 걸린 초는<br>실행마다 달라 넣지 않음"]
+  t1 ~~~ sum
+  t2 ~~~ sum
+  sum ~~~ note

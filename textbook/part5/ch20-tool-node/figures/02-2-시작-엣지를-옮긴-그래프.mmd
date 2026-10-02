@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  q["첫 상태<br>질문 하나<br>손으로 만든 응답 하나<br>흔적 빈 목록"]:::tool
+  s(["가상 시작점 START"])
+  t["도구 실행 노드 tools<br>ToolNode<br>설정만 바꿔 끼움"]
+  m["모델 노드 model<br>함수 call_model"]:::flow
+  e(["가상 끝점 END"])
+  q -->|invoke| s
+  s -->|옮긴 시작 엣지| t
+  t --> m
+  m -.->|도구 호출 요청 있음<br>이름표 tools| t
+  m -.->|도구 호출 요청 없음<br>이름표 END| e

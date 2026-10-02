@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph twobox["남길 대화 수 둘 · 노트북 5절"]
+    direction TB
+    a0["대화 기록<br>메시지 여섯"]:::tool
+    a1["자른 기록 메시지 셋<br>남은 말 하나 화요일"]:::measure
+    a0 --> a1
+  end
+  subgraph fourbox["남길 대화 수 넷 · 노트북 9절"]
+    direction TB
+    b0["대화 기록<br>메시지 여섯"]:::tool
+    b1["자른 기록 메시지 다섯<br>남은 말 둘<br>작은 정원과 화요일"]:::measure
+    b0 --> b1
+  end
+  same["두 칸 모두<br>첫 대화 메시지가 잘림<br>두 문장 조건이 빠짐"]
+  twobox ~~~ same
+  fourbox ~~~ same

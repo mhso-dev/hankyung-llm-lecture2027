@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  a["첫 사건 · custom<br>before_model 30"]:::measure
+  b["messages<br>스트림 청크가 이어짐<br>모두 노드 write_answer"]:::measure
+  c["custom<br>after_model 100"]:::measure
+  d["마지막 사건 · updates<br>노드 write_answer<br>칸 answer"]:::measure
+  a --> b
+  b --> c
+  c --> d

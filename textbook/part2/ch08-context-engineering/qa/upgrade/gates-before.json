@@ -1,0 +1,464 @@
+{
+  "chapter": "ch08-context-engineering",
+  "label": "before",
+  "totals": {
+    "G1": 4,
+    "G2": 6,
+    "G3": 2,
+    "G4": 6,
+    "G5": 80,
+    "G6": 159,
+    "G7": 17
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-컨텍스트와-토큰-예산",
+      "code_cells": 13,
+      "sentences": 172,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 0,
+        "G4": 1,
+        "G5": 12,
+        "G6": 25,
+        "G7": 2
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [],
+        "G4": [
+          "cell6:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_quotes_no_output",
+          "cell17:result_reading_quotes_no_output",
+          "cell21:result_reading_quotes_no_output",
+          "cell23:result_reading_quotes_no_output",
+          "cell26:result_reading_quotes_no_output",
+          "cell28:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Ch 6에서는 언어 모델에 메시지를 보내고 답을 받는 기본 호출을 배웠고, Ch 7에서는 지시와 예시를 배치하여 프롬프트를 구성했습니다",
+          "long:왼쪽 책상은 입력 자료가 답안 작성 공간까지 차지한 상태이고, 오른쪽 책상은 지시·질문·근거와 답안 공간을 나누어 둔 상태입니다",
+          "long:여유분 (safety margin) 토큰 추정 오차, 추가 지시, 도구 결과처럼 실행 중 늘어날 수 있는 내용을 수용하려고 비워 두는 공간입니다",
+          "long:로컬 도구는 시스템·사용자 역할 표시처럼 API가 메시지에 덧붙이는 형식과 서비스 내부 처리를 모두 똑같이 계산하지 못할 수 있습니다",
+          "long:운영 로그에는 토큰 수와 문서 식별자 등 필요한 정보만 남기고, 개인 정보나 비밀 값이 포함된 메시지 원문은 별도 정책에 따릅니다",
+          "long:다음 학습과 이어지는 지점 — 02절에서는 예산을 넘는 전체 자료를 외부 저장소에 Write하고, 질문에 필요한 항목만 Select하여 현재 호출의 컨텍스트에 넣습니다",
+          "long:정답과 해설 — 로컬 계산기는 시스템·사용자 역할 표시처럼 API가 메시지에 덧붙이는 형식과 서비스 내부 처리를 모두 똑같이 계산하지 못할 수 있습니다",
+          "long:정답과 해설 — 비용과 지연 시간을 관리하고, 관련성이 낮은 자료가 함께 들어오는 것을 줄이며, 실습 결과를 같은 조건에서 비교하기 위해서입니다",
+          "long:Anthropic, 「Effective context engineering for AI agents」 — anthropic.com/engineering/effective-context-engineering-for-ai-agents · 2025-09-29 · 확인 2026-09-08. 컨텍스트 정의, 최소한의 관련 정보만 유지하는 원칙, 긴 입력에서 나타날 수 있는 성능 저하의 근거.",
+          "long:OpenAI, 「GPT-5.4 Mini model」 — developers.openai.com/api/docs/models/gpt-5.4-mini · 확인 2026-09-08. 기준 모델의 컨텍스트 윈도, 최대 출력, 가격과 지원 기능.",
+          "long:LangChain, 「Models」 — docs.langchain.com/oss/python/langchain/models · 확인 2026-09-08. `init_chat_model`, 메시지 입력, `invoke`, `AIMessage` 사용법.",
+          "long:기준 모델: `gpt-5.4-mini` · 컨텍스트 윈도 400,000토큰 · 최대 출력 128,000토큰. 이 값은 모델 한도이며, 실습의 입력 예산은 별도로 정합니다",
+          "english_start:`return`은 계산값을 호출한 위치로 반환하고, 음수이면 `raise",
+          "english_start:`.env`는 현재 작업 폴더의 상위 경로에서도 찾습니다",
+          "english_start:`input_budget()`는 직접 작성하는 산술 함수입니다",
+          "english_start:`total=4096`은 수업에서 정한 배정량입니다",
+          "english_start:`encode()`는 문자열을 토큰 ID 목록으로 반환합니다",
+          "english_start:`get_encoding(\"o200k_base\")`는 지정한 토큰화 규칙",
+          "english_start:`AIMessage.text`와 `usage_metadata`를 함께 확",
+          "english_start:`invoke()`의 반환값은 `AIMessage`입니다",
+          "dense_paragraph:컨텍스트 엔지니어링은 모델에게 어떤 자료를 얼마나 보낼지 정하는 일입니다. 질문에 필요하다는 이유만으로 자료",
+          "dense_paragraph:넓이가 정해진 책상에서 자료를 검토한다고 생각해 봅시다. 책상 전체가 모델의 최대 작업 공간입니다. 업무 지",
+          "dense_paragraph:컨텍스트 (context) 모델이 현재 답을 만들 때 참고하도록 전달된 정보 전체입니다. 시스템 지시, 사용",
+          "dense_paragraph:입력에 사용할 수 있는 범위는 다음 순서로 정합니다. 먼저 이번 호출의 전체 예산을 정합니다. 그다음 원하는",
+          "dense_paragraph:실습에서는 두 값을 따로 기록합니다. 호출 전에는 해당 모델에 맞는 로컬 계산 도구로 추정 토큰 수 를 구합"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-Write와-Select",
+      "code_cells": 15,
+      "sentences": 185,
+      "counts": {
+        "G1": 0,
+        "G2": 1,
+        "G3": 0,
+        "G4": 1,
+        "G5": 15,
+        "G6": 32,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [
+          "cell14:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [
+          "cell6:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_quotes_no_output",
+          "cell16:result_reading_quotes_no_output",
+          "cell18:result_reading_quotes_no_output",
+          "cell22:result_reading_quotes_no_output",
+          "cell24:result_reading_quotes_no_output",
+          "cell27:result_reading_quotes_no_output",
+          "cell29:result_reading_quotes_no_output",
+          "cell31:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 절을 마치면 결정과 문서 조각을 외부 JSON 파일에 저장하고, 다시 읽어 메시지에 포함해야 하는 이유를 설명할 수 있습니다",
+          "long:모든 회의 기록과 규정을 매번 메시지에 복사하면 예산을 빠르게 사용하고, 현재 질문과 관련이 적은 문장이 답에 영향을 줄 수 있습니다",
+          "long:LangChain 팀은 컨텍스트를 다루는 여러 사례를 Write·Select·Compress·Isolate라는 네 이름으로 정리했습니다",
+          "long:Write (외부 기록) 나중에 사용할 결정, 문서 조각, 중간 결과를 현재 컨텍스트 윈도 밖의 변수나 파일에 저장하는 전략입니다",
+          "long:예를 들어 “매주 월요일에 운영하지 않는다”는 문장에는 어느 기관의 어느 시설인지, 언제부터 적용되는지, 현재 유효한지 나타나지 않습니다",
+          "long:다음 학습과 이어지는 지점 — 03절에서는 선택한 기록이나 긴 대화가 여전히 예산보다 클 때 Compress로 줄이고, 서로 다른 업무 자료는 Isolate로 분리합니다",
+          "long:LangChain Team, 「Context Engineering」 — langchain.com/blog/context-engineering-for-agents · 2025-07-02 · 확인 2026-09-08. 자료를 저장·선택·압축·분리하는 네 방법을 설명한 글입니다",
+          "long:Anthropic, 「Effective context engineering for AI agents」 — anthropic.com/engineering/effective-context-engineering-for-ai-agents · 2025-09-29 · 확인 2026-09-08. 필요한 자료를 실행할 때 불러오고, 본문과 출처·날짜 같은 항목을 함께 기록하는 방식의 근거.",
+          "long:Anthropic, 「Equipping agents for the real world with Agent Skills」 — anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills · 2025-10-16 · 확인 2026-09-08. 메타데이터에서 본문과 연결 파일로 이어지는 점진적 공개 사례.",
+          "english_start:Select의 결과는 그 메시지의 근거 영역에 추가되며, 선택하지 않은 ",
+          "english_start:Write는 결정과 문서 조각을 외부 JSON에 보존합니다",
+          "english_start:Select는 질문과 메타데이터를 비교해 항목을 고르고, 선택한 본문과 ",
+          "english_start:`json.dumps(records)`는 Python 목록을 저장 가능한",
+          "english_start:`write_text()`가 그 문자열을 파일에 쓰고, `read_tex",
+          "english_start:`json.loads()`가 목록으로 복원한 뒤에야 각 기록의 키를 이용",
+          "english_start:`effective_date`는 날짜 필터를 관찰하기 위한 합성 메타데이",
+          "english_start:Select의 누락 가능성을 기록합니다",
+          "english_start:Write는 정보를 컨텍스트 윈도 밖에 저장하며, 저장 자체는 모델 학습",
+          "english_start:Select는 질문과 메타데이터를 비교하여 필요한 기록을 고르고 현재 메",
+          "english_start:Write는 정보를 외부 기록에 남기는 단계이고, Select는 현재 질",
+          "english_start:`.env`는 현재 작업 폴더의 상위 경로에서도 찾습니다",
+          "english_start:`effective_date`는 날짜 필터를 관찰하기 위한 합성 메타데이",
+          "english_start:`gettempdir()`를 사용하므로 노트북을 어느 폴더에서 열어도 같",
+          "english_start:`Path(gettempdir()) / \"ch08-memory.json\"",
+          "english_start:`json.dumps()`는 목록을 JSON 문자열로 바꾸고 `write",
+          "english_start:`read_text()`는 문자열을 반환하고, `json.loads()`",
+          "english_start:`topics`는 필요한 주제의 집합이고 `in`은 포함 여부를 검사합니",
+          "english_start:`invoke()`의 반환값은 `AIMessage`입니다",
+          "english_start:`invoke()`에 파일 경로를 전달하지 않았고, 메시지에도 본문이 없",
+          "dense_paragraph:자료실에는 여러 기관의 규정과 회의 기록이 보관되어 있습니다. 질문을 처리할 때 모든 서류를 열람대에 펼치지",
+          "dense_paragraph:Write (외부 기록) 나중에 사용할 결정, 문서 조각, 중간 결과를 현재 컨텍스트 윈도 밖의 변수나 파일",
+          "dense_paragraph:자료가 많을 때는 처음부터 모든 본문을 읽지 않아도 됩니다. 첫 단계에서는 식별자, 제목, 기관, 적용 날짜"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-Compress와-Isolate",
+      "code_cells": 13,
+      "sentences": 172,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 0,
+        "G4": 1,
+        "G5": 12,
+        "G6": 29,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [],
+        "G4": [
+          "cell6:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_quotes_no_output",
+          "cell16:result_reading_quotes_no_output",
+          "cell18:result_reading_quotes_no_output",
+          "cell22:result_reading_quotes_no_output",
+          "cell25:result_reading_quotes_no_output",
+          "cell27:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:수동 압축 (manual compression) 사람이 보존 항목과 삭제 기준을 먼저 정하고 그 규칙에 따라 요약을 만드는 방식입니다",
+          "long:정보 손실 (information loss) 압축 과정에서 원문의 사실, 조건, 예외, 관계가 사라지거나 의미가 바뀌는 현상입니다",
+          "long:독립 메시지 (independent message set) 대출 문의라면 대출 지시·질문·근거만 넣는 식으로, 한 업무의 자료만 담아 따로 만든 메시지 목록입니다",
+          "long:민감한 자료를 보호하려면 프로그램이 사용 권한을 검사하고, 자료를 별도 저장소와 별도 호출로 나누며, 로그에 남길 항목도 제한해야 합니다",
+          "long:그다음 대출과 휴관 근거를 별도 메시지로 구성하고, 서로의 출처가 섞이지 않았는지 검사한 뒤 두 메시지를 각각 실제 API에 전달합니다",
+          "long:오래된 대화 기록을 먼저 압축한 뒤 필요한 결정을 선택할 수 있고, 여러 문서 중 필요한 문서를 먼저 선택한 뒤 그 문서만 압축할 수도 있습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 컨텍스트가 잘못된 정보, 과도한 자료, 관련 없는 자료, 서로 맞지 않는 정보 때문에 답에 어떤 문제가 생기는지 비교합니다",
+          "long:Ch 9에서는 Select를 자동 검색으로 확장하지만, 검색 결과가 길면 Compress가 필요하고 서로 다른 질문을 처리할 때는 Isolate로 자료 묶음을 나눕니다",
+          "long:[상] 4. 도서관 대출 질문과 휴관 질문을 처리하는 고정 프로그램을 설계할 때, 분리 규칙과 에이전트가 아닌 이유를 함께 설명하세요",
+          "long:정답과 해설 — 대출 질문 호출에는 대출 규정·질문·해당 출처만 넣고, 휴관 질문 호출에는 휴관 안내·질문·해당 출처만 넣습니다",
+          "long:LangChain Team, 「Context Engineering」 — langchain.com/blog/context-engineering-for-agents · 2025-07-02 · 확인 2026-09-08. 자료를 줄이는 Compress와 업무별로 나누는 Isolate의 출처입니다",
+          "long:Anthropic, 「Effective context engineering for AI agents」 — anthropic.com/engineering/effective-context-engineering-for-ai-agents · 2025-09-29 · 확인 2026-09-08. 모델에 보낼 자료의 양을 제한하고, 본문과 출처·조건을 함께 기록하며, 업무별 입력을 나누는 방식의 근거.",
+          "long:Hong, Troynikov, Huber, 「Context Rot: How Increasing Input Tokens Impacts LLM Performance」 — trychroma.com/research/context-rot · Chroma Technical Report, 2025-07-14 · 확인 2026-09-08. 긴 입력의 영향을 다룬 기술 보고서이며 동료 심사 논문이 아닙니다",
+          "long:이후 서로 다른 메시지 목록을 만드는 작업은 입력 자료를 나누는 것으로, 운영체제의 접근 권한이나 보안 격리를 설정하지 않습니다",
+          "english_start:Compress는 한 기록을 짧게 만들고, Isolate는 한 업무의 자",
+          "english_start:Compress는 한 자료 묶음에서 결정·예외·날짜·기관·출처를 남기고 ",
+          "english_start:Isolate는 도서관 대출 질문과 휴관 질문의 메시지를 각각 구성하여 ",
+          "english_start:`set(required) - record.keys()`는 필요한 키 중",
+          "english_start:Compress는 표현을 줄이되 결정·예외·날짜·기관·출처를 보존하며, ",
+          "english_start:Isolate는 서로 다른 업무마다 독립 메시지를 구성하여 필요한 자료만",
+          "english_start:Isolate는 서로 다른 작업의 자료 묶음을 나누어 각 호출에 필요한 ",
+          "english_start:Compress는 한 기록에서 필요한 사실을 남기고 반복 표현을 줄입니다",
+          "english_start:Isolate는 대출과 휴관처럼 서로 다른 질문의 근거가 한 메시지에 섞",
+          "english_start:`.env`는 현재 작업 폴더의 상위 경로에서도 찾습니다",
+          "english_start:`compress(record)`의 입력은 사람이 이미 골라 적은 네 항",
+          "english_start:`set(required) - record.keys()`는 빠진 키를 찾",
+          "english_start:`loan_messages`와 `closure_messages`는 서로 ",
+          "banned:돌립니다: 같은 사실·기간·출처를 유지하고 ‘예약이 없으면’이라는 조건만 되돌립니다",
+          "dense_paragraph:Compress (압축) 현재 과업에 필요한 사실을 유지하면서 긴 대화나 문서의 표현을 줄이는 전략입니다. "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-네-가지-실패-모드",
+      "code_cells": 12,
+      "sentences": 174,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 0,
+        "G4": 1,
+        "G5": 13,
+        "G6": 33,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [],
+        "G4": [
+          "cell6:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_quotes_no_output",
+          "cell16:result_reading_quotes_no_output",
+          "cell19:result_reading_quotes_no_output",
+          "cell21:result_reading_quotes_no_output",
+          "cell23:result_reading_quotes_no_output",
+          "cell25:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 절을 마치면 잘못된 정보, 무관한 정보, 비슷한 대상, 서로 맞지 않는 규정이 답에 어떤 오류를 만들 수 있는지 설명할 수 있습니다",
+          "long:필요한 정보를 외부 파일에 기록하고(Write), 현재 질문에 맞는 정보를 고르고(Select), 긴 내용을 줄이고(Compress), 서로 다른 작업을 분리합니다(Isolate). 이제 반대 방향에서 살펴볼 차례입니다",
+          "long:컨텍스트 오염 (context poisoning) 이전 답이나 저장한 메모에 틀린 내용이 들어 있고, 그 내용을 다음 질문에 다시 넣어 사실처럼 사용하는 문제입니다",
+          "long:컨텍스트 산만화 (context distraction) 현재 질문과 관계없는 내용이 많이 들어가서 모델이 중요한 지시나 근거를 놓치는 문제입니다",
+          "long:컨텍스트 혼동 (context confusion) 이름이나 설명이 비슷한 두 대상이 함께 들어가서, 모델이 다른 대상을 고르거나 두 대상의 내용을 섞는 문제입니다",
+          "long:컨텍스트 충돌 (context clash) 입력 안에 서로 맞지 않는 지시나 사실이 있는데, 어느 출처가 최신인지 또는 무엇을 먼저 따라야 하는지 표시되지 않은 문제입니다",
+          "long:출력에서 확인한 증거 (observational evidence) 모델의 실제 답에서 잘못된 요일, 다른 기관명, 서로 맞지 않는 문장처럼 직접 확인한 내용입니다",
+          "long:검색이 잘못된 문서를 가져왔는지, 지시가 부족했는지, 모델이 해당 내용을 학습하지 않았는지, 최신 자료가 빠졌는지도 따로 확인합니다",
+          "long:Poisoning은 잘못된 정보의 재사용, Distraction은 무관한 정보의 집중 방해, Confusion은 비슷한 대상의 구분 실패, Clash는 서로 맞지 않는 지시나 사실의 처리 문제를 살펴보는 이름입니다",
+          "long:다음 학습과 이어지는 지점 — 다음 05절에서는 입력이 길어질 때 성능이 달라지는 context rot를 같은 질문과 모델을 유지한 채 입력 길이만 바꾸어 살펴봅니다",
+          "long:Ch 9에서는 Select가 검색으로 자동화되면서 Distraction과 Confusion이 검색 결과의 품질 문제로 다시 나타납니다",
+          "long:Ch 19에서는 서로 비슷한 도구 설명이 Confusion을 일으킬 수 있는 조건을 다루고, 이 절의 진단표를 도구 선택 기록에 적용합니다",
+          "long:[중] 2. 질문과 무관한 긴 회의록과 이름이 비슷한 다른 기관의 안내문을 함께 넣었더니 다른 기관의 규정이 답에 포함되었습니다",
+          "long:Poisoning, Confusion, Clash를 각각 적용할 수 있는 조건을 구분하여 쓰고, 추가로 확인할 로그를 제안하세요",
+          "long:LangChain Team, 「Context Engineering」 — langchain.com/blog/context-engineering-for-agents · 2025-07-02 · 확인 2026-09-08 · 자료를 저장·선택·압축·분리하는 네 방법과 네 문제 이름의 출처입니다",
+          "long:Anthropic, 「Effective context engineering for AI agents」 — anthropic.com/engineering/effective-context-engineering-for-ai-agents · 2025-09-29 · 확인 2026-09-08 · 컨텍스트를 한정된 자원으로 다루고 관련성이 높은 토큰을 유지하는 원칙.",
+          "long:이 연습에서는 기관에 확인한 결과 기존 규정의 시행일은 2025-01-01, 대체 규정의 시행일은 2026-01-01이라고 가정합니다",
+          "long:두 규정의 본문은 그대로 두고, 같은 업무의 새 규정이 이전 규정을 대체한다는 조건에서 기준일까지 시행된 가장 최근 규정을 선택합니다",
+          "english_start:Distraction과 Confusion의 차이는 정보량만으로 결정되지 ",
+          "english_start:`conditions`의 키인 `poisoning`이나 `clash`는 ",
+          "english_start:`conditions.items()`로 이름과 내용을 하나씩 읽어 같은 ",
+          "english_start:Poisoning은 공격만을 뜻하지 않습니다",
+          "english_start:Confusion과 Clash는 출처 메타데이터로 줄일 수 있습니다",
+          "english_start:Poisoning은 잘못된 정보의 재사용, Distraction은 무관한",
+          "english_start:`.env`는 현재 작업 폴더의 상위 경로에서도 찾습니다",
+          "english_start:`conditions.items()`는 조건 이름과 입력 내용을 쌍으로 ",
+          "english_start:`results[name] = response`는 해당 이름에 실제 응답",
+          "english_start:`eligible`은 기준일 전에 시행된 후보 목록입니다",
+          "english_start:`max(eligible, key=effective_date)`는 각 후",
+          "dense_paragraph:Poisoning, Distraction, Confusion, Clash는 업계가 공통으로 정한 공식 오류 ",
+          "dense_paragraph:고객지원팀이 한 권의 인수인계 노트를 사용한다고 가정합니다. 첫 담당자가 휴관일을 잘못 적으면 다음 담당자도",
+          "dense_paragraph:컨텍스트 오염 (context poisoning) 이전 답이나 저장한 메모에 틀린 내용이 들어 있고, 그 내",
+          "dense_paragraph:Distraction과 Confusion의 차이는 정보량만으로 결정되지 않습니다. 무관한 회의록이 길어서 핵"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-Context-rot-측정",
+      "code_cells": 9,
+      "sentences": 164,
+      "counts": {
+        "G1": 3,
+        "G2": 1,
+        "G3": 0,
+        "G4": 1,
+        "G5": 13,
+        "G6": 14,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell16:list_comprehension",
+          "cell16:list_comprehension",
+          "cell16:generator_expression"
+        ],
+        "G2": [
+          "cell12:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_after_missing",
+          "cell3:explanation_before_missing",
+          "cell3:result_reading_after_missing",
+          "cell4:explanation_before_missing",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_quotes_no_output",
+          "cell16:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:짧은 입력에는 주변 문장을 넣지 않고, 중간 입력에는 근거 앞뒤로 같은 문장을 각각 120번, 긴 입력에는 각각 1,200번 넣습니다",
+          "long:같은 방법을 회의록에서 담당자를 찾는 과제에 적용하려면 담당자 이름이 적힌 근거와 질문을 고정하고 주변 기록의 양을 바꿀 수 있습니다",
+          "long:세 길이의 결과가 같다면 “이번 모델, 질문, 자료 구성, 입력 길이 범위에서는 이 기준으로 저하를 관찰하지 못했다”고 정리합니다",
+          "long:“입력 토큰이 늘었으므로 context rot가 발생했다”거나 “이번에 모두 맞았으므로 context rot는 없다”는 결론은 모두 실행 결과를 넘어섭니다",
+          "long:Hong, Troynikov, Huber, 「Context Rot: How Increasing Input Tokens Impacts LLM Performance」 — trychroma.com/research/context-rot · Chroma Technical Report, 2025-07-14 · 확인 2026-09-08 · 18개 모델의 통제 과제 결과. 동료 심사 논문이 아닌 기술 보고서입니다",
+          "long:Anthropic, 「Effective context engineering for AI agents」 — anthropic.com/engineering/effective-context-engineering-for-ai-agents · 2025-09-29 · 확인 2026-09-08 · 긴 입력에서의 성능 저하와 컨텍스트를 한정된 자원으로 관리하는 원칙.",
+          "long:OpenAI, 「GPT-5.4 Mini model」 — developers.openai.com/api/docs/models/gpt-5.4-mini · 확인 2026-09-08 · 컨텍스트 윈도, 출력 상한, 토큰 가격.",
+          "long:LangChain, 「Messages」 — docs.langchain.com/oss/python/langchain/messages · 확인 2026-09-08 · `AIMessage.text`와 `usage_metadata` 필드.",
+          "english_start:`rows`는 그중 길이 이름이 같은 행만 골라 만든 목록입니다",
+          "english_start:`record`는 한 번 실행한 길이, 반복 번호, 답, 토큰 수를 담는",
+          "english_start:`records`는 아홉 개의 `record`를 차례로 모은 목록입니다",
+          "english_start:`rows`는 현재 길이 조건과 이름이 같은 기록만 고르는 목록 표현식입",
+          "english_start:`sum()`은 참을 1, 거짓을 0으로 더하여 문자열 기준 충족 횟수를",
+          "dense_paragraph:컨텍스트 로트 (context rot) 입력이 길어질 때 모델이 필요한 정보를 찾아 적용하는 성능이 낮아지는"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "06-단계적-공개와-설계-비교",
+      "code_cells": 18,
+      "sentences": 179,
+      "counts": {
+        "G1": 1,
+        "G2": 4,
+        "G3": 2,
+        "G4": 1,
+        "G5": 15,
+        "G6": 26,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:generator_expression"
+        ],
+        "G2": [
+          "cell8:over_15_lines",
+          "cell21:over_15_lines",
+          "cell27:over_15_lines",
+          "cell36:over_15_lines"
+        ],
+        "G3": [
+          "cell8:first_line_comment_missing",
+          "cell27:first_line_comment_missing"
+        ],
+        "G4": [
+          "cell6:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell14:result_reading_quotes_no_output",
+          "cell16:result_reading_quotes_no_output",
+          "cell18:result_reading_quotes_no_output",
+          "cell20:result_reading_after_missing",
+          "cell21:explanation_before_missing",
+          "cell25:result_reading_quotes_no_output",
+          "cell29:result_reading_quotes_no_output",
+          "cell34:result_reading_quotes_no_output",
+          "cell36:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 절을 마치면 학생이 문서 ID를 직접 고르는 이 절의 코드와 Ch 9에서 검색 코드가 문서를 고르는 방식의 차이를 설명할 수 있습니다",
+          "long:단계적 공개는 화면 설계에서 오랫동안 사용한 개념이지만, 컨텍스트 엔지니어링에서는 모델이 처음부터 모든 세부 내용을 받지 않도록 하는 입력 설계로 적용할 수 있습니다",
+          "long:이 절은 그 파일과 SHA-256 지문을 직접 읽어 실행 기록의 출처를 확인한 뒤 같은 측정 필드와 가격 기준일·100만 토큰당 단가를 컨텍스트 설계 비교에 사용합니다",
+          "long:단계적 공개 (progressive disclosure) 처음에는 문서 ID와 한 줄 설명만 보여 주고, 질문에 필요한 문서를 고른 뒤 그 문서의 자세한 본문을 보여 주는 방식입니다",
+          "long:전체·선택·압축 입력을 같은 질문과 지시로 각각 실제 API에 전달하여 입력·출력·캐시 토큰, 지연, 예상 비용, 답변 원문, 대출 조건·연장 예외·출처의 보존 여부를 비교합니다",
+          "long:2026-09-09 새 커널 실행에서 full·selected·compressed의 입력 토큰은 각각 110·86·82토큰, 출력 토큰은 169·155·118토큰이었습니다",
+          "long:캐시 입력은 모두 0토큰이었고 지연은 1,376.7·1,411.3·1,450.1밀리초, 예상 비용은 0.000843·0.000762·0.0005925달러였습니다",
+          "long:full, selected, compressed는 입력 토큰뿐 아니라 정답 근거와 예외 조건의 보존 여부를 함께 비교해야 합니다",
+          "long:Ch 22에서는 Compress와 Isolate를 장기 실행 흐름에 적용하며, 요약의 근거 보존과 작업별 컨텍스트 분리를 다룹니다",
+          "long:정답·해설 — full에는 후보 전체, selected에는 비교 대상 두 문서의 관련 원문, compressed에는 두 문서의 수치·시점·예외·출처를 보존한 요약을 넣습니다",
+          "long:같은 모델과 프롬프트로 실행하고 입력 토큰, 두 문서의 핵심 사실 포함 여부, 차이 설명의 정확성, 근거 밖 주장, 압축 비용을 비교합니다",
+          "long:Anthropic, 「Equipping agents for the real world with Agent Skills」 — anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills · 2025-10-16 · 확인 2026-09-08 · 메타데이터, 본문, 연결 파일을 단계별로 여는 사례.",
+          "long:Anthropic, 「Effective context engineering for AI agents」 — anthropic.com/engineering/effective-context-engineering-for-ai-agents · 2025-09-29 · 확인 2026-09-08 · 식별자를 유지하고 필요한 자료를 실행 시점에 읽는 방식, 압축과 컨텍스트 분리의 근거.",
+          "long:LangChain Team, 「Context Engineering」 — langchain.com/blog/context-engineering-for-agents · 2025-07-02 · 확인 2026-09-08 · 자료를 저장·선택·압축·분리하는 네 방법의 출처입니다",
+          "long:단계적 공개는 문서 ID와 제목만 먼저 보고, 질문에 필요한 문서를 고른 뒤, 그 문서의 자세한 본문만 모델에 전달하는 방식입니다",
+          "english_start:Anthropic의 Agent Skills 설명은 스킬 이름과 설명, 본",
+          "english_start:`E01-p3`은 Ch 9의 `doc_id=E01`, `page=3`과 ",
+          "english_start:`selected_id`는 사람이 대출 규정의 ID로 지정하고, 반복문이",
+          "english_start:`break`는 찾은 뒤 반복을 중단합니다",
+          "english_start:selected가 더 좋은 설계라고 결론 내리기 전에 확인할 항목 두 가",
+          "english_start:`.env`는 현재 작업 폴더의 상위 경로에서도 찾습니다",
+          "english_start:`selected_id`는 사람이 정한 값입니다",
+          "english_start:`selected is None`은 끝까지 찾지 못했는지 확인합니다",
+          "dense_paragraph:단계적 공개 (progressive disclosure) 처음에는 문서 ID와 한 줄 설명만 보여 주고, 질",
+          "dense_paragraph:실행 순서는 세 단계입니다. 첫째, 문서 ID와 제목만 있는 짧은 목록을 만듭니다. 둘째, 학생이 필요한 I",
+          "dense_paragraph:`E01-p3`은 Ch 9의 `doc_id=E01`, `page=3`과 같은 출처 위치를 가리킵니다. 이 구"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

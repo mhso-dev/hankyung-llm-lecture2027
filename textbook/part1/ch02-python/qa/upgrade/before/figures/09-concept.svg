@@ -1,0 +1,30 @@
+<svg style="min-width:860px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 535" width="860" height="535" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-09-concept desc-09-concept">
+<title id="title-09-concept">함수 호출 전후의 기록과 예외 뒤의 자원 정리</title>
+<desc id="desc-09-concept">위쪽은 trace의 호출 기록, 아래쪽은 같은 RuntimeError 뒤 정리 여부를 비교합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="860" height="535" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">함수 호출 전후의 기록과 예외 뒤의 자원 정리</tspan></text>
+<rect x="30" y="90" width="230" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="145.0" y="128.0" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="145.0" dy="0.0">호출 시작 기록</tspan></text>
+<polyline points="260,128 310,128" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="310" y="90" width="230" height="76" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="425.0" y="117.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="425.0" dy="0.0">normalize_title 실행</tspan><tspan x="425.0" dy="21.6">양쪽 공백 제거</tspan></text>
+<polyline points="540,128 590,128" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="590" y="90" width="240" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="710.0" y="117.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="710.0" dy="0.0">호출 완료 기록</tspan><tspan x="710.0" dy="21.6">문자열 반환</tspan></text>
+<text x="430" y="208.0" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="430" dy="0.0">wraps는 원래 함수의 이름·설명 등을 유지합니다.</tspan></text>
+<rect x="40" y="290" width="350" height="130" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="215.0" y="333.4" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="215.0" dy="0.0">Before: RuntimeError 발생</tspan><tspan x="215.0" dy="21.6">close()에 도달하지 못함</tspan><tspan x="215.0" dy="21.6">closed: False</tspan></text>
+<rect x="470" y="290" width="350" height="130" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="645.0" y="333.4" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="645.0" dy="0.0">After: 같은 RuntimeError</tspan><tspan x="645.0" dy="21.6">finally에서 close() 실행</tspan><tspan x="645.0" dy="21.6">closed: True</tspan></text>
+<polyline points="390,355 470,355" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="395.0" y="328.0" width="70.0" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="430.0" y="340.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="430.0" dy="0.0">정리 위치</tspan></text>
+<text x="430" y="482.0" font-size="15" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="430" dy="0.0">파랑: 작성한 실행 순서 · 초록: 처리·자원 · 빨강: 정리 누락</tspan></text>
+</svg>

@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  ARROWS["벡터 두 개<br>[3, 4] · [4, 3]"]:::tool
+  DOT["점곱 24<br>3×4 + 4×3"]:::measure
+  LEN["길이 5.0 · 5.0"]:::measure
+  COS["코사인 유사도 0.96<br>24 ÷ (5.0 × 5.0)"]:::measure
+  ARROWS -- "dot_product()" --> DOT
+  ARROWS -- "vector_length()" --> LEN
+  DOT -- "cosine_similarity()" --> COS
+  LEN --> COS

@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph one["처음 상태를 넣은 1회 실행"]
+    direction TB
+    o1["넣은 값<br>메시지 칸이 빈 목록"]:::tool
+    o2["나온 메시지 수<br>둘"]:::measure
+    o3["나온 실행 흔적 수<br>셋"]:::measure
+    o1 ~~~ o2
+    o2 ~~~ o3
+  end
+  subgraph two["1회 결과를 다시 넣은 2회 실행"]
+    direction TB
+    t1["넣은 값<br>메시지 둘이 든 목록"]:::tool
+    t2["나온 메시지 수<br>둘"]:::measure
+    t3["나온 실행 흔적 수<br>여섯"]:::measure
+    t1 ~~~ t2
+    t2 ~~~ t3
+  end
+  same2["두 실행 모두<br>같은 그래프와 같은 번호"]
+  one ~~~ two
+  two ~~~ same2

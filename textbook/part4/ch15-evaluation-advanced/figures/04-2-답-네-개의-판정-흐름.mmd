@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  answers["답 네 개<br>Q002 · Q006<br>Q090 · 바꾼 답"]:::tool
+  labels["제시 라벨<br>1 · 1 · 1 · 0"]:::tool
+  judge["평가 모델 gpt-5.4-mini<br>머리글 rag-judge-v1.0.0<br>요청 네 번"]:::model
+  scores["받은 점수<br>1 · 1 · 0 · 0"]:::measure
+  count["box_name · count_boxes<br>라벨과 점수를 짝지어 세기"]:::flow
+  result["둘 다 1 둘 · 둘 다 0 하나<br>라벨 1 판정 0 하나 Q090<br>일치율 0.75"]:::measure
+  answers --> judge
+  judge --> scores
+  scores --> count
+  labels --> count
+  count --> result

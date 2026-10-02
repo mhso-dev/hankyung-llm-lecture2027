@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph three["10절 바퀴 한도 3"]
+    direction TB
+    t1["run_write_judge_loop"]:::flow
+    t2["첫 바퀴가 코드 검사에 걸려<br>둘째 바퀴로 감"]:::measure
+    t3["요청은 바퀴 수의 두 배<br>많아야 여섯 번"]
+    t1 --> t2
+    t2 --> t3
+  end
+  subgraph one["11절 바퀴 한도 1"]
+    direction TB
+    o1["run_write_judge_loop"]:::flow
+    o2["멈춘 까닭 바퀴 한도<br>상태 멈춤 · 요청 둘"]:::measure
+    o3["마지막 초안 코드 검사 문제<br>글자 수가 150자보다 적음"]:::measure
+    o1 --> o2
+    o2 --> o3
+  end
+  same["두 칸 모두 같은 과제 글<br>같은 설정 · 바퀴 한도만 다름"]
+  three ~~~ same
+  one ~~~ same

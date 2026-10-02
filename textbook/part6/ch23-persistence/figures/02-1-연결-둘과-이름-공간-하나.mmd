@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  url["접속 글 하나<br>127.0.0.1:55432 · rag_lab"]:::tool
+  qc["조회 연결 conn<br>autocommit=True"]:::tool
+  sc["체크포인터 연결 saver_conn<br>autocommit=True<br>dict_row<br>search_path ch23_lab"]:::tool
+  sv["체크포인터 PostgresSaver<br>그래프 graph에 붙음"]
+  subgraph ns["이름 공간 ch23_lab"]
+    direction TB
+    tb["setup() 뒤 표 넷<br>checkpoints<br>checkpoint_blobs<br>checkpoint_writes<br>checkpoint_migrations"]:::measure
+  end
+  url --> qc
+  url --> sc
+  sc --> sv
+  sv -->|체크포인트를 씀| ns
+  qc -->|표 이름과 줄 수를 읽음| ns

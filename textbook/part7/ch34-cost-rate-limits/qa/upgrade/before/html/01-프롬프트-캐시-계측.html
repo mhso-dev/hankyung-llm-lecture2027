@@ -1,0 +1,276 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프롬프트 캐시 계측 — Ch 34 · 비용 · Rate Limit 엔지니어링</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 서비스화와 운영 · Ch 34 · 비용 · Rate Limit 엔지니어링</p>
+<h1>프롬프트 캐시 계측</h1><div class="meta"><span>강의 0.6h</span><span>실습 1h</span><span>새 용어 4</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 0.6h | 실습 1h | 코드 Jupyter Notebook | 새 용어 4 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>프롬프트 캐시가 재사용하는 공통 접두어를 구성할 수 있습니다.</li><li>실제 API 사용량에서 캐시 읽기 토큰과 일반 입력 토큰을 분리할 수 있습니다.</li><li>API가 제공하지 않는 캐시 생성 값은 0이 아니라 <code>None</code>으로 기록할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>서비스가 같은 정책 문서와 도구 설명을 요청마다 다시 보내면 입력 토큰이 반복됩니다. 프롬프트 캐싱(prompt caching)은 같은 접두어의 내부 계산을 재사용해 지연과 비용을 줄입니다. 그러나 설정만 보고 절감 효과를 확인할 수는 없습니다. 실제 응답의 사용량에서 몇 토큰을 캐시로 읽었는지 확인해야 합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch 6에서는 모델 응답의 입력·출력 토큰을 기록했고, Ch 15에서는 추적 항목에서 캐시 읽기와 생성을 구분했습니다. 이번 절은 그 기록을 LangChain <code>AIMessage</code>의 실제 <code>usage_metadata</code>와 연결합니다. API 키는 프로젝트 루트의 <code>.env</code>에서 읽으며 값은 출력하지 않습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>반복되는 문서의 앞부분</h3><p>매일 같은 신청서를 처리한다고 생각해 봅니다. 양식과 규칙은 그대로이고 마지막 문의만 바뀝니다. 캐시는 양식과 규칙에 해당하는 앞부분을 재사용합니다. 따라서 변하지 않는 지시문과 예시는 앞에 두고, 요청마다 바뀌는 질문은 뒤에 둡니다.</p><dl class="term"><dt>접두어(prefix)</dt><dd>입력의 처음부터 이어지는 같은 토큰 구간입니다.</dd><dt>캐시 읽기(cache read)</dt><dd>이전에 계산한 접두어를 다시 사용한 입력 토큰 수입니다.</dd><dt>캐시 생성(cache creation)</dt><dd>다음 요청에서 읽을 수 있도록 새로 저장한 구간의 양입니다.</dd><dt>적중(cache hit)</dt><dd>요청 접두어가 저장된 접두어와 일치해 재사용된 상태입니다.</dd></dl><figure><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 250" role="img" aria-label="공통 접두어와 캐시 읽기 계측"><rect width="800" height="250" fill="white"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#334155"/></marker></defs><text x="400" y="42" text-anchor="middle" font-size="24" fill="#0f172a">공통 접두어와 캐시 읽기 계측</text><rect x="75" y="95" width="155" height="65" rx="10" fill="#dcfce7" stroke="#334155"/><text x="152.5" y="133" text-anchor="middle" font-size="16" fill="#0f172a">공통 접두어</text><rect x="325" y="95" width="155" height="65" rx="10" fill="#ede9fe" stroke="#334155"/><text x="402.5" y="124" text-anchor="middle" font-size="16" fill="#0f172a">모델 호출</text><text x="402.5" y="145" text-anchor="middle" font-size="16" fill="#0f172a">요청 1 · 요청 2</text><path d="M230 127.5L317 127.5" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/><rect x="575" y="95" width="155" height="65" rx="10" fill="#fef3c7" stroke="#334155"/><text x="652.5" y="124" text-anchor="middle" font-size="16" fill="#0f172a">일반 입력 ·</text><text x="652.5" y="145" text-anchor="middle" font-size="16" fill="#0f172a">cache read</text><path d="M480 127.5L567 127.5" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/></svg></div><figcaption>초록 상자의 같은 접두어를 두 번의 모델 호출에 사용합니다. 보라 상자는 모델 호출이며, 노란 상자에서 일반 입력 토큰과 캐시 읽기 토큰을 구분해 확인합니다.</figcaption></figure><p>OpenAI 공식 문서는 자동 캐싱이 1,024토큰 이상의 프롬프트에서 적용되며, 캐시 사용량은 <code>cached_tokens</code>에서 확인한다고 설명합니다. 이 실습은 충분히 긴 공통 접두어를 두 번 보내고 이 값을 직접 읽습니다.</p>
+<h3>코드 읽기와 개념 경계</h3><p>프롬프트 캐시는 입력의 처음부터 같은 토큰 구간을 다시 사용할 때 적용됩니다. 예제는 고정 정책을 긴 <code>stable_prefix</code>로 만들고 마지막 질문만 바꿔 두 번 호출합니다. <code>usage_metadata</code>의 전체 입력 토큰과 <code>input_token_details</code>의 캐시 읽기 값을 따로 기록하므로, 두 번째 호출이 빨랐다는 느낌 대신 제공자가 반환한 사용량으로 적중을 판단합니다.</p><p>문장 내용이 비슷해도 앞부분의 토큰 배열이 달라지면 같은 접두어가 아닙니다. 날짜나 사용자 식별자를 맨 앞에 넣으면 뒤의 긴 정책까지 재사용되지 않을 수 있습니다. 반대로 캐시 적중은 답의 품질이나 최신성을 높이지 않으므로, 반복 지시문 안정성과 질문별 근거 갱신을 별도로 관리합니다.</p><h2 id="b5"><span class="no">5</span>실행 예제</h2><p>먼저 실행마다 달라지는 실험 ID와 긴 정책 접두어를 결합하고 같은 모델에 두 번 전송합니다. 고유한 실험 ID는 이전 실행의 캐시와 구분하며, 두 요청 안에서는 같은 값을 유지합니다. 노트북은 두 응답의 본문이 비어 있지 않고 두 번째 요청에서 1,024토큰 이상이 실제로 읽혔는지 검사합니다.</p><section class="notebook" data-notebook="01-프롬프트-캐시-계측" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="01-프롬프트-캐시-계측.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjOGViNDg1ZSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMg7ZSE66Gs7ZSE7Yq4IOy6kOyLnCDqs4TsuKFcbiIsCiAgICAiXG4iLAogICAgIuuPmeydvO2VnCDquLQg7KCR65GQ7Ja066W8IOuRkCDrsogg7KCE7Iah7ZaI7J2EIOuVjCDsi6TsoJwg7IKs7Jqp65+J7JeQ7IScIOy6kOyLnCDsnb3quLAg7Yag7YGw7J2EIOq1rOu2hO2VoCDsiJgg7J6I64qU7KeAIO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI0ZDkyZjkwZSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEXG4iLAogICAgIlxuIiwKICAgICJPcGVuQUkgU0RL7JmAIGAuZW52YOulvCDspIDruYTtlanri4jri6QuIO2CpCDqsJLsnYAg7Lac66Cl7ZWY7KeAIOyViuyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJwcmVwLTM0LTAxLTAiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg7J20IOykgOu5hCDshYDsnbQg7ZWY64qUIOydvFxuIiwKICAgICJcbiIsCiAgICAi7KSA67mEIOyFgOydgCDtmITsnqwg7Y+0642U7JmAIOu2gOuqqCDtj7TrjZTsl5DshJwgYGNoMzQtY29zdC1yYXRlLWxpbWl0c2Ag7Iuk7Iq1IO2PtOuNlOulvCDssL7qs6AsIOuwnOqyrO2VnCBgLmVudmDqsIAg7J6I7Jy866m0IO2YhOyerCDtlITroZzshLjsiqTsl5Ag67aI65+s7Ji164uI64ukLiDtgqQg6rCS7J2AIOy2nOugpe2VmOyngCDslYrsnLzrqbAg7KSA67mEIOqysOqzvOuhnCDtj7TrjZTsmYAg7ZmY6rK9IO2MjOydvOydmCDsobTsnqwg7Jes67aA66eMIO2ZleyduO2VqeuLiOuLpC4g7J207ZuEIO2MjOydvCDquLDroZ3snYAg7LC+7J2AIGBjaGFwdGVyX3Jvb3RgIOyVhOuemCBgcnVuc2Ag7Y+0642U66W8IOyCrOyaqe2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICI2NzRlYzEwMCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoxOToyNi42MjM2MDBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoxOToyNi42MjM1MzZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoxOToyNi42Mjg0NzZaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjE5OjI2LjYyODEzMVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJQeXRob24g7KSA67mEIOyZhOujjCBBUEkg7YKkIO2MjOydvCDtmZXsnbhcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgImZyb20gZG90ZW52IGltcG9ydCBsb2FkX2RvdGVudlxuIiwKICAgICJcbiIsCiAgICAiaGVyZSA9IFBhdGguY3dkKCkucmVzb2x2ZSgpXG4iLAogICAgImNoYXB0ZXJfcm9vdCA9IG5leHQoKHAgZm9yIHAgaW4gKGhlcmUsICpoZXJlLnBhcmVudHMpIGlmIHAubmFtZSA9PSBcImNoMzQtY29zdC1yYXRlLWxpbWl0c1wiIGFuZCAocCAvIFwibm90ZWJvb2tzXCIpLmlzX2RpcigpKSwgTm9uZSlcbiIsCiAgICAiaWYgY2hhcHRlcl9yb290IGlzIE5vbmU6XG4iLAogICAgIiAgICByYWlzZSBGaWxlTm90Rm91bmRFcnJvcihcImNoMzQtY29zdC1yYXRlLWxpbWl0cyDsi6TsirUg7Y+0642UIOyViOyXkOyEnCDsi6TtlontlZjshLjsmpQuXCIpXG4iLAogICAgImVudl9wYXRoID0gbmV4dCgocCAvIFwiLmVudlwiIGZvciBwIGluIChoZXJlLCAqaGVyZS5wYXJlbnRzKSBpZiAocCAvIFwiLmVudlwiKS5leGlzdHMoKSksIE5vbmUpXG4iLAogICAgImlmIGVudl9wYXRoOlxuIiwKICAgICIgICAgbG9hZF9kb3RlbnYoZW52X3BhdGgpXG4iLAogICAgInByaW50KFwiUHl0aG9uIOykgOu5hCDsmYTro4xcIiwgXCJBUEkg7YKkIO2MjOydvCDtmZXsnbhcIiBpZiBlbnZfcGF0aCBlbHNlIFwiQVBJIO2CpCDtjIzsnbwg7JeG7J2MXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiMWVmN2M1NTEiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDquLQg6rO17Ya1IOygkeuRkOyWtCDrp4zrk6TquLBcbiIsCiAgICAiXG4iLAogICAgIu2UhOuhrO2UhO2KuCDsupDsi5zripQgMSwwMjTthqDtgbAg7J207IOB7J2YIOygkeuRkOyWtOyXkOyEnCDrj5nsnpHtlZjrr4DroZwg67CY67O17ZW07IScIOyCrOyaqe2VoCDslYjsoJXsoIHsnbgg7JWe67aA67aE7J2EIOunjOuTreuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICI0YTczM2FkNSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoxOToyNi42MjkyMzNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoxOToyNi42MjkxODdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoxOToyNi42MzA5MThaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjE5OjI2LjYzMDYxNloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLqs7XthrUg7KCR65GQ7Ja0IOusuOyekCDsiJg6IDIyNzI0XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImltcG9ydCB1dWlkXG4iLAogICAgIlxuIiwKICAgICJwb2xpY3kgPSBcIu2VnOq1reqyveygnOyLoOusuCDqs6DqsJ3sp4Dsm5Ag7KCV7LGFOiDsgqzsi6Tqs7wg7LaU7KCV7J2EIOq1rOu2hO2VmOqzoCwg6re86rGw6rCAIOyXhuycvOuptCDtmZXsnbjsnbQg7ZWE7JqU7ZWY64uk6rOgIOuLte2VqeuLiOuLpC4gXCJcbiIsCiAgICAic3RhYmxlX3ByZWZpeCA9IGZcIuyLpO2XmCBJRDoge3V1aWQudXVpZDQoKX1cXG5cIiArIHBvbGljeSAqIDQyMFxuIiwKICAgICJxdWVzdGlvbnMgPSBbXCLtmZjrtogg66y47J2Y66W8IO2VnCDrrLjsnqXsnLzroZwg67aE66WY7ZWY7IS47JqULlwiLCBcIuuwsOyGoSDrrLjsnZjrpbwg7ZWcIOusuOyepeycvOuhnCDrtoTrpZjtlZjshLjsmpQuXCJdXG4iLAogICAgInByaW50KFwi6rO17Ya1IOygkeuRkOyWtCDrrLjsnpAg7IiYOlwiLCBsZW4oc3RhYmxlX3ByZWZpeCkpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiNjU4MmQ0YTMiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TsoJwgQVBJ66W8IOuRkCDrsogg7Zi47Lac7ZWY6riwXG4iLAogICAgIlxuIiwKICAgICLrqqjrjbjqs7wg6rO17Ya1IOygkeuRkOyWtOuKlCDsnKDsp4DtlZjqs6Ag66eI7KeA66eJIOyniOusuOunjCDrsJTqv4nri4jri6QuIOqwgSDsnZHri7XsnZggYGlucHV0X3Rva2Vuc19kZXRhaWxzLmNhY2hlZF90b2tlbnNg66W8IOydveyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTM0LTAxLWEiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg67CU66GcIOuLpOydjCDsvZTrk5zrpbwg7J2964qUIOuwqeuylVxuIiwKICAgICJcbiIsCiAgICAi7ZSE66Gs7ZSE7Yq4IOy6kOyLnOuKlCDsnoXroKXsnZgg7LKY7J2M67aA7YSwIOqwmeydgCDthqDtgbAg6rWs6rCE7J2EIOuLpOyLnCDsgqzsmqntlaAg65WMIOyggeyaqeuQqeuLiOuLpC4g7JiI7KCc64qUIOqzoOyglSDsoJXssYXsnYQg6ri0IGBzdGFibGVfcHJlZml4YOuhnCDrp4zrk6Tqs6Ag66eI7KeA66eJIOyniOusuOunjCDrsJTqv5Qg65GQIOuyiCDtmLjstpztlanri4jri6QuIGB1c2FnZV9tZXRhZGF0YWDsnZgg7KCE7LK0IOyeheugpSDthqDtgbDqs7wgYGlucHV0X3Rva2VuX2RldGFpbHNg7J2YIOy6kOyLnCDsnb3quLAg6rCS7J2EIOuUsOuhnCDquLDroZ3tlZjrr4DroZwsIOuRkCDrsojsp7gg7Zi47Lac7J20IOu5qOuekOuLpOuKlCDripDrgowg64yA7IugIOygnOqzteyekOqwgCDrsJjtmZjtlZwg7IKs7Jqp65+J7Jy866GcIOyggeykkeydhCDtjJDri6jtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiNDBhYWFmNTQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTk6MjYuNjMxNTQ3WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTk6MjYuNjMxNTA2WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTk6MzAuNTI4MTA1WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxOTozMC41Mjc2ODJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAiZGF0YSI6IHsKICAgICAgInRleHQvcGxhaW4iOiBbCiAgICAgICAiW3sndGV4dCc6ICfrtoTrpZg6ICoq7ZmY67aIIOusuOydmCoqXFxuXFxu6re86rGw6rCAIOy2qeu2hO2VmOyngCDslYrslYQg67O07J2066+A66GcLCDshLjrtoAg7Jyg7ZiVKOyYiDog6rWs64+FIO2VtOyngCDtm4Qg7ZmY67aILCDspJHrs7Ug6rKw7KCcIO2ZmCcsXG4iLAogICAgICAgIiAgJ3VzYWdlJzogeydpbnB1dF90b2tlbnMnOiAxMTgwNSxcbiIsCiAgICAgICAiICAgJ291dHB1dF90b2tlbnMnOiA0MCxcbiIsCiAgICAgICAiICAgJ3RvdGFsX3Rva2Vucyc6IDExODQ1LFxuIiwKICAgICAgICIgICAnaW5wdXRfdG9rZW5fZGV0YWlscyc6IHsnYXVkaW8nOiAwLCAnY2FjaGVfcmVhZCc6IDB9LFxuIiwKICAgICAgICIgICAnb3V0cHV0X3Rva2VuX2RldGFpbHMnOiB7J2F1ZGlvJzogMCwgJ3JlYXNvbmluZyc6IDB9fSxcbiIsCiAgICAgICAiICAnaW5wdXQnOiAxMTgwNSxcbiIsCiAgICAgICAiICAnY2FjaGVkX3JlYWQnOiAwLFxuIiwKICAgICAgICIgICdjYWNoZV9jcmVhdGlvbic6IE5vbmUsXG4iLAogICAgICAgIiAgJ291dHB1dCc6IDQwfSxcbiIsCiAgICAgICAiIHsndGV4dCc6ICfrsLDshqEg66y47J2Y66GcICoq67aE66WY65Cp64uI64ukKiouICBcXG5cXG4tICoq7IKs7IukOioqIOyCrOyaqeyekOqwgCDigJzrsLDshqEg66y47J2Y66W8IO2VnCDrrLjsnqXsnLzroZwg67aE66WY4oCd7ZW0IOuLrOudvOqzoCDsmpTssq3tlojsirXri4jri6QuXFxuLSAqKuy2lCcsXG4iLAogICAgICAgIiAgJ3VzYWdlJzogeydpbnB1dF90b2tlbnMnOiAxMTgwNCxcbiIsCiAgICAgICAiICAgJ291dHB1dF90b2tlbnMnOiA0MCxcbiIsCiAgICAgICAiICAgJ3RvdGFsX3Rva2Vucyc6IDExODQ0LFxuIiwKICAgICAgICIgICAnaW5wdXRfdG9rZW5fZGV0YWlscyc6IHsnYXVkaW8nOiAwLCAnY2FjaGVfcmVhZCc6IDExNTIwfSxcbiIsCiAgICAgICAiICAgJ291dHB1dF90b2tlbl9kZXRhaWxzJzogeydhdWRpbyc6IDAsICdyZWFzb25pbmcnOiAwfX0sXG4iLAogICAgICAgIiAgJ2lucHV0JzogMTE4MDQsXG4iLAogICAgICAgIiAgJ2NhY2hlZF9yZWFkJzogMTE1MjAsXG4iLAogICAgICAgIiAgJ2NhY2hlX2NyZWF0aW9uJzogTm9uZSxcbiIsCiAgICAgICAiICAnb3V0cHV0JzogNDB9XSIKICAgICAgXQogICAgIH0sCiAgICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICAgIm1ldGFkYXRhIjoge30sCiAgICAgIm91dHB1dF90eXBlIjogImV4ZWN1dGVfcmVzdWx0IgogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImltcG9ydCBqc29uXG4iLAogICAgImZyb20gbGFuZ2NoYWluLmNoYXRfbW9kZWxzIGltcG9ydCBpbml0X2NoYXRfbW9kZWxcbiIsCiAgICAiXG4iLAogICAgIm1vZGVsID0gaW5pdF9jaGF0X21vZGVsKFwib3BlbmFpOmdwdC01LjQtbWluaVwiLCByZWFzb25pbmdfZWZmb3J0PVwibm9uZVwiLCBtYXhfdG9rZW5zPTQwLCBtYXhfcmV0cmllcz0xLCBzZWVkPTM0KVxuIiwKICAgICJyZWNvcmRzID0gW11cbiIsCiAgICAiZm9yIHF1ZXN0aW9uIGluIHF1ZXN0aW9uczpcbiIsCiAgICAiICAgIGFuc3dlciA9IG1vZGVsLmludm9rZShzdGFibGVfcHJlZml4ICsgXCJcXG5cIiArIHF1ZXN0aW9uKVxuIiwKICAgICIgICAgdXNhZ2UgPSBhbnN3ZXIudXNhZ2VfbWV0YWRhdGEgb3Ige31cbiIsCiAgICAiICAgIGRldGFpbHMgPSB1c2FnZS5nZXQoXCJpbnB1dF90b2tlbl9kZXRhaWxzXCIpIG9yIHt9XG4iLAogICAgIiAgICBjYWNoZWQgPSBkZXRhaWxzLmdldChcImNhY2hlX3JlYWRcIikgb3IgMFxuIiwKICAgICIgICAgY3JlYXRpb24gPSBkZXRhaWxzLmdldChcImNhY2hlX2NyZWF0aW9uXCIpXG4iLAogICAgIiAgICByZWNvcmRzLmFwcGVuZCh7XCJ0ZXh0XCI6IGFuc3dlci50ZXh0LCBcInVzYWdlXCI6IHVzYWdlLCBcImlucHV0XCI6IHVzYWdlLmdldChcImlucHV0X3Rva2Vuc1wiKSxcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICBcImNhY2hlZF9yZWFkXCI6IGNhY2hlZCwgXCJjYWNoZV9jcmVhdGlvblwiOiBjcmVhdGlvbiwgXCJvdXRwdXRcIjogdXNhZ2UuZ2V0KFwib3V0cHV0X3Rva2Vuc1wiKX0pXG4iLAogICAgInJ1bl9kaXIgPSBjaGFwdGVyX3Jvb3QgLyBcInJ1bnNcIjsgcnVuX2Rpci5ta2RpcihwYXJlbnRzPVRydWUsIGV4aXN0X29rPVRydWUpXG4iLAogICAgIihydW5fZGlyIC8gXCJjYWNoZS1tZWFzdXJlbWVudC5qc29uXCIpLndyaXRlX3RleHQoanNvbi5kdW1wcyhyZWNvcmRzLCBlbnN1cmVfYXNjaWk9RmFsc2UsIGluZGVudD0yKSlcbiIsCiAgICAicmVjb3JkcyIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjZkYTBjMzU0IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgcmVhZOyZgCBjcmVhdGlvbuydhCDrtoTrpqztlbQg7J296riwXG4iLAogICAgIlxuIiwKICAgICJgY2FjaGVkX3JlYWRg64qUIOyLpOygnCDsgqzsmqnrn4kg66mU7YOA642w7J207YSw7JeQ7IScIOyWu+yKteuLiOuLpC4g7ZiE7J6sIOyCrOyaqe2VnCBMYW5nQ2hhaW4gYHVzYWdlX21ldGFkYXRhYOyXkOyEnCDrs4Trj4Qg7IOd7ISxIOqwkuydhCDslrvsp4Ag66q77ZWY66m0IGBOb25lYOycvOuhnCDquLDroZ3tlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY29uY2VwdC0zNC0wMS1iIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDri6jqs4Tsl5DshJwg6rWs67aE7ZWgIOuylOychFxuIiwKICAgICJcbiIsCiAgICAi66y47J6lIOuCtOyaqeydtCDruYTsirftlbTrj4Qg7JWe67aA67aE7J2YIO2GoO2BsCDrsLDsl7TsnbQg64us65287KeA66m0IOqwmeydgCDsoJHrkZDslrTqsIAg7JWE64uZ64uI64ukLiDrgqDsp5zrgpgg7IKs7Jqp7J6QIOyLneuzhOyekOulvCDrp6gg7JWe7JeQIOuEo+ycvOuptCDrkqTsnZgg6ri0IOygleyxheq5jOyngCDsnqzsgqzsmqnrkJjsp4Ag7JWK7J2EIOyImCDsnojsirXri4jri6QuIOuwmOuMgOuhnCDsupDsi5wg7KCB7KSR7J2AIOuLteydmCDtkojsp4jsnbTrgpgg7LWc7Iug7ISx7J2EIOuGkuydtOyngCDslYrsnLzrr4DroZwsIOuwmOuztSDsp4Dsi5zrrLgg7JWI7KCV7ISx6rO8IOyniOusuOuzhCDqt7zqsbAg6rCx7Iug7J2EIOuzhOuPhOuhnCDqtIDrpqztlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiZDcxMjcyOGEiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTk6MzAuNTI4OTU4WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTk6MzAuNTI4ODk1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTk6MzAuNTMwODc5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxOTozMC41MzA2MzNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7Zi47LacIDE6IGlucHV0PTExODA1LCBjYWNoZV9yZWFkPTAsIGNhY2hlX2NyZWF0aW9uPU5vbmVcbiIsCiAgICAgICLtmLjstpwgMjogaW5wdXQ9MTE4MDQsIGNhY2hlX3JlYWQ9MTE1MjAsIGNhY2hlX2NyZWF0aW9uPU5vbmVcbiIsCiAgICAgICLrkZAg67KI7Ke4IO2YuOy2nOyXkOyEnCDsupDsi5wg7J296riwIO2ZleyduFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJmb3IgaW5kZXgsIHJvdyBpbiBlbnVtZXJhdGUocmVjb3JkcywgMSk6XG4iLAogICAgIiAgICBwcmludChmXCLtmLjstpwge2luZGV4fTogaW5wdXQ9e3Jvd1snaW5wdXQnXX0sIGNhY2hlX3JlYWQ9e3Jvd1snY2FjaGVkX3JlYWQnXX0sIGNhY2hlX2NyZWF0aW9uPXtyb3dbJ2NhY2hlX2NyZWF0aW9uJ119XCIpXG4iLAogICAgImFzc2VydCByZWNvcmRzWzFdW1wiY2FjaGVkX3JlYWRcIl0gPj0gMTAyNFxuIiwKICAgICJhc3NlcnQgYWxsKHJvd1tcInRleHRcIl0gYW5kIHJvd1tcIm91dHB1dFwiXSA+IDAgZm9yIHJvdyBpbiByZWNvcmRzKVxuIiwKICAgICJwcmludChcIuuRkCDrsojsp7gg7Zi47Lac7JeQ7IScIOy6kOyLnCDsnb3quLAg7ZmV7J24XCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiMzlkMjFjZWUiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6Ttl5gg6rKw6rO8IO2VtOyEnVxuIiwKICAgICJcbiIsCiAgICAi7LqQ7IucIOyggeykkSDsl6zrtoDripQg7Iuc6rCEIOy2lOygleydtOuCmCDtjIzsnbwg7IiY6rCAIOyVhOuLiOudvCBBUEnqsIAg67CY7ZmY7ZWcIOyCrOyaqeufieycvOuhnCDtjJDsoJXtlanri4jri6QuIOyDneyEsSDthqDtgbDsnbQg7KCc6rO165CY7KeAIOyViuyVmOuLpOuKlCDsgqzsi6Tqs7wgMOydhCDqtazrtoTtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiMjY3NDIxMzYiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTk6MzAuNTMxNTY5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTk6MzAuNTMxNTIyWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTk6MzAuNTMzMjgyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxOTozMC41MzI5MzZaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi67mE7LqQ7IucIOyeheugpSDthqDtgbA6IFsxMTgwNSwgMjg0XVxuIiwKICAgICAgIuy6kOyLnCDsg53shLEg6rOE7LihIOyngOybkDogRmFsc2VcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAidW5jYWNoZWQgPSBbcm93W1wiaW5wdXRcIl0gLSByb3dbXCJjYWNoZWRfcmVhZFwiXSBmb3Igcm93IGluIHJlY29yZHNdXG4iLAogICAgInByaW50KFwi67mE7LqQ7IucIOyeheugpSDthqDtgbA6XCIsIHVuY2FjaGVkKVxuIiwKICAgICJwcmludChcIuy6kOyLnCDsg53shLEg6rOE7LihIOyngOybkDpcIiwgcmVjb3Jkc1swXVtcImNhY2hlX2NyZWF0aW9uXCJdIGlzIG5vdCBOb25lKSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAiZXhwZXJpbWVudCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDUsCiAgICJjb2RlX3NoYTI1NiI6ICIxZjhhNjcxY2Y1ZWQzZGNmODQ2ZTNmNGEwZWU0N2ZiNTk4NmZiY2VkZmRlYWNiYmEwZTAwNmFhNTlhNGM3Njc3IiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDI6MTk6MzAuNjQ4Nzc5KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICI3MjY4NWRjNDM4N2M2Y2FiMjk1ZjdmY2FiNmRmMzVmNzRhYTFlODc4NDU5YThiMzI3ZTU4NTc3ZDYzNTc2NjZiIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>프롬프트 캐시 계측</h2>
+<p>동일한 긴 접두어를 두 번 전송했을 때 실제 사용량에서 캐시 읽기 토큰을 구분할 수 있는지 확인합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>OpenAI SDK와 <code>.env</code>를 준비합니다. 키 값은 출력하지 않습니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>준비 셀은 현재 폴더와 부모 폴더에서 <code>ch34-cost-rate-limits</code> 실습 폴더를 찾고, 발견한 <code>.env</code>가 있으면 현재 프로세스에 불러옵니다. 키 값은 출력하지 않으며 준비 결과로 폴더와 환경 파일의 존재 여부만 확인합니다. 이후 파일 기록은 찾은 <code>chapter_root</code> 아래 <code>runs</code> 폴더를 사용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">from pathlib import Path
+from dotenv import load_dotenv
+
+here = Path.cwd().resolve()
+chapter_root = next((p for p in (here, *here.parents) if p.name == &quot;ch34-cost-rate-limits&quot; and (p / &quot;notebooks&quot;).is_dir()), None)
+if chapter_root is None:
+    raise FileNotFoundError(&quot;ch34-cost-rate-limits 실습 폴더 안에서 실행하세요.&quot;)
+env_path = next((p / &quot;.env&quot; for p in (here, *here.parents) if (p / &quot;.env&quot;).exists()), None)
+if env_path:
+    load_dotenv(env_path)
+print(&quot;Python 준비 완료&quot;, &quot;API 키 파일 확인&quot; if env_path else &quot;API 키 파일 없음&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Python 준비 완료 API 키 파일 확인
+</pre></div>
+<div class="nb-markdown"><h3>긴 공통 접두어 만들기</h3>
+<p>프롬프트 캐시는 1,024토큰 이상의 접두어에서 동작하므로 반복해서 사용할 안정적인 앞부분을 만듭니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import uuid
+
+policy = &quot;한국경제신문 고객지원 정책: 사실과 추정을 구분하고, 근거가 없으면 확인이 필요하다고 답합니다. &quot;
+stable_prefix = f&quot;실험 ID: {uuid.uuid4()}\n&quot; + policy * 420
+questions = [&quot;환불 문의를 한 문장으로 분류하세요.&quot;, &quot;배송 문의를 한 문장으로 분류하세요.&quot;]
+print(&quot;공통 접두어 문자 수:&quot;, len(stable_prefix))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">공통 접두어 문자 수: 22724
+</pre></div>
+<div class="nb-markdown"><h3>실제 API를 두 번 호출하기</h3>
+<p>모델과 공통 접두어는 유지하고 마지막 질문만 바꿉니다. 각 응답의 <code>input_tokens_details.cached_tokens</code>를 읽습니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>프롬프트 캐시는 입력의 처음부터 같은 토큰 구간을 다시 사용할 때 적용됩니다. 예제는 고정 정책을 긴 <code>stable_prefix</code>로 만들고 마지막 질문만 바꿔 두 번 호출합니다. <code>usage_metadata</code>의 전체 입력 토큰과 <code>input_token_details</code>의 캐시 읽기 값을 따로 기록하므로, 두 번째 호출이 빨랐다는 느낌 대신 제공자가 반환한 사용량으로 적중을 판단합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import json
+from langchain.chat_models import init_chat_model
+
+model = init_chat_model(&quot;openai:gpt-5.4-mini&quot;, reasoning_effort=&quot;none&quot;, max_tokens=40, max_retries=1, seed=34)
+records = []
+for question in questions:
+    answer = model.invoke(stable_prefix + &quot;\n&quot; + question)
+    usage = answer.usage_metadata or {}
+    details = usage.get(&quot;input_token_details&quot;) or {}
+    cached = details.get(&quot;cache_read&quot;) or 0
+    creation = details.get(&quot;cache_creation&quot;)
+    records.append({&quot;text&quot;: answer.text, &quot;usage&quot;: usage, &quot;input&quot;: usage.get(&quot;input_tokens&quot;),
+                    &quot;cached_read&quot;: cached, &quot;cache_creation&quot;: creation, &quot;output&quot;: usage.get(&quot;output_tokens&quot;)})
+run_dir = chapter_root / &quot;runs&quot;; run_dir.mkdir(parents=True, exist_ok=True)
+(run_dir / &quot;cache-measurement.json&quot;).write_text(json.dumps(records, ensure_ascii=False, indent=2))
+records</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[{&#x27;text&#x27;: &#x27;분류: **환불 문의**\n\n근거가 충분하지 않아 보이므로, 세부 유형(예: 구독 해지 후 환불, 중복 결제 환&#x27;,
+  &#x27;usage&#x27;: {&#x27;input_tokens&#x27;: 11805,
+   &#x27;output_tokens&#x27;: 40,
+   &#x27;total_tokens&#x27;: 11845,
+   &#x27;input_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;cache_read&#x27;: 0},
+   &#x27;output_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;reasoning&#x27;: 0}},
+  &#x27;input&#x27;: 11805,
+  &#x27;cached_read&#x27;: 0,
+  &#x27;cache_creation&#x27;: None,
+  &#x27;output&#x27;: 40},
+ {&#x27;text&#x27;: &#x27;배송 문의로 **분류됩니다**.  \n\n- **사실:** 사용자가 “배송 문의를 한 문장으로 분류”해 달라고 요청했습니다.\n- **추&#x27;,
+  &#x27;usage&#x27;: {&#x27;input_tokens&#x27;: 11804,
+   &#x27;output_tokens&#x27;: 40,
+   &#x27;total_tokens&#x27;: 11844,
+   &#x27;input_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;cache_read&#x27;: 11520},
+   &#x27;output_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;reasoning&#x27;: 0}},
+  &#x27;input&#x27;: 11804,
+  &#x27;cached_read&#x27;: 11520,
+  &#x27;cache_creation&#x27;: None,
+  &#x27;output&#x27;: 40}]</pre></div>
+<div class="nb-markdown"><h3>read와 creation을 분리해 읽기</h3>
+<p><code>cached_read</code>는 실제 사용량 메타데이터에서 얻습니다. 현재 사용한 LangChain <code>usage_metadata</code>에서 별도 생성 값을 얻지 못하면 <code>None</code>으로 기록합니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>문장 내용이 비슷해도 앞부분의 토큰 배열이 달라지면 같은 접두어가 아닙니다. 날짜나 사용자 식별자를 맨 앞에 넣으면 뒤의 긴 정책까지 재사용되지 않을 수 있습니다. 반대로 캐시 적중은 답의 품질이나 최신성을 높이지 않으므로, 반복 지시문 안정성과 질문별 근거 갱신을 별도로 관리합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">for index, row in enumerate(records, 1):
+    print(f&quot;호출 {index}: input={row[&#x27;input&#x27;]}, cache_read={row[&#x27;cached_read&#x27;]}, cache_creation={row[&#x27;cache_creation&#x27;]}&quot;)
+assert records[1][&quot;cached_read&quot;] &gt;= 1024
+assert all(row[&quot;text&quot;] and row[&quot;output&quot;] &gt; 0 for row in records)
+print(&quot;두 번째 호출에서 캐시 읽기 확인&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">호출 1: input=11805, cache_read=0, cache_creation=None
+호출 2: input=11804, cache_read=11520, cache_creation=None
+두 번째 호출에서 캐시 읽기 확인
+</pre></div>
+<div class="nb-markdown"><h3>실험 결과 해석</h3>
+<p>캐시 적중 여부는 시간 추정이나 파일 수가 아니라 API가 반환한 사용량으로 판정합니다. 생성 토큰이 제공되지 않았다는 사실과 0을 구분합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">uncached = [row[&quot;input&quot;] - row[&quot;cached_read&quot;] for row in records]
+print(&quot;비캐시 입력 토큰:&quot;, uncached)
+print(&quot;캐시 생성 계측 지원:&quot;, records[0][&quot;cache_creation&quot;] is not None)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">비캐시 입력 토큰: [11805, 284]
+캐시 생성 계측 지원: False
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 실행 결과에서 첫 호출의 <code>cache_read</code>는 0이고 두 번째 호출은 11,520토큰이었습니다. 캐시 생성 필드는 응답 메타데이터에 없어 <code>None</code>으로 기록되었습니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>2026년 9월 11일 실행에서 첫 호출은 입력 11,805토큰, 캐시 읽기 0토큰이었고 두 번째 호출은 입력 11,804토큰 가운데 11,520토큰을 캐시에서 읽었습니다. 두 번째 호출의 비캐시 입력은 284토큰이었습니다. 두 호출 모두 실제 텍스트와 출력 토큰을 반환했습니다. 이 결과는 해당 실행의 두 요청에서 냉·온 조건을 관찰했다는 뜻이며 모든 요청에서 같은 적중률을 보장하지 않습니다.</p><p><code>cache_creation=None</code>은 생성량이 0이라는 뜻이 아닙니다. 현재 사용한 LangChain <code>usage_metadata</code>에서 별도 생성 값을 얻지 못했다는 뜻입니다. 제공되지 않은 값과 실제 0을 구분해야 비용 대시보드가 잘못된 확신을 주지 않습니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>공통 지시문 가운데 한 토큰이 바뀌어도 그 뒤의 접두어 재사용 범위가 줄 수 있습니다.</li><li>캐시 적중은 출력 품질 평가가 아닙니다. 같은 질문의 정답률과 지연을 별도로 측정합니다.</li><li>단가는 모델과 처리 방식에 따라 바뀝니다. 사용량 원자료와 단가 기준일을 함께 저장합니다.</li><li>긴 접두어를 만들기 위해 불필요한 문장을 추가하면 전체 입력과 관리 비용이 늘 수 있습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>변하지 않는 내용을 앞에 배치하면 같은 접두어를 재사용하기 쉽습니다.</li><li>캐시 절감은 <code>cached_tokens</code>로 확인합니다.</li><li>제공되지 않은 캐시 생성 값은 0으로 바꾸지 않습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 즉시 응답이 필요 없는 요청을 Batch API 입력으로 묶어 처리 비용을 줄입니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 요청마다 바뀌는 고객 질문을 긴 정책보다 앞에 두면 캐시 재사용에 어떤 영향이 있나요?</p><p class="quiz-a">접두어가 일찍 달라져 뒤쪽의 같은 정책도 재사용하기 어려워집니다.</p><p class="quiz-q">2. <code>cache_creation=None</code>을 0으로 저장하면 왜 문제가 되나요?</p><p class="quiz-a">계측 미지원과 실제 생성량 0을 구분할 수 없기 때문입니다.</p><p class="quiz-q">3. 캐시 읽기 토큰이 많으면 답의 품질도 높다고 볼 수 있나요?</p><p class="quiz-a">볼 수 없습니다. 캐시 사용량은 계산 재사용을 나타내며 품질은 별도 평가가 필요합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://developers.openai.com/api/docs/guides/prompt-caching">OpenAI Prompt caching</a> · 2026-09-11 확인</li><li><a href="https://developers.openai.com/api/docs/guides/prompt-cache-diagnostics">OpenAI Prompt cache diagnostics</a> · 2026-09-11 확인</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span>&nbsp;</span><span><a href="index.html">챕터 목차</a></span><span><a href="02-Batch-API.html">Batch API →</a></span></div></div></body></html>

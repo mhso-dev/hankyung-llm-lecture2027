@@ -1,0 +1,21 @@
+%%{init: {"sequence": {"messageAlign": "left", "actorMargin": 20, "width": 100}}}%%
+sequenceDiagram
+  participant U as 우리 코드
+  participant P as 바깥 에이전트
+  participant R as rule-checker
+  box Lavender
+  participant M as 모델<br>gpt-5.4-mini
+  end
+  U->>P: 질문 한 줄로 invoke
+  P->>M: 요청 1 · task를 받음
+  M-->>P: task 요청 rule-checker
+  P->>R: 넘긴 글 한 줄과 files
+  loop 요청 2~4
+    R->>M: lookup_rule을 받은 요청
+    M-->>R: 응답
+  end
+  R-->>P: 도구 메시지 하나 · files
+  Note over P: 상태 칸 files에<br>보고 파일이 있음
+  P->>M: 요청 5
+  M-->>P: 도구 요청 없음 · 답 글
+  P-->>U: 바깥 목록 넷 · 기록 훅 다섯

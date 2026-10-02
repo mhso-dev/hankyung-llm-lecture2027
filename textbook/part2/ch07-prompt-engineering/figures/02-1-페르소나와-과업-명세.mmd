@@ -1,0 +1,18 @@
+flowchart TB
+  %% classes
+  subgraph ONE["페르소나만 · 메시지 2개"]
+    direction TB
+    S1["system<br>페르소나"]:::tool
+    U1["user<br>고객 문의"]:::tool
+    S1 ~~~ U1
+  end
+  subgraph TASK["페르소나 + 과업 명세 · 메시지 3개"]
+    direction TB
+    S2["system<br>페르소나"]:::tool
+    D2["developer<br>과업 명세 네 글"]:::tool
+    U2["user<br>고객 문의"]:::tool
+    S2 ~~~ D2 ~~~ U2
+  end
+  M["gpt-5.4-mini<br>목록마다 요청 1번"]:::model
+  ONE --> M
+  TASK --> M

@@ -1,0 +1,44 @@
+{
+  "snapshot": "ch12-sections01-06-before-2026-09-09.txt",
+  "sha256": "0ecf0ed423fef025fae2b0150136c6504660ecd8f2fee1b9747d263bfdad5b27",
+  "sections": 7,
+  "excluded": [],
+  "files": [
+    {
+      "path": "textbook/part3/ch12-retrieval-tuning/_src/01-벡터-거리와-정확-검색.html",
+      "source_sha256": "1f6db911f1ceea570390aa3e8263910299793ef3829544c63f68f6ba99040d11",
+      "prose_characters": 2765
+    },
+    {
+      "path": "textbook/part3/ch12-retrieval-tuning/_src/02-pgvector와-HNSW.html",
+      "source_sha256": "a27890d0e005204df584eb2fa91fe8abb5deafe6a063cb674271741a7ee8ceb0",
+      "prose_characters": 2543
+    },
+    {
+      "path": "textbook/part3/ch12-retrieval-tuning/_src/03-메타데이터-필터와-iterative-scan.html",
+      "source_sha256": "6fa8602e2f8d9e89fefc042c51716b13d314d81d3a16fa360accd49fdfa09e5f",
+      "prose_characters": 2525
+    },
+    {
+      "path": "textbook/part3/ch12-retrieval-tuning/_src/04-한국어-Kiwi와-BM25.html",
+      "source_sha256": "ba6d0de498b887370ef538eb7063dee321a4a270e0165e48e134dc24d7b95b5e",
+      "prose_characters": 2499
+    },
+    {
+      "path": "textbook/part3/ch12-retrieval-tuning/_src/05-dense와-sparse-비교.html",
+      "source_sha256": "9c5b054419d141bc757315416d3efcd98744eba8302f31289efc68c27581eab0",
+      "prose_characters": 2452
+    },
+    {
+      "path": "textbook/part3/ch12-retrieval-tuning/_src/06-RRF-하이브리드-검색.html",
+      "source_sha256": "4b5425c026e33d3061ca59392ea5bba4a9b6709ae6f929a9fe19cde0946e9a05",
+      "prose_characters": 2615
+    },
+    {
+      "path": "textbook/part3/ch12-retrieval-tuning/index.html",
+      "source_sha256": "4d928b1e3afb7e5cf13e1ac29081bf6f6e9545b27c826f9f8d31e481a217a33d",
+      "prose_characters": 844
+    }
+  ],
+  "note": "Read-only extraction. Code, preformatted output, scripts, styles, and notebook placeholders are excluded."
+}

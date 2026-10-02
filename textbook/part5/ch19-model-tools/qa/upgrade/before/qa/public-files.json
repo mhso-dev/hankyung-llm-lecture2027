@@ -1,0 +1,5 @@
+{
+  "textbook": ["index.html", "*.html", "figures/*.svg"],
+  "labs": ["README.md", "pyproject.toml", "uv.lock", "data/orders.csv", "notebooks/*.ipynb"],
+  "exclude": [".env", ".venv", "*.failure.json", "_src", "qa", "*.excalidraw"]
+}

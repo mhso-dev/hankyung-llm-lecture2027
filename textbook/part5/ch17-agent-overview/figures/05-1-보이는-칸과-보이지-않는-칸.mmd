@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  src["공개 추출본 두 건<br>SWE-agent<br>mini-SWE-agent"]:::tool
+  subgraph unseen["자료에 없는 칸"]
+    direction TB
+    u1["다음 단계를 고른 쪽<br>고른 까닭"]
+    u2["걸린 초 · 토큰 수"]
+    u3["01절 classify로<br>가를 수 없음<br>04절 대가를<br>잴 수 없음"]
+    u1 ~~~ u2
+    u2 ~~~ u3
+  end
+  subgraph seen["자료에 있는 칸 넷"]
+    direction TB
+    s1["step · action<br>outcome · evidence"]:::tool
+    s2["print_events<br>print_after_failures"]:::flow
+    s3["실패 뒤 다음 한 일<br>10 뒤 11 · 1 뒤 2 · 8 뒤 9"]:::measure
+    s1 --> s2
+    s2 --> s3
+  end
+  src ~~~ unseen
+  src --> s1

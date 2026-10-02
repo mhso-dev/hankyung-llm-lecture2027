@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph WITH["5절 · 과업 명세에 출처 문장 있음"]
+    direction LR
+    w1["developer<br>문장마다 끝에<br>출처 표시를 그대로"]:::tool
+    w2["gpt-5.4-mini"]:::model
+    w3["답 끝에 E01 p.2 · E01 p.3<br>같은 기록 2개"]:::measure
+    w1 --> w2
+    w2 --> w3
+  end
+  subgraph NOMARK["7절 · 출처 문장 뺌"]
+    direction LR
+    n1["developer<br>근거에 있는 정보만<br>두 문장 이내"]:::tool
+    n2["gpt-5.4-mini"]:::model
+    n3["출처 표시 없음<br>같은 기록 []"]:::measure
+    n1 --> n2
+    n2 --> n3
+  end
+  note["두 요청 모두<br>같은 user 글 · 기록 3개<br>빠진 지킬 말 []"]
+  WITH ~~~ NOMARK
+  NOMARK ~~~ note

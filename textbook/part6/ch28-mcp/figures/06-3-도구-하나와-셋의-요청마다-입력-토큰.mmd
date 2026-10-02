@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  same["두 실행에 같게 둔 것<br>서버 · 질문<br>시스템 메시지 글<br>호출 한도 3 · run_agent"]
+  c1["실행 1 tool_count 1<br>명세 252자"]:::flow
+  c2["실행 2 tool_count 3<br>명세 685자"]:::flow
+  r1["요청 1 입력 토큰 187<br>요청 2 입력 토큰 243<br>합 430"]:::measure
+  r2["요청 1 입력 토큰 252<br>요청 2 입력 토큰 308<br>합 560"]:::measure
+  d["요청마다 늘어난 입력 토큰<br>요청 1 65 · 요청 2 65<br>합의 차 130"]:::measure
+  same -.-> c1
+  same -.-> c2
+  c1 --> r1
+  c2 --> r2
+  r1 --> d
+  r2 --> d

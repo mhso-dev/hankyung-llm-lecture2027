@@ -1,0 +1,12 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  registered["그래프에 등록된 도구 열<br>파일 도구 일곱 · execute<br>task · lookup_rule"]:::measure
+  received["모델이 받은 도구 아홉<br>파일 도구 일곱<br>task · lookup_rule"]:::measure
+  only["함수 names_only_in<br>둘째 목록에만 있는 이름"]:::flow
+  missing["그래프에만 있는 도구<br>execute"]:::measure
+  gp["general-purpose<br>서브에이전트가 받는 도구 여덟<br>파일 도구 일곱 · lookup_rule<br>소스 확인"]
+  registered --> only
+  received --> only
+  only --> missing
+  missing ~~~ gp

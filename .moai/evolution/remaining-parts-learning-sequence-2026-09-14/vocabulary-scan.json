@@ -1,0 +1,26 @@
+{
+  "findings": [
+    {
+      "file": "textbook/part6/ch23-persistence/_src/05-pending-writes와-장애-복구.html",
+      "word": "이게",
+      "count": 1,
+      "verdict": "false_positive",
+      "reason": "모이게/보이게에 포함된 부분 문자열"
+    },
+    {
+      "file": "textbook/part6/ch27-deepagents/_src/05-컨텍스트-관리와-오프로딩.html",
+      "word": "이게",
+      "count": 1,
+      "verdict": "false_positive",
+      "reason": "모이게/보이게에 포함된 부분 문자열"
+    },
+    {
+      "file": "labs/part6/ch23-persistence/notebooks/05-pending-writes와-장애-복구.ipynb",
+      "word": "이게",
+      "count": 1,
+      "verdict": "false_positive",
+      "reason": "모이게/보이게에 포함된 부분 문자열"
+    }
+  ],
+  "unresolved": 0
+}

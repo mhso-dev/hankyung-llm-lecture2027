@@ -1,0 +1,14 @@
+flowchart LR
+  %% classes
+  subgraph ORD["주문 표 · 외래 키 모두 다른가: False"]
+    O1["O101 · C001 · 32000"]:::tool
+    O2["O102 · C002 · 18000"]:::tool
+    O3["O103 · C001 · 27000"]:::tool
+  end
+  subgraph CUS["고객 표 · 기본 키 모두 다른가: True"]
+    C1["C001 · 김하나"]:::tool
+    C2["C002 · 이두리"]:::tool
+  end
+  O1 --> C1
+  O2 --> C2
+  O3 --> C1

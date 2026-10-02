@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  quest["첫 질문 C01<br>정답 LIB-001"]:::tool
+  subgraph distance_case["벡터 거리"]
+    direction TB
+    dnote["값이 작을수록 가까움"]:::measure
+    dtop["상위 3개 LIB-004<br>LIB-001 · LIB-003"]:::measure
+  end
+  subgraph score_case["낱말 겹침"]
+    direction TB
+    snote["값이 클수록 관련 있음"]:::measure
+    stop_box["상위 3개 LIB-004<br>LIB-003 · LIB-001"]:::measure
+  end
+  quest --> dnote
+  quest --> snote
+  dnote --> dtop
+  snote --> stop_box

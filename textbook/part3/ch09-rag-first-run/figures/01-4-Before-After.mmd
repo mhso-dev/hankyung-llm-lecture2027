@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 검색 없이 질문만 보냄"]
+    direction LR
+    b1["user 글<br>질문만"]:::tool
+    b2["gpt-5.4-mini"]:::model
+    b3["출처 자리에 (근거)<br>답에 쓰인 검색 출처 []"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 검색한 근거를 넣어 보냄"]
+    direction LR
+    a1["user 글<br>E01 p.1 · E01 p.2<br>근거 + 질문"]:::tool
+    a2["gpt-5.4-mini"]:::model
+    a3["답 끝에 E01 p.2<br>답에 쓰인 검색 출처<br>E01 p.2"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  note["두 답 모두<br>월요일 True"]
+  BEFORE ~~~ AFTER
+  AFTER ~~~ note

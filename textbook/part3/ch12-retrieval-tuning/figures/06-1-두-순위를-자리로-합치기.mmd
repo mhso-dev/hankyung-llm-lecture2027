@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  quest["질문 C01 · 정답 LIB-001"]:::tool
+  drank["벡터 거리 순위<br>LIB-004 · LIB-001 · LIB-003"]:::measure
+  srank["낱말 겹침 순위<br>LIB-004 · LIB-003 · LIB-001"]:::measure
+  share["자리마다 몫 내기<br>가중치 / (순위 상수 + 자리)"]:::flow
+  total["문서마다 몫 더하기"]:::flow
+  fused["합친 순위<br>LIB-004 · LIB-001 · LIB-003"]:::measure
+  quest --> drank
+  quest --> srank
+  drank --> share
+  srank --> share
+  share --> total
+  total --> fused

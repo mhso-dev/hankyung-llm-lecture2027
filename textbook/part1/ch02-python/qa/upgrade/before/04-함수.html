@@ -1,0 +1,313 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>함수 — Ch 2 · 파이썬 프로그래밍</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 2 · 파이썬 프로그래밍</p>
+<h1>함수</h1><div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>함수의 정의와 호출을 구분하고 입력·처리·반환 순서를 설명할 수 있습니다.</li><li>지역 변수와 함수 밖 변수의 범위를 출력으로 구분할 수 있습니다.</li><li>변경 가능한 기본 인자가 호출 사이에서 공유되는 문제를 <code>None</code>으로 수정할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>주문 금액에서 할인액을 빼는 계산을 여러 화면에서 사용한다고 가정합니다. 계산식을 매번 복사하면 한 화면만 다른 반올림 규칙을 사용할 수 있고, 수정할 곳도 늘어납니다. 계산에 이름을 붙여 한 번 정의하면 입력만 바꾸어 같은 규칙을 다시 사용할 수 있습니다. 함수는 프로그램을 역할 단위로 나누고 입력과 결과의 경계를 보여 줍니다. 이 절에서는 결제 금액 계산을 함수로 만들고, 함수 안의 변수와 기본 인자가 어디까지 유지되는지 확인합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>01절에서 정수와 실수로 금액을 계산했고, 03절에서 목록이 변경 가능하다는 사실과 복사 방법을 확인했습니다. 이 절의 <code>calculate_payment()</code>는 주문 금액 78000과 할인율 0.1을 입력으로 받습니다. 마지막 비교에서는 문자열 태그를 목록에 추가하므로 앞 절의 목록 변경과 별칭 관찰이 필요합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>계산 절차에 이름을 붙입니다</h3><p><strong>함수(function)</strong>는 입력을 받아 정해진 처리를 하고 결과를 제공하는 코드 묶음입니다. <code>def calculate_payment(amount, discount_rate):</code>는 함수를 실행하는 문장이 아니라 정의하는 문장입니다. <code>def</code> 다음은 함수 이름, 소괄호 안은 입력 자리, 콜론 다음의 들여쓴 줄은 처리 순서입니다. <code>calculate_payment(78000, 0.1)</code>처럼 이름 뒤에 소괄호를 붙여야 정의해 둔 함수가 호출됩니다.</p><p>함수 정의에 적은 <code>amount</code>와 <code>discount_rate</code> 같은 입력 자리 이름을 <strong>매개변수(parameter)</strong>라고 합니다. 실제 호출에서 전달하는 <code>78000</code>과 <code>0.1</code>은 <strong>인자(argument)</strong>입니다. 호출하면 첫 인자가 첫 매개변수에, 두 번째 인자가 두 번째 매개변수에 저장됩니다. 본문은 할인액을 계산하고 <code>round()</code>로 가장 가까운 정수 금액을 만듭니다. <strong>반환(return)</strong>은 처리한 결과를 호출한 곳으로 보냅니다. 반환값을 변수에 저장하면 뒤 계산의 입력으로 다시 사용할 수 있습니다.</p><p><strong>범위(scope)</strong>는 변수 이름을 사용할 수 있는 코드 영역입니다. 함수 안에서 만든 지역 변수는 그 함수 안에서 사용하며, 함수 밖의 같은 이름을 가진 변수와 구분됩니다. <strong>기본 인자(default argument)</strong>는 호출할 때 값을 생략하면 사용할 값입니다. <code>tags=[]</code>처럼 변경 가능한 기본값은 함수가 정의될 때 한 번 만들어져 호출 사이에서 공유될 수 있습니다. <code>None</code>은 값이 아직 없음을 나타내는 특별한 값이며, 이를 기본값으로 두고 함수 본문에서 새 목록을 만들면 호출별 결과를 분리할 수 있습니다. 타입 힌트 표기와 검사는 07절에서 배웁니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:900px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" width="900" height="650" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-04-concept desc-04-concept">
+<title id="title-04-concept">함수의 입력과 반환, 호출별 목록</title>
+<desc id="desc-04-concept">78000원과 할인율 0.1을 함수에 전달해 70200원을 반환하고, None 기본값으로 호출별 태그 목록을 분리합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="900" height="650" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">함수의 입력과 반환, 호출별 목록</tspan></text>
+<text x="20" y="72.0" font-size="16" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">함수 호출과 반환</tspan></text>
+<rect x="25" y="100" width="220" height="82" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="135.0" y="129.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="135.0" dy="0.0">인자</tspan><tspan x="135.0" dy="23.0">78000, 0.1</tspan></text>
+<polyline points="245,141 335,141" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="335" y="100" width="230" height="82" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="450.0" y="130.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">calculate_payment()</tspan><tspan x="450.0" dy="21.6">할인액 계산</tspan></text>
+<polyline points="565,141 655,141" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="575.0" y="114.0" width="70.0" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="610.0" y="126.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="610.0" dy="0.0">return</tspan></text>
+<rect x="655" y="100" width="220" height="82" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="765.0" y="129.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="765.0" dy="0.0">반환값</tspan><tspan x="765.0" dy="23.0">70200</tspan></text>
+<text x="20" y="240.0" font-size="16" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">변수 범위</tspan></text>
+<rect x="180" y="268" width="540" height="86" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="450.0" y="300.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">함수 밖 label = &quot;주문&quot;</tspan><tspan x="450.0" dy="21.6">함수 안 label = &quot;주문번호 A102&quot; · 호출 뒤 바깥 값은 &quot;주문&quot;</tspan></text>
+<text x="20" y="410.0" font-size="16" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">기본 목록과 None 방식 비교</tspan></text>
+<rect x="25" y="440" width="250" height="105" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="150.0" y="470.9" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="150.0" dy="0.0">기본 목록 []</tspan><tspan x="150.0" dy="21.6">두 호출이 같은 객체 공유</tspan><tspan x="150.0" dy="21.6">[신규, 배송]</tspan></text>
+<rect x="335" y="440" width="235" height="105" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="452.5" y="481.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="452.5" dy="0.0">기본값 None</tspan><tspan x="452.5" dy="21.6">호출마다 새 목록 생성</tspan></text>
+<polyline points="570,492 635,492" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="635" y="440" width="240" height="105" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="755.0" y="481.0" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="755.0" dy="0.0">서로 다른 객체</tspan><tspan x="755.0" dy="23.0">[신규] / [배송]</tspan></text>
+<text x="450.0" y="624.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg></div><p>위쪽 줄을 왼쪽에서 오른쪽으로 읽으면 78000과 0.1이 함수에 전달되고 할인 후 70200이 반환되는 순서가 보입니다. 가운데 상자는 함수 안팎의 <code>label</code>이 서로 다른 범위에 있음을 보여 줍니다. 아래쪽은 기본 목록을 공유한 두 호출의 결과와 <code>None</code>에서 새 목록을 만들어 분리한 결과를 비교합니다. 아래 비교는 위쪽 금액 계산과 별도의 함수 예제입니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p><code>calculate_payment(amount, discount_rate)</code>는 주문 금액과 할인율을 입력받습니다. 함수 안에서는 두 값을 곱해 할인액을 처리하고, 원래 금액에서 할인액을 뺀 뒤 <code>round()</code>가 정수 70200을 반환합니다. 기본 실행은 이 반환값을 <code>payment</code>에 저장합니다. <code>payment // 1000</code>의 <code>//</code>는 나눗셈 결과보다 크지 않은 정수로 내린 몫을 반환합니다. 이 예제의 양수 금액에서는 소수 부분을 버린 값과 같으므로 적립 예정 점수는 70점입니다.</p><p>지역 변수 관찰 셀은 함수 밖 <code>label</code>에 <code>"주문"</code>을 저장합니다. <code>make_label()</code> 안에서도 같은 이름을 사용하지만 <code>"주문번호 A102"</code>를 반환한 뒤 바깥 변수를 출력하면 여전히 <code>"주문"</code>입니다. 값 하나 변경 셀은 주문 금액을 유지하고 할인율만 0.1에서 0.2로 바꿉니다. 같은 처리에서 70200원과 62400원이 각각 반환됩니다.</p><section class="notebook" data-notebook="04-함수" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="04-함수.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtlajsiJhcbiIsCiAgICAiXG4iLAogICAgIuyeheugpeqwkuydhCDrsJvslYQg6rKw7KCcIOq4iOyVoeydhCDqs4TsgrDtlZjqs6Ag67CY7ZmY7ZWY64qUIO2VqOyImOulvCDsnpHshLHtlanri4jri6QuIO2VqOyImCDsoJXsnZgsIO2YuOy2nCwg7J6F66ClLCDsspjrpqwsIOuwmO2ZmOydhCDtlZwg64uo6rOE7JSpIO2ZleyduO2VnCDrkqQg67OA7IiY7J2YIOuylOychOyZgCDquLDrs7jqsJLsnZgg7KO87J2Y7KCQ7J2EIOyCtO2OtOu0heuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIuydtCDrhbjtirjrtoHsnYAgUHl0aG9uIDMuMTIg7ZGc7KSAIOq4sOuKpeunjCDsgqzsmqntlanri4jri6QuIO2DgOyehSDtnoztirjripQgMDfsoIjsl5DshJwg67Cw7Jqw66+A66GcIOyXrOq4sOyEnOuKlCDtlajsiJjsnZgg6riw67O4IOq1rOyhsOyXkCDsp5HspJHtlbQg7J2066aE6rO8IOq0hO2YuOunjCDsgqzsmqntlanri4jri6QuIGBkZWZg66GcIO2VqOyImOulvCDsoJXsnZjtlZjqs6AsIO2VqOyImCDsnbTrpoQg65Kk7JeQIOyGjOq0hO2YuOulvCDrtpnsl6wg7Zi47Lac7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MDI6NDguMDYxMDQ0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MDI6NDguMDYwODM4WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MDI6NDguMDY3NDM3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjowMjo0OC4wNjY4MDVaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiNzAyMDBcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBhbW91bnTsmYAgZGlzY291bnRfcmF0ZeulvCDsnoXroKXrsJvslYQg6rKw7KCcIOq4iOyVoeydhCDrsJjtmZjtlanri4jri6QuXG4iLAogICAgImRlZiBjYWxjdWxhdGVfcGF5bWVudChhbW91bnQsIGRpc2NvdW50X3JhdGUpOlxuIiwKICAgICIgICAgZGlzY291bnQgPSBhbW91bnQgKiBkaXNjb3VudF9yYXRlXG4iLAogICAgIiAgICByZXR1cm4gcm91bmQoYW1vdW50IC0gZGlzY291bnQpXG4iLAogICAgIlxuIiwKICAgICJwcmludChjYWxjdWxhdGVfcGF5bWVudCg3ODAwMCwgMC4xKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiAiIyMg6riw67O4IOyLpO2WiVxuXG7ssqsg7KSEIGBkZWYgY2FsY3VsYXRlX3BheW1lbnQoYW1vdW50LCBkaXNjb3VudF9yYXRlKTpg64qUIO2VqOyImOulvCDsoJXsnZjtlanri4jri6QuIGBhbW91bnRg7JmAIGBkaXNjb3VudF9yYXRlYOuKlCDtlajsiJjqsIAg67Cb7J2EIOyeheugpeydmCDsnpDrpqwg7J2066aE7J24IOunpOqwnOuzgOyImOyeheuLiOuLpC4g65Ok7Jes7JO0IOuRkCDspITsnYAg7J6F66Cl7Jy866GcIO2VoOyduOyVoeydhCDqs4TsgrDtlZjripQg7LKY66as7J6F64uI64ukLiBgcmV0dXJuYOydgCDqs4TsgrAg6rKw6rO866W8IO2YuOy2nO2VnCDqs7Psl5Ag67CY7ZmY7ZWp64uI64ukLiBgY2FsY3VsYXRlX3BheW1lbnQoYW1vdW50PTc4MDAwLCBkaXNjb3VudF9yYXRlPTAuMSlg7JeQ7IScIOuTse2YuOuhnCDsnbTrpoTsnYQg7KeA7KCV7ZWcIOyLpOygnCDsnoXroKXqsJLsnYAg7J247J6Q7J2066mwLCDrsJjtmZjrkJwg7KCV7IiYIDcwMjAw7J20IGBwYXltZW50YOyXkCDsoIDsnqXrkKnri4jri6QuIGAvLyAxMDAwYOydgCDrgpjriJfshYgg6rKw6rO867O064ukIO2BrOyngCDslYrsnYAg7KCV7IiY66GcIOuCtOumrOuKlCDrqqsg7Jew7IKw7J6F64uI64ukLiDsnbQg7JiI7KCc7J2YIOyWkeyImCA3MDIwMOydhCAxMDAw7Jy866GcIOuCmOuIiCA3MC4y7JeQ7ISc64qUIDcw7J20IOuQqeuLiOuLpC4iCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjowMjo0OC4wNjkwMjBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjowMjo0OC4wNjg4NzFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjowMjo0OC4wNzE0NzVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjAyOjQ4LjA3MTA0NloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLqsrDsoJwg6riI7JWhOiA3MDIwMOybkFxuIiwKICAgICAgIuyggeumvSDsmIjsoJU6IDcw7KCQXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg67CY7ZmY6rCS7J2EIOuzgOyImOyXkCDsoIDsnqXtlZjrqbQg65KkIOqzhOyCsOyXkOyEnCDri6Tsi5wg7IKs7Jqp7ZWgIOyImCDsnojsirXri4jri6QuXG4iLAogICAgInBheW1lbnQgPSBjYWxjdWxhdGVfcGF5bWVudChhbW91bnQ9NzgwMDAsIGRpc2NvdW50X3JhdGU9MC4xKVxuIiwKICAgICJyZXdhcmRfcG9pbnRzID0gcGF5bWVudCAvLyAxMDAwXG4iLAogICAgInByaW50KGZcIuqysOygnCDquIjslaE6IHtwYXltZW50feybkFwiKVxuIiwKICAgICJwcmludChmXCLsoIHrpr0g7JiI7KCVOiB7cmV3YXJkX3BvaW50c33soJBcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7KSR6rCEIOqysOqzvCDqtIDssLBcbiIsCiAgICAiXG4iLAogICAgIu2VqOyImCDslYjsl5DshJwg66eM65OgIOyngOyXrSDrs4DsiJjripQg7ZWo7IiYIOuwluydmCDqsJnsnYAg7J2066aE7J2EIOqwgOynhCDrs4DsiJjsmYAg67OE6rCc7J6F64uI64ukLiDrsJTquaUgYGxhYmVsYOyXkOuKlCBgXCLso7zrrLhcImDsnbQg7KCA7J6l65CY7Ja0IOyeiOyKteuLiOuLpC4gYG1ha2VfbGFiZWwoKWDsnYQg7Zi47Lac7ZWY66m0IOyViOyqveyXkCDrs4Trj4TsnZggYGxhYmVsYOydtCDrp4zrk6TslrTsp4Dqs6AsIOq3uCDqsJLrp4wg67CY7ZmY7ZWp64uI64ukLiDtlajsiJjqsIAg64Gd64KcIOuSpCDrsJTquaUg67OA7IiY66W8IOy2nOugpe2VmOuptCDsl6zsoITtnoggYFwi7KO866y4XCJg7J6F64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MDI6NDguMDcyNzYzWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MDI6NDguMDcyNjQwWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MDI6NDguMDc1MTkwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjowMjo0OC4wNzQ2MjhaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7KO866y467KI7Zi4IEExMDJcbiIsCiAgICAgICLso7zrrLhcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtlajsiJgg7JWI6rO8IOuwluydmCBsYWJlbOydgCDsnbTrpoTrp4wg6rCZ6rOgIOuylOychOqwgCDri6TrpoXri4jri6QuXG4iLAogICAgImxhYmVsID0gXCLso7zrrLhcIlxuIiwKICAgICJcbiIsCiAgICAiZGVmIG1ha2VfbGFiZWwob3JkZXJfaWQpOlxuIiwKICAgICIgICAgbGFiZWwgPSBmXCLso7zrrLjrsojtmLgge29yZGVyX2lkfVwiXG4iLAogICAgIiAgICByZXR1cm4gbGFiZWxcbiIsCiAgICAiXG4iLAogICAgInByaW50KG1ha2VfbGFiZWwoXCJBMTAyXCIpKVxuIiwKICAgICJwcmludChsYWJlbCkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rCSIO2VmOuCmOulvCDrsJTqv5Qg67mE6rWQXG4iLAogICAgIlxuIiwKICAgICLso7zrrLgg6riI7JWh7J2AIDc4MDAw7JuQ7Jy866GcIOqzoOygle2VmOqzoCDrkZAg67KI7Ke4IOyduOyekOunjCAwLjHsl5DshJwgMC4y66GcIOuwlOq/ieuLiOuLpC4g6rCZ7J2AIOygleydmOulvCDri6Tsi5wg7J6R7ISx7ZWY7KeAIOyViuyVhOuPhCDtlajsiJgg7Zi47Lac66eI64ukIOuLpOuluCDsnoXroKXsnYQg7LKY66as7ZW0IOqwgeqwgeydmCDqsrDsoJwg6riI7JWh7J2EIOuwmO2ZmO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjAyOjQ4LjA3NjQ2NloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjAyOjQ4LjA3NjMyMVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjAyOjQ4LjA3ODY4NVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MDI6NDguMDc4MzE2WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIjEwJSDtlaDsnbg6IDcwMjAw7JuQXG4iLAogICAgICAiMjAlIO2VoOyduDogNjI0MDDsm5BcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtlaDsnbjsnKgg7ZWY64KY66eMIOuwlOq/lCDrsJjtmZjqsJLsnYQg67mE6rWQ7ZWp64uI64ukLlxuIiwKICAgICJwYXltZW50XzEwID0gY2FsY3VsYXRlX3BheW1lbnQoNzgwMDAsIDAuMSlcbiIsCiAgICAicGF5bWVudF8yMCA9IGNhbGN1bGF0ZV9wYXltZW50KDc4MDAwLCAwLjIpXG4iLAogICAgInByaW50KGZcIjEwJSDtlaDsnbg6IHtwYXltZW50XzEwfeybkFwiKVxuIiwKICAgICJwcmludChmXCIyMCUg7ZWg7J24OiB7cGF5bWVudF8yMH3sm5BcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEwIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TtjKgg7J6s7ZiEXG4iLAogICAgIlxuIiwKICAgICJgdGFncz1bXWDsnZgg65Ox7Zi4IOyYpOuluOyqveydgCDsnbjsnpDrpbwg7IOd65617ZaI7J2EIOuVjCDsgqzsmqntlaAg6riw67O46rCS7J6F64uI64ukLiDtlajsiJgg7KCV7J2Y6rCAIOyLpO2WieuQoCDrlYwg67mIIOuqqeuhneydtCDtlZwg67KIIOunjOuTpOyWtOyngOupsCwg7Zi47Lac7ZWgIOuVjOuniOuLpCDsnpDrj5nsnLzroZwg7IOIIOuqqeuhneydtCDsg53quLDsp4Ag7JWK7Iq164uI64ukLiDssqsg7Zi47Lac7J20IOydtCDrqqnroZ3sl5AgYOyLoOq3nGDrpbwg7LaU6rCA7ZWY6rOgIOuRkCDrsojsp7gg7Zi47Lac7J20IOqwmeydgCDrqqnroZ3sl5AgYOuwsOyGoWDsnYQg7LaU6rCA7ZWY66+A66GcIOuRkCDtmLjstpzsnZgg6rKw6rO86rCAIOyEnuyeheuLiOuLpC4g7YOA7J6FIO2ejO2KuOuKlCDslYTsp4Eg7IKs7Jqp7ZWY7KeAIOyViuyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjZWxsLTExIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjAyOjQ4LjA3OTgzNFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjAyOjQ4LjA3OTczMFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjAyOjQ4LjA4MjI1NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MDI6NDguMDgxNzk3WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7LKrIO2YuOy2nCDsi5zsoJA6IFsn7Iug6recJ11cbiIsCiAgICAgICLrkZAg67KI7Ke4IO2YuOy2nCDrkqQg7LKrIOuzgOyImDogWyfsi6Dqt5wnLCAn67Cw7IahJ11cbiIsCiAgICAgICLrkZAg67KI7Ke4IO2YuOy2nCDqsrDqs7w6IFsn7Iug6recJywgJ+uwsOyGoSddXG4iLAogICAgICAi6rCZ7J2AIOqwneyytDogVHJ1ZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOq4sOuzuCDrqqnroZ3snbQg7Zi47LacIOyCrOydtOyXkCDqs7XsnKDrkJjripQg6rKw6rO866W8IOq0gOywsO2VqeuLiOuLpC5cbiIsCiAgICAiZGVmIGFkZF90YWdfYmVmb3JlKHRhZywgdGFncz1bXSk6XG4iLAogICAgIiAgICB0YWdzLmFwcGVuZCh0YWcpXG4iLAogICAgIiAgICByZXR1cm4gdGFnc1xuIiwKICAgICJcbiIsCiAgICAiZmlyc3RfdGFncyA9IGFkZF90YWdfYmVmb3JlKFwi7Iug6recXCIpXG4iLAogICAgImZpcnN0X3NuYXBzaG90ID0gZmlyc3RfdGFncy5jb3B5KClcbiIsCiAgICAic2Vjb25kX3RhZ3MgPSBhZGRfdGFnX2JlZm9yZShcIuuwsOyGoVwiKVxuIiwKICAgICJwcmludChmXCLssqsg7Zi47LacIOyLnOygkDoge2ZpcnN0X3NuYXBzaG90fVwiKVxuIiwKICAgICJwcmludChmXCLrkZAg67KI7Ke4IO2YuOy2nCDrkqQg7LKrIOuzgOyImDoge2ZpcnN0X3RhZ3N9XCIpXG4iLAogICAgInByaW50KGZcIuuRkCDrsojsp7gg7Zi47LacIOqysOqzvDoge3NlY29uZF90YWdzfVwiKVxuIiwKICAgICJwcmludChmXCLqsJnsnYAg6rCd7LK0OiB7Zmlyc3RfdGFncyBpcyBzZWNvbmRfdGFnc31cIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEyIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyImOyglVxuIiwKICAgICJcbiIsCiAgICAi6riw67O46rCS7J2EIGBOb25lYOycvOuhnCDrsJTqv4nri4jri6QuIGBOb25lYOydgCDqsJLsnbQg7JWE7KeBIOyXhuydjOydhCDrgpjtg4DrgrTripQg7Yq567OE7ZWcIOqwkuyeheuLiOuLpC4g7J247J6Q6rCAIOyDneueteuQmOyWtCBgdGFncyBpcyBOb25lYOydtCDssLjsnbwg65WMIO2VqOyImCDrs7jrrLjsl5DshJwg67mIIOuqqeuhneydhCDsg4jroZwg66eM65Ok6riwIOuVjOusuOyXkCDqsIEg7Zi47Lac7J2AIOyEnOuhnCDri6Trpbgg66qp66Gd7J2EIOyymOumrO2VmOqzoCDrsJjtmZjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA2LAogICAiaWQiOiAiY2VsbC0xMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjowMjo0OC4wODMzNzBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjowMjo0OC4wODMyNjBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjowMjo0OC4wODYwMjdaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjAyOjQ4LjA4NTY0NloiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7LKrIO2YuOy2nDogWyfsi6Dqt5wnXVxuIiwKICAgICAgIuuRkCDrsojsp7gg7Zi47LacOiBbJ+uwsOyGoSddXG4iLAogICAgICAi6rCZ7J2AIOqwneyytDogRmFsc2VcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtmLjstpzrp4jri6Qg7IOIIOuqqeuhneydhCDrp4zrk6TslrQg7J207KCEIO2YuOy2nOydmCDrs4Dqsr3snYQg67aE66as7ZWp64uI64ukLlxuIiwKICAgICJkZWYgYWRkX3RhZyh0YWcsIHRhZ3M9Tm9uZSk6XG4iLAogICAgIiAgICBpZiB0YWdzIGlzIE5vbmU6XG4iLAogICAgIiAgICAgICAgdGFncyA9IFtdXG4iLAogICAgIiAgICB0YWdzLmFwcGVuZCh0YWcpXG4iLAogICAgIiAgICByZXR1cm4gdGFnc1xuIiwKICAgICJcbiIsCiAgICAiZmlyc3RfdGFncyA9IGFkZF90YWcoXCLsi6Dqt5xcIilcbiIsCiAgICAic2Vjb25kX3RhZ3MgPSBhZGRfdGFnKFwi67Cw7IahXCIpXG4iLAogICAgInByaW50KGZcIuyyqyDtmLjstpw6IHtmaXJzdF90YWdzfVwiKVxuIiwKICAgICJwcmludChmXCLrkZAg67KI7Ke4IO2YuOy2nDoge3NlY29uZF90YWdzfVwiKVxuIiwKICAgICJwcmludChmXCLqsJnsnYAg6rCd7LK0OiB7Zmlyc3RfdGFncyBpcyBzZWNvbmRfdGFnc31cIilcbiIsCiAgICAiYXNzZXJ0IGZpcnN0X3RhZ3MgPT0gW1wi7Iug6recXCJdXG4iLAogICAgImFzc2VydCBzZWNvbmRfdGFncyA9PSBbXCLrsLDshqFcIl0iCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogInBhaXJlZCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDYsCiAgICJjb2RlX3NoYTI1NiI6ICJmYjYwYTNjZDgzYjA2MWE5OGQ5ZWU1NmFhZTQxZjA3YjU1MWRmODU3MWNmYmIwYzhlM2RhZDkxODgwYzg1OWVmIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDY6MDI6NDguMjA0MTQwKzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICI4NDg5NDMwY2M0YTRlMjdjYzVlYzE5NTM4YTVmYzI0ODkxMTY1MTY5NGQ2YWQyZjY3NGE1OWRhMzBlMzJiMWI3IiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>함수</h2>
+<p>입력값을 받아 결제 금액을 계산하고 반환하는 함수를 작성합니다. 함수 정의, 호출, 입력, 처리, 반환을 한 단계씩 확인한 뒤 변수의 범위와 기본값의 주의점을 살펴봅니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>이 노트북은 Python 3.12 표준 기능만 사용합니다. 타입 힌트는 07절에서 배우므로 여기서는 함수의 기본 구조에 집중해 이름과 괄호만 사용합니다. <code>def</code>로 함수를 정의하고, 함수 이름 뒤에 소괄호를 붙여 호출합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># amount와 discount_rate를 입력받아 결제 금액을 반환합니다.
+def calculate_payment(amount, discount_rate):
+    discount = amount * discount_rate
+    return round(amount - discount)
+
+print(calculate_payment(78000, 0.1))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">70200
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p>첫 줄 <code>def calculate_payment(amount, discount_rate):</code>는 함수를 정의합니다. <code>amount</code>와 <code>discount_rate</code>는 함수가 받을 입력의 자리 이름인 매개변수입니다. 들여쓴 두 줄은 입력으로 할인액을 계산하는 처리입니다. <code>return</code>은 계산 결과를 호출한 곳에 반환합니다. <code>calculate_payment(amount=78000, discount_rate=0.1)</code>에서 등호로 이름을 지정한 실제 입력값은 인자이며, 반환된 정수 70200이 <code>payment</code>에 저장됩니다. <code>// 1000</code>은 나눗셈 결과보다 크지 않은 정수로 내리는 몫 연산입니다. 이 예제의 양수 70200을 1000으로 나눈 70.2에서는 70이 됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 반환값을 변수에 저장하면 뒤 계산에서 다시 사용할 수 있습니다.
+payment = calculate_payment(amount=78000, discount_rate=0.1)
+reward_points = payment // 1000
+print(f&quot;결제 금액: {payment}원&quot;)
+print(f&quot;적립 예정: {reward_points}점&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">결제 금액: 70200원
+적립 예정: 70점
+</pre></div>
+<div class="nb-markdown"><h3>중간 결과 관찰</h3>
+<p>함수 안에서 만든 지역 변수는 함수 밖의 같은 이름을 가진 변수와 별개입니다. 바깥 <code>label</code>에는 <code>&quot;주문&quot;</code>이 저장되어 있습니다. <code>make_label()</code>을 호출하면 안쪽에 별도의 <code>label</code>이 만들어지고, 그 값만 반환합니다. 함수가 끝난 뒤 바깥 변수를 출력하면 여전히 <code>&quot;주문&quot;</code>입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 함수 안과 밖의 label은 이름만 같고 범위가 다릅니다.
+label = &quot;주문&quot;
+
+def make_label(order_id):
+    label = f&quot;주문번호 {order_id}&quot;
+    return label
+
+print(make_label(&quot;A102&quot;))
+print(label)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">주문번호 A102
+주문
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 비교</h3>
+<p>주문 금액은 78000원으로 고정하고 두 번째 인자만 0.1에서 0.2로 바꿉니다. 같은 정의를 다시 작성하지 않아도 함수 호출마다 다른 입력을 처리해 각각의 결제 금액을 반환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 할인율 하나만 바꿔 반환값을 비교합니다.
+payment_10 = calculate_payment(78000, 0.1)
+payment_20 = calculate_payment(78000, 0.2)
+print(f&quot;10% 할인: {payment_10}원&quot;)
+print(f&quot;20% 할인: {payment_20}원&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">10% 할인: 70200원
+20% 할인: 62400원
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 함수 정의만으로는 계산이 실행되지 않습니다. 실제 인자를 넣어 호출해야 본문이 처리되고 반환값이 생깁니다. 반환된 70200은 출력뿐 아니라 적립 점수 계산의 입력으로 다시 사용됩니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before 함수는 <code>tags=[]</code>처럼 빈 목록을 기본값으로 둡니다. 이 목록은 호출할 때마다 새로 만들어지지 않습니다. 첫 호출 직후 복사한 상태는 <code>['신규']</code>입니다. 두 번째 호출에서 <code>"배송"</code>을 추가한 뒤 첫 번째 반환값을 다시 확인하면 <code>['신규', '배송']</code>으로 바뀌어 있습니다. 두 반환값의 객체 동일성을 검사한 결과도 <code>True</code>입니다.</p><p>After 함수는 기본값을 <code>None</code>으로 둡니다. 함수 안에서 <code>tags is None</code>일 때 새 빈 목록을 만든 뒤 태그를 추가합니다. 입력은 호출별 태그 문자열이고, 처리는 새 목록 생성과 추가이며, 반환은 해당 호출만의 태그 목록입니다. 첫 호출 결과는 <code>['신규']</code>, 두 번째 호출 결과는 <code>['배송']</code>이고 같은 객체인지 확인한 값은 <code>False</code>입니다.</p><section class="notebook" data-notebook="04-함수" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p><code>tags=[]</code>의 등호 오른쪽은 인자를 생략했을 때 사용할 기본값입니다. 함수 정의가 실행될 때 빈 목록이 한 번 만들어지며, 호출할 때마다 자동으로 새 목록이 생기지 않습니다. 첫 호출이 이 목록에 <code>신규</code>를 추가하고 두 번째 호출이 같은 목록에 <code>배송</code>을 추가하므로 두 호출의 결과가 섞입니다. 타입 힌트는 아직 사용하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 기본 목록이 호출 사이에 공유되는 결과를 관찰합니다.
+def add_tag_before(tag, tags=[]):
+    tags.append(tag)
+    return tags
+
+first_tags = add_tag_before(&quot;신규&quot;)
+first_snapshot = first_tags.copy()
+second_tags = add_tag_before(&quot;배송&quot;)
+print(f&quot;첫 호출 시점: {first_snapshot}&quot;)
+print(f&quot;두 번째 호출 뒤 첫 변수: {first_tags}&quot;)
+print(f&quot;두 번째 호출 결과: {second_tags}&quot;)
+print(f&quot;같은 객체: {first_tags is second_tags}&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">첫 호출 시점: [&#x27;신규&#x27;]
+두 번째 호출 뒤 첫 변수: [&#x27;신규&#x27;, &#x27;배송&#x27;]
+두 번째 호출 결과: [&#x27;신규&#x27;, &#x27;배송&#x27;]
+같은 객체: True
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>기본값을 <code>None</code>으로 바꿉니다. <code>None</code>은 값이 아직 없음을 나타내는 특별한 값입니다. 인자가 생략되어 <code>tags is None</code>이 참일 때 함수 본문에서 빈 목록을 새로 만들기 때문에 각 호출은 서로 다른 목록을 처리하고 반환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 호출마다 새 목록을 만들어 이전 호출의 변경을 분리합니다.
+def add_tag(tag, tags=None):
+    if tags is None:
+        tags = []
+    tags.append(tag)
+    return tags
+
+first_tags = add_tag(&quot;신규&quot;)
+second_tags = add_tag(&quot;배송&quot;)
+print(f&quot;첫 호출: {first_tags}&quot;)
+print(f&quot;두 번째 호출: {second_tags}&quot;)
+print(f&quot;같은 객체: {first_tags is second_tags}&quot;)
+assert first_tags == [&quot;신규&quot;]
+assert second_tags == [&quot;배송&quot;]</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">첫 호출: [&#x27;신규&#x27;]
+두 번째 호출: [&#x27;배송&#x27;]
+같은 객체: False
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>함수 이름은 <code>calc()</code>보다 <code>calculate_payment()</code>처럼 역할이 드러나게 작성합니다. 함수 하나에는 설명할 수 있는 한 역할을 둡니다.</li><li>함수 안에서 <code>print()</code>만 실행하고 반환하지 않으면 결과를 뒤 계산에 사용하기 어렵습니다. 호출한 곳에서 필요한 값은 <code>return</code>으로 제공합니다.</li><li>위치로 인자를 전달할 때는 매개변수 순서를 지켜야 합니다. <code>amount=78000</code>처럼 이름을 지정하면 어떤 입력인지 코드에서 확인할 수 있습니다.</li><li>목록·딕셔너리·집합처럼 변경 가능한 값을 기본 인자로 직접 만들지 않습니다. <code>None</code>을 기본값으로 두고 함수 안에서 새 객체를 만듭니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>함수는 매개변수로 입력을 받고 <code>return</code>으로 결과를 반환합니다.</li><li>지역 변수는 함수 안의 범위에 속하며 바깥의 같은 이름과 구분됩니다.</li><li>변경 가능한 기본 인자는 호출 사이에 공유되므로 <code>None</code>을 사용해 새 값을 만듭니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 파일에서 읽은 문자열을 함수에 전달하고, 파일이 없거나 숫자 변환이 실패할 때 발생하는 예외를 처리합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. <code>calculate_payment(78000, 0.1)</code>에서 매개변수와 인자를 구분하십시오.</p><p class="quiz-a"><strong>정답:</strong> 함수 정의의 <code>amount</code>와 <code>discount_rate</code>가 매개변수이고, 호출에서 전달한 78000과 0.1이 인자입니다.</p><p class="quiz-q">2. 78000원에 10%와 20% 할인을 적용한 반환값은 각각 얼마입니까?</p><p class="quiz-a"><strong>정답:</strong> 10% 할인은 70200원, 20% 할인은 62400원입니다. 주문 금액은 같고 할인율만 바뀌었습니다.</p><p class="quiz-q">3. <code>make_label()</code>을 호출한 뒤 바깥 <code>label</code>이 여전히 <code>"주문"</code>인 이유는 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> 함수 안의 <code>label</code>은 지역 변수이며 함수 밖 변수와 범위가 다르기 때문입니다.</p><p class="quiz-q">4. 빈 목록을 기본 인자로 직접 두었을 때 관찰한 문제와 수정 방법을 쓰십시오.</p><p class="quiz-a"><strong>정답:</strong> 같은 목록이 두 호출에 공유되어 두 태그가 함께 남고 객체 동일성도 <code>True</code>였습니다. 기본값을 <code>None</code>으로 두고 함수 안에서 새 목록을 만들면 호출 결과가 분리됩니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.python.org/3.12/tutorial/controlflow.html#defining-functions">Python 3.12 자습서: 함수 정의하기</a> · 확인 2026-09-09 · 기준 Python 3.12</li><li><a href="https://docs.python.org/3.12/tutorial/controlflow.html#default-argument-values">Python 3.12 자습서: 기본 인자값</a> · 확인 2026-09-09 · 기준 Python 3.12</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="03-자료구조.html">← 자료구조</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="05-파일과-예외.html">파일과 예외 →</a></span></div></div></body></html>

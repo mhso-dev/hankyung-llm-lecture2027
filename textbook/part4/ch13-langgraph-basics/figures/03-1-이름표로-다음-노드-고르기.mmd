@@ -1,0 +1,9 @@
+flowchart LR
+  %% classes
+  sc["점수 칸<br>넣은 값"]:::tool
+  ch["조건 함수 choose_path"]:::flow
+  ok["노드 make_answer"]:::flow
+  more["노드 ask_more"]:::flow
+  sc --> ch
+  ch -->|이름표 enough| ok
+  ch -->|이름표 short| more

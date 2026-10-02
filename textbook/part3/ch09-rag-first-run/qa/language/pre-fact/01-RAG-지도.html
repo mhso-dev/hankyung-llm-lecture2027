@@ -1,0 +1,152 @@
+<!--meta: 강의 1h | 실습 1h | 코드 없음 (개념 절) | 새 용어 6 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 RAG의 두 흐름(색인 · 질의)을 그림 한 장으로 그리고, 각 상자가 어떤 파이썬 함수가 되는지 말할 수 있습니다.</li>
+<li>이 절을 마치면 "Ch 8의 Select를 검색으로 자동화한 것이 RAG"라는 문장을 자기 말로 설명할 수 있습니다.</li>
+<li>이 절을 마치면 이 챕터에서 <strong>학생이 정하는 것</strong>과 <strong>모델이 만드는 것</strong>을 구분하고, 왜 아직 에이전트가 아닌지 답할 수 있습니다.</li>
+<li>이 절을 마치면 <code>labs/data/rag-corpus/</code>의 문서 세트와 질의셋이 어떤 구조인지 알고, 이틀 뒤 완주 목표가 무엇인지 말할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>왜 지금 이것인가</h2>
+<p>Ch 8에서 컨텍스트를 다루는 네 가지 전략을 배웠습니다. 그중 <strong>Select</strong>는 "지금 필요한 것만 골라 넣는다"였고, 실습에서는 사람이 손으로 골랐습니다. 문서가 10쪽이면 손으로 고를 수 있습니다. 문서가 100건, 1,000쪽이 되면 손으로 고를 수 없습니다. 질문이 들어올 때마다 그 질문에 맞는 쪽을 <em>자동으로</em> 골라 프롬프트에 넣어야 합니다. 그 자동화 장치가 검색이고, 검색을 붙인 생성이 RAG입니다.</p>
+<p>이 챕터에서는 <strong>이틀 안에 실행되는 RAG를 완성합니다.</strong> 품질은 다음 챕터부터 높입니다. 이 순서에는 이유가 있습니다. 동작하는 결과물이 있어야 "어디가 나쁜가"를 확인할 수 있고, 문제 지점을 알아야 Ch 11에서 무엇을 측정할지 정할 수 있으며, 측정할 수 있어야 Ch 12에서 5일 동안 튜닝할 수 있습니다. 완주가 먼저, 측정이 다음, 튜닝이 마지막입니다.</p>
+<p>커리큘럼의 두 규칙을 여기서 다시 확인합니다. 첫째, 이 챕터에는 에이전트가 없습니다. 검색을 몇 번 할지, 몇 개를 가져올지, 답을 어떻게 만들지는 전부 학생이 코드에 적습니다. 모델은 마지막 한 단계, 문장을 만드는 일만 합니다. 둘째, 이 챕터는 측정 도구(Ch 11)보다 앞에 있으므로 "어느 설정이 더 좋은가"를 아직 판정하지 않습니다. 대신 판정할 수 있게 하는 준비물, 즉 <strong>실험 하네스</strong>를 06절에서 함께 만듭니다.</p>
+
+<h2 id="b3"><span class="no">3</span>선수 지식 되짚기</h2>
+<p>이 절은 코드를 새로 쓰지 않지만, 다음 절부터 사용하는 요소들이 어디에서 왔는지 정리해 둡니다.</p>
+<ul>
+<li><strong>Ch 4 문서 파싱 입문</strong> — PDF에서 텍스트를 추출하는 <code>pypdf</code>를 처음 다뤘습니다. 02절의 <code>load_pdfs()</code>는 추출 결과를 <code>Document</code> 객체로 감쌉니다.</li>
+<li><strong>Ch 5 임베딩과 의미 유사도</strong> — "가까운 문장은 벡터도 가깝다"를 실측했습니다. 03절의 검색은 그 원리를 176개의 문서 청크에 한꺼번에 적용하는 것입니다.</li>
+<li><strong>Ch 6 <code>init_chat_model</code></strong> — 첫 LLM 호출에 썼던 그 함수를 04절 <code>generate()</code>가 그대로 씁니다.</li>
+<li><strong>Ch 7 프롬프트</strong> — 시스템 프롬프트와 사용자 메시지를 나누는 습관, 출력 형식을 지정하는 습관이 04절의 출처 표기에 쓰입니다.</li>
+<li><strong>Ch 8 Select</strong> — 이 절의 주제입니다. Select를 사람이 아니라 검색이 합니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+
+<h3>비유 — 오픈북 시험</h3>
+<p>RAG는 오픈북 시험입니다. 모델은 외운 것으로 답하지 않고, <strong>지금 책상에 올라온 몇 쪽만 보고</strong> 답합니다. 닫힌 책 시험(순수 LLM)에서는 학생이 기억에 의존하고, 기억이 없으면 그럴듯하게 지어냅니다. 오픈북 시험(RAG)에서는 책상 위의 쪽에 답이 있으면 베끼고, 없으면 "없다"고 말할 수 있습니다. 다만 두 가지 조건이 붙습니다. 책상에 <em>맞는 쪽</em>이 올라와야 하고(검색), 학생이 <em>책상 위에 있는 내용만</em> 봐야 합니다(프롬프트). 이 챕터의 실패는 대부분 이 두 조건 중 하나가 깨져서 생깁니다.</p>
+<figure>
+{{img:01-오픈북-비유|같은 학생이 왼쪽에서는 빈 책상에서 고민하고, 오른쪽에서는 책갈피가 꽂힌 세 쪽을 보며 답을 씁니다.}}
+<figcaption>왼쪽은 기억만으로 답하는 학생(순수 LLM), 오른쪽은 책상에 올라온 세 쪽을 보며 답하는 학생(RAG)입니다. 책갈피가 출처 표기에 해당합니다.<span class="gaze">보는 순서 — ① 왼쪽 학생의 물음표 → ② 오른쪽 책상의 세 쪽 → ③ 쪽에서 답안지로 가는 화살표.</span></figcaption>
+</figure>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>RAG (Retrieval-Augmented Generation, 검색 증강 생성)</dt>
+<dd>질문이 들어오면 먼저 문서 저장소에서 관련 조각을 <em>검색</em>하고, 그 조각을 프롬프트에 넣어 답을 <em>생성</em>하는 방식입니다. "증강"은 프롬프트에 검색 결과를 더한다는 뜻입니다.</dd>
+<dt>색인 (indexing)</dt>
+<dd>문서를 미리 잘게 나누고 벡터로 바꿔 저장해 두는 준비 작업입니다. 문서가 바뀔 때 한 번 합니다.</dd>
+<dt>청크 (chunk)</dt>
+<dd>문서를 검색 단위로 자른 조각입니다. 이 챕터에서는 500자 안팎입니다. 검색 결과는 쪽이 아니라 청크 단위로 반환됩니다.</dd>
+<dt>벡터스토어 (vector store)</dt>
+<dd>청크와 그 벡터를 함께 담아 두고, 질문 벡터와 가까운 것을 찾아 주는 저장소입니다. 이 챕터에서는 메모리에 두는 <code>InMemoryVectorStore</code>를 씁니다.</dd>
+<dt>top-k 검색</dt>
+<dd>질문과 가장 가까운 청크 k개를 가져오는 것입니다. k는 학생이 정합니다. 이 챕터의 기본값은 4입니다.</dd>
+<dt>출처 인용 (citation)</dt>
+<dd>답의 어느 부분이 어느 문서 몇 쪽에서 왔는지 표기하는 것입니다. RAG가 순수 LLM과 다른 가장 실용적인 장점입니다.</dd>
+</dl>
+
+<h3>도식 — 두 흐름</h3>
+<p>RAG에는 시점이 다른 두 흐름이 있습니다. 위쪽 <strong>색인</strong>은 문서가 바뀔 때 한 번 실행되고, 아래쪽 <strong>질의</strong> 과정은 질문이 들어올 때마다 실행됩니다. 두 흐름이 만나는 곳이 벡터스토어입니다. 색인이 벡터스토어를 채우고, 질의가 벡터스토어에서 꺼냅니다.</p>
+<figure>
+{{svg:01-파이프라인}}
+<figcaption>색인은 한 번, 질의는 매번. 파란 상자는 학생이 적은 함수이고, 보라 상자는 모델이 문장을 만드는 유일한 자리입니다. 초록은 문서와 저장소입니다. 이 색 규칙은 41장 내내 같습니다.</figcaption>
+</figure>
+<p>각 상자는 하나의 함수에 대응합니다. 다음 절부터 이 상자들을 왼쪽에서 오른쪽으로 하나씩 만듭니다.</p>
+<table>
+<tr><th>상자</th><th>함수 (rag.py)</th><th>입력 → 출력</th><th>절</th></tr>
+<tr><td>로더</td><td><code>load_pdfs(paths)</code></td><td>PDF 경로 → 쪽 단위 <code>Document</code> 목록</td><td>02</td></tr>
+<tr><td>스플리터</td><td><code>split_docs(docs, chunk_size, chunk_overlap)</code></td><td>쪽 → 청크 목록</td><td>02</td></tr>
+<tr><td>임베딩 + 벡터스토어</td><td><code>build_index(chunks)</code></td><td>청크 → 벡터스토어</td><td>03</td></tr>
+<tr><td>top-k 검색</td><td><code>search(store, query, k)</code></td><td>질문 → (청크, 점수) k개</td><td>03</td></tr>
+<tr><td>프롬프트 조립 + 생성</td><td><code>format_context(hits)</code>, <code>generate(question, hits)</code></td><td>청크 k개 + 질문 → 답 + 출처</td><td>04</td></tr>
+</table>
+
+<h3>왜 일반 파이썬 함수로 조립하는가</h3>
+<p>LangChain에는 이 다섯 상자를 한 줄로 묶어 주는 편의 기능이 있습니다. 이 과정에서는 쓰지 않습니다. 이유는 디버깅입니다. 04절에서 답이 이상하게 나왔을 때 물어야 할 질문은 "검색이 틀렸나, 생성이 틀렸나"입니다. 함수가 따로 있으면 <code>search()</code>의 반환값을 출력해 보는 것으로 충분합니다. 한 줄로 묶여 있으면 중간값을 꺼내는 방법부터 찾아야 합니다. 05절과 06절에서 실제로 이 차이를 확인하게 됩니다.</p>
+<p>또 하나의 이유는 Ch 13입니다. Ch 13에서 이 함수들을 LangGraph의 노드로 옮깁니다. 함수의 입력과 출력이 분명하면 노드로 옮기는 일은 이름을 바꾸는 정도입니다. 그러니 지금부터 함수 하나에는 역할 하나만 두고, 입력과 출력은 타입힌트로 적는 습관을 지킵니다.</p>
+
+<h3>무엇을 학생이 정하고, 무엇을 모델이 만드는가</h3>
+<p>이 질문은 Part 5까지 계속 이어집니다. 이 챕터의 답은 분명합니다.</p>
+<table>
+<tr><th>학생이 코드에 적는 것 (파랑)</th><th>모델이 만드는 것 (보라)</th></tr>
+<tr><td>어떤 문서를 색인할지, 청크 크기, 임베딩 모델</td><td rowspan="3">검색된 청크 k개와 질문을 받아 <strong>답 문장</strong>을 만드는 일뿐입니다</td></tr>
+<tr><td>질문마다 검색을 1번 할지(이 챕터는 항상 1번), k를 몇으로 할지</td></tr>
+<tr><td>프롬프트에 무엇을 넣을지, 출처를 어떤 형식으로 붙일지, 답이 없을 때 무엇이라고 할지</td></tr>
+</table>
+<p>"검색 결과가 나쁘면 다시 검색한다" 같은 판단도 이 챕터에서는 학생이 <code>if</code>로 적습니다(Ch 14에서 합니다). 그 판단을 모델에게 넘기는 순간이 Ch 20이고, 그때부터 에이전트라고 부릅니다. 지금은 아닙니다.</p>
+
+<h3>이 챕터가 쓰는 문서 세트</h3>
+<p><code>labs/data/rag-corpus/</code>에 이 과정을 위해 만든 합성 문서 21건이 있습니다. 가상 기관 8곳(미르시립도서관, 별빛제과, 오로라 로보틱스, 누리테크, 청담해운, 파도여행, 한빛공제조합, 미르시의회)의 안내문·규정·약관·회의록·계약서입니다. 실제 기관과 무관하며 수업에 자유롭게 쓸 수 있습니다.</p>
+<table>
+<tr><th>폴더</th><th>문서</th><th>이 챕터에서</th></tr>
+<tr><td><code>pdf/easy/</code></td><td>E01~E06 (단일 단, 문단당 사실 1개)</td><td>02~04절의 기본 재료. 청킹만 제대로 하면 top-1에 답이 오도록 설계됨</td></tr>
+<tr><td><code>pdf/medium/</code></td><td>M01~M06 (표, 조문 참조, 신구 대비)</td><td>03절부터 함께 색인. 05절의 "신구 규정" 혼동 요소</td></tr>
+<tr><td><code>pdf/hard/</code></td><td>H01~H06 (2단, 회의록, 부록 우선)</td><td>함께 색인하되 답을 기대하지 않음. Ch 10·12의 재료</td></tr>
+<tr><td><code>pdf/scanned/</code></td><td>S01~S03 (텍스트 레이어 없음)</td><td>02절에서 "텍스트가 0자로 나온다"를 확인하는 용도. OCR은 Ch 10</td></tr>
+<tr><td><code>queries.jsonl</code></td><td>질의 149문항, 정답 문서 ID 포함</td><td>06절 하네스가 읽음. 지표 계산은 Ch 11</td></tr>
+</table>
+<p>문서 세트에는 의도적으로 넣은 혼동 요소가 있습니다. 예를 들어 오로라 <em>로보틱스</em>(로봇 제조)와 오로라 <em>로지스틱스</em>(물류)는 이름이 비슷한 별개 회사이고, 도우미봇 R2의 배터리는 빠른 시작 가이드(E03)에 "최대 8시간", 사양서(M01)에는 조건별로 3.2~8.0시간으로 적혀 있습니다. 이런 혼동 요소는 05절과 Ch 12에서 다룹니다. 지금은 "문서끼리 상충하는 값이 있다"는 것만 알아 두면 됩니다.</p>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>이 절은 개념 절이라 새 코드는 없습니다. 대신 이틀 뒤 완주 상태가 어떤 모습인지 미리 봅니다. 아래는 04절을 마쳤을 때 <code>rag.py</code>를 그대로 실행한 결과입니다.</p>
+<p class="file">labs/part3/ch09-rag-first-run/ — <code>uv run python rag.py</code></p>
+<pre class="out">{{output:ex01_rag_preserved.txt}}</pre>
+<p class="look"><b>확인할 점</b> — 답 뒤에 <code>[E01 p.2]</code>가 붙어 있고, "출처 후보"에는 검색이 가져온 4개가 모두 있습니다(이 실행은 쉬움 문서 6건만 색인했으므로 전부 E01입니다. 2쪽이 두 번 나온 것은 같은 쪽의 다른 청크 두 개입니다). 모델이 그중 실제로 쓴 것은 하나입니다. 이 둘의 차이(가져온 것 vs 쓴 것)가 Ch 11에서 검색 지표와 생성 지표를 나누는 이유가 됩니다. 실행일 2026-09-08, gpt-5.4-mini.</p>
+<p>실습 환경은 이 챕터 폴더에 준비되어 있습니다. 첫 실습 시간에 아래 명령을 실행해 두면 다음 절부터 바로 시작할 수 있습니다.</p>
+<pre><code class="language-bash">{{code:examples/ex01_setup.sh}}</code></pre>
+<p><code>OPENAI_API_KEY</code>는 프로젝트 루트의 <code>.env</code>에 둡니다. 코드 어디에도 키를 적지 않습니다(Ch 3에서 시크릿 유출 사고를 실습으로 확인했습니다).</p>
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>코드 없이 확인할 수 있는 실패 사례가 하나 있습니다. 검색 없이 모델에게 바로 물어보는 것입니다. Ch 6에서 만든 첫 호출 코드에 이 질문을 넣어 보세요.</p>
+<pre><code class="language-python">{{code:examples/ex01_without_context.py}}</code></pre>
+<pre class="out">{{output:ex01_without_context_preserved.txt}}</pre>
+<p class="look"><b>확인할 점</b> — 모델은 이 도서관을 모릅니다(<em>모델이 학습하지 않은 가상 기관 정보</em>라는 뜻입니다). 2026년 모델은 모른다고 말하는 편이지만, "보통 월요일"이라는 일반론을 덧붙입니다. 이 일반론이 우연히 맞으면 사용자는 모델이 알고 답했다고 믿게 됩니다. 문서에 근거한 답과 일반론을 구분해 주는 것이 출처 표기이고, 그 표기를 가능하게 하는 것이 검색입니다. 출력은 실행마다 달라집니다(2026-09-07, gpt-5.4-mini).</p>
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>"RAG를 붙이면 환각이 사라진다"는 말은 틀립니다.</strong> 검색이 엉뚱한 쪽을 가져오면 모델은 그 엉뚱한 쪽을 근거로 답하거나, 근거가 없으니 지어냅니다. 05절에서 직접 봅니다.</li>
+<li><strong>버전을 고정합니다.</strong> 이 챕터는 LangChain 1.4, langchain-openai 1.6, Python 3.12 기준입니다. 검색으로 찾은 예제 코드는 0.x 시절 것이 많고, 그 API는 <code>langchain-classic</code>으로 옮겨졌습니다. <code>from langchain.chains import RetrievalQA</code> 같은 줄이 보이면 옛 코드입니다.</li>
+<li><strong>PDF 로더 패키지 관련 참고.</strong> 공식 문서의 <code>PyPDFLoader</code>는 <code>langchain-community</code>에 있는데, 이 패키지는 2026년 현재 유지보수 종료(sunset)가 예고되어 있습니다. 그래서 02절은 <code>pypdf</code>를 직접 호출하는 20줄짜리 함수를 씁니다. 결과 형식(<code>Document</code>)은 같습니다.</li>
+<li><strong>한국어 문서는 글자 수와 토큰 수가 다릅니다.</strong> 500자 청크가 토큰으로는 430개 안팎입니다(02절에서 실측). 청크 크기를 정할 때 "토큰 기준인지 글자 기준인지"를 항상 확인합니다.</li>
+<li><strong>비용.</strong> 이 챕터 전체를 처음부터 끝까지 실행하면 임베딩 약 176개의 청크 + 생성 호출 약 60회로 미화 0.2달러 미만입니다(06절 하네스가 비용을 한 줄마다 기록합니다).</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul>
+<li>RAG는 Ch 8의 Select를 검색으로 자동화한 것이고, 색인(한 번)과 질의(매번) 두 흐름으로 이루어집니다.</li>
+<li>다섯 상자를 일반 파이썬 함수 다섯 개로 만듭니다. 판단은 전부 학생이 적고, 모델은 답 문장만 만듭니다. 에이전트는 아직 없습니다.</li>
+<li>이틀 안에 완주하고, 품질은 아직 측정하지 않습니다. 측정하는 도구(하네스)만 06절에서 준비합니다.</li>
+</ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 이 절의 그림은 Ch 13에서 LangGraph 그래프로 다시 그려집니다(상자 = 노드). "학생이 정한다 / 모델이 만든다"의 경계선은 Ch 17 첫 시간에 "이 중 무엇을 모델에게 넘길 수 있는가"라는 질문으로 되돌아옵니다. 다음 02절에서 첫 상자, 로더와 스플리터를 만듭니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. RAG의 두 흐름은 무엇이고, 각각 언제 실행됩니까?</p>
+<p class="quiz-a">색인과 질의입니다. 색인은 문서가 추가·변경될 때 한 번(로더 → 스플리터 → 임베딩 → 벡터스토어), 질의는 질문이 들어올 때마다(검색 → 프롬프트 조립 → 생성) 실행됩니다. 둘은 벡터스토어에서 만납니다.</p>
+<p class="quiz-q">2. 이 챕터의 RAG에서 모델이 하는 일을 한 문장으로 쓰세요. 학생이 정하는 것 세 가지도 쓰세요.</p>
+<p class="quiz-a">모델은 검색된 청크 k개와 질문을 받아 답 문장을 만듭니다. 학생이 정하는 것: 청크 크기·k·프롬프트(출처 형식, 답이 없을 때의 문구)·임베딩 모델·검색 횟수(항상 1번) 등.</p>
+<p class="quiz-q">3. "RAG를 붙였으니 환각은 없다"가 틀린 이유를 오픈북 시험 비유로 설명하세요.</p>
+<p class="quiz-a">오픈북이라도 책상에 맞는 쪽이 올라오지 않으면(검색 실패) 학생은 답을 지어내거나 엉뚱한 쪽을 베낍니다. 또 학생이 책상 위 것만 보라는 규칙을 어기면(프롬프트 미준수) 기억으로 답합니다. 검색과 프롬프트 두 조건이 모두 맞아야 합니다.</p>
+<p class="quiz-q">4. 커리큘럼 규칙 하나("중간 프로젝트 이전에는 에이전트가 없다")를 이 챕터의 코드에서 어떻게 확인할 수 있습니까?</p>
+<p class="quiz-a"><code>rag.py</code>의 <code>answer()</code>가 <code>search()</code> 한 번, <code>generate()</code> 한 번을 고정 순서로 부릅니다. 검색 횟수·재검색 여부를 모델이 결정하는 코드가 없습니다. 모델의 출력이 흐름을 바꾸는 지점이 생기는 것은 Ch 20 <code>ToolNode</code>부터입니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>강사 노트</h2>
+<details class="instructor"><summary>시간 배분 · 시연 순서 · 예상 질문 · 막히는 지점 · A/B 트랙</summary>
+<p><strong>시간 배분(2h)</strong> — 강의 60분: 지도(15) · 두 흐름 도식(15) · 학생/모델 경계(15) · 문서 세트 소개(15). 실습 60분: <code>uv sync</code>와 <code>pytest</code> 통과(20) · 문서 세트 PDF 3개를 직접 열어 혼동 요소 찾기(25) · 검색 없이 모델에 물어보기(15).</p>
+<p><strong>시연 순서</strong> — ① 커리큘럼 Part 3 소개문을 띄우고 "완주 → 측정 → 튜닝"을 강조 ② 도식에서 파랑·보라 상자를 가리키며 "누가 정하는가" 질문 ③ <code>rag.py</code>를 실행해 완주 결과를 먼저 보여 줌(목표를 눈으로 확인) ④ 검색 없이 같은 질문을 입력해 대비 ⑤ <code>queries.jsonl</code> 한 줄을 열어 <code>doc_id</code> 필드를 가리키며 "이 필드가 Ch 11의 정답표"라고 예고.</p>
+<p><strong>예상 질문</strong> — "왜 <code>as_retriever()</code>나 체인을 사용하지 않나요?" → 디버깅과 Ch 13 이식 때문이라고 답하고, 04절에서 실제로 중간값을 출력해 보여 주겠다고 예고. "GPT가 도서관 규정을 어차피 모르는데 왜 문서를 주는가?" → 이 점이 RAG를 사용하는 이유이며 회사 문서는 모델이 학습하지 않은 정보라고 설명. "청크는 왜 500자인가?" → 정답이 아닌 출발값이며 Ch 10에서 3가지 청킹을 비교한다고 답함.</p>
+<p><strong>학생이 막히는 지점</strong> — <code>uv sync</code>가 네트워크 환경에서 느릴 수 있음(사전 캐시 권장). <code>.env</code> 위치를 프로젝트 루트가 아닌 챕터 폴더에 두는 실수. Windows에서 경로 구분자 문제는 <code>pathlib</code>를 쓰므로 없음.</p>
+<p><strong>A/B 트랙</strong> — A트랙은 도식의 상자와 함수 이름을 대응시키는 데 집중. B트랙에게는 "왜 색인과 질의를 분리하는가(비용·시간)"를 추가로 묻고, 06절 하네스의 캐시 설계로 연결해 둠.</p>
+</details>
+
+<h2 id="b11"><span class="no">11</span>참고 자료</h2>
+<ul>
+<li>LangChain 공식 문서 「Build a RAG agent」(v1) — <a href="https://docs.langchain.com/oss/python/langchain/rag">docs.langchain.com/oss/python/langchain/rag</a> · 확인 2026-09-07 · 파이프라인 단계와 <code>InMemoryVectorStore</code> 사용법 참고. 문서의 에이전트 예제는 이 챕터 범위 밖입니다.</li>
+<li>LangChain Core API 「Vector stores」 — <a href="https://reference.langchain.com/python/langchain-core/vectorstores">reference.langchain.com/python/langchain-core/vectorstores</a> · 확인 2026-09-07 · langchain-core 1.6.2.</li>
+<li>실습 문서 세트 README — <code>labs/data/rag-corpus/README.md</code> · 문서별 주의할 점과 질의 유형 설명.</li>
+<li>기준 버전: LangChain 1.4.0 · langchain-openai 1.6.0 · langchain-text-splitters 1.1.2 · pypdf 6.17.0 · Python 3.12.13 · uv 0.12.</li>
+</ul>

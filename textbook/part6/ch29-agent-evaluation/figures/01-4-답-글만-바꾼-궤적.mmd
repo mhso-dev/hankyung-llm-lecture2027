@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  common["도구 요청은 기준 궤적과 같음<br>기준 답 일반 도서는<br>14일 동안 빌릴 수 있습니다."]
+  subgraph wrong["답만 틀림"]
+    direction TB
+    w1["최종 답 글<br>일반 도서는 7일 동안<br>빌릴 수 있습니다."]:::tool
+    w2["최종 답 False<br>한 단계 True · 궤적 True"]:::measure
+    w1 --> w2
+  end
+  subgraph reword["답 글을 바꿈"]
+    direction TB
+    p1["최종 답 글<br>14일 동안<br>빌릴 수 있습니다."]:::flow
+    p2["최종 답 False<br>한 단계 True · 궤적 True"]:::measure
+    p1 --> p2
+  end
+  same["두 줄이 같은가 True"]:::measure
+  common ~~~ wrong
+  wrong ~~~ reword
+  reword ~~~ same

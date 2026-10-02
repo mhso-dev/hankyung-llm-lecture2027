@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph AB["등록 순서 A, B"]
+    direction LR
+    x1["들어갈 때 A → B"]:::flow ~~~ x2["바깥에서 감싸는 쪽 A"]:::flow ~~~ x3["나올 때 B → A"]:::flow
+  end
+  subgraph BA["등록 순서 B, A"]
+    direction LR
+    y1["들어갈 때 B → A"]:::flow ~~~ y2["바깥에서 감싸는 쪽 B"]:::flow ~~~ y3["나올 때 A → B"]:::flow
+  end
+  AB ~~~ BA

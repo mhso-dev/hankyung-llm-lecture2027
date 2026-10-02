@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" width="900" height="470" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title desc">
+<title id="title">세 번 실행해 한 조건씩 비교하기</title>
+<desc id="desc">같은 원문과 질문에서 45자 small 모델, 30자 small 모델, 30자 large 모델을 차례로 실행하는 비교 순서</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a9eed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ef4444"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#757575"/></marker>
+</defs>
+<rect width="900" height="470" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="18" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">세 번 실행해 한 조건씩 비교하기</tspan></text>
+<rect x="45" y="130" width="150" height="80" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="120.0" y="160.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="120.0" dy="0.0">고정값</tspan><tspan x="120.0" dy="18.9">원문 · 질문 · k=2</tspan></text>
+<polyline points="205,170 275,170" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="275" y="115" width="155" height="110" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="352.5" y="160.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="352.5" dy="0.0">기준 실행</tspan><tspan x="352.5" dy="18.9">45자 · small</tspan></text>
+<polyline points="430,170 520,170" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="429.1" y="147.5" width="91.8" height="21.0" fill="#ffffff" fill-opacity="0.94" rx="4"/>
+<text x="475.0" y="158.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="475.0" dy="0.0">크기만 변경</tspan></text>
+<rect x="520" y="115" width="155" height="110" rx="10" fill="#fff3bf" stroke="#f59e0b" stroke-width="2"/>
+<text x="597.5" y="160.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="597.5" dy="0.0">청킹 변경</tspan><tspan x="597.5" dy="18.9">30자 · small</tspan></text>
+<polyline points="675,170 765,170" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="674.1" y="147.5" width="91.8" height="21.0" fill="#ffffff" fill-opacity="0.94" rx="4"/>
+<text x="720.0" y="158.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="720.0" dy="0.0">모델만 변경</tspan></text>
+<rect x="765" y="115" width="110" height="110" rx="10" fill="#ffc9c9" stroke="#ef4444" stroke-width="2"/>
+<text x="820.0" y="160.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="820.0" dy="0.0">모델 변경</tspan><tspan x="820.0" dy="18.9">30자 · large</tspan></text>
+<rect x="245" y="270" width="450" height="70" rx="12" fill="#dbe4ff" fill-opacity="0.35" stroke="#4a9eed" stroke-width="1"/>
+<text x="259" y="288.0" font-size="15" fill="#1e40af" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="259" dy="0.0">청크 크기 효과: 기준 실행 ↔ 청킹 변경</tspan></text>
+<rect x="500" y="355" width="375" height="55" rx="12" fill="#fff8dc" fill-opacity="0.35" stroke="#f59e0b" stroke-width="1"/>
+<text x="514" y="373.0" font-size="15" fill="#92400e" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="514" dy="0.0">모델 효과: 청킹 변경 ↔ 모델 변경</tspan></text>
+<text x="450" y="455.0" font-size="15" fill="#595959" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450" dy="0.0">한 번에 한 조건만 바뀐 두 실행을 비교합니다.</tspan></text>
+</svg>

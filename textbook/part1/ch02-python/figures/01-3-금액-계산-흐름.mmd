@@ -1,0 +1,16 @@
+flowchart TD
+  %% classes
+  Q["quantity<br>2 · int"]:::tool
+  U["unit_price<br>39000.0 · float"]:::tool
+  M["곱셈 줄<br>quantity * unit_price"]:::flow
+  T["order_total<br>78000.0 · float"]:::tool
+  D["discount<br>7800.0"]:::tool
+  S["뺄셈 줄<br>order_total - discount"]:::flow
+  P["payment<br>70200.0"]:::tool
+  Q --> M
+  U --> M
+  M --> T
+  T -- "× discount_rate 0.1" --> D
+  T --> S
+  D --> S
+  S --> P

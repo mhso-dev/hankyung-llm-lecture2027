@@ -1,0 +1,71 @@
+{
+  "chapter": "ch19-model-tools",
+  "review_date": "2026-09-10",
+  "genre": "산문",
+  "minimum_severity": "S1",
+  "verdict": "corrected",
+  "delivery": "accept",
+  "spell_check": {
+    "external_service_used": false,
+    "reason": "상업용 교재 여섯 절의 대량 외부 전송을 피하고 문맥 정독으로 맞춤법을 확인함"
+  },
+  "gates": {
+    "sections": 6,
+    "fixed_blocks_per_section": 10,
+    "quizzes_per_section": 4,
+    "inline_svgs_per_section": 1,
+    "raw_backticks": 0,
+    "forbidden_trap_terms": 0,
+    "generic_result_boilerplate": 0,
+    "notebook_code_cells": 43,
+    "max_code_cell_lines": 16,
+    "notebook_verify": "PASS",
+    "build": "PASS",
+    "metrics_risk_band": "high",
+    "metrics_contextual_disposition": "기술 식별자 반복을 문맥 정독으로 재검토했으며 S1 잔여 결함 없음"
+  },
+  "protected_findings": {
+    "description_experiment": {
+      "only_variable": "description",
+      "held_constant": ["public_name", "args_schema", "function", "query", "model", "temperature", "tool_order"],
+      "ambiguous": "9/9",
+      "specific": "9/9",
+      "input_tokens": 3483,
+      "output_tokens": 366,
+      "estimated_cost_usd": 0.00425925,
+      "interpretation": "차이를 관찰하지 못함"
+    },
+    "multiple_calls": {
+      "orders": ["O101", "O103"],
+      "tool_messages": 2,
+      "all_successful": true,
+      "request_result_ids_match": true,
+      "final_call_input_tokens": 290,
+      "final_call_output_tokens": 36,
+      "estimated_cost_usd": 0.00074925
+    },
+    "write_gate": {
+      "model_confirmed_arg": false,
+      "application_tracks_order_ids": true,
+      "confirmed_order": "O101",
+      "unconfirmed_order_rejected": "O103",
+      "before_error": "PermissionError",
+      "after_result_is_mock": true
+    },
+    "return_validation": {
+      "model": "OrderRecord",
+      "adapter": "TypeAdapter(list[OrderRecord])",
+      "observed": {"order_id": "O101", "customer_id": "C001", "status": "paid", "amount": 32000.0}
+    }
+  },
+  "accepted_source_hashes_sha256": {
+    "_src/01-tool과-Ch4-함수-재사용.html": "533e1dcba52fe30bbe55cbcf3dfdfadb8e9121cc81edb61cf2a764b1aec568f8",
+    "_src/02-Pydantic-인자와-반환-스키마.html": "9440aaf227929ce36e15677a7855de12188d019ff96155e91b01ba18472470c7",
+    "_src/03-좋은-도구-이름과-설명.html": "17567195ae0c2b140de8a1ce41ca4725b5cda3ef9f4903f1d3280643b8570b1d",
+    "_src/04-설명만으로-도구-선택하기.html": "d27a735475e05aed750841b020109fa8306ea7194f8df2033ad612913491a176",
+    "_src/05-bind_tools와-병렬-호출.html": "f975272e115d4905adc75144821974ceba87b0ddbe0bc257aed204e0513f54e0",
+    "_src/06-오류와-읽기-쓰기-분리.html": "92250515e81c0867328da864cbb8f63c3a8d712935cba6fe6b22caa0834ec133",
+    "chapter.json": "06823dbdea1b3a53d1cec9fe566425185940394ed024d97e51fceeb4ba7766d8",
+    "labs/README.md": "15d43c735a0c01e45f2fa32277bbad703cd4e7a14c626156137e995fb295f88d"
+  }
+}

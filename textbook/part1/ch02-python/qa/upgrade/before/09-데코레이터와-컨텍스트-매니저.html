@@ -1,0 +1,317 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>데코레이터와 컨텍스트 매니저 — Ch 2 · 파이썬 프로그래밍</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 2 · 파이썬 프로그래밍</p>
+<h1>데코레이터와 컨텍스트 매니저</h1><div class="meta"><span>강의 1h</span><span>실습 3h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 3h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>데코레이터가 함수를 받아 새 함수를 반환하는 과정을 설명할 수 있습니다.</li><li><code>functools.wraps</code>로 원래 함수의 이름·설명·서명을 유지할 수 있습니다.</li><li><code>contextmanager</code>와 <code>try/finally</code>로 예외 발생 여부와 관계없이 자원을 정리할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>여러 함수에서 호출 시각 기록, 권한 확인, 재시도 같은 공통 처리를 반복하면 핵심 기능보다 부가 코드가 많아집니다. 데코레이터는 공통 처리를 한곳에 정의하고 필요한 함수에 적용하게 합니다. 파일·연결·잠금처럼 사용 뒤 정리가 필요한 자원은 정상 처리뿐 아니라 예외 경로에서도 정리되어야 합니다. 컨텍스트 매니저는 시작과 정리 규칙을 묶어 <code>with</code> 문에서 재사용하게 합니다. 이 절은 A 경로 01~08절을 마친 학생이 선택하는 B 경로 확장 학습입니다. Ch 18에서는 API 호출의 기록과 재시도에, Ch 30에서는 서비스 자원의 수명 관리에 같은 구조가 이어집니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>04절에서 함수를 정의하고 호출하면 인자가 매개변수에 연결되고 <code>return</code> 값이 호출 위치로 반환된다고 배웠습니다. 이번 절에서는 함수 자체도 다른 함수의 입력과 반환으로 사용할 수 있다는 새 내용을 추가합니다. 05절에서는 <code>try</code>와 <code>except</code>로 예외가 발생한 경로를 처리했습니다. <code>finally</code>가 예외 여부와 관계없이 실행되는 규칙과 <code>with</code>가 준비·정리를 묶는 규칙은 이 절에서 처음 정의합니다. 07절의 타입힌트는 B 경로에서 배웠지만, 데코레이터 예제의 보조 타입 표기는 제거하여 함수의 입력과 반환에 집중합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>쉬운 예</h3><p>건물 출입구에서 모든 방문자가 같은 절차를 거친다고 생각해 봅니다. 방문 목적은 사람마다 다르지만 입장 기록과 퇴장 기록은 공통입니다. 각 업무 함수 안에 기록 코드를 복사하면 수정할 곳이 늘어납니다. 데코레이터는 업무 함수를 감싸 호출 전후의 공통 절차를 담당합니다. 자원 정리는 대여 물품을 반납하는 절차와 비슷합니다. 업무 중 문제가 생겨도 반납 규칙은 실행되어야 합니다.</p><h3>정의와 표기 읽기</h3><p><strong>데코레이터(decorator)</strong>는 함수를 입력으로 받아 기능을 덧붙인 새 함수를 반환하는 호출 가능한 객체입니다. <code>@trace</code>를 <code>normalize_title</code> 정의 바로 위에 쓰면 함수 정의 시점에 <code>normalize_title = trace(normalize_title)</code>가 실행된 것과 같습니다. <code>trace</code>의 입력 <code>func</code>에는 원래 함수가 들어가고, 반환된 <code>wrapper</code>가 이후 <code>normalize_title</code> 이름에 연결됩니다. 따라서 나중에 <code>normalize_title("  월간 보고서  ")</code>를 호출하면 래퍼가 먼저 실행되고 래퍼 내부에서 원래 함수가 호출됩니다.</p><p><strong>래퍼(wrapper)</strong>는 원래 함수를 감싸는 내부 함수입니다. <code>*args</code>는 이름 없이 위치로 전달된 인자를 튜플로 받고, <code>**kwargs</code>는 이름을 붙여 전달된 인자를 딕셔너리로 받습니다. <code>func(*args, **kwargs)</code>는 받은 인자를 원래 함수에 다시 전달하고, 그 반환값을 래퍼가 호출자에게 반환합니다. <strong>메타데이터(metadata)</strong>는 함수 이름, 설명, 서명처럼 함수를 설명하는 정보이며 <code>functools.wraps</code>가 이를 래퍼에 복사합니다.</p><p><strong>컨텍스트 매니저(context manager)</strong>는 <code>with</code> 블록에 들어갈 때 준비하고 나올 때 정리하는 규칙을 가진 객체입니다. <code>with managed_resource() as managed:</code>는 관리자를 호출해 준비를 시작하고, <code>yield current</code>가 내보낸 자원을 <code>managed</code>에 연결한 뒤 블록을 실행한다고 읽습니다. 블록이 끝나거나 예외로 중단되면 실행은 <code>yield</code> 다음 문장으로 이어집니다. 종료 코드를 <code>finally</code>에 두면 두 경로 모두에서 정리됩니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:860px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 535" width="860" height="535" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-09-concept desc-09-concept">
+<title id="title-09-concept">함수 호출 전후의 기록과 예외 뒤의 자원 정리</title>
+<desc id="desc-09-concept">위쪽은 trace의 호출 기록, 아래쪽은 같은 RuntimeError 뒤 정리 여부를 비교합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="860" height="535" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">함수 호출 전후의 기록과 예외 뒤의 자원 정리</tspan></text>
+<rect x="30" y="90" width="230" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="145.0" y="128.0" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="145.0" dy="0.0">호출 시작 기록</tspan></text>
+<polyline points="260,128 310,128" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="310" y="90" width="230" height="76" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="425.0" y="117.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="425.0" dy="0.0">normalize_title 실행</tspan><tspan x="425.0" dy="21.6">양쪽 공백 제거</tspan></text>
+<polyline points="540,128 590,128" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="590" y="90" width="240" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="710.0" y="117.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="710.0" dy="0.0">호출 완료 기록</tspan><tspan x="710.0" dy="21.6">문자열 반환</tspan></text>
+<text x="430" y="208.0" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="430" dy="0.0">wraps는 원래 함수의 이름·설명 등을 유지합니다.</tspan></text>
+<rect x="40" y="290" width="350" height="130" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="215.0" y="333.4" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="215.0" dy="0.0">Before: RuntimeError 발생</tspan><tspan x="215.0" dy="21.6">close()에 도달하지 못함</tspan><tspan x="215.0" dy="21.6">closed: False</tspan></text>
+<rect x="470" y="290" width="350" height="130" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="645.0" y="333.4" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="645.0" dy="0.0">After: 같은 RuntimeError</tspan><tspan x="645.0" dy="21.6">finally에서 close() 실행</tspan><tspan x="645.0" dy="21.6">closed: True</tspan></text>
+<polyline points="390,355 470,355" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="395.0" y="328.0" width="70.0" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="430.0" y="340.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="430.0" dy="0.0">정리 위치</tspan></text>
+<text x="430" y="482.0" font-size="15" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="430" dy="0.0">파랑: 작성한 실행 순서 · 초록: 처리·자원 · 빨강: 정리 누락</tspan></text>
+</svg></div><p>도식의 위쪽은 장식 시점에 원래 함수가 <code>trace</code>로 들어가 래퍼로 바뀌는 단계와, 호출 시점에 래퍼가 시작 기록·원래 함수 호출·완료 기록·결과 반환을 수행하는 단계를 나누어 보여 줍니다. 아래쪽은 같은 <code>RuntimeError</code>가 발생했을 때 Before에서는 정리 코드에 도달하지 못하고 After에서는 <code>finally</code>가 자원을 정리하는 결과를 비교합니다. 두 경우 모두 오류는 발생하며 정리 위치만 다릅니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>먼저 <code>trace(func)</code>를 정의합니다. 입력은 장식할 함수 객체이고 반환은 내부 함수 <code>wrapper</code>입니다. <code>@wraps(func)</code>는 이 래퍼의 정보를 원래 함수와 맞춥니다. 이어서 <code>@trace</code> 아래에 <code>normalize_title()</code>을 정의하면 장식이 즉시 적용됩니다. 이후 제목 문자열을 호출 인자로 주면 래퍼가 호출 시작을 출력하고, 원래 함수에 문자열을 전달해 공백을 제거한 값을 받은 뒤, 완료를 출력하고 그 값을 반환합니다.</p><p>실제 출력 <code>호출 시작</code>, <code>호출 완료</code>, <code>결과</code>의 순서는 공통 처리와 호출자의 출력 시점을 보여 줍니다. 다음 셀의 <code>inspect.signature()</code>는 장식된 함수가 받는 매개변수 표기를 반환합니다. 마지막 셀은 공백이 없는 제목만 입력으로 바꾸어도 같은 래퍼와 원래 함수가 호출되는지 확인합니다.</p><section class="notebook" data-notebook="09-데코레이터와-컨텍스트-매니저" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="09-데코레이터와-컨텍스트-매니저.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICIzZTJjNjc1MiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMg642w7L2U66CI7J207YSw7JmAIOy7qO2FjeyKpO2KuCDrp6Tri4jsoIBcbiIsCiAgICAiXG4iLAogICAgIu2VqOyImCDtmLjstpwg7KCE7ZuE7J2YIOqzte2GtSDsspjrpqzsmYAg7J6Q7JuQIOygleumrOulvCDslrTrlrvqsowg7JWI7KCE7ZWY6rKMIOyerOyCrOyaqe2VmOuKlOyngCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiMTk5YTkyMmUiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6Ttlokg7ZmY6rK9IOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAi7J20IOuFuO2KuOu2geydgCBQeXRob24gMy4xMiDtkZzspIAg65287J2067iM65+s66as66eMIOyCrOyaqe2VqeuLiOuLpC4gQSDqsr3roZwgMDF+MDjsoIjsnYQg66eI7LmcIOuSpCDshKDtg53tlZjripQgQiDqsr3roZwg7ZmV7J6lIOyLpOyKteyeheuLiOuLpC4gMDTsoIjsnZgg7ZWo7IiYIO2YuOy2nOqzvCDrsJjtmZgsIDA17KCI7J2YIOyYiOyZuCDsspjrpqzrpbwg7IKs7Jqp7ZWp64uI64ukLiBgZmluYWxseWDsmYAgYHdpdGhg7J2YIOyLpO2WiSDqt5zsuZnsnYAg7J20IOygiOyXkOyEnCDsspjsnYwg7KCV7J2Y7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogIjI0YjMwZDA4IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjIyOjExLjI3ODczNloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjIyOjExLjI3ODY1N1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjIyOjExLjI4MTQ3MFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjI6MTEuMjgxMTI2WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIlB5dGhvbiDtkZzspIAg65287J2067iM65+s66asIOykgOu5hCDsmYTro4xcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtlYTsmpTtlZwg7ZGc7KSAIOudvOydtOu4jOufrOumrOulvCDqsIDsoLjsmLXri4jri6QuXG4iLAogICAgImltcG9ydCBpbnNwZWN0XG4iLAogICAgImZyb20gY29udGV4dGxpYiBpbXBvcnQgY29udGV4dG1hbmFnZXJcbiIsCiAgICAiZnJvbSBmdW5jdG9vbHMgaW1wb3J0IHdyYXBzXG4iLAogICAgInByaW50KFwiUHl0aG9uIO2RnOykgCDrnbzsnbTruIzrn6zrpqwg7KSA67mEIOyZhOujjFwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjAxMTVlMTk2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6riw67O4IOyLpO2WiTog7ZWo7IiY7J2YIOyVnuuSpOyXkCDquLDroZ3snYQg642U7ZWY6riwXG4iLAogICAgIlxuIiwKICAgICJgQHRyYWNlYOuKlCDtlajsiJgg7KCV7J2YIOyLnOygkOyXkCDrsJTroZwg7JWE656YIOybkOuemCDtlajsiJjrpbwgYHRyYWNlKClg7JeQIOyeheugpe2VmOqzoCwg67CY7ZmY65CcIGB3cmFwcGVyYOulvCDqsJnsnYAg7ZWo7IiYIOydtOumhOyXkCDsl7DqsrDtlZjripQg7ZGc6riw7J6F64uI64ukLiDrgpjspJHsl5Ag7J6l7Iud65CcIO2VqOyImOulvCDtmLjstpztlZjrqbQg656Y7Y286rCAIOuovOyggCDsi6TtlontlZjqs6AgYGZ1bmMoKmFyZ3MsICoqa3dhcmdzKWDroZwg67Cb7J2AIOyduOyekOulvCDsm5Drnpgg7ZWo7IiY7JeQIOyghOuLrO2VqeuLiOuLpC4g656Y7Y2864qUIOybkOuemCDtlajsiJjsnZgg6rKw6rO866W8IOuLpOyLnCDtmLjstpzsnpDsl5Dqsowg67CY7ZmY7ZWp64uI64ukLiBgd3JhcHNg64qUIOybkOuemCDtlajsiJjsnZgg7J2066aE6rO8IOyEpOuqheydhCDsg4gg7ZWo7IiY7JeQIOuzteyCrO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICI4ZTM1ZDkwYSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS4yODIyNjJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS4yODIyMDBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS4yODQwMzFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjExLjI4Mzc1MloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLtmLjstpwg7Iuc7J6ROiBub3JtYWxpemVfdGl0bGVcbiIsCiAgICAgICLtmLjstpwg7JmE66OMOiBub3JtYWxpemVfdGl0bGVcbiIsCiAgICAgICLqsrDqs7w6IOyblOqwhCDrs7Tqs6DshJxcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsm5Drnpgg7ZWo7IiYIOygleuztOulvCDsnKDsp4DtlZjripQg7Zi47LacIOq4sOuhnSDrjbDsvZTroIjsnbTthLDrpbwg66eM65Ot64uI64ukLlxuIiwKICAgICJkZWYgdHJhY2UoZnVuY3Rpb24pOlxuIiwKICAgICIgICAgQHdyYXBzKGZ1bmN0aW9uKVxuIiwKICAgICIgICAgZGVmIHdyYXBwZXIoKmFyZ3MsICoqa3dhcmdzKTpcbiIsCiAgICAiICAgICAgICBwcmludChmXCLtmLjstpwg7Iuc7J6ROiB7ZnVuY3Rpb24uX19uYW1lX199XCIpXG4iLAogICAgIiAgICAgICAgcmVzdWx0ID0gZnVuY3Rpb24oKmFyZ3MsICoqa3dhcmdzKVxuIiwKICAgICIgICAgICAgIHByaW50KGZcIu2YuOy2nCDsmYTro4w6IHtmdW5jdGlvbi5fX25hbWVfX31cIilcbiIsCiAgICAiICAgICAgICByZXR1cm4gcmVzdWx0XG4iLAogICAgIiAgICByZXR1cm4gd3JhcHBlclxuIiwKICAgICJcbiIsCiAgICAiQHRyYWNlXG4iLAogICAgImRlZiBub3JtYWxpemVfdGl0bGUodGl0bGU6IHN0cikgLT4gc3RyOlxuIiwKICAgICIgICAgXCJcIlwi7KCc66qpIOyWkeyqveydmCDqs7XrsLHsnYQg7KCc6rGw7ZWp64uI64ukLlwiXCJcIlxuIiwKICAgICIgICAgcmV0dXJuIHRpdGxlLnN0cmlwKClcbiIsCiAgICAiXG4iLAogICAgInByaW50KFwi6rKw6rO8OlwiLCBub3JtYWxpemVfdGl0bGUoXCIgIOyblOqwhCDrs7Tqs6DshJwgIFwiKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI4YmIzZThjZCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOykkeqwhCDqsrDqs7wg6rSA7LCwOiDsm5Drnpgg7ZWo7IiYIOygleuztCDsnKDsp4BcbiIsCiAgICAiXG4iLAogICAgIuuUlOuyhOqxsOyZgCDrrLjshJwg7IOd7ISx6riw64qUIGBfX25hbWVfX2AsIGBfX2RvY19fYCwg7ZWo7IiYIOyEnOuqheydhCDsnb3sirXri4jri6QuIGBpbnNwZWN0LnNpZ25hdHVyZSgpYOuKlCDtlajsiJjqsIAg67Cb64qUIOunpOqwnOuzgOyImOyZgCDsmIjsg4Eg67CY7ZmYIO2DgOyehSDtkZzquLDrpbwg67CY7ZmY7ZWp64uI64ukLiBgd3JhcHNg66W8IOyNvOycvOuvgOuhnCDsnqXsi50g65Kk7JeQ64+EIGAodGl0bGU6IHN0cikgLT4gc3RyYOulvCDtmZXsnbjtlaAg7IiYIOyeiOyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICI4MjUxYWRjZiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS4yODQ3NTVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS4yODQ2ODBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS4yODYyNzNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjExLjI4NTk4OVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLtlajsiJgg7J2066aEOiBub3JtYWxpemVfdGl0bGVcbiIsCiAgICAgICLtlajsiJgg7ISk66qFOiDsoJzrqqkg7JaR7Kq97J2YIOqzteuwseydhCDsoJzqsbDtlanri4jri6QuXG4iLAogICAgICAi7ZWo7IiYIOyEnOuqhTogKHRpdGxlOiBzdHIpIC0+IHN0clxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyepeyLneuQnCDtlajsiJjsnZgg7J2066aEwrfshKTrqoXCt+yEnOuqheydhCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgInByaW50KFwi7ZWo7IiYIOydtOumhDpcIiwgbm9ybWFsaXplX3RpdGxlLl9fbmFtZV9fKVxuIiwKICAgICJwcmludChcIu2VqOyImCDshKTrqoU6XCIsIG5vcm1hbGl6ZV90aXRsZS5fX2RvY19fKVxuIiwKICAgICJwcmludChcIu2VqOyImCDshJzrqoU6XCIsIGluc3BlY3Quc2lnbmF0dXJlKG5vcm1hbGl6ZV90aXRsZSkpXG4iLAogICAgImFzc2VydCBub3JtYWxpemVfdGl0bGUuX19uYW1lX18gPT0gXCJub3JtYWxpemVfdGl0bGVcIiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNiNTA1MTc0IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rCSIO2VmOuCmOulvCDrsJTqv5Qg67mE6rWQOiDqs7XrsLEg7JeG64qUIOyeheugpVxuIiwKICAgICJcbiIsCiAgICAi6rCZ7J2AIO2VqOyImOyXkCDqs7XrsLHsnbQg7JeG64qUIOygnOuqqeydhCDsoITri6ztlanri4jri6QuIOuNsOy9lOugiOydtO2EsOqwgCDsnoXroKXqsJLsnYQg67CU6r647KeAIOyViuqzoCDsm5Drnpgg7ZWo7IiY7JeQIOyghOuLrO2VmOuKlOyngCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiMmRlYWNiZWQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MjI6MTEuMjg2OTQ1WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MjI6MTEuMjg2ODk0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MjI6MTEuMjg4NDE3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS4yODgwOTVaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7Zi47LacIOyLnOyekTogbm9ybWFsaXplX3RpdGxlXG4iLAogICAgICAi7Zi47LacIOyZhOujjDogbm9ybWFsaXplX3RpdGxlXG4iLAogICAgICAi6rO167CxIOyXhuuKlCDqsrDqs7w6IOyblOqwhCDrs7Tqs6DshJxcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDqs7XrsLHsnbQg7JeG64qUIOyeheugpSDtlZwg6rCA7KeA66eMIOuwlOq/lCDqsJnsnYAg7ZWo7IiY66W8IOyLpO2Wie2VqeuLiOuLpC5cbiIsCiAgICAiY2hhbmdlZF90aXRsZSA9IG5vcm1hbGl6ZV90aXRsZShcIuyblOqwhCDrs7Tqs6DshJxcIilcbiIsCiAgICAicHJpbnQoXCLqs7XrsLEg7JeG64qUIOqysOqzvDpcIiwgY2hhbmdlZF90aXRsZSlcbiIsCiAgICAiYXNzZXJ0IGNoYW5nZWRfdGl0bGUgPT0gXCLsm5TqsIQg67O06rOg7IScXCJcbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImQ3YjEyZDEzIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyBCZWZvcmU6IOyYiOyZuOqwgCDrsJzsg53tlZjrqbQg7KCV66asIOy9lOuTnOyXkCDrj4Tri6ztlZjsp4Ag66q77ZWoXG4iLAogICAgIlxuIiwKICAgICJgY2xvc2UoKWDrpbwg7KCV7IOBIOqyveuhnCDrgZ3sl5Drp4wg7JOw66m0IOyekeyXhSDspJEg7JiI7Jm46rCAIOuwnOyDne2WiOydhCDrlYwg7J6Q7JuQ7J20IOyXtOumsCDsg4Htg5zroZwg64Ko7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogImI3ZThlMjIzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjIyOjExLjI4OTExOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjIyOjExLjI4OTA1NVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjIyOjExLjI5MDg5NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjI6MTEuMjkwNjIzWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiUnVudGltZUVycm9yIC8g64ur7Z6YOiBGYWxzZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyYiOyZuOqwgCDsoJXrpqwg66y47J6l67O064ukIOuovOyggCDrsJzsg53tlZjripQg7IOB7Zmp7J2EIOyerO2YhO2VqeuLiOuLpC5cbiIsCiAgICAiY2xhc3MgRGVtb1Jlc291cmNlOlxuIiwKICAgICIgICAgZGVmIF9faW5pdF9fKHNlbGYpIC0+IE5vbmU6XG4iLAogICAgIiAgICAgICAgc2VsZi5jbG9zZWQgPSBGYWxzZVxuIiwKICAgICIgICAgZGVmIGNsb3NlKHNlbGYpIC0+IE5vbmU6XG4iLAogICAgIiAgICAgICAgc2VsZi5jbG9zZWQgPSBUcnVlXG4iLAogICAgIlxuIiwKICAgICJyZXNvdXJjZSA9IERlbW9SZXNvdXJjZSgpXG4iLAogICAgInRyeTpcbiIsCiAgICAiICAgIHJhaXNlIFJ1bnRpbWVFcnJvcihcIuyymOumrCDspJEg7Jik66WYXCIpXG4iLAogICAgIiAgICByZXNvdXJjZS5jbG9zZSgpXG4iLAogICAgImV4Y2VwdCBSdW50aW1lRXJyb3IgYXMgZXJyb3I6XG4iLAogICAgIiAgICBwcmludCh0eXBlKGVycm9yKS5fX25hbWVfXywgXCIvIOuLq+2emDpcIiwgcmVzb3VyY2UuY2xvc2VkKVxuIiwKICAgICJhc3NlcnQgcmVzb3VyY2UuY2xvc2VkIGlzIEZhbHNlIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiNDg4NGVlZDciLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgQWZ0ZXI6IGB0cnkvZmluYWxseWDroZwg7ZWt7IOBIOygleumrO2VmOq4sFxuIiwKICAgICJcbiIsCiAgICAiYEBjb250ZXh0bWFuYWdlcmDripQgYHlpZWxkYOulvCDtlZwg67KIIOyCrOyaqe2VmOuKlCDtlajsiJjsl5Ag7Luo7YWN7Iqk7Yq4IOunpOuLiOyggCDqt5zsuZnsnYQg67aA7Jes7ZWY7JesIGB3aXRoYOyXkOyEnCDtmLjstpztlaAg7IiYIOyeiOqyjCDtlanri4jri6QuIGB3aXRoIG1hbmFnZWRfcmVzb3VyY2UoKSBhcyBtYW5hZ2VkOmDripQg6rSA66as7J6Q66W8IO2YuOy2nO2VtCDspIDruYTrpbwg7Iuc7J6R7ZWY6rOgLCBgeWllbGQgY3VycmVudGDqsIAg64K067O064K4IOyekOybkOydhCBgbWFuYWdlZGDsl5Ag7Jew6rKw7ZWcIOuSpCDruJTroZ3snYQg7Iuk7ZaJ7ZWp64uI64ukLiDruJTroZ3snbQg7KCV7IOBIOyiheujjOuQmOqxsOuCmCDsmIjsmbjroZwg7KSR64uo65CY66m0IOyLpO2WieydgCBgeWllbGRgIOuLpOydjCDrrLjsnqXsnLzroZwg7J207Ja07KeR64uI64ukLiDsoJXrpqwg7L2U65Oc66W8IGBmaW5hbGx5YOyXkCDrkZDsl4jsnLzrr4DroZwg65GQIOqyveuhnCDrqqjrkZDsl5DshJwgYGNsb3NlKClg6rCAIO2YuOy2nOuQqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDYsCiAgICJpZCI6ICIzNDU4ZDVmZCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS4yOTE1NDhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS4yOTE0OTJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS4yOTMyMjNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjExLjI5Mjk3M1oiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7KCV66asIOyLpO2WiVxuIiwKICAgICAgIlJ1bnRpbWVFcnJvciAvIOuLq+2emDogVHJ1ZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGZpbmFsbHnsl5DshJwg7J6Q7JuQ7J2EIOuLq+uKlCDsu6jthY3siqTtirgg6rSA66as7J6Q66W8IOunjOuTreuLiOuLpC5cbiIsCiAgICAiQGNvbnRleHRtYW5hZ2VyXG4iLAogICAgImRlZiBtYW5hZ2VkX3Jlc291cmNlKCk6XG4iLAogICAgIiAgICBjdXJyZW50ID0gRGVtb1Jlc291cmNlKClcbiIsCiAgICAiICAgIHRyeTpcbiIsCiAgICAiICAgICAgICB5aWVsZCBjdXJyZW50XG4iLAogICAgIiAgICBmaW5hbGx5OlxuIiwKICAgICIgICAgICAgIGN1cnJlbnQuY2xvc2UoKVxuIiwKICAgICIgICAgICAgIHByaW50KFwi7KCV66asIOyLpO2WiVwiKVxuIiwKICAgICJcbiIsCiAgICAibWFuYWdlZCA9IE5vbmVcbiIsCiAgICAidHJ5OlxuIiwKICAgICIgICAgd2l0aCBtYW5hZ2VkX3Jlc291cmNlKCkgYXMgbWFuYWdlZDpcbiIsCiAgICAiICAgICAgICByYWlzZSBSdW50aW1lRXJyb3IoXCLsspjrpqwg7KSRIOyYpOulmFwiKVxuIiwKICAgICJleGNlcHQgUnVudGltZUVycm9yIGFzIGVycm9yOlxuIiwKICAgICIgICAgcHJpbnQodHlwZShlcnJvcikuX19uYW1lX18sIFwiLyDri6vtnpg6XCIsIG1hbmFnZWQuY2xvc2VkKVxuIiwKICAgICJhc3NlcnQgbWFuYWdlZCBpcyBub3QgTm9uZSBhbmQgbWFuYWdlZC5jbG9zZWQgaXMgVHJ1ZSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAicGFpcmVkIiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNiwKICAgImNvZGVfc2hhMjU2IjogIjIxMzExM2ZjYzU1YzE1ZjAyMTRkNTkxMzg1NGUwOWM3Y2E5MmE2ZDM1NmQzYmEyNDAzOWNiYjAzNWZlOGNjNzgiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS40MDY4OTkrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjU1ZTE1MDA5NmJhZDJjMTVlNjI2NzVlNTI2MDJmYmE5ZjA0MDVhMDFlNmU5MGMzNGUxOGZiYzA2ZTcxZmViNGEiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>데코레이터와 컨텍스트 매니저</h2>
+<p>함수 호출 전후의 공통 처리와 자원 정리를 어떻게 안전하게 재사용하는지 확인합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>이 노트북은 Python 3.12 표준 라이브러리만 사용합니다. A 경로 01~08절을 마친 뒤 선택하는 B 경로 확장 실습입니다. 04절의 함수 호출과 반환, 05절의 예외 처리를 사용합니다. <code>finally</code>와 <code>with</code>의 실행 규칙은 이 절에서 처음 정의합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 필요한 표준 라이브러리를 가져옵니다.
+import inspect
+from contextlib import contextmanager
+from functools import wraps
+print(&quot;Python 표준 라이브러리 준비 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Python 표준 라이브러리 준비 완료
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행: 함수의 앞뒤에 기록을 더하기</h3>
+<p><code>@trace</code>는 함수 정의 시점에 바로 아래 원래 함수를 <code>trace()</code>에 입력하고, 반환된 <code>wrapper</code>를 같은 함수 이름에 연결하는 표기입니다. 나중에 장식된 함수를 호출하면 래퍼가 먼저 실행하고 <code>func(*args, **kwargs)</code>로 받은 인자를 원래 함수에 전달합니다. 래퍼는 원래 함수의 결과를 다시 호출자에게 반환합니다. <code>wraps</code>는 원래 함수의 이름과 설명을 새 함수에 복사합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 원래 함수 정보를 유지하는 호출 기록 데코레이터를 만듭니다.
+def trace(function):
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        print(f&quot;호출 시작: {function.__name__}&quot;)
+        result = function(*args, **kwargs)
+        print(f&quot;호출 완료: {function.__name__}&quot;)
+        return result
+    return wrapper
+
+@trace
+def normalize_title(title: str) -&gt; str:
+    &quot;&quot;&quot;제목 양쪽의 공백을 제거합니다.&quot;&quot;&quot;
+    return title.strip()
+
+print(&quot;결과:&quot;, normalize_title(&quot;  월간 보고서  &quot;))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">호출 시작: normalize_title
+호출 완료: normalize_title
+결과: 월간 보고서
+</pre></div>
+<div class="nb-markdown"><h3>중간 결과 관찰: 원래 함수 정보 유지</h3>
+<p>디버거와 문서 생성기는 <code>__name__</code>, <code>__doc__</code>, 함수 서명을 읽습니다. <code>inspect.signature()</code>는 함수가 받는 매개변수와 예상 반환 타입 표기를 반환합니다. <code>wraps</code>를 썼으므로 장식 뒤에도 <code>(title: str) -&gt; str</code>를 확인할 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 장식된 함수의 이름·설명·서명을 확인합니다.
+print(&quot;함수 이름:&quot;, normalize_title.__name__)
+print(&quot;함수 설명:&quot;, normalize_title.__doc__)
+print(&quot;함수 서명:&quot;, inspect.signature(normalize_title))
+assert normalize_title.__name__ == &quot;normalize_title&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">함수 이름: normalize_title
+함수 설명: 제목 양쪽의 공백을 제거합니다.
+함수 서명: (title: str) -&gt; str
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 비교: 공백 없는 입력</h3>
+<p>같은 함수에 공백이 없는 제목을 전달합니다. 데코레이터가 입력값을 바꾸지 않고 원래 함수에 전달하는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 공백이 없는 입력 한 가지만 바꿔 같은 함수를 실행합니다.
+changed_title = normalize_title(&quot;월간 보고서&quot;)
+print(&quot;공백 없는 결과:&quot;, changed_title)
+assert changed_title == &quot;월간 보고서&quot;
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">호출 시작: normalize_title
+호출 완료: normalize_title
+공백 없는 결과: 월간 보고서
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 장식된 함수의 이름은 <code>wrapper</code>가 아니라 <code>normalize_title</code>로 출력됩니다. <code>(title: str) -&gt; str</code>는 문자열 제목을 받아 문자열을 반환한다는 서명입니다. 기록 두 줄 뒤에 반환값이 출력되므로 래퍼가 결과를 잃지 않고 호출자에게 전달했음을 확인할 수 있습니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before 코드는 자원을 만든 뒤 의도적으로 <code>RuntimeError</code>를 발생시킵니다. <code>close()</code>가 정상 처리 문장 뒤에 있으므로 해당 문장까지 실행되지 않습니다. 실제 출력의 <code>닫힘: False</code>는 정리가 누락되었음을 보여 줍니다.</p><p>After의 <code>@contextmanager</code>는 <code>yield</code>를 한 번 사용하는 함수에 컨텍스트 매니저 규칙을 부여하여 <code>with</code>에서 호출할 수 있게 합니다. 같은 오류가 <code>with managed_resource()</code> 안에서 발생하면 관리자의 <code>finally</code>가 먼저 <code>정리 실행</code>을 출력하고, 예외 처리 뒤 닫힘 상태는 <code>True</code>입니다. 이 결과는 예외가 없어졌다는 뜻이 아닙니다. 오류는 호출자가 처리하고, 컨텍스트 매니저는 자원 정리를 보장합니다.</p><section class="notebook" data-notebook="09-데코레이터와-컨텍스트-매니저" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>Before: 예외가 발생하면 정리 코드에 도달하지 못함</h3>
+<p><code>close()</code>를 정상 경로 끝에만 쓰면 작업 중 예외가 발생했을 때 자원이 열린 상태로 남습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 예외가 정리 문장보다 먼저 발생하는 상황을 재현합니다.
+class DemoResource:
+    def __init__(self) -&gt; None:
+        self.closed = False
+    def close(self) -&gt; None:
+        self.closed = True
+
+resource = DemoResource()
+try:
+    raise RuntimeError(&quot;처리 중 오류&quot;)
+    resource.close()
+except RuntimeError as error:
+    print(type(error).__name__, &quot;/ 닫힘:&quot;, resource.closed)
+assert resource.closed is False</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">RuntimeError / 닫힘: False
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>After: <code>try/finally</code>로 항상 정리하기</h3>
+<p><code>@contextmanager</code>는 <code>yield</code>를 한 번 사용하는 함수에 컨텍스트 매니저 규칙을 부여하여 <code>with</code>에서 호출할 수 있게 합니다. <code>with managed_resource() as managed:</code>는 관리자를 호출해 준비를 시작하고, <code>yield current</code>가 내보낸 자원을 <code>managed</code>에 연결한 뒤 블록을 실행합니다. 블록이 정상 종료되거나 예외로 중단되면 실행은 <code>yield</code> 다음 문장으로 이어집니다. 정리 코드를 <code>finally</code>에 두었으므로 두 경로 모두에서 <code>close()</code>가 호출됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># finally에서 자원을 닫는 컨텍스트 관리자를 만듭니다.
+@contextmanager
+def managed_resource():
+    current = DemoResource()
+    try:
+        yield current
+    finally:
+        current.close()
+        print(&quot;정리 실행&quot;)
+
+managed = None
+try:
+    with managed_resource() as managed:
+        raise RuntimeError(&quot;처리 중 오류&quot;)
+except RuntimeError as error:
+    print(type(error).__name__, &quot;/ 닫힘:&quot;, managed.closed)
+assert managed is not None and managed.closed is True</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">정리 실행
+RuntimeError / 닫힘: True
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li><code>wraps</code>를 생략해도 작은 예제는 실행될 수 있지만 문서 생성기, 디버거, 의존성 주입 도구가 함수 정보를 잘못 읽을 수 있습니다.</li><li>래퍼에서 예외를 무조건 잡아 숨기면 호출자가 실패를 알 수 없습니다. 기록 후 다시 발생시키거나 처리 책임을 명확히 정합니다.</li><li><code>contextmanager</code> 함수는 <code>yield</code>를 정확히 한 번 수행해야 합니다. 준비 중 실패했다면 아직 얻지 못한 자원을 정리하려 하지 않도록 단계별 상태를 고려합니다.</li><li>이 실습의 <code>DemoResource</code>는 정리 순서를 관찰하기 위한 모의 객체입니다. 데이터베이스 연결이나 네트워크 세션의 실제 종료 방식은 해당 라이브러리 문서를 확인합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>데코레이터는 함수 호출 전후의 공통 처리를 재사용합니다.</li><li><code>wraps</code>는 원래 함수의 이름·설명·서명을 유지합니다.</li><li>컨텍스트 매니저의 <code>finally</code>는 정상 종료와 예외 종료 모두에서 자원을 정리합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 10절에서는 함수 호출 경계에 들어온 데이터가 정해진 자료형과 범위를 만족하는지 Pydantic으로 확인합니다. Ch 18의 API 호출과 Ch 30의 서비스 자원 관리에서도 이 절의 호출 전후 처리 구조를 다시 사용합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. <code>wraps</code>를 쓰는 주된 이유는 무엇인가요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> 래퍼가 원래 함수의 이름, 문서 문자열, 서명 같은 정보를 유지하게 하기 위해서입니다. 실행 결과만 같다고 함수 정보까지 자동으로 보존되지는 않습니다.</p></details><details class="quiz"><summary>2. <code>contextmanager</code> 함수에서 <code>yield</code> 앞뒤는 각각 무엇을 담당하나요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> 앞부분은 자원 준비, 뒷부분은 종료 처리를 담당합니다. 종료 처리는 <code>finally</code> 안에 두어 예외 경로에서도 실행하게 합니다.</p></details><details class="quiz"><summary>3. Before 예제에서 자원이 열린 채 남은 직접 원인은 무엇인가요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> 예외가 <code>resource.close()</code>보다 먼저 발생하여 실행 흐름이 <code>except</code>로 옮겨졌기 때문입니다.</p></details><details class="quiz"><summary>4. 데코레이터가 예외를 잡은 뒤 아무 일도 하지 않고 반환하면 어떤 문제가 생기나요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> 호출자는 작업 실패를 알지 못하고 성공으로 오해할 수 있습니다. 예외 처리 책임에 따라 다시 발생시키거나 명시적인 실패 값을 반환해야 합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.python.org/3.12/library/contextlib.html">Python 3.12 contextlib</a> · 확인 2026-09-09 · 기준 Python 3.12</li><li><a href="https://docs.python.org/3.12/library/functools.html#functools.wraps">Python 3.12 functools.wraps</a> · 확인 2026-09-09 · 기준 Python 3.12</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="08-pytest.html">← pytest</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="10-Pydantic.html">Pydantic →</a></span></div></div></body></html>

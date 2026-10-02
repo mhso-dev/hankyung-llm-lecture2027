@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 확장자만 보고 압축 묶음으로 열기"]
+    direction LR
+    b1["legacy-signature.hwp"]:::tool
+    b2["압축 묶음으로 열기"]:::flow
+    b3["BadZipFile 오류<br>항목 목록 빈 목록"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 갈래를 먼저 정하기"]
+    direction LR
+    a1["견본 두 개"]:::tool
+    a2["앞 여덟 바이트와<br>압축 묶음 여부로 가름"]:::flow
+    a3["HWP 후보는 전용 도구가 필요함<br>HWPX는 본문 15자"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  note1["HWP 본문은 두 실행에서 모두 얻지 못함"]
+  BEFORE ~~~ AFTER
+  AFTER ~~~ note1

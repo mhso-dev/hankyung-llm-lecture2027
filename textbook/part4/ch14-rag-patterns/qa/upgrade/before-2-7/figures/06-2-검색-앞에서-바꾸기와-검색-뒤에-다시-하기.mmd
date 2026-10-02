@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q["원 질문 하나"]:::tool
+  before["검색 앞에서 넣을 글 바꾸기<br>앞 다섯 절"]
+  after["먼저 검색하고 거리 재기<br>이 절"]:::flow
+  judge["거리 기준값과 견주기"]:::flow
+  keep["그대로 두기<br>다시 검색하지 않음"]:::flow
+  again["한 번 더 검색<br>다시 검색 한 번"]:::flow
+  q --> before
+  q --> after
+  after --> judge
+  judge -.-> keep
+  judge -.-> again

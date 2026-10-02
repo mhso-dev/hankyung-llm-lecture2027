@@ -1,0 +1,2464 @@
+{
+ "ch01-development-environment": {
+  "part": "part1",
+  "lab": "labs/part1/ch01-development-environment",
+  "sections": 6,
+  "slugs": [
+   "01-과정-지도와-학습-규칙",
+   "02-도구-설치와-터미널",
+   "03-Python과-가상환경",
+   "04-첫-스크립트와-디버거",
+   "05-Git과-Docker-준비",
+   "06-개발환경-실습"
+  ],
+  "code_cells": 84,
+  "sentences": 1707,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 6,
+  "nonzero": {},
+  "per_section": {
+   "01-과정-지도와-학습-규칙": [
+    11,
+    228
+   ],
+   "02-도구-설치와-터미널": [
+    12,
+    266
+   ],
+   "03-Python과-가상환경": [
+    14,
+    288
+   ],
+   "04-첫-스크립트와-디버거": [
+    14,
+    300
+   ],
+   "05-Git과-Docker-준비": [
+    14,
+    372
+   ],
+   "06-개발환경-실습": [
+    19,
+    253
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 6,
+   "diffs": []
+  }
+ },
+ "ch02-python": {
+  "part": "part1",
+  "lab": "labs/part1/ch02-python",
+  "sections": 13,
+  "slugs": [
+   "01-변수와-자료형",
+   "02-조건문과-반복문",
+   "03-자료구조",
+   "04-함수",
+   "05-파일과-예외",
+   "06-클래스",
+   "07-모듈과-타입힌트",
+   "08-pytest",
+   "09-데코레이터와-컨텍스트-매니저",
+   "10-Pydantic",
+   "11-패키징과-테스트-격리",
+   "12-async와-await",
+   "13-파이썬-실습"
+  ],
+  "code_cells": 190,
+  "sentences": 4586,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 13,
+  "nonzero": {},
+  "per_section": {
+   "01-변수와-자료형": [
+    12,
+    308
+   ],
+   "02-조건문과-반복문": [
+    13,
+    265
+   ],
+   "03-자료구조": [
+    16,
+    375
+   ],
+   "04-함수": [
+    15,
+    353
+   ],
+   "05-파일과-예외": [
+    17,
+    401
+   ],
+   "06-클래스": [
+    11,
+    329
+   ],
+   "07-모듈과-타입힌트": [
+    11,
+    335
+   ],
+   "08-pytest": [
+    13,
+    322
+   ],
+   "09-데코레이터와-컨텍스트-매니저": [
+    17,
+    413
+   ],
+   "10-Pydantic": [
+    14,
+    360
+   ],
+   "11-패키징과-테스트-격리": [
+    19,
+    428
+   ],
+   "12-async와-await": [
+    16,
+    386
+   ],
+   "13-파이썬-실습": [
+    16,
+    311
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 13,
+   "diffs": []
+  }
+ },
+ "ch03-git-github": {
+  "part": "part1",
+  "lab": "labs/part1/ch03-git-github",
+  "sections": 6,
+  "slugs": [
+   "01-커밋과-gitignore",
+   "02-GitHub-Flow와-PR-리뷰",
+   "03-병합-충돌-해결",
+   "04-revert-reflog-worktree",
+   "05-시크릿-이력-정리와-예방",
+   "06-Git-실습"
+  ],
+  "code_cells": 108,
+  "sentences": 2256,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 6,
+  "nonzero": {},
+  "per_section": {
+   "01-커밋과-gitignore": [
+    19,
+    349
+   ],
+   "02-GitHub-Flow와-PR-리뷰": [
+    22,
+    455
+   ],
+   "03-병합-충돌-해결": [
+    18,
+    364
+   ],
+   "04-revert-reflog-worktree": [
+    18,
+    376
+   ],
+   "05-시크릿-이력-정리와-예방": [
+    16,
+    371
+   ],
+   "06-Git-실습": [
+    15,
+    341
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 6,
+   "diffs": [
+    "03-병합-충돌-해결:sentences 363->364",
+    "03-병합-충돌-해결:code_cells 19->18",
+    "04-revert-reflog-worktree:sentences 375->376",
+    "04-revert-reflog-worktree:code_cells 19->18",
+    "05-시크릿-이력-정리와-예방:sentences 366->371",
+    "05-시크릿-이력-정리와-예방:code_cells 17->16",
+    "06-Git-실습:sentences 339->341",
+    "06-Git-실습:code_cells 16->15"
+   ]
+  }
+ },
+ "ch04-data-tools": {
+  "part": "part1",
+  "lab": "labs/part1/ch04-data-tools",
+  "sections": 6,
+  "slugs": [
+   "01-Pandas로-표-다루기",
+   "02-관계형-테이블과-키",
+   "03-SQL로-조회-함수-만들기",
+   "04-REST와-페이지네이션",
+   "05-문서-파싱과-스크래핑",
+   "06-데이터-도구-실습"
+  ],
+  "code_cells": 96,
+  "sentences": 2197,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 6,
+  "nonzero": {},
+  "per_section": {
+   "01-Pandas로-표-다루기": [
+    16,
+    339
+   ],
+   "02-관계형-테이블과-키": [
+    16,
+    320
+   ],
+   "03-SQL로-조회-함수-만들기": [
+    20,
+    416
+   ],
+   "04-REST와-페이지네이션": [
+    13,
+    359
+   ],
+   "05-문서-파싱과-스크래핑": [
+    13,
+    401
+   ],
+   "06-데이터-도구-실습": [
+    18,
+    362
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 6,
+   "diffs": []
+  }
+ },
+ "ch05-llm-principles": {
+  "part": "part1",
+  "lab": "labs/part1/ch05-llm-principles",
+  "sections": 9,
+  "slugs": [
+   "01-토큰화와-한국어-효율",
+   "02-임베딩과-의미-유사도",
+   "03-어텐션-직관",
+   "04-컨텍스트-윈도",
+   "05-컨텍스트-로트",
+   "06-temperature와-샘플링",
+   "07-환각의-구조적-원인",
+   "08-모델-선택-기준",
+   "09-LLM-동작-원리-실습"
+  ],
+  "code_cells": 119,
+  "sentences": 3419,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 9,
+  "nonzero": {},
+  "per_section": {
+   "01-토큰화와-한국어-효율": [
+    12,
+    345
+   ],
+   "02-임베딩과-의미-유사도": [
+    15,
+    373
+   ],
+   "03-어텐션-직관": [
+    16,
+    426
+   ],
+   "04-컨텍스트-윈도": [
+    15,
+    386
+   ],
+   "05-컨텍스트-로트": [
+    13,
+    347
+   ],
+   "06-temperature와-샘플링": [
+    12,
+    404
+   ],
+   "07-환각의-구조적-원인": [
+    13,
+    368
+   ],
+   "08-모델-선택-기준": [
+    14,
+    413
+   ],
+   "09-LLM-동작-원리-실습": [
+    9,
+    357
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 9,
+   "diffs": [
+    "02-임베딩과-의미-유사도:sentences 334->373",
+    "02-임베딩과-의미-유사도:code_cells 13->15",
+    "03-어텐션-직관:sentences 420->426",
+    "03-어텐션-직관:code_cells 19->16",
+    "06-temperature와-샘플링:sentences 399->404",
+    "06-temperature와-샘플링:code_cells 14->12",
+    "07-환각의-구조적-원인:sentences 366->368",
+    "07-환각의-구조적-원인:code_cells 14->13",
+    "08-모델-선택-기준:sentences 421->413",
+    "08-모델-선택-기준:code_cells 17->14",
+    "09-LLM-동작-원리-실습:sentences 368->357",
+    "09-LLM-동작-원리-실습:code_cells 15->9"
+   ]
+  }
+ },
+ "ch06-langchain-start": {
+  "part": "part2",
+  "lab": "labs/part2/ch06-langchain-start",
+  "sections": 7,
+  "slugs": [
+   "01-계층-지도와-첫-호출",
+   "02-메시지와-제공자-전환",
+   "03-구조화-출력과-검증",
+   "04-스트리밍과-content-blocks",
+   "05-타임아웃-재시도-폴백",
+   "06-토큰-비용-지연-비교",
+   "07-LangChain-실습"
+  ],
+  "code_cells": 130,
+  "sentences": 2768,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 7,
+  "nonzero": {},
+  "per_section": {
+   "01-계층-지도와-첫-호출": [
+    15,
+    355
+   ],
+   "02-메시지와-제공자-전환": [
+    18,
+    356
+   ],
+   "03-구조화-출력과-검증": [
+    19,
+    372
+   ],
+   "04-스트리밍과-content-blocks": [
+    19,
+    425
+   ],
+   "05-타임아웃-재시도-폴백": [
+    19,
+    427
+   ],
+   "06-토큰-비용-지연-비교": [
+    21,
+    458
+   ],
+   "07-LangChain-실습": [
+    19,
+    375
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 7,
+   "diffs": []
+  }
+ },
+ "ch07-prompt-engineering": {
+  "part": "part2",
+  "lab": "labs/part2/ch07-prompt-engineering",
+  "sections": 9,
+  "slugs": [
+   "01-역할별-메시지와-제약",
+   "02-페르소나와-과업-제약",
+   "03-Few-shot-예시-선택",
+   "04-ChatPromptTemplate과-MessagesPlaceholder",
+   "05-CoT와-ReAct의-경계",
+   "06-Self-Consistency와-표본-합의",
+   "07-구조화-출력-프롬프트-진단",
+   "08-프롬프트-버전과-AB-비교",
+   "09-프롬프트-엔지니어링-실습"
+  ],
+  "code_cells": 179,
+  "sentences": 3770,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 9,
+  "nonzero": {},
+  "per_section": {
+   "01-역할별-메시지와-제약": [
+    18,
+    366
+   ],
+   "02-페르소나와-과업-제약": [
+    17,
+    372
+   ],
+   "03-Few-shot-예시-선택": [
+    20,
+    397
+   ],
+   "04-ChatPromptTemplate과-MessagesPlaceholder": [
+    22,
+    474
+   ],
+   "05-CoT와-ReAct의-경계": [
+    16,
+    412
+   ],
+   "06-Self-Consistency와-표본-합의": [
+    20,
+    417
+   ],
+   "07-구조화-출력-프롬프트-진단": [
+    22,
+    437
+   ],
+   "08-프롬프트-버전과-AB-비교": [
+    25,
+    516
+   ],
+   "09-프롬프트-엔지니어링-실습": [
+    19,
+    379
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 9,
+   "diffs": [
+    "01-역할별-메시지와-제약:sentences 363->366",
+    "01-역할별-메시지와-제약:code_cells 19->18",
+    "02-페르소나와-과업-제약:sentences 376->372",
+    "02-페르소나와-과업-제약:code_cells 19->17",
+    "03-Few-shot-예시-선택:sentences 404->397",
+    "03-Few-shot-예시-선택:code_cells 22->20",
+    "04-ChatPromptTemplate과-MessagesPlaceholder:code_cells 24->22",
+    "05-CoT와-ReAct의-경계:sentences 420->412",
+    "05-CoT와-ReAct의-경계:code_cells 18->16",
+    "06-Self-Consistency와-표본-합의:code_cells 22->20",
+    "07-구조화-출력-프롬프트-진단:sentences 440->437",
+    "07-구조화-출력-프롬프트-진단:code_cells 24->22",
+    "08-프롬프트-버전과-AB-비교:code_cells 27->25",
+    "09-프롬프트-엔지니어링-실습:sentences 385->379",
+    "09-프롬프트-엔지니어링-실습:code_cells 25->19"
+   ]
+  }
+ },
+ "ch08-context-engineering": {
+  "part": "part2",
+  "lab": "labs/part2/ch08-context-engineering",
+  "sections": 7,
+  "slugs": [
+   "01-컨텍스트와-토큰-예산",
+   "02-Write와-Select",
+   "03-Compress와-Isolate",
+   "04-네-가지-실패-모드",
+   "05-Context-rot-측정",
+   "06-단계적-공개와-설계-비교",
+   "07-컨텍스트-엔지니어링-실습"
+  ],
+  "code_cells": 161,
+  "sentences": 3090,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 7,
+  "nonzero": {},
+  "per_section": {
+   "01-컨텍스트와-토큰-예산": [
+    22,
+    409
+   ],
+   "02-Write와-Select": [
+    22,
+    405
+   ],
+   "03-Compress와-Isolate": [
+    24,
+    410
+   ],
+   "04-네-가지-실패-모드": [
+    26,
+    447
+   ],
+   "05-Context-rot-측정": [
+    21,
+    458
+   ],
+   "06-단계적-공개와-설계-비교": [
+    27,
+    511
+   ],
+   "07-컨텍스트-엔지니어링-실습": [
+    19,
+    450
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 7,
+   "diffs": [
+    "02-Write와-Select:sentences 408->405",
+    "02-Write와-Select:code_cells 23->22",
+    "03-Compress와-Isolate:sentences 412->410",
+    "03-Compress와-Isolate:code_cells 26->24",
+    "04-네-가지-실패-모드:sentences 452->447",
+    "04-네-가지-실패-모드:code_cells 29->26",
+    "05-Context-rot-측정:sentences 465->458",
+    "05-Context-rot-측정:code_cells 27->21",
+    "06-단계적-공개와-설계-비교:sentences 513->511",
+    "06-단계적-공개와-설계-비교:code_cells 31->27",
+    "07-컨텍스트-엔지니어링-실습:sentences 465->450",
+    "07-컨텍스트-엔지니어링-실습:code_cells 25->19"
+   ]
+  }
+ },
+ "ch09-rag-first-run": {
+  "part": "part3",
+  "lab": "labs/part3/ch09-rag-first-run",
+  "sections": 7,
+  "slugs": [
+   "01-RAG-지도",
+   "02-로더와-스플리터",
+   "03-임베딩과-벡터스토어",
+   "04-생성과-출처-인용",
+   "05-첫-실패-보기",
+   "06-실험-하네스",
+   "07-RAG-실습"
+  ],
+  "code_cells": 145,
+  "sentences": 3327,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 7,
+  "nonzero": {},
+  "per_section": {
+   "01-RAG-지도": [
+    21,
+    440
+   ],
+   "02-로더와-스플리터": [
+    17,
+    417
+   ],
+   "03-임베딩과-벡터스토어": [
+    15,
+    418
+   ],
+   "04-생성과-출처-인용": [
+    20,
+    436
+   ],
+   "05-첫-실패-보기": [
+    24,
+    526
+   ],
+   "06-실험-하네스": [
+    28,
+    641
+   ],
+   "07-RAG-실습": [
+    20,
+    449
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 7,
+   "diffs": [
+    "02-로더와-스플리터:sentences 415->417",
+    "02-로더와-스플리터:code_cells 19->17",
+    "03-임베딩과-벡터스토어:sentences 428->418",
+    "03-임베딩과-벡터스토어:code_cells 21->15",
+    "04-생성과-출처-인용:sentences 435->436",
+    "04-생성과-출처-인용:code_cells 25->20",
+    "05-첫-실패-보기:sentences 529->526",
+    "05-첫-실패-보기:code_cells 30->24",
+    "06-실험-하네스:sentences 642->641",
+    "06-실험-하네스:code_cells 32->28",
+    "07-RAG-실습:sentences 454->449",
+    "07-RAG-실습:code_cells 27->20"
+   ]
+  }
+ },
+ "ch10-document-processing": {
+  "part": "part3",
+  "lab": "labs/part3/ch10-document-processing",
+  "sections": 9,
+  "slugs": [
+   "01-문서와-메타데이터",
+   "02-PDF와-표-OCR",
+   "03-DOCX-HTML-CSV",
+   "04-HWP와-HWPX",
+   "05-문자-재귀-토큰-청킹",
+   "06-구조와-시맨틱-청킹",
+   "07-한국어-임베딩과-캐시",
+   "08-인덱싱-비교-실험",
+   "09-문서-처리-실습"
+  ],
+  "code_cells": 185,
+  "sentences": 3749,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 9,
+  "nonzero": {},
+  "per_section": {
+   "01-문서와-메타데이터": [
+    16,
+    309
+   ],
+   "02-PDF와-표-OCR": [
+    16,
+    330
+   ],
+   "03-DOCX-HTML-CSV": [
+    21,
+    408
+   ],
+   "04-HWP와-HWPX": [
+    22,
+    445
+   ],
+   "05-문자-재귀-토큰-청킹": [
+    20,
+    425
+   ],
+   "06-구조와-시맨틱-청킹": [
+    19,
+    455
+   ],
+   "07-한국어-임베딩과-캐시": [
+    21,
+    433
+   ],
+   "08-인덱싱-비교-실험": [
+    28,
+    496
+   ],
+   "09-문서-처리-실습": [
+    22,
+    448
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 9,
+   "diffs": [
+    "01-문서와-메타데이터:sentences 306->309",
+    "01-문서와-메타데이터:code_cells 18->16",
+    "02-PDF와-표-OCR:sentences 328->330",
+    "02-PDF와-표-OCR:code_cells 18->16",
+    "03-DOCX-HTML-CSV:sentences 405->408",
+    "03-DOCX-HTML-CSV:code_cells 23->21",
+    "04-HWP와-HWPX:sentences 442->445",
+    "04-HWP와-HWPX:code_cells 24->22",
+    "05-문자-재귀-토큰-청킹:sentences 418->425",
+    "05-문자-재귀-토큰-청킹:code_cells 24->20",
+    "06-구조와-시맨틱-청킹:sentences 458->455",
+    "06-구조와-시맨틱-청킹:code_cells 26->19",
+    "07-한국어-임베딩과-캐시:sentences 430->433",
+    "07-한국어-임베딩과-캐시:code_cells 23->21",
+    "08-인덱싱-비교-실험:sentences 491->496",
+    "08-인덱싱-비교-실험:code_cells 29->28",
+    "09-문서-처리-실습:sentences 451->448",
+    "09-문서-처리-실습:code_cells 30->22"
+   ]
+  }
+ },
+ "ch11-evaluation": {
+  "part": "part3",
+  "lab": "labs/part3/ch11-evaluation",
+  "sections": 7,
+  "slugs": [
+   "01-질의셋과-정답-문서-ID",
+   "02-Recall-at-50",
+   "03-Precision-at-5",
+   "04-nDCG-at-5",
+   "05-조건별-평가와-오류-분류",
+   "06-실험-로그와-자동-실행",
+   "07-평가-기초-실습"
+  ],
+  "code_cells": 167,
+  "sentences": 2934,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 7,
+  "nonzero": {},
+  "per_section": {
+   "01-질의셋과-정답-문서-ID": [
+    23,
+    391
+   ],
+   "02-Recall-at-50": [
+    22,
+    393
+   ],
+   "03-Precision-at-5": [
+    20,
+    397
+   ],
+   "04-nDCG-at-5": [
+    25,
+    451
+   ],
+   "05-조건별-평가와-오류-분류": [
+    27,
+    456
+   ],
+   "06-실험-로그와-자동-실행": [
+    31,
+    460
+   ],
+   "07-평가-기초-실습": [
+    19,
+    386
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 7,
+   "diffs": [
+    "02-Recall-at-50:sentences 392->393",
+    "02-Recall-at-50:code_cells 25->22",
+    "03-Precision-at-5:sentences 398->397",
+    "03-Precision-at-5:code_cells 25->20",
+    "04-nDCG-at-5:sentences 458->451",
+    "04-nDCG-at-5:code_cells 32->25",
+    "05-조건별-평가와-오류-분류:sentences 475->456",
+    "05-조건별-평가와-오류-분류:code_cells 38->27",
+    "06-실험-로그와-자동-실행:sentences 478->460",
+    "06-실험-로그와-자동-실행:code_cells 42->31",
+    "07-평가-기초-실습:sentences 411->386",
+    "07-평가-기초-실습:code_cells 32->19"
+   ]
+  }
+ },
+ "ch12-retrieval-tuning": {
+  "part": "part3",
+  "lab": "labs/part3/ch12-retrieval-tuning",
+  "sections": 13,
+  "slugs": [
+   "01-벡터-거리와-정확-검색",
+   "02-pgvector와-HNSW",
+   "03-메타데이터-필터와-iterative-scan",
+   "04-한국어-Kiwi와-BM25",
+   "05-dense와-sparse-비교",
+   "06-RRF-하이브리드-검색",
+   "07-cross-encoder-리랭킹",
+   "08-후보-수와-리랭커-비교",
+   "09-Parent-document-검색",
+   "10-MMR-다양성-선택",
+   "11-질문-재작성과-검색",
+   "12-종합-튜닝과-실험-로그",
+   "13-검색-품질-실습"
+  ],
+  "code_cells": 330,
+  "sentences": 4430,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 13,
+  "nonzero": {},
+  "per_section": {
+   "01-벡터-거리와-정확-검색": [
+    24,
+    297
+   ],
+   "02-pgvector와-HNSW": [
+    31,
+    344
+   ],
+   "03-메타데이터-필터와-iterative-scan": [
+    39,
+    404
+   ],
+   "04-한국어-Kiwi와-BM25": [
+    24,
+    304
+   ],
+   "05-dense와-sparse-비교": [
+    19,
+    303
+   ],
+   "06-RRF-하이브리드-검색": [
+    20,
+    313
+   ],
+   "07-cross-encoder-리랭킹": [
+    24,
+    370
+   ],
+   "08-후보-수와-리랭커-비교": [
+    21,
+    333
+   ],
+   "09-Parent-document-검색": [
+    23,
+    326
+   ],
+   "10-MMR-다양성-선택": [
+    22,
+    322
+   ],
+   "11-질문-재작성과-검색": [
+    22,
+    326
+   ],
+   "12-종합-튜닝과-실험-로그": [
+    38,
+    439
+   ],
+   "13-검색-품질-실습": [
+    23,
+    349
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 13,
+   "diffs": [
+    "01-벡터-거리와-정확-검색:sentences 291->297",
+    "01-벡터-거리와-정확-검색:code_cells 31->24",
+    "02-pgvector와-HNSW:sentences 350->344",
+    "02-pgvector와-HNSW:code_cells 39->31",
+    "03-메타데이터-필터와-iterative-scan:sentences 406->404",
+    "03-메타데이터-필터와-iterative-scan:code_cells 51->39",
+    "04-한국어-Kiwi와-BM25:sentences 303->304",
+    "04-한국어-Kiwi와-BM25:code_cells 28->24",
+    "05-dense와-sparse-비교:sentences 307->303",
+    "05-dense와-sparse-비교:code_cells 30->19",
+    "06-RRF-하이브리드-검색:sentences 331->313",
+    "06-RRF-하이브리드-검색:code_cells 31->20",
+    "07-cross-encoder-리랭킹:sentences 380->370",
+    "07-cross-encoder-리랭킹:code_cells 37->24",
+    "08-후보-수와-리랭커-비교:sentences 341->333",
+    "08-후보-수와-리랭커-비교:code_cells 33->21",
+    "09-Parent-document-검색:sentences 306->326",
+    "09-Parent-document-검색:code_cells 32->23",
+    "10-MMR-다양성-선택:sentences 309->322",
+    "10-MMR-다양성-선택:code_cells 31->22",
+    "11-질문-재작성과-검색:sentences 316->326",
+    "11-질문-재작성과-검색:code_cells 31->22",
+    "12-종합-튜닝과-실험-로그:sentences 424->439",
+    "12-종합-튜닝과-실험-로그:code_cells 54->38",
+    "13-검색-품질-실습:sentences 341->349",
+    "13-검색-품질-실습:code_cells 31->23"
+   ]
+  }
+ },
+ "ch13-langgraph-basics": {
+  "part": "part4",
+  "lab": "labs/part4/ch13-langgraph-basics",
+  "sections": 8,
+  "slugs": [
+   "01-StateGraph와-노드-엣지",
+   "02-State-갱신",
+   "03-조건부-엣지",
+   "04-add_messages-리듀서",
+   "05-Send-동적-팬아웃",
+   "06-Command-갱신과-이동",
+   "07-RAG-통합과-시각화",
+   "08-LangGraph-실습"
+  ],
+  "code_cells": 195,
+  "sentences": 2559,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 8,
+  "nonzero": {},
+  "per_section": {
+   "01-StateGraph와-노드-엣지": [
+    24,
+    269
+   ],
+   "02-State-갱신": [
+    21,
+    279
+   ],
+   "03-조건부-엣지": [
+    24,
+    309
+   ],
+   "04-add_messages-리듀서": [
+    26,
+    331
+   ],
+   "05-Send-동적-팬아웃": [
+    25,
+    319
+   ],
+   "06-Command-갱신과-이동": [
+    24,
+    325
+   ],
+   "07-RAG-통합과-시각화": [
+    26,
+    339
+   ],
+   "08-LangGraph-실습": [
+    25,
+    388
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 8,
+   "diffs": [
+    "02-State-갱신:sentences 271->279",
+    "02-State-갱신:code_cells 22->21",
+    "03-조건부-엣지:sentences 307->309",
+    "03-조건부-엣지:code_cells 26->24",
+    "04-add_messages-리듀서:sentences 326->331",
+    "04-add_messages-리듀서:code_cells 27->26",
+    "05-Send-동적-팬아웃:sentences 314->319",
+    "05-Send-동적-팬아웃:code_cells 26->25",
+    "06-Command-갱신과-이동:code_cells 27->24",
+    "07-RAG-통합과-시각화:sentences 320->339",
+    "07-RAG-통합과-시각화:code_cells 32->26",
+    "08-LangGraph-실습:sentences 381->388",
+    "08-LangGraph-실습:code_cells 32->25"
+   ]
+  }
+ },
+ "ch14-rag-patterns": {
+  "part": "part4",
+  "lab": "labs/part4/ch14-rag-patterns",
+  "sections": 10,
+  "slugs": [
+   "01-대화-히스토리와-질문-재작성",
+   "02-Multi-Query",
+   "03-질의-분해",
+   "04-Step-back",
+   "05-HyDE",
+   "06-CRAG",
+   "07-Self-RAG",
+   "08-RAPTOR-계층-요약",
+   "09-패턴-비교와-선택",
+   "10-RAG-패턴-실습"
+  ],
+  "code_cells": 236,
+  "sentences": 3524,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 10,
+  "nonzero": {},
+  "per_section": {
+   "01-대화-히스토리와-질문-재작성": [
+    25,
+    311
+   ],
+   "02-Multi-Query": [
+    23,
+    326
+   ],
+   "03-질의-분해": [
+    23,
+    347
+   ],
+   "04-Step-back": [
+    20,
+    326
+   ],
+   "05-HyDE": [
+    22,
+    340
+   ],
+   "06-CRAG": [
+    24,
+    363
+   ],
+   "07-Self-RAG": [
+    26,
+    395
+   ],
+   "08-RAPTOR-계층-요약": [
+    27,
+    375
+   ],
+   "09-패턴-비교와-선택": [
+    22,
+    353
+   ],
+   "10-RAG-패턴-실습": [
+    24,
+    388
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 10,
+   "diffs": [
+    "01-대화-히스토리와-질문-재작성:sentences 300->311",
+    "01-대화-히스토리와-질문-재작성:code_cells 29->25",
+    "02-Multi-Query:sentences 319->326",
+    "02-Multi-Query:code_cells 30->23",
+    "03-질의-분해:sentences 338->347",
+    "03-질의-분해:code_cells 30->23",
+    "04-Step-back:sentences 321->326",
+    "04-Step-back:code_cells 26->20",
+    "05-HyDE:sentences 333->340",
+    "05-HyDE:code_cells 27->22",
+    "06-CRAG:sentences 357->363",
+    "06-CRAG:code_cells 29->24",
+    "07-Self-RAG:sentences 382->395",
+    "07-Self-RAG:code_cells 29->26",
+    "08-RAPTOR-계층-요약:sentences 364->375",
+    "08-RAPTOR-계층-요약:code_cells 30->27",
+    "09-패턴-비교와-선택:sentences 340->353",
+    "09-패턴-비교와-선택:code_cells 29->22",
+    "10-RAG-패턴-실습:sentences 374->388",
+    "10-RAG-패턴-실습:code_cells 30->24"
+   ]
+  }
+ },
+ "ch15-evaluation-advanced": {
+  "part": "part4",
+  "lab": "labs/part4/ch15-evaluation-advanced",
+  "sections": 9,
+  "slugs": [
+   "01-실패-로그와-평가-대상",
+   "02-4대-RAG-평가자",
+   "03-judge-프롬프트와-편향",
+   "04-제시-라벨과-일치율",
+   "05-로컬-트레이싱과-지연",
+   "06-대화당-비용-백분위수",
+   "07-회귀-스위트",
+   "08-Batch-평가-입력",
+   "09-평가-심화-실습"
+  ],
+  "code_cells": 233,
+  "sentences": 3383,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 9,
+  "nonzero": {},
+  "per_section": {
+   "01-실패-로그와-평가-대상": [
+    30,
+    353
+   ],
+   "02-4대-RAG-평가자": [
+    26,
+    374
+   ],
+   "03-judge-프롬프트와-편향": [
+    25,
+    377
+   ],
+   "04-제시-라벨과-일치율": [
+    27,
+    393
+   ],
+   "05-로컬-트레이싱과-지연": [
+    23,
+    376
+   ],
+   "06-대화당-비용-백분위수": [
+    28,
+    408
+   ],
+   "07-회귀-스위트": [
+    25,
+    351
+   ],
+   "08-Batch-평가-입력": [
+    26,
+    390
+   ],
+   "09-평가-심화-실습": [
+    23,
+    361
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 9,
+   "diffs": []
+  }
+ },
+ "ch16-guardrails": {
+  "part": "part4",
+  "lab": "labs/part4/ch16-guardrails",
+  "sections": 7,
+  "slugs": [
+   "01-입출력-출처-검증",
+   "02-PII-마스킹",
+   "03-히스토리-트리밍과-요약",
+   "04-호출-한도와-비용-상한",
+   "05-재시도-폴백과-감사-로그",
+   "06-문서-프롬프트-인젝션과-통합",
+   "07-가드레일-실습"
+  ],
+  "code_cells": 184,
+  "sentences": 2632,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 7,
+  "nonzero": {},
+  "per_section": {
+   "01-입출력-출처-검증": [
+    27,
+    335
+   ],
+   "02-PII-마스킹": [
+    26,
+    386
+   ],
+   "03-히스토리-트리밍과-요약": [
+    22,
+    353
+   ],
+   "04-호출-한도와-비용-상한": [
+    26,
+    355
+   ],
+   "05-재시도-폴백과-감사-로그": [
+    29,
+    442
+   ],
+   "06-문서-프롬프트-인젝션과-통합": [
+    30,
+    418
+   ],
+   "07-가드레일-실습": [
+    24,
+    343
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 7,
+   "diffs": []
+  }
+ },
+ "ch17-agent-overview": {
+  "part": "part5",
+  "lab": "labs/part5/ch17-agent-overview",
+  "sections": 6,
+  "slugs": [
+   "01-워크플로우와-에이전트-경계",
+   "02-워크플로우가-충분한-조건",
+   "03-모델-도구-루프와-정지-조건",
+   "04-자율성의-대가",
+   "05-제품-트레이스와-자율성-진단",
+   "06-Agent-개요-실습"
+  ],
+  "code_cells": 147,
+  "sentences": 2297,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 6,
+  "nonzero": {},
+  "per_section": {
+   "01-워크플로우와-에이전트-경계": [
+    22,
+    331
+   ],
+   "02-워크플로우가-충분한-조건": [
+    22,
+    332
+   ],
+   "03-모델-도구-루프와-정지-조건": [
+    30,
+    454
+   ],
+   "04-자율성의-대가": [
+    23,
+    397
+   ],
+   "05-제품-트레이스와-자율성-진단": [
+    29,
+    430
+   ],
+   "06-Agent-개요-실습": [
+    21,
+    353
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 6,
+   "diffs": []
+  }
+ },
+ "ch18-workflow-patterns": {
+  "part": "part5",
+  "lab": "labs/part5/ch18-workflow-patterns",
+  "sections": 7,
+  "slugs": [
+   "01-게이트가-있는-프롬프트-체이닝",
+   "02-실패를-처리하는-라우팅",
+   "03-병렬-섹셔닝과-투표",
+   "04-동적-오케스트레이터와-워커",
+   "05-생성자-평가자와-정지-조건",
+   "06-같은-과제로-다섯-패턴-비교",
+   "07-워크플로우-패턴-실습"
+  ],
+  "code_cells": 192,
+  "sentences": 2931,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 7,
+  "nonzero": {},
+  "per_section": {
+   "01-게이트가-있는-프롬프트-체이닝": [
+    28,
+    398
+   ],
+   "02-실패를-처리하는-라우팅": [
+    26,
+    369
+   ],
+   "03-병렬-섹셔닝과-투표": [
+    29,
+    429
+   ],
+   "04-동적-오케스트레이터와-워커": [
+    29,
+    458
+   ],
+   "05-생성자-평가자와-정지-조건": [
+    29,
+    460
+   ],
+   "06-같은-과제로-다섯-패턴-비교": [
+    27,
+    455
+   ],
+   "07-워크플로우-패턴-실습": [
+    24,
+    362
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 7,
+   "diffs": []
+  }
+ },
+ "ch19-model-tools": {
+  "part": "part5",
+  "lab": "labs/part5/ch19-model-tools",
+  "sections": 7,
+  "slugs": [
+   "01-tool과-Ch4-함수-재사용",
+   "02-Pydantic-인자와-반환-스키마",
+   "03-좋은-도구-이름과-설명",
+   "04-설명만으로-도구-선택하기",
+   "05-bind_tools와-병렬-호출",
+   "06-오류와-읽기-쓰기-분리",
+   "07-모델과-도구-실습"
+  ],
+  "code_cells": 171,
+  "sentences": 2581,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 7,
+  "nonzero": {},
+  "per_section": {
+   "01-tool과-Ch4-함수-재사용": [
+    21,
+    359
+   ],
+   "02-Pydantic-인자와-반환-스키마": [
+    21,
+    349
+   ],
+   "03-좋은-도구-이름과-설명": [
+    27,
+    366
+   ],
+   "04-설명만으로-도구-선택하기": [
+    27,
+    369
+   ],
+   "05-bind_tools와-병렬-호출": [
+    26,
+    369
+   ],
+   "06-오류와-읽기-쓰기-분리": [
+    26,
+    406
+   ],
+   "07-모델과-도구-실습": [
+    23,
+    363
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 7,
+   "diffs": []
+  }
+ },
+ "ch20-tool-node": {
+  "part": "part5",
+  "lab": "labs/part5/ch20-tool-node",
+  "sections": 5,
+  "slugs": [
+   "01-ToolNode와-tools-condition",
+   "02-도구-오류와-ToolMessage",
+   "03-recursion-limit과-명시적-종료",
+   "04-if-분기와-모델-선택-비교",
+   "05-ToolNode-실습"
+  ],
+  "code_cells": 135,
+  "sentences": 1979,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 5,
+  "nonzero": {},
+  "per_section": {
+   "01-ToolNode와-tools-condition": [
+    28,
+    399
+   ],
+   "02-도구-오류와-ToolMessage": [
+    25,
+    397
+   ],
+   "03-recursion-limit과-명시적-종료": [
+    25,
+    398
+   ],
+   "04-if-분기와-모델-선택-비교": [
+    32,
+    424
+   ],
+   "05-ToolNode-실습": [
+    25,
+    361
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 5,
+   "diffs": []
+  }
+ },
+ "ch21-create-agent": {
+  "part": "part6",
+  "lab": "labs/part6/ch21-create-agent",
+  "sections": 7,
+  "slugs": [
+   "01-create-agent와-ReAct-루프",
+   "02-구조화-출력-두-전략",
+   "03-AgentState와-context-schema",
+   "04-0x에서-1x로-마이그레이션",
+   "05-retriever를-도구로-전환",
+   "06-같은-평가셋으로-RAG-비교",
+   "07-create-agent-실습"
+  ],
+  "code_cells": 180,
+  "sentences": 2633,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 7,
+  "nonzero": {},
+  "per_section": {
+   "01-create-agent와-ReAct-루프": [
+    23,
+    396
+   ],
+   "02-구조화-출력-두-전략": [
+    28,
+    389
+   ],
+   "03-AgentState와-context-schema": [
+    24,
+    355
+   ],
+   "04-0x에서-1x로-마이그레이션": [
+    24,
+    355
+   ],
+   "05-retriever를-도구로-전환": [
+    26,
+    379
+   ],
+   "06-같은-평가셋으로-RAG-비교": [
+    31,
+    412
+   ],
+   "07-create-agent-실습": [
+    24,
+    347
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 7,
+   "diffs": [
+    "06-같은-평가셋으로-RAG-비교:sentences 411->412"
+   ]
+  }
+ },
+ "ch22-middleware": {
+  "part": "part6",
+  "lab": "labs/part6/ch22-middleware",
+  "sections": 9,
+  "slugs": [
+   "01-미들웨어와-6개-훅",
+   "02-PII-마스킹-이식",
+   "03-요약-압축과-Compress",
+   "04-호출-한도와-재시도-폴백",
+   "05-커스텀-예산-미들웨어",
+   "06-커스텀-감사-미들웨어",
+   "07-순서와-합성",
+   "08-컨텍스트-분리와-Isolate",
+   "09-Middleware-실습"
+  ],
+  "code_cells": 135,
+  "sentences": 1412,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 9,
+  "nonzero": {},
+  "per_section": {
+   "01-미들웨어와-6개-훅": [
+    20,
+    207
+   ],
+   "02-PII-마스킹-이식": [
+    16,
+    169
+   ],
+   "03-요약-압축과-Compress": [
+    13,
+    157
+   ],
+   "04-호출-한도와-재시도-폴백": [
+    14,
+    166
+   ],
+   "05-커스텀-예산-미들웨어": [
+    13,
+    142
+   ],
+   "06-커스텀-감사-미들웨어": [
+    13,
+    137
+   ],
+   "07-순서와-합성": [
+    14,
+    126
+   ],
+   "08-컨텍스트-분리와-Isolate": [
+    13,
+    134
+   ],
+   "09-Middleware-실습": [
+    19,
+    174
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 9,
+   "diffs": [
+    "02-PII-마스킹-이식:sentences 162->169"
+   ]
+  }
+ },
+ "ch23-persistence": {
+  "part": "part6",
+  "lab": "labs/part6/ch23-persistence",
+  "sections": 7,
+  "slugs": [
+   "01-체크포인터와-스레드",
+   "02-PostgresSaver-준비와-스키마",
+   "03-스레드-재개와-대화-이어가기",
+   "04-내구-실행-모드-비교",
+   "05-pending-writes와-장애-복구",
+   "06-노드-재시작과-멱등성",
+   "07-Persistence-실습"
+  ],
+  "code_cells": 178,
+  "sentences": 2493,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 7,
+  "nonzero": {},
+  "per_section": {
+   "01-체크포인터와-스레드": [
+    28,
+    352
+   ],
+   "02-PostgresSaver-준비와-스키마": [
+    28,
+    377
+   ],
+   "03-스레드-재개와-대화-이어가기": [
+    29,
+    364
+   ],
+   "04-내구-실행-모드-비교": [
+    27,
+    393
+   ],
+   "05-pending-writes와-장애-복구": [
+    21,
+    307
+   ],
+   "06-노드-재시작과-멱등성": [
+    23,
+    356
+   ],
+   "07-Persistence-실습": [
+    22,
+    344
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 7,
+   "diffs": []
+  }
+ },
+ "ch24-human-in-the-loop": {
+  "part": "part6",
+  "lab": "labs/part6/ch24-human-in-the-loop",
+  "sections": 4,
+  "slugs": [
+   "01-interrupt-승인-게이트",
+   "02-Command-resume으로-실행-재개",
+   "03-상태-기록과-다른-분기-재실행",
+   "04-Human-in-the-Loop-실습"
+  ],
+  "code_cells": 112,
+  "sentences": 1593,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 4,
+  "nonzero": {},
+  "per_section": {
+   "01-interrupt-승인-게이트": [
+    28,
+    388
+   ],
+   "02-Command-resume으로-실행-재개": [
+    28,
+    421
+   ],
+   "03-상태-기록과-다른-분기-재실행": [
+    28,
+    417
+   ],
+   "04-Human-in-the-Loop-실습": [
+    28,
+    367
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 4,
+   "diffs": []
+  }
+ },
+ "ch25-streaming": {
+  "part": "part6",
+  "lab": "labs/part6/ch25-streaming",
+  "sections": 4,
+  "slugs": [
+   "01-일곱-가지-stream-mode",
+   "02-토큰과-중간-진행-스트리밍",
+   "03-TTFT와-total-비교",
+   "04-Streaming-실습"
+  ],
+  "code_cells": 97,
+  "sentences": 1414,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 4,
+  "nonzero": {},
+  "per_section": {
+   "01-일곱-가지-stream-mode": [
+    28,
+    395
+   ],
+   "02-토큰과-중간-진행-스트리밍": [
+    25,
+    344
+   ],
+   "03-TTFT와-total-비교": [
+    24,
+    358
+   ],
+   "04-Streaming-실습": [
+    20,
+    317
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 4,
+   "diffs": []
+  }
+ },
+ "ch26-delegation": {
+  "part": "part6",
+  "lab": "labs/part6/ch26-delegation",
+  "sections": 5,
+  "slugs": [
+   "01-Subagent-도구-위임",
+   "02-Handoff-상태-전환",
+   "03-Router-분류와-병렬-실행",
+   "04-호출-수-비용-종료-조건-비교",
+   "05-위임-구조-실습"
+  ],
+  "code_cells": 135,
+  "sentences": 2044,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 5,
+  "nonzero": {},
+  "per_section": {
+   "01-Subagent-도구-위임": [
+    28,
+    393
+   ],
+   "02-Handoff-상태-전환": [
+    31,
+    463
+   ],
+   "03-Router-분류와-병렬-실행": [
+    25,
+    390
+   ],
+   "04-호출-수-비용-종료-조건-비교": [
+    30,
+    477
+   ],
+   "05-위임-구조-실습": [
+    21,
+    321
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 5,
+   "diffs": []
+  }
+ },
+ "ch27-deepagents": {
+  "part": "part6",
+  "lab": "labs/part6/ch27-deepagents",
+  "sections": 9,
+  "slugs": [
+   "01-하네스와-일곱-기능",
+   "02-create-deep-agent와-도구",
+   "03-플래닝과-시스템-프롬프트",
+   "04-파일시스템과-중간-결과",
+   "05-컨텍스트-관리와-오프로딩",
+   "06-서브에이전트-위임",
+   "07-출처-검증형-deep-research",
+   "08-통합-실행과-운영-한계",
+   "09-DeepAgents-실습"
+  ],
+  "code_cells": 253,
+  "sentences": 3726,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 9,
+  "nonzero": {},
+  "per_section": {
+   "01-하네스와-일곱-기능": [
+    26,
+    403
+   ],
+   "02-create-deep-agent와-도구": [
+    26,
+    368
+   ],
+   "03-플래닝과-시스템-프롬프트": [
+    30,
+    432
+   ],
+   "04-파일시스템과-중간-결과": [
+    31,
+    417
+   ],
+   "05-컨텍스트-관리와-오프로딩": [
+    31,
+    437
+   ],
+   "06-서브에이전트-위임": [
+    30,
+    432
+   ],
+   "07-출처-검증형-deep-research": [
+    27,
+    390
+   ],
+   "08-통합-실행과-운영-한계": [
+    31,
+    474
+   ],
+   "09-DeepAgents-실습": [
+    21,
+    373
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 9,
+   "diffs": []
+  }
+ },
+ "ch28-mcp": {
+  "part": "part6",
+  "lab": "labs/part6/ch28-mcp",
+  "sections": 6,
+  "slugs": [
+   "01-MCP-구조와-capability-협상",
+   "02-FastMCP-로컬-서버-제작",
+   "03-stdio와-원격-전송-권한-경계",
+   "04-LangChain-MCP-클라이언트-연동",
+   "05-도구-정의와-첫-호출-토큰",
+   "06-MCP-실습"
+  ],
+  "code_cells": 152,
+  "sentences": 2428,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 6,
+  "nonzero": {},
+  "per_section": {
+   "01-MCP-구조와-capability-협상": [
+    25,
+    378
+   ],
+   "02-FastMCP-로컬-서버-제작": [
+    24,
+    381
+   ],
+   "03-stdio와-원격-전송-권한-경계": [
+    26,
+    483
+   ],
+   "04-LangChain-MCP-클라이언트-연동": [
+    25,
+    405
+   ],
+   "05-도구-정의와-첫-호출-토큰": [
+    28,
+    412
+   ],
+   "06-MCP-실습": [
+    24,
+    369
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 6,
+   "diffs": []
+  }
+ },
+ "ch29-agent-evaluation": {
+  "part": "part6",
+  "lab": "labs/part6/ch29-agent-evaluation",
+  "sections": 5,
+  "slugs": [
+   "01-에이전트-평가-세-전략",
+   "02-궤적-매칭-네-모드",
+   "03-LLM-judge로-궤적-평가",
+   "04-운영-지표와-Ch18-궤적-비교",
+   "05-Agent-평가-실습"
+  ],
+  "code_cells": 127,
+  "sentences": 2003,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 5,
+  "nonzero": {},
+  "per_section": {
+   "01-에이전트-평가-세-전략": [
+    23,
+    360
+   ],
+   "02-궤적-매칭-네-모드": [
+    27,
+    422
+   ],
+   "03-LLM-judge로-궤적-평가": [
+    28,
+    433
+   ],
+   "04-운영-지표와-Ch18-궤적-비교": [
+    25,
+    412
+   ],
+   "05-Agent-평가-실습": [
+    24,
+    376
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 5,
+   "diffs": []
+  }
+ },
+ "ch30-fastapi-serving": {
+  "part": "part7",
+  "lab": "labs/part7/ch30-fastapi-serving",
+  "sections": 10,
+  "slugs": [
+   "01-비동기-라우팅과-스키마",
+   "02-의존성으로-Agent-주입",
+   "03-ainvoke-요청-응답",
+   "04-astream과-응답-스트림",
+   "05-POST-SSE-이벤트-설계",
+   "06-fetch-재연결과-오류-이벤트",
+   "07-인증-CORS-타임아웃",
+   "08-OpenAPI와-TS-SDK",
+   "09-실제-Agent-HTTP-통합",
+   "10-FastAPI-서빙-실습"
+  ],
+  "code_cells": 229,
+  "sentences": 3926,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 10,
+  "nonzero": {},
+  "per_section": {
+   "01-비동기-라우팅과-스키마": [
+    22,
+    388
+   ],
+   "02-의존성으로-Agent-주입": [
+    24,
+    403
+   ],
+   "03-ainvoke-요청-응답": [
+    22,
+    361
+   ],
+   "04-astream과-응답-스트림": [
+    23,
+    367
+   ],
+   "05-POST-SSE-이벤트-설계": [
+    25,
+    414
+   ],
+   "06-fetch-재연결과-오류-이벤트": [
+    26,
+    433
+   ],
+   "07-인증-CORS-타임아웃": [
+    21,
+    424
+   ],
+   "08-OpenAPI와-TS-SDK": [
+    22,
+    402
+   ],
+   "09-실제-Agent-HTTP-통합": [
+    23,
+    401
+   ],
+   "10-FastAPI-서빙-실습": [
+    21,
+    333
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 10,
+   "diffs": []
+  }
+ },
+ "ch31-database": {
+  "part": "part7",
+  "lab": "labs/part7/ch31-database",
+  "sections": 6,
+  "slugs": [
+   "01-SQLAlchemy-비동기-PostgreSQL",
+   "02-트랜잭션과-원자성",
+   "03-Alembic-적용과-롤백",
+   "04-커넥션-풀-고갈과-대응",
+   "05-pgvector-체크포인터-공존과-백업",
+   "06-DB와-상태-영속화-실습"
+  ],
+  "code_cells": 150,
+  "sentences": 2560,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 6,
+  "nonzero": {},
+  "per_section": {
+   "01-SQLAlchemy-비동기-PostgreSQL": [
+    21,
+    394
+   ],
+   "02-트랜잭션과-원자성": [
+    23,
+    381
+   ],
+   "03-Alembic-적용과-롤백": [
+    31,
+    469
+   ],
+   "04-커넥션-풀-고갈과-대응": [
+    21,
+    403
+   ],
+   "05-pgvector-체크포인터-공존과-백업": [
+    31,
+    523
+   ],
+   "06-DB와-상태-영속화-실습": [
+    23,
+    390
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 6,
+   "diffs": []
+  }
+ },
+ "ch34-cost-rate-limits": {
+  "part": "part7",
+  "lab": "labs/part7/ch34-cost-rate-limits",
+  "sections": 6,
+  "slugs": [
+   "01-프롬프트-캐시-계측",
+   "02-Batch-API",
+   "03-모델-라우팅",
+   "04-백오프-큐-동시성",
+   "05-예산-가드와-p95",
+   "06-비용과-Rate-Limit-실습"
+  ],
+  "code_cells": 147,
+  "sentences": 2431,
+  "totals": {
+   "G1": 0,
+   "G2": 0,
+   "G3": 0,
+   "G4": 0,
+   "G5": 0,
+   "G6": 0,
+   "G7": 0
+  },
+  "passed": 6,
+  "nonzero": {},
+  "per_section": {
+   "01-프롬프트-캐시-계측": [
+    22,
+    373
+   ],
+   "02-Batch-API": [
+    29,
+    409
+   ],
+   "03-모델-라우팅": [
+    23,
+    385
+   ],
+   "04-백오프-큐-동시성": [
+    24,
+    429
+   ],
+   "05-예산-가드와-p95": [
+    23,
+    391
+   ],
+   "06-비용과-Rate-Limit-실습": [
+    26,
+    444
+   ]
+  },
+  "cmp": {
+   "after_totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 0,
+    "G4": 0,
+    "G5": 0,
+    "G6": 0,
+    "G7": 0
+   },
+   "after_passed": 6,
+   "diffs": []
+  }
+ }
+}

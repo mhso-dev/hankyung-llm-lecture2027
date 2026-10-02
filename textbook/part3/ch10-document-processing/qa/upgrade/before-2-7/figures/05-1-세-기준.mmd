@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  t1["E01.pdf 2쪽 글<br>905자 · 869조각"]:::tool
+  plan["끊을 자리 순서와<br>목표 크기를 정함"]:::flow
+  m1["문자 방식 · 목표 200자<br>문서 청크 6개 · 80~184자"]:::measure
+  m2["재귀 방식 · 목표 200자<br>문서 청크 6개 · 86~188자"]:::measure
+  m3["토큰 방식 · 목표 100조각<br>문서 청크 13개 · 33~92조각"]:::measure
+  rec["문서 청크마다 다섯 칸 기록<br>출처 표시 [E01 p.2]"]:::tool
+  t1 --> plan
+  plan --> m1
+  plan --> m2
+  plan --> m3
+  m2 --> rec

@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 검사 없이 연결"]
+    direction LR
+    b1["all_customers<br>C001 줄 두 번"]:::tool
+    b2["orders.merge()<br>on=customer_id"]:::flow
+    b3["연결한 표 5행<br>금액 합계 136000"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph AFTER["After · 관계를 검사하며 연결"]
+    direction LR
+    a1["merge(validate=<br>many_to_one)"]:::flow
+    a2["MergeError 받아 출력<br>not unique in right"]:::measure
+    a3["drop_duplicates()<br>모두 다른가: True"]:::flow
+    a4["연결한 표 3행<br>금액 합계 77000"]:::measure
+    a1 --> a2
+    a3 -- "다시 연결" --> a4
+  end
+  BEFORE --> AFTER

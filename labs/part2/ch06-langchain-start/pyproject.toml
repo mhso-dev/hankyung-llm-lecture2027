@@ -1,0 +1,21 @@
+[project]
+name = "ch06-langchain-start"
+version = "0.1.0"
+description = "Ch 6 LangChain 시작 실습"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "langchain==1.4.0",
+  "langchain-openai==1.6.0",
+  "langchain-anthropic==1.7.1",
+  "langchain-google-genai==4.4.0",
+  "pydantic==2.13.5",
+  "python-dotenv==1.2.3",
+]
+
+[dependency-groups]
+dev = ["pip==26.2", 
+  "ipykernel==7.3.0", "ruff==0.16.6"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

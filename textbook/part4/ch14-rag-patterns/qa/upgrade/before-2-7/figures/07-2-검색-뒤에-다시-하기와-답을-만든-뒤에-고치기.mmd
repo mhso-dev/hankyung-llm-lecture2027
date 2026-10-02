@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q["질문 하나"]:::tool
+  old["검색 뒤에 거리를 보고<br>다시 검색 · 앞 절<br>이 노트북에서 실행하지 않음"]
+  now["먼저 답을 만들고<br>근거 점수 재기 · 이 절"]:::flow
+  judge["근거 점수 기준값과<br>견주기"]:::flow
+  keep["답을 그대로 두기"]:::flow
+  fix["답을 한 번 고쳐 쓰기"]:::flow
+  q --> old
+  q --> now
+  now --> judge
+  judge -.-> keep
+  judge -.-> fix

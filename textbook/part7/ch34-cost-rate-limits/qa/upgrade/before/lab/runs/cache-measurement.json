@@ -1,0 +1,42 @@
+[
+  {
+    "text": "분류: **환불 문의**\n\n근거가 충분하지 않아 보이므로, 세부 유형(예: 구독 해지 후 환불, 중복 결제 환",
+    "usage": {
+      "input_tokens": 11805,
+      "output_tokens": 40,
+      "total_tokens": 11845,
+      "input_token_details": {
+        "audio": 0,
+        "cache_read": 0
+      },
+      "output_token_details": {
+        "audio": 0,
+        "reasoning": 0
+      }
+    },
+    "input": 11805,
+    "cached_read": 0,
+    "cache_creation": null,
+    "output": 40
+  },
+  {
+    "text": "배송 문의로 **분류됩니다**.  \n\n- **사실:** 사용자가 “배송 문의를 한 문장으로 분류”해 달라고 요청했습니다.\n- **추",
+    "usage": {
+      "input_tokens": 11804,
+      "output_tokens": 40,
+      "total_tokens": 11844,
+      "input_token_details": {
+        "audio": 0,
+        "cache_read": 11520
+      },
+      "output_token_details": {
+        "audio": 0,
+        "reasoning": 0
+      }
+    },
+    "input": 11804,
+    "cached_read": 11520,
+    "cache_creation": null,
+    "output": 40
+  }
+]

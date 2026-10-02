@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  same["두 판 같음<br>처음 1번 500 · 2번 500<br>이체 600 · 받은 오류 23514"]
+  subgraph bf["Before · 블록 둘"]
+    direction TB
+    m1["더하기 확정 뒤<br>빼기가 막힘"]:::flow
+    o1["1번 500 · 2번 1100<br>합계 1600"]:::fail
+    m1 --> o1
+  end
+  subgraph af["After · 블록 하나"]
+    direction TB
+    m2["빼기가 막혀<br>더하기도 취소"]:::flow
+    o2["1번 500 · 2번 500<br>합계 1000"]:::measure
+    m2 --> o2
+  end
+  same --> bf
+  same --> af

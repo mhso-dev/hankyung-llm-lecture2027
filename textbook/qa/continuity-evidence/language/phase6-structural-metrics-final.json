@@ -1,0 +1,39 @@
+{
+  "status": "final_student_prose_freeze",
+  "scope": "Ch1-12 continuity changes: 52 student-facing prose files",
+  "source": "textbook/qa/continuity-evidence/changed-prose.json",
+  "source_sha256": "f0c4f129fbfc6563e34a5805e3d19db6a7295e6e262d45ff3ddcd298255a223a",
+  "protected": "code blocks, inline code, commands, paths, identifiers, numeric outputs",
+  "before": {
+    "files": 52,
+    "sentences": 2626,
+    "mean_sentence_chars": 47.93,
+    "median_sentence_chars": 44.0,
+    "sentence_length_cv": 0.5964,
+    "short_sentence_ratio_le_20": 0.072,
+    "long_sentence_count_ge_100": 82,
+    "rhetorical_not_x_but_y_count": 17,
+    "question_heading_without_question_mark": 0,
+    "question_headings": []
+  },
+  "current": {
+    "files": 52,
+    "sentences": 2744,
+    "mean_sentence_chars": 48.55,
+    "median_sentence_chars": 45.0,
+    "sentence_length_cv": 0.5884,
+    "short_sentence_ratio_le_20": 0.0696,
+    "long_sentence_count_ge_100": 90,
+    "rhetorical_not_x_but_y_count": 19,
+    "question_heading_without_question_mark": 0,
+    "question_headings": []
+  },
+  "repeated_added_sentences": [
+    {
+      "sentence": "실행 결과 보존 기존 정식 결과를 해시 이름으로 보존하고, 이번 결과를 실행 시각이 포함된 파일에 먼저 저장한 뒤 최신 결과 파일을 갱신합니다.",
+      "count": 6
+    }
+  ],
+  "automatic_result": "INCONCLUSIVE: aggregate metrics concatenate different HTML pages, notebook markdown, READMEs, and tables; manual full-text reading determines acceptance.",
+  "spell_check": "External commercial bulk spelling service skipped; local full-text proofreading used."
+}

@@ -1,0 +1,23 @@
+flowchart LR
+  %% classes
+  subgraph B["Before · 끝점으로 가는 엣지 없음"]
+    direction TB
+    s1(["가상 시작점 START"])
+    bp["고르기 노드 pick<br>함수 pick_topic"]:::flow
+    bf["찾기 노드 find<br>함수 find_policy"]:::flow
+    s1 --> bp
+    bp --> bf
+    bf -->|되돌아가는 엣지| bp
+  end
+  subgraph A["After · 명시적 종료"]
+    direction TB
+    s2(["가상 시작점 START"])
+    ap["고르기 노드 pick<br>함수 pick_topic"]:::flow
+    af["찾기 노드 find<br>함수 find_policy"]:::flow
+    ae(["가상 끝점 END"])
+    s2 --> ap
+    ap -.->|주제어 있음 · 이름표 find| af
+    ap -.->|빈 글 · 이름표 END| ae
+    af -->|되돌아가는 엣지| ap
+  end
+  B ~~~ A

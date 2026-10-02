@@ -1,0 +1,671 @@
+[
+  {
+    "name": "05-concept",
+    "w": 900,
+    "h": 500,
+    "title": "UTF-8 파일 읽기와 누락 파일 처리",
+    "caption": "정상 파일은 줄 목록과 주문 튜플로 변환하고, 누락 파일은 FileNotFoundError만 처리하여 빈 목록을 반환합니다.",
+    "elements": [
+      {
+        "kind": "text",
+        "id": "zone",
+        "x": 20,
+        "y": 72,
+        "label": "같은 읽기 함수가 파일 존재 여부에 따라 갈라집니다",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "call",
+        "x": 335,
+        "y": 95,
+        "w": 230,
+        "h": 78,
+        "label": "read_items(path)\nUTF-8 읽기",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "normal_branch",
+        "points": [
+          [
+            420,
+            173
+          ],
+          [
+            420,
+            210
+          ],
+          [
+            205,
+            245
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "orders.txt",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "missing_branch",
+        "points": [
+          [
+            480,
+            173
+          ],
+          [
+            480,
+            210
+          ],
+          [
+            695,
+            245
+          ]
+        ],
+        "color": "#dc2626",
+        "label": "missing.txt",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "lines",
+        "x": 25,
+        "y": 245,
+        "w": 360,
+        "h": 90,
+        "label": "정상 파일\n['연필,3', '노트,2']",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "lines_to_parse",
+        "points": [
+          [
+            205,
+            335
+          ],
+          [
+            205,
+            380
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "parse_order",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "parsed",
+        "x": 25,
+        "y": 380,
+        "w": 360,
+        "h": 82,
+        "label": "주문 튜플\n[('연필', 3), ('노트', 2)]",
+        "fill": "#fef3c7",
+        "stroke": "#d97706",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "missing",
+        "x": 515,
+        "y": 245,
+        "w": 360,
+        "h": 90,
+        "label": "누락 파일\nFileNotFoundError",
+        "fill": "#fee2e2",
+        "stroke": "#dc2626",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "missing_to_empty",
+        "points": [
+          [
+            695,
+            335
+          ],
+          [
+            695,
+            380
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "해당 예외만 처리",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "empty",
+        "x": 515,
+        "y": 380,
+        "w": 360,
+        "h": 82,
+        "label": "read_items_or_empty()\n[] 반환",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      }
+    ]
+  },
+  {
+    "name": "06-concept",
+    "w": 900,
+    "h": 520,
+    "title": "인스턴스마다 분리된 주문 상태",
+    "caption": "Order 설계로 만든 민지 주문과 준호 주문은 각각 다른 items 목록을 소유합니다.",
+    "elements": [
+      {
+        "kind": "text",
+        "id": "zone",
+        "x": 20,
+        "y": 72,
+        "label": "하나의 클래스에서 서로 독립된 두 인스턴스를 만듭니다",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "class",
+        "x": 335,
+        "y": 95,
+        "w": 230,
+        "h": 82,
+        "label": "Order 클래스\n__init__ · add",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "to_first",
+        "points": [
+          [
+            410,
+            177
+          ],
+          [
+            410,
+            215
+          ],
+          [
+            205,
+            250
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "Order(\"민지\")",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "to_second",
+        "points": [
+          [
+            490,
+            177
+          ],
+          [
+            490,
+            215
+          ],
+          [
+            695,
+            250
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "Order(\"준호\")",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "first_initial",
+        "x": 25,
+        "y": 250,
+        "w": 360,
+        "h": 88,
+        "label": "민지 first.items\n['노트']",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "second_initial",
+        "x": 515,
+        "y": 250,
+        "w": 360,
+        "h": 88,
+        "label": "준호 second.items\n['연필']",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "first_add",
+        "points": [
+          [
+            205,
+            338
+          ],
+          [
+            205,
+            385
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "first.add(\"지우개\")",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "second_stays",
+        "points": [
+          [
+            695,
+            338
+          ],
+          [
+            695,
+            385
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "민지 변경 뒤에도",
+        "fs": 14,
+        "dashed": true
+      },
+      {
+        "kind": "box",
+        "id": "first_final",
+        "x": 25,
+        "y": 385,
+        "w": 360,
+        "h": 90,
+        "label": "민지 최종 상태\n['노트', '지우개']",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "second_final",
+        "x": 515,
+        "y": 385,
+        "w": 360,
+        "h": 90,
+        "label": "준호 최종 상태\n['연필'] 유지",
+        "fill": "#fef3c7",
+        "stroke": "#d97706",
+        "fs": 17,
+        "dashed": false
+      }
+    ]
+  },
+  {
+    "name": "07-concept",
+    "w": 900,
+    "h": 520,
+    "title": "모듈 가져오기와 타입힌트의 범위",
+    "caption": "학생이 pricing 모듈을 작성해 실행하고, 타입힌트 정보와 실제 값 검증을 구분합니다.",
+    "elements": [
+      {
+        "kind": "text",
+        "id": "module_zone",
+        "x": 20,
+        "y": 72,
+        "label": "모듈 작성과 실행",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "module",
+        "x": 25,
+        "y": 100,
+        "w": 245,
+        "h": 88,
+        "label": "pricing.py\nadd_tax 정의",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "module_to_import",
+        "points": [
+          [
+            270,
+            144
+          ],
+          [
+            330,
+            144
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "import",
+        "x": 330,
+        "y": 100,
+        "w": 240,
+        "h": 88,
+        "label": "from pricing import add_tax\n10000, 0.1 전달",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "import_to_value",
+        "points": [
+          [
+            570,
+            144
+          ],
+          [
+            635,
+            144
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "taxed",
+        "x": 635,
+        "y": 100,
+        "w": 240,
+        "h": 88,
+        "label": "반환값\n11000",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "hint_zone",
+        "x": 20,
+        "y": 250,
+        "label": "타입힌트 정보와 실행 시 검증은 서로 다릅니다",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "annotations",
+        "x": 25,
+        "y": 285,
+        "w": 250,
+        "h": 105,
+        "label": "타입힌트 정보\nint 입력 → int 반환",
+        "fill": "#fef3c7",
+        "stroke": "#d97706",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "wrong",
+        "x": 325,
+        "y": 285,
+        "w": 250,
+        "h": 105,
+        "label": "double_total('1200')\n'12001200'\n자동 검증 없음",
+        "fill": "#fee2e2",
+        "stroke": "#dc2626",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "convert",
+        "points": [
+          [
+            575,
+            338
+          ],
+          [
+            635,
+            338
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "int 변환",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "correct",
+        "x": 635,
+        "y": 285,
+        "w": 240,
+        "h": 105,
+        "label": "double_total(1200)\n2400",
+        "fill": "#fef3c7",
+        "stroke": "#d97706",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "independent",
+        "x": 25,
+        "y": 440,
+        "label": "타입힌트 표시는 실행 전에 입력값을 자동 변환하거나 거부하지 않습니다.",
+        "fs": 14,
+        "color": "#4b5563",
+        "anchor": "start",
+        "weight": "normal"
+      }
+    ]
+  },
+  {
+    "name": "08-concept",
+    "w": 900,
+    "h": 500,
+    "title": "실패하는 테스트에서 회귀 테스트까지",
+    "caption": "같은 10,000원 입력과 9,000원 기대값을 유지한 채 할인 구현만 수정하여 실패와 통과를 비교합니다.",
+    "elements": [
+      {
+        "kind": "text",
+        "id": "zone",
+        "x": 20,
+        "y": 72,
+        "label": "입력과 기대값을 유지하고 구현만 비교합니다",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "test",
+        "x": 300,
+        "y": 95,
+        "w": 300,
+        "h": 88,
+        "label": "같은 테스트\n입력 10000 · 기대값 9000",
+        "fill": "#fef3c7",
+        "stroke": "#d97706",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "before_branch",
+        "points": [
+          [
+            400,
+            183
+          ],
+          [
+            400,
+            220
+          ],
+          [
+            205,
+            255
+          ]
+        ],
+        "color": "#dc2626",
+        "label": "Before",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "after_branch",
+        "points": [
+          [
+            500,
+            183
+          ],
+          [
+            500,
+            220
+          ],
+          [
+            695,
+            255
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "After",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "buggy",
+        "x": 25,
+        "y": 255,
+        "w": 360,
+        "h": 90,
+        "label": "잘못된 구현\nint(price × 0.9) + 100",
+        "fill": "#fee2e2",
+        "stroke": "#dc2626",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "buggy_to_fail",
+        "points": [
+          [
+            205,
+            345
+          ],
+          [
+            205,
+            390
+          ]
+        ],
+        "color": "#dc2626",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "failed",
+        "x": 25,
+        "y": 390,
+        "w": 360,
+        "h": 82,
+        "label": "실제값 9100\n1 failed · 종료 코드 1",
+        "fill": "#fee2e2",
+        "stroke": "#dc2626",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "fixed",
+        "x": 515,
+        "y": 255,
+        "w": 360,
+        "h": 90,
+        "label": "수정한 구현\nint(price × 0.9)",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "fixed_to_pass",
+        "points": [
+          [
+            695,
+            345
+          ],
+          [
+            695,
+            390
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "passed",
+        "x": 515,
+        "y": 390,
+        "w": 360,
+        "h": 82,
+        "label": "실제값 9000\n1 passed · 종료 코드 0",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      }
+    ]
+  }
+]

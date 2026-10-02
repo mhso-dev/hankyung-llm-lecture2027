@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  ids["입력 파일의<br>요청 식별자 여섯"]:::tool
+  runs["두 실행<br>check_question 두 번<br>old-Q090 · new-Q090<br>old-Q002 · new-Q002"]:::flow
+  fn["08절 ids_not_in<br>파일의 요청 식별자와<br>보낸 네 줄을 견줌"]:::flow
+  merged["합친 점수<br>깨진 사례 Q002<br>짝지어 본 검사<br>통과 False"]:::measure
+  unsent["보내지 않은 요청<br>old-Q006 · new-Q006<br>판정과 비용 모름"]:::measure
+  ids --> runs
+  ids --> fn
+  runs --> fn
+  runs --> merged
+  fn --> unsent

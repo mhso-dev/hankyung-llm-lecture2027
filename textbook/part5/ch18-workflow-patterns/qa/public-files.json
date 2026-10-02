@@ -1,0 +1,6 @@
+{
+  "chapter": "textbook/part5/ch18-workflow-patterns",
+  "lab": "labs/part5/ch18-workflow-patterns",
+  "include": ["*.html", "figures/*.svg", "notebooks/*.ipynb", "notebooks/workflow_tools.py", "README.md", "pyproject.toml", "uv.lock"],
+  "exclude": [".env", ".venv", "*.failure.json", "author_notebooks.py", "_author.py", "figures/_gen_figures.py"]
+}

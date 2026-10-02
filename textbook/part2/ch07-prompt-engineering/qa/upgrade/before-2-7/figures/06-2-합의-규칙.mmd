@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  RULE["decide_consensus<br>전체 표본 수의<br>절반보다 많은 표<br>표본 3개면 2표 이상<br>형식 오류는 고르지 않음"]:::flow
+  subgraph EX["직접 적은 분류 목록 · 요청 없음"]
+    direction LR
+    A1["교환 · 교환 · 배송"]:::tool
+    O1["교환 2표<br>합의한 분류 교환"]:::measure
+    A2["교환 · 배송 · 환불"]:::tool
+    O2["한 표씩 동률<br>합의 없음"]:::measure
+    A3["교환 · 형식 오류 · 형식 오류"]:::tool
+    O3["교환 1표<br>합의 없음"]:::measure
+    A1 --> O1
+    A2 --> O2
+    A3 --> O3
+  end
+  RULE --> EX

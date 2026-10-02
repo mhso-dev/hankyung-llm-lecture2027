@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  subgraph ORDERED["위치 번호로 읽는 묶음"]
+    direction LR
+    L["목록 list<br>order_amounts<br>[18000, 42000, 65000]<br>위치 0 → 18000"]:::tool
+    T["튜플 tuple<br>order_line<br>('무선 키보드', 2, 39000)<br>위치 1 → 2 · 바꿀 수 없음"]:::tool
+    L ~~~ T
+  end
+  subgraph LOOKUP["키나 포함 여부로 찾는 묶음"]
+    direction LR
+    D["딕셔너리 dict<br>order<br>#quot;amount#quot;: 78000<br>키 amount → 78000"]:::tool
+    S["집합 set<br>unique_items<br>마우스 · 키보드<br>마우스가 있는가 → True"]:::tool
+    D ~~~ S
+  end
+  ORDERED ~~~ LOOKUP

@@ -1,0 +1,5 @@
+flowchart LR
+  %% classes
+  i1["count=3<br>정수"]:::tool -->|"OrderLine(...)"| o1["인스턴스<br>name='연필' count=3"]:::tool
+  i2["count='3'<br>숫자 모양 글자"]:::tool -->|"OrderLine(...)"| o2["정수로 바꿔 받음<br>name='연필' count=3"]:::tool
+  i3["count='많이'<br>정수로 못 읽는 글자"]:::tool -->|"OrderLine(...)"| o3["ValidationError<br>type=int_parsing"]:::measure

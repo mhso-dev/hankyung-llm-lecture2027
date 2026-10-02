@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  p1["사전 요청 200<br>허용 출처<br>http://localhost:5173"]:::measure
+  f1["첫 요청 200"]:::measure
+  cut["앞 사건 둘만 받음<br>마지막 사건 번호 web-1:1"]:::flow
+  p2["사전 요청 · 이어 받기<br>200"]:::measure
+  r1["이어 받기<br>Last-Event-ID web-1:1<br>200 · 첫 번호 web-1:2"]:::measure
+  j1["이은 사건 일곱 · done True<br>기준 응답의 글과 같음 True"]:::measure
+  p1 --> f1
+  f1 --> cut
+  cut --> p2
+  p2 --> r1
+  r1 --> j1

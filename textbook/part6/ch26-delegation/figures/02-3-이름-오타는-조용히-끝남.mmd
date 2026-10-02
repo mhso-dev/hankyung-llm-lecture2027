@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  t["loan_desk_typo<br>goto interlibrary_dsk<br>담당 칸 interlibrary_desk"]:::flow
+  i["interlibrary_desk<br>실행되지 않음"]
+  w["경고 글 한 줄<br>없는 이름으로 쓴 값은 무시함<br>오류 없이 끝남"]:::measure
+  r["실행 흔적 loan_desk<br>답 칸이 빈 글 True<br>담당 칸 interlibrary_desk"]:::measure
+  t --> w
+  w --> r
+  t -.-|이름이 달라 가지 않음| i

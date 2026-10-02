@@ -1,0 +1,51 @@
+{
+  "snapshot": "ch16-labs-phase6-2026-09-10.txt",
+  "sha256": "695f9c65c2e3c07271d3e2f7f08286f3f93d6dfe4432eb2d00886a9e53b05460",
+  "files": 7,
+  "prose_characters": 3280,
+  "items": [
+    {
+      "path": "labs/part4/ch16-guardrails/README.md",
+      "source_sha256": "516525849e1fac23f0a3de7b3cf18eb4652db2a6f5673aac6204f8bf620850fe",
+      "prose_characters": 678,
+      "kind": "readme"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/01-입출력-출처-검증.ipynb",
+      "source_sha256": "1924803b9437670aa1c4f49751a9f042e89483a1f5bba23fc05fa723db9e23f1",
+      "prose_characters": 422,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/02-PII-마스킹.ipynb",
+      "source_sha256": "8c7eac2bd74bca5b40f42b4b54de2287dc77178964fb4584fdc39187bee55b5c",
+      "prose_characters": 405,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/03-히스토리-트리밍과-요약.ipynb",
+      "source_sha256": "54c784067d99e42a701afdcb468cac3126f4151e4ef9972400272256073f61f5",
+      "prose_characters": 401,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/04-호출-한도와-비용-상한.ipynb",
+      "source_sha256": "3f701f80f9304d1476e3ea6db91b428428bea0df9c0510c0532d143b35a3e751",
+      "prose_characters": 383,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/05-재시도-폴백과-감사-로그.ipynb",
+      "source_sha256": "52c2b8d0c55b9742833815dc054c7932493b541773d0280984952702dbd3a017",
+      "prose_characters": 447,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/06-문서-프롬프트-인젝션과-통합.ipynb",
+      "source_sha256": "4661f8446ce63f036b74324e1132af06e53ff6ec4a8c57990b9bfd1c28254cd9",
+      "prose_characters": 544,
+      "kind": "notebook_markdown"
+    }
+  ],
+  "note": "Read-only extraction. Notebook code cells, outputs, metadata, and fenced README code blocks are excluded."
+}

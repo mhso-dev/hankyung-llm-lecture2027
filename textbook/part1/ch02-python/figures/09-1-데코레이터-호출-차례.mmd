@@ -1,0 +1,13 @@
+flowchart TD
+  %% classes
+  A["정의할 때 · @print_call 줄<br>원래 함수를 print_call에 넣음"]:::flow
+  B["이름 calculate_line_total<br>← 반환된 새 함수 wrapper"]:::tool
+  C["부를 때<br>calculate_line_total(<br>39000, 2)"]:::flow
+  D["wrapper 먼저 실행<br>호출 시작 · 받은 인자<br>(39000, 2) {}"]:::measure
+  E["wrapper 안에서 원래 함수 실행<br>line_total = 78000"]:::flow
+  F["호출 끝 출력<br>wrapper가 78000 반환<br>금액: 78000"]:::measure
+  A --> B
+  B --> C
+  C --> D
+  D --> E
+  E --> F

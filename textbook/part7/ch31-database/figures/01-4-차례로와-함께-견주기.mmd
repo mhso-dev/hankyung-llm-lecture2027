@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  same["두 실행 같음<br>함수 read_question<br>문의 셋 · 문의마다 0.15초"]
+  subgraph r1["실행 1 · 차례로"]
+    direction TB
+    m1["await 줄 셋"]:::flow
+    o1["기록 앞 셋<br>시작 1 · 끝 1 · 시작 2<br>쉬고 있는 연결 하나"]:::measure
+    m1 --> o1
+  end
+  subgraph r2["실행 2 · 함께"]
+    direction TB
+    m2["gather에 코루틴 셋"]:::flow
+    o2["기록 앞 셋<br>시작 1 · 시작 2 · 시작 3<br>쉬고 있는 연결 셋"]:::measure
+    m2 --> o2
+  end
+  res["받은 값 목록 같음 True<br>함께 기다린 시간이<br>더 짧음 True"]:::measure
+  same --> r1
+  same --> r2
+  r1 --> res
+  r2 --> res

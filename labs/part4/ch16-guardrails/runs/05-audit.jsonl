@@ -1,0 +1,3 @@
+{"event": "answer", "query_hash": "cf4ab66b4243", "query_masked": "도서관 휴관일은 언제인가요? 답은 <EMAIL_MASKED> 이나 <PHONE_MASKED> 으로 보내 주세요.", "detail": {"route": "primary", "attempt": 2, "reserved_calls": 2}}
+{"event": "answer", "query_hash": "cf4ab66b4243", "query_masked": "도서관 휴관일은 언제인가요? 답은 <EMAIL_MASKED> 이나 <PHONE_MASKED> 으로 보내 주세요.", "detail": {"route": "fallback", "attempt": 3, "reserved_calls": 3}}
+{"event": "stopped", "query_hash": "cf4ab66b4243", "query_masked": "도서관 휴관일은 언제인가요? 답은 <EMAIL_MASKED> 이나 <PHONE_MASKED> 으로 보내 주세요.", "detail": {"reason": "호출 한도를 넘습니다.", "reserved_calls": 2}}

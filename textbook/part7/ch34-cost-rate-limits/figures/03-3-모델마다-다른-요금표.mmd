@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  pick["모델 배정의 이름<br>gpt-5.4-nano 또는<br>gpt-5.4-mini"]:::flow
+  tables["price_tables<br>nano 0.2 · 0.02 · 1.25<br>mini 0.75 · 0.075 · 4.5<br>2026-09-29 확인"]:::tool
+  usage["응답의 사용량<br>입력 토큰 · 출력 토큰"]:::measure
+  est["estimate_cost<br>도구 파일 cost_tools.py"]:::flow
+  cost["같은 요청 1,000번의<br>예상 비용"]:::measure
+  cheaper["같은 사용량이면<br>nano 요금표 쪽이 적음 True"]:::measure
+  pick --> tables
+  tables --> est
+  usage --> est
+  est --> cost
+  est --> cheaper

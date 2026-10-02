@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  pdf["E01.pdf<br>쪽 수 5"]:::tool
+  rd["PdfReader<br>쪽마다 extract_text"]:::flow
+  docs["Document 5개<br>doc_id · page · source"]:::tool
+  sp["RecursiveCharacter<br>TextSplitter<br>500자 · 겹침 50"]:::flow
+  ch["문서 청크 8개"]:::tool
+  em["text-embedding-3-small<br>숫자 1536개"]:::model
+  st["InMemoryVectorStore<br>넣은 문서 청크 8개"]:::tool
+  pdf --> rd
+  rd --> docs
+  docs --> sp
+  sp --> ch
+  ch --> em
+  em --> st

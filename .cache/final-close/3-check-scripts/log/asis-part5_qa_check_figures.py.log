@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part5/qa/check_figures.py", line 42, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part5/qa/check_figures.py", line 21, in main
+    assert drawing.is_file(), f'Missing editable source: {path.name}'
+AssertionError: Missing editable source: 01-1-고른-쪽으로-가르기.svg

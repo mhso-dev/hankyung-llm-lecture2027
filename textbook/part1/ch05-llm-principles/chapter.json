@@ -1,0 +1,61 @@
+{
+  "part": 1,
+  "part_title": "Part 1 · 개발 기반",
+  "chapter": "ch05-llm-principles",
+  "title": "LLM 동작 원리",
+  "hours": "총 16h · 강의 10h · 실습 6h",
+  "objectives": [
+    "한국어와 영어 문장의 토큰 분할 결과를 비교하고 토큰 예산을 계산합니다.",
+    "문장 임베딩의 코사인 유사도를 계산하고 해석 범위를 설명합니다.",
+    "어텐션, 컨텍스트 윈도, 컨텍스트 로트를 구분하고 실험 결과를 해석합니다.",
+    "temperature에 따른 출력 변화와 환각의 구조적 원인을 설명하고 작업에 맞는 모델 선택 기준을 세웁니다."
+  ],
+  "lab_path": "labs/part1/ch05-llm-principles",
+  "sections": [
+    {
+      "slug": "01-토큰화와-한국어-효율",
+      "title": "토큰화와 한국어 효율",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-임베딩과-의미-유사도",
+      "title": "임베딩과 의미 유사도",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-어텐션-직관",
+      "title": "어텐션 직관",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-컨텍스트-윈도",
+      "title": "컨텍스트 윈도",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-컨텍스트-로트",
+      "title": "컨텍스트 로트",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-temperature와-샘플링",
+      "title": "temperature와 샘플링",
+      "format": "experiment"
+    },
+    {
+      "slug": "07-환각의-구조적-원인",
+      "title": "환각의 구조적 원인",
+      "format": "experiment"
+    },
+    {
+      "slug": "08-모델-선택-기준",
+      "title": "모델 선택 기준",
+      "format": "experiment"
+    },
+    {
+      "slug": "09-LLM-동작-원리-실습",
+      "title": "LLM 동작 원리 실습: 문서를 골라 넣고 답 점검하기",
+      "format": "experiment"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph JOIN["7절 · 글만 이어 붙이기 joined_text"]
+    direction LR
+    j1["청크 18개의 text"]:::measure
+    j2["글 더하기 +"]:::flow
+    j3["str 한 문장<br>두 글이 같은가 True<br>사용량 · 끝난 이유 없음"]:::measure
+    j1 --> j2 --> j3
+  end
+  subgraph ADD["7절 · 청크 더하기 combined"]
+    direction LR
+    a1["청크 18개"]:::measure
+    a2["청크 더하기 +"]:::flow
+    a3["AIMessageChunk 한 문장<br>출력 17토큰 · stop<br>content_blocks<br>글 블록 하나"]:::measure
+    a1 --> a2 --> a3
+  end
+  JOIN --> ADD

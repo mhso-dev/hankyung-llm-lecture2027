@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph shortSide["짧은 판 도구 셋"]
+    direction TB
+    sDoc["설명 한 문장씩"]:::flow
+    sMet["채운 기준 수<br>세 도구 모두 1<br>이름 기준만 True"]:::measure
+    sLen["명세 글자 수 599"]:::measure
+    sDoc --> sMet
+    sMet ~~~ sLen
+  end
+  subgraph detailSide["자세한 판 도구 셋"]
+    direction TB
+    dDoc["설명 네 문장씩<br>하는 일 · 언제 쓰는지<br>인자 · 내놓는 값"]:::flow
+    dMet["채운 기준 수<br>세 도구 모두 4"]:::measure
+    dLen["명세 글자 수 923<br>짧은 판보다 324 많음"]:::measure
+    dDoc --> dMet
+    dMet ~~~ dLen
+  end
+  same["두 판 공통<br>이름 셋 같음<br>입력 형식 셋 같음<br>한 건 도구로 O103<br>부른 결과 같음"]
+  shortSide ~~~ same
+  detailSide ~~~ same

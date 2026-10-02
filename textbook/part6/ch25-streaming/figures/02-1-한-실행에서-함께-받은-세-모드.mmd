@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  q["입력 칸 question<br>배송 문의 한 줄"]:::tool
+  s["graph.stream<br>모드 셋을 한 목록으로"]
+  n["노드 write_answer<br>요청 앞뒤에 진행 값"]:::flow
+  m["모델 gpt-5.4-mini<br>노드 안 invoke 한 번"]:::model
+  c["custom<br>진행 값 둘<br>30과 100"]:::measure
+  u["updates<br>갱신 하나"]:::measure
+  g["messages<br>스트림 청크 여러 개"]:::measure
+  q --> s
+  s --> n
+  n --> c
+  n --> m
+  n --> u
+  m --> g

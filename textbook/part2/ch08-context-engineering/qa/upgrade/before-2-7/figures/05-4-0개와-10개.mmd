@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph TEN["5절 · 무관한 기록 10개"]
+    direction LR
+    t1["휴관 기록 + 무관한 기록<br>실제 입력 470"]:::tool
+    t2["gpt-5.4-mini<br>출력 상한 120"]:::model
+    t3["출처 표시 수 1<br>둘째 문장 끝에만"]:::measure
+    t1 --> t2
+    t2 --> t3
+  end
+  subgraph ZERO["값 바꿔 보기 · 무관한 기록 0개"]
+    direction LR
+    z1["휴관 기록 하나<br>실제 입력 150"]:::tool
+    z2["gpt-5.4-mini<br>출력 상한 120"]:::model
+    z3["출처 표시 수 2<br>두 문장 끝마다"]:::measure
+    z1 --> z2
+    z2 --> z3
+  end
+  diff["함께 바뀐 조건 두 가지<br>입력 길이 · 무관한 기록 유무"]
+  TEN ~~~ ZERO
+  ZERO ~~~ diff

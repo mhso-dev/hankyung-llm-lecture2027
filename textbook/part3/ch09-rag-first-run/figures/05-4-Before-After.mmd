@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 휴관일 질문 k=1"]
+    direction LR
+    b1["검색 출처<br>E01 p.1 표지"]:::tool
+    b2["gpt-5.4-mini"]:::model
+    b3["빠진 정답 출처 E01 p.2<br>답은 입력에 없는 휴관 내용<br>user 글에 없던 말 화요일<br>끝에 E01 p.1"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 휴관일 질문 k=2"]
+    direction LR
+    a1["검색 출처<br>E01 p.1 · E01 p.2"]:::tool
+    a2["gpt-5.4-mini"]:::model
+    a3["빠진 정답 출처 없음<br>답은 2쪽 기록에 있는 내용<br>user 글에 없던 말 없음<br>끝에 E01 p.2"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  note["두 답 모두<br>보류 문장 False<br>법정 공휴일 빠짐"]
+  BEFORE ~~~ AFTER
+  AFTER ~~~ note

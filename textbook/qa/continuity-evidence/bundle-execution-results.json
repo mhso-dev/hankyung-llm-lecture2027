@@ -1,0 +1,204 @@
+{
+  "archive_sha256": "a750de3e00a8bf7878f391eda12bb79322f982f7eba20251751352630633fd95",
+  "extracted": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-delivery-4u6b5jpc/llm-practice",
+  "student_files_from_zip_only": true,
+  "credentials_written": false,
+  "runner_extras_in_student_kernel": false,
+  "notebooks": [
+    {
+      "path": "labs/part1/ch04-data-tools/notebooks/05-문서-파싱과-스크래핑.ipynb",
+      "shipped_sha256": "ada37e4a84805cb921323d8a338df2dc808b23994aff10e9791f4e39d551b21b",
+      "executed_sha256": "792a5cf87f7bbbfb75534b686a1abd14005ca9cf2cc483621c751b3abea509f9",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 6,
+        "code_sha256": "d3ea89b1151020c2f1107d9cb4928c495fbf99f3470363ff595a96e4825c1bdd",
+        "executed_at": "2026-09-09T17:50:13.697664+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "a01ad0ea008e58674d579afc8076151be6daf98a31e6c74bb525ade9a4f783a5",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "path": "labs/part1/ch05-llm-principles/notebooks/01-토큰화와-한국어-효율.ipynb",
+      "shipped_sha256": "618b609853cfd5f9552f43dfc6a3c3effcabb7a3a5b02b8ce671a59432c12b55",
+      "executed_sha256": "a61a427345a3e53e1dc71741dfe1b868d3346a434b9d8a6b3e620028bbf3687f",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 5,
+        "code_sha256": "93fa2f49a51c07c3bc26241e63ea95e2edf7447913f853bed193326698779402",
+        "executed_at": "2026-09-09T17:50:50.284544+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "33d64b52c5f02ed27161d27c8328b8575745638bf65955e5105752bb7f99bcc9",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "path": "labs/part2/ch06-langchain-start/notebooks/06-토큰-비용-지연-비교.ipynb",
+      "shipped_sha256": "2b7b2098aa6ff48c9f09d9522b919c65f1a81dbbdb8c14c8c60310f8ec33c787",
+      "executed_sha256": "db0d515d64edf71a249050ea671cf1ee4659e756ee7cc3fb5328d948cd90d168",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 9,
+        "code_sha256": "488aa3d2972da2a9d155c9b98089dcc12a2c5c555eb5862f1c27351769585378",
+        "executed_at": "2026-09-09T17:50:59.235302+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "163aa865d4ec6e572973d96b2c6628af3971de09302b5161109a73090e515352",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "path": "labs/part2/ch07-prompt-engineering/notebooks/08-프롬프트-버전과-AB-비교.ipynb",
+      "shipped_sha256": "611be423d4898f84317fa0d60278a396c8bd105f5aad1c389c82e5f6170e7cd4",
+      "executed_sha256": "3ea7a718a9cd716bb8419df9d132bf88b0e8c5bb52ea999171caaee5b0497f6a",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 9,
+        "code_sha256": "7538d9131df6075500c4366882c9e726f39f4372a981ffec121b67af505a7f91",
+        "executed_at": "2026-09-09T17:51:11.282203+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "e3f28480f194ce7d1e5a6adf2f150b2af77790294c19da15baffd03bd4d5d4f6",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "path": "labs/part2/ch08-context-engineering/notebooks/02-Write와-Select.ipynb",
+      "shipped_sha256": "471f27ad8cec3b5773456beed6ef0a5cf84ca728f4a420d8572418add0b257ad",
+      "executed_sha256": "67e12599bf77752d81fa3e765cdb9443e29010c96f043fa6ef3f9f170c8b6a45",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 15,
+        "code_sha256": "8158111ca836119c490b1ec8ef498869fe19cffc0696fb081c4c21c08dd80c8f",
+        "executed_at": "2026-09-09T17:51:21.501941+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "a346e7ae2cde9048c1828e0b2654441d22bd1abfa87f71a34460044cf60879db",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "path": "labs/part2/ch08-context-engineering/notebooks/03-Compress와-Isolate.ipynb",
+      "shipped_sha256": "4eac430b44a2c097c8d48428b8a03de2c21473d31c733e4db76ac3149bbfde0f",
+      "executed_sha256": "6c00efd5739acf0962e87e76daebbe718e6ff9b63616ac61801bd6229a308bf0",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 13,
+        "code_sha256": "5023c75a228d5cdad3b56077c26ab59f11c44f89cc0ae0d16809d1c6d8dda7c9",
+        "executed_at": "2026-09-09T17:51:25.842850+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "5cd9aa3e3c4f974b40a6b958a8cb0d966b5159cd893204edf0ae578625e424d0",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "path": "labs/part2/ch08-context-engineering/notebooks/06-단계적-공개와-설계-비교.ipynb",
+      "shipped_sha256": "168a2a4d5da3402acfa18e752589ee5eb2eee58828bea4afac07f4f9d8488c29",
+      "executed_sha256": "b072bc6d74a27ccd3c28a1c9e758d86efd4194ab271e72f07e43f7d1834dd6ad",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 18,
+        "code_sha256": "a90cc3d3c247e2b17d366cef10a154de8cf01a1897e2bc2bc542e01c57a7c036",
+        "executed_at": "2026-09-09T17:51:33.666943+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "9b195c65141b90ce949b100201cf1ea9b97d1dde4e4f2a53b982bea2118583e4",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/02-로더와-스플리터.ipynb",
+      "shipped_sha256": "e635c5dc853aa9ea720f481776186206fb1d4bb5f254fea93cd5414766731dea",
+      "executed_sha256": "b8b5d2e6dfea8e1f44992ce22d12240261dee01ca6ea282ed7f072242b4d7a39",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 8,
+        "code_sha256": "eaf2bf0d4d3a9a7c11da367d043066eb771f0ac83cedfb804e706b70e6e6d1a7",
+        "executed_at": "2026-09-09T17:51:39.441420+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "fe170b6f29a1d1fc0d75b44786eaa18af6038d3a2c74fdd16c5890ee4788445c",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/06-실험-로그와-자동-실행.ipynb",
+      "shipped_sha256": "06d23c395ce4b831bf1174706710c6d71d697606463be46ed207b5870e45d18d",
+      "executed_sha256": "0d2fd15e1a94423ba473345d44b86e19874b93ad64163f05140b00bfdd1e14fe",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 6,
+        "code_sha256": "c704a43d79e7740a4cdbf5a5f7a0c8486755de190e24fa9c32bc389cb971fa24",
+        "executed_at": "2026-09-09T17:51:42.604954+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "146590d5385166e784b10d678d884e0f412a5a9cb3c547d5a726c996fdcebde2",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "path": "labs/part3/ch12-retrieval-tuning/notebooks/04-한국어-Kiwi와-BM25.ipynb",
+      "shipped_sha256": "5f8f3dd3fc26dc770401faaac3eed2ef852dded39c6dd3719615db0821515429",
+      "executed_sha256": "b041cb5b368033295666512c41b9275b4d13fe58e61f340beb6dafdd547cd6d5",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 7,
+        "code_sha256": "c074ccdb4cc2aef991100b420c9dcc361bf26528e942cc3889d33dd7838ecbad",
+        "executed_at": "2026-09-09T17:51:48.250633+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "31547e1c7febe41ae82bb9fdbe1067d0be832856b1b0389864ff12d77e97d4ba",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "path": "labs/part3/ch12-retrieval-tuning/notebooks/12-종합-튜닝과-실험-로그.ipynb",
+      "shipped_sha256": "df4950fe32aee19edee3a1e1f6b1d9f96391871390985087137f5214cb256080",
+      "executed_sha256": "c73c014b5b74a9479b5d2aea3dfefced01368e4c30dbf0bb4575d198faf4c10b",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 12,
+        "code_sha256": "09aeae0c3e5725ddca5c8f4a735a3eb3a094e7e5e5e390c1bf1b0b924d6142fd",
+        "executed_at": "2026-09-09T17:52:39.285774+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "b3cbd20cfc36d4266f8502be4539ad103a15011a168cb30e572d09a570e101d8",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    }
+  ],
+  "commands": [
+    {
+      "chapter": "ch01",
+      "command": "uv run python hello.py",
+      "passed": true
+    }
+  ],
+  "article_handoff": {
+    "sha256": "e241854443edac502e0a9e090191ace34dbced1885a600db3af29a20a93103d1",
+    "generated_by_ch04_then_read_by_ch05": true
+  },
+  "part2_handoffs": [
+    {
+      "run_id": "ch07-prompt-ab-20260909T175111163232Z",
+      "source": {
+        "path": "labs/part2/ch06-langchain-start/runs/provider-comparison-continuity.json",
+        "sha256": "1ecdc16e6cea8094c74304f6ba4924059d4b26be763cc99131fa7fc870bc607f",
+        "run_id": "ch06-provider-20260909T175059115288Z"
+      }
+    },
+    {
+      "run_id": "ch08-context-20260909T175130932836Z",
+      "source": {
+        "path": "labs/part2/ch07-prompt-engineering/runs/prompt-ab-continuity.json",
+        "sha256": "a798a5763a5e92a99844efff67e21027d1b4a6923ed10f643a9ffb9d2c4e701c",
+        "run_id": "ch07-prompt-ab-20260909T175111163232Z"
+      }
+    }
+  ],
+  "status": "passed"
+}

@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q["질문 하나"]:::tool
+  top["요약 층 · 요약 셋과<br>거리 재기"]:::flow
+  pick["고른 갈래 account"]:::measure
+  leaf["원문 층 · 그 갈래 문서만"]:::flow
+  few["요약 층을 거치면<br>본 문서 넷"]:::measure
+  many["요약 층을 거치지 않으면<br>본 문서 열둘"]:::measure
+  q --> top
+  top -.-> pick
+  pick --> leaf
+  leaf --> few
+  q --> many

@@ -1,0 +1,13 @@
+flowchart TD
+  %% classes
+  rank["정답 문서 자리"]:::measure
+  ask1{자리가 0인가}:::flow
+  outside["후보 밖<br>0건"]:::measure
+  ask2{자리가 5보다 큰가}:::flow
+  pushed["뒤로 밀림<br>2건 Q085 Q086"]:::measure
+  inside["앞자리 안<br>13건"]:::measure
+  rank --> ask1
+  ask1 -- 예 --> outside
+  ask1 -- 아니오 --> ask2
+  ask2 -- 예 --> pushed
+  ask2 -- 아니오 --> inside

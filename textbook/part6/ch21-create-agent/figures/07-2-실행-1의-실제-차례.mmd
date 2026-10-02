@@ -1,0 +1,16 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant P as 노트북 코드<br>agent.invoke
+  box Lavender
+  participant M as 모델 노드 model<br>gpt-5.4-mini
+  end
+  participant T as 도구 실행 노드<br>tools
+  P->>M: 문의 하나 · 실행 정보 연체 0일
+  Note over M: 요청 1 · 도구 호출 요청 둘<br>check_my_loan 인자 없음<br>lookup_policy 주제어 대출
+  M->>T: model_to_tools · 요청 둘
+  Note over T: 도구 메시지 둘<br>결과 상태 모두 success<br>연체가 없어<br>새 대출을 할 수 있습니다<br>1인 5권까지 14일
+  T->>M: tools_to_model · 모델 노드로
+  Note over M: 요청 2 · 도구 호출 요청<br>LoanAnswer<br>can_borrow 가능
+  Note over M: 소스 확인 · 모델 노드가 검사해<br>structured_response에 담고<br>도구 메시지를 붙임
+  M-->>P: 소스 확인 · model_to_tools · END
+  Note over P: 메시지 여섯<br>도구 메시지 셋<br>모델 요청 두 번<br>호출 ID 짝 True

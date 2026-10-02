@@ -1,0 +1,44 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 개발",
+  "chapter": "ch21-create-agent",
+  "title": "create_agent — 직접 만든 루프를 한 함수로",
+  "hours": "총 16h · 강의 6h · 실습 10h",
+  "objectives": [
+    "에이전트의 실행 구조를 코드와 궤적으로 설명합니다.",
+    "같은 평가셋과 명시적 기준으로 동작을 비교합니다."
+  ],
+  "lab_path": "labs/part6/ch21-create-agent",
+  "sections": [
+    {
+      "slug": "01-create-agent와-ReAct-루프",
+      "title": "create agent와 ReAct 루프",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-구조화-출력-두-전략",
+      "title": "구조화 출력 두 전략",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-AgentState와-context-schema",
+      "title": "AgentState와 context schema",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-0x에서-1x로-마이그레이션",
+      "title": "0x에서 1x로 마이그레이션",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-retriever를-도구로-전환",
+      "title": "retriever를 도구로 전환",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-같은-평가셋으로-RAG-비교",
+      "title": "같은 평가셋으로 RAG 비교",
+      "format": "experiment"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+- 설명 대상 문장: 모듈 functools의 wraps는 원래 함수의 이름 같은 정보를 새 함수에 복사하는 데코레이터입니다.
+- 캡션: wraps 줄 하나의 차이. 두 칸 모두 새 함수는 wrapper이지만, wraps 줄을 더하면 원래 함수의 이름이 복사됩니다.
+- 읽는 법: 위 칸은 wraps 줄이 없는 데코레이터, 아래 칸은 wraps 줄을 더한 데코레이터입니다. 위 칸 노란 상자는 새 함수의 이름: wrapper, 아래 칸 노란 상자는 새 함수의 이름: calculate_line_total입니다.
+- alt: 위 칸은 wraps 줄이 없는 print_call에 calculate_line_total을 넣어 새 함수 wrapper가 이름 정보를 그대로 가져 새 함수의 이름이 wrapper로 출력되고, 아래 칸은 @wraps(function) 줄을 더한 print_call에 line_function을 넣어 wrapper에 원래 함수 이름이 복사되어 새 함수의 이름이 calculate_line_total로 출력되는 비교 그림

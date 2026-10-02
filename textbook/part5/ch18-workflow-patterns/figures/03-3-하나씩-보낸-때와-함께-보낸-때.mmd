@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph one["하나씩 보내기 · 4절"]
+    direction TB
+    o1["gpt-5.4-mini<br>목적 다음 절차 다음 문의<br>앞 응답 뒤에 다음 요청"]:::model
+    o2["요청 셋<br>입력 토큰 196 · 195 · 194"]:::measure
+    o1 --> o2
+  end
+  subgraph tog["함께 보내기 · 5절"]
+    direction TB
+    t1["gpt-5.4-mini<br>목적 · 절차 · 문의<br>세 기다림이 겹침"]:::model
+    t2["요청 셋<br>입력 토큰 196 · 195 · 194"]:::measure
+    t1 --> t2
+  end
+  note["걸린 초와 그 비교는<br>실행마다 달라<br>그림에 넣지 않음"]
+  one ~~~ note
+  tog ~~~ note

@@ -1,0 +1,11 @@
+[project]
+name = "ch22-middleware-labs"
+version = "0.1.0"
+requires-python = "==3.12.*"
+dependencies = [
+  "langchain==1.4.0",
+  "langchain-openai==1.6.0",
+  "langgraph==1.2.11",
+  "python-dotenv==1.2.3",
+]
+

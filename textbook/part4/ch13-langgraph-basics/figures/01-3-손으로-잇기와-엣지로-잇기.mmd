@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph hand["손으로 이어 부르기"]
+    direction TB
+    h1["코드 줄의 차례가<br>실행 순서를 정함"]:::flow
+    h2["검색어 칸<br>대출 기간은 며칠"]:::measure
+    h1 ~~~ h2
+  end
+  subgraph built["엣지로 이어 붙인 그래프"]
+    direction TB
+    g1["엣지 세 개가<br>실행 순서를 정함"]:::flow
+    g2["검색어 칸<br>대출 기간은 며칠"]:::measure
+    g1 ~~~ g2
+  end
+  same["두 결과의 검색어 칸과 실행 흔적이 같았음"]
+  hand ~~~ built
+  built ~~~ same

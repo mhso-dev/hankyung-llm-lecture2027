@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  subgraph CH16["Ch16 방식 — 직접 호출"]
+    direction LR
+    c1["개발자 코드"]:::flow --> c2["mask_pii() 호출"]:::flow --> c3["모델 호출"]:::model
+    c1 -. "호출을 빠뜨리면" .-> c4["원문 전송"]:::fail
+  end
+  subgraph MW["미들웨어 방식 — 등록"]
+    direction LR
+    m1["create_agent()에 등록"]:::flow --> m2["모델 호출마다 자동 마스킹"]:::flow --> m3["모델 호출"]:::model
+  end
+  CH16 ~~~ MW

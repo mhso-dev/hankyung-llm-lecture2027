@@ -1,0 +1,57 @@
+{
+  "snapshot": "ch13-labs-review-2026-09-10.txt",
+  "sha256": "a2521bdc8aa188ea5bcefac923da2034c9bf17acbc20be6cf1523091d06e4c93",
+  "files": 8,
+  "prose_characters": 4708,
+  "items": [
+    {
+      "path": "labs/part4/ch13-langgraph-basics/README.md",
+      "source_sha256": "7521269f5b063a8b94652b65063f0604a58ac0b76ec143cc247c7ee585631eb0",
+      "prose_characters": 501,
+      "kind": "readme"
+    },
+    {
+      "path": "labs/part4/ch13-langgraph-basics/notebooks/01-StateGraph와-노드-엣지.ipynb",
+      "source_sha256": "a42064bce737b7a0a779d598d54eb3b6aaa27dc8dd111a87058fa4a263cc848d",
+      "prose_characters": 636,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch13-langgraph-basics/notebooks/02-State-갱신.ipynb",
+      "source_sha256": "0621eb7b2d9c7cf21e76c686a4345a7968a99c050b6b8ac96f2b0990a46f8049",
+      "prose_characters": 556,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch13-langgraph-basics/notebooks/03-조건부-엣지.ipynb",
+      "source_sha256": "13aa7f62b113860ab43f173f8e765f42fc0a70c1f2f849eb841ffa864b1e0934",
+      "prose_characters": 560,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch13-langgraph-basics/notebooks/04-add_messages-리듀서.ipynb",
+      "source_sha256": "92af04b6075a692a86221e0cd119ad9c26a2d25f10a9b0ecff97cb09be5037f9",
+      "prose_characters": 576,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch13-langgraph-basics/notebooks/05-Send-동적-팬아웃.ipynb",
+      "source_sha256": "363c97cda93bfcaf4fe1ebdbb5c2b6d307d61665e11e12642eaf4acb64e03922",
+      "prose_characters": 570,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch13-langgraph-basics/notebooks/06-Command-갱신과-이동.ipynb",
+      "source_sha256": "fa79911c064a8d6261aecbf667ce3a375cb02c00a9a0a8e0e422e32170a8c5d0",
+      "prose_characters": 563,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch13-langgraph-basics/notebooks/07-RAG-통합과-시각화.ipynb",
+      "source_sha256": "31c5eb88081a64bf4028848235d581da6cd702944d17c54ff04c36f2cb2b1159",
+      "prose_characters": 746,
+      "kind": "notebook_markdown"
+    }
+  ],
+  "note": "Read-only extraction. Notebook code cells, outputs, metadata, and fenced README code blocks are excluded."
+}

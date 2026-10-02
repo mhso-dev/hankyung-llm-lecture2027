@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  q["입력 칸 question<br>배송 문의 한 줄"]:::tool
+  s["graph.stream<br>모드 셋을 한 목록으로<br>요청 한 번"]
+  n["노드 write_answer<br>진행 값 · 모델 · 진행 값"]:::flow
+  m["모델 gpt-5.4-mini<br>노드 안 invoke 한 번"]:::model
+  f["함수 collect_timed_events<br>사건을 꺼낼 때마다<br>시각 하나를 적음"]:::flow
+  r["사건 목록과 시각 목록<br>길이가 같음<br>같은 자리끼리 짝"]:::measure
+  q --> s
+  s --> n
+  n --> m
+  n -->|진행 값 · 갱신| f
+  m -->|스트림 청크| f
+  f --> r

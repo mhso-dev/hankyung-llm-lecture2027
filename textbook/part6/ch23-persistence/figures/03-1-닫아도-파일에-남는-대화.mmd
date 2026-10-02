@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph old["첫 객체 · 5절에서 연결을 닫음"]
+    direction TB
+    c1["첫 연결 first_conn"]:::tool
+    g1["첫 체크포인터와 첫 그래프<br>질문 둘을 넣음"]
+    c1 --> g1
+  end
+  fl["파일 chat.sqlite<br>스레드 conversation-a<br>체크포인트 여섯 · 메시지 넷"]:::tool
+  subgraph new["새 객체 · 6절에서 새로 만듦"]
+    direction TB
+    c2["새 연결 second_conn"]:::tool
+    g2["새 체크포인터와 새 그래프<br>셋째 질문을 넣음"]
+    c2 --> g2
+  end
+  rs["메시지 여섯<br>3번째 질문을 받았습니다<br>체크포인트 아홉"]:::measure
+  old -->|체크포인트를 씀| fl
+  fl -->|마지막 체크포인트를 읽음| new
+  new --> rs

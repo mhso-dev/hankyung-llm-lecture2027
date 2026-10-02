@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph old["자료 파일에 적힌 판정"]
+    direction TB
+    o1["판정 머리글<br>groundedness-v1.0.0<br>질문 · 근거 · 응답 세 칸"]:::tool
+    o2["근거 충실도 점수<br>Q002 1 · Q006 1 · Q090 0"]:::tool
+    o1 --> o2
+  end
+  subgraph now["이번 판정"]
+    direction TB
+    n1["판정 머리글<br>rag-judge-v1.0.0<br>답 · 근거 문서 두 칸"]:::flow
+    n2["평가 모델 gpt-5.4-mini<br>추론 설정 none"]:::model
+    n3["근거 충실도 점수<br>Q002 1 · Q006 1 · Q090 0"]:::measure
+    n1 --> n2
+    n2 --> n3
+  end
+  same["같은 답 글 세 건<br>같은 모델 이름"]
+  old ~~~ same
+  now ~~~ same

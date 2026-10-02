@@ -1,0 +1,39 @@
+name: ch32-course-stack
+services:
+  db:
+    image: pgvector/pgvector:0.8.6-pg17-bookworm
+    environment:
+      POSTGRES_DB: course
+      POSTGRES_USER: course
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/10-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U course -d course"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: db
+      DB_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:18332:8000"
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt.example
+
+volumes:
+  pgdata:

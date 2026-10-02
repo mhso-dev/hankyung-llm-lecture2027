@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph r1["첫 실행 · 입력 total 0 amount 3"]
+    direction TB
+    s0["단계 -1 · input<br>다음 __start__<br>실행 흔적 빈 목록만"]:::measure
+    s1["단계 0 · loop<br>다음 add<br>합계 0 · 이번 수 3"]:::measure
+    s2["단계 1 · loop<br>다음 없음<br>합계 3"]:::measure
+    s0 --> s1 --> s2
+  end
+  subgraph r2["둘째 실행 · 입력 amount 4"]
+    direction TB
+    s3["단계 2 · input<br>다음 __start__<br>합계 3 · 이번 수 3"]:::measure
+    s4["단계 3 · loop<br>다음 add<br>합계 3 · 이번 수 4"]:::measure
+    s5["단계 4 · loop<br>다음 없음<br>합계 7"]:::measure
+    s3 --> s4 --> s5
+  end
+  r1 --> r2

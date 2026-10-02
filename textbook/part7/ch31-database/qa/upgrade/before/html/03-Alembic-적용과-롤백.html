@@ -1,0 +1,277 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alembic 적용과 롤백 — Ch 31 · DB &amp; 상태 영속화</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · Agent 서비스 개발 · Ch 31 · DB &amp; 상태 영속화</p>
+<h1>Alembic 적용과 롤백</h1><div class="meta"><span>강의 1h · 실습 2h</span><span>새 용어 4</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h · 실습 2h | 코드 Jupyter Notebook | 새 용어 4 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>Alembic 리비전 파일이 스키마 변경 순서를 기록하는 방법을 설명할 수 있습니다.</li><li>`upgrade head`와 `downgrade base`로 표의 생성과 제거를 실행할 수 있습니다.</li><li>카탈로그 조회로 적용·제거·재적용 상태를 확인할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>코드 배포에서 모델 필드를 추가해도 이미 운영 중인 데이터베이스 표는 자동으로 바뀌지 않습니다. 코드와 스키마 버전이 어긋나면 요청이 시작된 뒤에야 없는 열이나 표 오류가 나타납니다. 이 절에서는 변경 파일을 버전 기록으로 남기고 적용과 롤백을 실제 카탈로그 조회로 확인합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch4에서 `CREATE TABLE`을 실행했고 앞 절에서는 트랜잭션 경계를 정했습니다. Alembic은 이 DDL 변경의 순서와 현재 적용 위치를 파일과 버전 표로 관리합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>구체적인 상황</h3><p>건물 도면을 지우고 매번 새로 그리면 어느 공사에서 문제가 생겼는지 알기 어렵습니다.</p><h3>정의</h3><p>변경 도면에 번호를 붙이고 순서대로 적용하면 현재 상태와 되돌릴 지점을 확인할 수 있습니다. 마이그레이션(migration)은 데이터베이스 구조 변경을 순서가 있는 코드로 기록하는 작업입니다. 리비전(revision)은 한 변경의 식별자이며 `down_revision`은 바로 앞 변경을 가리킵니다. `upgrade()`는 앞으로 적용할 DDL을, `downgrade()`는 되돌릴 DDL을 작성합니다. 자동 생성은 모델과 데이터베이스의 차이를 초안으로 만들 뿐이므로, 데이터 손실 가능성과 제약 조건을 사람이 읽어야 합니다.</p><p><strong>이 절의 새 용어</strong> — 마이그레이션, revision, upgrade, downgrade</p><h3>운영에서 경계를 정하는 방법</h3><p>배포 순서는 새 코드와 이전 코드가 잠시 함께 실행될 수 있다는 전제에서 정합니다. 새 열을 바로 필수로 만들기보다 먼저 NULL을 허용해 추가하고, 새 코드가 값을 쓰게 한 뒤 기존 행을 채우고, 마지막 배포에서 제약을 강화하는 방식이 안전할 수 있습니다. 이를 확장과 축소 패턴이라고 부릅니다. 롤백 파일도 작성 가능하다는 사실과 운영에서 안전하게 실행 가능하다는 사실은 다릅니다. 열을 삭제한 뒤 downgrade로 같은 이름의 열을 다시 만들더라도 원래 행 값은 돌아오지 않습니다. 큰 표의 인덱스 생성은 오랜 잠금이나 많은 I/O를 만들 수 있으므로 PostgreSQL 버전과 `CREATE INDEX CONCURRENTLY` 사용 조건을 따로 검토합니다. CI에서는 빈 데이터베이스에 처음부터 head까지 적용하는 경로와, 현재 운영 리비전에서 다음 리비전으로 이동하는 경로를 모두 시험합니다. 배포 기록에는 적용한 리비전 ID와 실행 시간을 남겨 장애 시 코드 버전과 스키마 버전을 함께 찾을 수 있게 합니다.</p><h3>코드 읽기와 개념 경계</h3><p>Alembic 리비전은 데이터베이스 구조 변경을 순서가 있는 파일로 기록합니다. <code>upgrade head</code>는 현재 데이터베이스를 최신 리비전까지 올리고, <code>downgrade base</code>는 정의된 역방향 작업을 적용합니다. 노트북의 <code>subprocess.run(..., check=True)</code>는 명령이 실패하면 즉시 예외를 내며, 이어지는 <code>to_regclass</code> 조회가 실제 표의 생성과 제거를 확인합니다.</p><p>코드 롤백과 스키마 다운그레이드는 같은 일이 아닙니다. 애플리케이션만 이전 버전으로 돌려도 이미 삭제하거나 변환한 열은 돌아오지 않습니다. 데이터가 손실되는 변경은 역방향 SQL보다 먼저 확장-이행-축소 순서를 검토하고 백업 복구 시간을 측정해야 합니다. 이 실습은 교육용 표 하나의 가역성만 확인합니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 430" style="width:340px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="Alembic 적용과 롤백"><title>Alembic 적용과 롤백</title><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190 85 L190 116" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><path d="M190 185 L190 216" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><path d="M190 285 L190 316" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><rect x="30" y="120" width="320" height="65" rx="10" fill="#F4D9D5" stroke="#334155" stroke-width="2"/><rect x="30" y="220" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><rect x="30" y="320" width="320" height="65" rx="10" fill="#E8E2F4" stroke="#334155" stroke-width="2"/><text x="190" y="59" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">리비전 파일</text><text x="190" y="159" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">upgrade head</text><text x="190" y="259" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">버전 표와 tickets</text><text x="190" y="359" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">downgrade base</text></svg></div><p>푸른 리비전 파일을 붉은 upgrade 명령이 적용하면 초록색 버전 표와 tickets 표가 생깁니다. 보라색 downgrade는 반대 방향 변경을 실행합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>노트북은 Alembic 설정 폴더를 찾고 명령 실행 함수를 준비합니다. 빈 스키마에 `upgrade head`를 적용해 tickets 표를 확인하고, `downgrade base`로 제거한 뒤 다시 최신 리비전을 적용합니다.</p><section class="notebook" data-notebook="03-Alembic-적용과-롤백" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="03-Alembic-적용과-롤백.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBBbGVtYmljIOyggeyaqeqzvCDroaTrsLFcbiIsCiAgICAiXG4iLAogICAgIuyLpOygnCBQb3N0Z3JlU1FMIDE37JeQ7IScIOyatOyYgSDrjbDsnbTthLDrsqDsnbTsiqTsnZgg7ZWcIOqwgOyngCDrrLjsoJzrpbwg7J6s7ZiE7ZWY6rOgIO2VtOqysO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIuuniOydtOq3uOugiOydtOyFmCDtjIzsnbzsnYQg7KCB7Jqp7ZWY6rOgIOuQmOuPjOumsCDrkqQg642w7J207YSw67Kg7J207IqkIOyKpO2CpOuniOulvCDsp4HsoJEg7KGw7ZqM7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogInByZXAtMzEtMDMtMCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg7KSA67mEIOyFgOydtCDtlZjripQg7J28XG4iLAogICAgIlxuIiwKICAgICLslZ7snZggYCVwaXAgaW5zdGFsbGAg7IWA7J2AIOydtCDrhbjtirjrtoHsnYQg7Iuk7ZaJ7ZWY64qUIO2YhOyerCDsu6TrhJDsl5AgQ2gzMeyXkOyEnCDqs6DsoJXtlZwgU1FMQWxjaGVtecK3UG9zdGdyZVNRTMK3cGd2ZWN0b3LCt0xhbmdHcmFwaCDtjKjtgqTsp4Drpbwg7ISk7LmY7ZWp64uI64ukLiDshKTsuZgg66qF66C57J2YIOy2nOugpeydgCDsiKjquLDsp4Drp4wsIOuLpOydjCDshYDsnZggaW1wb3J06rCAIOyEseqzte2VmOugpOuptCDsnbQg64uo6rOE6rCAIOuovOyggCDrgZ3rgpjslbwg7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTg6NTIuODg4ODIwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTg6NTIuODg4NzQ2WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTg6NTQuNDk3MTE2WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxODo1NC40OTY2MzFaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiTm90ZTogeW91IG1heSBuZWVkIHRvIHJlc3RhcnQgdGhlIGtlcm5lbCB0byB1c2UgdXBkYXRlZCBwYWNrYWdlcy5cbiIKICAgICBdCiAgICB9LAogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJOb3RlOiB5b3UgbWF5IG5lZWQgdG8gcmVzdGFydCB0aGUga2VybmVsIHRvIHVzZSB1cGRhdGVkIHBhY2thZ2VzLlxuIgogICAgIF0KICAgIH0sCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIk5vdGU6IHlvdSBtYXkgbmVlZCB0byByZXN0YXJ0IHRoZSBrZXJuZWwgdG8gdXNlIHVwZGF0ZWQgcGFja2FnZXMuXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7J20IOyxle2EsOyXkOyEnCDqs6DsoJXtlZwg7Yyo7YKk7KeA66W8IOyEpOy5mO2VqeuLiOuLpC5cbiIsCiAgICAiJXBpcCBpbnN0YWxsIC1xICdzcWxhbGNoZW15W2FzeW5jaW9dPT0yLjAuNDMnIGFzeW5jcGc9PTAuMzAuMCBhbGVtYmljPT0xLjE2LjVcbiIsCiAgICAiJXBpcCBpbnN0YWxsIC1xICdwc3ljb3BnW2JpbmFyeSxwb29sXT09My4zLjMnIHBndmVjdG9yPT0wLjQuMVxuIiwKICAgICIlcGlwIGluc3RhbGwgLXEgbGFuZ2dyYXBoPT0xLjIuMTEgbGFuZ2dyYXBoLWNoZWNrcG9pbnQtcG9zdGdyZXM9PTMuMC41IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAicHJlcC0zMS0wMy0xIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDspIDruYQg7IWA7J20IO2VmOuKlCDsnbxcbiIsCiAgICAiXG4iLAogICAgIuuRkCDrsojsp7gg7KSA67mEIOyFgOydgCBgQ0gzMV9EQVRBQkFTRV9VUkxg7J2EIOydveqzoCDsl4bsnLzrqbQg66Gc7LusIOyLpOyKteyaqSDso7zshozrpbwg7IKs7Jqp7ZWp64uI64ukLiDqsJnsnYAg642w7J207YSw67Kg7J207Iqk66W8IOu5hOuPmeq4sCBTUUxBbGNoZW15LCBwc3ljb3BnLCBQb3N0Z3JlU1FMIOuqheugueyXkOyEnCDsgqzsmqntlaAg7IiYIOyeiOuPhOuhnSDrk5zrnbzsnbTrsoQg7ZGc6riw66eMIOuwlOq+vCDshLggVVJM7J2EIOunjOuTreuLiOuLpC4g7ZmU66m07JeQ64qUIOuNsOydtO2EsOuyoOydtOyKpCDsnbTrpoTqs7wg67mE67CA6rCS7J2EIOyIqOqyvOuLpOuKlCDsgqzsi6Trp4wg7Lac66Cl7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTg6NTQuNDk4NTE2WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTg6NTQuNDk4NDA1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTg6NTQuNTAwOTcyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxODo1NC41MDA1MDFaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiZGF0YWJhc2U6IGNoMzFfbGFiLCBjcmVkZW50aWFsczogaGlkZGVuXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7KCE7JqpIOyLpOyKtSDrjbDsnbTthLDrsqDsnbTsiqQg7KO87IaM66eMIOykgOu5hO2VmOupsCDruYTrsIAg6rCS7J2AIOy2nOugpe2VmOyngCDslYrsirXri4jri6QuXG4iLAogICAgImltcG9ydCBvc1xuIiwKICAgICJBU1lOQ19VUkwgPSBvcy5nZXRlbnYoXG4iLAogICAgIiAgICBcIkNIMzFfREFUQUJBU0VfVVJMXCIsXG4iLAogICAgIiAgICBcInBvc3RncmVzcWwrYXN5bmNwZzovL3Bvc3RncmVzOnBvc3RncmVzQGxvY2FsaG9zdDo1NTQzMS9jaDMxX2xhYlwiLFxuIiwKICAgICIpXG4iLAogICAgIlNZTkNfVVJMID0gQVNZTkNfVVJMLnJlcGxhY2UoXCJwb3N0Z3Jlc3FsK2FzeW5jcGdcIiwgXCJwb3N0Z3Jlc3FsK3BzeWNvcGdcIilcbiIsCiAgICAiTkFUSVZFX1VSTCA9IEFTWU5DX1VSTC5yZXBsYWNlKFwicG9zdGdyZXNxbCthc3luY3BnXCIsIFwicG9zdGdyZXNxbFwiKVxuIiwKICAgICJwcmludChcImRhdGFiYXNlOiBjaDMxX2xhYiwgY3JlZGVudGlhbHM6IGhpZGRlblwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNvbmNlcHQtMzEtMDMtYSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDrsJTroZwg64uk7J2MIOy9lOuTnOulvCDsnb3ripQg67Cp67KVXG4iLAogICAgIlxuIiwKICAgICJBbGVtYmljIOumrOu5hOyghOydgCDrjbDsnbTthLDrsqDsnbTsiqQg6rWs7KGwIOuzgOqyveydhCDsiJzshJzqsIAg7J6I64qUIO2MjOydvOuhnCDquLDroZ3tlanri4jri6QuIGB1cGdyYWRlIGhlYWRg64qUIO2YhOyerCDrjbDsnbTthLDrsqDsnbTsiqTrpbwg7LWc7IugIOumrOu5hOyghOq5jOyngCDsmKzrpqzqs6AsIGBkb3duZ3JhZGUgYmFzZWDripQg7KCV7J2Y65CcIOyXreuwqe2WpSDsnpHsl4XsnYQg7KCB7Jqp7ZWp64uI64ukLiDrhbjtirjrtoHsnZggYHN1YnByb2Nlc3MucnVuKC4uLiwgY2hlY2s9VHJ1ZSlg64qUIOuqheugueydtCDsi6TtjKjtlZjrqbQg7KaJ7IucIOyYiOyZuOulvCDrgrTrqbAsIOydtOyWtOyngOuKlCBgdG9fcmVnY2xhc3NgIOyhsO2ajOqwgCDsi6TsoJwg7ZGc7J2YIOyDneyEseqzvCDsoJzqsbDrpbwg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTg6NTQuNTAyMDE0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTg6NTQuNTAxOTMzWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTg6NTQuNTA1Mzc0WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxODo1NC41MDQ4ODJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAibWlncmF0aW9uIGRpcmVjdG9yeTogY2gzMS1kYXRhYmFzZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJpbXBvcnQgb3MsIHN1YnByb2Nlc3NcbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgIiMg7ZiE7J6sIO2PtOuNlOyZgCDsg4HsnIQg7Y+0642U7JeQ7IScIOygnOqzteuQnCDrp4jsnbTqt7jroIjsnbTshZgg7ISk7KCV7J2EIOywvuyKteuLiOuLpC5cbiIsCiAgICAiY2FuZGlkYXRlcyA9IFtwYXJlbnQgLyBcImxhYnMvcGFydDcvY2gzMS1kYXRhYmFzZVwiIGZvciBwYXJlbnQgaW4gKFBhdGguY3dkKCksICpQYXRoLmN3ZCgpLnBhcmVudHMpXVxuIiwKICAgICJjYW5kaWRhdGVzICs9IFtQYXRoLmN3ZCgpLCBQYXRoLmN3ZCgpLnBhcmVudF1cbiIsCiAgICAiTEFCX1JPT1QgPSBuZXh0KHBhdGggZm9yIHBhdGggaW4gY2FuZGlkYXRlcyBpZiAocGF0aCAvIFwiYWxlbWJpYy5pbmlcIikuaXNfZmlsZSgpKVxuIiwKICAgICJlbnYgPSBvcy5lbnZpcm9uIHwge1wiQ0gzMV9TWU5DX1VSTFwiOiBTWU5DX1VSTH1cbiIsCiAgICAiZGVmIGFsZW1iaWMoKmFyZ3M6IHN0cikgLT4gc3RyOlxuIiwKICAgICIgICAgcmVzdWx0ID0gc3VicHJvY2Vzcy5ydW4oXG4iLAogICAgIiAgICAgICAgW1wiYWxlbWJpY1wiLCBcIi1jXCIsIHN0cihMQUJfUk9PVCAvIFwiYWxlbWJpYy5pbmlcIiksICphcmdzXSxcbiIsCiAgICAiICAgICAgICBjd2Q9TEFCX1JPT1QsIGVudj1lbnYsIHRleHQ9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgY2hlY2s9VHJ1ZSxcbiIsCiAgICAiICAgIClcbiIsCiAgICAiICAgIHJldHVybiAocmVzdWx0LnN0ZG91dCArIHJlc3VsdC5zdGRlcnIpLnN0cmlwKClcbiIsCiAgICAicHJpbnQoXCJtaWdyYXRpb24gZGlyZWN0b3J5OlwiLCBMQUJfUk9PVC5uYW1lKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDYiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDrp4jsnbTqt7jroIjsnbTshZgg7KCB7JqpXG4iLAogICAgIlxuIiwKICAgICJgdXBncmFkZSBoZWFkYOqwgCDtkZzsmYAg67KE7KCEIOq4sOuhneydhCDtlajqu5gg66eM65Oc64qU7KeAIO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA3IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjE4OjU0LjUwNjI5OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjE4OjU0LjUwNjIyM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjE4OjU1LjMyODY3OVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MTg6NTUuMzI4MTY0WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIklORk8gIFthbGVtYmljLnJ1bnRpbWUubWlncmF0aW9uXSBSdW5uaW5nIHVwZ3JhZGUgIC0+IDIwMjYwOTExXzAxLCDsg4Hri7Qg7Yuw7LyTIO2RnCDqtazsobDrpbwg67OA6rK97ZWp64uI64ukLlxuIiwKICAgICAgImFwcGxpZWQgdGFibGU6IGNoMzFfbWlncmF0aW9uLnRpY2tldHNcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IHBzeWNvcGdcbiIsCiAgICAid2l0aCBwc3ljb3BnLmNvbm5lY3QoTkFUSVZFX1VSTCwgYXV0b2NvbW1pdD1UcnVlKSBhcyBjb25uOlxuIiwKICAgICIgICAgY29ubi5leGVjdXRlKFwiRFJPUCBTQ0hFTUEgSUYgRVhJU1RTIGNoMzFfbWlncmF0aW9uIENBU0NBREVcIilcbiIsCiAgICAicHJpbnQoYWxlbWJpYyhcInVwZ3JhZGVcIiwgXCJoZWFkXCIpLnNwbGl0bGluZXMoKVstMV0pXG4iLAogICAgIndpdGggcHN5Y29wZy5jb25uZWN0KE5BVElWRV9VUkwpIGFzIGNvbm46XG4iLAogICAgIiAgICBhcHBsaWVkID0gY29ubi5leGVjdXRlKFwiU0VMRUNUIHRvX3JlZ2NsYXNzKCdjaDMxX21pZ3JhdGlvbi50aWNrZXRzJyk6OnRleHRcIikuZmV0Y2hvbmUoKVswXVxuIiwKICAgICJwcmludChcImFwcGxpZWQgdGFibGU6XCIsIGFwcGxpZWQpXG4iLAogICAgImFzc2VydCBhcHBsaWVkID09IFwiY2gzMV9taWdyYXRpb24udGlja2V0c1wiIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wOCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7YyoIO2ZleyduFxuIiwKICAgICJcbiIsCiAgICAiYGRvd25ncmFkZSBiYXNlYCDrkqTsl5DripQg7J207KCEIOy9lOuTnOqwgCDquLDrjIDtlZjrjZgg7ZGc66W8IOyhsO2ajO2VoCDsiJgg7JeG7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogImNlbGwtMDkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTg6NTUuMzI5NTc1WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTg6NTUuMzI5NTE5WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTg6NTUuNTMyMzExWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxODo1NS41MzE3ODBaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJJTkZPICBbYWxlbWJpYy5ydW50aW1lLm1pZ3JhdGlvbl0gUnVubmluZyBkb3duZ3JhZGUgMjAyNjA5MTFfMDEgLT4gLCDsg4Hri7Qg7Yuw7LyTIO2RnCDqtazsobDrpbwg67OA6rK97ZWp64uI64ukLlxuIgogICAgIF0KICAgIH0sCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgImFmdGVyIGRvd25ncmFkZTogTm9uZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJwcmludChhbGVtYmljKFwiZG93bmdyYWRlXCIsIFwiYmFzZVwiKS5zcGxpdGxpbmVzKClbLTFdKVxuIiwKICAgICJ3aXRoIHBzeWNvcGcuY29ubmVjdChOQVRJVkVfVVJMKSBhcyBjb25uOlxuIiwKICAgICIgICAgcmVtb3ZlZCA9IGNvbm4uZXhlY3V0ZShcIlNFTEVDVCB0b19yZWdjbGFzcygnY2gzMV9taWdyYXRpb24udGlja2V0cycpXCIpLmZldGNob25lKClbMF1cbiIsCiAgICAicHJpbnQoXCJhZnRlciBkb3duZ3JhZGU6XCIsIHJlbW92ZWQpXG4iLAogICAgImFzc2VydCByZW1vdmVkIGlzIE5vbmUiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEwIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyImOyglVxuIiwKICAgICJcbiIsCiAgICAi67Cw7Y+sIOy9lOuTnOyZgCDrp57ripQg66as67mE7KCE7J2EIOuLpOyLnCDsoIHsmqntlbQg7ZGc66W8IOuzteq1rO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTMxLTAzLWIiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDri6jqs4Tsl5DshJwg6rWs67aE7ZWgIOuylOychFxuIiwKICAgICJcbiIsCiAgICAi7L2U65OcIOuhpOuwseqzvCDsiqTtgqTrp4gg64uk7Jq06re466CI7J2065Oc64qUIOqwmeydgCDsnbzsnbQg7JWE64uZ64uI64ukLiDslaDtlIzrpqzsvIDsnbTshZjrp4wg7J207KCEIOuyhOyghOycvOuhnCDrj4zroKTrj4Qg7J2066+4IOyCreygnO2VmOqxsOuCmCDrs4DtmZjtlZwg7Je07J2AIOuPjOyVhOyYpOyngCDslYrsirXri4jri6QuIOuNsOydtO2EsOqwgCDshpDsi6TrkJjripQg67OA6rK97J2AIOyXreuwqe2WpSBTUUzrs7Tri6Qg66i87KCAIO2ZleyepS3snbTtlokt7LaV7IaMIOyInOyEnOulvCDqsoDthqDtlZjqs6Ag67Cx7JeFIOuzteq1rCDsi5zqsITsnYQg7Lih7KCV7ZW07JW8IO2VqeuLiOuLpC4g7J20IOyLpOyKteydgCDqtZDsnKHsmqkg7ZGcIO2VmOuCmOydmCDqsIDsl63shLHrp4wg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTg6NTUuNTMzMjQ2WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTg6NTUuNTMzMTg1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTg6NTUuNzM0NTQ2WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxODo1NS43MzQxNjVaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIklORk8gIFthbGVtYmljLnJ1bnRpbWUubWlncmF0aW9uXSBSdW5uaW5nIHVwZ3JhZGUgIC0+IDIwMjYwOTExXzAxLCDsg4Hri7Qg7Yuw7LyTIO2RnCDqtazsobDrpbwg67OA6rK97ZWp64uI64ukLlxuIgogICAgIF0KICAgIH0sCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInJlc3RvcmVkOiBjaDMxX21pZ3JhdGlvbi50aWNrZXRzXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgInByaW50KGFsZW1iaWMoXCJ1cGdyYWRlXCIsIFwiaGVhZFwiKS5zcGxpdGxpbmVzKClbLTFdKVxuIiwKICAgICJ3aXRoIHBzeWNvcGcuY29ubmVjdChOQVRJVkVfVVJMKSBhcyBjb25uOlxuIiwKICAgICIgICAgcmVzdG9yZWQgPSBjb25uLmV4ZWN1dGUoXCJTRUxFQ1QgdG9fcmVnY2xhc3MoJ2NoMzFfbWlncmF0aW9uLnRpY2tldHMnKTo6dGV4dFwiKS5mZXRjaG9uZSgpWzBdXG4iLAogICAgInByaW50KFwicmVzdG9yZWQ6XCIsIHJlc3RvcmVkKVxuIiwKICAgICJhc3NlcnQgcmVzdG9yZWQgPT0gXCJjaDMxX21pZ3JhdGlvbi50aWNrZXRzXCIiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogInBhaXJlZCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDYsCiAgICJjb2RlX3NoYTI1NiI6ICJiMDU5NGYyZDA2NGZlNzRlYjhjMTRjYmJlMGI1OGM2NGJmNzY1NDYxY2VkYmY3ZTRhZTkyNDE2MTFkZGI0OTRkIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDI6MTg6NTUuODUxNTA0KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICJiZDg5NGJkNWUwMDY5OTA1OTQ3ODA2NjM2MjcwMmNhOGZkMDJlMGExNTQ5NDQxOWMxNjBiMzZlMjU5MjI0ODM3IiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>Alembic 적용과 롤백</h2>
+<p>실제 PostgreSQL 17에서 운영 데이터베이스의 한 가지 문제를 재현하고 해결합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>마이그레이션 파일을 적용하고 되돌린 뒤 데이터베이스 스키마를 직접 조회합니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>앞의 <code>%pip install</code> 셀은 이 노트북을 실행하는 현재 커널에 Ch31에서 고정한 SQLAlchemy·PostgreSQL·pgvector·LangGraph 패키지를 설치합니다. 설치 명령의 출력은 숨기지만, 다음 셀의 import가 성공하려면 이 단계가 먼저 끝나야 합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 챕터에서 고정한 패키지를 설치합니다.
+%pip install -q &#x27;sqlalchemy[asyncio]==2.0.43&#x27; asyncpg==0.30.0 alembic==1.16.5
+%pip install -q &#x27;psycopg[binary,pool]==3.3.3&#x27; pgvector==0.4.1
+%pip install -q langgraph==1.2.11 langgraph-checkpoint-postgres==3.0.5</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>두 번째 준비 셀은 <code>CH31_DATABASE_URL</code>을 읽고 없으면 로컬 실습용 주소를 사용합니다. 같은 데이터베이스를 비동기 SQLAlchemy, psycopg, PostgreSQL 명령에서 사용할 수 있도록 드라이버 표기만 바꾼 세 URL을 만듭니다. 화면에는 데이터베이스 이름과 비밀값을 숨겼다는 사실만 출력합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 전용 실습 데이터베이스 주소만 준비하며 비밀 값은 출력하지 않습니다.
+import os
+ASYNC_URL = os.getenv(
+    &quot;CH31_DATABASE_URL&quot;,
+    &quot;postgresql+asyncpg://postgres:postgres@localhost:55431/ch31_lab&quot;,
+)
+SYNC_URL = ASYNC_URL.replace(&quot;postgresql+asyncpg&quot;, &quot;postgresql+psycopg&quot;)
+NATIVE_URL = ASYNC_URL.replace(&quot;postgresql+asyncpg&quot;, &quot;postgresql&quot;)
+print(&quot;database: ch31_lab, credentials: hidden&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">database: ch31_lab, credentials: hidden
+</pre></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>Alembic 리비전은 데이터베이스 구조 변경을 순서가 있는 파일로 기록합니다. <code>upgrade head</code>는 현재 데이터베이스를 최신 리비전까지 올리고, <code>downgrade base</code>는 정의된 역방향 작업을 적용합니다. 노트북의 <code>subprocess.run(..., check=True)</code>는 명령이 실패하면 즉시 예외를 내며, 이어지는 <code>to_regclass</code> 조회가 실제 표의 생성과 제거를 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import os, subprocess
+from pathlib import Path
+# 현재 폴더와 상위 폴더에서 제공된 마이그레이션 설정을 찾습니다.
+candidates = [parent / &quot;labs/part7/ch31-database&quot; for parent in (Path.cwd(), *Path.cwd().parents)]
+candidates += [Path.cwd(), Path.cwd().parent]
+LAB_ROOT = next(path for path in candidates if (path / &quot;alembic.ini&quot;).is_file())
+env = os.environ | {&quot;CH31_SYNC_URL&quot;: SYNC_URL}
+def alembic(*args: str) -&gt; str:
+    result = subprocess.run(
+        [&quot;alembic&quot;, &quot;-c&quot;, str(LAB_ROOT / &quot;alembic.ini&quot;), *args],
+        cwd=LAB_ROOT, env=env, text=True, capture_output=True, check=True,
+    )
+    return (result.stdout + result.stderr).strip()
+print(&quot;migration directory:&quot;, LAB_ROOT.name)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">migration directory: ch31-database
+</pre></div>
+<div class="nb-markdown"><h3>마이그레이션 적용</h3>
+<p><code>upgrade head</code>가 표와 버전 기록을 함께 만드는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import psycopg
+with psycopg.connect(NATIVE_URL, autocommit=True) as conn:
+    conn.execute(&quot;DROP SCHEMA IF EXISTS ch31_migration CASCADE&quot;)
+print(alembic(&quot;upgrade&quot;, &quot;head&quot;).splitlines()[-1])
+with psycopg.connect(NATIVE_URL) as conn:
+    applied = conn.execute(&quot;SELECT to_regclass(&#x27;ch31_migration.tickets&#x27;)::text&quot;).fetchone()[0]
+print(&quot;applied table:&quot;, applied)
+assert applied == &quot;ch31_migration.tickets&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">INFO  [alembic.runtime.migration] Running upgrade  -&gt; 20260911_01, 상담 티켓 표 구조를 변경합니다.
+applied table: ch31_migration.tickets
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 마이그레이션 폴더 이름, 적용 뒤 표 이름, 다운그레이드 뒤 `None`, 재적용 뒤 복구된 표 이름을 순서대로 확인합니다. 이 절은 실행 시간을 출력하지 않습니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>`upgrade head` 뒤에는 `ch31_migration.tickets`와 Alembic 버전 기록이 생성되었습니다. `downgrade base` 뒤 `to_regclass`는 NULL을 반환해 표가 제거됐음을 확인했습니다. 다시 `upgrade head`를 실행하자 같은 표가 복구되었습니다. 표를 되돌렸다는 사실만 확인했으며 운영 데이터가 안전하게 복원된다는 뜻은 아닙니다.</p><section class="notebook" data-notebook="03-Alembic-적용과-롤백" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 확인</h3>
+<p><code>downgrade base</code> 뒤에는 이전 코드가 기대하던 표를 조회할 수 없습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">print(alembic(&quot;downgrade&quot;, &quot;base&quot;).splitlines()[-1])
+with psycopg.connect(NATIVE_URL) as conn:
+    removed = conn.execute(&quot;SELECT to_regclass(&#x27;ch31_migration.tickets&#x27;)&quot;).fetchone()[0]
+print(&quot;after downgrade:&quot;, removed)
+assert removed is None</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">INFO  [alembic.runtime.migration] Running downgrade 20260911_01 -&gt; , 상담 티켓 표 구조를 변경합니다.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">after downgrade: None
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>배포 코드와 맞는 리비전을 다시 적용해 표를 복구합니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>코드 롤백과 스키마 다운그레이드는 같은 일이 아닙니다. 애플리케이션만 이전 버전으로 돌려도 이미 삭제하거나 변환한 열은 돌아오지 않습니다. 데이터가 손실되는 변경은 역방향 SQL보다 먼저 확장-이행-축소 순서를 검토하고 백업 복구 시간을 측정해야 합니다. 이 실습은 교육용 표 하나의 가역성만 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">print(alembic(&quot;upgrade&quot;, &quot;head&quot;).splitlines()[-1])
+with psycopg.connect(NATIVE_URL) as conn:
+    restored = conn.execute(&quot;SELECT to_regclass(&#x27;ch31_migration.tickets&#x27;)::text&quot;).fetchone()[0]
+print(&quot;restored:&quot;, restored)
+assert restored == &quot;ch31_migration.tickets&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">INFO  [alembic.runtime.migration] Running upgrade  -&gt; 20260911_01, 상담 티켓 표 구조를 변경합니다.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">restored: ch31_migration.tickets
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p>이 결과는 Docker의 독립 PostgreSQL 17.8 컨테이너와 작은 데이터에서 측정했습니다. 행 수, 네트워크, 디스크, 동시 요청 수가 달라지면 시간과 실행 계획도 달라집니다.</p><p>롤백 시간을 측정할 때는 DDL 실행 시간과 데이터 되채우기 시간을 나눕니다. 배포 제한 시간을 넘는 변경은 한 리비전에 모두 넣지 않고 호환 가능한 여러 단계로 나누어 각 단계의 중단 가능 지점을 기록합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>삭제 열이나 타입 축소는 롤백만으로 데이터를 복구하지 못할 수 있으므로 먼저 백업과 복원 연습이 필요합니다.</li><li>여러 애플리케이션 인스턴스가 시작할 때 동시에 마이그레이션을 실행하지 않도록 배포 단계에서 한 번 실행합니다.</li><li>자동 생성 결과에는 이름 없는 제약 조건과 데이터 변환 절차가 빠질 수 있어 파일을 검토해야 합니다.</li></ul><h3>운영 전 확인 순서</h3><p>마이그레이션 검증에서는 빈 데이터베이스 적용, 현재 리비전에서 다음 리비전 적용, 한 단계 롤백을 구분합니다. 각 경로에서 Alembic 버전과 실제 열·제약·인덱스를 조회합니다. 시간 측정이 필요한 DDL은 운영과 비슷한 행 수의 복제 환경에서 실행합니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>Alembic 리비전은 스키마 변경의 앞뒤 순서를 코드로 기록합니다.</li><li>upgrade, downgrade, 재적용을 `to_regclass`의 표 존재 여부로 확인했습니다.</li><li>되돌리는 DDL이 있어도 삭제한 운영 데이터가 자동으로 복원되지는 않습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 요청이 늘 때 마이그레이션된 데이터베이스 연결을 풀에서 어떻게 빌리고 반환하는지 확인합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. 리비전의 `down_revision`은 무엇을 가리키나요?</summary><p class="quiz-a"><b>해설</b> — 현재 변경 바로 앞에 적용되어야 하는 리비전을 가리킵니다.</p></details><details class="quiz"><summary>2. `upgrade head`의 `head`는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 현재 마이그레이션 계보에서 가장 최신 리비전을 뜻합니다.</p></details><details class="quiz"><summary>3. 자동 생성 파일을 그대로 적용하면 안 되는 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — Alembic이 의도와 데이터 변환 안전성을 모두 알 수 없으므로 생성된 DDL과 손실 가능성을 사람이 확인해야 합니다.</p></details><details class="quiz"><summary>4. 이 실습의 롤백 검사가 보장하지 않는 것은 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 운영 데이터가 백업 없이 복원된다는 점은 보장하지 않습니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://alembic.sqlalchemy.org/en/latest/tutorial.html">Alembic 적용과 롤백 공식 문서</a> · 확인 2026-09-11 · Alembic 1.16</li><li><a href="https://alembic.sqlalchemy.org/en/latest/autogenerate.html">Alembic 적용과 롤백 공식 문서</a> · 확인 2026-09-11 · 자동 생성</li></ul><p><strong>확인 필요 항목</strong> — 운영 배포 전에는 조직의 허용 연결 수, 백업 보존 기간, 복구 목표 시간과 실제 데이터 규모를 별도로 확인해야 합니다.</p>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="02-트랜잭션과-원자성.html">← 트랜잭션과 원자성</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="04-커넥션-풀-고갈과-대응.html">커넥션 풀 고갈과 대응 →</a></span></div></div></body></html>

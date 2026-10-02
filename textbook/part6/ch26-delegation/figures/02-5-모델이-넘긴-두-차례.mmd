@@ -1,0 +1,17 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant G as 바깥 그래프<br>team_graph
+  box Lavender
+  participant L as 대출 규정 담당<br>loan_desk
+  participant I as 상호대차 담당<br>interlibrary_desk
+  end
+  Note over G: 넘긴 실행 첫 차례<br>담당 칸 빈 글
+  G->>L: 조건 함수가 첫 담당을 고름
+  Note over L: 첫 차례 요청 1<br>넘기기 도구 요청
+  L-->>G: Command.PARENT · 도구 메시지 함께
+  Note over G: 도구 메시지가 그 요청의 답 True
+  G->>I: goto interlibrary_desk
+  Note over I: 첫 차례 요청 2<br>답
+  Note over G: 둘째 차례<br>저장된 담당 칸 interlibrary_desk
+  G->>I: 조건 함수가 받은 담당을 고름
+  Note over I: 둘째 차례 요청 1<br>답

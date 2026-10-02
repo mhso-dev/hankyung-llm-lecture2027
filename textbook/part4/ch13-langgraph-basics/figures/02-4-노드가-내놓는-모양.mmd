@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph onlynew["자기 이름만 내놓는 노드"]
+    direction TB
+    a1["노드가 낸 갱신<br>자기 이름 하나"]:::flow
+    a2["나온 실행 흔적<br>normalize 다음<br>make_query"]:::measure
+    a1 ~~~ a2
+  end
+  subgraph withold["앞 흔적까지 내놓는 노드"]
+    direction TB
+    b1["노드가 낸 갱신<br>앞 흔적과 자기 이름"]:::flow
+    b2["나온 실행 흔적<br>normalize 두 번 다음<br>make_query"]:::measure
+    b1 ~~~ b2
+  end
+  common2["두 칸 모두 규칙을 적은 같은 상태 형식"]
+  onlynew ~~~ withold
+  withold ~~~ common2

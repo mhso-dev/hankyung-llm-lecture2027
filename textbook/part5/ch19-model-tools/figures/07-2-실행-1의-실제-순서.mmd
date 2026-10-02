@@ -1,0 +1,13 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant H as 조립 함수<br>handle_inquiry
+  participant M as gpt-5.4-mini
+  participant R as 읽기 도구<br>get_order_by_id
+  Note over H: 사람 확인 False<br>명세 get_order_by_id 하나
+  H->>M: 요청 1 · 주문 문의
+  M-->>H: 도구 호출 요청 get_order_by_id · O102
+  H->>R: 요청을 통째로 invoke
+  R-->>H: 도구 메시지 · 결과 상태 success · pending
+  H->>M: 요청 2 · 문의 · 첫 응답 · 도구 메시지
+  M-->>H: 최종 답 · 도구 호출 요청 0건
+  Note over H: 요청 수 2 · 쓰기 도구 요청 없음

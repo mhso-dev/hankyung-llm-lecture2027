@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  z1["minimal-marker.hwpx<br>압축 묶음 · 항목 2개"]:::tool
+  pick["이름 조건 두 개로 고름<br>Contents/section 시작<br>.xml 끝"]:::flow
+  e1["Contents/content.hpf<br>고르지 않음"]
+  e2["Contents/section0.xml<br>본문 XML 1개"]:::measure
+  tree["요소 이름 네 개<br>section · p · run · t"]:::measure
+  body["t 요소의 글 15자<br>한글 문서 처리 실습입니다."]:::measure
+  z1 --> pick
+  pick --> e1
+  pick --> e2
+  e2 --> tree
+  tree --> body

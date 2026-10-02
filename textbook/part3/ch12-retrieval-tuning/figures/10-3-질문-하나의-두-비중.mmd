@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  root["질문 Q085 · 후보 문서 청크 8개<br>정답 부모 H01"]:::flow
+  subgraph low["관련성 비중 0.2"]
+    l1["고른 문서 청크 5개"]:::flow
+    l2["고유 부모 수 3<br>H01 · H02 · M02"]:::measure
+    l3["문서 청크 정밀도 자리 5<br>0.6"]:::measure
+  end
+  subgraph high["관련성 비중 1.0"]
+    h1["고른 문서 청크 5개"]:::flow
+    h2["고유 부모 수 1<br>H01"]:::measure
+    h3["문서 청크 정밀도 자리 5<br>1.0"]:::measure
+  end
+  root --> h1
+  root --> l1
+  h1 --> h2
+  h2 --> h3
+  l1 --> l2
+  l2 --> l3

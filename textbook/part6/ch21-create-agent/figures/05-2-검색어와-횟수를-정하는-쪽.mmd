@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph up["Ch 14 06절 흐름 · 코드가 정함"]
+    direction TB
+    a1["첫 검색어<br>질문 글 그대로"]
+    a2["다시 검색할지<br>첫 자리 거리를 기준값과<br>견주어 코드가 정함<br>다시 검색 상한 한 번을<br>코드로 확인"]
+    a1 ~~~ a2
+  end
+  subgraph dn["이 절 흐름 · 모델이 고름"]
+    direction TB
+    b1["검색어<br>모델이 인자 query에 적음"]:::model
+    b2["다시 검색<br>시스템 메시지 글<br>한 번만 더 검색<br>세거나 막는 코드 없음"]:::tool
+    b3["C05 질문 · 검색 한 번<br>주차 질문 · 검색 두 번"]:::measure
+    b1 ~~~ b2
+    b2 ~~~ b3
+  end
+  up ~~~ dn

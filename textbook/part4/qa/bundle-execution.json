@@ -1,0 +1,41 @@
+{
+  "archive": "part4-practice.zip",
+  "archive_sha256": "29cc6d1fa9be0c6a141d5fb6d8d56fefa76021c93415ba321b49ec17bd9da8d9",
+  "lessons": [
+    {
+      "notebook": "labs/part4/ch13-langgraph-basics/notebooks/05-Send-동적-팬아웃.ipynb",
+      "code_sha256": "74db8e067fb444a19bb1411effca87fd83b234b07b5e29681370e5f489de6fde",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 25,
+        "code_sha256": "74db8e067fb444a19bb1411effca87fd83b234b07b5e29681370e5f489de6fde",
+        "executed_at": "2026-09-23T13:47:38.053122+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "5bf3486948f08c4ec4f74ee1306a67a06f63cb1571588232af41fec0f9204243",
+        "python_version": "3.12.13",
+        "status": "passed"
+      },
+      "ran_from_notebooks_folder": true,
+      "output": "PASS 05-Send-동적-팬아웃.ipynb: 25 cells"
+    },
+    {
+      "notebook": "labs/part4/ch15-evaluation-advanced/notebooks/08-Batch-평가-입력.ipynb",
+      "code_sha256": "b86060ce9f07704982f1e0aff336f5877793b70a8d623f3b85533bd96a5d4559",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 26,
+        "code_sha256": "b86060ce9f07704982f1e0aff336f5877793b70a8d623f3b85533bd96a5d4559",
+        "executed_at": "2026-09-23T13:47:39.976244+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "311efc78e2b76c5e329c8d3b2fca11262a0f3645df11b21bae781649465d90bf",
+        "python_version": "3.12.13",
+        "status": "passed"
+      },
+      "ran_from_notebooks_folder": true,
+      "output": "PASS 08-Batch-평가-입력.ipynb: 26 cells"
+    }
+  ],
+  "guardrails_tests": ".......                                                                  [100%]\n7 passed in 0.01s",
+  "guardrails_sha256": "d4f760991409a996261558caabe16b6a7f3f107863ec1647616ac96559588555",
+  "scope": "Two offline notebooks and the reusable module tests in a clean extraction; no API key copied."
+}

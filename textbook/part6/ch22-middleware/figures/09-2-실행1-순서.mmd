@@ -1,0 +1,13 @@
+sequenceDiagram
+  participant A as 에이전트와 미들웨어
+  participant M as 모델
+  participant T as 도구 renew_loan
+  Note over A: agent_start 글자 수 54
+  A->>M: learner@****.com 가려진 요청
+  M-->>A: 도구 요청
+  Note over A: tool_call renew_loan
+  A->>T: 책 제목
+  T-->>A: 7일 연장 안내
+  A->>M: 도구 결과 전달
+  M-->>A: 최종 답
+  Note over A: agent_end 메시지 4개

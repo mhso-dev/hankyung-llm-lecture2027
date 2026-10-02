@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  q["새 문의<br>환불할 수 있는지만 물음"]:::tool
+  s["serve_inquiry<br>이 절의 조립 함수"]:::flow
+  l["run_measured_loop<br>03절 루프 · 04절 재기"]:::flow
+  m["gpt-5.4-mini<br>다음 행동을 JSON 글로 고름"]:::model
+  r["stop_reason<br>03절 정지 조건"]:::flow
+  c["count_steps · total_of<br>tool_names · classify<br>01 · 02 · 04절로 세고 가름"]:::flow
+  o["실행 요약 한 줄<br>모델 요청 · 입력 토큰<br>도구 차례 · 멈춘 까닭 · 구조"]:::tool
+  q --> s
+  s --> l
+  l --> m
+  m --> r
+  r -.->|멈출 까닭 없음<br>도구를 부르고 다음 바퀴| l
+  r -.->|사람 확인 · 모델이 끝을 고름<br>같은 도구를 다시 고름| c
+  l -.->|바퀴를 다 쓰면<br>바퀴 한도| c
+  c --> o

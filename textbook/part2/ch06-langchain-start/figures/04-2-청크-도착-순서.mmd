@@ -1,0 +1,14 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant NB as 노트북 for
+  participant ST as answer_stream
+  participant SV as OpenAI 서버
+  NB->>ST: 첫 청크 꺼내기
+  ST->>SV: 요청 1번 · 사용량도 함께
+  SV-->>ST: 0번 글자 없음
+  SV-->>ST: 1~14번 토 · 큰 · 을 · 실 …
+  SV-->>ST: 15번 끝난 이유 stop
+  SV-->>ST: 16번 사용량 출력 17토큰
+  Note over ST: LangChain이 끝에<br>빈 17번 청크를 붙임
+  ST-->>NB: 청크를 도착한 순서대로
+  Note over NB: 5절 출력 · 받은 청크 수 18<br>6절 출력 · 글자가 든 청크 수 14

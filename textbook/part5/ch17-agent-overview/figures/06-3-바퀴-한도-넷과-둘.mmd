@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph one["실행 1 · 바퀴 한도 4"]
+    direction TB
+    a1["바퀴 1 · 2<br>주문 조회 · 환불 규정 확인<br>입력 토큰 116 · 138"]:::measure
+    a2["바퀴 3<br>환불 요청 등록을 고름<br>입력 토큰 160"]:::measure
+    a3["멈춤 · 사람 확인<br>고른 쪽 코드<br>모델 요청 3<br>입력 토큰 합 414"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  subgraph two["실행 2 · 바퀴 한도 2"]
+    direction TB
+    b1["바퀴 1 · 2<br>주문 조회 · 환불 규정 확인<br>입력 토큰 116 · 138"]:::measure
+    b2["멈춤 · 바퀴 한도<br>고른 쪽 코드<br>모델 요청 2<br>입력 토큰 합 254"]:::measure
+    b1 --> b2
+  end
+  same["두 실행 모두<br>같은 문의와 머리글<br>부른 도구 둘<br>등록은 불리지 않음<br>구조는 에이전트 후보"]
+  one ~~~ same
+  two ~~~ same

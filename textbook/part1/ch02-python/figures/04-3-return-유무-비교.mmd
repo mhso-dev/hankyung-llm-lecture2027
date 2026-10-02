@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph RET["calculate_payment · return 줄 있음"]
+    direction LR
+    r1["인자<br>78000 · 0.1"]:::tool --> r2["return payment<br>70200을 반환"]:::flow --> r3["이름 payment<br>70200"]:::measure
+  end
+  subgraph NORET["print_payment · return 줄 없음"]
+    direction LR
+    n1["인자<br>78000 · 0.1"]:::tool --> n2["print 줄<br>화면에 70200 출력"]:::flow --> n3["이름 result<br>None"]:::measure
+  end
+  RET ~~~ NORET

@@ -1,0 +1,19 @@
+flowchart LR
+  %% classes
+  subgraph L["바꾸기 전 · 대출할"]
+    direction TB
+    l0["자료실에서 일반 도서를<br>며칠 대출할 수 있나요?"]:::tool
+    l1["규칙 갈래<br>주제어 대출 · request<br>요청 한 번 · 입력 토큰 72"]:::measure
+    l2["모델 선택<br>인자 대출 · 요청 두 번<br>입력 토큰 378"]:::measure
+    l0 ~~~ l1
+    l1 ~~~ l2
+  end
+  subgraph R["바꾼 값 · 빌릴"]
+    direction TB
+    r0["자료실에서 일반 도서를<br>며칠 빌릴 수 있나요?"]:::tool
+    r1["규칙 갈래<br>빈 글 · answer · 도구 없음<br>요청 한 번 · 입력 토큰 22"]:::measure
+    r2["모델 선택<br>인자 대출 · 요청 두 번<br>입력 토큰 378"]:::measure
+    r0 ~~~ r1
+    r1 ~~~ r2
+  end
+  L ~~~ R

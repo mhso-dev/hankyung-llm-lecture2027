@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  base["MCP 도구 하나 lookup_policy<br>명세 252자"]:::measure
+  c1["입력 형식 모양만 바꿈<br>직접 만든 @tool"]:::flow
+  c2["설명만 바꿈<br>두 문장 더함"]:::flow
+  c3["도구 수만 바꿈<br>서버 객체에 둘 더 붙임"]:::flow
+  r1["명세 221자<br>additionalProperties 없음<br>31자 짧음"]:::measure
+  r2["명세 299자<br>늘어난 명세 47<br>= 늘어난 설명 47"]:::measure
+  r3["도구 하나 둘 셋<br>252 · 503 · 685자"]:::measure
+  base -.-> c1
+  base -.-> c2
+  base -.-> c3
+  c1 --> r1
+  c2 --> r2
+  c3 --> r3

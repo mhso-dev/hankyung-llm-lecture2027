@@ -1,0 +1,270 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SQLAlchemy 비동기 PostgreSQL — Ch 31 · DB &amp; 상태 영속화</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · Agent 서비스 개발 · Ch 31 · DB &amp; 상태 영속화</p>
+<h1>SQLAlchemy 비동기 PostgreSQL</h1><div class="meta"><span>강의 1h · 실습 2h</span><span>새 용어 4</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h · 실습 2h | 코드 Jupyter Notebook | 새 용어 4 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>비동기 Engine과 세션 팩터리의 역할을 설명할 수 있습니다.</li><li>동시 작업마다 별도 AsyncSession을 만들어 조회할 수 있습니다.</li><li>순차 실행과 동시 실행의 대기 시간 차이를 실제 출력으로 해석할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>Ch30에서 FastAPI 요청 함수를 비동기로 작성했습니다. 요청 함수가 데이터베이스를 기다리는 동안 이벤트 루프까지 멈추면 다른 사용자의 요청을 처리하지 못합니다. 이 절에서는 비동기 드라이버와 세션을 사용해 같은 조회 세 건을 순차 실행과 동시 실행으로 비교합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch2에서 `async`와 `await`가 대기 가능한 작업을 표현한다는 점을 배웠고, Ch30에서는 FastAPI 경로 함수를 비동기로 작성했습니다. Ch4에서 만든 관계형 표와 기본 SQL도 다시 사용합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>구체적인 상황</h3><p>식당의 주문 담당자가 한 주문의 조리가 끝날 때까지 계산대 앞에 서 있으면 다음 손님을 받지 못합니다.</p><h3>정의</h3><p>주문표를 주방에 넘긴 뒤 다른 주문을 받으면 같은 시간에 더 많은 손님을 응대할 수 있습니다. 비동기 입력·출력(asynchronous I/O)은 데이터베이스 응답처럼 외부 작업을 기다리는 동안 이벤트 루프가 다른 작업을 진행하게 하는 방식입니다. `AsyncEngine`은 비동기 드라이버와 연결 풀을 관리하고, `AsyncSession`은 한 업무 작업에서 실행한 조회와 변경을 묶습니다. 하나의 세션은 변경 가능한 상태를 가지므로 여러 `asyncio` 작업이 공유하지 않습니다. 각 작업이 세션 팩터리에서 자기 세션을 받아야 합니다.</p><p><strong>이 절의 새 용어</strong> — AsyncEngine, AsyncSession, 비동기 I/O, 커넥션 풀</p><h3>운영에서 경계를 정하는 방법</h3><p>운영 코드에서는 엔진을 애플리케이션 시작 시 한 번 만들고 요청마다 다시 만들지 않습니다. 엔진은 접속 주소와 풀을 오래 유지하고, 세션은 요청이나 백그라운드 작업 한 건처럼 짧은 범위에서 생성합니다. FastAPI 의존성이라면 `yield` 앞에서 세션을 만들고 뒤에서 닫아 반환할 수 있습니다. 조회 결과를 모두 메모리에 옮긴 뒤 응답을 만드는지, 결과 스트림을 보내는 동안에도 연결을 점유하는지 구분해야 합니다. 후자는 느린 클라이언트 한 명이 연결을 오래 차지할 수 있습니다. 또한 비동기는 데이터베이스가 SQL을 더 빨리 계산하게 만들지 않습니다. 여러 독립 작업의 대기 시간을 겹칠 수 있게 합니다. CPU를 많이 쓰는 변환이나 하나의 트랜잭션 안에서 순서가 필요한 SQL은 `gather`로 묶는 대상이 아닙니다. 동시 실행을 늘리기 전에 작업이 서로 독립적인지, 풀에 충분한 연결이 있는지, PostgreSQL이 추가 부하를 감당하는지 차례로 확인합니다.</p><h3>코드 읽기와 개념 경계</h3><p><code>create_async_engine</code>은 비동기 드라이버와 연결 풀을 묶은 Engine을 만들고, <code>async_sessionmaker</code>는 요청마다 사용할 <code>AsyncSession</code> 생성 규칙을 만듭니다. <code>async with Session() as session</code>은 세션의 사용 범위를 표시하며 <code>await session.execute(...)</code>에서 실제 데이터베이스 입출력이 발생합니다. <code>scalar_one()</code>은 결과가 정확히 한 값이어야 한다는 조건까지 확인해 문자열을 반환합니다.</p><p><code>asyncio.gather</code>로 세 조회를 동시에 시작해도 하나의 <code>AsyncSession</code>을 공유하면 안 됩니다. 세션은 하나의 진행 중인 트랜잭션을 나타내는 변경 가능한 객체이기 때문입니다. 예제의 <code>delayed_read</code>가 호출마다 새 세션을 여는 이유가 여기에 있습니다. 출력의 순차·동시 시간 차이는 로컬 <code>pg_sleep</code> 조건에서 관찰한 값이며 실제 쿼리 성능의 일반적인 배수를 뜻하지 않습니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 430" style="width:340px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="비동기 세션과 연결 풀"><title>비동기 세션과 연결 풀</title><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190 85 L190 116" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><path d="M190 185 L190 216" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><path d="M190 285 L190 316" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><rect x="30" y="120" width="320" height="65" rx="10" fill="#F4D9D5" stroke="#334155" stroke-width="2"/><rect x="30" y="220" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><rect x="30" y="320" width="320" height="65" rx="10" fill="#E8E2F4" stroke="#334155" stroke-width="2"/><text x="190" y="59" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">비동기 요청 3건</text><text x="190" y="159" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">작업별 AsyncSession</text><text x="190" y="259" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">연결 풀</text><text x="190" y="359" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">PostgreSQL 응답</text></svg></div><p>푸른 요청 상자에서 시작해 붉은 세션 상자와 초록 연결 풀을 지나 보라색 PostgreSQL 응답으로 이동합니다. 색은 처리 단계를 구분하며 실패 여부를 뜻하지 않습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>노트북은 전용 스키마와 세 행을 만든 뒤 세션 하나의 조회 결과를 확인합니다. 이어 각 작업이 자기 세션을 열도록 구성하고, 0.15초 대기 조회 세 건을 순차 실행과 동시 실행으로 비교합니다.</p><section class="notebook" data-notebook="01-SQLAlchemy-비동기-PostgreSQL" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="01-SQLAlchemy-비동기-PostgreSQL.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBTUUxBbGNoZW15IOu5hOuPmeq4sCBQb3N0Z3JlU1FMXG4iLAogICAgIlxuIiwKICAgICLsi6TsoJwgUG9zdGdyZVNRTCAxN+yXkOyEnCDsmrTsmIEg642w7J207YSw67Kg7J207Iqk7J2YIO2VnCDqsIDsp4Ag66y47KCc66W8IOyerO2YhO2VmOqzoCDtlbTqsrDtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEXG4iLAogICAgIlxuIiwKICAgICJgQXN5bmNFbmdpbmVg6rO8IGBBc3luY1Nlc3Npb25g7Jy866GcIOuEpO2KuOybjO2BrCBJL0/rpbwg6riw64uk66as64qUIOuPmeyViCDri6Trpbgg7J6R7JeF7J2EIOynhO2Wie2VoCDsiJgg7J6I64qU7KeAIO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJwcmVwLTMxLTAxLTAiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg7J20IOykgOu5hCDshYDsnbQg7ZWY64qUIOydvFxuIiwKICAgICJcbiIsCiAgICAi7JWe7J2YIGAlcGlwIGluc3RhbGxgIOyFgOydgCDsnbQg64W47Yq467aB7J2EIOyLpO2Wie2VmOuKlCDtmITsnqwg7Luk64SQ7JeQIENoMzHsl5DshJwg6rOg7KCV7ZWcIFNRTEFsY2hlbXnCt1Bvc3RncmVTUUzCt3BndmVjdG9ywrdMYW5nR3JhcGgg7Yyo7YKk7KeA66W8IOyEpOy5mO2VqeuLiOuLpC4g7ISk7LmYIOuqheugueydmCDstpzroKXsnYAg7Iio6riw7KeA66eMLCDri6TsnYwg7IWA7J2YIGltcG9ydOqwgCDshLHqs7XtlZjroKTrqbQg7J20IOuLqOqzhOqwgCDrqLzsoIAg64Gd64KY7JW8IO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICJjZWxsLTAzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjA4OjA4LjU1OTgyM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjA4OjA4LjU1OTc0MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjA4OjA5LjgzNjgyNloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MDg6MDkuODM2MjM3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIk5vdGU6IHlvdSBtYXkgbmVlZCB0byByZXN0YXJ0IHRoZSBrZXJuZWwgdG8gdXNlIHVwZGF0ZWQgcGFja2FnZXMuXG4iCiAgICAgXQogICAgfSwKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiTm90ZTogeW91IG1heSBuZWVkIHRvIHJlc3RhcnQgdGhlIGtlcm5lbCB0byB1c2UgdXBkYXRlZCBwYWNrYWdlcy5cbiIKICAgICBdCiAgICB9LAogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJOb3RlOiB5b3UgbWF5IG5lZWQgdG8gcmVzdGFydCB0aGUga2VybmVsIHRvIHVzZSB1cGRhdGVkIHBhY2thZ2VzLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOydtCDssZXthLDsl5DshJwg6rOg7KCV7ZWcIO2MqO2CpOyngOulvCDshKTsuZjtlanri4jri6QuXG4iLAogICAgIiVwaXAgaW5zdGFsbCAtcSAnc3FsYWxjaGVteVthc3luY2lvXT09Mi4wLjQzJyBhc3luY3BnPT0wLjMwLjAgYWxlbWJpYz09MS4xNi41XG4iLAogICAgIiVwaXAgaW5zdGFsbCAtcSAncHN5Y29wZ1tiaW5hcnkscG9vbF09PTMuMy4zJyBwZ3ZlY3Rvcj09MC40LjFcbiIsCiAgICAiJXBpcCBpbnN0YWxsIC1xIGxhbmdncmFwaD09MS4yLjExIGxhbmdncmFwaC1jaGVja3BvaW50LXBvc3RncmVzPT0zLjAuNSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogInByZXAtMzEtMDEtMSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg7KSA67mEIOyFgOydtCDtlZjripQg7J28XG4iLAogICAgIlxuIiwKICAgICLrkZAg67KI7Ke4IOykgOu5hCDshYDsnYAgYENIMzFfREFUQUJBU0VfVVJMYOydhCDsnb3qs6Ag7JeG7Jy866m0IOuhnOy7rCDsi6TsirXsmqkg7KO87IaM66W8IOyCrOyaqe2VqeuLiOuLpC4g6rCZ7J2AIOuNsOydtO2EsOuyoOydtOyKpOulvCDruYTrj5nquLAgU1FMQWxjaGVteSwgcHN5Y29wZywgUG9zdGdyZVNRTCDrqoXroLnsl5DshJwg7IKs7Jqp7ZWgIOyImCDsnojrj4TroZ0g65Oc65287J2067KEIO2RnOq4sOunjCDrsJTqvrwg7IS4IFVSTOydhCDrp4zrk63ri4jri6QuIO2ZlOuptOyXkOuKlCDrjbDsnbTthLDrsqDsnbTsiqQg7J2066aE6rO8IOu5hOuwgOqwkuydhCDsiKjqsrzri6TripQg7IKs7Iuk66eMIOy2nOugpe2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjA4OjA5LjgzODEzOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjA4OjA5LjgzODAzNloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjA4OjA5Ljg0MDQ3MFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MDg6MDkuODQwMDc0WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgImRhdGFiYXNlOiBjaDMxX2xhYiwgY3JlZGVudGlhbHM6IGhpZGRlblxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyghOyaqSDsi6TsirUg642w7J207YSw67Kg7J207IqkIOyjvOyGjOunjCDspIDruYTtlZjrqbAg67mE67CAIOqwkuydgCDstpzroKXtlZjsp4Ag7JWK7Iq164uI64ukLlxuIiwKICAgICJpbXBvcnQgb3NcbiIsCiAgICAiQVNZTkNfVVJMID0gb3MuZ2V0ZW52KFxuIiwKICAgICIgICAgXCJDSDMxX0RBVEFCQVNFX1VSTFwiLFxuIiwKICAgICIgICAgXCJwb3N0Z3Jlc3FsK2FzeW5jcGc6Ly9wb3N0Z3Jlczpwb3N0Z3Jlc0Bsb2NhbGhvc3Q6NTU0MzEvY2gzMV9sYWJcIixcbiIsCiAgICAiKVxuIiwKICAgICJTWU5DX1VSTCA9IEFTWU5DX1VSTC5yZXBsYWNlKFwicG9zdGdyZXNxbCthc3luY3BnXCIsIFwicG9zdGdyZXNxbCtwc3ljb3BnXCIpXG4iLAogICAgIk5BVElWRV9VUkwgPSBBU1lOQ19VUkwucmVwbGFjZShcInBvc3RncmVzcWwrYXN5bmNwZ1wiLCBcInBvc3RncmVzcWxcIilcbiIsCiAgICAicHJpbnQoXCJkYXRhYmFzZTogY2gzMV9sYWIsIGNyZWRlbnRpYWxzOiBoaWRkZW5cIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg67mE64+Z6riwIOyXlOynhOqzvCDthYzsnbTruJQg7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLsoITsmqkgYGNoMzFfYXN5bmNgIOyKpO2CpOuniOyXkCDsg4Hri7Qg7JqU7LKtIOyEuCDqsbTsnYQg7KCA7J6l7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNvbmNlcHQtMzEtMDEtYSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDrsJTroZwg64uk7J2MIOy9lOuTnOulvCDsnb3ripQg67Cp67KVXG4iLAogICAgIlxuIiwKICAgICJgY3JlYXRlX2FzeW5jX2VuZ2luZWDsnYAg67mE64+Z6riwIOuTnOudvOydtOuyhOyZgCDsl7DqsrAg7ZKA7J2EIOustuydgCBFbmdpbmXsnYQg66eM65Ok6rOgLCBgYXN5bmNfc2Vzc2lvbm1ha2VyYOuKlCDsmpTssq3rp4jri6Qg7IKs7Jqp7ZWgIGBBc3luY1Nlc3Npb25gIOyDneyEsSDqt5zsuZnsnYQg66eM65Ot64uI64ukLiBgYXN5bmMgd2l0aCBTZXNzaW9uKCkgYXMgc2Vzc2lvbmDsnYAg7IS47IWY7J2YIOyCrOyaqSDrspTsnITrpbwg7ZGc7Iuc7ZWY66mwIGBhd2FpdCBzZXNzaW9uLmV4ZWN1dGUoLi4uKWDsl5DshJwg7Iuk7KCcIOuNsOydtO2EsOuyoOydtOyKpCDsnoXstpzroKXsnbQg67Cc7IOd7ZWp64uI64ukLiBgc2NhbGFyX29uZSgpYOydgCDqsrDqs7zqsIAg7KCV7ZmV7Z6IIO2VnCDqsJLsnbTslrTslbwg7ZWc64uk64qUIOyhsOqxtOq5jOyngCDtmZXsnbjtlbQg66y47J6Q7Je07J2EIOuwmO2ZmO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjA4OjA5Ljg0MTQ4OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjA4OjA5Ljg0MTM5MloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjA4OjA5Ljk3NzQ3M1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MDg6MDkuOTc3MTEyWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInJvd3MgcHJlcGFyZWQ6IDNcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IGFzeW5jaW9cbiIsCiAgICAiZnJvbSBzcWxhbGNoZW15IGltcG9ydCB0ZXh0XG4iLAogICAgImZyb20gc3FsYWxjaGVteS5leHQuYXN5bmNpbyBpbXBvcnQgYXN5bmNfc2Vzc2lvbm1ha2VyLCBjcmVhdGVfYXN5bmNfZW5naW5lXG4iLAogICAgIlxuIiwKICAgICJlbmdpbmUgPSBjcmVhdGVfYXN5bmNfZW5naW5lKEFTWU5DX1VSTCwgcG9vbF9zaXplPTMsIG1heF9vdmVyZmxvdz0wKVxuIiwKICAgICJTZXNzaW9uID0gYXN5bmNfc2Vzc2lvbm1ha2VyKGVuZ2luZSwgZXhwaXJlX29uX2NvbW1pdD1GYWxzZSlcbiIsCiAgICAiYXN5bmMgd2l0aCBlbmdpbmUuYmVnaW4oKSBhcyBjb25uOlxuIiwKICAgICIgICAgYXdhaXQgY29ubi5leGVjdXRlKHRleHQoXCJEUk9QIFNDSEVNQSBJRiBFWElTVFMgY2gzMV9hc3luYyBDQVNDQURFXCIpKVxuIiwKICAgICIgICAgYXdhaXQgY29ubi5leGVjdXRlKHRleHQoXCJDUkVBVEUgU0NIRU1BIGNoMzFfYXN5bmNcIikpXG4iLAogICAgIiAgICBhd2FpdCBjb25uLmV4ZWN1dGUodGV4dChcIkNSRUFURSBUQUJMRSBjaDMxX2FzeW5jLnJlcXVlc3RzIChpZCBpbnQgcHJpbWFyeSBrZXksIHF1ZXN0aW9uIHRleHQpXCIpKVxuIiwKICAgICIgICAgYXdhaXQgY29ubi5leGVjdXRlKHRleHQoXCJJTlNFUlQgSU5UTyBjaDMxX2FzeW5jLnJlcXVlc3RzIFZBTFVFUyAoMSwn7ZmY67aIJyksKDIsJ+uwsOyGoScpLCgzLCfqsrDsoJwnKVwiKSlcbiIsCiAgICAicHJpbnQoXCJyb3dzIHByZXBhcmVkOiAzXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyEuOyFmOycvOuhnCDsobDtmoxcbiIsCiAgICAiXG4iLAogICAgIuyEuOyFmOydgCDtlZwg7J6R7JeF7J2YIOuNsOydtO2EsOuyoOydtOyKpCDrjIDtmZTrpbwg64KY7YOA64OF64uI64ukLiDsnpHsl4Xrp4jri6Qg7IOIIOyEuOyFmOydhCDsgqzsmqntlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiY2VsbC0wOCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjowODowOS45NzgyMThaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjowODowOS45NzgxNjZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjowODowOS45ODI5MDRaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjA4OjA5Ljk4MjU3NloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJbJ+2ZmOu2iCcsICfrsLDshqEnLCAn6rKw7KCcJ11cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiYXN5bmMgZGVmIHJlYWRfcXVlc3Rpb24oaXRlbV9pZDogaW50KSAtPiBzdHI6XG4iLAogICAgIiAgICBhc3luYyB3aXRoIFNlc3Npb24oKSBhcyBzZXNzaW9uOlxuIiwKICAgICIgICAgICAgIHJlc3VsdCA9IGF3YWl0IHNlc3Npb24uZXhlY3V0ZShcbiIsCiAgICAiICAgICAgICAgICAgdGV4dChcIlNFTEVDVCBxdWVzdGlvbiBGUk9NIGNoMzFfYXN5bmMucmVxdWVzdHMgV0hFUkUgaWQ9OmlkXCIpLCB7XCJpZFwiOiBpdGVtX2lkfVxuIiwKICAgICIgICAgICAgIClcbiIsCiAgICAiICAgICAgICByZXR1cm4gcmVzdWx0LnNjYWxhcl9vbmUoKVxuIiwKICAgICJcbiIsCiAgICAicXVlc3Rpb25zID0gW2F3YWl0IHJlYWRfcXVlc3Rpb24oaSkgZm9yIGkgaW4gcmFuZ2UoMSwgNCldXG4iLAogICAgInByaW50KHF1ZXN0aW9ucylcbiIsCiAgICAiYXNzZXJ0IHF1ZXN0aW9ucyA9PSBbXCLtmZjrtohcIiwgXCLrsLDshqFcIiwgXCLqsrDsoJxcIl0iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iic7LCoIOyLpO2WieqzvCDrj5nsi5wg7Iuk7ZaJIOu5hOq1kFxuIiwKICAgICJcbiIsCiAgICAi6rCZ7J2AIGBwZ19zbGVlcCgwLjE1KWAg7L+866asIOyEuCDqsbTsnZgg7Iuk7ZaJIOuwqeyLneunjCDrsJTqv4nri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY29uY2VwdC0zMS0wMS1iIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDri6jqs4Tsl5DshJwg6rWs67aE7ZWgIOuylOychFxuIiwKICAgICJcbiIsCiAgICAiYGFzeW5jaW8uZ2F0aGVyYOuhnCDshLgg7KGw7ZqM66W8IOuPmeyLnOyXkCDsi5zsnpHtlbTrj4Qg7ZWY64KY7J2YIGBBc3luY1Nlc3Npb25g7J2EIOqzteycoO2VmOuptCDslYgg65Cp64uI64ukLiDshLjshZjsnYAg7ZWY64KY7J2YIOynhO2WiSDspJHsnbgg7Yq4656c7J6t7IWY7J2EIOuCmO2DgOuCtOuKlCDrs4Dqsr0g6rCA64ql7ZWcIOqwneyytOydtOq4sCDrlYzrrLjsnoXri4jri6QuIOyYiOygnOydmCBgZGVsYXllZF9yZWFkYOqwgCDtmLjstpzrp4jri6Qg7IOIIOyEuOyFmOydhCDsl6zripQg7J207Jyg6rCAIOyXrOq4sOyXkCDsnojsirXri4jri6QuIOy2nOugpeydmCDsiJzssKjCt+uPmeyLnCDsi5zqsIQg7LCo7J2064qUIOuhnOy7rCBgcGdfc2xlZXBgIOyhsOqxtOyXkOyEnCDqtIDssLDtlZwg6rCS7J2066mwIOyLpOygnCDsv7zrpqwg7ISx64ql7J2YIOydvOuwmOyggeyduCDrsLDsiJjrpbwg65y77ZWY7KeAIOyViuyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjZWxsLTEwIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjA4OjA5Ljk4MzYxOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjA4OjA5Ljk4MzU3N1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjA4OjEwLjY1NTUwNFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MDg6MTAuNjU0NjYzWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInNlcXVlbnRpYWw9MC40NjhzLCBjb25jdXJyZW50PTAuMTk1c1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJmcm9tIHRpbWUgaW1wb3J0IHBlcmZfY291bnRlclxuIiwKICAgICJhc3luYyBkZWYgZGVsYXllZF9yZWFkKGl0ZW1faWQ6IGludCkgLT4gc3RyOlxuIiwKICAgICIgICAgYXN5bmMgd2l0aCBTZXNzaW9uKCkgYXMgc2Vzc2lvbjpcbiIsCiAgICAiICAgICAgICByb3cgPSBhd2FpdCBzZXNzaW9uLmV4ZWN1dGUodGV4dChcbiIsCiAgICAiICAgICAgICAgICAgXCJTRUxFQ1QgcXVlc3Rpb24gRlJPTSBjaDMxX2FzeW5jLnJlcXVlc3RzLCBwZ19zbGVlcCgwLjE1KSBXSEVSRSBpZD06aWRcIlxuIiwKICAgICIgICAgICAgICksIHtcImlkXCI6IGl0ZW1faWR9KVxuIiwKICAgICIgICAgICAgIHJldHVybiByb3cuc2NhbGFyX29uZSgpXG4iLAogICAgIlxuIiwKICAgICJzdGFydCA9IHBlcmZfY291bnRlcigpXG4iLAogICAgInNlcXVlbnRpYWwgPSBbYXdhaXQgZGVsYXllZF9yZWFkKGkpIGZvciBpIGluIHJhbmdlKDEsIDQpXVxuIiwKICAgICJzZXF1ZW50aWFsX3MgPSBwZXJmX2NvdW50ZXIoKSAtIHN0YXJ0XG4iLAogICAgInN0YXJ0ID0gcGVyZl9jb3VudGVyKClcbiIsCiAgICAiY29uY3VycmVudCA9IGF3YWl0IGFzeW5jaW8uZ2F0aGVyKCooZGVsYXllZF9yZWFkKGkpIGZvciBpIGluIHJhbmdlKDEsIDQpKSlcbiIsCiAgICAiY29uY3VycmVudF9zID0gcGVyZl9jb3VudGVyKCkgLSBzdGFydFxuIiwKICAgICJwcmludChmXCJzZXF1ZW50aWFsPXtzZXF1ZW50aWFsX3M6LjNmfXMsIGNvbmN1cnJlbnQ9e2NvbmN1cnJlbnRfczouM2Z9c1wiKVxuIiwKICAgICJhc3NlcnQgc2VxdWVudGlhbCA9PSBjb25jdXJyZW50IGFuZCBjb25jdXJyZW50X3MgPCBzZXF1ZW50aWFsX3NcbiIsCiAgICAiYXdhaXQgZW5naW5lLmRpc3Bvc2UoKSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAiZXhwZXJpbWVudCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDUsCiAgICJjb2RlX3NoYTI1NiI6ICJkZTU3ODQ5MTNmNTYxODQxNGE1MTFhOGNjMjRiZTEyMDBmZDQ0NTI4NzY0NzczYjM0NGRmOWNjODI5NzYxODlkIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDI6MDg6MTAuNzczNjI0KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICJhZDJiYzgwMTBiMGNmZmQ1YTkxYzczYjQ3OTg4ZDMyYTJmNWEyNWRmMmM3NDViZmM1YmE3OWNjNWZhMTYzMjUyIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>SQLAlchemy 비동기 PostgreSQL</h2>
+<p>실제 PostgreSQL 17에서 운영 데이터베이스의 한 가지 문제를 재현하고 해결합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p><code>AsyncEngine</code>과 <code>AsyncSession</code>으로 네트워크 I/O를 기다리는 동안 다른 작업을 진행할 수 있는지 확인합니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>앞의 <code>%pip install</code> 셀은 이 노트북을 실행하는 현재 커널에 Ch31에서 고정한 SQLAlchemy·PostgreSQL·pgvector·LangGraph 패키지를 설치합니다. 설치 명령의 출력은 숨기지만, 다음 셀의 import가 성공하려면 이 단계가 먼저 끝나야 합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 챕터에서 고정한 패키지를 설치합니다.
+%pip install -q &#x27;sqlalchemy[asyncio]==2.0.43&#x27; asyncpg==0.30.0 alembic==1.16.5
+%pip install -q &#x27;psycopg[binary,pool]==3.3.3&#x27; pgvector==0.4.1
+%pip install -q langgraph==1.2.11 langgraph-checkpoint-postgres==3.0.5</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>두 번째 준비 셀은 <code>CH31_DATABASE_URL</code>을 읽고 없으면 로컬 실습용 주소를 사용합니다. 같은 데이터베이스를 비동기 SQLAlchemy, psycopg, PostgreSQL 명령에서 사용할 수 있도록 드라이버 표기만 바꾼 세 URL을 만듭니다. 화면에는 데이터베이스 이름과 비밀값을 숨겼다는 사실만 출력합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 전용 실습 데이터베이스 주소만 준비하며 비밀 값은 출력하지 않습니다.
+import os
+ASYNC_URL = os.getenv(
+    &quot;CH31_DATABASE_URL&quot;,
+    &quot;postgresql+asyncpg://postgres:postgres@localhost:55431/ch31_lab&quot;,
+)
+SYNC_URL = ASYNC_URL.replace(&quot;postgresql+asyncpg&quot;, &quot;postgresql+psycopg&quot;)
+NATIVE_URL = ASYNC_URL.replace(&quot;postgresql+asyncpg&quot;, &quot;postgresql&quot;)
+print(&quot;database: ch31_lab, credentials: hidden&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">database: ch31_lab, credentials: hidden
+</pre></div>
+<div class="nb-markdown"><h3>비동기 엔진과 테이블 준비</h3>
+<p>전용 <code>ch31_async</code> 스키마에 상담 요청 세 건을 저장합니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p><code>create_async_engine</code>은 비동기 드라이버와 연결 풀을 묶은 Engine을 만들고, <code>async_sessionmaker</code>는 요청마다 사용할 <code>AsyncSession</code> 생성 규칙을 만듭니다. <code>async with Session() as session</code>은 세션의 사용 범위를 표시하며 <code>await session.execute(...)</code>에서 실제 데이터베이스 입출력이 발생합니다. <code>scalar_one()</code>은 결과가 정확히 한 값이어야 한다는 조건까지 확인해 문자열을 반환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import asyncio
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+
+engine = create_async_engine(ASYNC_URL, pool_size=3, max_overflow=0)
+Session = async_sessionmaker(engine, expire_on_commit=False)
+async with engine.begin() as conn:
+    await conn.execute(text(&quot;DROP SCHEMA IF EXISTS ch31_async CASCADE&quot;))
+    await conn.execute(text(&quot;CREATE SCHEMA ch31_async&quot;))
+    await conn.execute(text(&quot;CREATE TABLE ch31_async.requests (id int primary key, question text)&quot;))
+    await conn.execute(text(&quot;INSERT INTO ch31_async.requests VALUES (1,&#x27;환불&#x27;),(2,&#x27;배송&#x27;),(3,&#x27;결제&#x27;)&quot;))
+print(&quot;rows prepared: 3&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">rows prepared: 3
+</pre></div>
+<div class="nb-markdown"><h3>세션으로 조회</h3>
+<p>세션은 한 작업의 데이터베이스 대화를 나타냅니다. 작업마다 새 세션을 사용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">async def read_question(item_id: int) -&gt; str:
+    async with Session() as session:
+        result = await session.execute(
+            text(&quot;SELECT question FROM ch31_async.requests WHERE id=:id&quot;), {&quot;id&quot;: item_id}
+        )
+        return result.scalar_one()
+
+questions = [await read_question(i) for i in range(1, 4)]
+print(questions)
+assert questions == [&quot;환불&quot;, &quot;배송&quot;, &quot;결제&quot;]</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[&#x27;환불&#x27;, &#x27;배송&#x27;, &#x27;결제&#x27;]
+</pre></div>
+<div class="nb-markdown"><h3>순차 실행과 동시 실행 비교</h3>
+<p>같은 <code>pg_sleep(0.15)</code> 쿼리 세 건의 실행 방식만 바꿉니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p><code>asyncio.gather</code>로 세 조회를 동시에 시작해도 하나의 <code>AsyncSession</code>을 공유하면 안 됩니다. 세션은 하나의 진행 중인 트랜잭션을 나타내는 변경 가능한 객체이기 때문입니다. 예제의 <code>delayed_read</code>가 호출마다 새 세션을 여는 이유가 여기에 있습니다. 출력의 순차·동시 시간 차이는 로컬 <code>pg_sleep</code> 조건에서 관찰한 값이며 실제 쿼리 성능의 일반적인 배수를 뜻하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">from time import perf_counter
+async def delayed_read(item_id: int) -&gt; str:
+    async with Session() as session:
+        row = await session.execute(text(
+            &quot;SELECT question FROM ch31_async.requests, pg_sleep(0.15) WHERE id=:id&quot;
+        ), {&quot;id&quot;: item_id})
+        return row.scalar_one()
+
+start = perf_counter()
+sequential = [await delayed_read(i) for i in range(1, 4)]
+sequential_s = perf_counter() - start
+start = perf_counter()
+concurrent = await asyncio.gather(*(delayed_read(i) for i in range(1, 4)))
+concurrent_s = perf_counter() - start
+print(f&quot;sequential={sequential_s:.3f}s, concurrent={concurrent_s:.3f}s&quot;)
+assert sequential == concurrent and concurrent_s &lt; sequential_s
+await engine.dispose()</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">sequential=0.468s, concurrent=0.195s
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 세 조회 결과가 같은지, 순차 시간과 동시 시간이 각각 얼마인지 확인합니다. 시간 차이는 독립된 대기와 세 개 연결이라는 실험 조건에서만 해석합니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>실제 실행에서는 0.15초 대기 쿼리 세 건의 순차 실행 시간이 약 0.46초였고, 연결 세 개로 동시 실행한 시간은 약 0.20초였습니다. 운영 성능 전체를 뜻하지 않으며, 인위적인 대기와 로컬 네트워크에서 동시 대기의 차이만 보여 줍니다.</p><p>이 결과는 Docker의 독립 PostgreSQL 17.8 컨테이너와 작은 데이터에서 측정했습니다. 행 수, 네트워크, 디스크, 동시 요청 수가 달라지면 시간과 실행 계획도 달라집니다.</p><p>실제 서비스에서는 쿼리별 지연뿐 아니라 한 요청이 세션을 보유한 전체 시간도 측정합니다. 동시 실행 개수를 풀 크기보다 크게 바꿔 대기 구간이 생기는 지점을 찾고, 그 결과를 요청 제한 설정에 반영합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>비동기 함수 안에서 동기 데이터베이스 드라이버를 호출하면 이벤트 루프가 멈출 수 있습니다.</li><li>`AsyncSession` 하나를 여러 동시 작업이 공유하면 트랜잭션 상태가 섞일 수 있습니다.</li><li>애플리케이션 종료 시 `await engine.dispose()`로 풀의 유휴 연결을 정리합니다.</li></ul><h3>운영 전 확인 순서</h3><p>배포 전에는 요청 수를 한 단계씩 늘리며 활성 세션 수와 풀 체크아웃 수를 기록합니다. 동기 드라이버가 섞이지 않았는지 실행 경로를 확인하고, 타임아웃 뒤 세션이 닫히는지도 시험합니다. 취소된 요청이 연결을 계속 점유한다면 동시 처리 수를 늘리기 전에 정리 경로를 고쳐야 합니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>`AsyncEngine`은 비동기 드라이버와 연결 풀을 관리합니다.</li><li>동시 작업마다 별도 `AsyncSession`을 만들며 하나의 세션을 공유하지 않습니다.</li><li>대기 쿼리 세 건은 순차 약 0.46초, 동시 약 0.20초였습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 세션과 연결이 변경 작업을 어떤 단위로 확정하고 되돌리는지 확인합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. `AsyncEngine`을 사용하는 주된 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 데이터베이스 응답을 기다리는 동안 이벤트 루프가 다른 작업을 처리할 수 있게 하기 위해서입니다.</p></details><details class="quiz"><summary>2. `AsyncSession`을 여러 동시 작업이 공유해도 되나요?</summary><p class="quiz-a"><b>해설</b> — 안 됩니다. 세션은 한 논리 트랜잭션의 변경 가능한 상태를 가지므로 작업마다 별도 세션을 사용합니다.</p></details><details class="quiz"><summary>3. 동시 실행 시간이 짧아진 결과가 모든 쿼리의 성능 향상을 보장하나요?</summary><p class="quiz-a"><b>해설</b> — 보장하지 않습니다. 이 실험은 독립적인 대기 쿼리 세 건과 연결 세 개라는 조건에서만 동시 대기 효과를 확인했습니다.</p></details><details class="quiz"><summary>4. 엔진을 마칠 때 호출한 메서드는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — `await engine.dispose()`이며 풀의 유휴 연결을 정리합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html">SQLAlchemy 비동기 PostgreSQL 공식 문서</a> · 확인 2026-09-11 · SQLAlchemy 2.0</li><li><a href="https://docs.sqlalchemy.org/en/20/orm/session_basics.html">SQLAlchemy 비동기 PostgreSQL 공식 문서</a> · 확인 2026-09-11 · 세션 동시성</li></ul><p><strong>확인 필요 항목</strong> — 운영 배포 전에는 조직의 허용 연결 수, 백업 보존 기간, 복구 목표 시간과 실제 데이터 규모를 별도로 확인해야 합니다.</p>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span>&nbsp;</span><span><a href="index.html">챕터 목차</a></span><span><a href="02-트랜잭션과-원자성.html">트랜잭션과 원자성 →</a></span></div></div></body></html>

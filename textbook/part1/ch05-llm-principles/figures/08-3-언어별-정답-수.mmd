@@ -1,0 +1,15 @@
+flowchart LR
+  %% classes
+  SAME["같은 문서와 질문 네 개<br>정답 숫자 같게 옮김"]:::tool
+  KOREAN["한국어 평가 자료"]:::tool
+  ENGLISH["영어 평가 자료"]:::tool
+  KO_QWEN["Qwen 정답 3 / 4<br>답 시간 12.4초"]:::measure
+  KO_SMOL["SmolLM2 정답 1 / 4<br>답 시간 7.7초"]:::measure
+  EN_QWEN["Qwen 정답 4 / 4<br>답 시간 19.3초"]:::measure
+  EN_SMOL["SmolLM2 정답 3 / 4<br>답 시간 4.7초"]:::measure
+  SAME --> KOREAN
+  SAME --> ENGLISH
+  KOREAN --> KO_QWEN
+  KOREAN --> KO_SMOL
+  ENGLISH --> EN_QWEN
+  ENGLISH --> EN_SMOL

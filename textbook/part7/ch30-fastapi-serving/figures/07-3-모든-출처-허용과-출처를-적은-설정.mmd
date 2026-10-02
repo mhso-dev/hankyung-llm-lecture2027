@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  evil["모르는 출처의 사전 요청<br>Origin https://evil.example"]:::tool
+  subgraph bf["Before · 모든 출처 허용"]
+    direction TB
+    b1["세 칸 모두 별표<br>자격 증명 허락<br>새 앱 객체 wide_app"]:::flow
+    b2["200 · 허용 출처<br>https://evil.example<br>자격 증명 허용 true"]:::fail
+    b1 --> b2
+  end
+  subgraph af["After · 출처를 적은 실습 앱"]
+    direction TB
+    a1["허용 출처<br>http://localhost:5173<br>요청 방식과 요청 머리도<br>이름으로"]:::tool
+    a2["400<br>Disallowed CORS origin<br>허용 출처 없음"]:::measure
+    a1 --> a2
+  end
+  evil --> bf
+  evil --> af

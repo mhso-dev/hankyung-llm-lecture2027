@@ -1,0 +1,422 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · 임베딩·벡터스토어·top-k 검색 — Ch 9 · RAG 첫 완주 + 실험 하네스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>{if(!window.hljs)return;document.querySelectorAll("pre:not(.out) code").forEach(el=>hljs.highlightElement(el));});</script>
+<style>
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+pre{white-space:pre-wrap;overflow-wrap:anywhere} .nav-foot>span{min-width:0;overflow-wrap:anywhere} .goal li::before{content:none!important}.goal li{padding-left:0!important}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+.diagram-scroll{overflow-x:auto;max-width:100%}figure svg{width:100%;min-width:760px;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media print{body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style>
+</head><body><div class="page">
+<!-- 생성: _build.py · 원본 조각 _src/03-임베딩과-벡터스토어.html · 도식 figures/*.svg · 삽화 figures/*.png (Higgsfield nano_banana_pro, 2026-09-07) -->
+<header class="top">
+<p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 3 RAG · Ch 9 · RAG 첫 완주 + 실험 하네스</p>
+<h1>03 · 임베딩·벡터스토어·top-k 검색</h1>
+<div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 6</span></div>
+</header>
+<nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 03-임베딩과-벡터스토어.ipynb | 새 용어 6 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul>
+<li>이 절을 마치면 ID가 있는 Document 세 건을 만들고 실제 OpenAI 임베딩으로 <code>InMemoryVectorStore</code>에 저장할 수 있습니다.</li>
+<li>이 절을 마치면 <code>similarity_search_with_score()</code>가 문서와 점수를 한 쌍으로 묶어 반환한다는 것을 알고, 두 값을 반복문으로 나누어 읽을 수 있습니다.</li>
+<li>이 절을 마치면 질문·문서·모델은 유지하고 <code>k</code>만 1에서 2로 바꾸어 검색 결과를 비교할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>02절에서 청크를 만들었습니다. 이제 "질문의 답과 관련 있는 청크"를 골라야 합니다. 단어가 겹치는지로 고를 수도 있지만(Ch 12의 BM25), 이 절은 <strong>의미가 가까운지</strong>로 고릅니다. 기본 노트북은 원리와 반환값을 분명히 보려고 D01, D02, D03이라는 ID를 붙인 문서 세 건에서 검색합니다.</p>
+<p>이 절은 벡터스토어의 <code>similarity_search_with_score()</code>를 직접 호출하고 <em>반환값을 해석하는 능력</em>을 익힙니다. 반환된 Document의 ID·본문과 점수를 함께 읽으면 어떤 문서가 먼저 선택되었는지 확인할 수 있습니다. Ch 12에서는 같은 중간값을 보며 검색 방법을 비교합니다.</p>
+
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<ul>
+<li><strong>Ch 5 임베딩과 의미 유사도</strong> — 문장 두 개를 벡터로 바꿔 코사인 유사도를 직접 계산했습니다. 기본 노트북의 벡터스토어가 문서 세 건에 같은 계산을 적용하고, 질문과 가까운 순서로 놓습니다.</li>
+<li><strong>02절의 분할 결과</strong> — 기본 노트북은 독립 실행을 위해 <code>doc_id</code>가 든 짧은 <code>Document</code> 세 건을 만듭니다. 이 객체들이 임베딩과 색인의 입력이 됩니다.</li>
+<li><strong>Ch 4 저장할 데이터의 항목 읽기</strong> — 벡터스토어에는 본문, 숫자 벡터, 문서 ID 같은 부가 정보가 함께 저장됩니다. Ch 12에서는 이 세 항목을 pgvector 데이터베이스의 열로 나누어 저장합니다. 데이터베이스에 어떤 열을 둘지 정한 구조를 스키마라고 부릅니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+
+<h3>비유 — 지도 위의 핀</h3>
+<p>기본 노트북의 문서 세 건을 지도 위 핀 세 개라고 생각하세요. 비슷한 내용은 가까운 자리에 놓입니다. 질문이 들어오면 질문도 같은 지도에 핀 하나로 표시하고, 그 핀에서 가장 가까운 핀 k개를 고릅니다. 이것이 top-k 검색의 전부입니다. 지도의 좌표가 벡터이고, 지도가 벡터스토어이며, "가깝다"의 잣대가 코사인 유사도입니다.</p>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>임베딩 (embedding)</dt>
+<dd>텍스트를 고정 길이의 숫자 벡터로 바꾸는 것, 또는 그 벡터입니다. 이 절의 모델 <code>text-embedding-3-small</code>은 입력 한도 안의 텍스트를 소수를 포함할 수 있는 숫자 1,536개로 이루어진 벡터로 바꿉니다. <code>dimensions</code>를 지정하면 벡터 길이를 줄일 수 있습니다. 의미가 비슷한 텍스트는 비슷한 벡터가 됩니다.</dd>
+<dt>코사인 유사도 (cosine similarity, 벡터 방향의 가까움을 나타내는 값)</dt>
+<dd>두 벡터가 이루는 각도로 가까운 정도를 측정하는 값입니다. 1이면 같은 방향이고 0이면 두 벡터가 서로 90도를 이룹니다. 0이나 음수라는 값만으로 문장 의미가 무관하거나 반대라고 단정할 수는 없습니다. <code>InMemoryVectorStore</code>의 점수가 이것입니다.</dd>
+<dt>벡터스토어 (vector store)</dt>
+<dd>청크 텍스트·벡터·메타데이터를 함께 저장하고, 질문 벡터와 가까운 것을 찾아 주는 저장소입니다. 기본 노트북의 <code>InMemoryVectorStore</code>는 문서 세 건을 메모리에 둡니다. 문서가 많아졌을 때 사용하며 프로그램을 종료해도 데이터가 남는 저장소와 빠른 검색 구조는 Ch 12에서 다룹니다.</dd>
+<dt>top-k</dt>
+<dd>점수 상위 k개만 반환하는 것입니다. k는 학생이 정하는 값입니다. 이 절은 k=1과 k=2의 반환 개수를 비교하고, 04절은 k=1 Document를 프롬프트에 넣습니다.</dd>
+<dt>질문 임베딩 (query embedding)</dt>
+<dd>질문 문장을 청크와 같은 모델로 벡터화한 것입니다. <em>같은 모델</em>이어야 같은 지도에 놓입니다. 청크는 A 모델, 질문은 B 모델로 임베딩하면 점수가 무의미해집니다.</dd>
+<dt>저장 ID</dt>
+<dd><code>add_documents()</code>가 반환하는 각 벡터의 식별자입니다. 기본 노트북은 반환된 ID 리스트의 길이가 입력 Document 수와 같은지 확인합니다.</dd>
+</dl>
+
+<h3>도식 — 질문 핀과 가까운 청크 핀</h3>
+<figure>
+<div class="diagram-scroll" role="region" aria-label="가로로 이동하여 도식 보기" tabindex="0"><svg style="min-width:800px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="800" height="480" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" role="img" aria-label="질문과 뜻이 가까운 문서를 k개 고르는 검색">
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a9eed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ef4444"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#757575"/></marker>
+</defs>
+<rect width="800" height="480" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="18" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">질문과 뜻이 가까운 문서를 k개 고르는 검색</tspan></text>
+<rect x="40" y="60" width="480" height="380" rx="12" fill="#d3f9d8" fill-opacity="0.35" stroke="#22c55e" stroke-width="1"/>
+<text x="54" y="76.0" font-size="15" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="54" dy="0.0">글의 뜻을 숫자로 나타낸 공간 (그림은 2차원으로 단순화)</tspan></text>
+<circle cx="200" cy="200" r="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="216" y="200.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="216" dy="0.0">D01 휴관일</tspan></text>
+<circle cx="250" cy="250" r="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="266" y="250.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="266" dy="0.0">D02 점심 영업</tspan></text>
+<circle cx="150" cy="300" r="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="166" y="300.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="166" dy="0.0">D03 급여일</tspan></text>
+<circle cx="310" cy="305" r="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="326" y="305.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="326" dy="0.0">추가 문서</tspan></text>
+<circle cx="420" cy="130" r="8" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="434" y="130.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="434" dy="0.0">다른 문서</tspan></text>
+<circle cx="460" cy="380" r="8" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="474" y="380.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="474" dy="0.0">다른 문서</tspan></text>
+<circle cx="90" cy="130" r="8" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="104" y="130.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="104" dy="0.0">다른 문서</tspan></text>
+<circle cx="230" cy="230" r="12" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="175" y="222.0" font-size="15" fill="#2563eb" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="175" dy="0.0">질문 ★</tspan></text>
+<circle cx="230" cy="230" r="125" fill="none" stroke="#4a9eed" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="290" y="120.0" font-size="14" fill="#2563eb" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="290" dy="0.0">k=2 범위</tspan></text>
+<rect x="560" y="80" width="210" height="60" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="665.0" y="100.5" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="665.0" dy="0.0">질문도 같은 방식으로</tspan><tspan x="665.0" dy="18.9">숫자 벡터로 바꾸기</tspan></text>
+<polyline points="560,110 345,220" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)" stroke-dasharray="7 5"/>
+<rect x="560" y="170" width="210" height="90" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="665.0" y="196.1" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="665.0" dy="0.0">similarity_search_with_score</tspan><tspan x="665.0" dy="18.9">(query, k=1 또는 2)</tspan><tspan x="665.0" dy="18.9">→ [(Document, 점수)]</tspan></text>
+<rect x="560" y="290" width="210" height="70" rx="10" fill="#ffc9c9" stroke="#ef4444" stroke-width="2"/>
+<text x="665.0" y="315.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="665.0" dy="0.0">k=1: 가장 가까운</tspan><tspan x="665.0" dy="18.9">D01 한 건</tspan></text>
+<rect x="560" y="380" width="210" height="55" rx="10" fill="#fff3bf" stroke="#f59e0b" stroke-width="2"/>
+<text x="665.0" y="398.1" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="665.0" dy="0.0">k=2: D01은 유지되고</tspan><tspan x="665.0" dy="18.9">후보 한 건이 추가된다</tspan></text>
+</svg></div>
+<figcaption>질문 벡터와 가까운 문서 벡터를 순서대로 고르는 개념도입니다. 기본 노트북에서는 문서 세 건을 저장하고 k=1과 k=2의 반환 Document·점수를 직접 비교합니다.</figcaption>
+</figure>
+
+<h3>노트북에서 확인할 색인과 검색</h3>
+<p>세 줄이 핵심입니다. <code>OpenAIEmbeddings</code>가 텍스트를 벡터로 바꾸는 담당, <code>InMemoryVectorStore</code>가 벡터를 담는 담당, <code>add_documents()</code>가 청크 목록을 받아 하나씩 임베딩해 넣는 동작입니다. 기본 비교에서는 <code>similarity_search_with_score()</code>를 호출합니다. 이 메서드는 <code>(Document, 점수)</code> 튜플의 리스트를 반환하므로 문서 내용과 순서를 함께 관찰할 수 있습니다. 실패 수정 셀에서는 두 문서의 정보를 함께 묻는 질문에서 k만 1에서 2로 바꾸고 검색된 Document ID를 비교합니다.</p>
+<div class="callout blue"><b>직접 호출하는 이유</b>이 절에서는 벡터스토어 메서드를 셀에서 직접 호출합니다. <code>hits_k1</code>과 <code>hits_k2</code>를 바로 출력하면 k 변경 전후의 Document·점수·개수를 한 단계씩 확인할 수 있습니다.</div>
+
+<h3>벡터스토어 호출을 단계별로 읽기</h3><p><code>OpenAIEmbeddings(model=...)</code>는 임베딩 설정을 가진 객체를 만들 뿐, 이 줄에서 문서 벡터를 요청하지는 않습니다. 실제 호출은 <code>add_documents(documents)</code>가 문서 목록을 받아 각 본문을 임베딩할 때 일어납니다. 반환된 벡터 ID 목록은 저장 성공을 확인하는 값이고, <code>store</code>에는 원문 <code>Document</code>와 검색용 벡터가 연결되어 있습니다.</p><p><code>similarity_search_with_score(question, k=2)</code>는 질문을 같은 모델로 임베딩하고 가까운 문서 두 건을 <code>(Document, 코사인 유사도)</code> 쌍으로 반환합니다. 이 절의 <code>InMemoryVectorStore</code> 점수는 클수록 질문과 더 가깝습니다. 유사도는 관련성 확률이 아니므로 0.8을 “80% 관련”으로 읽으면 안 됩니다. 제품 코드명처럼 정확한 철자가 핵심인 질문은 의미 벡터만으로 부족할 수 있으며 Ch 12의 키워드 검색과 비교합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>문서 ID와 본문을 튜플에서 하나씩 꺼내 Document로 만듭니다. 실제 임베딩 후 반환된 벡터 ID 수, store 타입, k=1의 Document·점수·본문을 확인하고 k만 2로 바꿉니다.</p>
+<section class="notebook" data-notebook="03-임베딩과-벡터스토어" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-09</span><button type="button" class="copy-all">전체 코드 복사</button><a download="03-임베딩과-벡터스토어.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI5OGEzZTlhYiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIjxoMz7si6TsirUg7JWI64K0PC9oMz48cD7sp6fsnYAgRG9jdW1lbnQg7IS4IOqxtOydhCBPcGVuQUkg7J6E67Kg65Sp7Jy866GcIOyIq+yekCDrsqHthLDroZwg67CU6r+UIOyggOyepe2VqeuLiOuLpC4gPGNvZGU+azwvY29kZT7ripQg6rKA7IOJ7ZWgIOusuOyEnCDqsJzsiJjsnoXri4jri6QuIGvrp4wgMeyXkOyEnCAy66GcIOuwlOq+uOqzoCDqsoDsg4kg6rKw6rO86rCAIOyWtOuWu+qyjCDri6zrnbzsp4DripTsp4Ag67mE6rWQ7ZWp64uI64ukLjwvcD5cbiIsCiAgICAiPGgzPuuyoe2EsOyKpO2GoOyWtCDtmLjstpzsnYQg64uo6rOE67OE66GcIOydveq4sDwvaDM+PHA+PGNvZGU+T3BlbkFJRW1iZWRkaW5ncygpPC9jb2RlPuuKlCDshKTsoJUg6rCd7LK066W8IOunjOuTpOqzoCwg7Iuk7KCcIOusuOyEnCDsnoTrsqDrlKnsnYAgPGNvZGU+YWRkX2RvY3VtZW50cygpPC9jb2RlPuulvCDtmLjstpztlaAg65WMIOyLpO2WieuQqeuLiOuLpC4gPGNvZGU+c2ltaWxhcml0eV9zZWFyY2hfd2l0aF9zY29yZShxdWVzdGlvbiwgaz0yKTwvY29kZT7ripQg7KeI66y47J2EIOqwmeydgCDrqqjrjbjroZwg7J6E67Kg65Sp7ZWcIOuSpCA8Y29kZT4oRG9jdW1lbnQsIOy9lOyCrOyduCDsnKDsgqzrj4QpPC9jb2RlPiDrkZAg6rG07J2EIOuwmO2ZmO2VqeuLiOuLpC4g7J20IDxjb2RlPkluTWVtb3J5VmVjdG9yU3RvcmU8L2NvZGU+IOygkOyImOuKlCDtgbTsiJjroZ0g7KeI66y46rO8IOuNlCDqsIDquZ3sirXri4jri6QuPC9wPjxwPuycoOyCrOuPhOuKlCDqtIDroKjshLEg7ZmV66Wg7J20IOyVhOuLiOuvgOuhnCAwLjjsnYQgODAlIOq0gOugqOycvOuhnCDtlbTshJ3tlZjsp4Ag7JWK7Iq164uI64ukLiDsoJXtmZXtlZwg7KCc7ZKIIOy9lOuTnOqwgCDspJHsmpTtlZwg7KeI66y47J2AIOydmOuvuCDrsqHthLDrp4zsnLzroZwg67aA7KGx7ZWgIOyImCDsnojsnLzrqbAgQ2ggMTLsl5DshJwg7YKk7JuM65OcIOqygOyDieqzvCDruYTqtZDtlanri4jri6QuPC9wPiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogIjk2MDBmNmUyIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE0OjE2OjU5LjAzNDI3NFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE0OjE2OjU5LjAzNDE5OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE0OjE2OjU5LjQ0MTkyMVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTQ6MTY6NTkuNDQxNDIyWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIk5vdGU6IHlvdSBtYXkgbmVlZCB0byByZXN0YXJ0IHRoZSBrZXJuZWwgdG8gdXNlIHVwZGF0ZWQgcGFja2FnZXMuXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7J6E67Kg65Sp6rO8IOuplOuqqOumrCDrsqHthLDsiqTthqDslrTsl5Ag7ZWE7JqU7ZWcIO2MqO2CpOyngOulvCDshKTsuZjtlanri4jri6QuXG4iLAogICAgIiMgPT3ripQg6rKA7Kad65CcIOuyhOyghOydhCDqs6DsoJXtlZjqs6AgLXHripQg7ISk7LmYIOuhnOq3uOulvCDspITsnoXri4jri6QuXG4iLAogICAgIiVwaXAgaW5zdGFsbCAtcSBcImxhbmdjaGFpbj09MS40LjBcIiBcImxhbmdjaGFpbi1vcGVuYWk9PTEuNi4wXCIgXCJweXRob24tZG90ZW52PT0xLjIuM1wiIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiZjMxNzYzMmMiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICI8aDM+MS4gQVBJIO2CpCDspIDruYQ8L2gzPjxwPu2YhOyerCDsnpHsl4Ug7Y+0642U7JeQ7IScIDxjb2RlPi5lbnY8L2NvZGU+66W8IOywvuyVhCDsi6TsoJwg7J6E67Kg65SpIO2YuOy2nOydhCDspIDruYTtlanri4jri6QuPC9wPiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogIjBmNWMwMWRkIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE0OjE2OjU5LjQ0MzIwM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE0OjE2OjU5LjQ0MzExMFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE0OjE2OjU5LjQ0NzgyMFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTQ6MTY6NTkuNDQ3NTI0WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIkFQSSDtgqQg7KSA67mEIOyZhOujjFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGVudl9maWxl7J2AIGZpbmRfZG90ZW52KCnqsIAg7LC+7J2AIC5lbnYg6rK966GcIOusuOyekOyXtOyeheuLiOuLpC5cbiIsCiAgICAiIyBsb2FkX2RvdGVudigp64qUIO2MjOydvOydhCDroZzrk5ztlZjqs6Agb3MuZ2V0ZW52KCnripQgT1BFTkFJX0FQSV9LRVkg7KG07J6s66W8IO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiaW1wb3J0IG9zXG4iLAogICAgImZyb20gZG90ZW52IGltcG9ydCBmaW5kX2RvdGVudiwgbG9hZF9kb3RlbnZcbiIsCiAgICAiXG4iLAogICAgImVudl9maWxlID0gZmluZF9kb3RlbnYodXNlY3dkPVRydWUpXG4iLAogICAgImFzc2VydCBlbnZfZmlsZSwgXCIuZW5266W8IOywvuyngCDrqrvtlojsirXri4jri6QuXCJcbiIsCiAgICAibG9hZF9kb3RlbnYoZW52X2ZpbGUpXG4iLAogICAgImFzc2VydCBvcy5nZXRlbnYoXCJPUEVOQUlfQVBJX0tFWVwiKSwgXCJPUEVOQUlfQVBJX0tFWeqwgCDsl4bsirXri4jri6QuXCJcbiIsCiAgICAicHJpbnQoXCJBUEkg7YKkIOykgOu5hCDsmYTro4xcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICIyM2E2NzY0ZCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIjxoMz4yLiDrnbzrsqjsnbQg7J6I64qUIOusuOyEnCDspIDruYQ8L2gzPjxwPuqygOyDieuQnCDrrLjshJzrpbwg7J2066aE7Jy866GcIOq1rOu2hO2VoCDsiJgg7J6I6rKMIOqwgSBEb2N1bWVudOyXkCBEMDEsIEQwMiwgRDAz7J20652864qUIOusuOyEnCBJRCg8Y29kZT5kb2NfaWQ8L2NvZGU+KeulvCDrhKPsirXri4jri6QuPC9wPiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogIjE2NGFjYjk5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE0OjE2OjU5LjQ0ODYyN1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE0OjE2OjU5LjQ0ODU4MloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE0OjE2OjU5LjQ4NzE2OFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTQ6MTY6NTkuNDg2ODM3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuusuOyEnCDsiJg6IDMg7YOA7J6FOiBEb2N1bWVudFxuIiwKICAgICAgInsnZG9jX2lkJzogJ0QwMSd9IOuvuOultOyLnOumveuPhOyEnOq0gOydmCDsoJXquLAg7Zy06rSA7J287J2AIOunpOyjvCDsm5TsmpTsnbzsnoXri4jri6QuXG4iLAogICAgICAieydkb2NfaWQnOiAnRDAyJ30g7ZW07IaU7Iud64u57J2YIOygkOyLrCDsmIHsl4XsnYAg7Jik7KCEIDEx7Iuc7JeQIOyLnOyeke2VqeuLiOuLpC5cbiIsCiAgICAgICJ7J2RvY19pZCc6ICdEMDMnfSDrs4TruZvtmozsgqzsnZgg6riJ7Jes7J287J2AIOunpOyblCAyNeydvOyeheuLiOuLpC5cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyByYXdfZG9jdW1lbnRz7J2YIOqwgSDtipztlIzsnYAgKOusuOyEnCBJRCwg67O466y4KSDrkZAg6rCS7J2EIOustuyKteuLiOuLpC5cbiIsCiAgICAiIyBmb3LroZwg7Yqc7ZSM7J2EIGRvY19pZOyZgCBjb250ZW5066GcIOuCmOuIhOyWtCBEb2N1bWVudOulvCDtlZjrgpjslKkg7LaU6rCA7ZWp64uI64ukLlxuIiwKICAgICJmcm9tIGxhbmdjaGFpbl9jb3JlLmRvY3VtZW50cyBpbXBvcnQgRG9jdW1lbnRcbiIsCiAgICAiXG4iLAogICAgInJhd19kb2N1bWVudHMgPSBbXG4iLAogICAgIiAgICAoXCJEMDFcIiwgXCLrr7jrpbTsi5zrpr3rj4TshJzqtIDsnZgg7KCV6riwIO2ctOq0gOydvOydgCDrp6Tso7wg7JuU7JqU7J287J6F64uI64ukLlwiKSxcbiIsCiAgICAiICAgIChcIkQwMlwiLCBcIu2VtOyGlOyLneuLueydmCDsoJDsi6wg7JiB7JeF7J2AIOyYpOyghCAxMeyLnOyXkCDsi5zsnpHtlanri4jri6QuXCIpLFxuIiwKICAgICIgICAgKFwiRDAzXCIsIFwi67OE67mb7ZqM7IKs7J2YIOq4ieyXrOydvOydgCDrp6Tsm5QgMjXsnbzsnoXri4jri6QuXCIpLFxuIiwKICAgICJdXG4iLAogICAgImRvY3VtZW50cyA9IFtdXG4iLAogICAgImZvciBkb2NfaWQsIGNvbnRlbnQgaW4gcmF3X2RvY3VtZW50czpcbiIsCiAgICAiICAgIGRvY3VtZW50ID0gRG9jdW1lbnQocGFnZV9jb250ZW50PWNvbnRlbnQsIG1ldGFkYXRhPXtcImRvY19pZFwiOiBkb2NfaWR9KVxuIiwKICAgICIgICAgZG9jdW1lbnRzLmFwcGVuZChkb2N1bWVudClcbiIsCiAgICAicHJpbnQoXCLrrLjshJwg7IiYOlwiLCBsZW4oZG9jdW1lbnRzKSwgXCLtg4DsnoU6XCIsIHR5cGUoZG9jdW1lbnRzWzBdKS5fX25hbWVfXylcbiIsCiAgICAiZm9yIGRvY3VtZW50IGluIGRvY3VtZW50czpcbiIsCiAgICAiICAgIHByaW50KGRvY3VtZW50Lm1ldGFkYXRhLCBkb2N1bWVudC5wYWdlX2NvbnRlbnQpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiOGJjNzNlMmQiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICI8aDM+My4g7J6E67Kg65SpIOuqqOuNuOqzvCDrsqHthLDsiqTthqDslrQg66eM65Ok6riwPC9oMz48cD7qsIEg66y47ISc66W8IOucu+ydhCDrgpjtg4DrgrTripQg7Iir7J6QIOuyoe2EsOuhnCDrsJTqvrjqs6AsIOybkOusuOqzvCDrsqHthLDrpbwg7ZiE7J6sIOyLpO2WiSDrqZTrqqjrpqzsnZgg7KCA7J6l7IaM7JeQIO2VqOq7mCDrhKPsirXri4jri6QuPC9wPiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogIjUyYWMwZDZmIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE0OjE2OjU5LjQ4Nzk4NloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE0OjE2OjU5LjQ4NzkzOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAwLjQ4OTIwMFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTQ6MTc6MDAuNDg4Njg4WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInN0b3JlIO2DgOyehTogSW5NZW1vcnlWZWN0b3JTdG9yZVxuIiwKICAgICAgIuyggOyepeuQnCDrsqHthLAgSUQg7IiYOiAzXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgZW1iZWRkaW5n7J2AIOusuOyepeydhCDsiKvsnpAg67Kh7YSw66GcIOuwlOq+uOuKlCBPcGVuQUkg66qo6424IOqwneyytOyeheuLiOuLpC5cbiIsCiAgICAiIyBhZGRfZG9jdW1lbnRzKCnripQg66y47IScIOuyoe2EsOyZgCDsm5Drs7ggRG9jdW1lbnTrpbwgc3RvcmXsl5Ag7KCA7J6l7ZWp64uI64ukLlxuIiwKICAgICJmcm9tIGxhbmdjaGFpbl9jb3JlLnZlY3RvcnN0b3JlcyBpbXBvcnQgSW5NZW1vcnlWZWN0b3JTdG9yZVxuIiwKICAgICJmcm9tIGxhbmdjaGFpbl9vcGVuYWkgaW1wb3J0IE9wZW5BSUVtYmVkZGluZ3NcbiIsCiAgICAiXG4iLAogICAgImVtYmVkZGluZyA9IE9wZW5BSUVtYmVkZGluZ3MobW9kZWw9XCJ0ZXh0LWVtYmVkZGluZy0zLXNtYWxsXCIpXG4iLAogICAgInN0b3JlID0gSW5NZW1vcnlWZWN0b3JTdG9yZShlbWJlZGRpbmc9ZW1iZWRkaW5nKVxuIiwKICAgICJzdG9yZWRfaWRzID0gc3RvcmUuYWRkX2RvY3VtZW50cyhkb2N1bWVudHMpXG4iLAogICAgInByaW50KFwic3RvcmUg7YOA7J6FOlwiLCB0eXBlKHN0b3JlKS5fX25hbWVfXylcbiIsCiAgICAicHJpbnQoXCLsoIDsnqXrkJwg67Kh7YSwIElEIOyImDpcIiwgbGVuKHN0b3JlZF9pZHMpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjFiZWYxZjUwIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiPGgzPjQuIOq4sOuzuOqwkiBrPTHroZwg6rKA7IOJPC9oMz48cD7qsoDsg4kg6rKw6rO864qUIERvY3VtZW507JmAIOycoOyCrOuPhCDsoJDsiJjrpbwg7ZWcIOyMjeycvOuhnCDrsJjtmZjtlanri4jri6QuIOuRkCDqsJLsnYQg65Sw66GcIOy2nOugpe2VtCDslrTrlqQg66y47ISc6rCAIOuovOyggCDshKDtg53rkJjsl4jripTsp4Ag7ZmV7J247ZWp64uI64ukLjwvcD4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJiNjA2YzliOCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNDoxNzowMC40OTAyMThaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNDoxNzowMC40OTAxNDhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNDoxNzowMC42MzUzMjZaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAwLjYzNDYzNloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLrsJjtmZgg7YOA7J6FOiBsaXN0IOqwnOyImDogMVxuIiwKICAgICAgImRvY19pZDogRDAxXG4iLAogICAgICAic2NvcmU6IDAuNTI2XG4iLAogICAgICAiY29udGVudDog66+466W07Iuc66a964+E7ISc6rSA7J2YIOygleq4sCDtnLTqtIDsnbzsnYAg66ek7KO8IOyblOyalOydvOyeheuLiOuLpC5cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBzaW1pbGFyaXR5X3NlYXJjaF93aXRoX3Njb3JlKCnripQgKERvY3VtZW50LCDsoJDsiJgpIO2KnO2UjOydmCDrpqzsiqTtirjrpbwg67CY7ZmY7ZWp64uI64ukLlxuIiwKICAgICIjIGs9MeydgCDqsIDsnqUg6rSA66CoIOuGkuydgCDqsrDqs7wg7ZWcIOqxtOunjCDsmpTssq3tlanri4jri6QuXG4iLAogICAgInF1ZXJ5ID0gXCLrj4TshJzqtIDsnbQg7Ims64qUIOyalOydvOydgD9cIlxuIiwKICAgICJoaXRzX2sxID0gc3RvcmUuc2ltaWxhcml0eV9zZWFyY2hfd2l0aF9zY29yZShxdWVyeSwgaz0xKVxuIiwKICAgICJwcmludChcIuuwmO2ZmCDtg4DsnoU6XCIsIHR5cGUoaGl0c19rMSkuX19uYW1lX18sIFwi6rCc7IiYOlwiLCBsZW4oaGl0c19rMSkpXG4iLAogICAgImZvciBkb2N1bWVudCwgc2NvcmUgaW4gaGl0c19rMTpcbiIsCiAgICAiICAgIHByaW50KFwiZG9jX2lkOlwiLCBkb2N1bWVudC5tZXRhZGF0YVtcImRvY19pZFwiXSlcbiIsCiAgICAiICAgIHByaW50KFwic2NvcmU6XCIsIHJvdW5kKHNjb3JlLCAzKSlcbiIsCiAgICAiICAgIHByaW50KFwiY29udGVudDpcIiwgZG9jdW1lbnQucGFnZV9jb250ZW50KSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjUyOWIxMDE2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiPGgzPjUuIGvrp4wgMuuhnCDrsJTqvrjslrQg67mE6rWQPC9oMz48cD7sp4jrrLjCt+usuOyEnMK37J6E67Kg65SpIOuqqOuNuOydgCDqt7jrjIDroZwg65GQ6rOgIOuwmO2ZmCDqsJzsiJjrp4wg64qY66a964uI64ukLjwvcD4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDYsCiAgICJpZCI6ICI3OTA0NmQ2OSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNDoxNzowMC42MzY4MTZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNDoxNzowMC42MzY2NjdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNDoxNzowMC44MDkwODFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAwLjgwODU2N1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJrPTEg6rCc7IiYOiAxXG4iLAogICAgICAiaz0yIOqwnOyImDogMlxuIiwKICAgICAgIkQwMSAwLjUyNlxuIiwKICAgICAgIkQwMyAwLjMyNVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGhpdHNfazLripQg6rCZ7J2AIHF1ZXJ57JeQ7IScIGvrp4wgMuuhnCDrs4Dqsr3tlZwg6rKw6rO87J6F64uI64ukLlxuIiwKICAgICIjIOuwmOuzteusuOycvOuhnCDrkZAg6rKw6rO87J2YIElE7JmAIOygkOyImOulvCDrqqjrkZAg67O07JesIOykjeuLiOuLpC5cbiIsCiAgICAiaGl0c19rMiA9IHN0b3JlLnNpbWlsYXJpdHlfc2VhcmNoX3dpdGhfc2NvcmUocXVlcnksIGs9MilcbiIsCiAgICAicHJpbnQoXCJrPTEg6rCc7IiYOlwiLCBsZW4oaGl0c19rMSkpXG4iLAogICAgInByaW50KFwiaz0yIOqwnOyImDpcIiwgbGVuKGhpdHNfazIpKVxuIiwKICAgICJmb3IgZG9jdW1lbnQsIHNjb3JlIGluIGhpdHNfazI6XG4iLAogICAgIiAgICBwcmludChkb2N1bWVudC5tZXRhZGF0YVtcImRvY19pZFwiXSwgcm91bmQoc2NvcmUsIDMpKVxuIiwKICAgICJhc3NlcnQgaGl0c19rMVswXVswXS5tZXRhZGF0YVtcImRvY19pZFwiXSA9PSBcIkQwMVwiXG4iLAogICAgImFzc2VydCBsZW4oaGl0c19rMikgPT0gMiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjc5Y2EwYTBjIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiPGgzPuygleumrDwvaDM+PHA+65y77J20IOqwgOq5jOyatCDrrLjshJzrpbwg7LC+64qUIOqygOyDieyXkOyEnCBEMDHsnbQg7LKrIOuyiOynuOuhnCDrgpjsmZTsirXri4jri6QuIDxjb2RlPms8L2NvZGU+66eMIDHsl5DshJwgMuuhnCDripjrpqzsnpAgRDAx7J2AIOq3uOuMgOuhnCDsnojqs6Ag66y47IScIO2VnCDqsbTsnbQg642UIOuztOyYgOyKteuLiOuLpC48L3A+IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiMjQ0ODJmZGIiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAic291cmNlIjogWwogICAgIjxwPjxzdHJvbmc+7JuQ7J24PC9zdHJvbmc+IOKAlCDrj4TshJzqtIAg7Zy06rSA7J286rO8IO2ajOyCrCDquInsl6zsnbzsnYQg7ZWo6ruYIOusu+yngOunjCA8Y29kZT5rPTE8L2NvZGU+7J2AIOusuOyEnCDtlZwg6rG066eMIOuwmO2ZmO2VmOuvgOuhnCDrkZAg64u17J2YIOq3vOqxsOulvCDrqqjrkZAg6rCA7KC47JisIOyImCDsl4bsirXri4jri6QuPC9wPiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNywKICAgImlkIjogImE3MDE1NjQ5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE0OjE3OjAwLjgxMDA0MloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAwLjgwOTk2OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAwLjk1MzQ5OVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTQ6MTc6MDAuOTUzMTIxWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiQmVmb3JlIElEOiBbJ0QwMSddXG4iLAogICAgICAiQmVmb3JlIOuzuOusuDog66+466W07Iuc66a964+E7ISc6rSA7J2YIOygleq4sCDtnLTqtIDsnbzsnYAg66ek7KO8IOyblOyalOydvOyeheuLiOuLpC5cbiIsCiAgICAgICLsmIjsg4HtlZwg7Iuk7YyoOiDsp4jrrLjsl5Ag7ZWE7JqU7ZWcIOusuOyEnCDrkZAg6rG07J2EIOuqqOuRkCDqsIDsoLjsmKTsp4Ag66q77ZaI7Iq164uI64ukLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGNvbWJpbmVkX3F1ZXJ564qUIOyEnOuhnCDri6Trpbgg65GQIOusuOyEnOydmCDsoJXrs7TqsIAg7ZWE7JqU7ZWcIOyniOusuOyeheuLiOuLpC5cbiIsCiAgICAiIyBrPTHsl5DshJwg67mg7KeEIOq3vOqxsOulvCBJROyZgCDrs7jrrLjsnLzroZwg7KeB7KCRIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiY29tYmluZWRfcXVlcnkgPSBcIuuPhOyEnOq0gCDtnLTqtIDsnbzqs7wg7ZqM7IKsIOq4ieyXrOydvOydgCDslrjsoJzsnbjqsIDsmpQ/XCJcbiIsCiAgICAiYmVmb3JlX2hpdHMgPSBzdG9yZS5zaW1pbGFyaXR5X3NlYXJjaChjb21iaW5lZF9xdWVyeSwgaz0xKVxuIiwKICAgICJiZWZvcmVfaWRzID0gW2RvY3VtZW50Lm1ldGFkYXRhW1wiZG9jX2lkXCJdIGZvciBkb2N1bWVudCBpbiBiZWZvcmVfaGl0c11cbiIsCiAgICAicHJpbnQoXCJCZWZvcmUgSUQ6XCIsIGJlZm9yZV9pZHMpXG4iLAogICAgImZvciBkb2N1bWVudCBpbiBiZWZvcmVfaGl0czpcbiIsCiAgICAiICAgIHByaW50KFwiQmVmb3JlIOuzuOusuDpcIiwgZG9jdW1lbnQucGFnZV9jb250ZW50KVxuIiwKICAgICJ0cnk6XG4iLAogICAgIiAgICBhc3NlcnQge1wiRDAxXCIsIFwiRDAzXCJ9Lmlzc3Vic2V0KGJlZm9yZV9pZHMpXG4iLAogICAgImV4Y2VwdCBBc3NlcnRpb25FcnJvcjpcbiIsCiAgICAiICAgIHByaW50KFwi7JiI7IOB7ZWcIOyLpO2MqDog7KeI66y47JeQIO2VhOyalO2VnCDrrLjshJwg65GQIOqxtOydhCDrqqjrkZAg6rCA7KC47Jik7KeAIOuqu+2WiOyKteuLiOuLpC5cIilcbiIsCiAgICAiZWxzZTpcbiIsCiAgICAiICAgIHJhaXNlIEFzc2VydGlvbkVycm9yKFwiaz0xIOqygOyDiSDriITrnb3snbQg7J6s7ZiE65CY7Ja07JW8IO2VqeuLiOuLpC5cIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJkOTZhZTVkMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICI8cD48c3Ryb25nPuyImOyglTwvc3Ryb25nPiDigJQg7KeI66y46rO8IOusuOyEnOuKlCDsnKDsp4DtlZjqs6AgPGNvZGU+azwvY29kZT7rp4wgMeyXkOyEnCAy66GcIOuKmOugpCDrkZAg64u17J2YIOq3vOqxsCDrrLjshJzrpbwg7ZWo6ruYIOqygOyDie2VqeuLiOuLpC48L3A+IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA4LAogICAiaWQiOiAiNTRkMmNkNDkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTQ6MTc6MDAuOTU0Mjc1WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTQ6MTc6MDAuOTU0MjI0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTQ6MTc6MDEuMTE1NDIyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNDoxNzowMS4xMTQ4NzRaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIkFmdGVyIElEOiBbJ0QwMScsICdEMDMnXVxuIiwKICAgICAgIkFmdGVyIOuzuOusuDog66+466W07Iuc66a964+E7ISc6rSA7J2YIOygleq4sCDtnLTqtIDsnbzsnYAg66ek7KO8IOyblOyalOydvOyeheuLiOuLpC5cbiIsCiAgICAgICJBZnRlciDrs7jrrLg6IOuzhOu5m+2ajOyCrOydmCDquInsl6zsnbzsnYAg66ek7JuUIDI17J287J6F64uI64ukLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGZpeGVkX2hpdHPripQg6rCZ7J2AIGNvbWJpbmVkX3F1ZXJ57JeQ7IScIGvrp4wgMuuhnCDrsJTqvrwg6rKw6rO87J6F64uI64ukLlxuIiwKICAgICIjIEQwMeqzvCBEMDPsnZggSUTsmYAg67O466y47J20IOuqqOuRkCDrk6TslrTsmZTripTsp4Ag6rKA7IKs7ZWp64uI64ukLlxuIiwKICAgICJmaXhlZF9oaXRzID0gc3RvcmUuc2ltaWxhcml0eV9zZWFyY2goY29tYmluZWRfcXVlcnksIGs9MilcbiIsCiAgICAiZml4ZWRfaWRzID0gW2RvY3VtZW50Lm1ldGFkYXRhW1wiZG9jX2lkXCJdIGZvciBkb2N1bWVudCBpbiBmaXhlZF9oaXRzXVxuIiwKICAgICJwcmludChcIkFmdGVyIElEOlwiLCBmaXhlZF9pZHMpXG4iLAogICAgImZvciBkb2N1bWVudCBpbiBmaXhlZF9oaXRzOlxuIiwKICAgICIgICAgcHJpbnQoXCJBZnRlciDrs7jrrLg6XCIsIGRvY3VtZW50LnBhZ2VfY29udGVudClcbiIsCiAgICAiYXNzZXJ0IHtcIkQwMVwiLCBcIkQwM1wifS5pc3N1YnNldChmaXhlZF9pZHMpIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogOCwKICAgImNvZGVfc2hhMjU2IjogIjhhMmZkODc2NjdiNDI2OTQwZDc4NTA3NmUyMzFkNzM1OGJkMGYyN2MwODEyNGIyMDA1ZDYwNmIyNjY4NTEzYjUiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0wOVQxNDoxNzowMS4yMzI2NDgrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogImJiZTVjNWIwNDE1MDQ0MmZlODVkN2FlZTU4Njg2MDJkYjY2ZjNlYmNjMzM2NmEzNDFmMjYwZTI5YTIxODcxYjMiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h3>실습 안내</h3><p>짧은 Document 세 건을 OpenAI 임베딩으로 숫자 벡터로 바꿔 저장합니다. <code>k</code>는 검색할 문서 개수입니다. k만 1에서 2로 바꾸고 검색 결과가 어떻게 달라지는지 비교합니다.</p>
+<h3>벡터스토어 호출을 단계별로 읽기</h3><p><code>OpenAIEmbeddings()</code>는 설정 객체를 만들고, 실제 문서 임베딩은 <code>add_documents()</code>를 호출할 때 실행됩니다. <code>similarity_search_with_score(question, k=2)</code>는 질문을 같은 모델로 임베딩한 뒤 <code>(Document, 코사인 유사도)</code> 두 건을 반환합니다. 이 <code>InMemoryVectorStore</code> 점수는 클수록 질문과 더 가깝습니다.</p><p>유사도는 관련성 확률이 아니므로 0.8을 80% 관련으로 해석하지 않습니다. 정확한 제품 코드가 중요한 질문은 의미 벡터만으로 부족할 수 있으며 Ch 12에서 키워드 검색과 비교합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 임베딩과 메모리 벡터스토어에 필요한 패키지를 설치합니다.
+# ==는 검증된 버전을 고정하고 -q는 설치 로그를 줄입니다.
+%pip install -q &quot;langchain==1.4.0&quot; &quot;langchain-openai==1.6.0&quot; &quot;python-dotenv==1.2.3&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-markdown"><h3>1. API 키 준비</h3><p>현재 작업 폴더에서 <code>.env</code>를 찾아 실제 임베딩 호출을 준비합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># env_file은 find_dotenv()가 찾은 .env 경로 문자열입니다.
+# load_dotenv()는 파일을 로드하고 os.getenv()는 OPENAI_API_KEY 존재를 확인합니다.
+import os
+from dotenv import find_dotenv, load_dotenv
+
+env_file = find_dotenv(usecwd=True)
+assert env_file, &quot;.env를 찾지 못했습니다.&quot;
+load_dotenv(env_file)
+assert os.getenv(&quot;OPENAI_API_KEY&quot;), &quot;OPENAI_API_KEY가 없습니다.&quot;
+print(&quot;API 키 준비 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">API 키 준비 완료
+</pre></div>
+<div class="nb-markdown"><h3>2. 라벨이 있는 문서 준비</h3><p>검색된 문서를 이름으로 구분할 수 있게 각 Document에 D01, D02, D03이라는 문서 ID(<code>doc_id</code>)를 넣습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># raw_documents의 각 튜플은 (문서 ID, 본문) 두 값을 묶습니다.
+# for로 튜플을 doc_id와 content로 나누어 Document를 하나씩 추가합니다.
+from langchain_core.documents import Document
+
+raw_documents = [
+    (&quot;D01&quot;, &quot;미르시립도서관의 정기 휴관일은 매주 월요일입니다.&quot;),
+    (&quot;D02&quot;, &quot;해솔식당의 점심 영업은 오전 11시에 시작합니다.&quot;),
+    (&quot;D03&quot;, &quot;별빛회사의 급여일은 매월 25일입니다.&quot;),
+]
+documents = []
+for doc_id, content in raw_documents:
+    document = Document(page_content=content, metadata={&quot;doc_id&quot;: doc_id})
+    documents.append(document)
+print(&quot;문서 수:&quot;, len(documents), &quot;타입:&quot;, type(documents[0]).__name__)
+for document in documents:
+    print(document.metadata, document.page_content)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">문서 수: 3 타입: Document
+{&#x27;doc_id&#x27;: &#x27;D01&#x27;} 미르시립도서관의 정기 휴관일은 매주 월요일입니다.
+{&#x27;doc_id&#x27;: &#x27;D02&#x27;} 해솔식당의 점심 영업은 오전 11시에 시작합니다.
+{&#x27;doc_id&#x27;: &#x27;D03&#x27;} 별빛회사의 급여일은 매월 25일입니다.
+</pre></div>
+<div class="nb-markdown"><h3>3. 임베딩 모델과 벡터스토어 만들기</h3><p>각 문서를 뜻을 나타내는 숫자 벡터로 바꾸고, 원문과 벡터를 현재 실행 메모리의 저장소에 함께 넣습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># embedding은 문장을 숫자 벡터로 바꾸는 OpenAI 모델 객체입니다.
+# add_documents()는 문서 벡터와 원본 Document를 store에 저장합니다.
+from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_openai import OpenAIEmbeddings
+
+embedding = OpenAIEmbeddings(model=&quot;text-embedding-3-small&quot;)
+store = InMemoryVectorStore(embedding=embedding)
+stored_ids = store.add_documents(documents)
+print(&quot;store 타입:&quot;, type(store).__name__)
+print(&quot;저장된 벡터 ID 수:&quot;, len(stored_ids))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">store 타입: InMemoryVectorStore
+저장된 벡터 ID 수: 3
+</pre></div>
+<div class="nb-markdown"><h3>4. 기본값 k=1로 검색</h3><p>검색 결과는 Document와 유사도 점수를 한 쌍으로 반환합니다. 두 값을 따로 출력해 어떤 문서가 먼저 선택되었는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># similarity_search_with_score()는 (Document, 점수) 튜플의 리스트를 반환합니다.
+# k=1은 가장 관련 높은 결과 한 건만 요청합니다.
+query = &quot;도서관이 쉬는 요일은?&quot;
+hits_k1 = store.similarity_search_with_score(query, k=1)
+print(&quot;반환 타입:&quot;, type(hits_k1).__name__, &quot;개수:&quot;, len(hits_k1))
+for document, score in hits_k1:
+    print(&quot;doc_id:&quot;, document.metadata[&quot;doc_id&quot;])
+    print(&quot;score:&quot;, round(score, 3))
+    print(&quot;content:&quot;, document.page_content)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">반환 타입: list 개수: 1
+doc_id: D01
+score: 0.526
+content: 미르시립도서관의 정기 휴관일은 매주 월요일입니다.
+</pre></div>
+<div class="nb-markdown"><h3>5. k만 2로 바꾸어 비교</h3><p>질문·문서·임베딩 모델은 그대로 두고 반환 개수만 늘립니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># hits_k2는 같은 query에서 k만 2로 변경한 결과입니다.
+# 반복문으로 두 결과의 ID와 점수를 모두 보여 줍니다.
+hits_k2 = store.similarity_search_with_score(query, k=2)
+print(&quot;k=1 개수:&quot;, len(hits_k1))
+print(&quot;k=2 개수:&quot;, len(hits_k2))
+for document, score in hits_k2:
+    print(document.metadata[&quot;doc_id&quot;], round(score, 3))
+assert hits_k1[0][0].metadata[&quot;doc_id&quot;] == &quot;D01&quot;
+assert len(hits_k2) == 2</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">k=1 개수: 1
+k=2 개수: 2
+D01 0.526
+D03 0.325
+</pre></div>
+<div class="nb-markdown"><h3>정리</h3><p>뜻이 가까운 문서를 찾는 검색에서 D01이 첫 번째로 나왔습니다. <code>k</code>만 1에서 2로 늘리자 D01은 그대로 있고 문서 한 건이 더 보였습니다.</p></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<p class="look"><b>확인할 점</b> — <code>add_documents()</code>는 저장된 벡터 ID 리스트를 반환합니다. <code>similarity_search_with_score()</code>는 Document와 점수의 튜플 리스트를 반환하며, k를 1에서 2로 늘리면 결과 개수가 늘어납니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before에서 도서관 휴관일과 회사 급여일을 함께 묻지만 <code>k=1</code>로는 근거 문서 두 건을 모두 가져오지 못하는 결과를 확인합니다. After에서 질문과 문서는 유지하고 k만 2로 늘려 D01과 D03이 함께 검색되는지 검사합니다.</p>
+<section class="notebook" data-notebook="03-임베딩과-벡터스토어" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><p><strong>원인</strong> — 도서관 휴관일과 회사 급여일을 함께 묻지만 <code>k=1</code>은 문서 한 건만 반환하므로 두 답의 근거를 모두 가져올 수 없습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># combined_query는 서로 다른 두 문서의 정보가 필요한 질문입니다.
+# k=1에서 빠진 근거를 ID와 본문으로 직접 확인합니다.
+combined_query = &quot;도서관 휴관일과 회사 급여일은 언제인가요?&quot;
+before_hits = store.similarity_search(combined_query, k=1)
+before_ids = [document.metadata[&quot;doc_id&quot;] for document in before_hits]
+print(&quot;Before ID:&quot;, before_ids)
+for document in before_hits:
+    print(&quot;Before 본문:&quot;, document.page_content)
+try:
+    assert {&quot;D01&quot;, &quot;D03&quot;}.issubset(before_ids)
+except AssertionError:
+    print(&quot;예상한 실패: 질문에 필요한 문서 두 건을 모두 가져오지 못했습니다.&quot;)
+else:
+    raise AssertionError(&quot;k=1 검색 누락이 재현되어야 합니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Before ID: [&#x27;D01&#x27;]
+Before 본문: 미르시립도서관의 정기 휴관일은 매주 월요일입니다.
+예상한 실패: 질문에 필요한 문서 두 건을 모두 가져오지 못했습니다.
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><p><strong>수정</strong> — 질문과 문서는 유지하고 <code>k</code>만 1에서 2로 늘려 두 답의 근거 문서를 함께 검색합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [8]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># fixed_hits는 같은 combined_query에서 k만 2로 바꾼 결과입니다.
+# D01과 D03의 ID와 본문이 모두 들어왔는지 검사합니다.
+fixed_hits = store.similarity_search(combined_query, k=2)
+fixed_ids = [document.metadata[&quot;doc_id&quot;] for document in fixed_hits]
+print(&quot;After ID:&quot;, fixed_ids)
+for document in fixed_hits:
+    print(&quot;After 본문:&quot;, document.page_content)
+assert {&quot;D01&quot;, &quot;D03&quot;}.issubset(fixed_ids)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">After ID: [&#x27;D01&#x27;, &#x27;D03&#x27;]
+After 본문: 미르시립도서관의 정기 휴관일은 매주 월요일입니다.
+After 본문: 별빛회사의 급여일은 매월 25일입니다.
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>점수에 절대 기준은 없습니다.</strong> 0.65가 좋고 0.35가 나쁘다고 말할 수 없습니다. 모델·언어·질문 길이에 따라 점수가 퍼지는 범위와 모양이 다릅니다. "이 점수보다 낮으면 버린다"고 정하는 기준값은 Ch 11의 테스트 질문 모음으로 <em>측정한 뒤</em> 정합니다. Ch 14에서는 점수가 기준보다 낮을 때 다른 검색 방법을 시도합니다. 이런 대체 동작을 폴백이라고 부릅니다.</li>
+<li><strong>한국어 임베딩 품질.</strong> 영어 벤치마크 상위 모델이 한국어 조사·어미 변화에도 같은 성능을 낸다고 단정할 수 없습니다. 이 챕터의 모델은 <span class="tbd">[[미정: 임베딩 모델]]</span>이 확정될 때까지의 임시값입니다. Ch 10에서 다른 임베딩 모델과 결과를 비교합니다.</li>
+<li><strong>짧은 문서도 검색 후보입니다.</strong> 기본 노트북의 세 문서는 길이가 비슷하지만 실제 PDF에는 표지와 목차처럼 짧은 문서도 있습니다. 실무에서는 로더 단계에서 제외하거나 최소 청크 길이를 정한 뒤 결과를 비교합니다.</li>
+<li><strong><code>InMemoryVectorStore</code>의 한계.</strong> 기본 노트북처럼 문서 세 건을 관찰하기에는 충분하지만, 프로세스가 종료되면 메모리의 값도 사라집니다. 문서가 많아졌을 때 사용할, 프로그램을 종료해도 데이터가 남는 저장소와 빠른 검색 구조는 Ch 12에서 다룹니다.</li>
+<li><strong>비용과 재임베딩.</strong> 청크 크기나 임베딩 모델을 바꾸면 문서 벡터를 다시 만들어야 합니다. 기본 노트북은 짧은 문서 세 건만 실제 임베딩합니다. Ch 10에서 설정 변경과 재임베딩의 관계를 더 살펴봅니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>Document 세 건을 실제로 임베딩해 메모리 벡터스토어에 저장했습니다.</li><li>k=1 검색의 Document·점수·본문을 분리해 읽었습니다.</li><li>k만 2로 바꾸어 추가 후보가 반환되는 것을 확인했습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 04절에서 검색한 Document의 본문과 문서 ID 같은 출처 정보(metadata)를 프롬프트에 넣습니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. <code>add_documents()</code>가 입력받고 반환하는 것은 무엇입니까?</p><p class="quiz-a">Document 리스트를 입력받아 임베딩해 저장하고, 저장된 벡터 ID 리스트를 반환합니다.</p>
+<p class="quiz-q">2. <code>similarity_search_with_score()</code>의 결과 하나는 어떤 형태입니까?</p><p class="quiz-a">Document와 점수를 묶은 튜플입니다. 반복문에서 <code>for document, score in ...</code>로 두 값을 나눌 수 있습니다.</p>
+<p class="quiz-q">3. k=1에서 k=2로 바꾸면 무엇이 달라지고 무엇이 그대로입니까?</p><p class="quiz-a">반환할 상위 문서 개수만 달라지고 질문, Document, 임베딩 모델, store는 그대로입니다.</p>
+<p class="quiz-q">4. 두 문서의 정보가 필요한 질문에서 <code>k=1</code>이 부족한 이유는 무엇입니까?</p><p class="quiz-a">검색 결과를 한 건만 반환하므로 D01과 D03 가운데 하나가 빠집니다. 이 실습에서는 k를 2로 늘려 두 근거를 함께 검색했습니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul>
+<li>LangChain Core 「InMemoryVectorStore」 — <a href="https://reference.langchain.com/python/langchain-core/vectorstores/in_memory/InMemoryVectorStore">reference.langchain.com/python/langchain-core/vectorstores/in_memory/InMemoryVectorStore</a> · 확인 2026-09-07 · <code>add_documents</code>·<code>similarity_search_with_score</code>·<code>dump</code>·<code>load</code>.</li>
+<li>LangChain 「Build a RAG agent」 — Embeddings·Vector store 선택 절 — <a href="https://docs.langchain.com/oss/python/langchain/rag">docs.langchain.com/oss/python/langchain/rag</a> · 확인 2026-09-07.</li>
+<li>OpenAI 임베딩 가이드 — <a href="https://developers.openai.com/api/docs/guides/embeddings">입력 한도·기본 벡터 길이·dimensions</a> · 확인 2026-09-08.</li>
+<li>OpenAI 임베딩 요금 — text-embedding-3-small 미화 0.02달러 / 100만 토큰 — <a href="https://developers.openai.com/api/docs/pricing">developers.openai.com/api/docs/pricing</a> · 확인 2026-09-07.</li>
+<li>기준 버전: langchain-core 1.6.2 · langchain-openai 1.6.0.</li>
+</ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script>
+<div class="nav-foot"><span><a href="02-로더와-스플리터.html">← 02 · 로더와 스플리터 — PDF가 문서 청크가 되기까지</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="04-생성과-출처-인용.html">04 · 생성과 출처 인용 — 첫 완주 →</a></span></div>
+</div></body></html>

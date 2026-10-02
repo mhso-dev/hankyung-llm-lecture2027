@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  s0["입력을 받은 때<br>1 checkpoints 단계 -1<br>3 values 입력 그대로<br>4 checkpoints 단계 0"]:::measure
+  s1["노드 prepare<br>6 tasks 시작<br>8 custom 50<br>9 updates · 10 tasks 끝<br>12 values<br>13 checkpoints 단계 1"]:::measure
+  s2["노드 write<br>15 tasks 시작<br>17 custom 100<br>18 updates · 19 tasks 끝<br>21 values<br>22 checkpoints 단계 2"]:::measure
+  d["debug 여덟<br>checkpoints와 tasks<br>사건마다 바로 뒤 한 자리"]:::measure
+  s0 --> s1
+  s1 --> s2
+  s2 ~~~ d

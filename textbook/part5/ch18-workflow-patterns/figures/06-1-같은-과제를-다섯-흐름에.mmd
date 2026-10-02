@@ -1,0 +1,19 @@
+flowchart LR
+  %% classes
+  job["과제 글<br>공통 사실<br>코드 검사 값<br>120~180자"]:::tool
+  f1["01 단계 잇기<br>run_gated_chain"]:::flow
+  f2["02 라우팅<br>route_question"]:::flow
+  f3["03 나눠 쓰기<br>write_sections"]:::flow
+  f4["04 작업 나눠 맡기기<br>run_orchestrator"]:::flow
+  f5["05 쓰고 평가하기 반복<br>run_write_judge_loop"]:::flow
+  table["비교 표 다섯 줄<br>칸 여섯<br>두 번 모두<br>상태 ok 다섯"]:::measure
+  job --> f1
+  job --> f2
+  job --> f3
+  job --> f4
+  job --> f5
+  f1 --> table
+  f2 --> table
+  f3 --> table
+  f4 --> table
+  f5 --> table

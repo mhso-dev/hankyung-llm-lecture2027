@@ -1,0 +1,241 @@
+{
+  "chapters": 29,
+  "verdict_counts": {
+    "WARN": 26,
+    "PASS": 3
+  },
+  "external_spelling": "skipped: skill commercial bulk restriction; independent local review applied",
+  "rows": [
+    {
+      "chapter": "ch06-langchain-start",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.1% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "6d66e452793ad98e4fca108ee50a9f809746d94d06623cc1460d371b65d8217c"
+    },
+    {
+      "chapter": "ch07-prompt-engineering",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.6% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인",
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "5ede1c2996a074a09afc3c5b7505f7cb57270c685df8df910e31c5af1fd075de"
+    },
+    {
+      "chapter": "ch08-context-engineering",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.0% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "3773ef364011fa96a6a0715694e285d8d81e83a63424f260b1243e31a783533b"
+    },
+    {
+      "chapter": "ch09-rag-first-run",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.7% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인",
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "a844eb281dcc29337d88b017b67bc9fef36bf047dda82b33157b2e3361d6772e"
+    },
+    {
+      "chapter": "ch10-document-processing",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.6% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "84c23565ce30c78709704e7ec4f43c03a08e702fbf3b3361a381476fe93451be"
+    },
+    {
+      "chapter": "ch11-evaluation",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 2.6% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "7967bb0f03c92dcefb79bfd0169e14574753e8ce39f7a90f3da6e4bfd28f81da"
+    },
+    {
+      "chapter": "ch12-retrieval-tuning",
+      "verdict": "WARN",
+      "warnings": {
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "21f2dd277a246e779a50bc6999da136d09fe56612ec1fee242bd28f3309be8f4"
+    },
+    {
+      "chapter": "ch13-langgraph-basics",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 1.3% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "fea2e07f12b4eaf68c7fb33cb9f392809c3153adbaed034790914abc81bd3af9"
+    },
+    {
+      "chapter": "ch14-rag-patterns",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 2.1% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인",
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "4114b239695487dbb9d36b478c7a8a3c87225eae4b63a1ab877397a6872bc6b8"
+    },
+    {
+      "chapter": "ch15-evaluation-advanced",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 2.6% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인",
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "a92b6b634c53aa53b4db09bca6f907837f913188d00ae5f649bc09b02b96d54d"
+    },
+    {
+      "chapter": "ch16-guardrails",
+      "verdict": "WARN",
+      "warnings": {
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "9bdd323105c7f23a326e789efebcfb79c3756eb6bd050a06d6abf05b7e354564"
+    },
+    {
+      "chapter": "ch17-agent-overview",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.0% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "978617966a84884e126d20a5ded874a49e25b35d7bb95f0ea3f6719c94a8ef38"
+    },
+    {
+      "chapter": "ch18-workflow-patterns",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.3% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인",
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "35e91486fc0653f491efaf667344dab2c58d86391a77e2e809150125ef4a6b55"
+    },
+    {
+      "chapter": "ch19-model-tools",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.0% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "a7785b111b802cf1433e8df2e1d7d65de53a2e7dabf673001a190ab221ff42fd"
+    },
+    {
+      "chapter": "ch20-tool-node",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.1% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "f8116650acd81cb841e96fa3b0e85359fe27998a6f781ece1fc5c659c1027f68"
+    },
+    {
+      "chapter": "ch21-create-agent",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.0% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "364930c183460e0267999732c0bb11a7ad3967a140cd42c9705d4a3b2b72cf5a"
+    },
+    {
+      "chapter": "ch22-middleware",
+      "verdict": "WARN",
+      "warnings": {
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "05f75e5c1342ca0fd3e952bf64d5d1db07e29c15d94d7cbc17a9bcdaf02d0fee"
+    },
+    {
+      "chapter": "ch23-persistence",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.0% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "9f45a88eb559a2b9efcb42293d8409ff91daf332a0b9a9286a537551455b0fbd"
+    },
+    {
+      "chapter": "ch24-human-in-the-loop",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 0.0% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "d8d4203f58f4fd68abd2b1aaa25692b31b3be8ceaa6330b49ea27c3125022978"
+    },
+    {
+      "chapter": "ch25-streaming",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 1.7% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "332ccc4abb4ac1cf76f9f7e6c4e9d7771759a41dfed6e13d0fb4abefbd68efbe"
+    },
+    {
+      "chapter": "ch26-delegation",
+      "verdict": "WARN",
+      "warnings": {
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "1bb785654aef249af2d10964ffdcdc6590a062c0f5d28c734849f1754481155b"
+    },
+    {
+      "chapter": "ch27-deepagents",
+      "verdict": "WARN",
+      "warnings": {
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "fdf40d64a9671c27874c57e98faf7ef12e901f8e794654d34db37e7f5b2e600f"
+    },
+    {
+      "chapter": "ch28-mcp",
+      "verdict": "WARN",
+      "warnings": {
+        "P0_문자율": "문자 변경률 4.8% < 5% — 저윤문. S1 패턴이 남아 있는지 재확인"
+      },
+      "corpus_sha256": "f4307fbf611b7f24ab73f8e32cf61679b3fa9eeb3cb5c9a31584a2a51ba9bfd2"
+    },
+    {
+      "chapter": "ch29-agent-evaluation",
+      "verdict": "WARN",
+      "warnings": {
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "1314c214eb4ae1f9434461cf304814f19187a58aceee4997a7f414ea2144a491"
+    },
+    {
+      "chapter": "ch30-fastapi-serving",
+      "verdict": "WARN",
+      "warnings": {
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "564a5f8f90973dbdc41494b4d9d456cfcd7d6b72492017527b1d207deb1ef8fd"
+    },
+    {
+      "chapter": "ch31-database",
+      "verdict": "PASS",
+      "warnings": {},
+      "corpus_sha256": "7744810f3ba2376f9881fa5a44adc69e7ca0680622becee9ce3b927cd198a09f"
+    },
+    {
+      "chapter": "ch32-docker",
+      "verdict": "PASS",
+      "warnings": {},
+      "corpus_sha256": "d185309bfad6ac9d309d57f7bee6b21744167a052b45235eedbf1683614bc9b1"
+    },
+    {
+      "chapter": "ch33-cicd",
+      "verdict": "WARN",
+      "warnings": {
+        "P3_불변식": "불변식 경고: numbers"
+      },
+      "corpus_sha256": "4fdcca4fbd017c5a2e3d6b89ee1202239add12431bc0a28b2035d1705393310c"
+    },
+    {
+      "chapter": "ch34-cost-rate-limits",
+      "verdict": "PASS",
+      "warnings": {},
+      "corpus_sha256": "d189b6ed7f7ba666478f6ef096cdf2f37aede543ac00a7a67d76e0ed25c7c7a5"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part5/qa/check_scope.py", line 57, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part5/qa/check_scope.py", line 34, in main
+    assert lecture and practice and terms, f'Missing scope: {path}'
+AssertionError: Missing scope: /sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part5/ch17-agent-overview/_src/06-Agent-개요-실습.html

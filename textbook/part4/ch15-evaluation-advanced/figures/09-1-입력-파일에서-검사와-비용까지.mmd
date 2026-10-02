@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  file["runs/<br>batch-eval-input.jsonl<br>여섯 줄 · 읽기만"]:::tool
+  pick["lines_for<br>08절 요청 식별자로<br>두 줄 고르기"]:::flow
+  judge["gpt-5.4-mini<br>줄마다 판정 한 번"]:::model
+  check["scores_for로 점수<br>07절 check_by_case"]:::flow
+  cost["print_costs 안의<br>06절 estimate_cost"]:::flow
+  verdict["깨진 사례와<br>통과 여부"]:::measure
+  money["요청마다<br>예상 비용"]:::measure
+  file --> pick
+  pick --> judge
+  judge --> check
+  judge --> cost
+  check --> verdict
+  cost --> money

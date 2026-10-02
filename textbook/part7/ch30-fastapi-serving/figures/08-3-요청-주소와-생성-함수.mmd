@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  jsonpath["JSON 요청 주소 셋<br>본문 종류 아래 schema"]:::measure
+  ssepath["SSE 요청 주소 둘<br>본문 종류 아래 itemSchema"]:::measure
+  gen["생성기 typescript-fetch<br>노트북 밖"]
+  fjson["함수 셋<br>ChatResponse나<br>HealthResponse를<br>내놓는 Promise"]:::measure
+  fsse["함수 둘<br>void를 내놓는 Promise<br>응답 본문을 읽지 않음"]:::measure
+  ts["SSE 사건은<br>손으로 쓴 client/stream.ts가<br>fetch로 읽음"]:::tool
+  jsonpath --> gen
+  ssepath --> gen
+  gen --> fjson
+  gen --> fsse
+  fsse -.-> ts

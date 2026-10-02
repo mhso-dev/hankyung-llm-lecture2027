@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" width="900" height="470" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title desc">
+<title id="title">고정 문서 실험 격자 — 3개 청커 × 2개 임베딩 모델</title>
+<desc id="desc">고정된 문서 집합을 3개 청커와 2개 임베딩 모델의 여섯 조합으로 실행하고 로그를 챕터 11 평가로 넘기는 격자</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a9eed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ef4444"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#757575"/></marker>
+</defs>
+<rect width="900" height="470" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="18" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">고정 문서 실험 격자 — 3개 청커 × 2개 임베딩 모델</tspan></text>
+<rect x="45" y="175" width="155" height="80" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="122.5" y="205.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="122.5" dy="0.0">고정 문서 집합</tspan><tspan x="122.5" dy="18.9">doc_hash 동일</tspan></text>
+<polyline points="200,215 275,215" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="198.2" y="192.5" width="78.5" height="21.0" fill="#ffffff" fill-opacity="0.94" rx="4"/>
+<text x="237.5" y="203.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="237.5" dy="0.0">6회 실행</tspan></text>
+<rect x="275" y="70" width="390" height="310" rx="12" fill="#dbe4ff" fill-opacity="0.35" stroke="#4a9eed" stroke-width="1"/>
+<text x="289" y="88.0" font-size="15" fill="#1e40af" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="289" dy="0.0">실험 격자</tspan></text>
+<text x="445" y="105.0" font-size="14" fill="#15803d" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="445" dy="0.0">임베딩 A</tspan></text>
+<text x="580" y="105.0" font-size="14" fill="#15803d" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="580" dy="0.0">임베딩 B</tspan></text>
+<text x="300" y="155.0" font-size="14" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="300" dy="0.0">문자 청커</tspan></text>
+<text x="300" y="235.0" font-size="14" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="300" dy="0.0">재귀 청커</tspan></text>
+<text x="300" y="315.0" font-size="14" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="300" dy="0.0">구조 청커</tspan></text>
+<text x="445" y="155.0" font-size="16" fill="#2563eb" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="445" dy="0.0">A-1</tspan></text>
+<text x="580" y="155.0" font-size="16" fill="#2563eb" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="580" dy="0.0">B-1</tspan></text>
+<text x="445" y="235.0" font-size="16" fill="#2563eb" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="445" dy="0.0">A-2</tspan></text>
+<text x="580" y="235.0" font-size="16" fill="#2563eb" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="580" dy="0.0">B-2</tspan></text>
+<text x="445" y="315.0" font-size="16" fill="#2563eb" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="445" dy="0.0">A-3</tspan></text>
+<text x="580" y="315.0" font-size="16" fill="#2563eb" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="580" dy="0.0">B-3</tspan></text>
+<polyline points="665,215 725,215" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#m-yellow)"/>
+<rect x="655.8" y="192.5" width="78.5" height="21.0" fill="#ffffff" fill-opacity="0.94" rx="4"/>
+<text x="695.0" y="203.0" font-size="14" fill="#92400e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="695.0" dy="0.0">동일 형식</tspan></text>
+<rect x="725" y="175" width="135" height="80" rx="10" fill="#fff3bf" stroke="#f59e0b" stroke-width="2"/>
+<text x="792.5" y="205.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="792.5" dy="0.0">실행 로그</tspan><tspan x="792.5" dy="18.9">설정 · 시간 · 비용</tspan></text>
+<polyline points="792,255 792,315" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#m-yellow)"/>
+<rect x="725" y="315" width="135" height="65" rx="10" fill="#fff3bf" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="792.5" y="338.1" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="792.5" dy="0.0">Ch 11 평가</tspan><tspan x="792.5" dy="18.9">검색 품질 비교</tspan></text>
+<text x="450" y="430.0" font-size="14" fill="#595959" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450" dy="0.0">문서와 질의셋을 고정해야 청커 또는 임베딩 모델을 바꾼 효과를 분리해 측정할 수 있습니다.</tspan></text>
+</svg>

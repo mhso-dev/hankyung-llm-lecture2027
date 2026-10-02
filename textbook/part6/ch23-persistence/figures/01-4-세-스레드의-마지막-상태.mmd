@@ -1,0 +1,24 @@
+flowchart TB
+  %% classes
+  subgraph ra["customer-a"]
+    direction TB
+    ai["둘째 입력<br>amount 4"]:::tool
+    ao["합계 7<br>실행 흔적 두 칸<br>체크포인트 여섯"]:::measure
+    ai --> ao
+  end
+  subgraph rb["customer-b"]
+    direction TB
+    bi["한 번뿐인 입력<br>total 0 amount 4"]:::tool
+    bo["합계 4<br>실행 흔적 한 칸<br>체크포인트 셋"]:::measure
+    bi --> bo
+  end
+  subgraph rc["customer-c"]
+    direction TB
+    ci["둘째 입력<br>total 0 amount 4"]:::tool
+    co["합계 4<br>실행 흔적 두 칸<br>체크포인트 여섯"]:::measure
+    ci --> co
+  end
+  cm["세 스레드 모두<br>같은 graph와 memory<br>a와 c의 첫 입력은<br>total 0 amount 3"]
+  ra ~~~ cm
+  rb ~~~ cm
+  rc ~~~ cm

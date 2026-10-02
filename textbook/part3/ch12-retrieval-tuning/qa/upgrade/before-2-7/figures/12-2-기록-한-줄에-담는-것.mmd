@@ -1,0 +1,13 @@
+flowchart LR
+  %% classes
+  inputs["입력 지문 두 개<br>문서 · 질문"]:::tool
+  settings["설정 일곱 칸<br>가중치 · 관련성 비중"]:::flow
+  names["실행 이름 · 날짜 · 분할"]:::flow
+  row["기록 한 줄<br>칸 17개"]:::measure
+  summary["지표 여섯 칸의 질문 평균"]:::measure
+  details["질문별 결과 15줄"]:::measure
+  inputs --> row
+  settings --> row
+  names --> row
+  row --> summary
+  row --> details

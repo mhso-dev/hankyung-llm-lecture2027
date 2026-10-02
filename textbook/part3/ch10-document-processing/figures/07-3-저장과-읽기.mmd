@@ -1,0 +1,14 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant nb as 노트북
+  participant ca as 벡터 캐시
+  participant em as 임베딩 모델
+  nb->>ca: 첫 요청 · 문서 청크 6개
+  Note over ca: 글마다 저장 이름표를 만들어<br>같은 이름의 파일을 찾음
+  ca->>em: 파일이 없어 글 6개를 보냄
+  em-->>ca: 벡터 6개
+  Note over ca: 벡터를 파일로 저장<br>저장 파일 수 6
+  ca-->>nb: 벡터 6개
+  nb->>ca: 두 번째 요청 · 같은 글 6개
+  Note over ca: 같은 이름의 파일을 찾음<br>소스 확인: 모델에 보내지 않음
+  ca-->>nb: 저장 파일 수 6 그대로 · 두 목록이 같음

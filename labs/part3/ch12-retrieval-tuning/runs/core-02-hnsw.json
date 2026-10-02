@@ -1,0 +1,12 @@
+[
+  {
+    "type": "vector",
+    "dimensions": 2001,
+    "outcome": "column cannot have more than 2000 dimensions for hnsw index"
+  },
+  {
+    "type": "halfvec",
+    "dimensions": 2001,
+    "outcome": "색인 생성 성공"
+  }
+]

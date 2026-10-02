@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  c1["함수 이름<br>list_orders_by_status"]:::flow
+  c2["독스트링 한 줄"]:::flow
+  c3["매개변수 status: str"]:::flow
+  deco["@tool 줄이 감쌈<br>도구 객체 StructuredTool"]
+  t1["도구 이름<br>list_orders_by_status"]:::measure
+  t2["도구 설명<br>독스트링과 같은가 True"]:::measure
+  t3["입력 형식<br>status · type string"]:::measure
+  csv["CSV 파일 위치 csv_path<br>몸통 안에서만 읽음<br>세 칸 어디에도 없음"]:::tool
+  c1 --> deco
+  c2 --> deco
+  c3 --> deco
+  deco --> t1
+  deco --> t2
+  deco --> t3
+  t2 ~~~ csv

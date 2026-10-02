@@ -1,0 +1,11 @@
+flowchart LR
+  %% classes
+  RULES["코드 판정 세 규칙<br>새 숫자 · 정답 숫자<br>보류 문장"]:::flow
+  CAUGHT["숫자 주장을 잡음<br>6절 1억원의 1 · 10000<br>7절 1600"]:::measure
+  NOT_CLAIM["주장이 아닌 숫자<br>7절 번호 목록의 1"]:::measure
+  MISSED_CLAIM["숫자 없는 주장<br>4절 제도 설명<br>6절 애플이 개발한<br>8절 문서에 없는 설명"]
+  MISSED_ABSTAIN["다른 말로 한 보류<br>4절 실제 제품에 대한<br>정보는 없습니다"]
+  RULES -- "잡음" --> CAUGHT
+  RULES -- "새 숫자로 셈" --> NOT_CLAIM
+  RULES -- "놓침" --> MISSED_CLAIM
+  RULES -- "놓침" --> MISSED_ABSTAIN

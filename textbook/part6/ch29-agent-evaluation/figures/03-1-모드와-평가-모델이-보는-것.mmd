@@ -1,0 +1,23 @@
+flowchart TB
+  %% classes
+  wr["답만 틀린 궤적<br>도구 요청 둘은 기준과 같음<br>답 글 7일"]:::tool
+  rf["기준 궤적<br>답 글 14일"]:::tool
+  subgraph lane1["궤적 맞춰 보기"]
+    direction TB
+    md["모드 넷<br>도구 요청의 이름과<br>인자만 짝지음"]:::flow
+    mr["네 모드 모두 True"]:::measure
+    md --> mr
+  end
+  subgraph lane2["평가 모델"]
+    direction TB
+    fm["_format_inputs<br>메시지마다 태그로<br>감싼 궤적 글"]
+    fr["답 글·검색 결과 글·<br>호출 ID 모두<br>들어 있음 True"]:::measure
+    jd["평가 모델<br>3절에서 만들기만 함"]
+    fm --> fr
+    fr -.-> jd
+  end
+  wr --> md
+  rf --> md
+  wr --> fm
+  rf --> fm
+  style jd stroke-dasharray: 5 5

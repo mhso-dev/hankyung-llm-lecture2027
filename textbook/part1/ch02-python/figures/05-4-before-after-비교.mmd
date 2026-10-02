@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · except Exception"]
+    direction LR
+    b1["missing.txt<br>FileNotFoundError"]:::tool --> bx["except Exception<br>둘 다 받음"]:::flow
+    b2["bad_orders.txt<br>ValueError"]:::tool --> bx
+    bx --> br["주문 목록 [] · []<br>두 결과가 같은가 True"]:::fail
+  end
+  subgraph AFTER["After · except FileNotFoundError"]
+    direction LR
+    a1["missing.txt<br>FileNotFoundError"]:::tool --> ax["except<br>FileNotFoundError<br>이것만 받음"]:::flow
+    ax --> ar1["주문 목록 []"]:::measure
+    a2["bad_orders.txt<br>ValueError"]:::tool --> ar2["함수 밖에서 받은 메시지<br>invalid literal<br>... '많이'"]:::measure
+  end
+  BEFORE ~~~ AFTER

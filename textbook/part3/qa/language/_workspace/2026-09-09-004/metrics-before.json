@@ -1,0 +1,33 @@
+{
+  "version": "v1.6",
+  "genre": "prose",
+  "char_count": 16208,
+  "metrics": {
+    "comma_inclusion_rate": 0.09806835066864784,
+    "comma_usage_rate": 0.15304606240713226,
+    "ending_comma_rate": 0.15476190476190477,
+    "comma_segment_length": 5.0967302452316074,
+    "conclusion_pivot_count": 2,
+    "safe_balance_count": 0,
+    "hanja_nominalizer_density": 0.003475006682705159,
+    "lexical_diversity": 0.41512964448008555
+  },
+  "z_scores": {
+    "comma_inclusion_rate": -0.9506431413096321,
+    "comma_usage_rate": -1.366369143486528,
+    "ending_comma_rate": 1.4464323555232648,
+    "comma_segment_length": 0.35474120913615564,
+    "hanja_nominalizer_density": -1.8841664439098282,
+    "lexical_diversity": -4.697407110398291
+  },
+  "risk_band": "medium",
+  "risk_score": 4,
+  "evidence": {
+    "conclusion_pivots": [
+      "따라서",
+      "그러므로"
+    ],
+    "safe_balances": []
+  },
+  "warning": "baseline_genre_null:prose->essay"
+}

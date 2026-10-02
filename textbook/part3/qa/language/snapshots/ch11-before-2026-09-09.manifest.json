@@ -1,0 +1,44 @@
+{
+  "snapshot": "ch11-before-2026-09-09.txt",
+  "sha256": "a4d7e5530d8041db8cedeb1965f406812633a97220d0677e454217352ac629bb",
+  "sections": 7,
+  "excluded": [],
+  "files": [
+    {
+      "path": "textbook/part3/ch11-evaluation/_src/01-질의셋과-정답-문서-ID.html",
+      "source_sha256": "0e6a259fc0695f52b325df02c4b33a3d89f141e40f07b101b88b8fd1a811f5b2",
+      "prose_characters": 3111
+    },
+    {
+      "path": "textbook/part3/ch11-evaluation/_src/02-Recall-at-50.html",
+      "source_sha256": "0adea4278e769aeac30353e1357028a3af832570f6788e09ae84987996e60cfc",
+      "prose_characters": 2365
+    },
+    {
+      "path": "textbook/part3/ch11-evaluation/_src/03-Precision-at-5.html",
+      "source_sha256": "c3c7ade53027819414e0120ed77c8f3a4d65d2c0038130149309bfd29010ae3c",
+      "prose_characters": 2425
+    },
+    {
+      "path": "textbook/part3/ch11-evaluation/_src/04-nDCG-at-5.html",
+      "source_sha256": "d30374247a3fd216769a9e5f5c6b71eb4b2efd468f1e8f580ba86bf1ad4aa560",
+      "prose_characters": 2326
+    },
+    {
+      "path": "textbook/part3/ch11-evaluation/_src/05-조건별-평가와-오류-분류.html",
+      "source_sha256": "6428cc434a478c5cc0d573529f6a8e89a2b85162a94ba138123f9182a4e83b62",
+      "prose_characters": 2520
+    },
+    {
+      "path": "textbook/part3/ch11-evaluation/_src/06-실험-로그와-자동-실행.html",
+      "source_sha256": "ac306c8c2b8f1f0f4e751beb0fd8ccf7e3a4291d74faab8d4aa1f7100e266b57",
+      "prose_characters": 2470
+    },
+    {
+      "path": "textbook/part3/ch11-evaluation/index.html",
+      "source_sha256": "99068a9b8e3532356eeacf4e0b770ab40be24f0c11a8363d54e666db766de2f7",
+      "prose_characters": 502
+    }
+  ],
+  "note": "Read-only extraction. Code, preformatted output, scripts, styles, and notebook placeholders are excluded."
+}

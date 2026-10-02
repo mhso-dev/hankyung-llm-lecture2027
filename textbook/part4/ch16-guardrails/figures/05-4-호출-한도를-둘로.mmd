@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph three["호출 한도 셋 · 노트북 5절 둘째 실행"]
+    direction TB
+    a1["기본 흐름 두 번<br>TimeoutError"]:::measure
+    a2["예비 흐름 예약 셋째<br>예비 모델이 답함"]:::model
+    a3["기록 answer<br>fallback · 시도 번호 3"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  subgraph two["호출 한도 둘 · 노트북 9절"]
+    direction TB
+    b1["기본 흐름 두 번<br>TimeoutError · 예약 둘"]:::measure
+    b2["예비 흐름 예약에서 멈춤<br>ValueError 호출 한도"]:::measure
+    b3["기록 stopped<br>예약한 호출 둘"]:::measure
+    b1 --> b2
+    b2 --> b3
+  end
+  same["두 칸 모두 실패 흉내 두 번<br>시도 횟수 둘"]
+  three ~~~ same
+  two ~~~ same

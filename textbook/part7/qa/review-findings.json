@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "guides",
+    "finding": "인증값 저장 위치 모호함",
+    "action": "GitHub 저장소 비밀값으로 분리하는 설명으로 수정",
+    "status": "resolved"
+  },
+  {
+    "scope": "guides",
+    "finding": "복구할 이미지 표현 모호함",
+    "action": "복구에 사용할 이미지로 수정",
+    "status": "resolved"
+  },
+  {
+    "scope": "ch30",
+    "finding": "SSE LF/CRLF 경계파서 불일치",
+    "action": "SSE LF/CRLF·실제 TS 클라이언트·재연결, 실제 Agent API, notebooks 폴더 새 커널 9개·45셀·테스트 6개 통과",
+    "status": "resolved"
+  },
+  {
+    "scope": "ch31",
+    "finding": "LangGraph 기준버전 차이, 도식색 설명 반대, 본문 지연값 불일치",
+    "action": "LangGraph 1.2.11 고정·재실행·본문 수치와 도식 대조, 새 커널 5개·27셀 및 ZIP 추출 마이그레이션 통과",
+    "status": "resolved"
+  },
+  {
+    "scope": "ch33",
+    "finding": "JSON기록만 변경하는 배포/롤백과 임의점수 비교만으로 실제실습 부족",
+    "action": "실제 후보 함수 평가와 회귀 종료코드, Docker 빌드·HTTP 200→503→200 복구, 이력 보존·테스트 5개 통과",
+    "status": "resolved"
+  },
+  {
+    "scope": "ch34",
+    "finding": "일반 생성 직접 SDK 사용과 max_output_tokens=20 빈응답에 따른 0점 품질비교",
+    "action": "LangChain 호출·충분한 출력 예산·실제 답변·usage_metadata 저장, 새 커널 5개·26셀·본문 수치 대조 통과",
+    "status": "resolved"
+  },
+  {
+    "scope": "ch32",
+    "finding": "도식 편집 원본 누락·비밀번호 URI 예약 문자·notebooks cwd",
+    "action": "동일 요소 SVG/Excalidraw 생성, 실제 특수문자 DB 인증, 경로 수정 후 5개 새 커널 재실행",
+    "status": "resolved"
+  },
+  {
+    "scope": "delivery",
+    "finding": "학생 커널 준비와 배포 묶음 검증",
+    "action": "5개 잠금 환경·커널 설치, ZIP 추출 3개 대표 노트북 실행, 72개 화면과 기존 파일 376개 보존 검사 통과",
+    "status": "resolved"
+  }
+]

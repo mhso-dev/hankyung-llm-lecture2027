@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph leftSide["자세한 판 · 5절"]
+    direction TB
+    l1["이름 get_order_by_id"]:::flow
+    l2["채운 기준 수 4<br>이름이 동사로 시작 True"]:::measure
+    l1 --> l2
+  end
+  subgraph rightSide["이름만 바꾼 도구 · 7절"]
+    direction TB
+    r1["이름 order_info"]:::flow
+    r2["채운 기준 수 3<br>이름이 동사로 시작 False"]:::measure
+    r1 --> r2
+  end
+  same["두 도구 공통<br>설명 같음 True<br>설명 쪽 기준 셋 True"]
+  leftSide ~~~ same
+  rightSide ~~~ same

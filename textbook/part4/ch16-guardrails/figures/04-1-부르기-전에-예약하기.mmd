@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  q["질문 셋<br>한 대화에서 차례로"]:::tool
+  r["예약 reserve<br>호출 한도 둘 · 비용 상한 0.01"]:::flow
+  m["모델 gpt-5.4-mini<br>첫째와 둘째 질문"]:::model
+  a["받은 응답 둘"]:::measure
+  s["셋째 질문 멈춤<br>ValueError 호출 한도"]:::measure
+  q --> r
+  r --> m
+  r --> s
+  m --> a

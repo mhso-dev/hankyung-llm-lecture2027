@@ -1,0 +1,40 @@
+# 한국경제신문 LLM Agent 교재 저장소 — 올리지 않는 것
+# 2026-10-02 저장소용으로 넓힘. 새 컴퓨터 준비는 docs/NEW-MACHINE-SETUP.md
+
+# 비밀값 — 루트와 모든 폴더의 .env, .env.* (예시 파일 .env.example 만 올림)
+.env
+.env.*
+!.env.example
+
+# 가상환경 — 각 실습 폴더의 pyproject.toml·uv.lock 으로 다시 만든다
+.venv/
+venv/
+
+# 작업 기기 캐시와 실행 환경(.cache/vm 의 PostgreSQL 등)
+# 전체 마감 기록(.cache/final-close/ — 기록·도구·전후 해시, 약 11MB)만 올린다
+.cache/*
+!.cache/final-close/
+.moai/cache/
+# 실습 폴더 안의 임베딩 캐시(Ch 9·10 강사용 확장 스크립트 — 다시 만들 수 있음)
+labs/**/.cache/
+
+# 파이썬·노트북·도구 캐시
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+node_modules/
+
+# 운영체제와 로컬 도구 상태
+.DS_Store
+.omx/
+
+# 로그 — 새로 생기는 로그는 올리지 않는다.
+# 검사 기록으로 문서가 가리키는 로그(교재 qa·.moai/evolution·전체 마감 기록)는 올린다
+*.log
+!textbook/**/*.log
+!.moai/evolution/**/*.log
+!.cache/final-close/**/*.log

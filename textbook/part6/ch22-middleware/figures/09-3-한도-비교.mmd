@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph FOUR["실행 1 — 호출 한도 4"]
+    direction LR
+    a1["모델 호출 2번"]:::model ~~~ a2["도구 renew_loan 1번"]:::tool ~~~ a3["최종 답 받음"]:::flow
+  end
+  subgraph ONE["실행 2 — 호출 한도 1"]
+    direction LR
+    b1["모델 호출 1번"]:::model ~~~ b2["도구 renew_loan 1번"]:::tool ~~~ b3["한도 안내로 멈춤"]:::fail
+  end
+  FOUR ~~~ ONE

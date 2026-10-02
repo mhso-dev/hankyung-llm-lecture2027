@@ -1,0 +1,23 @@
+[project]
+name = "ch08-context-engineering"
+version = "0.1.0"
+description = "Ch 8 컨텍스트 엔지니어링 실험"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "langchain==1.4.0",
+    "langchain-openai==1.6.0",
+    "pypdf==6.18.0",
+    "python-dotenv==1.2.3",
+    "tiktoken==0.14.0",
+]
+
+[dependency-groups]
+dev = ["pip==26.2", 
+  "ipykernel==7.3.0", "pytest==9.1.1", "ruff==0.16.6"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

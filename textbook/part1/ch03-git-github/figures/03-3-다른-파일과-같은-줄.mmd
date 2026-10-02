@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph ONE["1차 · 서로 다른 파일"]
+    direction LR
+    a1["작성자<br>contact.txt 추가"]:::tool
+    b1["리뷰어<br>policy.txt 추가"]:::tool
+    m1["git merge origin/main<br>Merge made by<br>the 'ort' strategy."]:::flow
+    a1 --> m1
+    b1 --> m1
+  end
+  subgraph TWO["2차 · message.txt 같은 줄"]
+    direction LR
+    a2["작성자<br>배송 안내: 내일 출고"]:::tool
+    b2["리뷰어<br>배송 안내: 14시 이전은<br>오늘 출고"]:::tool
+    m2["git merge origin/main<br>CONFLICT<br>종료 코드: 1"]:::fail
+    a2 --> m2
+    b2 --> m2
+  end
+  ONE -- "고치는 자리 하나만 바꿈" --> TWO

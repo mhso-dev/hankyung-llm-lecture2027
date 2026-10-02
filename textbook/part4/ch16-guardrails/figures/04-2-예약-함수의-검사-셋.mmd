@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  c0["예상 비용 한 번 몫<br>정한 값 0.002"]:::tool
+  c1["검사 하나<br>끝이 있는 0 이상 값인가"]:::flow
+  c2["검사 둘<br>호출 수에 하나를 더해도<br>한도 안인가"]:::flow
+  c3["검사 셋<br>예상 비용을 더해도<br>상한 안인가"]:::flow
+  up["예산 칸 둘을 고침<br>calls와 cost_usd"]:::flow
+  ok["예약 한 번 뒤<br>calls 1 · cost_usd 0.002"]:::measure
+  err["ValueError<br>예산 칸은 그대로"]:::measure
+  c0 --> c1
+  c1 --> c2
+  c2 --> c3
+  c3 --> up
+  up --> ok
+  c1 -.-> err
+  c2 -.-> err
+  c3 -.-> err

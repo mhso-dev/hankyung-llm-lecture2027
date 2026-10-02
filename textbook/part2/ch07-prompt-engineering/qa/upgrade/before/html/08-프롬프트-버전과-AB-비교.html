@@ -1,0 +1,388 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프롬프트 버전과 AB 비교 — Ch 7 · 프롬프트 엔지니어링</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 2 · LangChain과 프롬프트 · Ch 7 · 프롬프트 엔지니어링</p>
+<h1>프롬프트 버전과 AB 비교</h1><div class="meta"><span>강의 0.5h</span><span>실습 0.5h</span><span>새 용어 7개</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 0.5h | 실습 0.5h | 코드 Jupyter Notebook | 새 용어 7개 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>프롬프트 버전에 원문과 변경 이유를 함께 기록할 수 있습니다.</li><li>모델과 과제를 고정하고 누적된 세 프롬프트 전략의 토큰·지연·단어 포함 표시를 비교할 수 있습니다.</li><li>프롬프트, 실행 결과, 측정 조건을 JSON 파일로 저장하고 다시 읽어 확인할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>프롬프트를 수정하다 보면 마지막 문장만 남고 어떤 문제를 고치려고 무엇을 바꿨는지 사라지기 쉽습니다. 이름을 <code>v2</code>라고 붙이는 것만으로는 버전이 보존되지 않습니다. 원문, 변경 이유, 모델, 입력, 실행 결과, 평가 기준을 함께 저장해야 다른 사람이 같은 조건을 다시 살필 수 있습니다. 기록이 없으면 출력 차이가 프롬프트 때문인지 모델 변경이나 다른 고객 문의 때문인지 구분하기 어렵습니다.</p><p>이번 절에서는 기준선, 형식·금지 조건 추가, 관련 예시 추가의 세 전략을 비교합니다. 세 번째 전략은 두 번째 조건을 유지한 채 관련 예시만 추가합니다. 이렇게 누적 조건을 분명히 해야 두 번째에서 세 번째로 바뀐 결과를 예시 추가와 연결해 해석할 수 있습니다. 마지막에는 메모리에 있던 사전을 <code>prompt-ab-continuity.json</code> 파일로 저장하고 실행 시각별 사본도 함께 남깁니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch 6에서는 <code>usage_metadata</code>에서 토큰·캐시 사용량을 읽고 <code>time.perf_counter()</code>로 호출 지연을 기록했습니다. 이 절의 노트북은 Ch 6의 <code>provider-comparison-continuity.json</code>을 직접 읽어 이전 실행의 출처와 공통 필드를 확인합니다. 현재 고객 문의는 Ch 6 질문과 다르므로 두 실행의 수치를 직접 비교하지 않고, 같은 측정 형식만 이어서 사용합니다. 이번 챕터에서는 과업 제약, 관련 예시, 공개 근거, 반복 표본, JSON 필드 진단을 차례로 확인했습니다. 이번 절은 새 프롬프트 기법을 추가하는 대신 앞에서 사용한 전략을 세 버전으로 묶습니다. 파일 저장에는 Ch 2의 05절에서 배운 경로·파일 처리와 Ch 4의 05절에서 다룬 <code>json.dumps()</code>·<code>json.loads()</code>를 사용합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>버전과 변경 기록</h3><p>프롬프트 버전(prompt version)은 특정 시점의 프롬프트 원문과 그 원문을 식별하는 이름입니다. 버전 이름은 <code>v1-direct</code>처럼 사람이 읽을 수 있지만, 이름만 저장해서는 실제 문장을 복구할 수 없습니다. 변경 기록(change log)은 이전 버전에서 무엇을 추가하거나 수정했는지와 그 이유를 적은 기록입니다. 이번 실습의 <code>change_log</code>는 <code>v1</code>을 기준선, <code>v2</code>를 형식·금지 조건 추가, <code>v3</code>를 <code>v2</code> 조건 유지·관련 예시 추가로 설명합니다.</p><p>기준선(baseline)은 이후 변경과 비교할 첫 조건입니다. 통제 변수(control variable)는 비교 중에 유지하는 값입니다. 여기서는 모델 <code>openai:gpt-5.4-mini</code>, 생성 상한 220토큰, system 메시지, 고객 문의, 단어 포함 검사 목록을 유지합니다. 실험 변수는 프롬프트 전략입니다. <code>v1</code>에서 <code>v2</code>로 갈 때는 출력 형식과 금지 조건을 함께 추가했으므로 두 요소 각각의 효과를 분리할 수 없습니다. <code>v2</code>와 <code>v3</code>의 차이는 관련 예시 추가 한 가지로 좁혀져 있습니다.</p><h3>A/B 비교와 실행 기록</h3><p>A/B 비교(A/B comparison)는 같은 대상 집합을 두 조건으로 나누어 결과를 비교하는 방법입니다. 이번 실습은 세 조건을 사용하므로 엄밀히는 A/B/n 비교에 가깝습니다. 각 버전을 한 번씩 실행하기 때문에 반복 변동을 평균내지 못하며, 결과표는 탐색용 실행 기록으로 읽어야 합니다. <code>mention_count</code>는 ‘교환’, ‘A-1042’, ‘사진’ 중 몇 단어가 나타났는지를 세며 품질 점수가 아닙니다. 원문이 규정을 지키는지와 근거 없는 약속을 추가했는지는 사람이 읽어야 합니다.</p><p>실행 아티팩트(run artifact)는 실행 조건과 결과를 나중에 다시 읽을 수 있도록 저장한 파일입니다. 이번 JSON에는 모델, 생성 상한, 고객 문의, 단어 목록, 세 프롬프트 원문, 변경 이유, 응답, 사용량, 지연, 캐시 토큰, 예상 비용, 가격 기준일과 100만 토큰당 단가가 들어갑니다. 모델 별칭은 이후 다른 스냅샷을 가리킬 수 있으므로 높은 재현성이 필요한 평가에서는 접근 가능한 고정 모델 ID와 실행 날짜도 추가해야 합니다.</p><h3>도식 읽기</h3><figure><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 340" role="img"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#516076"/></marker></defs><rect width="980" height="340" rx="18" fill="#F8FAFC"/><path d="M210 78 L275 120" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><path d="M210 178 L275 150" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><path d="M210 278 L275 180" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><path d="M450 150 L520 150" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><path d="M675 150 L740 100" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><path d="M675 150 L740 245" stroke="#516076" stroke-width="3" fill="none" marker-end="url(#a)"/><rect x="20" y="40" width="190" height="75" rx="12" fill="#4F86C6" opacity="0.14" stroke="#4F86C6" stroke-width="3"/><text x="115.0" y="77.5" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">v1 기준선</text><rect x="20" y="140" width="190" height="75" rx="12" fill="#4F86C6" opacity="0.14" stroke="#4F86C6" stroke-width="3"/><text x="115.0" y="177.5" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">v2 제약 추가</text><rect x="20" y="240" width="190" height="75" rx="12" fill="#4F86C6" opacity="0.14" stroke="#4F86C6" stroke-width="3"/><text x="115.0" y="277.5" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">v3 예시 추가</text><rect x="275" y="95" width="175" height="110" rx="12" fill="#2E8B57" opacity="0.14" stroke="#2E8B57" stroke-width="3"/><text x="362.5" y="138.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">고정 입력·모델</text><text x="362.5" y="163.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">동일 실행 조건</text><rect x="520" y="95" width="155" height="110" rx="12" fill="#7C3AED" opacity="0.14" stroke="#7C3AED" stroke-width="3"/><text x="597.5" y="150.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">모델 호출</text><rect x="740" y="55" width="195" height="90" rx="12" fill="#F4B942" opacity="0.14" stroke="#F4B942" stroke-width="3"/><text x="837.5" y="88.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">비교표</text><text x="837.5" y="113.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">토큰·지연·원문</text><rect x="740" y="200" width="195" height="90" rx="12" fill="#4F86C6" opacity="0.14" stroke="#4F86C6" stroke-width="3"/><text x="837.5" y="233.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">JSON 기록</text><text x="837.5" y="258.0" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="700" fill="#172033">프롬프트·응답</text></svg></div><figcaption>프롬프트 원문과 변경 기록이 세 버전을 만들고, 고정된 모델·입력으로 실행한 결과가 비교표와 JSON 파일에 함께 저장됩니다. 파일을 다시 읽는 화살표는 이름만 붙인 상태와 영구 기록을 구분합니다.<span class="gaze">각 결과 행에서 프롬프트 원문과 모델·입력 조건까지 거슬러 올라갈 수 있는지 확인합니다.</span></figcaption></figure>
+<!-- learning-sequence-20260914-08 -->
+<h3>파일의 이름과 내용의 지문을 함께 남기기</h3>
+<p><code>run_id</code>는 한 실행을 구분하는 이름이고 SHA-256은 파일 바이트에서 계산한 고정 길이의 지문입니다. 코드의 <code>read_bytes()</code>로 파일을 읽고 <code>sha256(...).hexdigest()</code>로 16진수 문자열을 얻습니다. 같은 파일 이름의 내용이 바뀌면 지문으로 차이를 확인할 수 있습니다. 지문이 있다고 원자료의 내용이 정확하거나 신뢰할 수 있는 출처라고 보증되지는 않습니다.</p>
+<p>가령 v2라는 이름을 그대로 둔 채 출력 형식만 바꾸면 결과를 나중에 해석할 때 어느 문장을 사용했는지 모호해집니다. 그래서 버전 이름 외에 실제 프롬프트 원문, 바꾼 이유, 모델과 입력, 응답을 같은 기록에 넣습니다. 이전 파일을 읽는 준비 셀은 새 실험의 성능을 계산하는 셀이 아니라 그 실험이 어떤 선수 자료를 사용했는지 확인하는 셀입니다.</p>
+<p>이 방식은 번역 지침의 존댓말 규칙이나 정보 추출의 누락값 규칙을 비교할 때도 적용할 수 있습니다. 한 번의 실험에서 말투와 누락 처리 규칙을 함께 바꾸면 차이를 두 원인으로 분리하기 어렵습니다. 현재 v1→v2는 형식과 금지 조건을 함께 바꾸고 v2→v3는 예시 추가를 비교하므로, 각 행을 한 가지 순수 효과로 해석하지 않습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p><code>versions</code> 사전은 세 프롬프트 원문을 보존합니다. <code>v2</code>는 세 줄 형식과 규정 밖 약속 금지를 추가하고, <code>v3</code>는 이 두 조건을 그대로 둔 채 관련 예시를 추가합니다. 각 원문을 같은 모델과 system 메시지로 한 번씩 실행한 뒤, 입력·출력·캐시 토큰, 전체 호출 지연, 예상 비용, 단어 포함 개수를 표의 한 행으로 만듭니다. 마지막 셀은 모든 원문과 결과를 <code>labs/part2/ch07-prompt-engineering/runs/prompt-ab-continuity.json</code>에 저장하고 실행 시각별 사본 경로를 출력합니다.</p><section class="notebook" data-notebook="08-프롬프트-버전과-AB-비교" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-09</span><button type="button" class="copy-all">전체 코드 복사</button><a download="08-프롬프트-버전과-AB-비교.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtlITroaztlITtirgg67KE7KCE6rO8IEEvQiDruYTqtZBcbiIsCiAgICAiXG4iLAogICAgIuqwmeydgCDqs7zsoJzrpbwg7IS4IOqwgOyngCDtlITroaztlITtirgg7KCE65617Jy866GcIOyLpO2Wie2VmOqzoCDthqDtgbDCt+yngOyXsMK364uo7Ja0IO2PrO2VqCDtkZzsi5zrpbwg7ZWcIO2RnOyXkCDslrTrlrvqsowg6riw66Gd7ZWg6rmM7JqUPyIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDtjKjtgqTsp4Ag7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLssqsg7Iuk7ZaJ7JeQ7IScIOyImOyXhSDquLDspIAg67KE7KCE7J2EIOyEpOy5mO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICJjZWxsLTAzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjQwOjA0LjkxNzk0NloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjQwOjA0LjkxNzgzNFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjQwOjA1LjQ3ODMyMloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6NDA6MDUuNDc3NzAxWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIk5vdGU6IHlvdSBtYXkgbmVlZCB0byByZXN0YXJ0IHRoZSBrZXJuZWwgdG8gdXNlIHVwZGF0ZWQgcGFja2FnZXMuXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7ZiE7J6sIOy7pOuEkOyXkCDsiJjsl4Ug6riw7KSAIO2MqO2CpOyngCDrsoTsoITsnYQg7ISk7LmY7ZWp64uI64ukLlxuIiwKICAgICIlcGlwIGluc3RhbGwgLXEgbGFuZ2NoYWluPT0xLjQuMCBsYW5nY2hhaW4tb3BlbmFpPT0xLjYuMCBweXRob24tZG90ZW52PT0xLjIuMyIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyBBUEkg7YKk7JmAIOuqqOuNuCDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIuyDgeychCDtj7TrjZTsnZggYC5lbnZg66W8IOywvuqzoCDtgqTsnZgg7KG07J6s66eMIO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjQwOjA1LjQ3OTgzNVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjQwOjA1LjQ3OTcxOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjQwOjA2LjEzMDk5OVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6NDA6MDYuMTMwNTI3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGZpbmRfZG90ZW5264qUIOyLpO2WiSDtj7TrjZTrtoDthLAg7IOB7JyEIO2PtOuNlOydmCAuZW5266W8IOywvuqzoCDtgqQg6rCS7J2AIOy2nOugpe2VmOyngCDslYrsirXri4jri6QuXG4iLAogICAgImltcG9ydCBqc29uLCBvcywgdGltZVxuIiwKICAgICJmcm9tIGRvdGVudiBpbXBvcnQgZmluZF9kb3RlbnYsIGxvYWRfZG90ZW52XG4iLAogICAgImZyb20gbGFuZ2NoYWluLmNoYXRfbW9kZWxzIGltcG9ydCBpbml0X2NoYXRfbW9kZWxcbiIsCiAgICAiXG4iLAogICAgImVudl9wYXRoID0gZmluZF9kb3RlbnYodXNlY3dkPVRydWUpXG4iLAogICAgImlmIGVudl9wYXRoOlxuIiwKICAgICIgICAgbG9hZF9kb3RlbnYoZW52X3BhdGgpXG4iLAogICAgImlmIG5vdCBvcy5nZXRlbnYoXCJPUEVOQUlfQVBJX0tFWVwiKTpcbiIsCiAgICAiICAgIHJhaXNlIFJ1bnRpbWVFcnJvcihcIu2UhOuhnOygne2KuCDro6jtirjsnZggLmVuduyXkCBPUEVOQUlfQVBJX0tFWeqwgCDtlYTsmpTtlanri4jri6QuXCIpXG4iLAogICAgIm1vZGVsID0gaW5pdF9jaGF0X21vZGVsKFwib3BlbmFpOmdwdC01LjQtbWluaVwiLCBtYXhfdG9rZW5zPTIyMCkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rOg7KCVIOqzvOygnFxuIiwKICAgICJcbiIsCiAgICAi66qo65OgIOygiOyXkOyEnCDqsJnsnYAg6rOg6rCdIOusuOydmOyZgCDtmZXsnbgg64uo7Ja066W8IOyCrOyaqe2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJjZWxsLTA3IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjQwOjA2LjEzMTkzMFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjQwOjA2LjEzMTg2NVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjQwOjA2LjEzMzUwNloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6NDA6MDYuMTMzMjI4WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICIjIFRBU0vripQg66qo65OgIOu5hOq1kOyXkOyEnCDrsJTqvrjsp4Ag7JWK64qUIO2VqeyEsSDrrLjsnZjsnbTqs6AgTUVOVElPTlPripQg7ZKI7KeIIOygkOyImOqwgCDslYTri5nri4jri6QuXG4iLAogICAgIlRBU0sgPSBcIlwiXCLqs6DqsJ0g66y47J2YOiDslrTsoJwg67Cb7J2AIO2FgOu4lOufrCDrmpzqu5HsnbQg6rmo7KGM7Iq164uI64ukLiDso7zrrLjrsojtmLjripQgQS0xMDQy7J6F64uI64ukLlxuIiwKICAgICLsg4gg7IOB7ZKI7Jy866GcIOuwlOq+uOqzoCDsi7bsirXri4jri6QuIO2ajOyCrCDqt5zsoJXsg4Eg6rWQ7ZmYIOygkeyImOyXkOuKlCDtjIzshpAg7IKs7KeE7J20IO2VhOyalO2VqeuLiOuLpC5cbiIsCiAgICAi64u167OA7JeQ64qUIOu2hOulmCwg7ZWE7JqU7ZWcIOuLpOydjCDtlonrj5ksIOqzoOqwneyXkOqyjCDrs7Trgrwg7ZWcIOusuOyepeydhCDtj6ztlajtlZjshLjsmpQuXCJcIlwiXG4iLAogICAgIk1FTlRJT05TID0gW1wi6rWQ7ZmYXCIsIFwiQS0xMDQyXCIsIFwi7IKs7KeEXCJdIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wOCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOy4oeyglSDtlajsiJhcbiIsCiAgICAiXG4iLAogICAgIuuLqOyWtCDtj6ztlagg7ZGc7Iuc64qUIOybkOusuCDsoJXrj4XsnYQg64+V64qUIO2RnOyLnOydtOupsCDtkojsp4gg7KCQ7IiY6rCAIOyVhOuLmeuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgImBydW4obWVzc2FnZXMpYOuKlCDsnbQg64W47Yq467aB7JeQ7IScIOyekeyEse2VmOuKlCDrs7TsobAg7ZWo7IiY7J6F64uI64ukLiDsl63tlaDCt+uCtOyaqSDrqqnroZ3snYQg67Cb7JWEIGBtb2RlbC5pbnZva2UoKWDrpbwg7ZWcIOuyiCDsi6TtlontlZjqs6AsIOuLtSDrrLjsnpDsl7TCt+yCrOyaqeuficK36rK96rO8IOy0iOulvCDri7TsnYAg65SV7IWU64SI66as66W8IOuwmO2ZmO2VqeuLiOuLpC4gYGRlZmAg7IWA7J2AIO2VqOyImOulvCDsoJXsnZjtlaAg67+Q7J2066mwIOuSpOyXkOyEnCBgcnVuKC4uLilg7J2EIO2YuOy2nO2VoCDrlYwg66qo6424IOyalOyyreydtCDsi5zsnpHrkKnri4jri6QuIGBtZW50aW9uX2ZsYWdzKHRleHQpYOuKlCDsp4DsoJUg64uo7Ja06rCAIOusuOyekOyXtOyXkCDsnojripTsp4Ag7ZGc7Iuc7ZWcIOuUleyFlOuEiOumrOulvCDrsJjtmZjtlanri4jri6QuIOuLteydmCDrnLvsnYQg7YyQ64uo7ZWY64qUIOuqqOuNuCDtmLjstpzsnYAg7Y+s7ZWo7ZWY7KeAIOyViuyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjQwOjA2LjEzNDIxNVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjQwOjA2LjEzNDE1OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjQwOjA2LjEzNjAxMVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6NDA6MDYuMTM1NjY3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOuqqOuNuCDsnZHri7XsnZgg7JuQ66y4LCDsgqzsmqnrn4ksIOqyveqzvCDsi5zqsITsnYQg7ZWcIOugiOy9lOuTnOuhnCDrs7TsobTtlanri4jri6QuXG4iLAogICAgImRlZiBydW4obWVzc2FnZXMpOlxuIiwKICAgICIgICAgc3RhcnRlZCA9IHRpbWUucGVyZl9jb3VudGVyKClcbiIsCiAgICAiICAgIGFuc3dlciA9IG1vZGVsLmludm9rZShtZXNzYWdlcylcbiIsCiAgICAiICAgIHJldHVybiB7XCJ0ZXh0XCI6IGFuc3dlci50ZXh0LCBcInVzYWdlXCI6IGFuc3dlci51c2FnZV9tZXRhZGF0YSxcbiIsCiAgICAiICAgICAgICAgICAgXCJsYXRlbmN5X3NcIjogcm91bmQodGltZS5wZXJmX2NvdW50ZXIoKSAtIHN0YXJ0ZWQsIDMpfVxuIiwKICAgICJcbiIsCiAgICAiZGVmIG1lbnRpb25fZmxhZ3ModGV4dCk6XG4iLAogICAgIiAgICByZXR1cm4ge3dvcmQ6IHdvcmQgaW4gdGV4dCBmb3Igd29yZCBpbiBNRU5USU9OU30iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEwIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgQ2ggNiDsuKHsoJUg6riw66GdIOyXsOqysFxuIiwKICAgICJcbiIsCiAgICAiQ2ggNuydtCDsoIDsnqXtlZwg7KCc6rO17J6QIOy4oeyglSDquLDroZ3snYQg7J296rOgIOqzte2GtSDtlYTrk5zsmYAg7YyM7J28IOyngOusuOydhCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgIlxuIiwKICAgICJgcnVuX2lkYOuKlCDsi6TtlonsnYQg6rWs67aE7ZWY64qUIOydtOumhOydtOqzoCBTSEEtMjU27J2AIO2MjOydvCDrgrTsmqnsnYQg67CU7J207Yq466GcIOydveyWtCDqs4TsgrDtlZwg7KeA66y47J6F64uI64ukLiBgcmVhZF90ZXh0KClg64qUIO2FjeyKpO2KuOulvCwgYHJlYWRfYnl0ZXMoKWDripQg67CU7J207Yq466W8IOydveyKteuLiOuLpC4gYGhleGRpZ2VzdCgpYOuKlCDqs4TsgrDrkJwg7KeA66y47J2EIDE27KeE7IiYIOusuOyekOyXtOuhnCDtkZztmITtlanri4jri6QuIOydtCDqsJLsnYAg64K07JqpIOuzgOqyveydhCDruYTqtZDtlZjripQg642wIOyTsOupsCDsgqzsi6Qg7KCV7ZmV7ISx7J2EIO2PieqwgO2VmOuKlCDsoJDsiJjripQg7JWE64uZ64uI64ukLlxuIiwKICAgICJcbiIsCiAgICAiYG5leHQoKHBhdGggZm9yIHBhdGggaW4gLi4uIGlmIC4uLiksIE5vbmUpYOuKlCDsobDqsbTsl5Ag66ee64qUIOyyqyDqsr3roZzrpbwg7LC+6rOgIOyXhuycvOuptCBgTm9uZWDsnYQg67CY7ZmY7ZWp64uI64ukLiBgW1BhdGguY3dkKCksICpQYXRoLmN3ZCgpLnBhcmVudHNdYOyXkOyEnCDrs4TtkZzripQg7IOB7JyEIOqyveuhnOuTpOydhCDrqqnroZ0g7JWI7JeQIO2OvOy5qeuLiOuLpC4g7ZiE7J6sIO2PtOuNlOu2gO2EsCDsg4HsnIQg7Y+0642U66W8IOywvuuKlCDspIDruYQg7L2U65Oc7J2066mwIOuqqOuNuCDsnoXroKXsnYQg66eM65Oc64qUIOuLqOqzhOyZgCDqtazrtoTtlanri4jri6QuXG4iLAogICAgIlxuIiwKICAgICJgcmVxdWlyZWQgPD0gY2gwNl9yZWNvcmQua2V5cygpYOuKlCDtlYTsmpTtlZwg7YKkIOynke2VqeydtCDsoIDsnqUg6riw66Gd7J2YIO2CpOyXkCDrqqjrkZAg7Y+s7ZWo65CY64qU7KeAIOqygOyCrO2VqeuLiOuLpC4g7J207Ja07KeA64qUIOq4sOuhneydgCDqsJnsnYAg7ZWE65OcIO2YleyLneydhCDssLjqs6DtlZjsp4Drp4wg6rOg6rCdIOusuOydmOyZgCBDaCA27J2YIOyniOusuOydtCDri6TrpbTrr4DroZwg65GQIOyLpO2WiSDsiJjsuZjrpbwg7ISx64qlIOuzgO2ZlOuhnCDruYTqtZDtlZjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6NDA6MDYuMTM2OTM1WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6NDA6MDYuMTM2ODg0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6NDA6MDYuMTM5ODkxWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzo0MDowNi4xMzk1MTNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiQ2ggNiDquLDroZ06IGNoMDYtcHJvdmlkZXItMjAyNjA5MDlUMTczNjU1OTIzNDU0WiA1MzFiMzBkMGMxYTBcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtlITroaztlITtirgg7JuQ66y46rO8IHJhdyDsnZHri7XsnYQgVVRGLTggSlNPTuycvOuhnCDsoIDsnqXtlZwg65KkIOuLpOyLnCDsnb3slrQg7ZmV7J247ZWp64uI64ukLlxuIiwKICAgICJmcm9tIGhhc2hsaWIgaW1wb3J0IHNoYTI1NlxuIiwKICAgICJmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGhcbiIsCiAgICAiXG4iLAogICAgImNvdXJzZV9yb290ID0gbmV4dCgocGF0aCBmb3IgcGF0aCBpbiBbUGF0aC5jd2QoKSwgKlBhdGguY3dkKCkucGFyZW50c11cbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICBpZiAocGF0aCAvIFwibGFicy9wYXJ0Mi9jaDA2LWxhbmdjaGFpbi1zdGFydFwiKS5pc19kaXIoKSksIE5vbmUpXG4iLAogICAgImlmIGNvdXJzZV9yb290IGlzIE5vbmU6XG4iLAogICAgIiAgICByYWlzZSBGaWxlTm90Rm91bmRFcnJvcihcIuyLpOyKtSDrrLbsnYzsnZggbGFicy9wYXJ0MiDtj7TrjZTrpbwg7LC+7KeAIOuqu+2WiOyKteuLiOuLpC5cIilcbiIsCiAgICAiY2gwNl9yZWxhdGl2ZSA9IFBhdGgoXCJsYWJzL3BhcnQyL2NoMDYtbGFuZ2NoYWluLXN0YXJ0L3J1bnMvcHJvdmlkZXItY29tcGFyaXNvbi1jb250aW51aXR5Lmpzb25cIilcbiIsCiAgICAiY2gwNl9wYXRoID0gY291cnNlX3Jvb3QgLyBjaDA2X3JlbGF0aXZlXG4iLAogICAgImlmIG5vdCBjaDA2X3BhdGguZXhpc3RzKCk6XG4iLAogICAgIiAgICByYWlzZSBGaWxlTm90Rm91bmRFcnJvcihcIkNoIDbsnZggMDYg64W47Yq467aB7J2EIOuovOyggCDsi6TtlontlZjshLjsmpQuXCIpXG4iLAogICAgImNoMDZfcmVjb3JkID0ganNvbi5sb2FkcyhjaDA2X3BhdGgucmVhZF90ZXh0KGVuY29kaW5nPVwidXRmLThcIikpXG4iLAogICAgImNoMDZfc2hhMjU2ID0gc2hhMjU2KGNoMDZfcGF0aC5yZWFkX2J5dGVzKCkpLmhleGRpZ2VzdCgpXG4iLAogICAgInJlcXVpcmVkID0ge1wicnVuX2lkXCIsIFwicnVuX2RhdGVcIiwgXCJzb3VyY2VfY2hhcHRlclwiLCBcImNvbmRpdGlvbnNcIiwgXCJwcmljaW5nXCIsIFwicmVjb3Jkc1wifVxuIiwKICAgICJhc3NlcnQgcmVxdWlyZWQgPD0gY2gwNl9yZWNvcmQua2V5cygpXG4iLAogICAgImFzc2VydCBjaDA2X3JlY29yZFtcInByaWNpbmdcIl1bXCJvcGVuYWlcIl0gPT0ge1wib3JkaW5hcnlfaW5wdXRcIjogMC43NSwgXCJjYWNoZWRfaW5wdXRcIjogMC4wNzUsIFwib3V0cHV0XCI6IDQuNTB9XG4iLAogICAgInByaW50KFwiQ2ggNiDquLDroZ06XCIsIGNoMDZfcmVjb3JkW1wicnVuX2lkXCJdLCBjaDA2X3NoYTI1Nls6MTJdKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDrsoTsoITqs7wg67OA6rK9IOydtOycoCDquLDroZ1cbiIsCiAgICAiXG4iLAogICAgIuuyhOyghOuniOuLpCDrsJTqvrwg7KGw6rG07J2EIO2VnCDqsIDsp4Ag7KCE65617Jy866GcIOyEpOuqhe2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDYsCiAgICJpZCI6ICJjZWxsLTEzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjQwOjA2LjE0MDU1OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjQwOjA2LjE0MDUwNFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjQwOjA2LjE0MjIyMFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6NDA6MDYuMTQxOTc2WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIntcbiIsCiAgICAgICIgIFwidjEtZGlyZWN0XCI6IFwi6riw7KSA7ISgXCIsXG4iLAogICAgICAiICBcInYyLWNvbnN0cmFpbnRzXCI6IFwi7ZiV7IudwrfquIjsp4Ag7KGw6rG0XCIsXG4iLAogICAgICAiICBcInYzLWV4YW1wbGVcIjogXCJ2MiDsobDqsbQg7Jyg7KeAwrfqtIDroKgg7JiI7IucIOy2lOqwgFwiXG4iLAogICAgICAifVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIHYz64qUIHYyIOygnOyVveydhCDsnKDsp4DtlZwg7LGEIOq0gOugqCDsmIjsi5zrp4wg7LaU6rCA7ZWp64uI64ukLlxuIiwKICAgICJ2ZXJzaW9ucyA9IHtcbiIsCiAgICAiICAgIFwidjEtZGlyZWN0XCI6IFwi64u17ZWY7IS47JqULiBcIiArIFRBU0ssXG4iLAogICAgIiAgICBcInYyLWNvbnN0cmFpbnRzXCI6IFwi67aE66WYL+uLpOydjCDtlonrj5kv6rOg6rCdIOusuOyepSDshLgg7KSE66GcIOuLte2VmOqzoCDqt5zsoJUg67CWIOyVveyGjeydgCDtlZjsp4Ag66eI7IS47JqULiBcIiArIFRBU0ssXG4iLAogICAgIiAgICBcInYzLWV4YW1wbGVcIjogXCLsmIjsi5w6IO2MjOyGkCDsg4HtkojsnYAg6rWQ7ZmY7Jy866GcIOu2hOulmO2VmOqzoCDsgqzsp4Tqs7wg7KO866y467KI7Zi466W8IO2ZleyduO2VqeuLiOuLpC4gXCJcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgXCLrtoTrpZgv64uk7J2MIO2WieuPmS/qs6DqsJ0g66y47J6lIOyEuCDspITroZwg64u17ZWY6rOgIOq3nOyglSDrsJYg7JW97IaN7J2AIO2VmOyngCDrp4jshLjsmpQuIFwiICsgVEFTSyxcbiIsCiAgICAifVxuIiwKICAgICJjaGFuZ2VfbG9nID0ge1widjEtZGlyZWN0XCI6IFwi6riw7KSA7ISgXCIsIFwidjItY29uc3RyYWludHNcIjogXCLtmJXsi53Ct+q4iOyngCDsobDqsbRcIixcbiIsCiAgICAiICAgICAgICAgICAgICBcInYzLWV4YW1wbGVcIjogXCJ2MiDsobDqsbQg7Jyg7KeAwrfqtIDroKgg7JiI7IucIOy2lOqwgFwifVxuIiwKICAgICJwcmludChqc29uLmR1bXBzKGNoYW5nZV9sb2csIGVuc3VyZV9hc2NpaT1GYWxzZSwgaW5kZW50PTIpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTQiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDshLgg7KCE6561IOyLpO2WiVxuIiwKICAgICJcbiIsCiAgICAi66qo6424LCDsp4jrrLgsIOyDneyEsSDsg4HtlZzqs7wg7Y+J6rCAIOq4sOykgOydhCDqs6DsoJXtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA3LAogICAiaWQiOiAiY2VsbC0xNSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNzo0MDowNi4xNDI4MDVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNzo0MDowNi4xNDI3NjBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNzo0MDowOS43NDA5NTdaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE3OjQwOjA5Ljc0MDIwMloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJ2MS1kaXJlY3QgKirrtoTrpZg6Kiog6rWQ7ZmYIOyalOyyrSAvIO2MjOyGkCDsg4Htkogg66y47J2YXG4iLAogICAgICAiXG4iLAogICAgICAiKirtlYTsmpTtlZwg64uk7J2MIO2WieuPmToqKiAgXG4iLAogICAgICAi7YyM7IaQ65CcIOuanOq7kSDsgqzsp4TsnYQg67O064K07KO87Iuc66m0IOq1kO2ZmCDsoJHsiJjrpbwg64+E7JmA65Oc66as6rKg7Iq164uI64ukLiDso7zrrLjrsojtmLggKipBLTEwNDIqKiDtmZXsnbjtlojsirXri4jri6QuXG4iLAogICAgICAiXG4iLAogICAgICAiKirqs6DqsJ3sl5Dqsowg67O064K8IO2VnCDrrLjsnqU6KiogIFxuIiwKICAgICAgIuyjvOusuOuyiO2YuCBBLTEwNDIg7ZmV7J247ZaI7Iq164uI64ukLiDqtZDtmZgg7KCR7IiY66W8IOychO2VtCDquajsp4Qg65qc6ruR7J2YIO2MjOyGkCDsgqzsp4TsnYQg67O064K07KO87Iuc66m0IOuwlOuhnCDsg4gg7IOB7ZKIIOq1kO2ZmCDsoIjssKjrpbwg7KeE7ZaJ7ZW065Oc66as6rKg7Iq164uI64ukLlxuIgogICAgIF0KICAgIH0sCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInYyLWNvbnN0cmFpbnRzIOu2hOulmDog7KCc7ZKIIO2MjOyGkCDqtZDtmZgg66y47J2YXG4iLAogICAgICAiXG4iLAogICAgICAi64uk7J2MIO2WieuPmTog7YyM7IaQIOu2gOychOqwgCDrs7TsnbTrj4TroZ0g65qc6ruRIOyCrOynhOydhCDso7zrrLjrsojtmLggQS0xMDQy7JmAIO2VqOq7mCDrs7TrgrTso7zsi5zrqbQg6rWQ7ZmYIOygkeyImOulvCDrj4TsmYDrk5zrpqzqsqDsirXri4jri6QuXG4iLAogICAgICAiXG4iLAogICAgICAi6rOg6rCdIOusuOyepTog7Ja07KCcIOuwm+ydgCDthYDruJTrn6wg65qc6ruRIO2MjOyGkOycvOuhnCDrtojtjrjsnYQg65Oc66CkIOyjhOyGoe2VmOupsCwg7KO866y467KI7Zi4IEEtMTA0MuyZgCDtlajqu5gg7YyM7IaQIOyCrOynhOydhCDrs7TrgrTso7zsi5zrqbQg7ZmV7J24IO2bhCDqtZDtmZgg7KCR7IiY66W8IOynhO2Wie2VmOqyoOyKteuLiOuLpC5cbiIKICAgICBdCiAgICB9LAogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJ2My1leGFtcGxlIOu2hOulmDog6rWQ7ZmYICBcbiIsCiAgICAgICLri6TsnYwg7ZaJ64+ZOiDtjIzshpAg7IKs7KeE6rO8IOyjvOusuOuyiO2YuCBBLTEwNDLrpbwg7ZmV7J247ZWcIOuSpCDqtZDtmZgg7KCR7IiY66W8IOynhO2Wie2VqeuLiOuLpC4gIFxuIiwKICAgICAgIuqzoOqwnSDrrLjsnqU6IO2MjOyGkOuQnCDrmpzqu5Eg7IKs7KeE7J2EIOuztOuCtOyjvOyLnOuptCDso7zrrLjrsojtmLggQS0xMDQyIOq4sOykgOycvOuhnCDqtZDtmZgg7KCR7IiY66W8IOuPhOyZgOuTnOumrOqyoOyKteuLiOuLpC5cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDshLgg67KE7KCE7J2EIOqwmeydgCBzeXN0ZW0g66mU7Iuc7KeA7JmAIOuqqOuNuCDshKTsoJXsnLzroZwg7ZWcIOuyiOyUqSDsi6Ttlontlanri4jri6QuXG4iLAogICAgInJ1bnMgPSB7fVxuIiwKICAgICJmb3IgdmVyc2lvbiwgcHJvbXB0X3RleHQgaW4gdmVyc2lvbnMuaXRlbXMoKTpcbiIsCiAgICAiICAgIHJ1bnNbdmVyc2lvbl0gPSBydW4oWyhcInN5c3RlbVwiLCBcIuqzoOqwnSDsp4Dsm5Ag7JqU7LKt7J2EIOyymOumrO2VmOyEuOyalC5cIiksXG4iLAogICAgIiAgICAgICAgICAgICAgICAgICAgICAgICAoXCJ1c2VyXCIsIHByb21wdF90ZXh0KV0pXG4iLAogICAgIiAgICBwcmludCh2ZXJzaW9uLCBydW5zW3ZlcnNpb25dW1widGV4dFwiXSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTE2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Yag7YGwwrfsp4Dsl7DCt+yekOuPmSDtmZXsnbgg6rKw6rO8XG4iLAogICAgIlxuIiwKICAgICLri6jslrQg7Y+s7ZWoIOyImCDrj5nsoJDrj4Qg6rKw6rO87J6F64uI64ukLiDtlZwg67KI7J2YIOyLpO2WieycvOuhnCDsoITrnrUg7KCE7LK07J2YIOyasOyXtOydhCDtmZXsoJXtlZjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogOCwKICAgImlkIjogImNlbGwtMTciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6NDA6MDkuNzQyNTYyWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6NDA6MDkuNzQyNDAzWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6NDA6MDkuNzQ4MzI4WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzo0MDowOS43NDc3MDJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiW1xuIiwKICAgICAgIiAge1xuIiwKICAgICAgIiAgICBcInZlcnNpb25cIjogXCJ2MS1kaXJlY3RcIixcbiIsCiAgICAgICIgICAgXCJjaGFuZ2VcIjogXCLquLDspIDshKBcIixcbiIsCiAgICAgICIgICAgXCJpbnB1dF90b2tlbnNcIjogOTUsXG4iLAogICAgICAiICAgIFwib3V0cHV0X3Rva2Vuc1wiOiAxMTMsXG4iLAogICAgICAiICAgIFwiY2FjaGVfcmVhZF90b2tlbnNcIjogMCxcbiIsCiAgICAgICIgICAgXCJlc3RpbWF0ZWRfY29zdF91c2RcIjogMC4wMDA1Nzk3NSxcbiIsCiAgICAgICIgICAgXCJsYXRlbmN5X21zXCI6IDE1NjAuMCxcbiIsCiAgICAgICIgICAgXCJtZW50aW9uX2NvdW50XCI6IDMsXG4iLAogICAgICAiICAgIFwiZ2VuZXJhdGlvbl9ldmFsdWF0aW9uXCI6IFwiaHVtYW5fcmV2aWV3X3JlcXVpcmVkXCJcbiIsCiAgICAgICIgIH0sXG4iLAogICAgICAiICB7XG4iLAogICAgICAiICAgIFwidmVyc2lvblwiOiBcInYyLWNvbnN0cmFpbnRzXCIsXG4iLAogICAgICAiICAgIFwiY2hhbmdlXCI6IFwi7ZiV7IudwrfquIjsp4Ag7KGw6rG0XCIsXG4iLAogICAgICAiICAgIFwiaW5wdXRfdG9rZW5zXCI6IDExOCxcbiIsCiAgICAgICIgICAgXCJvdXRwdXRfdG9rZW5zXCI6IDEwOCxcbiIsCiAgICAgICIgICAgXCJjYWNoZV9yZWFkX3Rva2Vuc1wiOiAwLFxuIiwKICAgICAgIiAgICBcImVzdGltYXRlZF9jb3N0X3VzZFwiOiAwLjAwMDU3NDUsXG4iLAogICAgICAiICAgIFwibGF0ZW5jeV9tc1wiOiAxMTY1LjAsXG4iLAogICAgICAiICAgIFwibWVudGlvbl9jb3VudFwiOiAzLFxuIiwKICAgICAgIiAgICBcImdlbmVyYXRpb25fZXZhbHVhdGlvblwiOiBcImh1bWFuX3Jldmlld19yZXF1aXJlZFwiXG4iLAogICAgICAiICB9LFxuIiwKICAgICAgIiAge1xuIiwKICAgICAgIiAgICBcInZlcnNpb25cIjogXCJ2My1leGFtcGxlXCIsXG4iLAogICAgICAiICAgIFwiY2hhbmdlXCI6IFwidjIg7KGw6rG0IOycoOyngMK36rSA66CoIOyYiOyLnCDstpTqsIBcIixcbiIsCiAgICAgICIgICAgXCJpbnB1dF90b2tlbnNcIjogMTM5LFxuIiwKICAgICAgIiAgICBcIm91dHB1dF90b2tlbnNcIjogNzEsXG4iLAogICAgICAiICAgIFwiY2FjaGVfcmVhZF90b2tlbnNcIjogMCxcbiIsCiAgICAgICIgICAgXCJlc3RpbWF0ZWRfY29zdF91c2RcIjogMC4wMDA0MjM3NSxcbiIsCiAgICAgICIgICAgXCJsYXRlbmN5X21zXCI6IDg3MC4wLFxuIiwKICAgICAgIiAgICBcIm1lbnRpb25fY291bnRcIjogMyxcbiIsCiAgICAgICIgICAgXCJnZW5lcmF0aW9uX2V2YWx1YXRpb25cIjogXCJodW1hbl9yZXZpZXdfcmVxdWlyZWRcIlxuIiwKICAgICAgIiAgfVxuIiwKICAgICAgIl1cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyB1c2FnZV9tZXRhZGF0YeydmCDthqDtgbDqs7wg7KeA7JewLCDri6jslrQg7ZGc7IucIOyImOulvCDrsoTsoITrs4Qg7ZaJ7Jy866GcIOunjOuTreuLiOuLpC5cbiIsCiAgICAiZGVmIGVzdGltYXRlX29wZW5haV9jb3N0KHVzYWdlKTpcbiIsCiAgICAiICAgIGlucHV0X3Rva2VucyA9IHVzYWdlLmdldChcImlucHV0X3Rva2Vuc1wiKVxuIiwKICAgICIgICAgb3V0cHV0X3Rva2VucyA9IHVzYWdlLmdldChcIm91dHB1dF90b2tlbnNcIilcbiIsCiAgICAiICAgIGlmIGlucHV0X3Rva2VucyBpcyBOb25lIG9yIG91dHB1dF90b2tlbnMgaXMgTm9uZTpcbiIsCiAgICAiICAgICAgICByZXR1cm4gTm9uZVxuIiwKICAgICIgICAgY2FjaGVfcmVhZCA9ICh1c2FnZS5nZXQoXCJpbnB1dF90b2tlbl9kZXRhaWxzXCIpIG9yIHt9KS5nZXQoXCJjYWNoZV9yZWFkXCIpIG9yIDBcbiIsCiAgICAiICAgIG5vcm1hbF9pbnB1dCA9IGlucHV0X3Rva2VucyAtIGNhY2hlX3JlYWRcbiIsCiAgICAiICAgIHJldHVybiAobm9ybWFsX2lucHV0ICogMC43NSArIGNhY2hlX3JlYWQgKiAwLjA3NSArIG91dHB1dF90b2tlbnMgKiA0LjUwKSAvIDFfMDAwXzAwMFxuIiwKICAgICJcbiIsCiAgICAidGFibGUgPSBbXVxuIiwKICAgICJmb3IgdmVyc2lvbiwgcmVzdWx0IGluIHJ1bnMuaXRlbXMoKTpcbiIsCiAgICAiICAgIHVzYWdlID0gcmVzdWx0W1widXNhZ2VcIl0gb3Ige31cbiIsCiAgICAiICAgIGNhY2hlX3JlYWQgPSAodXNhZ2UuZ2V0KFwiaW5wdXRfdG9rZW5fZGV0YWlsc1wiKSBvciB7fSkuZ2V0KFwiY2FjaGVfcmVhZFwiKSBvciAwXG4iLAogICAgIiAgICBjb3N0ID0gZXN0aW1hdGVfb3BlbmFpX2Nvc3QodXNhZ2UpXG4iLAogICAgIiAgICB0YWJsZS5hcHBlbmQoe1widmVyc2lvblwiOiB2ZXJzaW9uLCBcImNoYW5nZVwiOiBjaGFuZ2VfbG9nW3ZlcnNpb25dLFxuIiwKICAgICIgICAgICAgICAgICAgICAgICBcImlucHV0X3Rva2Vuc1wiOiB1c2FnZS5nZXQoXCJpbnB1dF90b2tlbnNcIiksIFwib3V0cHV0X3Rva2Vuc1wiOiB1c2FnZS5nZXQoXCJvdXRwdXRfdG9rZW5zXCIpLFxuIiwKICAgICIgICAgICAgICAgICAgICAgICBcImNhY2hlX3JlYWRfdG9rZW5zXCI6IGNhY2hlX3JlYWQsXG4iLAogICAgIiAgICAgICAgICAgICAgICAgIFwiZXN0aW1hdGVkX2Nvc3RfdXNkXCI6IE5vbmUgaWYgY29zdCBpcyBOb25lIGVsc2Ugcm91bmQoY29zdCwgOCksXG4iLAogICAgIiAgICAgICAgICAgICAgICAgIFwibGF0ZW5jeV9tc1wiOiByb3VuZChyZXN1bHRbXCJsYXRlbmN5X3NcIl0gKiAxMDAwLCAxKSxcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgXCJtZW50aW9uX2NvdW50XCI6IHN1bShtZW50aW9uX2ZsYWdzKHJlc3VsdFtcInRleHRcIl0pLnZhbHVlcygpKSxcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgXCJnZW5lcmF0aW9uX2V2YWx1YXRpb25cIjogXCJodW1hbl9yZXZpZXdfcmVxdWlyZWRcIn0pXG4iLAogICAgInByaW50KGpzb24uZHVtcHModGFibGUsIGVuc3VyZV9hc2NpaT1GYWxzZSwgaW5kZW50PTIpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTgiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDrsoTsoIQg6riw66GdIOyggOyepeqzvCDsnqztmZXsnbhcbiIsCiAgICAiXG4iLAogICAgIu2UhOuhrO2UhO2KuCDsm5DrrLgsIOqzoOyglSDsobDqsbQsIOybkOusuCDsnZHri7XsnYQg7IOB64yAIOqyveuhnOydmCBKU09OIO2MjOydvOyXkCDtlajqu5gg7KCA7J6l7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogOSwKICAgImlkIjogImNlbGwtMTkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6NDA6MDkuNzQ5NjU1WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6NDA6MDkuNzQ5NTExWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6NDA6MDkuNzU0OTI5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzo0MDowOS43NTQzODZaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAibGFicy9wYXJ0Mi9jaDA3LXByb21wdC1lbmdpbmVlcmluZy9ydW5zL3Byb21wdC1hYi1jb250aW51aXR5Lmpzb24g67O07KG0IOyCrOuzuDogbGFicy9wYXJ0Mi9jaDA3LXByb21wdC1lbmdpbmVlcmluZy9ydW5zL2NvbnRpbnVpdHkvMjAyNjA5MDlUMTc0MDA5NzUxNzcwWi9wcm9tcHQtYWItY29udGludWl0eS5qc29uXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7KGw6rG067OEIOybkOusuOqzvCDsuKHsoJXqsJLsnYQg7J2066aE6rO8IO2VqOq7mCDstpzroKXtlZjsl6wg67mE6rWQ7ZWp64uI64ukLlxuIiwKICAgICJmcm9tIGRhdGV0aW1lIGltcG9ydCBkYXRldGltZSwgdGltZXpvbmVcbiIsCiAgICAiXG4iLAogICAgInJ1bl9hdCA9IGRhdGV0aW1lLm5vdyh0aW1lem9uZS51dGMpXG4iLAogICAgInNlc3Npb25faWQgPSBydW5fYXQuc3RyZnRpbWUoXCIlWSVtJWRUJUglTSVTJWZaXCIpXG4iLAogICAgInJlY29yZCA9IHtcInJ1bl9pZFwiOiBmXCJjaDA3LXByb21wdC1hYi17c2Vzc2lvbl9pZH1cIiwgXCJydW5fZGF0ZVwiOiBydW5fYXQuZGF0ZSgpLmlzb2Zvcm1hdCgpLFxuIiwKICAgICIgICAgICAgICAgXCJzb3VyY2VfY2hhcHRlclwiOiBcImNoMDdcIiwgXCJzb3VyY2VfcmVjb3JkXCI6IHtcInBhdGhcIjogc3RyKGNoMDZfcmVsYXRpdmUpLCBcInNoYTI1NlwiOiBjaDA2X3NoYTI1NiwgXCJydW5faWRcIjogY2gwNl9yZWNvcmRbXCJydW5faWRcIl19LFxuIiwKICAgICIgICAgICAgICAgXCJtb2RlbFwiOiBcIm9wZW5haTpncHQtNS40LW1pbmlcIiwgXCJzZXR0aW5nc1wiOiB7XCJtYXhfdG9rZW5zXCI6IDIyMCwgXCJyZXBldGl0aW9uc1wiOiAxLFxuIiwKICAgICIgICAgICAgICAgXCJwcmljaW5nX2RhdGVcIjogY2gwNl9yZWNvcmRbXCJwcmljaW5nXCJdW1wiZGF0ZVwiXSxcbiIsCiAgICAiICAgICAgICAgIFwicHJpY2luZ191c2RfcGVyX21pbGxpb25cIjogY2gwNl9yZWNvcmRbXCJwcmljaW5nXCJdW1wib3BlbmFpXCJdfSxcbiIsCiAgICAiICAgICAgICAgIFwiaW5wdXRcIjogVEFTSywgXCJtZW50aW9uX3NjcmVlblwiOiBNRU5USU9OUyxcbiIsCiAgICAiICAgICAgICAgIFwiY29tcGFyaXNvbl9wb2xpY3lcIjogXCJtZW50aW9uX2NvdW5064qUIOybkOusuCDsoJXrj4Ug67O07KGw7J2066mwIOyDneyEsSDri7Xrs4Ag7ZKI7KeIIOygkOyImOqwgCDslYTri5hcIixcbiIsCiAgICAiICAgICAgICAgIFwidmVyc2lvbnNcIjoge25hbWU6IHtcInByb21wdFwiOiB2ZXJzaW9uc1tuYW1lXSwgXCJjaGFuZ2VcIjogY2hhbmdlX2xvZ1tuYW1lXSxcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwicmVzdWx0XCI6IHJ1bnNbbmFtZV0sIFwibWV0cmljc1wiOiB0YWJsZVtpbmRleF19XG4iLAogICAgIiAgICAgICAgICAgICAgICAgICAgICAgZm9yIGluZGV4LCBuYW1lIGluIGVudW1lcmF0ZSh2ZXJzaW9ucyl9fVxuIiwKICAgICJydW5zX2RpciA9IGNvdXJzZV9yb290IC8gXCJsYWJzL3BhcnQyL2NoMDctcHJvbXB0LWVuZ2luZWVyaW5nL3J1bnNcIlxuIiwKICAgICJyZWNvcmRfcGF0aCA9IHJ1bnNfZGlyIC8gXCJwcm9tcHQtYWItY29udGludWl0eS5qc29uXCJcbiIsCiAgICAic2Vzc2lvbl9wYXRoID0gcnVuc19kaXIgLyBcImNvbnRpbnVpdHlcIiAvIHNlc3Npb25faWQgLyByZWNvcmRfcGF0aC5uYW1lXG4iLAogICAgInNlc3Npb25fcGF0aC5wYXJlbnQubWtkaXIocGFyZW50cz1UcnVlLCBleGlzdF9vaz1GYWxzZSlcbiIsCiAgICAicGF5bG9hZCA9IGpzb24uZHVtcHMocmVjb3JkLCBlbnN1cmVfYXNjaWk9RmFsc2UsIGluZGVudD0yKVxuIiwKICAgICJyZWNvcmRfcGF0aC53cml0ZV90ZXh0KHBheWxvYWQsIGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAic2Vzc2lvbl9wYXRoLndyaXRlX3RleHQocGF5bG9hZCwgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJwcmludChyZWNvcmRfcGF0aC5yZWxhdGl2ZV90byhjb3Vyc2Vfcm9vdCksIFwi67O07KG0IOyCrOuzuDpcIiwgc2Vzc2lvbl9wYXRoLnJlbGF0aXZlX3RvKGNvdXJzZV9yb290KSkiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogImV4cGVyaW1lbnQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA5LAogICAiY29kZV9zaGEyNTYiOiAiNzUzOGQ5MTMxZGY2MDc1NTAwYzQzNjY4ODJjOWU3MjZmMzlmNDM3MmE5ODFmZmVjMTIxYjY3YWY1MDVhN2Y5MSIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTA5VDE3OjQwOjA5Ljg3NTkzOSswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiYTU4MDhmMmM0M2EwZDQ1YzBmZTU5ZjRjMjYwMWNkZDM1M2ExZDk3YzFjOTY2Njg3MGI3NzZkNzk0YzUwNjFjNyIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>프롬프트 버전과 A/B 비교</h2>
+<p>같은 과제를 세 가지 프롬프트 전략으로 실행하고 토큰·지연·단어 포함 표시를 한 표에 어떻게 기록할까요?</p></div>
+<div class="nb-markdown"><h3>패키지 준비</h3>
+<p>첫 실행에서 수업 기준 버전을 설치합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 현재 커널에 수업 기준 패키지 버전을 설치합니다.
+%pip install -q langchain==1.4.0 langchain-openai==1.6.0 python-dotenv==1.2.3</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-markdown"><h3>API 키와 모델 준비</h3>
+<p>상위 폴더의 <code>.env</code>를 찾고 키의 존재만 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># find_dotenv는 실행 폴더부터 상위 폴더의 .env를 찾고 키 값은 출력하지 않습니다.
+import json, os, time
+from dotenv import find_dotenv, load_dotenv
+from langchain.chat_models import init_chat_model
+
+env_path = find_dotenv(usecwd=True)
+if env_path:
+    load_dotenv(env_path)
+if not os.getenv(&quot;OPENAI_API_KEY&quot;):
+    raise RuntimeError(&quot;프로젝트 루트의 .env에 OPENAI_API_KEY가 필요합니다.&quot;)
+model = init_chat_model(&quot;openai:gpt-5.4-mini&quot;, max_tokens=220)</code></pre></div></div>
+<div class="nb-markdown"><h3>고정 과제</h3>
+<p>모든 절에서 같은 고객 문의와 확인 단어를 사용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># TASK는 모든 비교에서 바꾸지 않는 합성 문의이고 MENTIONS는 품질 점수가 아닙니다.
+TASK = &quot;&quot;&quot;고객 문의: 어제 받은 텀블러 뚜껑이 깨졌습니다. 주문번호는 A-1042입니다.
+새 상품으로 바꾸고 싶습니다. 회사 규정상 교환 접수에는 파손 사진이 필요합니다.
+답변에는 분류, 필요한 다음 행동, 고객에게 보낼 한 문장을 포함하세요.&quot;&quot;&quot;
+MENTIONS = [&quot;교환&quot;, &quot;A-1042&quot;, &quot;사진&quot;]</code></pre></div></div>
+<div class="nb-markdown"><h3>측정 함수</h3>
+<p>단어 포함 표시는 원문 정독을 돕는 표시이며 품질 점수가 아닙니다.</p>
+<p><code>run(messages)</code>는 이 노트북에서 작성하는 보조 함수입니다. 역할·내용 목록을 받아 <code>model.invoke()</code>를 한 번 실행하고, 답 문자열·사용량·경과 초를 담은 딕셔너리를 반환합니다. <code>def</code> 셀은 함수를 정의할 뿐이며 뒤에서 <code>run(...)</code>을 호출할 때 모델 요청이 시작됩니다. <code>mention_flags(text)</code>는 지정 단어가 문자열에 있는지 표시한 딕셔너리를 반환합니다. 답의 뜻을 판단하는 모델 호출은 포함하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 모델 응답의 원문, 사용량, 경과 시간을 한 레코드로 보존합니다.
+def run(messages):
+    started = time.perf_counter()
+    answer = model.invoke(messages)
+    return {&quot;text&quot;: answer.text, &quot;usage&quot;: answer.usage_metadata,
+            &quot;latency_s&quot;: round(time.perf_counter() - started, 3)}
+
+def mention_flags(text):
+    return {word: word in text for word in MENTIONS}</code></pre></div></div>
+<div class="nb-markdown"><h3>Ch 6 측정 기록 연결</h3>
+<p>Ch 6이 저장한 제공자 측정 기록을 읽고 공통 필드와 파일 지문을 확인합니다.</p>
+<p><code>run_id</code>는 실행을 구분하는 이름이고 SHA-256은 파일 내용을 바이트로 읽어 계산한 지문입니다. <code>read_text()</code>는 텍스트를, <code>read_bytes()</code>는 바이트를 읽습니다. <code>hexdigest()</code>는 계산된 지문을 16진수 문자열로 표현합니다. 이 값은 내용 변경을 비교하는 데 쓰며 사실 정확성을 평가하는 점수는 아닙니다.</p>
+<p><code>next((path for path in ... if ...), None)</code>는 조건에 맞는 첫 경로를 찾고 없으면 <code>None</code>을 반환합니다. <code>[Path.cwd(), *Path.cwd().parents]</code>에서 별표는 상위 경로들을 목록 안에 펼칩니다. 현재 폴더부터 상위 폴더를 찾는 준비 코드이며 모델 입력을 만드는 단계와 구분합니다.</p>
+<p><code>required &lt;= ch06_record.keys()</code>는 필요한 키 집합이 저장 기록의 키에 모두 포함되는지 검사합니다. 이어지는 기록은 같은 필드 형식을 참고하지만 고객 문의와 Ch 6의 질문이 다르므로 두 실행 수치를 성능 변화로 비교하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 프롬프트 원문과 raw 응답을 UTF-8 JSON으로 저장한 뒤 다시 읽어 확인합니다.
+from hashlib import sha256
+from pathlib import Path
+
+course_root = next((path for path in [Path.cwd(), *Path.cwd().parents]
+                    if (path / &quot;labs/part2/ch06-langchain-start&quot;).is_dir()), None)
+if course_root is None:
+    raise FileNotFoundError(&quot;실습 묶음의 labs/part2 폴더를 찾지 못했습니다.&quot;)
+ch06_relative = Path(&quot;labs/part2/ch06-langchain-start/runs/provider-comparison-continuity.json&quot;)
+ch06_path = course_root / ch06_relative
+if not ch06_path.exists():
+    raise FileNotFoundError(&quot;Ch 6의 06 노트북을 먼저 실행하세요.&quot;)
+ch06_record = json.loads(ch06_path.read_text(encoding=&quot;utf-8&quot;))
+ch06_sha256 = sha256(ch06_path.read_bytes()).hexdigest()
+required = {&quot;run_id&quot;, &quot;run_date&quot;, &quot;source_chapter&quot;, &quot;conditions&quot;, &quot;pricing&quot;, &quot;records&quot;}
+assert required &lt;= ch06_record.keys()
+assert ch06_record[&quot;pricing&quot;][&quot;openai&quot;] == {&quot;ordinary_input&quot;: 0.75, &quot;cached_input&quot;: 0.075, &quot;output&quot;: 4.50}
+print(&quot;Ch 6 기록:&quot;, ch06_record[&quot;run_id&quot;], ch06_sha256[:12])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Ch 6 기록: ch06-provider-20260909T173655923454Z 531b30d0c1a0
+</pre></div>
+<div class="nb-markdown"><h3>버전과 변경 이유 기록</h3>
+<p>버전마다 바꾼 조건을 한 가지 전략으로 설명합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># v3는 v2 제약을 유지한 채 관련 예시만 추가합니다.
+versions = {
+    &quot;v1-direct&quot;: &quot;답하세요. &quot; + TASK,
+    &quot;v2-constraints&quot;: &quot;분류/다음 행동/고객 문장 세 줄로 답하고 규정 밖 약속은 하지 마세요. &quot; + TASK,
+    &quot;v3-example&quot;: &quot;예시: 파손 상품은 교환으로 분류하고 사진과 주문번호를 확인합니다. &quot;
+                  &quot;분류/다음 행동/고객 문장 세 줄로 답하고 규정 밖 약속은 하지 마세요. &quot; + TASK,
+}
+change_log = {&quot;v1-direct&quot;: &quot;기준선&quot;, &quot;v2-constraints&quot;: &quot;형식·금지 조건&quot;,
+              &quot;v3-example&quot;: &quot;v2 조건 유지·관련 예시 추가&quot;}
+print(json.dumps(change_log, ensure_ascii=False, indent=2))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{
+  &quot;v1-direct&quot;: &quot;기준선&quot;,
+  &quot;v2-constraints&quot;: &quot;형식·금지 조건&quot;,
+  &quot;v3-example&quot;: &quot;v2 조건 유지·관련 예시 추가&quot;
+}
+</pre></div>
+<div class="nb-markdown"><h3>세 전략 실행</h3>
+<p>모델, 질문, 생성 상한과 평가 기준을 고정합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 세 버전을 같은 system 메시지와 모델 설정으로 한 번씩 실행합니다.
+runs = {}
+for version, prompt_text in versions.items():
+    runs[version] = run([(&quot;system&quot;, &quot;고객 지원 요청을 처리하세요.&quot;),
+                         (&quot;user&quot;, prompt_text)])
+    print(version, runs[version][&quot;text&quot;])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">v1-direct **분류:** 교환 요청 / 파손 상품 문의
+
+**필요한 다음 행동:**  
+파손된 뚜껑 사진을 보내주시면 교환 접수를 도와드리겠습니다. 주문번호 **A-1042** 확인했습니다.
+
+**고객에게 보낼 한 문장:**  
+주문번호 A-1042 확인했습니다. 교환 접수를 위해 깨진 뚜껑의 파손 사진을 보내주시면 바로 새 상품 교환 절차를 진행해드리겠습니다.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">v2-constraints 분류: 제품 파손 교환 문의
+
+다음 행동: 파손 부위가 보이도록 뚜껑 사진을 주문번호 A-1042와 함께 보내주시면 교환 접수를 도와드리겠습니다.
+
+고객 문장: 어제 받은 텀블러 뚜껑 파손으로 불편을 드려 죄송하며, 주문번호 A-1042와 함께 파손 사진을 보내주시면 확인 후 교환 접수를 진행하겠습니다.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">v3-example 분류: 교환  
+다음 행동: 파손 사진과 주문번호 A-1042를 확인한 뒤 교환 접수를 진행합니다.  
+고객 문장: 파손된 뚜껑 사진을 보내주시면 주문번호 A-1042 기준으로 교환 접수를 도와드리겠습니다.
+</pre></div>
+<div class="nb-markdown"><h3>토큰·지연·자동 확인 결과</h3>
+<p>단어 포함 수 동점도 결과입니다. 한 번의 실행으로 전략 전체의 우열을 확정하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [8]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># usage_metadata의 토큰과 지연, 단어 표시 수를 버전별 행으로 만듭니다.
+def estimate_openai_cost(usage):
+    input_tokens = usage.get(&quot;input_tokens&quot;)
+    output_tokens = usage.get(&quot;output_tokens&quot;)
+    if input_tokens is None or output_tokens is None:
+        return None
+    cache_read = (usage.get(&quot;input_token_details&quot;) or {}).get(&quot;cache_read&quot;) or 0
+    normal_input = input_tokens - cache_read
+    return (normal_input * 0.75 + cache_read * 0.075 + output_tokens * 4.50) / 1_000_000
+
+table = []
+for version, result in runs.items():
+    usage = result[&quot;usage&quot;] or {}
+    cache_read = (usage.get(&quot;input_token_details&quot;) or {}).get(&quot;cache_read&quot;) or 0
+    cost = estimate_openai_cost(usage)
+    table.append({&quot;version&quot;: version, &quot;change&quot;: change_log[version],
+                  &quot;input_tokens&quot;: usage.get(&quot;input_tokens&quot;), &quot;output_tokens&quot;: usage.get(&quot;output_tokens&quot;),
+                  &quot;cache_read_tokens&quot;: cache_read,
+                  &quot;estimated_cost_usd&quot;: None if cost is None else round(cost, 8),
+                  &quot;latency_ms&quot;: round(result[&quot;latency_s&quot;] * 1000, 1),
+                  &quot;mention_count&quot;: sum(mention_flags(result[&quot;text&quot;]).values()),
+                  &quot;generation_evaluation&quot;: &quot;human_review_required&quot;})
+print(json.dumps(table, ensure_ascii=False, indent=2))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[
+  {
+    &quot;version&quot;: &quot;v1-direct&quot;,
+    &quot;change&quot;: &quot;기준선&quot;,
+    &quot;input_tokens&quot;: 95,
+    &quot;output_tokens&quot;: 113,
+    &quot;cache_read_tokens&quot;: 0,
+    &quot;estimated_cost_usd&quot;: 0.00057975,
+    &quot;latency_ms&quot;: 1560.0,
+    &quot;mention_count&quot;: 3,
+    &quot;generation_evaluation&quot;: &quot;human_review_required&quot;
+  },
+  {
+    &quot;version&quot;: &quot;v2-constraints&quot;,
+    &quot;change&quot;: &quot;형식·금지 조건&quot;,
+    &quot;input_tokens&quot;: 118,
+    &quot;output_tokens&quot;: 108,
+    &quot;cache_read_tokens&quot;: 0,
+    &quot;estimated_cost_usd&quot;: 0.0005745,
+    &quot;latency_ms&quot;: 1165.0,
+    &quot;mention_count&quot;: 3,
+    &quot;generation_evaluation&quot;: &quot;human_review_required&quot;
+  },
+  {
+    &quot;version&quot;: &quot;v3-example&quot;,
+    &quot;change&quot;: &quot;v2 조건 유지·관련 예시 추가&quot;,
+    &quot;input_tokens&quot;: 139,
+    &quot;output_tokens&quot;: 71,
+    &quot;cache_read_tokens&quot;: 0,
+    &quot;estimated_cost_usd&quot;: 0.00042375,
+    &quot;latency_ms&quot;: 870.0,
+    &quot;mention_count&quot;: 3,
+    &quot;generation_evaluation&quot;: &quot;human_review_required&quot;
+  }
+]
+</pre></div>
+<div class="nb-markdown"><h3>버전 기록 저장과 재확인</h3>
+<p>프롬프트 원문, 고정 조건, 원문 응답을 상대 경로의 JSON 파일에 함께 저장합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [9]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 조건별 원문과 측정값을 이름과 함께 출력하여 비교합니다.
+from datetime import datetime, timezone
+
+run_at = datetime.now(timezone.utc)
+session_id = run_at.strftime(&quot;%Y%m%dT%H%M%S%fZ&quot;)
+record = {&quot;run_id&quot;: f&quot;ch07-prompt-ab-{session_id}&quot;, &quot;run_date&quot;: run_at.date().isoformat(),
+          &quot;source_chapter&quot;: &quot;ch07&quot;, &quot;source_record&quot;: {&quot;path&quot;: str(ch06_relative), &quot;sha256&quot;: ch06_sha256, &quot;run_id&quot;: ch06_record[&quot;run_id&quot;]},
+          &quot;model&quot;: &quot;openai:gpt-5.4-mini&quot;, &quot;settings&quot;: {&quot;max_tokens&quot;: 220, &quot;repetitions&quot;: 1,
+          &quot;pricing_date&quot;: ch06_record[&quot;pricing&quot;][&quot;date&quot;],
+          &quot;pricing_usd_per_million&quot;: ch06_record[&quot;pricing&quot;][&quot;openai&quot;]},
+          &quot;input&quot;: TASK, &quot;mention_screen&quot;: MENTIONS,
+          &quot;comparison_policy&quot;: &quot;mention_count는 원문 정독 보조이며 생성 답변 품질 점수가 아님&quot;,
+          &quot;versions&quot;: {name: {&quot;prompt&quot;: versions[name], &quot;change&quot;: change_log[name],
+                               &quot;result&quot;: runs[name], &quot;metrics&quot;: table[index]}
+                       for index, name in enumerate(versions)}}
+runs_dir = course_root / &quot;labs/part2/ch07-prompt-engineering/runs&quot;
+record_path = runs_dir / &quot;prompt-ab-continuity.json&quot;
+session_path = runs_dir / &quot;continuity&quot; / session_id / record_path.name
+session_path.parent.mkdir(parents=True, exist_ok=False)
+payload = json.dumps(record, ensure_ascii=False, indent=2)
+record_path.write_text(payload, encoding=&quot;utf-8&quot;)
+session_path.write_text(payload, encoding=&quot;utf-8&quot;)
+print(record_path.relative_to(course_root), &quot;보존 사본:&quot;, session_path.relative_to(course_root))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">labs/part2/ch07-prompt-engineering/runs/prompt-ab-continuity.json 보존 사본: labs/part2/ch07-prompt-engineering/runs/continuity/20260909T174009751770Z/prompt-ab-continuity.json
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 세 버전의 <code>mention_count</code>가 같더라도 출력 형식과 안내 문장을 원문에서 비교합니다. 마지막 출력에서 Ch 6 기록 ID와 지문, 새 JSON 정본과 실행 시각별 사본 경로가 나타나는지 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>세 응답은 모두 ‘교환’, ‘A-1042’, ‘사진’을 포함하여 <code>mention_count</code>가 3이었습니다. 입력 토큰은 <code>v1</code> 95, <code>v2</code> 118, <code>v3</code> 139토큰으로 늘었습니다. 지시와 예시가 추가되었기 때문입니다. 출력 토큰은 각각 113, 108, 71토큰이었고 전체 호출 지연은 1.560초, 1.165초, 0.870초였습니다. 캐시 입력은 세 행 모두 0토큰이었고 예상 비용은 각각 0.00057975달러, 0.0005745달러, 0.00042375달러였습니다. 입력이 긴 버전의 출력과 지연이 이번 실행에서 오히려 작았으므로, 입력 길이만으로 출력 길이나 지연 순서를 예측할 수 없음을 확인할 수 있습니다.</p><p>원문을 읽으면 세 버전 모두 교환 접수에 사진이 필요하다고 안내하고 주문번호를 포함합니다. <code>v2</code>와 <code>v3</code>는 세 줄 형식으로 응답했으며, <code>v3</code>는 관련 예시를 추가하면서 <code>v2</code>의 규정 밖 약속 금지 조건을 유지했습니다. 그러나 단어 포함 개수 3은 세 답의 업무 품질이 같다는 뜻이 아닙니다. 문장의 명확성, 정책 준수, 불필요한 약속은 별도의 루브릭으로 평가해야 합니다.</p><p>마지막 셀은 실행 날짜와 ID, Ch 6 기록의 경로·SHA-256 지문, 모델 설정, 세 프롬프트와 원문 응답, 공통 측정 필드를 <code>prompt-ab-continuity.json</code>과 실행별 사본에 저장합니다. <code>mention_count</code>는 품질 점수가 아니며, 생성 답변의 업무 품질은 <code>human_review_required</code>로 남겨 사람이 원문을 검토해야 합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>한 버전에서 여러 요소를 동시에 바꾸면 어떤 요소가 결과 차이를 만들었는지 분리하기 어렵습니다. 변경 기록에 묶여 바뀐 조건을 그대로 적습니다.</li><li>생성 응답은 실행할 때마다 달라질 수 있습니다. 버전마다 같은 반복 횟수를 정하고 실행 순서 효과도 확인합니다.</li><li>프롬프트 파일과 실행 로그에는 API 키, Authorization 헤더, 공개할 수 없는 고객 원문을 저장하지 않습니다. 필요한 식별자는 비식별 입력 ID로 대체합니다.</li><li>지연은 네트워크와 제공자 부하의 영향을 받습니다. 한 번의 수치로 프롬프트 전략의 속도를 일반화하지 않습니다.</li><li>LangSmith 같은 외부 저장소를 사용할 때는 데이터 보관 정책과 접근 권한을 확인합니다. 이번 기본 실습은 로컬 JSON 파일만 사용합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>프롬프트 버전은 이름, 원문, 변경 이유를 함께 보존해야 합니다.</li><li>비교에서는 모델·입력·평가 기준을 유지하고 바꾼 조건을 기록합니다.</li><li>실행 아티팩트에 프롬프트와 결과를 함께 저장해야 이후 검토와 재실행이 가능합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — Ch 8에서는 프롬프트 한 문장보다 넓은 모델 맥락을 다룹니다. 06절이 이 실행 기록과 지문을 직접 읽은 뒤, 별도 질문으로 full·selected·compressed를 실행하고 같은 측정 필드를 남깁니다. 두 실험은 질문과 입력 단위가 다르므로 수치를 직접 비교하지 않습니다. Ch 11은 검색된 문서 순위를 평가하고, 생성 답변의 정확성·근거성 평가는 Ch 15에서 다룹니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제 1</summary><p class="quiz-q"><code>v2-constraints</code>라는 이름만 저장하면 버전 기록으로 부족한 이유는 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 실제 프롬프트 원문과 변경 이유, 실행 조건이 없으면 어떤 문장을 실행했는지 복구하거나 결과 차이의 원인을 검토할 수 없습니다.</p></details><details class="quiz"><summary>문제 2</summary><p class="quiz-q"><code>v2</code>와 <code>v3</code> 비교에서 유지한 조건과 추가한 조건은 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 세 줄 형식과 규정 밖 약속 금지를 유지하고, 현재 문의와 관련된 예시를 추가했습니다.</p></details><details class="quiz"><summary>문제 3</summary><p class="quiz-q">세 버전의 <code>mention_count</code>가 모두 3이면 품질이 같다고 판정할 수 있나요?</p><p class="quiz-a"><b>해설</b> — 판정할 수 없습니다. 단어 포함 검사는 문맥과 정책 준수, 근거 없는 약속을 확인하지 않으므로 원문과 별도 루브릭이 필요합니다.</p></details><details class="quiz"><summary>문제 4</summary><p class="quiz-q">이번 JSON 기록에 재현성을 높이기 위해 추가할 항목 두 가지를 고르면 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 실행 날짜, 고정 모델 스냅샷, 제공자 설정, 반복 번호, 입력 ID, 평가자 판정 가운데 목적에 맞는 항목을 추가할 수 있습니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.langchain.com/langsmith/prompt-engineering-quickstart">LangSmith Prompt Engineering Quickstart</a> · 확인 2026-09-09 · 외부 서비스의 prompt commit 개념 참고</li><li><a href="https://docs.langchain.com/oss/python/langchain/models">LangChain Models</a> · 확인 2026-09-09 · LangChain 1.4.0 환경의 <code>invoke</code>와 <code>usage_metadata</code> 사용</li><li><a href="https://docs.python.org/3.12/library/json.html">Python 3.12 <code>json</code> 문서</a> · 확인 2026-09-09</li><li><a href="https://docs.python.org/3.12/library/pathlib.html">Python 3.12 <code>pathlib</code> 문서</a> · 확인 2026-09-09</li><li><a href="https://github.com/langchain-ai/langchain/blob/master/LICENSE">LangChain LICENSE</a> · MIT · 확인 2026-09-09 · 예제는 수업 도메인과 변수명으로 새로 작성</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="07-구조화-출력-프롬프트-진단.html">← 구조화 출력 프롬프트 진단</a></span><span><a href="index.html">챕터 목차</a></span><span>챕터 끝</span></div></div></body></html>

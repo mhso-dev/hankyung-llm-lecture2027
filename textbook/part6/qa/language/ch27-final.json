@@ -1,0 +1,90 @@
+{
+  "run_id": "2026-09-11-001",
+  "genre": "산문",
+  "minimum_severity": "S1",
+  "phase6_verdict": "corrected",
+  "technical_correction_separate": true,
+  "technical_review": "textbook/part6/qa/ch27-technical-review.md",
+  "gate": {
+    "exit_code": 1,
+    "verdict": "WARN",
+    "P0": "WARN: character change rate 4.7%; local correction scope",
+    "P1": "PASS",
+    "P2": "PASS: antithesis 7 to 8",
+    "P3": "PASS",
+    "P4": "REPORT: 40 of 455 source sentences changed",
+    "P5": "REPORT: average 50.3 chars, short-sentence ratio 14.3%, longest run 3"
+  },
+  "meaning_preservation_15": "PASS; the incorrect 03 in_progress claim was separately corrected against actual output",
+  "overediting": "none",
+  "spell_check": "skipped: public teaching material but external commercial bulk transfer avoided",
+  "notebook_code_output_exception": "04, 05, 07, and 08 were deliberately changed and rerun for notebook-cwd project-root discovery, dotenv discovery, and current-call file verification.",
+  "notebook_verification_hashes": {
+    "01": {
+      "code": "5452a8d5efa21915ae619133a8accf71ac4cb3f4e46a3363dd3f1c2be9e4ca55",
+      "outputs": "c244b5634556190843f06c6516a27a1690d31443045f3aad277e53b48eb75307"
+    },
+    "02": {
+      "code": "f302f7a3c451dafc2e562c48e5baa5c8930f8fa89798210e41895f608aaaf54c",
+      "outputs": "ba154aab80936548f11f1c8a1227a726713412208750b82f3c3c3f783c9b8c84"
+    },
+    "03": {
+      "code": "7b6c4edf3a6b8cd6d4ccf673f6f3bb25a3862dc0d168370d56cf4da095e5edaa",
+      "outputs": "e848899d74fc37087d31fa41b2f1b0f64829db6b6c2ce48dedd1d84d41ee356d"
+    },
+    "04": {
+      "code": "8f1f812082630f377feb618f35802ea1260644ee38e281f0c54e5b6e374c141b",
+      "outputs": "b1cf4a63ec991148da9608f42ec5254075923b35593073ccd117de9d7da6fa94"
+    },
+    "05": {
+      "code": "fe50b75d8ba45b75d674956bda1c89772e839f380dcca219b8db33a2dfd325ea",
+      "outputs": "303db97bd99dfb779a215085c266e3c55db64ff7af72561c6ad80d08ac7ddb29"
+    },
+    "06": {
+      "code": "02000e813991e7fc6236dffced710e96713a0dc464880a28e8a7eb31da4c971d",
+      "outputs": "99841edc51a30ae1d67be41abac2e2871816f7ae068f1b2a826521021ea5664f"
+    },
+    "07": {
+      "code": "c2cbe546a56d3e5696335ca085253d5bbdc059ca1e56f3cc0f3750b420ca9e3c",
+      "outputs": "b6cef1434516ed5d8f39b3b1aa9583740e7b1b8bf204b311dd70f519b151df58"
+    },
+    "08": {
+      "code": "5e0d3c79be961e3dcbf66683cddf827c8ffdbebe3f1ead153b37a34b1e9c3004",
+      "outputs": "0d04a43e76def1d3c5b7c9649b857b27160440ffefc37c12d9b7b3430a18cdc4"
+    }
+  },
+  "source_hashes_after": {
+    "01": "ac68f1b180c3dc10014d9c974b729f20451918f7f0630f58ebb72e0502c95acf",
+    "02": "99c52e096d621f56985b58f93e37665f7cb15e69bfa1d879764377d520669004",
+    "03": "aeca5afcfdfe141f5ab8939204cb7e00c129d10bf5d51d060fad49582794115a",
+    "04": "a88022fb72d46db9826cba9d23ee8f91023213e34497fdbbd51e8cf1abfd8319",
+    "05": "62ffcd0ab85707b7d92c72959bd2cbeedc31f1ad199c44b16728cdde90be1cb1",
+    "06": "801b4ab0f50ea95beb8815b5d68152656888190ed95b8d6b46496a1d7236067f",
+    "07": "96554f1392f0dd0831be4b3e40657d8c8008ee95192dc23283afc4cc44d18768",
+    "08": "e95256359b999bbc65d187f1ac4c0d716b0f73eefd635d944c6c0c627bf8a8c5",
+    "README": "acdc92015a647b1ff64f58d7f368ed19b22b65489755faced0f1a41082d6374f",
+    "chapter_json": "dcb80fff84a20f20753f2cab5e65a4537d8f2ec0af78bbe86ca8f45c6241841d"
+  },
+  "diagram_sync": {
+    "status": "PASS: 8 SVG/Excalidraw pairs; 18 desktop/mobile visual pages",
+    "generator": "ff7f352ffc35b945cc7e2536200bea831a9b849d7a5017e950dc961702d74fec"
+  },
+  "diagram_file_hashes": {
+    "01-흐름.excalidraw": "e355cf07ee8800d2715c35fb25662d09ae7044eb27ac4690aef3c72ab653586d",
+    "01-흐름.svg": "4cd961d5f1cff1f19cbd9cdcdeaa9b9ae83d6bc18f5117b02154dff3f3535f42",
+    "02-흐름.excalidraw": "b64dcff2fc57e259440e13856702611d57514cdc2ac60f9b2e0ab655fb87e1ac",
+    "02-흐름.svg": "2f346ba9d6fa0e0cc2592766c4415ed8b6bb7d09318f3150f5b456187e98213e",
+    "03-흐름.excalidraw": "7207669508f03e5437da1065ab68034c4fc9de79677a1eebf533952971baedd7",
+    "03-흐름.svg": "daa238655981b0332099545fdf366f5f76caadd58a43b1cd4b421a8f9e38cfb5",
+    "04-흐름.excalidraw": "e44ff2ff3c382c76d6f684321a1c0eea07c42971d8e511acee9558e92e70916d",
+    "04-흐름.svg": "a8c87beaf299774208837f1c8ced2dc2cc2918e451aa68b8d600b50aeae78f9a",
+    "05-흐름.excalidraw": "35c4c1a59c747894e566abe14c1d2c80bccdd787857884ffce23547b889c3307",
+    "05-흐름.svg": "89f4bcba687fd08344b16f4117b0877b4fecffb7284a4f446cd74cb4b49b3b80",
+    "06-흐름.excalidraw": "69282be8929bd70a158e252953cdba0d746b8daa36364187482e36b850cd4a9e",
+    "06-흐름.svg": "523f5e0d07dca09bcabd526e2de85b8ee6c37e77f0db382ca17f71d980a8c54d",
+    "07-흐름.excalidraw": "9088bccc2858c946f904e98fdae638739829f85ee3aa12aa52028c1c6e544383",
+    "07-흐름.svg": "d6c3d6aff58a72b7f6127c9cceeafbcae4f7c78d0224128f4f697512b981a84b",
+    "08-흐름.excalidraw": "9cdfa4c834593036d4f501f624518ed4fc941954ade5dc8c9ba241dd4397dd1c",
+    "08-흐름.svg": "7f9e69983534b6203230dace6d66b57f8071c0dd559f66e2260e9eca3f6404af"
+  }
+}

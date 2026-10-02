@@ -1,0 +1,19 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  subgraph hook[기록 훅으로 센 요청]
+    direction TB
+    h1["task를 받은 요청 2<br>바깥"]:::measure
+    h2["lookup_rule을 받은 요청 3<br>rule-checker"]:::measure
+    h3["기록 훅이 센 요청 수 5"]:::measure
+    h1 ~~~ h2
+    h2 ~~~ h3
+  end
+  subgraph ch26[Ch 26 셈]
+    direction TB
+    c1["바깥 목록으로 센 요청 수 2<br>더하기 task 부른 횟수 1 곱하기 1"]:::measure
+    c2["Ch 26 셈으로 센 요청 수 3<br>두 수가 같은가 False"]:::measure
+    c1 ~~~ c2
+  end
+  rule["셈<br>바깥은 도구를 요청한 응답 수 더하기 1<br>서브에이전트는 부른 횟수 곱하기 안 요청 수"]
+  ch26 ~~~ rule

@@ -1,0 +1,51 @@
+{
+  "run_id": "advanced-continuity-20260921T082024-integrated-01",
+  "run_type": "generation_smoke_test",
+  "qid": "Q002",
+  "split": "dev",
+  "question": "도서는 한 번에 몇 권까지, 며칠 동안 빌릴 수 있나요?",
+  "gold_doc_ids": [
+    "E01"
+  ],
+  "retrieved": [
+    {
+      "doc_id": "E01",
+      "page": 3,
+      "chunk_id": "E01-P03-C02",
+      "rank": 1
+    },
+    {
+      "doc_id": "E01",
+      "page": 3,
+      "chunk_id": "E01-P03-C01",
+      "rank": 2
+    },
+    {
+      "doc_id": "E01",
+      "page": 3,
+      "chunk_id": "E01-P03-C06",
+      "rank": 3
+    }
+  ],
+  "response": "도서는 한 번에 **7권까지** 빌릴 수 있고, **14일 동안** 대출할 수 있습니다. [E01 p.3]",
+  "retrieval_metrics": null,
+  "generation_evaluation": {
+    "status": "not_evaluated",
+    "next_chapter": "Ch15"
+  },
+  "settings": {
+    "input": "advanced-documents.json chunk text",
+    "dense": "text-embedding-3-small",
+    "sparse": "Kiwi+BM25",
+    "fusion": "RRF(k=60)",
+    "weights": [
+      0.0,
+      1.0
+    ],
+    "relevance_weight": 1.0,
+    "reranker": null,
+    "context_selection": "matched-chunk-text",
+    "chat": "gpt-5.4-mini",
+    "dimensions": 256
+  }
+}

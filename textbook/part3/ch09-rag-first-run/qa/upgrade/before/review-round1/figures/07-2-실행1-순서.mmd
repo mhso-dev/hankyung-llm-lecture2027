@@ -1,0 +1,12 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant CQ as check_question
+  participant ST as 벡터스토어 500자
+  participant MI as gpt-5.4-mini
+  CQ->>ST: 휴관일 질문 · 검색 개수 2
+  ST-->>CQ: 기록 두 개 · E01 p.1 · E01 p.2
+  Note over CQ,ST: 검색 뒤 점검표 · 근거 글자 수 543<br>근거에서 빠진 지킬 말 없음 · 빠진 정답 출처 없음
+  CQ->>MI: 메시지 목록 세 개 · 근거 두 개와 질문
+  MI-->>CQ: 응답 객체
+  Note over CQ,MI: 답 뒤 점검표 · 입력 토큰 수 513 · 보류 문장 없음<br>표시와 같은 기록 수 1 · 답에서 빠진 지킬 말 법정 공휴일
+  Note over CQ,MI: 마지막에 print_rows 로 표 두 개 출력

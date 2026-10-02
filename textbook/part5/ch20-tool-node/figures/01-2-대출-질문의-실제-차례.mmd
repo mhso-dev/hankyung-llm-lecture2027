@@ -1,0 +1,15 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant P as 노트북 코드<br>graph.invoke
+  box Lavender
+  participant M as 모델 노드 model<br>gpt-5.4-mini
+  end
+  participant T as 도구 실행 노드<br>tools
+  P->>M: 질문 하나 · 흔적 빈 목록
+  Note over M: 요청 1 · 도구 호출 요청<br>lookup_policy · 주제어 대출
+  M->>T: tools_condition · 이름표 tools
+  Note over T: 도구 메시지 · success<br>1인 5권까지 14일
+  T->>M: 되돌아가는 엣지
+  Note over M: 요청 2 · 도구 호출 요청 0건
+  M-->>P: tools_condition · END
+  Note over P: 흔적 model 두 번<br>메시지 넷 · 호출 ID 짝 True

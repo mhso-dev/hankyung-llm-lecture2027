@@ -1,0 +1,147 @@
+{
+  "snapshot": "labs-stable-before-2026-09-09.txt",
+  "sha256": "2868a50303850dba24b1983a24fd532d9c76593ab0a9bc009e414e9319b24d40",
+  "files": 23,
+  "prose_characters": 21934,
+  "items": [
+    {
+      "path": "labs/part3/ch09-rag-first-run/README.md",
+      "source_sha256": "73520b553734ad8d58c019bb7a7f3d26496101b5e0b661e36e564b9823a1a082",
+      "prose_characters": 391,
+      "kind": "readme"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/01-RAG-지도.ipynb",
+      "source_sha256": "c3590691e025b187e2180ed763d8aea23970e678589946856035bb018794eed4",
+      "prose_characters": 1889,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/02-로더와-스플리터.ipynb",
+      "source_sha256": "0939d0feefc5dd11347a7aa750749aa2b6622550f0646dca46757636561a3ffa",
+      "prose_characters": 995,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/03-임베딩과-벡터스토어.ipynb",
+      "source_sha256": "0f98a0c59de108fcd8c4cc4f6c2e9aab9ef99e5586e7abac27e276b174e8358f",
+      "prose_characters": 1075,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/04-생성과-출처-인용.ipynb",
+      "source_sha256": "be1bac0978c7e04c9ab82cbe6b5be1e2366ee0c8bd12b7b12a0c83ef8e014a51",
+      "prose_characters": 1408,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/05-첫-실패-보기.ipynb",
+      "source_sha256": "da72976f28526070b63e6e75b41b254da3b52f8b6bc145e9cd22f15c97a13ea9",
+      "prose_characters": 1302,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/06-실험-하네스.ipynb",
+      "source_sha256": "91a09bfa703fa3c9923ca54c72929063817a37f28dac2a60727c1f0e28144d90",
+      "prose_characters": 1366,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/README.md",
+      "source_sha256": "1524ab76661975c8874eec1d2af271993809c37ca6be9f27e579689f745c9083",
+      "prose_characters": 903,
+      "kind": "readme"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/01-문서와-메타데이터.ipynb",
+      "source_sha256": "a920c78879fa09d75eb7b7256861e45c1d540c23068a37b83ca8e81015c8acc5",
+      "prose_characters": 1054,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/02-PDF와-표-OCR.ipynb",
+      "source_sha256": "2edfc018ed9118b0aadcdafcc873834e74d96c4b89dec35cc60d8c4dc20c3a1b",
+      "prose_characters": 1179,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/03-DOCX-HTML-CSV.ipynb",
+      "source_sha256": "21625cc3075050f10e4d3bdf11d2e24b6a6c36a6f412b76f0d662e3f45a58523",
+      "prose_characters": 1246,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/04-HWP와-HWPX.ipynb",
+      "source_sha256": "57a13fda141a3e67e775d47608995594e207d29ddde378ad5dd7973f1a44155f",
+      "prose_characters": 1232,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/05-문자-재귀-토큰-청킹.ipynb",
+      "source_sha256": "29651408441f9ef2061953eaa0ad326a5e084c021e412ecdf40f23943a3647e1",
+      "prose_characters": 1097,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/06-구조와-시맨틱-청킹.ipynb",
+      "source_sha256": "c0bdc549559cae459b0a3949a1fc209e52aaad810a00fc2de2e5601ca238c123",
+      "prose_characters": 1122,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/07-한국어-임베딩과-캐시.ipynb",
+      "source_sha256": "68557cdc1a94f16e9631604bc0e6de200a6978341690709279686037aafeea89",
+      "prose_characters": 956,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/08-인덱싱-비교-실험.ipynb",
+      "source_sha256": "fd54e3138a1ee2e464ecab598fb6d6774ac76cf07a8ce52118993b0eb270ba16",
+      "prose_characters": 1249,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/README.md",
+      "source_sha256": "793e22a550c53ee3e33154ff9c1678b2a3a0994e676d5fc2d7865ed08a0cdb9e",
+      "prose_characters": 522,
+      "kind": "readme"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/01-질의셋과-정답-문서-ID.ipynb",
+      "source_sha256": "37adc2e2e82ea854fb4d27df041c0e46b60c7142dd14dde0e42be9571967c205",
+      "prose_characters": 486,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/02-Recall-at-50.ipynb",
+      "source_sha256": "a9d637f89ca4d37298b30c78f6deaada1deb7533d527289386c944260dc54a70",
+      "prose_characters": 575,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/03-Precision-at-5.ipynb",
+      "source_sha256": "7968389f14cfbae65b1d12153d88e278b55a6c84fe870cf653eb91781d8a8704",
+      "prose_characters": 479,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/04-nDCG-at-5.ipynb",
+      "source_sha256": "2f48695ec1bd6295386e5710ffb1495b9ef4fe3e8ad0d134aff1332d783894f7",
+      "prose_characters": 467,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/05-조건별-평가와-오류-분류.ipynb",
+      "source_sha256": "f992b7e8ccd5694b018b81558c0531afdb1064a610623be340150835ddaab54b",
+      "prose_characters": 467,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch11-evaluation/notebooks/06-실험-로그와-자동-실행.ipynb",
+      "source_sha256": "35639aa99431f691b4b5ca16eed7852f0d28095ca6a024d5de38f0c4023fe6f6",
+      "prose_characters": 474,
+      "kind": "notebook_markdown"
+    }
+  ],
+  "note": "Read-only extraction. Notebook code cells, outputs, metadata, and fenced README code blocks are excluded."
+}

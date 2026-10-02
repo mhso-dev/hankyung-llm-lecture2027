@@ -1,0 +1,13 @@
+flowchart BT
+  %% classes
+  C0["docs: 배송 안내 시작"]:::tool
+  C1["docs: 문의 안내 추가"]:::tool
+  C2["docs: 출고 기준 기록"]:::tool
+  C3["merge: 출고 기준 받기<br>자동 병합"]:::tool
+  C4["docs: 익일 출고 안내"]:::tool
+  C5["docs: 당일 출고 안내"]:::tool
+  C6["merge: 출고 기준에 맞춰<br>충돌 해결"]:::tool
+  C0 --> C1 --> C3
+  C0 --> C2 --> C3
+  C3 --> C4 --> C6
+  C3 --> C5 --> C6

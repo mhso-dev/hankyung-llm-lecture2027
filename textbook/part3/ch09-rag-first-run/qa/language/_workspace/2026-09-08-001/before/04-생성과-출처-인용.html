@@ -1,0 +1,223 @@
+<!--meta: 강의 1h | 실습 2h | 코드 rag.py · examples/ex04_generate.py | 새 용어 4 | 생성 비용 호출당 약 $0.001 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 검색 결과 k개를 하나의 문자열로 조립하는 <code>format_context()</code>와, 그것을 프롬프트에 넣어 답을 받는 <code>generate()</code>를 읽고 고칠 수 있습니다.</li>
+<li>이 절을 마치면 모델에게 <em>실제로 보낸 문자열</em>을 출력해 확인하고, 답 뒤에 붙은 <code>[E01 p.2]</code>가 어디서 왔는지 추적할 수 있습니다.</li>
+<li>이 절을 마치면 <code>answer()</code> 한 함수로 질문 → 답까지 완주하고, 토큰 수로 호출 비용을 어림할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>왜 지금 이것인가</h2>
+<p>마지막 상자입니다. 03절의 <code>search()</code>가 반환한 (청크, 점수) 4개를 모델에게 전달해 답을 받으면 RAG 한 사이클이 완성됩니다. 이 절을 마치면 "이틀 안에 돌아가는 RAG"라는 챕터 목표가 달성됩니다.</p>
+<p>이 절에서 정하는 것이 하나 더 있습니다. <strong>출처 표기 형식</strong>입니다. 답 뒤에 <code>[doc_id p.페이지]</code>를 붙이기로 정하면, 그 형식이 05절의 실패 분석, Ch 11의 "무엇을 맞다고 볼지" 합의, 중간 프로젝트 요건("출처 인용")까지 이어집니다. 형식은 지금 정하고, 지키는지 측정하는 것은 Ch 11부터입니다.</p>
+
+<h2 id="b3"><span class="no">3</span>선수 지식 되짚기</h2>
+<ul>
+<li><strong>Ch 6 <code>init_chat_model</code></strong> — 첫 호출 때 쓴 함수 그대로입니다. 메시지를 <code>("system", …)</code>, <code>("user", …)</code> 튜플 목록으로 넘기는 형식도 같습니다.</li>
+<li><strong>Ch 7 프롬프트 설계</strong> — 역할 지정, 근거 범위 제한, 출력 형식 지정. 세 가지가 이 절의 시스템 프롬프트 세 줄입니다.</li>
+<li><strong>Ch 8 컨텍스트 예산</strong> — 청크 4개 × 500자가 프롬프트의 대부분을 차지합니다. k를 늘리면 비용이 어떻게 변하는지 이 절의 토큰 수로 확인합니다.</li>
+<li><strong>03절 <code>search()</code></strong> — 이 절의 입력입니다. 검색이 틀리면 이 절은 그 틀린 재료로 답을 만듭니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+
+<h3>비유 — 답안지 규칙</h3>
+<p>오픈북 시험에서 감독관이 규칙을 정합니다. "책상 위 자료만 보고 답하라. 답의 근거가 된 쪽 번호를 답 옆에 적어라." 규칙이 없으면 학생은 기억으로 답하거나 근거 없이 씁니다. 시스템 프롬프트가 이 규칙이고, 검색 결과를 조립한 문자열이 책상 위 자료이며, <code>[E01 p.2]</code>가 답 옆의 쪽 번호입니다. 규칙을 지킬지는 학생(모델)에게 달려 있다는 점도 같습니다. 05절에서 규칙이 어떻게 깨지는지 봅니다.</p>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>컨텍스트 조립 (context assembly)</dt>
+<dd>검색된 청크 여러 개를 모델이 읽을 하나의 문자열로 이어 붙이는 것입니다. 청크마다 출처 태그를 앞에 붙이고 구분선으로 나눕니다. 이 형식이 모델의 출처 표기 형식을 결정합니다.</dd>
+<dt>시스템 프롬프트 (system prompt)</dt>
+<dd>모델의 역할과 규칙을 적는 메시지입니다. 이 절에서는 "문서 절만 근거로 답하라"와 "출처를 <code>[doc_id p.페이지]</code>로 붙여라" 두 규칙을 적습니다.</dd>
+<dt>출처 인용 (citation)</dt>
+<dd>답의 근거가 된 청크의 <code>doc_id</code>·<code>page</code>를 답에 표기하는 것입니다. 모델이 표기한 출처는 검색된 k개 중 하나여야 합니다. 그렇지 않으면 지어낸 출처입니다.</dd>
+<dt>사용량 메타데이터 (usage_metadata)</dt>
+<dd>응답 객체에 붙어 오는 입력·출력 토큰 수입니다. 비용 계산과 06절 하네스 로그의 재료입니다.</dd>
+</dl>
+
+<h3>코드 — 조립과 생성</h3>
+<p class="file">labs/part3/ch09-rag-first-run/rag.py (일부)</p>
+<pre><code class="language-python">from dataclasses import dataclass, field
+
+from langchain.chat_models import init_chat_model
+
+DEFAULT_CHAT = "openai:gpt-5.4-mini"
+
+SYSTEM_PROMPT = """당신은 사내 문서 안내 담당자입니다.
+아래 [문서] 절만 근거로 한국어로 답하세요.
+답의 근거가 된 문장 뒤에 [doc_id p.페이지] 형식으로 출처를 붙이세요."""
+
+
+def format_context(hits: list[tuple[Document, float]]) -> str:
+    """검색 결과를 모델이 읽을 문자열로 바꾼다. 출처 표기는 여기서 정한 형식을 따른다."""
+    blocks = []
+    for doc, _score in hits:
+        tag = f"[{doc.metadata['doc_id']} p.{doc.metadata['page']}]"
+        blocks.append(f"{tag}\n{doc.page_content}")
+    return "\n\n---\n\n".join(blocks)
+
+
+@dataclass
+class Answer:
+    question: str
+    text: str
+    sources: list[str] = field(default_factory=list)  # ["E01 p.2", ...]
+    input_tokens: int = 0
+    output_tokens: int = 0
+
+
+def generate(
+    question: str,
+    hits: list[tuple[Document, float]],
+    chat_model: str = DEFAULT_CHAT,
+    system_prompt: str = SYSTEM_PROMPT,
+) -> Answer:
+    """검색된 청크를 프롬프트에 넣고 답을 만든다."""
+    model = init_chat_model(chat_model)
+    context = format_context(hits)
+    messages = [
+        ("system", system_prompt),
+        ("user", f"[문서]\n{context}\n\n[질문]\n{question}"),
+    ]
+    response = model.invoke(messages)
+    usage = response.usage_metadata or {}
+    sources = [f"{d.metadata['doc_id']} p.{d.metadata['page']}" for d, _ in hits]
+    return Answer(
+        question=question,
+        text=str(response.content),
+        sources=sources,
+        input_tokens=usage.get("input_tokens", 0),
+        output_tokens=usage.get("output_tokens", 0),
+    )
+
+
+def answer(store: InMemoryVectorStore, question: str, k: int = 4, **kw: str) -> Answer:
+    """search → generate 두 단계를 잇는다. 이것이 Ch 9 RAG의 전부다."""
+    hits = search(store, question, k=k)
+    return generate(question, hits, **kw)</code></pre>
+<p>읽을 때 순서를 지키세요. 첫째, <code>format_context()</code>는 점수를 버립니다(<code>_score</code>). 모델에게 점수를 보여 주지 않는 것이 기본입니다. 점수를 보여 주는 변형은 Ch 14에서 다룹니다. 둘째, 출처 태그 <code>[E01 p.2]</code>가 각 청크 <em>앞</em>에 붙습니다. 모델은 이 태그를 그대로 베껴서 답에 붙입니다. 태그를 붙이지 않으면 모델은 출처를 표기할 방법이 없습니다. 셋째, <code>Answer</code>는 답 문장뿐 아니라 검색된 출처 후보와 토큰 수를 함께 담습니다. 답만 반환하면 05절에서 "검색이 틀렸나 생성이 틀렸나"를 가릴 수 없습니다. 넷째, <code>answer()</code>는 두 줄입니다. 검색 한 번, 생성 한 번. 재검색도 분기도 없습니다. 이 두 줄이 이 챕터 RAG의 전부이고, 여기에 <code>if</code>가 붙는 것이 Ch 14, 모델의 판단이 붙는 것이 Ch 21입니다.</p>
+<div class="callout yellow"><b>모델 선택</b><code>gpt-5.4-mini</code>(2026-03 출시)를 씁니다. 이 세대 모델은 <code>temperature</code>를 받지 않으므로 코드에 적지 않습니다. 출력은 실행마다 조금씩 달라집니다. 교재의 출력은 2026-09-07 실행 결과이며, 여러분의 출력과 표현이 다를 수 있습니다. 답의 <em>내용</em>과 <em>출처 태그</em>가 같은지를 봅니다.</div>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p class="file">labs/part3/ch09-rag-first-run/examples/ex04_generate.py</p>
+<pre><code class="language-python">from _index import get_store          # 03절에서 저장한 색인을 불러온다 (없으면 만든다)
+from rag import SYSTEM_PROMPT, answer, format_context, search
+
+store = get_store()
+
+for question in [
+    "미르시립도서관의 정기 휴관일은 언제인가요?",
+    "별빛제과 수습 기간 급여는 정규 급여의 몇 %인가요?",
+]:
+    hits = search(store, question, k=4)
+    print("=" * 70)
+    print("질문:", question)
+    print("검색 결과:", [f"{d.metadata['doc_id']} p.{d.metadata['page']} ({s:.2f})" for d, s in hits])
+    result = answer(store, question, k=4)
+    print("답변:", result.text)
+    print(f"토큰: 입력 {result.input_tokens} / 출력 {result.output_tokens}")
+
+# 모델에게 실제로 보내는 문자열을 한 번 눈으로 확인한다
+hits = search(store, "미르시립도서관의 정기 휴관일은 언제인가요?", k=2)
+print("\n=== 시스템 프롬프트 ===\n" + SYSTEM_PROMPT)
+print("\n=== [문서] 절 (k=2, 앞 500자) ===\n" + format_context(hits)[:500] + " …")</code></pre>
+<pre class="out">======================================================================
+질문: 미르시립도서관의 정기 휴관일은 언제인가요?
+검색 결과: ['E01 p.1 (0.65)', 'E01 p.2 (0.56)', 'M04 p.3 (0.49)', 'H03 p.2 (0.46)']
+답변: 미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2]
+토큰: 입력 1162 / 출력 30
+======================================================================
+질문: 별빛제과 수습 기간 급여는 정규 급여의 몇 %인가요?
+검색 결과: ['E02 p.1 (0.47)', 'M05 p.4 (0.44)', 'E02 p.5 (0.44)', 'H02 p.3 (0.42)']
+답변: 수습 기간 급여는 정규 급여의 90%입니다. [E02 p.5]
+토큰: 입력 997 / 출력 26
+
+=== 시스템 프롬프트 ===
+당신은 사내 문서 안내 담당자입니다.
+아래 [문서] 절만 근거로 한국어로 답하세요.
+답의 근거가 된 문장 뒤에 [doc_id p.페이지] 형식으로 출처를 붙이세요.
+
+=== [문서] 절 (k=2, 앞 500자) ===
+[E01 p.1]
+미르시립도서관 이용 안내
+미르시립도서관
+2026년판
+발행 2026. 3. 1.
+1
+
+---
+
+[E01 p.2]
+1. 도서관 소개
+미르시립도서관은 1998년 10월 미르시 중앙동에 문을 연 공공도서관입니다. 지상 4층, 지하 1층 규모
+이며 장서 42만 권과 전자책 6만 종을 보유하고 있습니다. 2024년 리모델링을 마치고 3층에 '메이커 스
+페이스'와 '조용한 열람실'을 새로 열었습니다.
+도서관의 사명은 "누구나, 언제나, 무료로"입니다. 시민 모두가 자료를 자유롭게 이용하고 배울 수 있도
+록 돕는 것을 최우선으로 합니다.
+2. 이용 시간
+평일(화~금) 이용 시간은 오전 9시부터 오후 10시까지입니다. 토요일과 일요일은 오전 9시부터 오후 6
+시까지 문을 엽니다.
+매주 월요일은 정기 휴관일 입니다. 법정 공휴일에도 휴관하며, 공휴일이 월요일과 겹치면 그 다음 날인
+화요일에도 휴관합니다.
+어린이자료실(1층)은 요일과 관계없이 오후 6시에 문을 닫습니다. 디지털자료실( …</pre>
+<p class="look"><b>확인할 점</b> — ① 첫 질문에서 검색 1위는 표지(E01 p.1)였지만 모델은 2위 청크를 근거로 답하고 <code>[E01 p.2]</code>를 붙였습니다. 검색의 순위 오류를 생성이 흡수한 경우입니다. ② 두 번째 질문에서 정답 청크(E02 p.5)는 3위였고, 1위·2위는 별빛제과 표지와 <em>다른 회사</em>(누리테크 M05) 규정이었습니다. 모델은 그중 맞는 것을 골랐습니다. ③ 입력 토큰 1,000 안팎 중 질문은 30토큰도 안 됩니다. 나머지는 청크 4개입니다. k를 8로 늘리면 입력이 두 배가 됩니다(06절 로그에서 확인합니다). ④ 모델에게 보낸 문자열을 직접 보면, 표지 청크가 그대로 포함되어 토큰을 소비하고 있다는 점이 보입니다. 실행일 2026-09-07, gpt-5.4-mini. 답 표현은 실행마다 다를 수 있습니다.</p>
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p><strong>실패 1 — 출처 태그를 빼 본다.</strong> <code>format_context()</code>에서 <code>tag</code>를 빈 문자열로 바꾸고 첫 질문을 다시 실행하세요.</p>
+<pre class="out">답변: 미르시립도서관의 정기 휴관일은 매주 월요일입니다. 법정 공휴일에도 휴관하며, 공휴일이
+월요일과 겹치면 그 다음 날인 화요일에도 휴관합니다. [문서 p.1]</pre>
+<p>모델은 규칙대로 출처를 붙이려 했지만 붙일 재료가 없어 <code>[문서 p.1]</code>을 스스로 만들었습니다. 이 표기는 어느 문서의 몇 쪽도 가리키지 않고, 게다가 답의 근거는 2쪽인데 "p.1"이라고 적었습니다. 형식만 갖춘 가짜 출처입니다. 출처 인용은 프롬프트 규칙이 아니라 <em>조립 단계의 데이터</em>가 만든다는 것을 확인합니다.</p>
+<p><strong>실패 2 — 검색 결과를 비운다.</strong> <code>generate(question, hits=[])</code>를 호출하면 <code>[문서]</code> 절이 빈 채로 전송됩니다.</p>
+<pre class="out">답변: 제공된 [문서]에는 미르시립도서관의 정기 휴관일에 대한 내용이 없어 확인할 수 없습니다.</pre>
+<p>이번에는 모델이 규칙을 지켰습니다. 01절 6번에서 문서 없이 물었을 때는 "보통 월요일"이라는 일반론을 덧붙였는데, 여기서는 "[문서] 절만 근거로"라는 규칙 덕에 덧붙이지 않았습니다. 다만 이것은 이번 실행의 결과이고, 같은 프롬프트로도 일반론이 섞여 나오는 실행이 있습니다. 규칙이 <em>얼마나</em> 지켜지는지는 한 번 실행해서는 알 수 없습니다 — 05절에서 같은 질문을 다섯 번 실행해 봅니다.</p>
+<p><strong>실패 3 — 검색이 이미 틀린 재료를 준다.</strong> 03절 실패 1과 같은 취지의 질문 "도서를 3일 늦게 반납하면 어떤 불이익이 있나요?"를 <code>answer(store, question, k=3)</code>에 넣으세요. 검색이 E01 3쪽을 가져오지 못했으므로 모델이 아무리 규칙을 잘 지켜도 답할 수 없습니다.</p>
+<pre class="out">답변: 문서에 도서 반납 지연에 대한 규정은 없습니다. 따라서 3일 늦게 반납했을 때의 불이익을
+이 문서만으로는 알 수 없습니다.
+검색된 출처 후보: ['E05 p.3', 'H03 p.4', 'H03 p.5']</pre>
+<p>모델의 말은 <em>주어진 문서 기준으로</em> 맞습니다. 그러나 사용자 입장에서는 틀린 답입니다. 규정은 E01 3쪽에 있습니다. <strong>생성은 검색이 못 가져온 것을 만들어 낼 수 없습니다.</strong> 이 한 문장이 Part 3 전체의 구조를 정합니다. Ch 12의 40시간이 검색에 쓰이는 이유입니다.</p>
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>출처 후보와 실제 출처는 다릅니다.</strong> <code>Answer.sources</code>는 검색이 <em>가져온</em> 4개이고, 답에 붙은 <code>[E01 p.2]</code>는 모델이 <em>썼다고 주장하는</em> 것입니다. 둘을 나눠 기록해야 Ch 11에서 검색 지표(Recall)와 생성 지표(Groundedness)를 따로 잴 수 있습니다.</li>
+<li><strong>출처 태그 검증은 정규식 한 줄입니다.</strong> 답에서 <code>\[([A-Z]\d{2}) p\.(\d+)\]</code>를 추출해 <code>sources</code> 안에 있는지 확인하면 "지어낸 출처"를 걸러 낼 수 있습니다. Ch 16 가드레일의 출력 검증 항목이고, 여기서는 아직 붙이지 않습니다.</li>
+<li><strong>비용.</strong> gpt-5.4-mini 표준 요금은 입력 미화 0.75달러, 출력 4.50달러 / 100만 토큰입니다(2026-09-07 확인). 위 호출 하나가 약 1,200토큰이므로 0.001달러 안팎입니다. 출력 토큰이 입력보다 6배 비싸므로 "짧게 답하라"는 규칙은 품질 문제이기 전에 비용 문제입니다.</li>
+<li><strong>한국어 출력 규칙.</strong> 시스템 프롬프트에 "한국어로"를 넣지 않으면 영어 문서가 섞인 코퍼스에서 영어로 답하는 경우가 생깁니다. 이 코퍼스는 전부 한국어라 영향이 없지만 습관으로 넣습니다.</li>
+<li><strong><code>response.content</code>의 타입.</strong> LangChain 1.x에서 <code>content</code>는 문자열이거나 콘텐츠 블록 목록일 수 있습니다. 이 절은 <code>str()</code>로 감싸 두었습니다. 멀티모달 응답(Ch 26)에서 이 차이가 중요해집니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul>
+<li><code>format_context()</code>가 청크 앞에 <code>[doc_id p.페이지]</code> 태그를 붙여 하나의 문자열로 조립하고, <code>generate()</code>가 그것을 시스템 프롬프트와 함께 모델에 보냅니다. 출처 표기는 프롬프트 규칙이 아니라 조립 데이터가 만듭니다.</li>
+<li><code>answer()</code>는 검색 한 번 + 생성 한 번, 두 줄입니다. RAG 첫 완주가 여기서 마무리됩니다.</li>
+<li>생성은 검색이 못 가져온 것을 만들어 낼 수 없습니다. 검색 순위 오류는 k개 안에 정답이 있으면 생성이 흡수하지만, k개 밖이면 답이 없습니다.</li>
+</ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 이 절의 <code>SYSTEM_PROMPT</code>는 05절에서 "모르면 모른다" 한 줄이 추가된 <code>strict</code> 버전으로 바뀌고, 06절 하네스의 <code>prompts.py</code>에 이름을 달고 들어갑니다. 출처 태그 정규식 검증은 Ch 16 출력 검증 모듈이 됩니다. <code>Answer</code>의 <code>sources</code>와 답 속 태그의 차이는 Ch 11·15에서 검색 지표와 생성 지표를 나누는 근거입니다. 다음 05절에서 이 완주한 RAG가 어떻게 실패하는지 일부러 봅니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. 모델이 답에 <code>[E01 p.2]</code>를 붙일 수 있는 것은 코드의 어느 줄 때문입니까?</p>
+<p class="quiz-a"><code>format_context()</code>에서 청크 앞에 <code>tag = f"[{doc_id} p.{page}]"</code>를 붙이는 줄입니다. 시스템 프롬프트는 "붙여라"라고 지시할 뿐이고, 붙일 문자열은 조립 단계가 줍니다.</p>
+<p class="quiz-q">2. 수습 급여 질문에서 정답 청크는 3위였고 1·2위는 표지와 다른 회사 규정이었습니다. 답이 맞게 나온 것은 누구의 공입니까? 이 방식의 위험은 무엇입니까?</p>
+<p class="quiz-a">생성(모델)의 공입니다. k=4 안에 정답이 있었고 모델이 그것을 골랐습니다. 위험은 다른 회사(M05) 규정이 같은 프롬프트에 있어 모델이 그쪽 수치를 고를 수도 있다는 점이고, 실제로 06절 로그에서 정답 청크가 빠진 채 누리테크 규정을 근거로 답한 사례(Q007)가 나옵니다.</p>
+<p class="quiz-q">3. "생성은 검색이 못 가져온 것을 만들어 낼 수 없다"를 이 절의 실행 결과로 증명하세요.</p>
+<p class="quiz-a">실패 3의 반납 질문입니다. 검색 결과에 E01 3쪽이 없었고 모델은 "규정이 없다"고 답했습니다. 프롬프트를 아무리 고쳐도 없는 재료로는 답할 수 없습니다.</p>
+<p class="quiz-q">4. 입력 1,162토큰 중 질문은 30토큰 미만입니다. 나머지는 무엇이며, k를 8로 바꾸면 비용은 어떻게 됩니까?</p>
+<p class="quiz-a">나머지는 시스템 프롬프트와 청크 4개입니다. k=8이면 청크가 8개가 되어 입력 토큰이 약 두 배가 되고 입력 비용도 약 두 배가 됩니다(06절 로그에서 9,588 → 17,366토큰으로 확인됩니다).</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>강사 노트</h2>
+<details class="instructor"><summary>시간 배분 · 시연 순서 · 예상 질문 · 막히는 지점 · A/B 트랙</summary>
+<p><strong>시간 배분(3h)</strong> — 강의 60분: 답안지 규칙 비유(10) · 코드 읽기, 특히 태그와 <code>Answer</code>(25) · 실행 결과 읽기(15) · 비용(10). 실습 120분: 완주 실행(20) · 질문 10개로 답·출처 표 만들기(40) · 실패 1~3(40) · <code>SYSTEM_PROMPT</code> 문구를 바꿔 답 길이 변화 관찰(20).</p>
+<p><strong>시연 순서</strong> — ① <code>answer()</code> 두 줄을 먼저 보여 주고 "이것이 전부"라고 말한 뒤 ② 위로 올라가 <code>format_context()</code>의 태그 줄을 강조 ③ 모델에게 보낸 문자열을 <code>print</code>로 전체를 보여 줌(학생 대부분이 이것을 처음 봄) ④ 첫 질문 실행 → 출처 확인 ⑤ 실패 3을 실행해 "검색이 틀리면 끝"을 체감시킴 ⑥ 챕터 목표 달성 선언.</p>
+<p><strong>예상 질문</strong> — "<code>temperature=0</code>으로 고정하면 되지 않나요?" → gpt-5.4 계열은 받지 않으며, 받는 모델이라도 출력이 완전히 같아지지는 않는다고 답하고, 재현성은 Ch 15 회귀 스위트에서 다룬다고 예고. "출처를 두 개 붙이면요?" → 허용되며 정규식이 둘 다 뽑는다. "답이 너무 짧은데 더 길게 하면?" → 출력 토큰이 6배 비싸다는 점을 들어 요건(중간 프로젝트)에 맞춰 정하라고 안내.</p>
+<p><strong>학생이 막히는 지점</strong> — <code>_index.get_store()</code>가 처음 실행 때 색인을 새로 만드느라 몇 초 걸리는 것을 오류로 착각. <code>response.content</code>를 바로 문자열 연산해 타입 오류. 시스템 프롬프트를 사용자 메시지에 합쳐 넣는 습관(Ch 7 복습).</p>
+<p><strong>A/B 트랙</strong> — A트랙은 출처 태그 추적까지. B트랙은 정규식으로 답 속 태그를 추출해 <code>sources</code>와 대조하는 <code>check_citations(answer) -&gt; bool</code>을 만들고 테스트를 붙이게 합니다(Ch 16 예행).</p>
+</details>
+
+<h2 id="b11"><span class="no">11</span>참고 자료</h2>
+<ul>
+<li>LangChain 「Build a RAG agent」 — <code>init_chat_model</code> 절과 검색 결과를 프롬프트에 넣는 예제 — <a href="https://docs.langchain.com/oss/python/langchain/rag">docs.langchain.com/oss/python/langchain/rag</a> · 확인 2026-09-07 · 예제의 <code>create_agent</code>·<code>@tool</code> 부분은 이 챕터 범위 밖(Ch 19~21).</li>
+<li>OpenAI API 요금 — gpt-5.4-mini 입력 0.75 / 출력 4.50달러 per 1M tokens (standard) — <a href="https://developers.openai.com/api/docs/pricing">developers.openai.com/api/docs/pricing</a> · 확인 2026-09-07.</li>
+<li>기준 버전: langchain 1.4.0 · langchain-openai 1.6.0 · 모델 gpt-5.4-mini-2026-03-17.</li>
+</ul>

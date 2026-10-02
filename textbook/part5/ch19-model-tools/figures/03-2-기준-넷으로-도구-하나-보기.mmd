@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  one["자세한 판 도구<br>get_order_by_id<br>이름 · 설명 · 입력 형식"]
+  table["정한 기준 표<br>동사 여섯<br>찾을 낱말 둘"]:::tool
+  check["check_tool<br>기준 넷을 봄"]:::flow
+  r1["이름이<br>동사로 시작<br>True"]:::measure
+  r2["설명에<br>인자 이름<br>True"]:::measure
+  r3["언제 쓰는지<br>때 씁니다<br>True"]:::measure
+  r4["내놓는 값<br>내놓습니다<br>True"]:::measure
+  one --> check
+  table --> check
+  check --> r1
+  check --> r2
+  check --> r3
+  check --> r4

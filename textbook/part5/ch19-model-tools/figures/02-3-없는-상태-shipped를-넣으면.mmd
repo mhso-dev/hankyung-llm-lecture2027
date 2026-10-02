@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph before["Before · 01절 도구 · 입력 형식은 글"]
+    direction TB
+    b1["invoke<br>status shipped"]:::flow
+    b2["오류 없이 끝남<br>받은 주문 수 0<br>받은 값 빈 목록"]:::fail
+    b1 --> b2
+  end
+  subgraph after["After · 양식 클래스 도구"]
+    direction TB
+    a1["invoke<br>status shipped · limit 1"]:::flow
+    a2["받은 오류 ValidationError<br>for OrderQuery · status<br>몸통 실행 줄 없음"]:::measure
+    a1 --> a2
+  end
+  same["두 칸 모두 같은 CSV<br>상태는 세 가지<br>paid · pending · cancelled<br>shipped인 주문 없음"]
+  before ~~~ same
+  after ~~~ same

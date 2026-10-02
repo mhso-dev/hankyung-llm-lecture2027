@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph v100["rag-judge-v1.0.0 · 02절 판"]
+    direction TB
+    h1["기준 문장 하나<br>뒷받침되면 1 아니면 0"]:::flow
+    m1["평가 모델 gpt-5.4-mini"]:::model
+    r1["근거 충실도 점수<br>Q002 1 · Q006 1 · Q090 0"]:::measure
+    h1 --> m1
+    m1 --> r1
+  end
+  subgraph v110["rag-judge-v1.1.0 · 한 문장 더함"]
+    direction TB
+    h2["기준 문장 하나 + 더한 문장<br>없는 것을 없다고 답하면<br>뒷받침된 것으로 보기"]:::flow
+    m2["평가 모델 gpt-5.4-mini"]:::model
+    r2["근거 충실도 점수<br>Q002 1 · Q006 1 · Q090 1"]:::measure
+    h2 --> m2
+    m2 --> r2
+  end
+  same["두 판 모두 같은 두 칸<br>답 · 근거 문서<br>03절 두 실행에서 같은 점수"]
+  v100 ~~~ same
+  v110 ~~~ same

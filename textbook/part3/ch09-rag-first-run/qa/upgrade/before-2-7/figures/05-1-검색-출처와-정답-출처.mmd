@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph WIFI["와이파이 질문 · k=1"]
+    direction LR
+    w1["정답 출처<br>빈 목록"]:::tool
+    w2["검색 출처<br>E01 p.1 표지"]:::tool
+    w3["빠진 정답 출처 없음<br>답이 없는 질문"]:::measure
+    w1 --> w2
+    w2 --> w3
+  end
+  subgraph CLOSE["휴관일 질문 · k=1 · Before"]
+    direction LR
+    c1["정답 출처<br>E01 p.2"]:::tool
+    c2["검색 출처<br>E01 p.1 표지"]:::tool
+    c3["빠진 정답 출처<br>E01 p.2<br>검색 누락"]:::fail
+    c1 --> c2
+    c2 --> c3
+  end
+  note["두 질문 모두<br>k=1 검색 출처 E01 p.1<br>답을 읽기 전에<br>정답 출처와 대조"]
+  WIFI ~~~ CLOSE
+  CLOSE ~~~ note

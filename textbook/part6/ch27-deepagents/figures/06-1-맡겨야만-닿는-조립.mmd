@@ -1,0 +1,22 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  subgraph gp[general-purpose 명세]
+    direction TB
+    g1["도구를 적지 않음<br>바깥 도구를 물려받음"]:::tool
+    g2["자기 호출 한도 2<br>기록 훅"]:::tool
+    g1 ~~~ g2
+  end
+  subgraph rc[rule-checker 명세]
+    direction TB
+    r1["도구 lookup_rule"]:::tool
+    r2["자기 호출 한도 4<br>기록 훅"]:::tool
+    r1 ~~~ r2
+  end
+  make["create_deep_agent<br>인자 tools 없음 · 명세 둘"]:::flow
+  outer["바깥 에이전트 도구 아홉<br>lookup_rule이 있는가 False"]:::measure
+  desc["task 설명 글<br>두 이름 줄 True<br>기본 general-purpose 설명 False"]:::measure
+  rc --> make
+  gp --> make
+  make --> outer
+  make --> desc

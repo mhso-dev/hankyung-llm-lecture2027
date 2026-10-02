@@ -1,0 +1,35 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 개발",
+  "chapter": "ch26-delegation",
+  "title": "위임 구조 — Subagents · Handoffs · Router",
+  "hours": "총 8h · 강의 4h · 실습 4h",
+  "objectives": [
+    "Subagent·Handoff·Router의 제어 흐름과 맥락 소유자를 구분할 수 있습니다.",
+    "같은 과제를 세 구조로 구현하고 실제 모델 호출을 계측할 수 있습니다.",
+    "호출 수·추정 비용·종료 조건을 근거로 구조를 선택할 수 있습니다."
+  ],
+  "lab_path": "labs/part6/ch26-delegation",
+  "sections": [
+    {
+      "slug": "01-Subagent-도구-위임",
+      "title": "Subagent 도구 위임",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-Handoff-상태-전환",
+      "title": "Handoff 상태 전환",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-Router-분류와-병렬-실행",
+      "title": "Router 분류와 병렬 실행",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-호출-수-비용-종료-조건-비교",
+      "title": "호출 수·비용·종료 조건 비교",
+      "format": "experiment"
+    }
+  ]
+}

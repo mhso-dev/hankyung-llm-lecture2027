@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph before["Before · 검사 없이 받는 흐름"]
+    direction TB
+    b1["받은 답 셋"]:::tool
+    b2["막은 답 없음"]:::fail
+    b3["내보낸 답 셋"]:::fail
+    b1 --> b2
+    b1 --> b3
+  end
+  subgraph after["After · 출력 검사를 붙인 흐름"]
+    direction TB
+    a1["받은 답 셋"]:::tool
+    a2["막은 답 둘<br>목록 밖 출처<br>출처 표시 없음"]:::measure
+    a3["통과한 답 하나"]:::measure
+    a1 --> a2
+    a1 --> a3
+  end
+  same["두 칸에 넣은 답 셋은 같습니다"]
+  before ~~~ same
+  after ~~~ same

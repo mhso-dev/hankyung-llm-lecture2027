@@ -1,0 +1,35 @@
+{
+  "part": 5,
+  "part_title": "Part 5 · Agent 입문",
+  "chapter": "ch20-tool-node",
+  "title": "ToolNode — 모델이 도구를 고른다",
+  "hours": "총 8h · 강의 3h · 실습 5h",
+  "objectives": [
+    "StateGraph에 ToolNode와 tools_condition을 직접 연결해 모델·도구 반복을 구성할 수 있습니다.",
+    "도구 오류를 ToolMessage로 전달하고 실행 한도와 명시적 종료 조건을 적용할 수 있습니다.",
+    "고정 if 분기와 모델 선택 분기를 같은 조건에서 실행해 trace·토큰·비용·지연을 비교할 수 있습니다."
+  ],
+  "lab_path": "labs/part5/ch20-tool-node",
+  "sections": [
+    {
+      "slug": "01-ToolNode와-tools-condition",
+      "title": "ToolNode와 tools_condition",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-도구-오류와-ToolMessage",
+      "title": "도구 오류와 ToolMessage",
+      "format": "paired"
+    },
+    {
+      "slug": "03-recursion-limit과-명시적-종료",
+      "title": "recursion_limit과 명시적 종료",
+      "format": "paired"
+    },
+    {
+      "slug": "04-if-분기와-모델-선택-비교",
+      "title": "if 분기와 모델 선택 비교",
+      "format": "experiment"
+    }
+  ]
+}

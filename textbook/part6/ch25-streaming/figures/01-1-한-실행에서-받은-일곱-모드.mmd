@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  a["입력 딕셔너리<br>topic 배송 문의"]:::tool
+  s["graph.stream<br>모드 일곱을 한 목록으로"]
+  n["우리 노드 둘<br>prepare 다음 write<br>진행 값을 한 번씩 보냄"]:::flow
+  e["스트림 사건 스물셋<br>모드 이름과 자료의 짝"]:::measure
+  x1["칸 값과 진행 값에서<br>values 셋 · updates 둘<br>custom 둘"]:::measure
+  x2["저장과 작업에서<br>checkpoints 넷 · tasks 넷<br>debug 여덟"]:::measure
+  x3["모델의 답에서<br>messages 없음"]:::measure
+  a --> s
+  s --> n
+  n --> e
+  e --> x1
+  e --> x2
+  e --> x3

@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  req["입력 파일의<br>요청 식별자 여섯 개<br>old-Q002 · old-Q006<br>old-Q090 · new-Q002<br>new-Q006 · new-Q090"]:::tool
+  res["손으로 적은 결과 줄 다섯 개<br>new-Q090부터<br>입력과 차례가 다름"]:::tool
+  fn["ids_not_in<br>인자 차례를 바꿔 두 번"]:::flow
+  miss["결과가 없는 요청<br>old-Q006"]:::measure
+  unk["요청에 없는 결과<br>없음"]:::measure
+  note["OpenAI 안내<br>결과 줄 차례는<br>입력과 다를 수 있음<br>실패한 요청은<br>오류 파일에 적힘<br>이번에 받은 결과 아님"]
+  req --> fn
+  res --> fn
+  fn --> miss
+  fn --> unk
+  miss ~~~ note
+  unk ~~~ note

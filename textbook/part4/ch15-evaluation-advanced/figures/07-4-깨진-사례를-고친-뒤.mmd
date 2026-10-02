@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph hand["손으로 적은 예"]
+    direction TB
+    h1["사례 네 개<br>이전 판 1 · 1 · 0 · 1<br>이후 판 1 · 0 · 1 · 1"]:::tool
+    h2["깨진 사례-2<br>평균만 본 검사 True<br>짝지어 본 검사 False"]:::measure
+    h1 --> h2
+  end
+  subgraph fixed["값 바꿔 보기"]
+    direction TB
+    f1["사례-2만 0에서 1로<br>고친 이후 판"]:::tool
+    f2["깨진 사례 없음<br>짝지어 본 검사 True"]:::measure
+    f1 --> f2
+  end
+  note["모델을 부르지 않은 손 값이라<br>두 결과를 assert로 확인함"]
+  hand ~~~ note
+  fixed ~~~ note

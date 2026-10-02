@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  q["상담 질문 셋<br>가짜 값이 하나씩 든 질문"]:::tool
+  m["가리기 mask_pii<br>02절"]:::flow
+  r["예약 reserve<br>04절"]:::flow
+  mo["모델<br>gpt-5.4-mini"]:::model
+  a["기록 한 줄 남기기<br>note_event · answer"]:::flow
+  s["기록 한 줄 남기기<br>note_event · stopped"]:::flow
+  l["기록 목록<br>파일에 쓰지 않음"]:::tool
+  q --> m
+  m --> r
+  r --> mo
+  mo --> a
+  a --> l
+  r -.->|한도를 넘으면 멈춤| s
+  s --> l

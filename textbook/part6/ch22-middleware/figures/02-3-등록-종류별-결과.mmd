@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  subgraph R1["이메일만 등록 · 이메일 질문"]
+    direction LR
+    r1a["learner@example.com"]:::flow --> r1b["learner@****.com"]:::model
+  end
+  subgraph R2["이메일만 등록 · 전화번호 질문"]
+    direction LR
+    r2a["010-1234-5678"]:::flow --> r2b["010-1234-5678 그대로"]:::fail
+  end
+  subgraph R3["이메일 + 전화번호 등록"]
+    direction LR
+    r3a["010-1234-5678"]:::flow --> r3b["****5678"]:::model
+  end
+  R1 ~~~ R2 ~~~ R3

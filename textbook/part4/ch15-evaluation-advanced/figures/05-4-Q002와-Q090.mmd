@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph q002["사례 Q002"]
+    direction TB
+    a1["근거 문서 3020자<br>요청 글 3161자"]:::tool
+    a2["입력 토큰 1995"]:::measure
+    a3["가장 긴 단계<br>모델 요청"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  subgraph q090["사례 Q090"]
+    direction TB
+    b1["근거 문서 4936자<br>요청 글 5093자"]:::tool
+    b2["입력 토큰 3248"]:::measure
+    b3["가장 긴 단계<br>모델 요청"]:::measure
+    b1 --> b2
+    b2 --> b3
+  end
+  same["같은 머리글<br>rag-judge-v1.0.0<br>같은 세 단계 · 요청 한 번씩<br>더 오래 걸린 사례는<br>새 커널 두 번에서 서로 달랐음"]
+  q002 ~~~ same
+  q090 ~~~ same

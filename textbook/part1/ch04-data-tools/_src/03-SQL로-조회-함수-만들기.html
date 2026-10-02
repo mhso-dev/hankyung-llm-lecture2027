@@ -1,0 +1,104 @@
+<!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 9 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul><li>SQL 문장 <code>CREATE TABLE</code>, <code>INSERT INTO</code>, <code>SELECT</code>의 뜻을 말하고, 기본 키와 외래 키 제약이 막은 행을 출력에서 확인할 수 있습니다.</li><li><code>WHERE</code>, <code>ORDER BY</code>, <code>JOIN</code>을 쓴 SQL로, 고객 번호를 받아 딕셔너리 목록을 반환하는 조회 함수를 만들 수 있습니다.</li><li>입력 글을 SQL에 이어 붙이면 결과가 달라지는 이유를 설명하고, 자리표시자로 값만 넘기도록 고칠 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>02절에서는 고객 표와 주문 표를 CSV 파일로 두고 pandas로 이었습니다. 실제 서비스에서는 이런 표를 데이터베이스에 두는 경우가 많습니다. 여러 프로그램이 같은 표를 읽고, 규칙에 어긋난 행은 넣는 순간 막을 수 있기 때문입니다.</p>
+<p>에이전트가 「김하나 고객의 주문을 알려 줘」에 답하려면, 고객 번호로 데이터베이스를 조회하는 함수가 필요합니다. 이 함수에 넘기는 고객 번호는 사용자가 적은 글에서 옵니다. 그 글을 SQL 문장에 그대로 이어 붙이면, 사용자가 문장의 뜻을 바꿀 수 있습니다.</p>
+<p>그래서 이 절에서는 SQL 문장을 하나씩 실행해 본 뒤 조회 함수로 묶습니다. 마지막에 입력을 이어 붙인 함수와 자리표시자를 쓴 함수에 같은 입력을 넣어 비교합니다. Ch 19에서는 이런 조회 함수를 에이전트가 부르는 도구로 씁니다.</p>
+<p><strong>이 절의 질문</strong> — 입력 글이 SQL 문장의 뜻을 바꾸지 못하게 하려면, 조회 함수에 고객 번호를 어떻게 넘겨야 할까요?</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>02절에서는 고객 번호로 고객 표와 주문 표를 이었습니다. 메서드 <code>merge()</code>의 기본값은 내부 조인이라, 고객 표에 없는 C003의 주문이 오류 없이 빠졌습니다. C001 줄이 두 번 든 고객 표에서는 주문이 두 번 세어졌고, 인자 <code>validate="many_to_one"</code>으로 막았습니다.</p>
+<p>01절에서는 마스크를 <code>loc</code>에 넣어 행을 고르고, 조회 함수 <code>fetch_orders()</code>가 딕셔너리 목록을 반환하게 했습니다. 이 절에서는 SQL의 <code>WHERE</code>가 마스크의 일을 맡습니다. 새 조회 함수도 같은 딕셔너리 목록을 반환합니다.</p>
+<p>Ch 2 03절의 튜플과 풀어 담기, 04절의 함수 정의, 05절의 여러 줄 글과 <code>try/except 오류이름</code>을 그대로 씁니다. Ch 2 01절에서는 변수를 넣은 f-string으로 글을 만들었습니다. 이 절의 Before 함수가 그 f-string으로 SQL 글을 만듭니다.</p>
+<p>Ch 3 01절의 커밋은 Git 저장소에 파일 상태를 기록했습니다. 이 절의 커밋은 이름만 같고, 데이터베이스에 넣은 행을 확정하는 일입니다. Ch 1 05절의 연산자 <code>or</code>는 SQL 조건의 <code>OR</code>와 뜻이 같습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유로 시작하기</h3>
+<p>가게 창고에 주문 서류를 꺼내 달라는 요청서 양식이 있다고 해 봅니다. 인쇄된 줄 사이에 고객 번호를 적는 빈칸 하나가 있습니다. 직원은 인쇄된 줄대로 일하고, 빈칸 안의 글은 고객 번호 하나로 봅니다.</p>
+<p>누군가 받은 쪽지를 빈칸에 붙였는데, 쪽지가 길어 빈칸 밖의 인쇄된 줄까지 덮었다고 해 봅니다. 직원은 덮인 자리의 글까지 요청으로 읽고, 서류를 모두 꺼냅니다. 같은 쪽지를 투명 봉투에 넣어 빈칸 안에만 끼우면 인쇄된 줄은 그대로입니다. 그런 번호의 서류는 없으니 꺼낸 서류도 없습니다.</p>
+<p>이 장면을 SQL로 옮기면 인쇄된 줄이 SQL 문장, 빈칸이 자리표시자 <code>?</code>, 투명 봉투가 따로 넘기는 값 목록입니다. 빈칸 밖까지 덮은 쪽지는 f-string으로 SQL에 이어 붙인 입력입니다.</p>
+{{img:03-5-요청서-빈칸|왼쪽에는 긴 분홍 쪽지가 요청서의 파란 빈칸에서 아래 인쇄된 줄까지 덮고 옆 쟁반에 초록 서류철 두 개와 파란 서류철 하나가 있고, 오른쪽에는 같은 쪽지를 접어 넣은 투명 봉투가 빈칸 안에만 있고 쟁반이 빈 삽화|쪽지가 빈칸 밖 줄까지 덮으면 서류를 모두 꺼냅니다. 봉투에 넣어 빈칸 안에만 두면 꺼낸 서류가 없습니다.}}
+<p><strong>그림 읽기</strong> — 가운데 세로선의 왼쪽이 이어 붙인 경우, 오른쪽이 따로 넘긴 경우입니다. 두 칸에는 같은 요청서와 나무 쟁반이 있습니다. 왼쪽 요청서에서는 긴 분홍 쪽지가 파란 빈칸에서 시작해 아래 인쇄된 줄들을 비스듬히 덮었습니다. 옆 쟁반에는 초록 서류철 두 개와 파란 서류철 하나, 곧 주문 세 건이 모두 꺼내져 있습니다.</p>
+<p>오른쪽 요청서에서는 같은 쪽지를 접어 넣은 투명 봉투가 파란 빈칸 안에만 있고, 인쇄된 줄은 모두 보입니다. 옆 쟁반은 비어 있습니다.</p>
+<h3>이 절에서 쓰는 말</h3>
+<table><thead><tr><th>용어</th><th>뜻</th><th>이 절에서 보이는 모습</th></tr></thead><tbody>
+<tr><td>데이터베이스(database)</td><td>여러 표를 한곳에 모아 두고, 정해진 문장으로 읽고 쓰는 저장소</td><td>파일 하나에 두 테이블을 담은 <code>shop.db</code></td></tr>
+<tr><td>SQL(Structured Query Language)</td><td>데이터베이스에 표를 만들고, 행을 넣고, 읽으라고 적는 언어</td><td><code>SELECT * FROM orders</code></td></tr>
+<tr><td>테이블(table)</td><td>데이터베이스 안의 표. 열 이름과 자료형을 먼저 정해 둡니다</td><td><code>customers</code>, <code>orders</code></td></tr>
+<tr><td>연결(connection)</td><td>데이터베이스와 명령을 주고받는 통로</td><td><code>sqlite3.connect("shop.db")</code>가 반환한 객체</td></tr>
+<tr><td>커서(cursor)</td><td>실행한 SQL의 결과 행을 들고 있는 객체</td><td><code>cursor.fetchall()</code>, <code>cursor.rowcount</code></td></tr>
+<tr><td>제약(constraint)</td><td>테이블에 적어 두고, 어기는 행을 막는 조건</td><td><code>PRIMARY KEY</code>, <code>NOT NULL</code>, <code>FOREIGN KEY</code></td></tr>
+<tr><td>커밋(commit)</td><td>데이터베이스에 한 변경을 파일에 확정하는 일. Git 커밋과 이름만 같습니다</td><td><code>connection.commit()</code></td></tr>
+<tr><td>자리표시자(placeholder)</td><td>SQL 문장에서 값이 들어갈 자리를 비워 둔 표시</td><td><code>WHERE orders.customer_id = ?</code></td></tr>
+<tr><td>SQL 주입(SQL injection)</td><td>입력 글이 SQL 문장의 일부로 읽혀 문장의 뜻이 바뀌는 문제</td><td><code>C001' OR '1'='1</code>로 3건</td></tr>
+</tbody></table>
+<h3>이 절에서 실행하는 SQL 문장</h3>
+<p>SQL 문장은 영어 낱말로 시작해 무엇을 할지 적습니다. 아래 표는 노트북에서 실행한 순서대로, 문장마다 뜻과 일상 예와 코드를 나란히 적었습니다.</p>
+<table><thead><tr><th>문장</th><th>뜻</th><th>일상 예</th><th>노트북 코드</th></tr></thead><tbody>
+<tr><td><code>PRAGMA foreign_keys = ON</code></td><td>SQLite의 외래 키 검사를 이 연결에서 켭니다</td><td>주문을 받기 전에 손님 카드부터 찾아보기로 정하기</td><td>연결 직후 한 번(3절)</td></tr>
+<tr><td><code>CREATE TABLE</code></td><td>새 테이블과 열, 제약을 만듭니다</td><td>새 장부 첫 줄에 칸 이름 적기</td><td><code>customer_id TEXT PRIMARY KEY</code>(4·5절)</td></tr>
+<tr><td><code>INSERT INTO … VALUES</code></td><td>테이블에 행을 넣습니다</td><td>장부에 새 줄 적기</td><td><code>('C001', '김하나')</code>(6절)</td></tr>
+<tr><td><code>SELECT … FROM</code></td><td>테이블에서 열을 골라 읽습니다</td><td>「주문 장부의 모든 칸을 보여 주세요」</td><td><code>SELECT * FROM orders</code>(7절)</td></tr>
+<tr><td><code>WHERE</code></td><td>남길 행의 조건을 적습니다</td><td>「C001 고객 줄만」</td><td><code>WHERE customer_id = 'C001'</code>(8절)</td></tr>
+<tr><td><code>ORDER BY</code></td><td>행의 순서를 정합니다. 방향을 적지 않으면 작은 값부터입니다</td><td>금액이 작은 쪽지부터 늘어놓기</td><td><code>ORDER BY amount</code>(9절)</td></tr>
+<tr><td><code>JOIN … ON</code></td><td>짝 조건이 맞는 두 테이블의 행을 잇습니다</td><td>쪽지의 번호로 손님 카드 찾기</td><td><code>ON orders.customer_id = customers.customer_id</code>(10절)</td></tr>
+</tbody></table>
+<h3>요청 문장을 SQL 조각으로 나누기</h3>
+<p>「C001 고객의 주문 번호, 이름, 금액을 주문 번호 순서로」라는 요청에는 네 가지 결정이 들어 있습니다. 읽을 열, 이을 테이블, 고를 행, 순서입니다. SQL 문장은 이 넷을 <code>SELECT</code>, <code>FROM … JOIN … ON</code>, <code>WHERE</code>, <code>ORDER BY</code> 조각에 한 가지씩 적습니다.</p>
+<p>조각 중 부를 때마다 달라지는 것은 고객 번호 하나입니다. 그래서 함수의 SQL 문장에는 고객 번호 자리에 물음표를 적고, 값은 따로 넘깁니다.</p>
+{{mermaid:03-1-요청과-SQL-조각|C001 고객의 주문 번호, 이름, 금액을 주문 번호 순서로 달라는 요청이 SELECT, FROM JOIN ON, WHERE 물음표, ORDER BY 네 조각으로 나뉘고, 물음표 자리에 값 C001이 들어가 O101 김하나 32000과 O103 김하나 27000 두 행이 나오는 그림|요청 한 문장을 SQL 조각 네 개로 나눴습니다. 달라지는 고객 번호 C001만 물음표 자리에 따로 들어갑니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 읽습니다. 맨 위 회색 상자는 말로 한 요청이고, 파란 상자 네 개는 그 요청을 나눠 적은 SQL 조각입니다. 조각은 위부터 읽을 열, 이을 테이블과 짝 조건, 고를 행의 조건, 정렬 기준입니다.</p>
+<p>오른쪽 초록 상자는 함수가 받은 값 C001이고, WHERE 조각의 물음표 자리로 들어갑니다. 맨 아래 노란 상자는 노트북 15절에서 출력으로 확인한 두 주문입니다.</p>
+<h3>값은 문장과 따로 넘깁니다</h3>
+<p>메서드 <code>execute()</code>에 SQL 글 하나만 넣으면, 데이터베이스는 그 글 전체를 SQL 문장으로 읽습니다. 입력 글을 f-string으로 이어 붙였다면 입력도 문장의 일부가 됩니다.</p>
+<p>둘째 인자에 값 목록을 따로 넣으면 이야기가 다릅니다. SQL 문장은 물음표가 있는 모양 그대로 읽히고, 목록의 값은 물음표 자리의 값으로만 쓰입니다. 입력에 따옴표나 <code>OR</code>가 있어도 고객 번호 글자의 일부일 뿐입니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>노트북은 임시 폴더에 데이터베이스 파일 <code>shop.db</code>를 만들고, 02절과 같은 고객 두 명과 주문 세 건을 테이블에 넣습니다. SQL 문장을 하나씩 실행하며 행을 읽고, 고르고, 정렬하고, 두 테이블을 잇습니다. 이어서 제약에 걸리는 행을 넣어 본 뒤, 고객 번호로 주문을 찾는 함수를 만듭니다.</p>
+<p>모델을 부르지 않으므로 API 키가 필요 없고 비용도 들지 않습니다. 따로 설치하는 패키지도 없습니다. 교재 출력은 Python 3.12.13과 그 Python이 쓰는 SQLite 3.53.1로 만들었습니다.</p>
+<p><strong>강의와 실습 범위</strong> — 강의 시간에는 노트북의 4~10번과 14·15·17·18번 소제목을 설명합니다. 4~10번은 테이블 만들기부터 JOIN까지이고, 14·15·17·18번은 조회 함수와 Before/After입니다. 2·3번, 11~13번(제약과 남은 행 수), 16번(값 바꿔 보기)은 셀을 함께 실행합니다. 결과 읽기는 실습 시간에 이어서 읽습니다.</p>
+{{notebook:03-SQL로-조회-함수-만들기|example}}
+<p class="look"><b>확인할 점</b> — 9절에서 <code>ORDER BY amount</code>를 더하자 O103이 먼저 나왔는지 봅니다. 11·12절의 오류 메시지가 서로 다른 제약 이름을 적었는지 확인합니다. 15절 합계가 02절과 같은 <code>59000</code>인지도 봅니다.</p>
+<h3>테이블을 만들고 제약 확인하기</h3>
+<p>행은 고객부터 넣었습니다. 외래 키 검사를 켠 연결에서는 주문이 가리킬 고객 행이 먼저 있어야 하기 때문입니다. 행을 넣은 뒤에는 <code>commit()</code>으로 확정했습니다.</p>
+<p>이미 있는 C001로 고객을 한 번 더 넣자 <code>UNIQUE constraint failed: customers.customer_id</code>가 나왔습니다. 고객 테이블에 없는 C003으로 주문을 넣자 <code>FOREIGN KEY constraint failed</code>가 나왔습니다. 두 오류 뒤에 센 행 수는 고객 2, 주문 3으로 그대로였습니다.</p>
+<p>02절 pandas에서는 겹친 키가 행을 늘리고, 짝 없는 키가 행을 조용히 뺐습니다. 데이터베이스 제약은 그런 행이 들어오는 순간에 막았습니다.</p>
+{{mermaid:03-2-테이블과-제약|sqlite3.connect와 PRAGMA foreign_keys = ON, CREATE TABLE 두 번으로 shop.db 안에 두 테이블을 만들고, INSERT INTO와 commit으로 2행과 3행을 넣은 뒤, C001을 한 번 더 넣으면 UNIQUE constraint failed, O104 C003을 넣으면 FOREIGN KEY constraint failed가 나오고, 남은 행 수는 고객 2와 주문 3인 흐름도|제약이 두 행을 막았습니다. 겹친 고객 번호와 짝 없는 고객 번호가 모두 넣는 순간 거절되어 행 수는 그대로입니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 읽습니다. 파란 상자는 실행한 코드이고, 초록 상자는 그 코드가 <code>shop.db</code> 안에 만든 두 테이블입니다. 행을 넣은 파란 상자에는 출력으로 본 넣은 행 수 2와 3을 함께 적었습니다.</p>
+<p>그 아래 노란 상자 두 개는 제약에 걸려, 코드가 받아 출력한 오류입니다. 왼쪽은 겹친 기본 키, 오른쪽은 짝 없는 외래 키입니다. 맨 아래 노란 상자는 두 오류 뒤에 센 행 수, 고객 2와 주문 3입니다.</p>
+<h3>조회 함수로 묶기</h3>
+<p>함수 <code>find_customer_orders()</code>는 데이터베이스 파일 이름과 고객 번호를 받습니다. 함수 안에서 새 연결을 열고, 물음표를 둔 SQL 문장과 값 목록 <code>[customer_id]</code>를 <code>execute()</code>에 넣습니다. 결과 튜플은 풀어 담기로 나눠 딕셔너리로 만들고, 연결을 닫은 뒤 목록을 반환합니다.</p>
+<p>고객 번호 C001로 부르자 딕셔너리 두 개가 나왔고, 금액을 더한 출력은 <code>김하나 고객의 주문 합계: 59000</code>이었습니다. 고객 번호만 C002로 바꾸자 딕셔너리 하나, <code>주문 수: 1</code>이었습니다.</p>
+{{mermaid:03-3-조회-함수|입력 shop.db와 C001이 find_customer_orders 함수로 들어가 딕셔너리 2개 O101과 O103 김하나, 합계 59000이 나오고, 점선으로 C002를 넣으면 딕셔너리 1개 O102 이두리 18000이 나오는 그림|같은 함수에 고객 번호만 바꿔 넣었습니다. C001은 두 건과 합계 59000, C002는 한 건입니다.}}
+<p><strong>도식 읽기</strong> — 왼쪽에서 오른쪽으로 읽습니다. 왼쪽 초록 상자는 함수에 넣은 인자, 가운데 파란 상자는 우리가 정의한 함수, 오른쪽 노란 상자는 출력으로 확인한 반환값입니다.</p>
+<p>실선은 C001로 부른 호출이고, 딕셔너리 2개와 합계 59000이 나왔습니다. 점선은 고객 번호만 C002로 바꾼 호출이고, O102 이두리 18000 딕셔너리 1개가 나왔습니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before 함수는 물음표 대신 f-string으로 고객 번호를 SQL 글에 바로 넣고, 만든 SQL을 출력합니다. 보통 고객 번호 C001로 부른 뒤, 따옴표와 <code>OR</code>가 섞인 입력 <code>C001' OR '1'='1</code>로 다시 부릅니다.</p>
+<p>After에서는 같은 입력을 14절에서 만든 자리표시자 함수에 넣습니다. 두 함수는 SQL 조건 줄과, Before가 만든 SQL을 출력하는 줄만 다릅니다.</p>
+{{notebook:03-SQL로-조회-함수-만들기|failure}}
+<p>Before 함수에 C001을 넣었을 때는 조건 줄이 <code>WHERE orders.customer_id = 'C001'</code>이었고 <code>찾은 주문 수: 2</code>였습니다. 이상한 입력을 넣자 조건 줄이 <code>WHERE orders.customer_id = 'C001' OR '1'='1'</code>로 바뀌었습니다. 입력의 첫 따옴표가 글자 값을 일찍 닫았고, 늘 참인 <code>OR '1'='1'</code>이 조건으로 붙었습니다.</p>
+<p>그래서 <code>찾은 주문 수: 3</code>이 나왔고, 목록에 이두리 고객의 주문 O102도 들어갔습니다. 셀은 오류 없이 끝났습니다. 고객 C001을 물었는데 다른 고객의 주문을 꺼냈으니, 에이전트 도구라면 남의 주문을 알려 주게 됩니다.</p>
+<p>After 함수에 같은 입력을 넣자 <code>[]</code>와 <code>찾은 주문 수: 0</code>이 나왔습니다. 입력 글 전체가 고객 번호 하나로 비교되었고, 그런 고객 번호의 주문은 없었습니다.</p>
+{{mermaid:03-4-이어-붙이기-비교|Before는 입력 C001' OR '1'='1을 f-string으로 이어 붙여 조건이 customer_id = 'C001' OR '1'='1'이 되고 O102 이두리를 포함한 3건이라는 빨간 결과로 이어지고, After는 같은 입력을 물음표 자리의 값 목록으로 넘겨 0건 빈 목록이 되는 비교 그림|같은 입력, 다른 넘기는 방법. 이어 붙이면 조건이 바뀌어 3건, 자리표시자로 넘기면 0건입니다.}}
+<p><strong>도식 읽기</strong> — 위 칸이 Before, 아래 칸이 After이고, 칸마다 왼쪽에서 오른쪽으로 읽습니다. 두 칸의 초록 입력 상자에는 같은 글 <code>C001' OR '1'='1</code>이 들어갑니다. 위 칸 가운데 파란 상자는 f-string으로 만든 SQL의 조건이고, 입력 속 <code>OR</code>가 조건으로 들어갔습니다.</p>
+<p>위 칸 끝의 빨간 상자는 틀린 결과, O102 이두리를 포함한 3건입니다. 아래 칸 가운데 상자는 물음표를 둔 조건이고, 입력 글은 값 목록으로 따로 갑니다. 끝의 노란 상자는 출력으로 확인한 0건, 빈 목록입니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul><li>자리표시자는 값이 들어갈 자리에 쓰는 표시입니다. 테이블 이름이나 열 이름 자리에 물음표를 쓰는 경우는 이번에 실행하지 않았습니다.</li>
+<li>외래 키 검사는 연결마다 켭니다. 14절 함수의 새 연결은 검사를 켜지 않았지만 행을 읽기만 합니다. 검사를 켜지 않은 연결로 행을 넣는 경우는 이번에 실행하지 않았습니다.</li>
+<li>Python 설명서는 넣은 행을 잃지 않도록 연결을 닫기 전에 <code>commit()</code>을 부르라고 적습니다. 커밋 없이 닫는 경우는 이번에 실행하지 않았습니다.</li>
+<li>함수 안에서 SQL을 실행하다 오류가 나면 <code>close()</code> 줄까지 가지 못합니다. 오류가 나도 연결을 닫는 방법(Ch 2 09절의 <code>finally</code>, 확장 경로)은 이 절에서 쓰지 않았습니다.</li>
+<li>설명서의 예시는 값 목록으로 튜플 <code>(customer_id,)</code>를 많이 씁니다. 값이 하나인 튜플은 끝에 쉼표가 있어야 합니다. 이 절은 쉼표 규칙을 피하려고 목록 <code>[customer_id]</code>를 썼습니다.</li>
+<li>빈 목록 <code>[]</code>은 「그 고객 번호의 주문이 없다」만 알려 줍니다. 입력이 이상했는지는 알려 주지 않으므로, 도구 결과를 설명할 때 그대로 전합니다.</li>
+<li>실습 폴더 <code>data/customers.csv</code>에는 C003 박세진이 있습니다. 이 절의 C003은 02절처럼 고객 테이블에 없는 번호로 썼습니다.</li>
+<li>실습 폴더 <code>data_tools.py</code>의 <code>find_customer_orders()</code>는 키 이름과 정렬 순서가 이 절 함수와 다릅니다. Ch 19 01절이 도구로 다시 쓰는 것은 같은 파일의 <code>fetch_orders(csv_path, *, status=None)</code>입니다.</li>
+<li>교재 출력은 2026-09-16에 Linux의 Python 3.12.13, SQLite 3.53.1로 만들었습니다. Python 3.12의 sqlite3는 SQLite 3.7.15 이상을 요구합니다. 외래 키 검사는 SQLite 3.6.19부터 있습니다. 다른 버전과 운영체제에서는 실행하지 않았습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>SQL 문장 <code>CREATE TABLE</code>로 테이블과 제약을 만들고, <code>INSERT INTO</code>로 행을 넣고, <code>SELECT</code>로 읽습니다. 넣은 행은 <code>commit()</code>으로 확정합니다.</li><li>읽기 문장에는 <code>WHERE</code>로 조건, <code>ORDER BY</code>로 순서, <code>JOIN … ON</code>으로 짝을 적습니다. 기본 키와 외래 키 제약은 겹친 번호와 짝 없는 번호를 넣는 순간 막았습니다.</li><li>입력 글을 f-string으로 SQL에 이어 붙인 함수는 3건을 찾았습니다. 자리표시자 <code>?</code>로 값만 넘긴 함수는 0건이었습니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 04절에서는 데이터베이스 대신 HTTP 주소로 데이터를 주는 REST 서비스를 조회합니다. 여러 페이지로 나뉜 목록을 끝까지 읽는 함수를 만들고, 이 절처럼 딕셔너리 목록을 반환합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary>
+<p class="quiz-q">1. 명령 <code>WHERE</code>와 <code>ORDER BY</code>는 각각 무엇을 정하나요? 9절에서 <code>ORDER BY amount</code>를 더하자 무엇이 바뀌었나요? · 기초</p><p class="quiz-a"><b>해설</b> — 명령 <code>WHERE</code>는 남길 행의 조건을, <code>ORDER BY</code>는 행의 순서를 정합니다. 고른 행은 O101과 O103 그대로였습니다. 금액이 작은 O103 27000이 O101 32000보다 먼저 나왔습니다.</p>
+<p class="quiz-q">2. 6절에서 행을 넣은 뒤 <code>commit()</code>을 부른 이유는 무엇인가요? Git 커밋과는 어떻게 다른가요? · 기초</p><p class="quiz-a"><b>해설</b> — 넣은 행을 데이터베이스 파일에 확정하려고 불렀습니다. 확정한 행은 15절에서 함수가 연 새 연결에서도 읽혔습니다. Git 커밋은 저장소에 파일 상태를 기록하는 일이라 이름만 같습니다.</p>
+<p class="quiz-q">3. 02절에서 고객 번호 C003인 주문은 <code>merge()</code>에서 조용히 빠졌습니다. 이 절에서 C003 주문을 넣었을 때는 어떻게 되었나요? · 적용</p><p class="quiz-a"><b>해설</b> — 넣는 순간 <code>FOREIGN KEY constraint failed</code> 오류가 나서 행이 들어가지 않았습니다. 주문 테이블의 행 수는 3 그대로였습니다. 3절에서 이 연결의 외래 키 검사를 켰기 때문입니다.</p>
+<p class="quiz-q">4. Before 함수에 <code>C001' OR '1'='1</code>을 넣었더니 주문 3건이 나왔습니다. 만든 SQL의 조건은 무엇이었고, 왜 3건인가요? · 분석</p><p class="quiz-a"><b>해설</b> — 조건은 <code>WHERE orders.customer_id = 'C001' OR '1'='1'</code>이었습니다. 입력의 따옴표가 글자 값을 닫고, 뒤의 <code>OR '1'='1'</code>이 SQL 조건이 되었습니다. 늘 참인 조건이 붙어 모든 주문이 골라졌습니다.</p>
+<p class="quiz-q">5. 같은 입력을 자리표시자 함수에 넣었더니 빈 목록이 나왔습니다. 둘째 인자 <code>[customer_id]</code>는 어떤 일을 했나요? · 분석</p><p class="quiz-a"><b>해설</b> — 입력 글을 SQL 문장과 따로, 물음표 자리의 값으로 넘겼습니다. 그래서 따옴표와 <code>OR</code>까지 고객 번호 글자 하나로 비교되었습니다. 그런 고객 번호의 주문은 없어 빈 목록이 나왔습니다.</p>
+</details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3.12/library/sqlite3.html">Python 3.12 공식 문서: sqlite3</a> · 확인 2026-09-16 · 실행 Python 3.12.13</li><li><a href="https://www.sqlite.org/lang_select.html">SQLite 공식 문서: SELECT</a> · 확인 2026-09-16 · 실행 SQLite 3.53.1</li><li><a href="https://www.sqlite.org/foreignkeys.html">SQLite 공식 문서: Foreign Key Support</a> · 확인 2026-09-16 · 실행 SQLite 3.53.1</li></ul>

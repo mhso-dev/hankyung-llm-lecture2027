@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  st["가상 시작점<br>엣지 둘"]
+  subgraph step["같은 단계에서 함께 실행"]
+    direction TB
+    g["노드 good<br>결과 글 하나를 냄"]:::flow
+    f["노드 flaky<br>0.1초 뒤 실패 흉내"]:::flow
+  end
+  gw["표 writes<br>good 줄 칸 results<br>남은 쓰기"]:::measure
+  fw["표 writes<br>flaky 줄 칸 __error__"]:::measure
+  rd["읽은 체크포인트<br>다음 노드 flaky 하나<br>칸 값에 good-result"]:::measure
+  st --> g
+  st --> f
+  g --> gw
+  f --> fw
+  gw --> rd
+  fw --> rd

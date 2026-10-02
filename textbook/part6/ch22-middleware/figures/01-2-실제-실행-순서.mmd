@@ -1,0 +1,18 @@
+sequenceDiagram
+  participant A as 에이전트와 훅
+  participant M as 모델
+  participant T as 도구 lookup_hours
+  Note over A: 1 before_agent
+  Note over A: 2~3 호출 전 기록
+  A->>M: 질문 전달
+  M-->>A: 도구 요청 day="평일"
+  Note over A: 4~5 응답 뒤 기록
+  Note over A: 6 wrap_tool_call 시작
+  A->>T: lookup_hours("평일")
+  T-->>A: 평일 09:00~20:00
+  Note over A: 7 wrap_tool_call 끝
+  Note over A: 8~9 호출 전 기록
+  A->>M: 도구 결과 전달
+  M-->>A: 최종 답 09:00~20:00
+  Note over A: 10~11 응답 뒤 기록
+  Note over A: 12 after_agent

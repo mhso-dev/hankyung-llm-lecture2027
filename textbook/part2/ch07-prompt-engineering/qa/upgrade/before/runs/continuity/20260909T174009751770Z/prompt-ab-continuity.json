@@ -1,0 +1,126 @@
+{
+  "run_id": "ch07-prompt-ab-20260909T174009751770Z",
+  "run_date": "2026-09-09",
+  "source_chapter": "ch07",
+  "source_record": {
+    "path": "labs/part2/ch06-langchain-start/runs/provider-comparison-continuity.json",
+    "sha256": "531b30d0c1a07e49a653a651f9a082b3716bca142fed6e081dc15482b5f6b10a",
+    "run_id": "ch06-provider-20260909T173655923454Z"
+  },
+  "model": "openai:gpt-5.4-mini",
+  "settings": {
+    "max_tokens": 220,
+    "repetitions": 1,
+    "pricing_date": "2026-09-09",
+    "pricing_usd_per_million": {
+      "ordinary_input": 0.75,
+      "cached_input": 0.075,
+      "output": 4.5
+    }
+  },
+  "input": "고객 문의: 어제 받은 텀블러 뚜껑이 깨졌습니다. 주문번호는 A-1042입니다.\n새 상품으로 바꾸고 싶습니다. 회사 규정상 교환 접수에는 파손 사진이 필요합니다.\n답변에는 분류, 필요한 다음 행동, 고객에게 보낼 한 문장을 포함하세요.",
+  "mention_screen": [
+    "교환",
+    "A-1042",
+    "사진"
+  ],
+  "comparison_policy": "mention_count는 원문 정독 보조이며 생성 답변 품질 점수가 아님",
+  "versions": {
+    "v1-direct": {
+      "prompt": "답하세요. 고객 문의: 어제 받은 텀블러 뚜껑이 깨졌습니다. 주문번호는 A-1042입니다.\n새 상품으로 바꾸고 싶습니다. 회사 규정상 교환 접수에는 파손 사진이 필요합니다.\n답변에는 분류, 필요한 다음 행동, 고객에게 보낼 한 문장을 포함하세요.",
+      "change": "기준선",
+      "result": {
+        "text": "**분류:** 교환 요청 / 파손 상품 문의\n\n**필요한 다음 행동:**  \n파손된 뚜껑 사진을 보내주시면 교환 접수를 도와드리겠습니다. 주문번호 **A-1042** 확인했습니다.\n\n**고객에게 보낼 한 문장:**  \n주문번호 A-1042 확인했습니다. 교환 접수를 위해 깨진 뚜껑의 파손 사진을 보내주시면 바로 새 상품 교환 절차를 진행해드리겠습니다.",
+        "usage": {
+          "input_tokens": 95,
+          "output_tokens": 113,
+          "total_tokens": 208,
+          "input_token_details": {
+            "audio": 0,
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "audio": 0,
+            "reasoning": 0
+          }
+        },
+        "latency_s": 1.56
+      },
+      "metrics": {
+        "version": "v1-direct",
+        "change": "기준선",
+        "input_tokens": 95,
+        "output_tokens": 113,
+        "cache_read_tokens": 0,
+        "estimated_cost_usd": 0.00057975,
+        "latency_ms": 1560.0,
+        "mention_count": 3,
+        "generation_evaluation": "human_review_required"
+      }
+    },
+    "v2-constraints": {
+      "prompt": "분류/다음 행동/고객 문장 세 줄로 답하고 규정 밖 약속은 하지 마세요. 고객 문의: 어제 받은 텀블러 뚜껑이 깨졌습니다. 주문번호는 A-1042입니다.\n새 상품으로 바꾸고 싶습니다. 회사 규정상 교환 접수에는 파손 사진이 필요합니다.\n답변에는 분류, 필요한 다음 행동, 고객에게 보낼 한 문장을 포함하세요.",
+      "change": "형식·금지 조건",
+      "result": {
+        "text": "분류: 제품 파손 교환 문의\n\n다음 행동: 파손 부위가 보이도록 뚜껑 사진을 주문번호 A-1042와 함께 보내주시면 교환 접수를 도와드리겠습니다.\n\n고객 문장: 어제 받은 텀블러 뚜껑 파손으로 불편을 드려 죄송하며, 주문번호 A-1042와 함께 파손 사진을 보내주시면 확인 후 교환 접수를 진행하겠습니다.",
+        "usage": {
+          "input_tokens": 118,
+          "output_tokens": 108,
+          "total_tokens": 226,
+          "input_token_details": {
+            "audio": 0,
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "audio": 0,
+            "reasoning": 0
+          }
+        },
+        "latency_s": 1.165
+      },
+      "metrics": {
+        "version": "v2-constraints",
+        "change": "형식·금지 조건",
+        "input_tokens": 118,
+        "output_tokens": 108,
+        "cache_read_tokens": 0,
+        "estimated_cost_usd": 0.0005745,
+        "latency_ms": 1165.0,
+        "mention_count": 3,
+        "generation_evaluation": "human_review_required"
+      }
+    },
+    "v3-example": {
+      "prompt": "예시: 파손 상품은 교환으로 분류하고 사진과 주문번호를 확인합니다. 분류/다음 행동/고객 문장 세 줄로 답하고 규정 밖 약속은 하지 마세요. 고객 문의: 어제 받은 텀블러 뚜껑이 깨졌습니다. 주문번호는 A-1042입니다.\n새 상품으로 바꾸고 싶습니다. 회사 규정상 교환 접수에는 파손 사진이 필요합니다.\n답변에는 분류, 필요한 다음 행동, 고객에게 보낼 한 문장을 포함하세요.",
+      "change": "v2 조건 유지·관련 예시 추가",
+      "result": {
+        "text": "분류: 교환  \n다음 행동: 파손 사진과 주문번호 A-1042를 확인한 뒤 교환 접수를 진행합니다.  \n고객 문장: 파손된 뚜껑 사진을 보내주시면 주문번호 A-1042 기준으로 교환 접수를 도와드리겠습니다.",
+        "usage": {
+          "input_tokens": 139,
+          "output_tokens": 71,
+          "total_tokens": 210,
+          "input_token_details": {
+            "audio": 0,
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "audio": 0,
+            "reasoning": 0
+          }
+        },
+        "latency_s": 0.87
+      },
+      "metrics": {
+        "version": "v3-example",
+        "change": "v2 조건 유지·관련 예시 추가",
+        "input_tokens": 139,
+        "output_tokens": 71,
+        "cache_read_tokens": 0,
+        "estimated_cost_usd": 0.00042375,
+        "latency_ms": 870.0,
+        "mention_count": 3,
+        "generation_evaluation": "human_review_required"
+      }
+    }
+  }
+}

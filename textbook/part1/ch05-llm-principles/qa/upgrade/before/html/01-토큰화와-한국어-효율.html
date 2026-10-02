@@ -1,0 +1,300 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>토큰화와 한국어 효율 — Ch 5 · LLM 동작 원리</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 5 · LLM 동작 원리</p>
+<h1>토큰화와 한국어 효율</h1><div class="meta"><span>강의 1.5h · 실습 1h</span><span>장르 산문</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1.5h · 실습 1h | 코드 Jupyter Notebook | 장르 산문 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>문장을 토큰으로 나누는 이유를 설명합니다.</li><li>두 토큰화기의 한·영 문장 분할과 토큰 수를 비교합니다.</li><li>문자 수와 토큰 수가 같은 개념이 아님을 설명합니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>대규모 언어 모델(Large Language Model, LLM)은 문장을 글자 단위로 바로 처리하지 않습니다. 문장을 토큰이라는 작은 텍스트 단위로 나눈 뒤 각 토큰을 숫자 ID로 바꾸어 처리합니다. 모델 사용량, 입력 길이, 응답 시간을 이해하려면 먼저 토큰을 세어야 합니다. 한국어는 토큰화기의 어휘와 학습 자료에 따라 한 글자가 여러 토큰으로 나뉠 수 있으므로 실측이 필요합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch 2에서 문자열을 리스트처럼 순회하고 <code>len()</code>으로 길이를 구했습니다. Ch 4에서는 HTML 기사의 제목과 요약을 추출해 <code>article-text.json</code>으로 보존했습니다. 이 절은 그 파싱 텍스트를 직접 읽고 문자열 길이와 토큰 리스트 길이를 나란히 비교합니다. 가상환경과 Jupyter 커널을 선택하는 방법은 Ch 1에서 배운 절차를 그대로 사용합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>정의와 관찰</h3><p>토큰(token)은 모델이 처리하는 텍스트 단위입니다. 토큰은 한 단어일 수도 있고 단어의 조각이나 문장부호일 수도 있습니다. 토큰화(tokenization)는 텍스트를 이러한 단위로 나누고 각 단위를 정수 ID에 연결하는 과정입니다. 모델은 ID 열을 입력받으므로 같은 문장도 토큰화기가 다르면 다른 숫자 열이 됩니다.</p><p>어휘(vocabulary)는 토큰화기가 알고 있는 토큰과 ID의 목록입니다. 영어 자료를 중심으로 만든 어휘에는 흔한 영어 단어 조각이 많습니다. 한국어 자료를 반영한 어휘는 '확인', '환불'과 같은 조각을 하나의 토큰으로 가질 수 있습니다. 이 차이는 언어의 우열이 아니라 어휘 설계와 학습 자료의 차이입니다.</p><p>토큰화기의 입력은 사람이 읽는 문자열이고, 처리는 문자열을 어휘에 있는 조각과 연결하는 일입니다. <code>tokenize(text)</code>는 조각의 문자열 목록을 반환하고, <code>encode(text)</code>는 조각에 대응하는 정수 ID 목록을 반환합니다. 여기서 반환은 함수가 계산을 마친 뒤 호출한 코드에 결과값을 넘긴다는 뜻입니다. <code>len(...)</code>은 반환된 목록에 들어 있는 항목 수를 셉니다.</p><p><code>AutoTokenizer.from_pretrained(model_id, revision=...)</code>는 모델 ID와 고정 revision을 입력받아 해당 파일을 불러오고 tokenizer 객체를 반환합니다. revision은 같은 이름의 모델 파일이 나중에 바뀌어도 실습에서 확인한 버전을 다시 받기 위한 식별자입니다. <code>vocab_size</code>는 어휘에 등록된 토큰 ID 개수를 정수로 반환합니다. 어휘 크기가 크다는 사실만으로 한국어가 더 적은 토큰으로 나뉜다고 판단할 수는 없습니다.</p><p>예를 들어 입력 <code>"환불!"</code>이 <code>["환불", "!"]</code>처럼 나뉘었다면 토큰 수는 2입니다. 실제 분할은 토큰화기마다 다르므로 이 모양을 외우지 않습니다. 노트북에서는 같은 입력을 두 토큰화기에 전달하고, 반환된 목록의 길이와 각 조각을 함께 출력해 차이를 읽습니다.</p><p>두 토큰화기는 '오늘 주문 상태를 확인해 주세요.'라는 문장을 각각 39개와 9개의 토큰으로 나눕니다. 반면 영어 번역문은 각각 7개와 15개였습니다. 이 결과는 특정 문장과 두 토큰화기에서 관찰한 값입니다. '한국어는 항상 비효율적이다'라는 보편적 결론을 내릴 수는 없습니다.</p><p>토큰 수는 비용만이 아니라 컨텍스트 윈도에도 영향을 줍니다. 같은 내용을 더 많은 토큰으로 표현하면 모델에 넣을 수 있는 원문의 양이 줄어듭니다. 그러므로 프로덕션에서는 문자 수나 단어 수로 사용량을 추정하지 않고 실제 모델의 토큰화기로 측정합니다.</p><p>토큰 수를 비교할 때는 원문의 의미와 형식을 함께 기록합니다. 한국어와 영어 번역문은 비슷한 뜻을 담을 수 있지만 문법 구조와 문자 수가 다릅니다. 그러므로 '뜻이 같다'는 것을 자동으로 통제된 실험으로 보면 안 됩니다. 실습의 두 문장 쌍은 분할 모양을 읽는 예시입니다. 업무용 효율을 비교할 때는 실제 서비스의 대화, 문서, 코드 표본을 같은 비율로 구성하고 모델별 토큰 수의 분포를 측정합니다.</p><p>토큰화기는 보이는 문자 외에 특수 토큰(special token)을 추가할 수 있습니다. 문장의 시작과 끝, 발화자 역할, 문장 쌍의 경계를 표시하는 토큰이 예입니다. <code>tokenize()</code>의 결과와 실제 모델 입력의 길이가 다를 수 있는 이유입니다. 특히 채팅 모델은 대화 템플릿이 역할 표시와 생성 시작 표시를 덧붙입니다. 다른 절에서 입력 길이를 측정할 때는 이 템플릿을 적용한 후의 토큰 수를 사용합니다.</p><p>출력의 'Ġ'나 '##'와 같은 표시는 사용자 문장에 추가된 글자가 아닙니다. 토큰화기가 공백 앞의 조각인지, 앞 조각에 이어지는 부분인지 표시하는 방식입니다. 입문 단계에서는 표시 자체를 외우기보다 원문이 어떤 조각으로 나뉘었는지 확인합니다. 예상보다 많이 나뉜 단어가 있다면 해당 모델의 어휘에서 흔하지 않은 표현일 가능성을 점검합니다.</p>
+<figure><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 210" role="img" aria-labelledby="title desc">
+<title id="title">01-concept 개념 도식</title>
+<desc id="desc">네 단계를 왼쪽에서 오른쪽으로 읽는 흐름</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#475569"/></marker></defs>
+<rect x="20" y="55" width="165" height="90" rx="14" fill="#dcfce7" stroke="#334155" stroke-width="2"/>
+<text x="102.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">문장</text>
+<line x1="185" y1="100" x2="210" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="215" y="55" width="165" height="90" rx="14" fill="#dcfce7" stroke="#334155" stroke-width="2"/>
+<text x="297.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">토큰화기</text>
+<line x1="380" y1="100" x2="405" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="410" y="55" width="165" height="90" rx="14" fill="#dcfce7" stroke="#334155" stroke-width="2"/>
+<text x="492.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">토큰 ID 열</text>
+<line x1="575" y1="100" x2="600" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="605" y="55" width="165" height="90" rx="14" fill="#fef3c7" stroke="#334155" stroke-width="2"/>
+<text x="687.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">토큰 수 측정</text>
+</svg></div><figcaption>파란색은 학습자가 따라갈 입력 흐름, 녹색은 도구와 자료, 보라색은 모델의 처리, 노란색은 측정 결과, 빨간색은 확인할 제한을 뜻합니다. 화살표를 왼쪽에서 오른쪽으로 읽습니다.</figcaption></figure>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>첫 셀은 Ch 4의 기사 문자열을 두 토큰화기에 입력합니다. 다음 셀은 같은 한·영 문장 쌍을 입력하고 <code>encode()</code>가 반환한 토큰 수와 <code>tokenize()</code>가 반환한 조각을 나란히 출력합니다. 마지막 비교는 같은 한국어 문장의 반복 횟수만 바꿉니다.</p><p>노트북을 새 Python 3.12 커널에서 첫 셀부터 순서대로 실행합니다.</p><section class="notebook" data-notebook="01-토큰화와-한국어-효율" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="01-토큰화와-한국어-효율.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDthqDtgbDtmZTsmYAg7ZWc6rWt7Ja0IO2aqOycqFxuIiwKICAgICJcbiIsCiAgICAi6rCZ7J2AIOucu+ydhCDri7TsnYAg7ZWc6rWt7Ja07JmAIOyYgeyWtCDrrLjsnqXsnYAg7Yag7YGw7ZmUIOuwqeyLneyXkCDrlLDrnbwg66qHIOqwnOydmCDthqDtgbDsnbQg65Cg6rmM7JqUP1xuIiwKICAgICJcbiIsCiAgICAiUHl0aG9uIDMuMTLsmYAg7J6g6ri0IO2MqO2CpOyngOulvCDsgqzsmqntlanri4jri6QuIOyyqyDsi6Ttlonsl5DshJzripQg66Gc7LusIOuqqOuNuOydhCDri6TsmrTroZzrk5ztlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOuRkCDthqDtgbDtmZTquLAg7KSA67mEXG4iLAogICAgIlxuIiwKICAgICJgQXV0b1Rva2VuaXplci5mcm9tX3ByZXRyYWluZWQobW9kZWxfaWQsIHJldmlzaW9uPS4uLilg64qUIOuqqOuNuCBJROyZgCDqs6DsoJUgcmV2aXNpb27snYQg7J6F66Cl67Cb7JWEIO2VtOuLuSDtjIzsnbzsnYQg67aI65+s7Jik6rOgIHRva2VuaXplciDqsJ3ssrTrpbwg67CY7ZmY7ZWp64uI64ukLiByZXZpc2lvbuydgCDqsJnsnYAg7J2066aE7J2YIOuqqOuNuCDtjIzsnbzsnbQg64KY7KSR7JeQIOuwlOuAjOyWtOuPhCDsnbQg7Iuk7Iq17JeQ7IScIO2ZleyduO2VnCDrsoTsoITsnYQg64uk7IucIOuwm+q4sCDsnITtlZwg7Iud67OE7J6Q7J6F64uI64ukLiBgdm9jYWJfc2l6ZWDripQgdG9rZW5pemVyIOyWtO2cmOyXkCDrk7HroZ3rkJwg7Yag7YGwIElEIOqwnOyImOulvCDsoJXsiJjroZwg67CY7ZmY7ZWp64uI64ukLiDslrTtnJgg7YGs6riw6rCAIO2BrOuLpOuKlCDsgqzsi6Trp4zsnLzroZwg7ZWc6rWt7Ja06rCAIOuNlCDsoIHsnYAg7Yag7YGw7Jy866GcIOuCmOuJnOuLpOqzoCDtjJDri6jtlaAg7IiY64qUIOyXhuyKteuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgIu2GoO2BsO2ZlOq4sOydmCDsnoXroKXsnYAg7IKs656M7J20IOydveuKlCDrrLjsnpDsl7TsnoXri4jri6QuIGB0b2tlbml6ZSh0ZXh0KWDripQg7Yag7YGwIOusuOyekOyXtCDrqqnroZ3snYQsIGBlbmNvZGUodGV4dClg64qUIO2GoO2BsCBJROydmCDsoJXsiJgg66qp66Gd7J2EIOuwmO2ZmO2VqeuLiOuLpC4g67CY7ZmY7J2AIO2VqOyImOqwgCDqs4TsgrDtlZwg6rCS7J2EIO2YuOy2nO2VnCDsvZTrk5zsl5Ag64SY6ri064uk64qUIOucu+yeheuLiOuLpC4g7JWE656YIOyFgOydgCDrkZAgdG9rZW5pemVyIOqwneyytOyZgCDqsIHqsIHsnZgg7Ja07ZyYIO2BrOq4sOulvCDstpzroKXtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjozNDoxMS44Mzg4MzlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjozNDoxMS44Mzg2NDFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC42ODQ0NDZaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjM0OjE0LjY4Mzk3OFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJHUFQtMiDslrTtnJgg7YGs6riwOiA1MDI1N1xuIiwKICAgICAgIktMVUUgQkVSVCDslrTtnJgg7YGs6riwOiAzMjAwMFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJpbXBvcnQgd2FybmluZ3NcbiIsCiAgICAid2FybmluZ3MuZmlsdGVyd2FybmluZ3MoXCJpZ25vcmVcIiwgbWVzc2FnZT1cIklQcm9ncmVzcyBub3QgZm91bmRcIilcbiIsCiAgICAiZnJvbSB0cmFuc2Zvcm1lcnMgaW1wb3J0IEF1dG9Ub2tlbml6ZXJcbiIsCiAgICAiXG4iLAogICAgIiMg66qo6424IElE7JmAIOqzoOyglSByZXZpc2lvbuyXkCDrp57ripQg65GQIO2GoO2BsO2ZlOq4sOulvCDroZzsu6zsl5Ag67Cb7JWEIOyCrOyaqe2VqeuLiOuLpC5cbiIsCiAgICAiZ3B0MiA9IEF1dG9Ub2tlbml6ZXIuZnJvbV9wcmV0cmFpbmVkKFwib3BlbmFpLWNvbW11bml0eS9ncHQyXCIsIHJldmlzaW9uPVwiNjA3YTMwZDc4M2RmYTY2M2NhZjM5ZTA2NjMzNzIxYzhkNGNmY2Q3ZVwiKVxuIiwKICAgICJrb190b2tlbml6ZXIgPSBBdXRvVG9rZW5pemVyLmZyb21fcHJldHJhaW5lZChcImtsdWUvYmVydC1iYXNlXCIsIHJldmlzaW9uPVwiNzdjOGIzZDcwN2RmNzg1MDM0YjRlNTBmMmRhNWQzN2JlNWYwZjU0NlwiKVxuIiwKICAgICJwcmludChcIkdQVC0yIOyWtO2cmCDtgazquLA6XCIsIGdwdDIudm9jYWJfc2l6ZSlcbiIsCiAgICAicHJpbnQoXCJLTFVFIEJFUlQg7Ja07ZyYIO2BrOq4sDpcIiwga29fdG9rZW5pemVyLnZvY2FiX3NpemUpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIENoIDQg7YyM7IuxIO2FjeyKpO2KuCDsnb3quLBcbiIsCiAgICAiXG4iLAogICAgIu2YhOyerCDsnpHsl4Ug7Y+0642U66W8IGBzZWFyY2hfcGF0aHNgIOuqqeuhneyXkCDrqLzsoIAg64Sj6rOgLCDrtoDrqqgg7Y+0642U66W8IO2VmOuCmOyUqSDsiJztmoztlZjrqbAgYGFwcGVuZCgpYOuhnCDstpTqsIDtlanri4jri6QuIOuLpOydjCBgZm9yYCDrsJjrs7XrrLjsnYAg7J20IOuqqeuhneyXkOyEnCBDaCA0IO2MjOydvOydtCDsnojripQg6rK966Gc66W8IOywvuyKteuLiOuLpC4g7YyM7J287J2EIOywvuycvOuptCBgYnJlYWtg66GcIO2DkOyDieydhCDrp4jsuZjqs6AsIOuBneq5jOyngCDssL7sp4Ag66q77ZWY66m0IOyYpOulmOulvCDrsJzsg53si5ztgrXri4jri6QuIOywvuydgCBKU09O7J2YIOq4sOyCrCDrrLjsnpDsl7TsnYQg65GQIO2GoO2BsO2ZlOq4sOyXkCDsnoXroKXtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC42ODU2ODZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC42ODU1MzJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC42OTIyOTRaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjM0OjE0LjY5MTg5NloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJzY2hlbWE6IGNoMDQtcGFyc2VkLWFydGljbGUtdjFcbiIsCiAgICAgICJzb3VyY2U6IGxhYnMvcGFydDEvY2gwNC1kYXRhLXRvb2xzL2RhdGEvYXJ0aWNsZS5odG1sXG4iLAogICAgICAiYXJ0aWNsZTogQTEwICfqs6jrqqnsg4Hqtowg66ek7LacIO2ajOuztVxcbuyjvOunkCDrsKnrrLjqsJ0g7Kad6rCA66GcIOydjOyLneygkCDrp6TstpzsnbQg64qY7JeI7Iq164uI64ukLidcbiIsCiAgICAgICJHUFQtMjogODEgfCBLTFVFOiAxN1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOychCDshKTrqoXsnZgg7KGw6rG07J2EIOyLpO2Wie2VmOqzoCDsi6TsoJwg7Lac66Cl7J2EIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiaW1wb3J0IGpzb25cbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgIlxuIiwKICAgICJzZWFyY2hfcGF0aHMgPSBbUGF0aC5jd2QoKV1cbiIsCiAgICAiZm9yIHBhcmVudCBpbiBQYXRoLmN3ZCgpLnBhcmVudHM6XG4iLAogICAgIiAgICBzZWFyY2hfcGF0aHMuYXBwZW5kKHBhcmVudClcbiIsCiAgICAiXG4iLAogICAgInJvb3QgPSBOb25lXG4iLAogICAgImZvciBwYXRoIGluIHNlYXJjaF9wYXRoczpcbiIsCiAgICAiICAgIGNhbmRpZGF0ZSA9IHBhdGggLyBcImxhYnMvcGFydDEvY2gwNC1kYXRhLXRvb2xzL2RhdGEvYXJ0aWNsZS10ZXh0Lmpzb25cIlxuIiwKICAgICIgICAgaWYgY2FuZGlkYXRlLmV4aXN0cygpOlxuIiwKICAgICIgICAgICAgIHJvb3QgPSBwYXRoXG4iLAogICAgIiAgICAgICAgYnJlYWtcbiIsCiAgICAiaWYgcm9vdCBpcyBOb25lOlxuIiwKICAgICIgICAgcmFpc2UgRmlsZU5vdEZvdW5kRXJyb3IoXCJDaCA0IGFydGljbGUtdGV4dC5qc29u7J2EIOywvuyngCDrqrvtlojsirXri4jri6QuXCIpXG4iLAogICAgImhhbmRvZmZfcGF0aCA9IHJvb3QgLyBcImxhYnMvcGFydDEvY2gwNC1kYXRhLXRvb2xzL2RhdGEvYXJ0aWNsZS10ZXh0Lmpzb25cIlxuIiwKICAgICJoYW5kb2ZmID0ganNvbi5sb2FkcyhoYW5kb2ZmX3BhdGgucmVhZF90ZXh0KGVuY29kaW5nPVwidXRmLThcIikpXG4iLAogICAgImFydGljbGVfdGV4dCA9IGhhbmRvZmZbXCJyZWNvcmRcIl1bXCJ0ZXh0XCJdXG4iLAogICAgInByaW50KFwic2NoZW1hOlwiLCBoYW5kb2ZmW1wic2NoZW1hX3ZlcnNpb25cIl0pXG4iLAogICAgInByaW50KFwic291cmNlOlwiLCBoYW5kb2ZmW1wic291cmNlXCJdKVxuIiwKICAgICJwcmludChcImFydGljbGU6XCIsIGhhbmRvZmZbXCJyZWNvcmRcIl1bXCJpZFwiXSwgcmVwcihhcnRpY2xlX3RleHQpKVxuIiwKICAgICJwcmludChcIkdQVC0yOlwiLCBsZW4oZ3B0Mi5lbmNvZGUoYXJ0aWNsZV90ZXh0KSksIFwifCBLTFVFOlwiLCBsZW4oa29fdG9rZW5pemVyLnRva2VuaXplKGFydGljbGVfdGV4dCkpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDYiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDtlZzCt+yYgSDrrLjsnqUg67mE6rWQXG4iLAogICAgIlxuIiwKICAgICLqsJnsnYAg66y47J6lIOyMjeydhCDrkZAg7Yag7YGw7ZmU6riw7J2YIGBlbmNvZGUoKWDsmYAgYHRva2VuaXplKClg7JeQIOyeheugpe2VqeuLiOuLpC4gYGxlbigpYOydgCDrsJjtmZjrkJwg66qp66Gd7J2YIO2VreuqqSDsiJjrpbwg7IWJ64uI64ukLiDstpzroKXsnYAgYOyWuOyWtCDihpIg7Yag7YGwIOyImCDihpIg7Iuk7KCcIOyhsOqwgSDrqqnroZ1gIOyInOyEnOyeheuLiOuLpC4g66i87KCAIO2VnOq1reyWtCDssqsg66y47J6l7J20IEdQVC0y7JeQ7IScIOuqhyDsobDqsIHsnLzroZwg64KY64mY64qU7KeAIOydveqzoCwg6rCZ7J2AIOusuOyepeydmCBLTFVFIOqysOqzvOyZgCDruYTqtZDtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC42OTMyNjdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC42OTMxODNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC42OTYxOTBaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjM0OjE0LjY5NTg2M1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJcbiIsCiAgICAgICJLb3JlYW46IOyYpOuKmCDso7zrrLgg7IOB7YOc66W8IO2ZleyduO2VtCDso7zshLjsmpQuXG4iLAogICAgICAiIEdQVC0yOiAzOSBbJ8OsJywgJ8S6JywgJ8KkJywgJ8OrJywgJ8SsJywgJ8S6JywgJ8Sgw6wnLCAnwqMnLCAnwrwnLCAnw6snLCAnwqwnLCAnwrgnLCAnxKDDrCcsICfEpScsICfEoycsICfDrScsICfEpScsICfEvicsICfDqycsICfCpScsICfCvCcsICfEoCcsICfDrScsICfEuycsICfEtycsICfDrMS/JywgJ8K4JywgJ8OtxLcnLCAnwrQnLCAnxKDDrCcsICfCoycsICfCvCcsICfDrCcsICfEpicsICfCuCcsICfDrCcsICfEvCcsICfEticsICcuJ11cbiIsCiAgICAgICIgS0xVRSA6IDkgWyfsmKTripgnLCAn7KO866y4JywgJ+yDge2DnCcsICcjI+ulvCcsICftmZXsnbgnLCAnIyPtlbQnLCAn7KO87IS4JywgJyMj7JqUJywgJy4nXVxuIiwKICAgICAgIkVuZ2xpc2g6IFBsZWFzZSBjaGVjayB0b2RheSdzIG9yZGVyIHN0YXR1cy5cbiIsCiAgICAgICIgR1BULTI6IDcgWydQbGVhc2UnLCAnxKBjaGVjaycsICfEoHRvZGF5JywgXCInc1wiLCAnxKBvcmRlcicsICfEoHN0YXR1cycsICcuJ11cbiIsCiAgICAgICIgS0xVRSA6IDE1IFsnUGwnLCAnIyNlYScsICcjI3NlJywgJ2NoJywgJyMjZWNrJywgJ3RvJywgJyMjZGF5JywgXCInXCIsICdzJywgJ29yJywgJyMjZGVyJywgJ3N0JywgJyMjYXQnLCAnIyN1cycsICcuJ11cbiIsCiAgICAgICJcbiIsCiAgICAgICJLb3JlYW46IO2ZmOu2iCDquLDspIDsnYAg6rKw7KCc7J2866Gc67aA7YSwIDfsnbzsnoXri4jri6QuXG4iLAogICAgICAiIEdQVC0yOiA0NCBbJ8OtJywgJ8S7JywgJ8S6JywgJ8OrJywgJ8K2JywgJ8SqJywgJ8SgJywgJ8OqJywgJ8K4JywgJ8KwJywgJ8OsJywgJ8KkJywgJ8SiJywgJ8OsxL8nLCAnxKInLCAnxKAnLCAnw6onLCAnwrInLCAnwrAnLCAnw6wnLCAnxYInLCAnxL4nLCAnw6zEvycsICfCvCcsICfDqycsICfCoScsICfEvicsICfDqycsICfCticsICfEoicsICfDrScsICfEpicsICfCsCcsICfEoDcnLCAnw6zEvycsICfCvCcsICfDrCcsICfFgCcsICfEpycsICfDq8StJywgJ8SqJywgJ8OrxK0nLCAnwqQnLCAnLiddXG4iLAogICAgICAiIEtMVUUgOiAxMSBbJ+2ZmOu2iCcsICfquLDspIAnLCAnIyPsnYAnLCAn6rKw7KCcJywgJyMj7J28JywgJyMj66GcJywgJyMj67aA7YSwJywgJzcnLCAnIyPsnbwnLCAnIyPsnoXri4jri6QnLCAnLiddXG4iLAogICAgICAiRW5nbGlzaDogVGhlIHJlZnVuZCBwZXJpb2QgaXMgc2V2ZW4gZGF5cyBmcm9tIHBheW1lbnQuXG4iLAogICAgICAiIEdQVC0yOiA5IFsnVGhlJywgJ8SgcmVmdW5kJywgJ8SgcGVyaW9kJywgJ8SgaXMnLCAnxKBzZXZlbicsICfEoGRheXMnLCAnxKBmcm9tJywgJ8SgcGF5bWVudCcsICcuJ11cbiIsCiAgICAgICIgS0xVRSA6IDE3IFsnVGhlJywgJ3JlJywgJyMjZicsICcjI3VuZCcsICdwZXInLCAnIyNpbycsICcjI2QnLCAnaXMnLCAnc2UnLCAnIyN2ZW4nLCAnZGF5JywgJyMjcycsICdmcm9tJywgJ3AnLCAnIyNheScsICcjI21lbnQnLCAnLiddXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7JyEIOyEpOuqheydmCDsobDqsbTsnYQg7Iuk7ZaJ7ZWY6rOgIOyLpOygnCDstpzroKXsnYQg7ZmV7J247ZWp64uI64ukLlxuIiwKICAgICJwYWlycyA9IFtcbiIsCiAgICAiICAgIChcIuyYpOuKmCDso7zrrLgg7IOB7YOc66W8IO2ZleyduO2VtCDso7zshLjsmpQuXCIsIFwiUGxlYXNlIGNoZWNrIHRvZGF5J3Mgb3JkZXIgc3RhdHVzLlwiKSxcbiIsCiAgICAiICAgIChcIu2ZmOu2iCDquLDspIDsnYAg6rKw7KCc7J2866Gc67aA7YSwIDfsnbzsnoXri4jri6QuXCIsIFwiVGhlIHJlZnVuZCBwZXJpb2QgaXMgc2V2ZW4gZGF5cyBmcm9tIHBheW1lbnQuXCIpLFxuIiwKICAgICJdXG4iLAogICAgImZvciBrb3JlYW4sIGVuZ2xpc2ggaW4gcGFpcnM6XG4iLAogICAgIiAgICBwcmludChcIlxcbktvcmVhbjpcIiwga29yZWFuKVxuIiwKICAgICIgICAgcHJpbnQoXCIgR1BULTI6XCIsIGxlbihncHQyLmVuY29kZShrb3JlYW4pKSwgZ3B0Mi50b2tlbml6ZShrb3JlYW4pKVxuIiwKICAgICIgICAgcHJpbnQoXCIgS0xVRSA6XCIsIGxlbihrb190b2tlbml6ZXIudG9rZW5pemUoa29yZWFuKSksIGtvX3Rva2VuaXplci50b2tlbml6ZShrb3JlYW4pKVxuIiwKICAgICIgICAgcHJpbnQoXCJFbmdsaXNoOlwiLCBlbmdsaXNoKVxuIiwKICAgICIgICAgcHJpbnQoXCIgR1BULTI6XCIsIGxlbihncHQyLmVuY29kZShlbmdsaXNoKSksIGdwdDIudG9rZW5pemUoZW5nbGlzaCkpXG4iLAogICAgIiAgICBwcmludChcIiBLTFVFIDpcIiwgbGVuKGtvX3Rva2VuaXplci50b2tlbml6ZShlbmdsaXNoKSksIGtvX3Rva2VuaXplci50b2tlbml6ZShlbmdsaXNoKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg66y47J6lIOq4uOydtOyZgCDthqDtgbAg7IiYXG4iLAogICAgIlxuIiwKICAgICLrrLjsnqUg6ri47J206rCAIOuwsOuhnCDripjslrTrgpjrqbQg7Yag7YGwIOyImOuPhCDsoJXtmZXtnogg67Cw6rCAIOuQmOuKlOyngCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiY2VsbC0wOSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC42OTcwMDBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC42OTY5MjZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC42OTk1MDZaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjM0OjE0LjY5OTE0OFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICIxIOusuOyepSB8IOusuOyekCAxNyB8IEdQVC0yIDM3IHwgS0xVRSA4XG4iLAogICAgICAiMiDrrLjsnqUgfCDrrLjsnpAgMzUgfCBHUFQtMiA3NSB8IEtMVUUgMTZcbiIsCiAgICAgICI0IOusuOyepSB8IOusuOyekCA3MSB8IEdQVC0yIDE1MSB8IEtMVUUgMzJcbiIsCiAgICAgICI4IOusuOyepSB8IOusuOyekCAxNDMgfCBHUFQtMiAzMDMgfCBLTFVFIDY0XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7JyEIOyEpOuqheydmCDsobDqsbTsnYQg7Iuk7ZaJ7ZWY6rOgIOyLpOygnCDstpzroKXsnYQg7ZmV7J247ZWp64uI64ukLlxuIiwKICAgICJiYXNlID0gXCLtlZzqta3slrQg7Yag7YGwIO2aqOycqOydhCDsuKHsoJXtlanri4jri6QuXCJcbiIsCiAgICAiZm9yIHJlcGVhdCBpbiBbMSwgMiwgNCwgOF06XG4iLAogICAgIiAgICB0ZXh0ID0gXCIgXCIuam9pbihbYmFzZV0gKiByZXBlYXQpXG4iLAogICAgIiAgICBwcmludChyZXBlYXQsIFwi66y47J6lIHwg66y47J6QXCIsIGxlbih0ZXh0KSwgXCJ8IEdQVC0yXCIsIGxlbihncHQyLmVuY29kZSh0ZXh0KSksIFwifCBLTFVFXCIsIGxlbihrb190b2tlbml6ZXIudG9rZW5pemUodGV4dCkpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDqtazsobAg6rKA7KadXG4iLAogICAgIlxuIiwKICAgICLsmIjsg4HtlZwg7Iuk7ZeYIOyhsOqxtOqzvCDstpzroKUg6rWs7KGw6rCAIOycoOyngOuQmOyXiOuKlOyngCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiY2VsbC0xMSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC43MDAzMTRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC43MDAyNDZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC43MDI1NDlaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjM0OjE0LjcwMjE1N1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLqsoDspp06IENoIDQg7YyM7IuxIO2FjeyKpO2KuOyZgCDrkZAg7Yag7YGw7ZmU6riw7J2YIO2VnMK37JiBIOusuOyepSDrtoTtlaDsnYQg7ZmV7J247ZaI7Iq164uI64ukLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJhc3NlcnQgcm9vdCBpcyBub3QgTm9uZSBhbmQgaGFuZG9mZl9wYXRoLmV4aXN0cygpXG4iLAogICAgImFzc2VydCBoYW5kb2ZmW1wic2NoZW1hX3ZlcnNpb25cIl0gPT0gXCJjaDA0LXBhcnNlZC1hcnRpY2xlLXYxXCJcbiIsCiAgICAiYXNzZXJ0IGhhbmRvZmZbXCJyZWNvcmRcIl1bXCJpZFwiXSA9PSBcIkExMFwiIGFuZCBhcnRpY2xlX3RleHQgPT0gaGFuZG9mZltcInJlY29yZFwiXVtcInRleHRcIl1cbiIsCiAgICAiYXNzZXJ0IGxlbihncHQyLmVuY29kZShwYWlyc1swXVswXSkpID4gbGVuKGtvX3Rva2VuaXplci5lbmNvZGUocGFpcnNbMF1bMF0sIGFkZF9zcGVjaWFsX3Rva2Vucz1GYWxzZSkpXG4iLAogICAgImFzc2VydCBsZW4oZ3B0Mi5lbmNvZGUoYmFzZSkpID4gMFxuIiwKICAgICJwcmludChcIuqygOymnTogQ2ggNCDtjIzsi7Eg7YWN7Iqk7Yq47JmAIOuRkCDthqDtgbDtmZTquLDsnZgg7ZWcwrfsmIEg66y47J6lIOu2hO2VoOydhCDtmZXsnbjtlojsirXri4jri6QuXCIpIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJleHBlcmltZW50IiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNSwKICAgImNvZGVfc2hhMjU2IjogImU2ZDk2MjdjOTAxNjI5ZDcyMzI4NWQzYzkxMGRlZDg3OGUyMmRiNTU2NDE4NGNlMGEyMGFhZjQ1MGNlODI4NDAiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwNjozNDoxNC44MTc3MTErMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjMzZDY0YjUyYzVmMDJlZDI3MTYxZDI3YzgzMjhiODU3NTc0NTYzOGJmNjU5NTVlNTEwNTc1MmJiN2Y5OWJjYzkiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>토큰화와 한국어 효율</h2>
+<p>같은 뜻을 담은 한국어와 영어 문장은 토큰화 방식에 따라 몇 개의 토큰이 될까요?</p>
+<p>Python 3.12와 잠긴 패키지를 사용합니다. 첫 실행에서는 로컬 모델을 다운로드합니다.</p></div>
+<div class="nb-markdown"><h3>두 토큰화기 준비</h3>
+<p><code>AutoTokenizer.from_pretrained(model_id, revision=...)</code>는 모델 ID와 고정 revision을 입력받아 해당 파일을 불러오고 tokenizer 객체를 반환합니다. revision은 같은 이름의 모델 파일이 나중에 바뀌어도 이 실습에서 확인한 버전을 다시 받기 위한 식별자입니다. <code>vocab_size</code>는 tokenizer 어휘에 등록된 토큰 ID 개수를 정수로 반환합니다. 어휘 크기가 크다는 사실만으로 한국어가 더 적은 토큰으로 나뉜다고 판단할 수는 없습니다.</p>
+<p>토큰화기의 입력은 사람이 읽는 문자열입니다. <code>tokenize(text)</code>는 토큰 문자열 목록을, <code>encode(text)</code>는 토큰 ID의 정수 목록을 반환합니다. 반환은 함수가 계산한 값을 호출한 코드에 넘긴다는 뜻입니다. 아래 셀은 두 tokenizer 객체와 각각의 어휘 크기를 출력합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import warnings
+warnings.filterwarnings(&quot;ignore&quot;, message=&quot;IProgress not found&quot;)
+from transformers import AutoTokenizer
+
+# 모델 ID와 고정 revision에 맞는 두 토큰화기를 로컬에 받아 사용합니다.
+gpt2 = AutoTokenizer.from_pretrained(&quot;openai-community/gpt2&quot;, revision=&quot;607a30d783dfa663caf39e06633721c8d4cfcd7e&quot;)
+ko_tokenizer = AutoTokenizer.from_pretrained(&quot;klue/bert-base&quot;, revision=&quot;77c8b3d707df785034b4e50f2da5d37be5f0f546&quot;)
+print(&quot;GPT-2 어휘 크기:&quot;, gpt2.vocab_size)
+print(&quot;KLUE BERT 어휘 크기:&quot;, ko_tokenizer.vocab_size)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">GPT-2 어휘 크기: 50257
+KLUE BERT 어휘 크기: 32000
+</pre></div>
+<div class="nb-markdown"><h3>Ch 4 파싱 텍스트 읽기</h3>
+<p>현재 작업 폴더를 <code>search_paths</code> 목록에 먼저 넣고, 부모 폴더를 하나씩 순회하며 <code>append()</code>로 추가합니다. 다음 <code>for</code> 반복문은 이 목록에서 Ch 4 파일이 있는 경로를 찾습니다. 파일을 찾으면 <code>break</code>로 탐색을 마치고, 끝까지 찾지 못하면 오류를 발생시킵니다. 찾은 JSON의 기사 문자열을 두 토큰화기에 입력합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 위 설명의 조건을 실행하고 실제 출력을 확인합니다.
+import json
+from pathlib import Path
+
+search_paths = [Path.cwd()]
+for parent in Path.cwd().parents:
+    search_paths.append(parent)
+
+root = None
+for path in search_paths:
+    candidate = path / &quot;labs/part1/ch04-data-tools/data/article-text.json&quot;
+    if candidate.exists():
+        root = path
+        break
+if root is None:
+    raise FileNotFoundError(&quot;Ch 4 article-text.json을 찾지 못했습니다.&quot;)
+handoff_path = root / &quot;labs/part1/ch04-data-tools/data/article-text.json&quot;
+handoff = json.loads(handoff_path.read_text(encoding=&quot;utf-8&quot;))
+article_text = handoff[&quot;record&quot;][&quot;text&quot;]
+print(&quot;schema:&quot;, handoff[&quot;schema_version&quot;])
+print(&quot;source:&quot;, handoff[&quot;source&quot;])
+print(&quot;article:&quot;, handoff[&quot;record&quot;][&quot;id&quot;], repr(article_text))
+print(&quot;GPT-2:&quot;, len(gpt2.encode(article_text)), &quot;| KLUE:&quot;, len(ko_tokenizer.tokenize(article_text)))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">schema: ch04-parsed-article-v1
+source: labs/part1/ch04-data-tools/data/article.html
+article: A10 &#x27;골목상권 매출 회복\n주말 방문객 증가로 음식점 매출이 늘었습니다.&#x27;
+GPT-2: 81 | KLUE: 17
+</pre></div>
+<div class="nb-markdown"><h3>한·영 문장 비교</h3>
+<p>같은 문장 쌍을 두 토큰화기의 <code>encode()</code>와 <code>tokenize()</code>에 입력합니다. <code>len()</code>은 반환된 목록의 항목 수를 셉니다. 출력은 <code>언어 → 토큰 수 → 실제 조각 목록</code> 순서입니다. 먼저 한국어 첫 문장이 GPT-2에서 몇 조각으로 나뉘는지 읽고, 같은 문장의 KLUE 결과와 비교합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 위 설명의 조건을 실행하고 실제 출력을 확인합니다.
+pairs = [
+    (&quot;오늘 주문 상태를 확인해 주세요.&quot;, &quot;Please check today&#x27;s order status.&quot;),
+    (&quot;환불 기준은 결제일로부터 7일입니다.&quot;, &quot;The refund period is seven days from payment.&quot;),
+]
+for korean, english in pairs:
+    print(&quot;\nKorean:&quot;, korean)
+    print(&quot; GPT-2:&quot;, len(gpt2.encode(korean)), gpt2.tokenize(korean))
+    print(&quot; KLUE :&quot;, len(ko_tokenizer.tokenize(korean)), ko_tokenizer.tokenize(korean))
+    print(&quot;English:&quot;, english)
+    print(&quot; GPT-2:&quot;, len(gpt2.encode(english)), gpt2.tokenize(english))
+    print(&quot; KLUE :&quot;, len(ko_tokenizer.tokenize(english)), ko_tokenizer.tokenize(english))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">
+Korean: 오늘 주문 상태를 확인해 주세요.
+ GPT-2: 39 [&#x27;ì&#x27;, &#x27;ĺ&#x27;, &#x27;¤&#x27;, &#x27;ë&#x27;, &#x27;Ĭ&#x27;, &#x27;ĺ&#x27;, &#x27;Ġì&#x27;, &#x27;£&#x27;, &#x27;¼&#x27;, &#x27;ë&#x27;, &#x27;¬&#x27;, &#x27;¸&#x27;, &#x27;Ġì&#x27;, &#x27;ĥ&#x27;, &#x27;ģ&#x27;, &#x27;í&#x27;, &#x27;ĥ&#x27;, &#x27;ľ&#x27;, &#x27;ë&#x27;, &#x27;¥&#x27;, &#x27;¼&#x27;, &#x27;Ġ&#x27;, &#x27;í&#x27;, &#x27;Ļ&#x27;, &#x27;ķ&#x27;, &#x27;ìĿ&#x27;, &#x27;¸&#x27;, &#x27;íķ&#x27;, &#x27;´&#x27;, &#x27;Ġì&#x27;, &#x27;£&#x27;, &#x27;¼&#x27;, &#x27;ì&#x27;, &#x27;Ħ&#x27;, &#x27;¸&#x27;, &#x27;ì&#x27;, &#x27;ļ&#x27;, &#x27;Ķ&#x27;, &#x27;.&#x27;]
+ KLUE : 9 [&#x27;오늘&#x27;, &#x27;주문&#x27;, &#x27;상태&#x27;, &#x27;##를&#x27;, &#x27;확인&#x27;, &#x27;##해&#x27;, &#x27;주세&#x27;, &#x27;##요&#x27;, &#x27;.&#x27;]
+English: Please check today&#x27;s order status.
+ GPT-2: 7 [&#x27;Please&#x27;, &#x27;Ġcheck&#x27;, &#x27;Ġtoday&#x27;, &quot;&#x27;s&quot;, &#x27;Ġorder&#x27;, &#x27;Ġstatus&#x27;, &#x27;.&#x27;]
+ KLUE : 15 [&#x27;Pl&#x27;, &#x27;##ea&#x27;, &#x27;##se&#x27;, &#x27;ch&#x27;, &#x27;##eck&#x27;, &#x27;to&#x27;, &#x27;##day&#x27;, &quot;&#x27;&quot;, &#x27;s&#x27;, &#x27;or&#x27;, &#x27;##der&#x27;, &#x27;st&#x27;, &#x27;##at&#x27;, &#x27;##us&#x27;, &#x27;.&#x27;]
+
+Korean: 환불 기준은 결제일로부터 7일입니다.
+ GPT-2: 44 [&#x27;í&#x27;, &#x27;Ļ&#x27;, &#x27;ĺ&#x27;, &#x27;ë&#x27;, &#x27;¶&#x27;, &#x27;Ī&#x27;, &#x27;Ġ&#x27;, &#x27;ê&#x27;, &#x27;¸&#x27;, &#x27;°&#x27;, &#x27;ì&#x27;, &#x27;¤&#x27;, &#x27;Ģ&#x27;, &#x27;ìĿ&#x27;, &#x27;Ģ&#x27;, &#x27;Ġ&#x27;, &#x27;ê&#x27;, &#x27;²&#x27;, &#x27;°&#x27;, &#x27;ì&#x27;, &#x27;ł&#x27;, &#x27;ľ&#x27;, &#x27;ìĿ&#x27;, &#x27;¼&#x27;, &#x27;ë&#x27;, &#x27;¡&#x27;, &#x27;ľ&#x27;, &#x27;ë&#x27;, &#x27;¶&#x27;, &#x27;Ģ&#x27;, &#x27;í&#x27;, &#x27;Ħ&#x27;, &#x27;°&#x27;, &#x27;Ġ7&#x27;, &#x27;ìĿ&#x27;, &#x27;¼&#x27;, &#x27;ì&#x27;, &#x27;ŀ&#x27;, &#x27;ħ&#x27;, &#x27;ëĭ&#x27;, &#x27;Ī&#x27;, &#x27;ëĭ&#x27;, &#x27;¤&#x27;, &#x27;.&#x27;]
+ KLUE : 11 [&#x27;환불&#x27;, &#x27;기준&#x27;, &#x27;##은&#x27;, &#x27;결제&#x27;, &#x27;##일&#x27;, &#x27;##로&#x27;, &#x27;##부터&#x27;, &#x27;7&#x27;, &#x27;##일&#x27;, &#x27;##입니다&#x27;, &#x27;.&#x27;]
+English: The refund period is seven days from payment.
+ GPT-2: 9 [&#x27;The&#x27;, &#x27;Ġrefund&#x27;, &#x27;Ġperiod&#x27;, &#x27;Ġis&#x27;, &#x27;Ġseven&#x27;, &#x27;Ġdays&#x27;, &#x27;Ġfrom&#x27;, &#x27;Ġpayment&#x27;, &#x27;.&#x27;]
+ KLUE : 17 [&#x27;The&#x27;, &#x27;re&#x27;, &#x27;##f&#x27;, &#x27;##und&#x27;, &#x27;per&#x27;, &#x27;##io&#x27;, &#x27;##d&#x27;, &#x27;is&#x27;, &#x27;se&#x27;, &#x27;##ven&#x27;, &#x27;day&#x27;, &#x27;##s&#x27;, &#x27;from&#x27;, &#x27;p&#x27;, &#x27;##ay&#x27;, &#x27;##ment&#x27;, &#x27;.&#x27;]
+</pre></div>
+<div class="nb-markdown"><h3>문장 길이와 토큰 수</h3>
+<p>문장 길이가 배로 늘어나면 토큰 수도 정확히 배가 되는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 위 설명의 조건을 실행하고 실제 출력을 확인합니다.
+base = &quot;한국어 토큰 효율을 측정합니다.&quot;
+for repeat in [1, 2, 4, 8]:
+    text = &quot; &quot;.join([base] * repeat)
+    print(repeat, &quot;문장 | 문자&quot;, len(text), &quot;| GPT-2&quot;, len(gpt2.encode(text)), &quot;| KLUE&quot;, len(ko_tokenizer.tokenize(text)))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">1 문장 | 문자 17 | GPT-2 37 | KLUE 8
+2 문장 | 문자 35 | GPT-2 75 | KLUE 16
+4 문장 | 문자 71 | GPT-2 151 | KLUE 32
+8 문장 | 문자 143 | GPT-2 303 | KLUE 64
+</pre></div>
+<div class="nb-markdown"><h3>구조 검증</h3>
+<p>예상한 실험 조건과 출력 구조가 유지되었는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">assert root is not None and handoff_path.exists()
+assert handoff[&quot;schema_version&quot;] == &quot;ch04-parsed-article-v1&quot;
+assert handoff[&quot;record&quot;][&quot;id&quot;] == &quot;A10&quot; and article_text == handoff[&quot;record&quot;][&quot;text&quot;]
+assert len(gpt2.encode(pairs[0][0])) &gt; len(ko_tokenizer.encode(pairs[0][0], add_special_tokens=False))
+assert len(gpt2.encode(base)) &gt; 0
+print(&quot;검증: Ch 4 파싱 텍스트와 두 토큰화기의 한·영 문장 분할을 확인했습니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">검증: Ch 4 파싱 텍스트와 두 토큰화기의 한·영 문장 분할을 확인했습니다.
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 첫 한국어 문장에서 GPT-2와 KLUE의 토큰 수와 조각이 어떻게 다른가요? 반복 횟수가 1에서 8로 늘 때 두 토큰 수는 어떤 규칙으로 변하나요?</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>짧은 한국어 문장 하나를 1, 2, 4, 8회 반복했을 때 GPT-2의 토큰 수는 37, 75, 151, 303이었고 KLUE의 토큰 수는 8, 16, 32, 64였습니다. 공백이 추가된 GPT-2 결과는 단순히 정확한 배수가 되지 않았습니다. 이 실험은 문장을 반복한 특수한 조건의 분할 결과만 보여 줍니다. 일반적인 한국어 토큰 효율을 평가하려면 대화, 문서, 코드가 섞인 더 넓은 자료를 사용해야 합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>토큰 ID는 토큰화기마다 다르므로 서로 바꿔 사용할 수 없습니다.</li><li>패키지 버전과 모델 revision을 고정해야 분할 결과를 재현하기 쉬워집니다.</li><li>첫 실행은 토큰화기 파일을 다운로드합니다. 오프라인 환경에서는 미리 캐시를 준비해야 합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>토큰은 모델이 처리하는 텍스트 단위입니다.</li><li>같은 문장도 토큰화기에 따라 분할과 토큰 수가 달라집니다.</li><li>사용량은 실제 모델의 토큰화기로 측정합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 토큰 열을 문장의 의미를 담은 숫자 벡터로 바꾸고 비교합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 토큰은 항상 한 단어와 같은가요?</p><p class="quiz-a"><strong>해설</strong> — 아닙니다. 단어, 단어 조각, 문장부호 등이 토큰이 될 수 있습니다.</p><p class="quiz-q">2. 문자 수만으로 모델 사용량을 정확히 계산할 수 있나요?</p><p class="quiz-a"><strong>해설</strong> — 계산할 수 없습니다. 모델의 토큰화기로 인코딩한 토큰 수를 확인합니다.</p><p class="quiz-q">3. 두 토큰화기의 수치로 언어 자체의 효율을 단정할 수 없는 이유는 무엇인가요?</p><p class="quiz-a"><strong>해설</strong> — 어휘, 학습 자료, 분할 규칙이 다르기 때문입니다. 특정 모델과 자료의 결과로 범위를 한정해야 합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li>Hugging Face Transformers 공식 문서 · <a href="https://huggingface.co/docs/transformers/">https://huggingface.co/docs/transformers/</a> · 확인 2026-09-09 · transformers 4.56.2</li><li>GPT-2 모델 파일과 MIT 라이선스 · <a href="https://huggingface.co/openai-community/gpt2/tree/607a30d783dfa663caf39e06633721c8d4cfcd7e">https://huggingface.co/openai-community/gpt2/tree/607a30d783dfa663caf39e06633721c8d4cfcd7e</a> · 확인 2026-09-09</li><li>KLUE BERT 모델 파일과 CC-BY-SA-4.0 라이선스 · <a href="https://huggingface.co/klue/bert-base/tree/77c8b3d707df785034b4e50f2da5d37be5f0f546">https://huggingface.co/klue/bert-base/tree/77c8b3d707df785034b4e50f2da5d37be5f0f546</a> · 확인 2026-09-09</li></ul><script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span>&nbsp;</span><span><a href="index.html">챕터 목차</a></span><span><a href="02-임베딩과-의미-유사도.html">임베딩과 의미 유사도 →</a></span></div></div></body></html>

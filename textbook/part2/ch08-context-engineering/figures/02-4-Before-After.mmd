@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · user 글에 파일 이름만 적음"]
+    direction LR
+    b1["user 글<br>파일 이름 library-notes.json<br>+ 질문"]:::tool
+    b2["gpt-5.4-mini<br>출력 상한 120"]:::model
+    b3["답 확인할 수 없음<br>7권 · 2시간 없음<br>출처 표시 없음"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 고른 기록 두 줄을 넣음"]
+    direction LR
+    a1["user 글<br>E01 p.3 · E01 p.5 기록<br>+ 질문"]:::tool
+    a2["gpt-5.4-mini<br>출력 상한 120"]:::model
+    a3["답 7권 · 2시간<br>출처 E01 p.3 · E01 p.5<br>그 출처는 고른 두 기록"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  BEFORE ~~~ AFTER

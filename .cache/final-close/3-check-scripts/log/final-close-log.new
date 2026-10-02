@@ -1,0 +1,36 @@
+# 전체 마감 기록
+
+품질 개선 과정 전체 마감 단계별 기록. 단계마다 절을 덧붙이기만 합니다.
+
+## 1단계 옛 생성기 정리·청크 표기 (2026-09-30)
+
+- **옛 생성기 18개 옮김**(`mv -n`, 삭제 없음): 막히지 않은 12개(Ch 3 labs `_make_notebooks.py` + Ch 1~9·11·22 `figures/_gen_figures.py`)에 설명 글·`from __future__` 다음 최상위 `raise SystemExit("옛 …생성기 — 품질 개선 뒤 실행 금지 …")` 한 줄(ast 확인) → 막혔던 6개(Ch 10·11 labs·12 둘·13 둘)와 함께 각 챕터 `qa/upgrade/before/generators/blocked/`로. 옮긴 뒤 해시 = 막음 뒤 해시(18/18). 전후 해시 표 `.cache/final-close/1-generators-chunk/log/`(`hash-0-orig.tsv`·`hash-1-blocked.tsv`·`moves.tsv`), 원본 사본 `before/`.
+- **요구하는 스크립트**(고치지 않음): `textbook/part7/qa/check_figures.py` 20행 — Part 7 모든 챕터 `figures/_gen_figures.py` 요구(이번에 옮긴 것과 무관, Ch 30·31·34는 이미 없음). `.moai/…/revise_part2.py` 23행·`refine_part2.py` 10행 — Part 2 labs `_make_notebooks.py`(앞 마감에서 옮김) 읽음. 빌드 스크립트가 부르는 것 0 · 공개 목록 줄 0(Ch 14·18은 제외 목록 줄뿐).
+- **`.moai` 9개 막음**(옮기지 않음): 막힌 5개와 같은 최상위 `raise SystemExit("옛 Part N 보조 스크립트(…)입니다. …")` 한 줄. 기록만 쓰는 2개·Ch 32·33 `_gen_figures.py`는 그대로.
+- **청크 표기**: Ch 6 04 본문·노트북 마크다운·생성기 글 「청크」 → 「스트림 청크」, 「사용량 청크」 → 「사용량이 든 스트림 청크」(100곳 + 설명 한 문장), Ch 6 05 한 곳·06 세 곳, Ch 25 02 b3·b4 두 문장과 「사용량 청크」 다섯 곳. 치환 목록 `.cache/final-close/1-generators-chunk/chunk/reps-*.json`. 코드 주석·출력 라벨·그림 라벨과 대체 텍스트는 그대로.
+- **검사**: 노트북 Ch 6 04·05·06, Ch 25 02 `code_sha256`·`outputs_sha256` 전후 같음 · 게이트 Ch 6 7/7·Ch 25 4/4 G1~G7 0 · `verify.py` PASS(7/130·4/97) · 빌드 HTML `{{`·`[[` 0 · 모델 요청 0.
+- **남은 것**: 묶음 재생성 때 Ch 6 04·Ch 25 02 노트북 새 판 · 그림 04-1~04-4 라벨 「청크」(다시 렌더 몫) · 코드 쪽 「청크」(재실행 몫) · Ch 5 09 「문서 덩어리(청크)」·Ch 12 「청크 ID」(문서 뜻, 이번 범위 밖) · `check_figures.py` 20행(다음 단계).
+
+## 2단계 도구 파일 머리 줄 (2026-09-30)
+
+- **도구 파일 여섯, 머리 설명만**(함수 본문·가져오기·주석 AST·글자 같음): Ch 24 `d562c9e6…` → `295bfaf6…` · Ch 25 `3a734aeb…` → `6df804b8…` · Ch 26 `c3c1709a…` → `0748a8eb…` · Ch 27 `7a40d994…` → `ed5c4240…` · Ch 29 `d624b8f3…` → `b75636c4…` · Ch 30 `2f66bc6b…` → `333e9a62…`. Ch 28 `570ed3cc…` 그대로(확인만).
+- **생성기**: 머리 상수 여섯(`TOOLS_HEAD`) · 판 해시 고정값 Ch 24 `author_04`, Ch 29 `author_03`·`04`·`05` · 뒤 챕터 고정값 Ch 26 `author_01`·Ch 30 `author_04`(Ch 25) · Ch 27 `author_02`(Ch 26) · **Ch 28 `author_04`**·Ch 29 `author_01`(Ch 27) · **Ch 34 `author_01`**(Ch 29). 바뀐 파일 31개 전후 해시 `.cache/final-close/2-tools-head/log/changed-2.tsv`, 원본 `before/`.
+- **검사**: (가) 노트북 43·`_src`·HTML·README에 머리 글·판 해시 0 · (나) 생성기 44개를 파일 쓰기를 가로채 `--src-only`·인자 없는 모드로 → `_src` 바이트 같음, 가드 skip/same, 대조 통과, `cells()` = 노트북 · (다) 모델 없는 사본 12개 셀별 출력 같음(설치 셀 스트림 나뉨만), 모델 절은 가져오는 이름·함수 AST만 · 게이트 37절 0 · `verify.py` PASS 6/6(계약 JSON·`gates-after.json` 바이트 같음) · 노트북 해시 전후 같음 · 모델 요청 0 · 포트 0.
+- **기록**: 챕터마다 `handoff.md` 한 줄·`chapter-summary.md` 도구 파일 절 끝·`upgrade-contracts.md` §4 한 줄. 공개 목록은 경로만이라 그대로.
+- **남은 것**: 묶음 재생성(Part 6·7·`llm-practice.zip` 속 도구 파일 옛 판) · 과정 요약·체크리스트 §2-13 6번의 옛 해시 · Ch 29 가져오기 줄 주석 두 뜻·`average` 주석·Ch 30 「정의합니다」·「After 판정:」(셀 글 그대로) · Ch 28 머리 출처 줄(확인만).
+
+## 3단계 옛 검사 스크립트 (2026-10-01)
+
+- **고친 15개**(설명 맨 위 「전체 마감 2026-10-01: …」, 원본 `.cache/final-close/3-check-scripts/before/`, 전후 해시 `log/changed.tsv`, 바뀐 줄 `log/diffs.patch`) — 옛 구조를 가리키는 곳만 바꾸고 검사 항목은 그대로:
+  - Part 4·5·6 `check_figures.py`: `.excalidraw` 짝이 없는 Mermaid SVG를 원본 `.mmd`와 견줌(라벨·화살촉 수·`.render.json` 도장·PNG) → 163·119·260쌍 통과. Part 7 `check_figures.py` 20행: 개선 챕터는 Mermaid·삽화 원본과 렌더, 막힌 `before/generators/blocked/_gen_figures.py`를 요구하고 Mermaid도 상자 1~7까지 견줌, Ch 32·33은 옛 구조 → 119쌍 통과.
+  - 실습 절·절 수: Part 5·6 `check_scope.py`(통과) · `check_notebook_readiness.py`(21·47 → chapter.json 절 목록) · Part 6 `check_visual_reports.py`(116 → 134) · Part 1 `check_delivery.py`(35 → 40, 실습 절 「실습 30분」은 시수 합에서 뺌, 절마다 Mermaid 3~5장) · Part 2 `check_delivery.py`(20·180 → 23·470) · `textbook/qa/check_course_delivery.py`(87 → 246) · Part 3 `finalize_continuity_evidence.py`(94 → 폴더별 쪽 × 두 너비, 합 98).
+  - Part 7 `check_bundle_execution.py`: 실행기를 Part 4~6과 같은 `uv run --project <챕터> --with nbclient==0.11.0 --with python-dotenv==1.2.3`로, `--pre-exec`면 Ch 31 `pre_exec.sh`를 같은 셸에서 먼저 부름, 보고서에 zip 해시. 대상 그대로. 옛 zip으로 풀기·`uv sync --locked` 다섯·실행기 환경·훅 DB 연결까지만 시험(노트북 실행 0). Part 7 `check_delivery.py`: 기준을 `existing-artifacts-final-close.json`(옛 파일과 같은 범위)으로, `--write-baseline`으로 한 번만 만듦(아직 없음, 옛 파일 그대로).
+- **결과 파일**: `figure-consistency.json` 넷·`lesson-scope.json` 둘·`notebook-readiness.json` 둘을 새로 씀(`log/results-changed.tsv`).
+- **남은 실패**: 내용(사람 결정) — 함수 타입힌트 없음 Part 5 25/25·Part 6 46/56(AGENTS.md 283행), Ch 29 01 `assert` 0, Ch 2 01~12 복습 6문항(규칙 3~5, Ch 6 04도 6). 화면 재촬영 뒤 — Part 6(Ch 21·22·25·목차 둘), Part 3(ch08 07·ch09 07 쪽 — ch08은 새로 찾음). 묶음 재생성 뒤 — 각 check_delivery·연속성 둘(사본에서 낡은 zip 대조만 빼면 통과).
+- **고치지 않음**: Part 4 `check_language_freeze.py`·Part 5 `finalize_evidence.py`(2026-09-10 언어 감사 승인 해시가 기준 — 새 감사 없이 만들 수 없음) · `textbook/qa/collect_course_changes.py`(검사 아님) · Ch 2 `qa/audit.py`(챕터 단위, 범위 밖). 구조 문제 없음: Part 3~6 나머지 검사·`check_course_continuity.py`·`collect_public_files.py` 둘.
+- **다음 단계**(`ROOT=$HOME/mnt/한국경제신문; cd $ROOT; export PYTHONDONTWRITEBYTECODE=1; U="env -u UV_PROJECT_ENVIRONMENT -u UV_NO_SYNC -u OPENAI_API_KEY -u PYTHONPATH UV_LINK_MODE=symlink"`):
+  1. 묶음 재생성 뒤: `python3 textbook/part1/qa/check_delivery.py --revised-existing` · part2~6 `qa/check_delivery.py` · `textbook/qa/check_course_delivery.py` · `textbook/part7/qa/check_secrets.py` · Part 1~6 원본 확정 뒤 `python3 textbook/part7/qa/check_delivery.py --write-baseline` 한 번 → 같은 스크립트를 인자 없이.
+  2. `$U UV_CACHE_DIR=$ROOT/.cache/vm/bundle-check/uv-cache python3 textbook/partN/qa/check_bundle_execution.py`(N=4·5·6) · Part 7은 `$U UV_CACHE_DIR=/tmp/uv-cache nohup python3 textbook/part7/qa/check_bundle_execution.py --pre-exec > 기록 2>&1 &`(Ch 33 setuptools 빌드 임시 폴더를 연결 폴더 캐시에서 못 지워 멈춤 — 루트 여유 700MB 이상, 끝나면 55431 포트 0) · `$U UV_CACHE_DIR=$ROOT/.cache/vm/bundle-check/uv-cache python3 textbook/part3/qa/run_continuity_bundle.py`(모델 요청).
+  3. 화면 재촬영 뒤: `python3 textbook/part3/qa/finalize_continuity_evidence.py` · `python3 textbook/part6/qa/check_visual_reports.py`.
+  4. `python3 textbook/part3/qa/check_continuity.py` · `.cache/vm/venv-ch06-langchain-start/bin/python textbook/qa/check_course_continuity.py`. 옛 그림 삭제 뒤 `check_figures.py` 넷을 다시.
+- **남은 것**: 사람 결정 둘(타입힌트·Ch 2 복습 문항) · 삭제 승인 목록에 기기 `$TMPDIR/fc3-ch33`·`fc3-ch34`(97MB)·`.cache/final-close/3-check-scripts/`.

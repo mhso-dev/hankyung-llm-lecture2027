@@ -1,0 +1,20 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  req["손 요청 write_file 둘<br>/reports/check.md<br>/sources/new-books.md"]:::tool
+  subgraph c2[같은 이름 FilesystemMiddleware를 넣은 에이전트]
+    direction TB
+    s1["check.md success"]:::measure
+    s2["new-books.md success<br>자료 글이 바뀜"]:::measure
+    s1 ~~~ s2
+  end
+  subgraph c1[조립한 에이전트의 작은 그래프]
+    direction TB
+    g1["check.md success"]:::measure
+    g2["new-books.md error<br>permission denied"]:::measure
+    g1 ~~~ g2
+  end
+  note["같은 이름 미들웨어가 기본 자리를 바꾸면<br>권한 규칙도 함께 사라짐"]
+  req --> c1
+  req --> c2
+  c2 ~~~ note

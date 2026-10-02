@@ -1,0 +1,8 @@
+flowchart TB
+  %% classes
+  cl["pending = agent.ainvoke<br>입력 question_input<br>부르기만 함"]:::flow
+  co["받은 값의 종류 coroutine"]:::measure
+  aw["result = await pending"]:::flow
+  rn["라이브러리가 노드 answer를<br>끝까지 실행"]
+  dc["받은 값의 종류 dict<br>칸 messages와 answer"]:::measure
+  cl --> co --> aw --> rn --> dc

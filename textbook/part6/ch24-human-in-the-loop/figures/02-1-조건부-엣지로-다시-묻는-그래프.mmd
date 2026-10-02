@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  s(["가상 시작점 START"])
+  a["허용 답 목록<br>approve · reject"]:::tool
+  h["사람의 답<br>Command resume으로<br>넘김"]:::tool
+  n["노드 ask_once<br>interrupt를 한 번 부르고<br>받은 답을 목록으로 검사"]:::flow
+  c{"조건 함수<br>after_answer"}
+  e(["가상 끝점 END"])
+  s --> n
+  a --> n
+  h --> n
+  n --> c
+  c -.->|오류 칸에 글 있음<br>이름표 ask_again| n
+  c -.->|오류 칸 빈 글<br>이름표 END| e

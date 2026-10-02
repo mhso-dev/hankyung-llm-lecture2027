@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  l["합칠 순위 목록 셋"]:::tool
+  f["우리가 적은<br>순위 합치기"]:::flow
+  a["합친 목록 첫 자리 FAC-004"]:::measure
+  b["그 문서는 두 사실의<br>근거가 아님"]:::measure
+  why["두 하위 질문은<br>서로의 목록에서 뒷자리"]
+  run["합친 뒤 두 근거의 자리는<br>두 실행에서 달라짐"]
+  l --> f
+  f --> a
+  a ~~~ b
+  b ~~~ why
+  why ~~~ run

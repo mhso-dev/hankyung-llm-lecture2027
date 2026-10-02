@@ -1,0 +1,237 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenAPI와 TS SDK — Ch 30 · FastAPI로 Agent 서빙</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 서비스화 &amp; 배포 · Ch 30 · FastAPI로 Agent 서빙</p>
+<h1>OpenAPI와 TS SDK</h1><div class="meta"><span>강의 0.75h</span><span>실습 2h</span><span>새 용어 4</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 0.75h | 실습 2h | 코드 Jupyter Notebook | 새 용어 4 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>FastAPI에서 OpenAPI 3.1 문서를 생성할 수 있습니다.</li><li>OpenAPI로 TypeScript 클라이언트 생성 명령을 구성할 수 있습니다.</li><li>백엔드 변경의 호환성 영향을 검토할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>최종 프로젝트에서는 LLM 백엔드와 프런트엔드가 다른 사람이 만든 코드로 연결됩니다. 요청 필드를 말로만 합의하면 이름과 선택 여부가 어긋납니다. OpenAPI는 기계가 읽을 수 있는 계약을 만듭니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>01절의 Pydantic 모델, 05절의 SSE 응답, 07절의 인증을 한 문서로 모아 프런트 팀에 전달합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><p>건축 도면은 부품의 치수와 연결 위치를 합의합니다. OpenAPI도 경로, 입력, 출력, 오류, 인증을 기계가 읽을 수 있게 기록합니다.</p><p>FastAPI의 `.openapi()`는 라우트와 Pydantic 모델에서 OpenAPI 3.1 문서를 만들고 캐시합니다. `/openapi.json`도 같은 문서를 제공합니다. `info.version`은 API 제품 버전이며 FastAPI 패키지 버전과 다릅니다.</p><p>요청의 길이와 정규식 제약, 응답 타입은 JSON Schema 참조로 기록됩니다. TypeScript 타입이 빌드 오류를 줄이지만 런타임 검증을 없애지는 못합니다. 서버와 클라이언트 배포 버전이 어긋날 수 있고 SSE 이벤트는 생성기가 완전히 모델링하지 못할 수 있습니다.</p><p>SDK 생성기는 OpenAPI를 읽어 타입과 HTTP 호출 코드를 만듭니다. `typescript-fetch` 생성물을 직접 수정하지 말고 스키마를 고쳐 다시 생성합니다. 생성기와 Node 버전을 고정하지 않으면 같은 스키마에서도 파일 구조가 달라질 수 있습니다.</p><p>SSE는 일반 JSON보다 생성 지원이 제한적입니다. 생성된 SDK가 POST와 인증 헤더를 만들더라도 ReadableStream 분리와 Last-Event-ID 관리는 실제 출력으로 확인해야 합니다. 이 장은 `client/stream.ts`에 그 처리를 둡니다.</p><p>필수 요청 필드 추가, 타입 변경, enum 제거, 경로 삭제는 호환성을 깨울 수 있습니다. 이전 스키마와 새 스키마 차이를 CI에서 검사하고 생성된 SDK로 프런트 테스트를 실행합니다. 공개 함수 이름을 안정화하려면 operationId를 명시적으로 관리합니다.</p><h3>코드 읽기와 개념 경계</h3><p><code>app.openapi()</code>는 현재 라우트와 Pydantic 모델에서 OpenAPI 문서를 파이썬 사전으로 만듭니다. <code>paths</code>에는 URL별 연산이, <code>$ref</code>에는 공통 스키마를 가리키는 참조가 들어갑니다. 예제는 요청이 <code>ChatRequest</code>, 200 응답이 <code>ChatResponse</code>를 참조하는지 검사하고 JSON 파일로 저장합니다. SDK 생성기는 실행 중인 서버를 추측하는 대신 이 문서를 입력으로 사용합니다.</p><p>스키마가 같은 문자열로 두 번 생성된다는 검사는 현재 프로세스에서 결정적인 출력을 확인할 뿐, 이전 배포와의 호환성을 증명하지 않습니다. 필수 필드 추가, 타입 축소, 상태 코드 삭제는 기존 클라이언트를 깨뜨릴 수 있습니다. 반대로 선택 필드 추가도 생성된 SDK를 다시 배포해야 소비자가 타입으로 사용할 수 있습니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 430" style="width:380px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="백엔드 모델과 라우트 선언에서 OpenAPI가 생성되고 같은 문서로 TypeScript 클라이언트 코드를 만듭니다."><title>백엔드 모델과 라우트 선언에서 OpenAPI가 생성되고 같은 문서로 TypeScript 클라이언트 코드를 만듭니다.</title><defs><marker id="08-흐름-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190,85 L190,116" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#08-흐름-arrow)"/><path d="M190,185 L190,216" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#08-흐름-arrow)"/><path d="M190,285 L190,316" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#08-흐름-arrow)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="59.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">Pydantic 모델</text><rect x="30" y="120" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="159.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">OpenAPI</text><rect x="30" y="220" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="259.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">SDK 생성기</text><rect x="30" y="320" width="320" height="65" rx="10" fill="#F7EDC7" stroke="#334155" stroke-width="2"/><text x="190.0" y="359.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">TypeScript 호출</text></svg></div><p>위쪽의 요청에서 아래쪽의 관찰 결과까지 화살표를 따라 읽습니다. 파란 상자는 데이터, 보라색 상자는 Agent 실행, 초록 상자는 확인할 결과를 나타냅니다.</p><h3>서비스 설계 판단</h3><p>계약 검토에서는 이전 OpenAPI와 새 문서를 기계적으로 비교한 뒤 변경 이유를 사람이 읽습니다. 필수 필드 추가나 타입 변경은 명확한 호환성 위험이며, 설명과 예시 변경도 프런트 구현에 영향을 줄 수 있습니다. 생성된 SDK의 함수명은 operationId에 따라 결정되므로 공개 API에서는 안정적인 이름을 지정하고 중복을 검사합니다. 생성물 컴파일은 스키마가 TypeScript 문법으로 변환되었다는 증거입니다. 실제 서버 호출 성공까지 보장하지 않으므로 생성 SDK로 health와 JSON chat을 호출하는 통합 검사도 둡니다. SSE의 itemSchema처럼 생성기가 아직 이해하지 못하는 확장은 경고를 숨기지 않고 버전과 우회 옵션을 기록합니다. 우회 옵션을 계속 사용해야 하는지 생성기 업그레이드 때 다시 확인하고, 경고가 사라졌다면 직접 스트림 코드와 생성물의 역할을 재검토합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>`app.openapi()`로 openapi.json을 저장하고 `/v1/chat`의 요청과 응답 참조를 확인합니다. 같은 앱에서 두 번 생성한 문서를 정렬해 동일한지 검사합니다.</p><section class="notebook" data-notebook="08-OpenAPI와-TS-SDK" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="08-OpenAPI와-TS-SDK.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBPcGVuQVBJ7JmAIFRTIFNES1xuIiwKICAgICJcbiIsCiAgICAiUHlkYW50aWPqs7wgRmFzdEFQSSDshKDslrjsnbQgT3BlbkFQSSDsiqTtgqTrp4jqsIAg65CY6rOgIFR5cGVTY3JpcHQg7YG065287J207Ja47Yq4IOyDneyEsSDsnoXroKXsnbQg65CY64qUIOqzvOygleydhCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLtmITsnqwg7Y+0642U64KYIOyDgeychCDtj7TrjZTsl5DshJwgYGxhYnMvcGFydDcvY2gzMC1mYXN0YXBpLXNlcnZpbmdg7J2EIOywvuyVhCDsnpHsl4Ug7Y+0642U66GcIOyCrOyaqe2VqeuLiOuLpC4g67mE67CAIO2CpOulvCDstpzroKXtlZjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogInByZXAtMzAtMDgtMCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg7KSA67mEIOyFgOydtCDtlZjripQg7J28XG4iLAogICAgIlxuIiwKICAgICLsnbQg7KSA67mEIOyFgOydgCBgUGF0aC5jd2QoKS5yZXNvbHZlKClg66GcIO2YhOyerCDtj7TrjZTrpbwg7KCI64yAIOqyveuhnOuhnCDsnb3qs6AsIO2YhOyerCDtj7TrjZTsmYAg67aA66qoIO2PtOuNlOyXkOyEnCBgYWdlbnRfc2VydmljZWDqsIAg7J6I64qUIOyyqyDsnITsuZjrpbwgYG5leHQoLi4uLCBOb25lKWDroZwg7LC+7Iq164uI64ukLiDssL7sp4Ag66q77ZWY66m0IGBhc3NlcnRg6rCAIOyLpO2WieydhCDspJHri6jtlanri4jri6QuIOywvuydgCDrkqQgYG9zLmNoZGlyKGxhYilg7J20IOydtO2bhCBpbXBvcnTsmYAg7YyM7J28IOygkeq3vOydmCDquLDspIAg7Y+0642U66W8IOuwlOq+uOqzoCwg66eI7KeA66eJIOy2nOugpeydgCDsi6TsoJwg7ISg7YOd65CcIO2PtOuNlCDsnbTrpoTsnYQg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6Mjk6NDUuNzg4MzY0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6Mjk6NDUuNzg4Mjk4WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6Mjk6NDUuNzkyMDYzWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoyOTo0NS43OTE3NTZaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7Iuk7Iq1IO2PtOuNlDogY2gzMC1mYXN0YXBpLXNlcnZpbmdcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IG9zXG4iLAogICAgImZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aFxuIiwKICAgICJzdGFydCA9IFBhdGguY3dkKCkucmVzb2x2ZSgpXG4iLAogICAgImxhYiA9IG5leHQoKHAgZm9yIHAgaW4gKHN0YXJ0LCAqc3RhcnQucGFyZW50cylcbiIsCiAgICAiICAgIGlmIChwIC8gJ2FnZW50X3NlcnZpY2UnKS5pc19kaXIoKSksIE5vbmUpXG4iLAogICAgImFzc2VydCBsYWIgaXMgbm90IE5vbmUsICdhZ2VudF9zZXJ2aWNl6rCAIOyeiOuKlCBDaDMwIOyLpOyKtSDtj7TrjZTsl5DshJwg7Iuk7ZaJ7ZWY7IS47JqULidcbiIsCiAgICAib3MuY2hkaXIobGFiKVxuIiwKICAgICJwcmludCgn7Iuk7Iq1IO2PtOuNlDonLCBQYXRoLmN3ZCgpLm5hbWUpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyKpO2CpOuniCDsg53shLFcbiIsCiAgICAiXG4iLAogICAgIuyEnOuyhCDtlITroZzshLjsiqTrpbwg7Iuc7J6R7ZWY7KeAIOyViuyVhOuPhCDslbEg6rCd7LK07JeQ7IScIOqwmeydgCBPcGVuQVBJIOusuOyEnOulvCDslrvsnYQg7IiYIOyeiOyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTMwLTA4LWEiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg67CU66GcIOuLpOydjCDsvZTrk5zrpbwg7J2964qUIOuwqeuylVxuIiwKICAgICJcbiIsCiAgICAiYGFwcC5vcGVuYXBpKClg64qUIO2YhOyerCDrnbzsmrDtirjsmYAgUHlkYW50aWMg66qo64247JeQ7IScIE9wZW5BUEkg66y47ISc66W8IO2MjOydtOyNrCDsgqzsoITsnLzroZwg66eM65Ot64uI64ukLiBgcGF0aHNg7JeQ64qUIFVSTOuzhCDsl7DsgrDsnbQsIGAkcmVmYOyXkOuKlCDqs7XthrUg7Iqk7YKk66eI66W8IOqwgOumrO2CpOuKlCDssLjsobDqsIAg65Ok7Ja06rCR64uI64ukLiDsmIjsoJzripQg7JqU7LKt7J20IGBDaGF0UmVxdWVzdGAsIDIwMCDsnZHri7XsnbQgYENoYXRSZXNwb25zZWDrpbwg7LC47KGw7ZWY64qU7KeAIOqygOyCrO2VmOqzoCBKU09OIO2MjOydvOuhnCDsoIDsnqXtlanri4jri6QuIFNESyDsg53shLHquLDripQg7Iuk7ZaJIOykkeyduCDshJzrsoTrpbwg7LaU7Lih7ZWY64qUIOuMgOyLoCDsnbQg66y47ISc66W8IOyeheugpeycvOuhnCDsgqzsmqntlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoyOTo0NS43OTI5NjNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoyOTo0NS43OTI5MDJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoyOTo0Ni4wODgwODFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjI5OjQ2LjA4Nzc0NloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICIzLjEuMCA1XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImltcG9ydCBqc29uXG4iLAogICAgImZyb20gYWdlbnRfc2VydmljZS5hcHAgaW1wb3J0IGFwcFxuIiwKICAgICJzY2hlbWEgPSBhcHAub3BlbmFwaSgpXG4iLAogICAgInBhdGggPSBQYXRoKCdvcGVuYXBpLmpzb24nKVxuIiwKICAgICJwYXRoLndyaXRlX3RleHQoanNvbi5kdW1wcyhzY2hlbWEsIGVuc3VyZV9hc2NpaT1GYWxzZSwgaW5kZW50PTIpLCBlbmNvZGluZz0ndXRmLTgnKVxuIiwKICAgICJwcmludChzY2hlbWFbJ29wZW5hcGknXSwgbGVuKHNjaGVtYVsncGF0aHMnXSkpXG4iLAogICAgImFzc2VydCAnL3YxL2NoYXQnIGluIHNjaGVtYVsncGF0aHMnXSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDYiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDtg4DsnoXqs7wg67O07JWIIOygleuztCDqtIDssLBcbiIsCiAgICAiXG4iLAogICAgIuyalOyyrSDsiqTtgqTrp4jsnZgg7ZWE7IiYIO2VhOuTnOyZgCDsnZHri7Ug7YOA7J6F7J20IOqzhOyVvSDrrLjshJzsl5Ag7Y+s7ZWo65Cp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6Mjk6NDYuMDg4ODU3WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6Mjk6NDYuMDg4ODA0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6Mjk6NDYuMDkwNTU2WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoyOTo0Ni4wOTAyNzZaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiIy9jb21wb25lbnRzL3NjaGVtYXMvQ2hhdFJlcXVlc3QgIy9jb21wb25lbnRzL3NjaGVtYXMvQ2hhdFJlc3BvbnNlXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImNoYXQgPSBzY2hlbWFbJ3BhdGhzJ11bJy92MS9jaGF0J11bJ3Bvc3QnXVxuIiwKICAgICJyZXF1ZXN0X3JlZiA9IGNoYXRbJ3JlcXVlc3RCb2R5J11bJ2NvbnRlbnQnXVsnYXBwbGljYXRpb24vanNvbiddWydzY2hlbWEnXVsnJHJlZiddXG4iLAogICAgInJlc3BvbnNlX3JlZiA9IGNoYXRbJ3Jlc3BvbnNlcyddWycyMDAnXVsnY29udGVudCddWydhcHBsaWNhdGlvbi9qc29uJ11bJ3NjaGVtYSddWyckcmVmJ11cbiIsCiAgICAicHJpbnQocmVxdWVzdF9yZWYsIHJlc3BvbnNlX3JlZilcbiIsCiAgICAiYXNzZXJ0IHJlcXVlc3RfcmVmLmVuZHN3aXRoKCcvQ2hhdFJlcXVlc3QnKVxuIiwKICAgICJhc3NlcnQgcmVzcG9uc2VfcmVmLmVuZHN3aXRoKCcvQ2hhdFJlc3BvbnNlJykiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg67CY67O1IOyLpO2XmOqzvCDqsrDqs7wg7ZW07ISdXG4iLAogICAgIlxuIiwKICAgICLqsJnsnYAg7JWx7JeQ7IScIOuRkCDrsogg7IOd7ISx7ZWcIOyKpO2CpOuniOulvCDsoJXroKztlbQg7KeB66Cs7ZmU7ZWY66m0IOqwmeydgCDqsrDqs7zqsIAg64KY7Ji164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNvbmNlcHQtMzAtMDgtYiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg64uo6rOE7JeQ7IScIOq1rOu2hO2VoCDrspTsnIRcbiIsCiAgICAiXG4iLAogICAgIuyKpO2CpOuniOqwgCDqsJnsnYAg66y47J6Q7Je066GcIOuRkCDrsogg7IOd7ISx65Cc64uk64qUIOqygOyCrOuKlCDtmITsnqwg7ZSE66Gc7IS47Iqk7JeQ7IScIOqysOygleyggeyduCDstpzroKXsnYQg7ZmV7J247ZWgIOu/kCwg7J207KCEIOuwsO2PrOyZgOydmCDtmLjtmZjshLHsnYQg7Kad66qF7ZWY7KeAIOyViuyKteuLiOuLpC4g7ZWE7IiYIO2VhOuTnCDstpTqsIAsIO2DgOyehSDstpXshowsIOyDge2DnCDsvZTrk5wg7IKt7KCc64qUIOq4sOyhtCDtgbTrnbzsnbTslrjtirjrpbwg6rmo65yo66a0IOyImCDsnojsirXri4jri6QuIOuwmOuMgOuhnCDshKDtg50g7ZWE65OcIOy2lOqwgOuPhCDsg53shLHrkJwgU0RL66W8IOuLpOyLnCDrsLDtj6ztlbTslbwg7IaM67mE7J6Q6rCAIO2DgOyeheycvOuhnCDsgqzsmqntlaAg7IiYIOyeiOyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjI5OjQ2LjA5MTE3NloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjI5OjQ2LjA5MTEzM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjI5OjQ2LjA5MzAyM1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6Mjk6NDYuMDkyNzE3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuuPmeydvDogVHJ1ZSDrrLjsnpAg7IiYOiA0ODg1XG4iLAogICAgICAiU0RLIOyDneyEsSDsnoXroKU6IFvsgqzsmqnsnpAg7Y+0642UXS93b3JraW5nL2NsYXVkZS9wcm9qZWN0cy/tlZzqta3qsr3soJzsi6DrrLgvbGFicy9wYXJ0Ny9jaDMwLWZhc3RhcGktc2VydmluZy9vcGVuYXBpLmpzb25cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiZmlyc3QgPSBqc29uLmR1bXBzKGFwcC5vcGVuYXBpKCksIHNvcnRfa2V5cz1UcnVlKVxuIiwKICAgICJzZWNvbmQgPSBqc29uLmR1bXBzKGFwcC5vcGVuYXBpKCksIHNvcnRfa2V5cz1UcnVlKVxuIiwKICAgICJwcmludCgn64+Z7J28OicsIGZpcnN0ID09IHNlY29uZCwgJ+usuOyekCDsiJg6JywgbGVuKGZpcnN0KSlcbiIsCiAgICAiYXNzZXJ0IGZpcnN0ID09IHNlY29uZFxuIiwKICAgICJwcmludCgnU0RLIOyDneyEsSDsnoXroKU6JywgcGF0aC5yZXNvbHZlKCkpIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJleHBlcmltZW50IiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNCwKICAgImNvZGVfc2hhMjU2IjogIjYyMzZkN2UxMTE1NDE2NjgwMDdhZGE2MWRmYWExNzQ0NzVmMGI2ZTQ3YTM5M2Q0ZDM3MzRkMWE3ZmEwYjNlMDMiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwMjoyOTo0Ni4yMDgxODErMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjI4NmJmNGVhNWEzNzI1MzM5OWRiZTgzMDI5NDZhMDMwMTQ2ZTU2MDQ4YTZlMmQ4YmFjZGYzY2VmNGZkZWU3Y2QiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>OpenAPI와 TS SDK</h2>
+<p>Pydantic과 FastAPI 선언이 OpenAPI 스키마가 되고 TypeScript 클라이언트 생성 입력이 되는 과정을 확인합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>현재 폴더나 상위 폴더에서 <code>labs/part7/ch30-fastapi-serving</code>을 찾아 작업 폴더로 사용합니다. 비밀 키를 출력하지 않습니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>이 준비 셀은 <code>Path.cwd().resolve()</code>로 현재 폴더를 절대 경로로 읽고, 현재 폴더와 부모 폴더에서 <code>agent_service</code>가 있는 첫 위치를 <code>next(..., None)</code>로 찾습니다. 찾지 못하면 <code>assert</code>가 실행을 중단합니다. 찾은 뒤 <code>os.chdir(lab)</code>이 이후 import와 파일 접근의 기준 폴더를 바꾸고, 마지막 출력은 실제 선택된 폴더 이름을 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import os
+from pathlib import Path
+start = Path.cwd().resolve()
+lab = next((p for p in (start, *start.parents)
+    if (p / &#x27;agent_service&#x27;).is_dir()), None)
+assert lab is not None, &#x27;agent_service가 있는 Ch30 실습 폴더에서 실행하세요.&#x27;
+os.chdir(lab)
+print(&#x27;실습 폴더:&#x27;, Path.cwd().name)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">실습 폴더: ch30-fastapi-serving
+</pre></div>
+<div class="nb-markdown"><h3>스키마 생성</h3>
+<p>서버 프로세스를 시작하지 않아도 앱 객체에서 같은 OpenAPI 문서를 얻을 수 있습니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p><code>app.openapi()</code>는 현재 라우트와 Pydantic 모델에서 OpenAPI 문서를 파이썬 사전으로 만듭니다. <code>paths</code>에는 URL별 연산이, <code>$ref</code>에는 공통 스키마를 가리키는 참조가 들어갑니다. 예제는 요청이 <code>ChatRequest</code>, 200 응답이 <code>ChatResponse</code>를 참조하는지 검사하고 JSON 파일로 저장합니다. SDK 생성기는 실행 중인 서버를 추측하는 대신 이 문서를 입력으로 사용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import json
+from agent_service.app import app
+schema = app.openapi()
+path = Path(&#x27;openapi.json&#x27;)
+path.write_text(json.dumps(schema, ensure_ascii=False, indent=2), encoding=&#x27;utf-8&#x27;)
+print(schema[&#x27;openapi&#x27;], len(schema[&#x27;paths&#x27;]))
+assert &#x27;/v1/chat&#x27; in schema[&#x27;paths&#x27;]</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">3.1.0 5
+</pre></div>
+<div class="nb-markdown"><h3>타입과 보안 정보 관찰</h3>
+<p>요청 스키마의 필수 필드와 응답 타입이 계약 문서에 포함됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">chat = schema[&#x27;paths&#x27;][&#x27;/v1/chat&#x27;][&#x27;post&#x27;]
+request_ref = chat[&#x27;requestBody&#x27;][&#x27;content&#x27;][&#x27;application/json&#x27;][&#x27;schema&#x27;][&#x27;$ref&#x27;]
+response_ref = chat[&#x27;responses&#x27;][&#x27;200&#x27;][&#x27;content&#x27;][&#x27;application/json&#x27;][&#x27;schema&#x27;][&#x27;$ref&#x27;]
+print(request_ref, response_ref)
+assert request_ref.endswith(&#x27;/ChatRequest&#x27;)
+assert response_ref.endswith(&#x27;/ChatResponse&#x27;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">#/components/schemas/ChatRequest #/components/schemas/ChatResponse
+</pre></div>
+<div class="nb-markdown"><h3>반복 실험과 결과 해석</h3>
+<p>같은 앱에서 두 번 생성한 스키마를 정렬해 직렬화하면 같은 결과가 나옵니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>스키마가 같은 문자열로 두 번 생성된다는 검사는 현재 프로세스에서 결정적인 출력을 확인할 뿐, 이전 배포와의 호환성을 증명하지 않습니다. 필수 필드 추가, 타입 축소, 상태 코드 삭제는 기존 클라이언트를 깨뜨릴 수 있습니다. 반대로 선택 필드 추가도 생성된 SDK를 다시 배포해야 소비자가 타입으로 사용할 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">first = json.dumps(app.openapi(), sort_keys=True)
+second = json.dumps(app.openapi(), sort_keys=True)
+print(&#x27;동일:&#x27;, first == second, &#x27;문자 수:&#x27;, len(first))
+assert first == second
+print(&#x27;SDK 생성 입력:&#x27;, path.resolve())</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">동일: True 문자 수: 4885
+SDK 생성 입력: [사용자 폴더]/working/claude/projects/한국경제신문/labs/part7/ch30-fastapi-serving/openapi.json
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — OpenAPI 버전, `ChatRequest`와 `ChatResponse` 참조, 두 직렬화 결과의 일치 여부를 실제 출력에서 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>같은 앱 객체의 두 OpenAPI 직렬화 결과는 같았습니다. 이는 코드 변경 뒤 스키마도 같다는 뜻이 아닙니다. 별도 프로세스에서 기준 파일과 새 파일을 비교해야 변경을 찾을 수 있습니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>생성된 SDK를 직접 수정하지 않습니다.</li><li>생성기 버전과 라이선스를 기록합니다.</li><li>SSE 오류와 재연결은 실제 브라우저 통합 테스트를 유지합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>FastAPI에서 OpenAPI 3.1 문서를 생성할 수 있습니다.</li><li>OpenAPI로 TypeScript 클라이언트 생성 명령을 구성할 수 있습니다.</li><li>백엔드 변경의 호환성 영향을 검토할 수 있습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — Ch31에서는 이벤트를 데이터베이스에 저장해 프로세스 재시작 뒤에도 복구합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. OpenAPI 기본 경로는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — /openapi.json입니다.</p></details><details class="quiz"><summary>2. 생성물을 직접 고치지 않는 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 재생성 때 사라지므로 서버 선언을 고쳐야 합니다.</p></details><details class="quiz"><summary>3. OpenAPI가 SSE 재연결을 보장하나요?</summary><p class="quiz-a"><b>해설</b> — 아닙니다. 생성기 범위와 통합 동작을 확인해야 합니다.</p></details><details class="quiz"><summary>4. 호환성을 깨는 변경 예는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 필수 필드 추가나 타입 변경입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">FastAPI OpenAPI</a> · 확인 2026-09-11</li><li><a href="https://openapi-generator.tech/docs/generators/typescript-fetch/">OpenAPI Generator</a> · 확인 2026-09-11</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="07-인증-CORS-타임아웃.html">← 인증 CORS 타임아웃</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="09-실제-Agent-HTTP-통합.html">실제 Agent HTTP 통합 →</a></span></div></div></body></html>

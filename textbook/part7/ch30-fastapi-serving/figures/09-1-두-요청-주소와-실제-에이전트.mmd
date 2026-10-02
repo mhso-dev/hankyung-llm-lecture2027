@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  cl["시험용 클라이언트<br>같은 질문<br>thread_id live-1"]:::flow
+  jr["POST /v1/chat/live<br>ainvoke로 기다림"]:::tool
+  sr["POST /v1/chat/live/stream<br>astream 모드 messages"]:::tool
+  gp["제공 함수 get_live_agent<br>build_live_agent<br>같은 객체 True"]:::tool
+  ag["에이전트 그래프<br>노드 model과 tools<br>gpt-5.4-mini"]:::model
+  jo["JSON 응답 200<br>칸 answer와 thread_id"]:::measure
+  so["SSE 응답 200<br>token 사건들 뒤 done"]:::measure
+  cl --> jr
+  cl --> sr
+  jr --> gp
+  sr --> gp
+  gp --> ag
+  ag --> jo
+  ag --> so

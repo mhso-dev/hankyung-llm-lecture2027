@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · tags=[]"]
+    direction LR
+    b1["첫 호출<br>add_tag_before('신규')"]:::flow --> bl["함수에 저장된<br>기본값 목록 하나<br>['신규', '배송']"]:::tool
+    b2["둘째 호출<br>add_tag_before('배송')"]:::flow --> bl
+    bl --> br["같은 목록인가 True<br>첫 주문 태그<br>['신규', '배송']"]:::fail
+  end
+  subgraph AFTER["After · tags=None"]
+    direction LR
+    a1["첫 호출<br>add_tag('신규')"]:::flow --> al1["새 목록<br>['신규']"]:::tool
+    a2["둘째 호출<br>add_tag('배송')"]:::flow --> al2["새 목록<br>['배송']"]:::tool
+    al1 --> ar["같은 목록인가 False<br>첫 주문 태그<br>['신규']"]:::measure
+    al2 --> ar
+  end
+  BEFORE ~~~ AFTER

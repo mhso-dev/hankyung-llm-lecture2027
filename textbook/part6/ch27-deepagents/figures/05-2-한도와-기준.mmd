@@ -1,0 +1,20 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  hand["손으로 만든 요청 둘<br>대출 33자 · 운영 41자 규정"]:::tool
+  subgraph smallSide[한도 10 · 기준 40자]
+    direction TB
+    s1["대출 33자<br>그대로"]:::measure
+    s2["운영 41자<br>안내 글 658자로"]:::measure
+    s3["상태 칸 files<br>/large_tool_results/hand_rule_2"]:::measure
+    s1 ~~~ s2
+    s2 ~~~ s3
+  end
+  subgraph baseSide[기본 한도 20000 · 기준 80000자]
+    direction TB
+    b1["대출 33자 · 운영 41자<br>둘 다 그대로"]:::measure
+    b2["상태 칸 files<br>빈 목록"]:::measure
+    b1 ~~~ b2
+  end
+  hand --> baseSide
+  hand --> smallSide

@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  same["같은 처리 함수 health<br>GET /v1/ping<br>새 앱 객체"]:::flow
+  subgraph r1["실행 1 · 제공 함수"]
+    direction TB
+    a1["dependencies에<br>require_token"]:::tool
+    a2["보안 방식 칸 False<br>매개변수 authorization<br>응답 코드 200·422"]:::measure
+    a1 --> a2
+  end
+  subgraph r2["실행 2 · 보안 객체"]
+    direction TB
+    b1["dependencies에<br>HTTPBearer 객체"]:::flow
+    b2["보안 방식 칸 True<br>security 칸 HTTPBearer<br>응답 코드 200"]:::measure
+    b1 --> b2
+  end
+  both["두 실행 모두<br>머리 없음 401<br>교재용 접근 토큰 200"]
+  same --> r1
+  same --> r2
+  r1 --> both
+  r2 --> both

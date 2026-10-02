@@ -1,0 +1,32 @@
+{
+  "version": "v1.6",
+  "genre": "산문",
+  "char_count": 4120,
+  "metrics": {
+    "comma_inclusion_rate": 0.1956521739130435,
+    "comma_usage_rate": 0.3695652173913043,
+    "ending_comma_rate": 0.13333333333333333,
+    "comma_segment_length": 10.53968253968254,
+    "conclusion_pivot_count": 1,
+    "safe_balance_count": 0,
+    "hanja_nominalizer_density": 0.0015060240963855422,
+    "lexical_diversity": 0.7379518072289156
+  },
+  "z_scores": {
+    "comma_inclusion_rate": -0.3885243438188739,
+    "comma_usage_rate": -1.063545150501672,
+    "ending_comma_rate": 1.1739775376139014,
+    "comma_segment_length": 2.9404667646947926,
+    "hanja_nominalizer_density": -1.9497991967871486,
+    "lexical_diversity": 1.7590361445783125
+  },
+  "risk_band": "medium",
+  "risk_score": 4,
+  "evidence": {
+    "conclusion_pivots": [
+      "따라서"
+    ],
+    "safe_balances": []
+  },
+  "warning": "baseline_genre_null:산문->essay"
+}

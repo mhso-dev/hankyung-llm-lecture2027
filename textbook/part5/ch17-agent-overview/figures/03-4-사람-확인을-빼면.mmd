@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph left["사람 확인 있음"]
+    direction TB
+    a1["사람 확인 도구<br>환불 요청 등록"]:::tool
+    a2["셋째 바퀴에 등록을 고름<br>부르기 전에 멈춤 · 사람 확인<br>모델 요청 3"]:::measure
+    a1 --> a2
+  end
+  subgraph right["사람 확인 없음"]
+    direction TB
+    b1["바꾼 값<br>사람 확인 도구 없음"]:::tool
+    b2["셋째 바퀴에 등록을 부름<br>넷째 바퀴에 모델이 끝을 고름<br>모델 요청 4<br>02절 코드 차례와 같음"]:::measure
+    b1 --> b2
+  end
+  same["앞 두 바퀴는 같음<br>주문 조회<br>그다음 환불 규정 확인"]
+  left ~~~ same
+  right ~~~ same

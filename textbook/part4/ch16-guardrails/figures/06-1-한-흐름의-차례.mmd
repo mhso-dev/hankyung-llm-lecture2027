@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  q["질문과 검색 문서"]:::tool
+  a["질문 검사 · 가리기<br>01절 · 02절"]:::flow
+  b["문서 검사 · 격리<br>이 절"]:::flow
+  c["예약<br>04절"]:::flow
+  m["모델<br>gpt-5.4-mini"]:::model
+  d["출처 대조<br>01절"]:::flow
+  r["감사 기록 한 줄<br>05절"]:::tool
+  q --> a
+  a --> b
+  b --> c
+  c --> m
+  m --> d
+  d --> r
+  b -.->|의심 문서가 있으면 멈춤| r
+  d -.->|목록 밖 출처면 막음| r

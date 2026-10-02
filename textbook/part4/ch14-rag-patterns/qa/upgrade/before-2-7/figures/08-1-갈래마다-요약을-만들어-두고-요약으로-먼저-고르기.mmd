@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  src["문서 열두 건과<br>자료에 적힌 갈래 이름"]:::tool
+  grp["갈래 셋으로 묶기"]:::flow
+  write["답 모델 gpt-5.4-mini가<br>갈래마다 요약 쓰기"]:::model
+  top["요약 층 · 요약 셋"]:::measure
+  near["질문과 요약의<br>거리 재기"]:::flow
+  leaf["원문 층 · 고른 갈래<br>문서 넷만 남기기"]:::flow
+  place["정답 문서의 자리"]:::measure
+  src --> grp
+  grp --> write
+  write --> top
+  top --> near
+  near -.-> leaf
+  leaf --> place

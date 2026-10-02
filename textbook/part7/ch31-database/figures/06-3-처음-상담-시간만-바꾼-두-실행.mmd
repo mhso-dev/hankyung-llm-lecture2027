@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  same["두 실행 같음<br>문의 셋 10 · 30 · 10분<br>같은 그래프 · 풀 크기 1"]
+  subgraph r1["실행 1"]
+    direction TB
+    s1["처음 상담 시간 50분"]:::tool
+    m1["남긴 예약 줄 수 1 · 1 · 1<br>남은 0분<br>예약 번호 1 · 2 · 3<br>배송 상태 booked 1"]:::measure
+    s1 --> m1
+  end
+  subgraph r2["실행 2 · 값 하나만 바꿈"]
+    direction TB
+    s2["처음 상담 시간 30분"]:::flow
+    e2["문의 2 받은 오류<br>IntegrityError 23514"]:::measure
+    m2["남긴 예약 줄 수 1 · 0 · 1<br>남은 10분<br>예약 번호 1 · 3<br>배송 상태 booked 0"]:::measure
+    s2 --> e2 --> m2
+  end
+  both["두 실행 모두<br>체크포인트 줄 아홉<br>빌려 간 연결 없음"]:::measure
+  same --> r1
+  same --> r2
+  r1 --> both
+  r2 --> both

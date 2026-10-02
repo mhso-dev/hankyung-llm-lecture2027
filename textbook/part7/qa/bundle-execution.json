@@ -1,0 +1,69 @@
+{
+  "archive": "part7-practice.zip",
+  "archive_sha256": "710053c5061e14d6fe40a04b9845539f4b9880672986f435e9bbb3e0212473b8",
+  "chapters": [
+    {
+      "chapter": "ch30-fastapi-serving",
+      "locked_sync": true,
+      "notebook_kernel_import": true,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 22,
+        "code_sha256": "861cacdb64be1cf3bf7a5e8e712eab20cc46488075e16225f7f182699fb3337f",
+        "executed_at": "2026-10-01T01:11:27.726087+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "87ea510f027a766becb9c3e031690b996b3f266d918be96ef7d73b9d136e7542",
+        "python_version": "3.12.13",
+        "status": "passed"
+      },
+      "notebook": "01-비동기-라우팅과-스키마.ipynb",
+      "cwd": "chapter/notebooks"
+    },
+    {
+      "chapter": "ch31-database",
+      "locked_sync": true,
+      "notebook_kernel_import": true,
+      "pre_exec": "textbook/part7/ch31-database/qa/upgrade/pre_exec.sh",
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 31,
+        "code_sha256": "f97cba07f5bc40c161d04a77d7043d5ec1ea17ecd3e716ca2d2455817b04d252",
+        "executed_at": "2026-10-01T01:11:32.409012+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "6325a739f5405f81f3c393acdb19618095d8933ce0c2a053a82f87b853c162f1",
+        "python_version": "3.12.13",
+        "status": "passed"
+      },
+      "notebook": "03-Alembic-적용과-롤백.ipynb",
+      "cwd": "chapter/notebooks"
+    },
+    {
+      "chapter": "ch32-docker",
+      "locked_sync": true,
+      "notebook_kernel_import": true
+    },
+    {
+      "chapter": "ch33-cicd",
+      "locked_sync": true,
+      "notebook_kernel_import": true,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 4,
+        "code_sha256": "61c7664ff88719fb6c4b35c852e833b122ae394ead8cad728b691f08337d756c",
+        "executed_at": "2026-10-01T01:11:35.341039+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "c585bc9320a0389b0fda7b8973dc256894fa8ee293dfd617f6b819dd4619b8ba",
+        "python_version": "3.12.13",
+        "status": "passed"
+      },
+      "notebook": "02-평가-회귀를-CI에-연결하기.ipynb",
+      "cwd": "chapter/notebooks"
+    },
+    {
+      "chapter": "ch34-cost-rate-limits",
+      "locked_sync": true,
+      "notebook_kernel_import": true
+    }
+  ],
+  "actual_env_files": 0
+}

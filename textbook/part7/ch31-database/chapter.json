@@ -1,0 +1,48 @@
+{
+  "part": 7,
+  "part_title": "Part 7 · Agent 서비스 개발",
+  "chapter": "ch31-database",
+  "title": "DB & 상태 영속화",
+  "hours": "총 16h · 강의 5h · 실습 11h",
+  "objectives": [
+    "비동기 엔진과 연결 풀을 만들고, 조회 셋을 차례로 기다릴 때와 gather로 함께 기다릴 때의 연결 수를 견줍니다.",
+    "두 변경을 begin 블록 하나로 묶으면, CHECK 제약 위반(23514) 뒤 두 변경이 함께 취소되는 것을 확인합니다.",
+    "도구 Alembic으로 판을 올리고 내리며, 기본값 없는 NOT NULL 칸을 더하는 판이 막히는 것을 봅니다.",
+    "반납하지 않은 연결 때문에 다음 요청이 대기 제한 안에 연결을 받지 못하는 것을 보고, 반납으로 고칩니다.",
+    "pgvector 색인과 체크포인터 표를 한 이름 공간에 두고, 백업을 확장 유무가 다른 두 데이터베이스에 복원합니다.",
+    "실습에서 한 묶음 작업·작은 연결 풀·체크포인터를 상담 예약 그래프 하나로 잇고, 값 하나만 바꾼 두 실행을 견줍니다."
+  ],
+  "lab_path": "labs/part7/ch31-database",
+  "sections": [
+    {
+      "slug": "01-SQLAlchemy-비동기-PostgreSQL",
+      "title": "SQLAlchemy 비동기 PostgreSQL",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-트랜잭션과-원자성",
+      "title": "트랜잭션과 원자성",
+      "format": "paired"
+    },
+    {
+      "slug": "03-Alembic-적용과-롤백",
+      "title": "Alembic 적용과 롤백",
+      "format": "paired"
+    },
+    {
+      "slug": "04-커넥션-풀-고갈과-대응",
+      "title": "커넥션 풀 고갈과 대응",
+      "format": "paired"
+    },
+    {
+      "slug": "05-pgvector-체크포인터-공존과-백업",
+      "title": "pgvector 체크포인터 공존과 백업",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-DB와-상태-영속화-실습",
+      "title": "DB와 상태 영속화 실습: 상담 예약 그래프에서 처음 상담 시간 하나만 바꾸기",
+      "format": "experiment"
+    }
+  ]
+}

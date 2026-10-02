@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  subgraph LOOP["루프 · LangGraph가 여러 단계 실행을 맡음"]
+    direction TB
+    subgraph HARNESS["하네스 · DeepAgents가 긴 작업용 틀을 제공"]
+      direction TB
+      subgraph CONTEXT["컨텍스트 · 이번 호출에 넣은 정보"]
+        direction TB
+        PROMPT["프롬프트<br>질문과 지시 문장"]:::tool
+        EXTRA["규정·이전 대화·예시"]:::tool
+      end
+      CALL["모델 호출 · LangChain<br>model.invoke(messages)"]:::flow
+      CHECK["입력 검사와 답 기록"]
+    end
+    NEXT["결과를 보고<br>다시 요청할지 정하기"]
+  end
+  PROMPT ~~~ EXTRA
+  EXTRA ~~~ CALL
+  CALL ~~~ CHECK
+  CHECK ~~~ NEXT

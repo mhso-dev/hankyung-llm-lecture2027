@@ -1,0 +1,28 @@
+%%{init: {"flowchart": {"wrappingWidth": 320}}}%%
+flowchart TB
+  %% classes
+  subgraph og["옛 함수 · 양식 PolicyAnswer를 넘김"]
+    direction TB
+    oa["agent"]
+    ot["tools"]
+    og2["generate_structured_response"]
+    oe(["__end__"])
+    ox["소스 확인 · 루프가 끝난 뒤<br>모델에게 한 번 더 요청<br>이번에 실행 안 함"]
+    oa -.->|should_continue| ot
+    ot --> oa
+    oa -.->|should_continue| og2
+    og2 --> oe
+    og2 ~~~ ox
+  end
+  subgraph ng["새 함수 · 같은 양식을 넘김"]
+    direction TB
+    nm["model"]
+    nt["tools"]
+    ne(["__end__"])
+    nm -.->|model_to_tools| nt
+    nm -.->|model_to_tools| ne
+    nm -.-> nm
+    nt -.->|tools_to_model| nm
+    nt -.->|tools_to_model| ne
+  end
+  og ~~~ ng

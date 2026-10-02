@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  subgraph s1["Q002 도서 대출"]
+    direction TB
+    a1["정답 일치도 1<br>답변 관련성 1<br>근거 충실도 1<br>검색 관련성 1"]:::measure
+  end
+  subgraph s2["Q006 주차 요금"]
+    direction TB
+    b1["정답 일치도 1<br>답변 관련성 1<br>근거 충실도 1<br>검색 관련성 1"]:::measure
+  end
+  subgraph s3["Q090 계약 입회인"]
+    direction TB
+    d1["정답 일치도 1<br>답변 관련성 0<br>근거 충실도 0<br>검색 관련성 0"]:::measure
+    d2["기준 답도<br>확인할 수 없음"]:::tool
+    d1 ~~~ d2
+  end
+  same["세 사례 모두 같은 판정 머리글<br>rag-judge-v1.0.0"]
+  s1 ~~~ same
+  s2 ~~~ same
+  s3 ~~~ same

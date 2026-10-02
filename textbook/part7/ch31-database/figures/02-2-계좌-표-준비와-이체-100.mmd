@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  prep["begin 블록<br>이름 공간 ch31_tx<br>표 accounts<br>CHECK 잔액 0 이상"]:::flow
+  rows["계좌 두 줄<br>1번 500 · 2번 500"]:::tool
+  start["처음 합계 1000"]:::measure
+  tr["transfer_one_block<br>1번에서 2번으로 100<br>더하기 · 빼기 한 블록"]:::flow
+  ok["블록 끝 확정"]
+  res["1번 400 · 2번 600<br>합계 1000"]:::measure
+  prep --> rows --> start --> tr --> ok --> res

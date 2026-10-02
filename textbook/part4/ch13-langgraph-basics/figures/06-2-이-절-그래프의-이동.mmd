@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  s1["가상 시작점 START"]
+  n1["노드 normalize"]:::flow
+  n2["노드 route"]:::flow
+  n3["노드 make_answer"]:::flow
+  n4["노드 ask_more"]:::flow
+  e1["가상 끝점 END"]
+  s1 --> n1
+  n1 --> n2
+  n2 -.-> n3
+  n2 -.-> n4
+  n3 --> e1
+  n4 --> e1

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  a1["앱 134~137행<br>astream 모드 messages"]:::tool
+  a2["스트림 사건 하나<br>스트림 청크와<br>칸 metadata의 짝"]
+  a3["앱 138~139행<br>노드 이름이 model인가"]:::tool
+  a4["앱 140~147행<br>글 블록만 골라<br>사건 번호를 붙인 token 사건"]:::tool
+  sk["건너뜀<br>노드 model이 아닌 사건"]
+  a5["앱 148행<br>끝에 done 사건"]:::tool
+  got["받은 SSE 사건<br>첫 사건 token<br>끝 사건 done<br>첫 사건 번호 live-1:0"]:::measure
+  a1 --> a2
+  a2 --> a3
+  a3 --> a4
+  a3 -.-> sk
+  a4 --> a5
+  a5 --> got

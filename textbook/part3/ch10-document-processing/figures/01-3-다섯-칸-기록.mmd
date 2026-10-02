@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  PATH["고른 경로<br>labs/data/rag-corpus<br>/pdf/easy/E01.pdf"]:::tool
+  NAME["Path 속성 읽기<br>name · stem · suffix"]:::flow
+  ADD["읽은 방법과 쪽 번호를 더함<br>parser pypdf-plain<br>page 2"]:::flow
+  REC["다섯 칸 출처 기록<br>doc_id E01<br>source E01.pdf<br>file_type pdf<br>parser pypdf-plain<br>page 2"]:::tool
+  MARK["make_source_mark()<br>Ch 9 03절 함수(도구 파일)"]:::flow
+  OUT["출처 표시<br>E01 p.2"]:::measure
+  PATH --> NAME
+  NAME --> REC
+  ADD --> REC
+  REC --> MARK
+  MARK --> OUT

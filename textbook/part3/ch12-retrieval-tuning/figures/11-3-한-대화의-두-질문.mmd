@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  root["질문 Q001 · 정답 부모 E01"]:::flow
+  subgraph rew["재작성문"]
+    r1["보고 자리 부모 차례 E01"]:::measure
+    r2["고유 부모 수 1<br>문서 청크 정밀도 자리 5 1.0"]:::measure
+  end
+  subgraph miss["대상 빠진 질문"]
+    m1["보고 자리 부모 차례 E01 · E02"]:::measure
+    m2["고유 부모 수 2<br>문서 청크 정밀도 자리 5 0.8"]:::measure
+  end
+  root --> r1
+  root --> m1
+  r1 --> r2
+  m1 --> m2

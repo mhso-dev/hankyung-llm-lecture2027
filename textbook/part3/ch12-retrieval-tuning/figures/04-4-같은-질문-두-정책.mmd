@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  subgraph space_case["공백 분리"]
+    direction TB
+    space_terms["질문 낱말 ISBN으로 · 없는<br>책을 · 신청하려면?"]:::measure
+    space_out["1위 점수 0.0"]:::measure
+  end
+  subgraph kiwi_case["Kiwi 형태소"]
+    direction TB
+    kiwi_terms_box["질문 낱말 ISBN · 없<br>책 · 신청"]:::measure
+    kiwi_out["1위 LIB-003<br>점수 6.34"]:::measure
+  end
+  space_terms --> space_out
+  kiwi_terms_box --> kiwi_out
+  space_out --> tie["공백 분리 칸은 세 점수가 모두 같아<br>순서를 문서 ID 차례로 정함"]

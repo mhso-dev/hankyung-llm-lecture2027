@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  runner["before_runnable<br>with_retry 시도 세 번까지"]:::flow
+  a1["시도 1<br>default_model이 요청 세 번"]
+  a2["시도 2<br>default_model이 요청 세 번"]
+  a3["시도 3<br>default_model이 요청 세 번"]
+  result["서버가 받은 요청 아홉 번"]:::fail
+  err["받은 오류는<br>OpenAIRateLimitError 하나"]:::measure
+  runner --> a1
+  a1 --> a2
+  a2 --> a3
+  a3 --> result
+  a3 --> err

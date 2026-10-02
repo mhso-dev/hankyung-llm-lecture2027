@@ -1,0 +1,127 @@
+<!--meta: 강의 1h | 실습 2h | 코드 03-DOCX-HTML-CSV.ipynb | 새 용어 4 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 형식 견본 세 개를 열어 형식마다 남는 구조 정보를 말할 수 있습니다.</li>
+<li>이 절을 마치면 표가 형식마다 어디에 들어 있는지 찾아 한 행을 한 줄 글로 만들 수 있습니다.</li>
+<li>이 절을 마치면 쪽 번호가 없는 형식의 출처 기록을 네 칸으로 적고 출처 표시를 만들 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>01·02절이 읽은 파일은 모두 PDF였습니다. PDF에는 글자와 그 자리만 남아 있습니다. 그래서 어디가 제목이고 어디가 표인지 도구가 추정해야 했습니다.</p>
+<p>이 절의 세 형식은 다릅니다. 작성 도구가 구조를 이름으로 적어 둡니다. 어느 문단이 제목인지, 어느 글이 본문인지, 어느 값이 무슨 칸의 값인지가 파일 안에 있습니다. 그 이름을 버리고 글만 이어 붙이면 도구가 준 정보를 스스로 버리는 셈입니다.</p>
+<p>그런데 이름이 붙은 자리가 형식마다 다릅니다. 표가 들어 있는 자리도 다릅니다. 그래서 같은 방법으로 셋을 다 읽을 수는 없습니다.</p>
+<p>세 형식에는 쪽이라는 것도 없습니다. 출처 표시 <code>[E01 p.2]</code>를 만들 수 없다는 뜻입니다. 이 절은 쪽이 없는 형식의 기록 칸을 정합니다.</p>
+<p>이 절이 읽는 파일은 견본 세 개입니다. 폴더 <code>labs/part3/ch10-document-processing/fixtures/</code>의 <code>sample.docx</code>·<code>sample.html</code>·<code>sample.csv</code>입니다. 01절 2절에서 확장자만 세어 보았던 파일입니다.</p>
+
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<ul>
+<li><strong>다섯 칸 출처 기록</strong> — 01절에서 정했습니다. 칸은 <code>doc_id</code>·<code>source</code>·<code>file_type</code>·<code>parser</code>·<code>page</code> 다섯 개입니다.</li>
+<li><strong>출처 표시</strong> — 01·02절 <code>make_source_mark()</code>는 기록의 <code>doc_id</code>와 <code>page</code> 두 칸을 읽어 <code>[E01 p.2]</code>를 만듭니다.</li>
+<li><strong>머리글 붙이기</strong> — 02절 <code>make_row_text()</code>는 머리글 행과 값 행을 받습니다. 칸마다 머리글을 붙여 한 줄 글로 만듭니다.</li>
+<li><strong>값이 없는 칸</strong> — 02절에서 갈라 둔 말입니다. 표에서 값이 없는 칸을 가리키고, 코드가 넣는 자리 표시 글은 <code>(값 없음)</code>입니다. 글자 사이의 공백은 「빈칸」입니다.</li>
+<li><strong>HTML 읽기</strong> — Ch 4 05절에서 같은 라이브러리로 웹 문서를 읽었습니다. 그때는 태그 하나를 골라 글을 꺼냈습니다.</li>
+<li><strong>파일 열기</strong> — Ch 2 05절에서 <code>with open(..., encoding="utf-8")</code>을 배웠습니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유 — 공책과 이름표 상자와 장부</h3>
+<p>같은 안내문을 세 가지에 옮겨 적었다고 생각해 보세요. 하나는 스프링 공책이고, 하나는 이름표가 달린 상자이며, 하나는 줄이 그어진 장부입니다.</p>
+<p>공책에서는 제목 줄만 굵은 띠로 칠해 두어 눈에 띕니다. 상자에서는 안쪽 작은 상자마다 이름표가 달려 있습니다. 장부에서는 맨 윗줄에 칸 이름이 인쇄되어 있습니다.</p>
+<p>세 가지 모두 「이 글이 무엇인가」를 알려 주는 표시가 있습니다. 다만 그 표시가 붙은 자리가 서로 다릅니다. 게다가 공책에는 격자 종이 한 장이 따로 끼워져 있어서 공책만 넘기면 지나칩니다.</p>
+{{img:03-5-공책과-장부|평면 그림으로 왼쪽에 펼친 스프링 공책이 있고 위쪽에 굵은 가로 띠 하나와 그 아래 얇은 가로줄 몇 개가 있으며 공책 뒤쪽에서 격자가 그려진 종이 한 장이 반쯤 빠져나와 있고 가운데에 큰 열린 상자 안에 작은 상자 두 개가 들어 있으며 작은 상자마다 빈 이름표가 달려 있고 오른쪽에 가로 세로 줄이 그어진 장부 한 장이 있으며 맨 윗줄만 진하게 칠해져 있고 세 가지 아래에 크기와 모양이 똑같은 흰 봉투 세 개가 하나씩 놓여 있음|표시가 붙은 자리는 셋이 다르지만 다음 자리로 넘기는 봉투는 모두 같은 모양입니다}}
+<p><strong>그림 읽기</strong> — 위쪽 세 가지를 왼쪽에서 오른쪽으로 보고, 그다음 아래 봉투를 봅니다. 왼쪽 공책은 굵은 띠로 제목 줄을 알리고, 뒤쪽에서 격자 종이가 반쯤 빠져나와 있습니다. 가운데 상자는 작은 상자마다 이름표가 달려 있습니다. 오른쪽 장부는 맨 윗줄만 진하게 칠해져 있습니다. 아래 봉투 세 개는 크기와 모양이 같고, 01절에서 정한 출처 기록입니다.</p>
+
+<h3>이 절에서 쓰는 말</h3>
+<table><thead><tr><th>용어</th><th>뜻과 일상 예</th><th>이 절에서 보이는 모습</th></tr></thead><tbody>
+<tr><td>문단(paragraph)</td><td>DOCX에서 글을 담는 기본 단위. 공책에서 줄바꿈으로 나뉘는 한 덩이와 같음</td><td>노트북 3절 <code>문단 수: 2</code>와 <code>문단 글:</code> 줄</td></tr>
+<tr><td>꾸밈 이름(style name)</td><td>문단이 제목인지 본문인지 알려 주려고 작성 도구가 붙여 둔 이름. 공책 제목 줄에 칠한 굵은 띠와 같음</td><td>노트북 3절 <code>문단 꾸밈 이름: ['Heading 1', 'Normal']</code></td></tr>
+<tr><td>태그(tag)</td><td>HTML에서 글을 감싸 그 글의 종류를 알려 주는 이름. 상자에 달아 둔 이름표와 같음</td><td>노트북 5절 <code>h1 태그 수: 1</code>과 <code>첫 글의 태그 이름: h1</code></td></tr>
+<tr><td>자리 칸</td><td>쪽이 없는 형식에서 본문이 파일의 어디에서 왔는지 적는 칸. 장부의 몇째 줄인지 적어 두는 것과 같음</td><td>노트북 8절 CSV 기록의 <code>'row': 2</code></td></tr>
+</tbody></table>
+<p>파서·파일 형식·출처 기록·출처 계보는 01절과 같은 뜻입니다. 글자 층·표 읽기는 02절과 같은 뜻입니다. 문서 청크·메타데이터·출처 표시도 Ch 9에서 정한 뜻 그대로입니다.</p>
+
+<h3>도식 — 형식은 셋이지만 기록의 칸 이름은 하나입니다</h3>
+{{mermaid:03-1-형식별-구조|초록 상자 형식 견본 세 개에서 파란 상자 형식마다 다른 읽기로 내려온 뒤 노란 상자 세 개 DOCX 문단 2개와 표 목록 1개 HTML h1 1개와 p 1개와 table 0개 CSV 칸 이름 2개와 행 2개로 갈라지고 다시 초록 상자 네 칸 출처 기록 page 칸 없음 CSV만 row 칸으로 모인 뒤 회색 상자 문서 청크와 색인으로 이어지는 흐름도|형식마다 남는 구조 정보가 다르지만 기록의 칸 이름은 세 형식이 모두 같습니다}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 봅니다. 맨 위 초록 상자가 이 절이 읽는 견본 세 개입니다. 그 아래 파란 상자가 형식마다 다르게 하는 읽기입니다.</p>
+<p>거기서 길이 세 갈래로 갈라집니다. 노란 상자 세 개가 노트북 3~6절 출력입니다. 형식 DOCX에서는 <code>문단 수: 2</code>와 <code>표 목록의 표 수: 1</code>을 얻고, 형식 HTML에서는 <code>h1 태그 수: 1</code>·<code>p 태그 수: 1</code>·<code>table 태그 수: 0</code>을 얻습니다. 형식 CSV에서는 <code>칸 이름: ['상품', '보관']</code>과 <code>행 수: 2</code>를 얻습니다.</p>
+<p>세 갈래가 다시 한 초록 상자로 모입니다. 칸 이름은 세 형식이 모두 같습니다. 다만 <code>page</code> 칸이 없고 CSV에만 <code>row</code> 칸이 하나 더 붙습니다. 맨 아래 회색 상자는 05~08절에서 할 일이고 이 절에서는 실행하지 않습니다.</p>
+
+<h3>형식마다 무엇이 남는가</h3>
+<p>아래 표는 노트북 3~8절 출력을 형식별로 모은 것입니다. 둘째 열이 글에 붙어 있는 구조 정보이고, 셋째 열이 표가 들어 있는 자리입니다.</p>
+<table>
+<tr><th>형식</th><th>글에 붙은 구조 정보</th><th>표가 들어 있는 자리</th><th><code>parser</code> 칸에 적는 이름</th></tr>
+<tr><td>DOCX</td><td>문단마다 꾸밈 이름(<code>Heading 1</code>·<code>Normal</code>)</td><td>문단 목록과 따로 있는 표 목록(<code>표 목록의 표 수: 1</code>)</td><td><code>python-docx</code></td></tr>
+<tr><td>HTML</td><td>글마다 태그 이름(<code>h1</code>·<code>p</code>)</td><td><code>table</code> 태그로 찾음(이 견본은 <code>0개</code>)</td><td><code>beautifulsoup</code></td></tr>
+<tr><td>CSV</td><td>첫 줄이 칸 이름(<code>['상품', '보관']</code>)</td><td>파일 전체가 표 하나</td><td><code>csv.DictReader</code></td></tr>
+</table>
+<p>세 형식의 구조 정보는 모두 사람이 문서를 만들 때 정한 것입니다. 도구가 글자 자리를 보고 추정한 값이 아닙니다. 그래서 제목을 기준으로 글을 나누거나 값 앞에 칸 이름을 붙이는 일을 바로 할 수 있습니다.</p>
+<p>다만 세 형식 가운데 어느 쪽이 읽기 쉽다고 정하지는 않습니다. 이번에 읽은 것은 문단 두 개와 두 행짜리 표가 든 아주 작은 견본 세 건입니다. 표가 여러 개인 DOCX나 메뉴가 많은 HTML에서는 이번과 같은 결과가 나오는지 실행하지 않았습니다.</p>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>내려받은 실습 폴더에서 노트북을 열고 위에서 아래로 실행합니다. API 키는 필요하지 않고 인터넷 서비스에 요청을 한 번도 보내지 않습니다. 먼저 견본 세 개를 찾고, 형식마다 구조 정보를 출력합니다.</p>
+<p>이 페이지의 출력은 2026-09-18에 실행한 결과입니다. 모델을 부르지 않으므로 같은 판에서 다시 실행해도 같은 값이 나왔습니다. 새 커널로 두 번 실행해 스물세 개 코드 셀의 출력이 모두 같은 것을 확인했습니다.</p>
+<p>강의 시간에는 노트북 2~7절을 설명합니다. 견본 세 개 찾기, DOCX 문단과 표 목록, HTML 태그 고르기, CSV 칸 이름, 머리글 붙이기입니다. 8~9절 출처 기록과 값 바꿔 보기, 10~11절 Before·After는 함께 실행하고 실습 시간에 다시 읽습니다.</p>
+{{mermaid:03-2-표가-있는-자리|초록 상자 sample.docx에서 파란 상자 문단 목록 문단 2개와 파란 상자 표 목록 표 1개 2행 둘로 갈라지고 그 옆에 초록 상자 sample.html에서 파란 상자 table 태그 찾기 0개가 이어지며 다시 그 옆에 초록 상자 sample.csv에서 파란 상자 파일 전체가 표 칸 이름 줄 1 행 2가 이어지는 흐름도|DOCX는 표 목록에, HTML은 table 태그에, CSV는 파일 전체에 표가 들어 있습니다}}
+<p><strong>도식 읽기</strong> — 묶음 세 개를 왼쪽에서 오른쪽으로 봅니다. 초록 상자 세 개가 견본 파일이고, 그 아래 파란 상자가 표를 찾는 자리입니다.</p>
+<p>왼쪽 묶음만 파일 하나에서 목록 두 개로 갈라집니다. 노트북 3절이 문단 목록을, 4절이 표 목록을 엽니다. 두 목록은 겹치지 않습니다. 노트북 3절 출력 <code>문단 글:</code> 줄에는 표에만 있는 말 <code>추가 일수</code>가 없습니다.</p>
+<p>가운데 묶음의 파란 상자는 <code>table 태그 수: 0</code>입니다. 표를 찾는 이름은 있는데 이 견본에는 그 태그가 없습니다. 오른쪽 묶음은 파일 전체가 표여서 따로 찾을 것이 없습니다.</p>
+{{mermaid:03-3-쪽-없는-기록|왼쪽 줄기에 초록 상자 01과 02절 다섯 칸 기록 page 칸 있음에서 파란 상자 make_source_mark 함수 page 칸을 읽음을 거쳐 노란 상자 대괄호 E01 p.2로 아래로 이어지고 오른쪽 줄기에 초록 상자 03절 네 칸 기록 CSV만 row 칸 하나 더에서 파란 상자 make_unit_mark 함수 file_type과 row 칸을 읽음을 거쳐 노란 상자 대괄호 sample docx와 대괄호 sample csv row.2로 아래로 이어지는 흐름도|기록의 마지막 칸이 page인지 row인지에 따라 출처 표시의 모양이 달라집니다}}
+<p><strong>도식 읽기</strong> — 줄기 두 개를 왼쪽에서 오른쪽으로 봅니다. 줄기마다 위에서 아래로 읽습니다. 왼쪽 줄기가 01·02절 기록이고 오른쪽 줄기가 이 절 기록입니다.</p>
+<p>왼쪽 줄기의 파란 상자는 기록의 <code>page</code> 칸을 읽습니다. 그래서 노란 상자에 쪽 번호가 든 표시가 나옵니다. 오른쪽 줄기의 기록에는 그 칸이 없습니다. 노트북 8절 출력 <code>DOCX 기록에 page 칸이 있는가: False</code>가 그것입니다.</p>
+<p>오른쪽 줄기의 파란 상자는 <code>file_type</code> 칸과 <code>row</code> 칸을 읽습니다. 쪽 번호 자리에 파일 형식이 들어가서 노란 상자가 <code>[sample docx]</code> 모양이 됩니다. CSV 기록에는 <code>row</code> 칸이 있어서 <code>첫 행의 출처 표시: [sample csv row.2]</code>까지 나옵니다.</p>
+{{notebook:03-DOCX-HTML-CSV|example}}
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>DOCX 견본을 <code>Document</code> 하나로 담아 봅니다. 문단 목록만 읽어도 오류는 나지 않습니다. 문단 목록만으로도 글이 만들어지기 때문입니다.</p>
+<p>Before 셀은 문단 목록만 이어 붙입니다. After 셀은 표 목록의 행에 머리글을 붙여 함께 담습니다.</p>
+{{mermaid:03-4-빠진-표|위 칸 Before에 초록 상자 sample.docx와 파란 상자 문단 2개를 이어 붙임과 빨간 상자 본문 26자 표 머리글 추가 일수 없음이 왼쪽에서 오른쪽으로 있고 아래 칸 After에 같은 초록 상자와 파란 상자 표 행에 머리글을 붙여 더함과 노란 상자 본문 45자 표 머리글 추가 일수 있음이 같은 방향으로 있으며 맨 아래에 회색 상자 출처 기록은 두 실행이 같음 doc_id sample parser python-docx가 있는 비교 흐름도|같은 파일에서 Before는 26자를 얻고 After는 표 행을 더해 45자를 얻습니다}}
+<p><strong>도식 읽기</strong> — 위 칸이 Before, 아래 칸이 After이고 칸마다 왼쪽에서 오른쪽으로 봅니다. 두 칸의 초록 상자는 같은 파일입니다. 파란 상자에서 갈라집니다.</p>
+<p>위 칸의 빨간 상자가 Before 결과입니다. 출력 <code>본문 글자 수: 26</code>과 <code>출처 표시: [sample docx]</code>는 모양이 갖춰져 있습니다. 그런데 <code>표 머리글이 본문에 있는가: False</code>입니다. 노트북 4절에서 본 <code>['지역', '추가 일수']</code>와 <code>['제주', '2일']</code>이 모두 빠졌습니다.</p>
+<p>아래 칸의 노란 상자가 After 결과입니다. 출력 <code>본문 글자 수: 45</code>로 늘고 <code>표 머리글이 본문에 있는가: True</code>로 바뀌었습니다. 늘어난 줄은 <code>지역: 제주 / 추가 일수: 2일</code> 한 줄입니다.</p>
+<p>맨 아래 회색 상자는 두 실행에 모두 해당합니다. 출처 기록은 Before와 After가 같습니다. 문단과 표를 한 <code>Document</code>에 담았기 때문에 자리 칸을 따로 적지 않았습니다.</p>
+{{notebook:03-DOCX-HTML-CSV|failure}}
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>쪽이 없는 형식에 <code>page</code> 칸을 지어 넣지 않습니다.</strong> 쪽 번호가 있는 형식과 한 색인에 섞이면 어느 값이 원본의 실제 쪽인지 알 수 없습니다. 이 절은 <code>page</code> 칸을 빼고 CSV에만 <code>row</code> 칸을 더했습니다. 출처 표시도 <code>[sample csv row.2]</code>처럼 쪽 번호 자리를 바꿔 적습니다.</li>
+<li><strong>문서 이름이 겹치는지 봅니다.</strong> 노트북 8절 출력 <code>세 기록의 doc_id: sample sample sample</code>을 보세요. 세 파일의 이름 앞부분이 같아서 문서 이름이 하나로 겹쳤습니다. 실제 문서 모음에서는 폴더 이름이나 접두를 붙여 갈라 둡니다.</li>
+<li><strong>표를 어떻게 담을지 미리 정합니다.</strong> 이 절은 두 행짜리 표를 문단 글과 한 <code>Document</code>에 함께 담았습니다. 02절에서는 일곱 행짜리 표를 행마다 따로 담았습니다. 표가 커지면 행 묶음으로 나누고 머리글을 묶음마다 다시 붙입니다.</li>
+<li><strong>고를 태그 목록을 기록에 남깁니다.</strong> 노트북 9절에서 목록을 <code>['h1', 'p']</code>에서 <code>['p']</code>로 바꾸자 제목이 빠졌습니다. 어떤 태그를 골랐는지가 색인에 들어간 글의 범위를 정합니다. 견본에는 화면 표시를 정하는 <code>style</code> 태그도 하나 있었고, 고를 목록에 넣지 않아 그 글은 들어오지 않았습니다. 실습 폴더 모듈은 그 태그를 아예 지운 뒤 읽습니다.</li>
+<li><strong>CSV 첫 줄과 글자 인코딩을 확인합니다.</strong> 이 노트북은 <code>encoding="utf-8"</code>로 읽었습니다. 파일 앞에 눈에 보이지 않는 표시가 붙어 있으면 첫 칸 이름에 그 표시가 섞입니다. 실습 폴더 모듈은 그 표시를 걸러내는 <code>encoding="utf-8-sig"</code>를 씁니다. 구분자가 쉼표가 아닌 파일은 이번에 읽지 않았습니다.</li>
+<li><strong>검색에 쓰지 않을 칸은 빼 둡니다.</strong> 사람 이름·연락처 같은 칸이 있는 CSV는 그 칸을 로더에서 빼거나 권한이 있는 사람만 읽는 자리에 따로 둡니다. 이 견본에는 그런 칸이 없어서 모든 칸을 담았습니다.</li>
+<li><strong>실습 폴더 모듈에 같은 일을 하는 함수가 있습니다.</strong> <code>labs/part3/ch10-document-processing/document_processing.py</code>의 <code>load_docx()</code>는 문단과 표를 문서 순서대로 한 <code>Document</code>에 담고, 표 앞에 <code>[표 1]</code>이라는 줄을 넣습니다. 같은 파일의 <code>load_html()</code>은 태그를 골라내지 않고 <code>script</code>·<code>style</code>을 지운 전체 글을 담습니다. 같은 파일의 <code>load_csv()</code>는 행마다 <code>Document</code>를 만들고 <code>row</code> 칸을 2부터 적습니다. 이번 노트북에서는 그 모듈을 부르지 않았습니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul>
+<li>형식마다 남는 구조 정보가 다릅니다. 차례로 DOCX 문단의 꾸밈 이름, HTML 태그 이름, CSV 첫 줄의 칸 이름입니다.</li>
+<li>표가 들어 있는 자리도 다릅니다. 차례로 DOCX 표 목록, HTML <code>table</code> 태그, CSV 파일 전체입니다.</li>
+<li>02절 <code>make_row_text()</code>를 고치지 않고 DOCX 표의 행과 CSV의 행에 모두 썼습니다. 값 앞에 칸 이름이 붙은 한 줄 글을 세 개 얻었습니다.</li>
+<li>쪽이 없는 형식은 <code>page</code> 칸을 넣지 않고 네 칸만 적습니다. CSV만 <code>row</code> 칸을 하나 더하고, 출처 표시는 <code>[sample csv row.2]</code> 모양입니다.</li>
+<li>문단 목록만 읽으면 표가 통째로 빠졌습니다. 표 목록의 행을 더해 본문이 26자에서 45자가 되었습니다.</li>
+</ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 04절에서는 HWP와 HWPX를 가릅니다. 이름이 비슷하지만 파일 안의 모양이 다릅니다. HWPX 견본을 열어 압축 파일 속 XML을 직접 보고, 그때도 같은 칸 이름에 담습니다.</p>
+<p>05~08절은 이렇게 읽은 글을 문서 청크로 나누어 색인합니다. 이 절에서 정한 자리 칸은 그때도 함께 남습니다. 형식이 섞인 색인에서 검색 결과를 볼 때 그 칸이 있어야 원본을 되짚을 수 있습니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. [하] DOCX 문단 목록을 다 읽었는데도 표의 값이 없는 까닭은 무엇입니까?</p>
+<p class="quiz-a">표가 문단 목록이 아니라 표 목록에 들어 있기 때문입니다. 노트북 3절 <code>문단 수: 2</code>와 4절 <code>표 목록의 표 수: 1</code>은 서로 다른 목록을 센 값입니다. 문단 목록만 읽은 10절 본문은 26자였고 표 머리글이 없었습니다.</p>
+<p class="quiz-q">2. [중] 꾸밈 이름과 태그 이름은 무엇을 같게 해 줍니까?</p>
+<p class="quiz-a">글을 이어 붙이기 전에 어느 글이 제목인지 알 수 있게 해 줍니다. 노트북 3절 <code>['Heading 1', 'Normal']</code>과 5절 <code>첫 글의 태그 이름: h1</code>이 그 정보입니다. PDF에서는 글자와 자리만 있어서 이런 이름을 얻지 못했습니다.</p>
+<p class="quiz-q">3. [중] 02절 <code>make_row_text()</code>를 고치지 않고 CSV 행에도 쓸 수 있었던 까닭은 무엇입니까?</p>
+<p class="quiz-a">그 함수가 머리글 행과 값 행을 목록으로 받기 때문입니다. CSV 행은 딕셔너리라서 칸 이름 목록으로 값을 순서대로 꺼내 넣었습니다. 노트북 7절 출력 <code>CSV 첫 행: 상품: 쿠키 / 보관: 실온</code>이 그 결과입니다.</p>
+<p class="quiz-q">4. [상] 쪽이 없는 형식에 <code>page</code> 칸을 1로 적어 두면 어떤 문제가 생깁니까?</p>
+<p class="quiz-a">쪽 번호가 있는 형식과 한 색인에 섞였을 때 값의 뜻이 달라집니다. 형식 PDF의 <code>page</code> 칸은 원본의 실제 쪽인데 DOCX의 1은 지어낸 값입니다. 출처 표시도 <code>[E01 p.2]</code>와 같은 모양이 되어 되짚을 때 가릴 수 없습니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul>
+<li><div><a href="https://python-docx.readthedocs.io/en/latest/user/quickstart.html">python-docx 공식 문서 Quickstart</a></div>확인 2026-09-18 · 문단 목록과 표 목록이 따로 있는 구조 참고.</li>
+<li><div><a href="https://python-docx.readthedocs.io/en/latest/api/text.html">python-docx 공식 문서 Text-related objects</a></div>확인 2026-09-18 · <code>paragraph.style</code>과 꾸밈 이름 참고.</li>
+<li><div><a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/#find-all">Beautiful Soup 공식 문서 find_all()</a></div>확인 2026-09-18 · 태그 이름 목록으로 고르는 방법 참고.</li>
+<li><div><a href="https://docs.python.org/3/library/csv.html#csv.DictReader">Python 공식 문서 csv.DictReader</a></div>확인 2026-09-18 · 첫 줄을 칸 이름으로 삼는 동작과 <code>newline=''</code> 참고.</li>
+<li><div><a href="https://reference.langchain.com/python/langchain-core/documents">LangChain 공식 API Document</a></div>확인 2026-09-18 · <code>page_content</code>와 <code>metadata</code> 구조 참고.</li>
+<li>기준 버전은 Python 3.12.13과 python-docx 1.2.0입니다. 함께 쓰는 판은 beautifulsoup4 4.15.0과 langchain-core 1.6.2입니다. 판을 고정한 기준은 실습 폴더의 잠금 파일입니다.</li>
+</ul>

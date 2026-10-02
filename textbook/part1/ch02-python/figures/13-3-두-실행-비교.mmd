@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph RUN1["실행 1 · file_name = orders.txt"]
+    direction LR
+    a1["연필,3<br>노트,2"]:::tool --> a2["ValueError 없음"] --> a3["읽은 줄 수 2 · 주문 수 2<br>건너뛴 줄 []<br>합계 8000"]:::measure
+  end
+  subgraph RUN2["실행 2 · file_name = bad_orders.txt"]
+    direction LR
+    b1["연필,많이<br>노트,2"]:::tool --> b2["연필,많이에서 ValueError<br>invalid literal ... '많이'"]:::measure --> b3["읽은 줄 수 2 · 주문 수 1<br>건너뛴 줄 ['연필,많이']<br>합계 5000"]:::measure
+  end
+  RUN1 ~~~ RUN2

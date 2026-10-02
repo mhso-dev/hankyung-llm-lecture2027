@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  EX["developer 예시 답<br>떨어진 단추 사진을 받고<br>주문번호 B-203으로<br>교환 접수를 진행합니다"]:::tool
+  Q["user 고객 문의<br>텀블러 뚜껑 · A-1042"]:::tool
+  M["gpt-5.4-mini"]:::model
+  AN["관련 예시 조건 답<br>파손 사진을 받아<br>주문번호 A-1042로<br>교환 접수를 진행합니다"]:::measure
+  W1["따라온 것<br>다음 행동 줄 문장 모양"]:::measure
+  W2["섞이지 않은 것<br>B-203 · 단추 · 글꼴 False"]:::measure
+  EX --> M
+  Q --> M
+  M --> AN
+  AN --> W1
+  AN --> W2

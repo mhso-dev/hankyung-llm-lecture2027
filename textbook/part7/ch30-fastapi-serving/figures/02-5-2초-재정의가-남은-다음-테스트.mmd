@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  v["바꾼 값<br>재정의 함수 two_second_timeout<br>내놓는 초 2.0"]:::flow
+  subgraph out["다음 테스트의 출력"]
+    direction TB
+    res["상태 코드 200<br>재정의가 없을 때와 같음"]:::measure
+    keys["딕셔너리 키 수 1"]:::measure
+    res ~~~ keys
+  end
+  gist["상태 코드로는<br>남은 재정의가 보이지 않음"]
+  v --> out
+  out -.-> gist

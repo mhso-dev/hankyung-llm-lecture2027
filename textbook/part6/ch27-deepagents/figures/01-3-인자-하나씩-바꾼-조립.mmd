@@ -1,0 +1,19 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  subgraph nodes_added[노드가 더해진 설정]
+    direction TB
+    sk["skills<br>노드 SkillsMiddleware<br>.before_agent"]:::measure
+    me["memory<br>노드 MemoryMiddleware<br>.before_agent"]:::measure
+    ap["interrupt_on<br>노드 HumanInTheLoopMiddleware<br>.after_model"]:::measure
+    td["middleware에 TodoListMiddleware<br>노드 TodoListMiddleware<br>.after_model<br>도구 write_todos"]:::measure
+    sk ~~~ me ~~~ ap ~~~ td
+  end
+  subgraph tools_added[도구만 더해진 설정]
+    asy["비동기 서브에이전트 명세<br>도구 다섯<br>start_async_task 등"]:::measure
+  end
+  subgraph none_added[아무것도 더해지지 않은 설정]
+    pe["쓰기를 막는 권한 규칙<br>더해진 노드·도구 없음"]:::measure
+  end
+  nodes_added ~~~ tools_added
+  tools_added ~~~ none_added

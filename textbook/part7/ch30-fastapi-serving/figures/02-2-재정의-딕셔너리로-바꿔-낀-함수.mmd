@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  req["요청 GET /limit"]:::tool
+  ov["재정의 딕셔너리<br>키 get_limit<br>값 get_short_limit"]:::flow
+  lib["라이브러리가 딕셔너리에서<br>바꿔 낄 함수를 찾음"]
+  short["get_short_limit<br>내놓는 값 0.5"]:::flow
+  fn["처리 함수 show_limit<br>고치지 않음"]:::flow
+  ok["200 limit 0.5<br>get_limit 불린 기록 없음<br>딕셔너리 키 수 1"]:::measure
+  req --> lib
+  ov --> lib
+  lib --> short --> fn --> ok

@@ -1,0 +1,1220 @@
+{
+  "run_id": "20260909T164027150825Z-lexical-overlap",
+  "run_date": "2026-09-10",
+  "settings": {
+    "retriever": "word+bigrams-overlap",
+    "candidate_k": 50,
+    "report_k": 5
+  },
+  "metrics_policy": "unique-doc-macro-v1",
+  "metrics": {
+    "recall_at_5": 1.0,
+    "recall_at_50": 1.0,
+    "precision_at_5": 0.2,
+    "ndcg_at_5": 0.8928526173809582
+  },
+  "slices": {
+    "easy": {
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 0.9261859507142916
+    },
+    "hard": {
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 0.8261859507142916
+    },
+    "medium": {
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 0.9261859507142916
+    }
+  },
+  "split_slices": {
+    "dev": {
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 0.8928526173809582
+    }
+  },
+  "query_count": 15,
+  "excluded_query_count": 0,
+  "results": [
+    {
+      "qid": "Q001",
+      "tier": "easy",
+      "split": "dev",
+      "type": "single",
+      "gold_doc_ids": [
+        "E01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "E01",
+        "M04",
+        "H03",
+        "H06",
+        "E02",
+        "H04",
+        "E05",
+        "H01",
+        "M02",
+        "E04",
+        "E06",
+        "H02",
+        "M03",
+        "M05",
+        "E03",
+        "M01",
+        "M06"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 1.0,
+      "top_doc_ids": [
+        "E01",
+        "M04",
+        "H03",
+        "H06",
+        "E02"
+      ],
+      "top_results": [
+        {
+          "doc_id": "E01",
+          "page": 1,
+          "score": 0.9258200997725514,
+          "chunk_id": "E01:page1",
+          "rank": 1
+        },
+        {
+          "doc_id": "M04",
+          "page": 3,
+          "score": 0.2253347298566039,
+          "chunk_id": "M04:page3",
+          "rank": 2
+        },
+        {
+          "doc_id": "H03",
+          "page": 1,
+          "score": 0.18814417367671946,
+          "chunk_id": "H03:page1",
+          "rank": 3
+        },
+        {
+          "doc_id": "H06",
+          "page": 5,
+          "score": 0.1424940999758193,
+          "chunk_id": "H06:page5",
+          "rank": 4
+        },
+        {
+          "doc_id": "E02",
+          "page": 5,
+          "score": 0.1315903389919538,
+          "chunk_id": "E02:page5",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q002",
+      "tier": "easy",
+      "split": "dev",
+      "type": "single",
+      "gold_doc_ids": [
+        "E01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "E01",
+        "E06",
+        "E03",
+        "E02",
+        "M06",
+        "E05",
+        "H02",
+        "M01",
+        "H01",
+        "E04",
+        "H03",
+        "M05",
+        "M02",
+        "H06",
+        "M03",
+        "H04",
+        "M04"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 1.0,
+      "top_doc_ids": [
+        "E01",
+        "E06",
+        "E03",
+        "E02",
+        "M06"
+      ],
+      "top_results": [
+        {
+          "doc_id": "E01",
+          "page": 3,
+          "score": 0.4033755872716886,
+          "chunk_id": "E01:page3",
+          "rank": 1
+        },
+        {
+          "doc_id": "E06",
+          "page": 3,
+          "score": 0.37619206243122316,
+          "chunk_id": "E06:page3",
+          "rank": 2
+        },
+        {
+          "doc_id": "E03",
+          "page": 3,
+          "score": 0.32560857238158974,
+          "chunk_id": "E03:page3",
+          "rank": 3
+        },
+        {
+          "doc_id": "E02",
+          "page": 2,
+          "score": 0.24009801919951237,
+          "chunk_id": "E02:page2",
+          "rank": 4
+        },
+        {
+          "doc_id": "M06",
+          "page": 5,
+          "score": 0.22661687238014938,
+          "chunk_id": "M06:page5",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q003",
+      "tier": "easy",
+      "split": "dev",
+      "type": "single",
+      "gold_doc_ids": [
+        "E01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "E01",
+        "E02",
+        "E05",
+        "E06",
+        "M06",
+        "E04",
+        "E03",
+        "H02",
+        "M02",
+        "M05",
+        "M04",
+        "M01",
+        "H01",
+        "H03",
+        "M03",
+        "H06",
+        "H04"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 1.0,
+      "top_doc_ids": [
+        "E01",
+        "E02",
+        "E05",
+        "E06",
+        "M06"
+      ],
+      "top_results": [
+        {
+          "doc_id": "E01",
+          "page": 3,
+          "score": 0.33614632272640715,
+          "chunk_id": "E01:page3",
+          "rank": 1
+        },
+        {
+          "doc_id": "E02",
+          "page": 5,
+          "score": 0.3289758474798845,
+          "chunk_id": "E02:page5",
+          "rank": 2
+        },
+        {
+          "doc_id": "E05",
+          "page": 1,
+          "score": 0.24806946917841693,
+          "chunk_id": "E05:page1",
+          "rank": 3
+        },
+        {
+          "doc_id": "E06",
+          "page": 5,
+          "score": 0.240841525429544,
+          "chunk_id": "E06:page5",
+          "rank": 4
+        },
+        {
+          "doc_id": "M06",
+          "page": 5,
+          "score": 0.18884739365012448,
+          "chunk_id": "M06:page5",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q004",
+      "tier": "easy",
+      "split": "dev",
+      "type": "single",
+      "gold_doc_ids": [
+        "E01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "E02",
+        "E01",
+        "E06",
+        "M03",
+        "H04",
+        "E04",
+        "M04",
+        "E05",
+        "H01",
+        "M05",
+        "H03",
+        "E03",
+        "H02",
+        "H06",
+        "M01",
+        "M02",
+        "M06"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 0.6309297535714575,
+      "top_doc_ids": [
+        "E02",
+        "E01",
+        "E06",
+        "M03",
+        "H04"
+      ],
+      "top_results": [
+        {
+          "doc_id": "E02",
+          "page": 5,
+          "score": 0.39477101697586137,
+          "chunk_id": "E02:page5",
+          "rank": 1
+        },
+        {
+          "doc_id": "E01",
+          "page": 4,
+          "score": 0.27785148465887516,
+          "chunk_id": "E01:page4",
+          "rank": 2
+        },
+        {
+          "doc_id": "E06",
+          "page": 4,
+          "score": 0.20377068324339734,
+          "chunk_id": "E06:page4",
+          "rank": 3
+        },
+        {
+          "doc_id": "M03",
+          "page": 1,
+          "score": 0.10369516947304253,
+          "chunk_id": "M03:page1",
+          "rank": 4
+        },
+        {
+          "doc_id": "H04",
+          "page": 4,
+          "score": 0.07479575920067658,
+          "chunk_id": "H04:page4",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q005",
+      "tier": "easy",
+      "split": "dev",
+      "type": "single",
+      "gold_doc_ids": [
+        "E01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "E01",
+        "H01",
+        "H02",
+        "E05",
+        "M02",
+        "H04",
+        "M05",
+        "E02",
+        "E03",
+        "H06",
+        "M03",
+        "E06",
+        "M06",
+        "E04",
+        "H03",
+        "M04",
+        "M01"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 1.0,
+      "top_doc_ids": [
+        "E01",
+        "H01",
+        "H02",
+        "E05",
+        "M02"
+      ],
+      "top_results": [
+        {
+          "doc_id": "E01",
+          "page": 3,
+          "score": 0.4369902195443293,
+          "chunk_id": "E01:page3",
+          "rank": 1
+        },
+        {
+          "doc_id": "H01",
+          "page": 5,
+          "score": 0.29012942659282975,
+          "chunk_id": "H01:page5",
+          "rank": 2
+        },
+        {
+          "doc_id": "H02",
+          "page": 4,
+          "score": 0.2606233456578416,
+          "chunk_id": "H02:page4",
+          "rank": 3
+        },
+        {
+          "doc_id": "E05",
+          "page": 3,
+          "score": 0.25715142542972574,
+          "chunk_id": "E05:page3",
+          "rank": 4
+        },
+        {
+          "doc_id": "M02",
+          "page": 4,
+          "score": 0.2036532699906392,
+          "chunk_id": "M02:page4",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q037",
+      "tier": "medium",
+      "split": "dev",
+      "type": "table",
+      "gold_doc_ids": [
+        "M01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "M01",
+        "E03",
+        "E02",
+        "H01",
+        "E06",
+        "M02",
+        "H03",
+        "E05",
+        "E01",
+        "M06",
+        "M04",
+        "H04",
+        "H02",
+        "M05",
+        "E04",
+        "H06",
+        "M03"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 1.0,
+      "top_doc_ids": [
+        "M01",
+        "E03",
+        "E02",
+        "H01",
+        "E06"
+      ],
+      "top_results": [
+        {
+          "doc_id": "M01",
+          "page": 3,
+          "score": 0.8288624656799143,
+          "chunk_id": "M01:page3",
+          "rank": 1
+        },
+        {
+          "doc_id": "E03",
+          "page": 3,
+          "score": 0.3979660329108319,
+          "chunk_id": "E03:page3",
+          "rank": 2
+        },
+        {
+          "doc_id": "E02",
+          "page": 3,
+          "score": 0.2561166066426108,
+          "chunk_id": "E02:page3",
+          "rank": 3
+        },
+        {
+          "doc_id": "H01",
+          "page": 7,
+          "score": 0.24795272144153507,
+          "chunk_id": "H01:page7",
+          "rank": 4
+        },
+        {
+          "doc_id": "E06",
+          "page": 5,
+          "score": 0.240841525429544,
+          "chunk_id": "E06:page5",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q038",
+      "tier": "medium",
+      "split": "dev",
+      "type": "multi_doc",
+      "gold_doc_ids": [
+        "M01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "E03",
+        "M01",
+        "E05",
+        "E06",
+        "E01",
+        "E02",
+        "M02",
+        "H06",
+        "M05",
+        "M04",
+        "H04",
+        "H01",
+        "H03",
+        "M03",
+        "H02",
+        "M06",
+        "E04"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 0.6309297535714575,
+      "top_doc_ids": [
+        "E03",
+        "M01",
+        "E05",
+        "E06",
+        "E01"
+      ],
+      "top_results": [
+        {
+          "doc_id": "E03",
+          "page": 1,
+          "score": 1.420093893609386,
+          "chunk_id": "E03:page1",
+          "rank": 1
+        },
+        {
+          "doc_id": "M01",
+          "page": 2,
+          "score": 0.6835859270246633,
+          "chunk_id": "M01:page2",
+          "rank": 2
+        },
+        {
+          "doc_id": "E05",
+          "page": 2,
+          "score": 0.35555906726738895,
+          "chunk_id": "E05:page2",
+          "rank": 3
+        },
+        {
+          "doc_id": "E06",
+          "page": 2,
+          "score": 0.3167031776097682,
+          "chunk_id": "E06:page2",
+          "rank": 4
+        },
+        {
+          "doc_id": "E01",
+          "page": 4,
+          "score": 0.24312004907651577,
+          "chunk_id": "E01:page4",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q039",
+      "tier": "medium",
+      "split": "dev",
+      "type": "single",
+      "gold_doc_ids": [
+        "M01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "M01",
+        "E03",
+        "H01",
+        "E04",
+        "M04",
+        "E05",
+        "E06",
+        "M06",
+        "M05",
+        "E01",
+        "M02",
+        "E02",
+        "H04",
+        "H06",
+        "H02",
+        "M03",
+        "H03"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 1.0,
+      "top_doc_ids": [
+        "M01",
+        "E03",
+        "H01",
+        "E04",
+        "M04"
+      ],
+      "top_results": [
+        {
+          "doc_id": "M01",
+          "page": 3,
+          "score": 0.5405624776173353,
+          "chunk_id": "M01:page3",
+          "rank": 1
+        },
+        {
+          "doc_id": "E03",
+          "page": 3,
+          "score": 0.28942984211696865,
+          "chunk_id": "E03:page3",
+          "rank": 2
+        },
+        {
+          "doc_id": "H01",
+          "page": 7,
+          "score": 0.24795272144153507,
+          "chunk_id": "H01:page7",
+          "rank": 3
+        },
+        {
+          "doc_id": "E04",
+          "page": 4,
+          "score": 0.11721969977468454,
+          "chunk_id": "E04:page4",
+          "rank": 4
+        },
+        {
+          "doc_id": "M04",
+          "page": 3,
+          "score": 0.11266736492830196,
+          "chunk_id": "M04:page3",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q040",
+      "tier": "medium",
+      "split": "dev",
+      "type": "table",
+      "gold_doc_ids": [
+        "M01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "M01",
+        "E03",
+        "H01",
+        "E06",
+        "M04",
+        "H06",
+        "H04",
+        "M03",
+        "E01",
+        "M02",
+        "E02",
+        "E04",
+        "E05",
+        "H02",
+        "H03",
+        "M05",
+        "M06"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 1.0,
+      "top_doc_ids": [
+        "M01",
+        "E03",
+        "H01",
+        "E06",
+        "M04"
+      ],
+      "top_results": [
+        {
+          "doc_id": "M01",
+          "page": 2,
+          "score": 0.3759722598635648,
+          "chunk_id": "M01:page2",
+          "rank": 1
+        },
+        {
+          "doc_id": "E03",
+          "page": 1,
+          "score": 0.2581988897471611,
+          "chunk_id": "E03:page1",
+          "rank": 2
+        },
+        {
+          "doc_id": "H01",
+          "page": 7,
+          "score": 0.21253090409274436,
+          "chunk_id": "H01:page7",
+          "rank": 3
+        },
+        {
+          "doc_id": "E06",
+          "page": 2,
+          "score": 0.1583515888048841,
+          "chunk_id": "E06:page2",
+          "rank": 4
+        },
+        {
+          "doc_id": "M04",
+          "page": 2,
+          "score": 0.10107256807938136,
+          "chunk_id": "M04:page2",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q041",
+      "tier": "medium",
+      "split": "dev",
+      "type": "single",
+      "gold_doc_ids": [
+        "M01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "M01",
+        "H01",
+        "E03",
+        "E02",
+        "E04",
+        "E06",
+        "E01",
+        "H06",
+        "M02",
+        "H02",
+        "M05",
+        "M04",
+        "M06",
+        "E05",
+        "H03",
+        "H04",
+        "M03"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 1.0,
+      "top_doc_ids": [
+        "M01",
+        "H01",
+        "E03",
+        "E02",
+        "E04"
+      ],
+      "top_results": [
+        {
+          "doc_id": "M01",
+          "page": 4,
+          "score": 0.3806934938134405,
+          "chunk_id": "M01:page4",
+          "rank": 1
+        },
+        {
+          "doc_id": "H01",
+          "page": 1,
+          "score": 0.25997347344787264,
+          "chunk_id": "H01:page1",
+          "rank": 2
+        },
+        {
+          "doc_id": "E03",
+          "page": 1,
+          "score": 0.2581988897471611,
+          "chunk_id": "E03:page1",
+          "rank": 3
+        },
+        {
+          "doc_id": "E02",
+          "page": 5,
+          "score": 0.19738550848793068,
+          "chunk_id": "E02:page5",
+          "rank": 4
+        },
+        {
+          "doc_id": "E04",
+          "page": 3,
+          "score": 0.15075567228888181,
+          "chunk_id": "E04:page3",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q085",
+      "tier": "hard",
+      "split": "dev",
+      "type": "single",
+      "gold_doc_ids": [
+        "H01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "E06",
+        "M05",
+        "H01",
+        "E02",
+        "M06",
+        "E04",
+        "H03",
+        "H02",
+        "M02",
+        "E03",
+        "M01",
+        "E05",
+        "E01",
+        "H04",
+        "M04",
+        "M03",
+        "H06"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 0.5,
+      "top_doc_ids": [
+        "E06",
+        "M05",
+        "H01",
+        "E02",
+        "M06"
+      ],
+      "top_results": [
+        {
+          "doc_id": "E06",
+          "page": 1,
+          "score": 0.36380343755449945,
+          "chunk_id": "E06:page1",
+          "rank": 1
+        },
+        {
+          "doc_id": "M05",
+          "page": 1,
+          "score": 0.3216337604513384,
+          "chunk_id": "M05:page1",
+          "rank": 2
+        },
+        {
+          "doc_id": "H01",
+          "page": 3,
+          "score": 0.3086066999241838,
+          "chunk_id": "H01:page3",
+          "rank": 3
+        },
+        {
+          "doc_id": "E02",
+          "page": 5,
+          "score": 0.2631806779839076,
+          "chunk_id": "E02:page5",
+          "rank": 4
+        },
+        {
+          "doc_id": "M06",
+          "page": 3,
+          "score": 0.19215378456610457,
+          "chunk_id": "M06:page3",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q086",
+      "tier": "hard",
+      "split": "dev",
+      "type": "reasoning",
+      "gold_doc_ids": [
+        "H01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "H01",
+        "E06",
+        "M05",
+        "M02",
+        "H02",
+        "H04",
+        "M06",
+        "E02",
+        "H06",
+        "H03",
+        "E05",
+        "M01",
+        "E04",
+        "E03",
+        "M03",
+        "E01",
+        "M04"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 1.0,
+      "top_doc_ids": [
+        "H01",
+        "E06",
+        "M05",
+        "M02",
+        "H02"
+      ],
+      "top_results": [
+        {
+          "doc_id": "H01",
+          "page": 3,
+          "score": 0.46291004988627577,
+          "chunk_id": "H01:page3",
+          "rank": 1
+        },
+        {
+          "doc_id": "E06",
+          "page": 1,
+          "score": 0.36380343755449945,
+          "chunk_id": "E06:page1",
+          "rank": 2
+        },
+        {
+          "doc_id": "M05",
+          "page": 1,
+          "score": 0.3216337604513384,
+          "chunk_id": "M05:page1",
+          "rank": 3
+        },
+        {
+          "doc_id": "M02",
+          "page": 4,
+          "score": 0.23759548165574573,
+          "chunk_id": "M02:page4",
+          "rank": 4
+        },
+        {
+          "doc_id": "H02",
+          "page": 3,
+          "score": 0.20465780403866032,
+          "chunk_id": "H02:page3",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q087",
+      "tier": "hard",
+      "split": "dev",
+      "type": "temporal",
+      "gold_doc_ids": [
+        "H01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "E01",
+        "H01",
+        "E05",
+        "E04",
+        "M06",
+        "E06",
+        "M04",
+        "E02",
+        "M02",
+        "H04",
+        "M01",
+        "H06",
+        "H03",
+        "M05",
+        "M03",
+        "E03",
+        "H02"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 0.6309297535714575,
+      "top_doc_ids": [
+        "E01",
+        "H01",
+        "E05",
+        "E04",
+        "M06"
+      ],
+      "top_results": [
+        {
+          "doc_id": "E01",
+          "page": 1,
+          "score": 0.9258200997725514,
+          "chunk_id": "E01:page1",
+          "rank": 1
+        },
+        {
+          "doc_id": "H01",
+          "page": 7,
+          "score": 0.8855454337197681,
+          "chunk_id": "H01:page7",
+          "rank": 2
+        },
+        {
+          "doc_id": "E05",
+          "page": 1,
+          "score": 0.8682431421244593,
+          "chunk_id": "E05:page1",
+          "rank": 3
+        },
+        {
+          "doc_id": "E04",
+          "page": 1,
+          "score": 0.816496580927726,
+          "chunk_id": "E04:page1",
+          "rank": 4
+        },
+        {
+          "doc_id": "M06",
+          "page": 1,
+          "score": 0.7826237921249264,
+          "chunk_id": "M06:page1",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q088",
+      "tier": "hard",
+      "split": "dev",
+      "type": "single",
+      "gold_doc_ids": [
+        "H01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "H01",
+        "H02",
+        "M02",
+        "M06",
+        "E02",
+        "E06",
+        "M01",
+        "H04",
+        "E05",
+        "H06",
+        "M05",
+        "E03",
+        "E01",
+        "H03",
+        "E04",
+        "M03",
+        "M04"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 1.0,
+      "top_doc_ids": [
+        "H01",
+        "H02",
+        "M02",
+        "M06",
+        "E02"
+      ],
+      "top_results": [
+        {
+          "doc_id": "H01",
+          "page": 5,
+          "score": 0.6963106238227914,
+          "chunk_id": "H01:page5",
+          "rank": 1
+        },
+        {
+          "doc_id": "H02",
+          "page": 4,
+          "score": 0.2171861213815347,
+          "chunk_id": "H02:page4",
+          "rank": 2
+        },
+        {
+          "doc_id": "M02",
+          "page": 2,
+          "score": 0.1749278571353299,
+          "chunk_id": "M02:page2",
+          "rank": 3
+        },
+        {
+          "doc_id": "M06",
+          "page": 5,
+          "score": 0.1510779149200996,
+          "chunk_id": "M06:page5",
+          "rank": 4
+        },
+        {
+          "doc_id": "E02",
+          "page": 5,
+          "score": 0.1315903389919538,
+          "chunk_id": "E02:page5",
+          "rank": 5
+        }
+      ]
+    },
+    {
+      "qid": "Q089",
+      "tier": "hard",
+      "split": "dev",
+      "type": "multi_hop",
+      "gold_doc_ids": [
+        "H01"
+      ],
+      "candidate_count": 17,
+      "candidate_doc_ids": [
+        "H01",
+        "M01",
+        "H06",
+        "H02",
+        "E03",
+        "E04",
+        "E06",
+        "M02",
+        "M03",
+        "M06",
+        "E02",
+        "H04",
+        "H03",
+        "E05",
+        "E01",
+        "M04",
+        "M05"
+      ],
+      "returned_count": 5,
+      "recall_at_5": 1.0,
+      "recall_at_50": 1.0,
+      "precision_at_5": 0.2,
+      "ndcg_at_5": 1.0,
+      "top_doc_ids": [
+        "H01",
+        "M01",
+        "H06",
+        "H02",
+        "E03"
+      ],
+      "top_results": [
+        {
+          "doc_id": "H01",
+          "page": 4,
+          "score": 0.5249429719398293,
+          "chunk_id": "H01:page4",
+          "rank": 1
+        },
+        {
+          "doc_id": "M01",
+          "page": 6,
+          "score": 0.2656844656620286,
+          "chunk_id": "M01:page6",
+          "rank": 2
+        },
+        {
+          "doc_id": "H06",
+          "page": 2,
+          "score": 0.15609763526361567,
+          "chunk_id": "H06:page2",
+          "rank": 3
+        },
+        {
+          "doc_id": "H02",
+          "page": 2,
+          "score": 0.14834045293024462,
+          "chunk_id": "H02:page2",
+          "rank": 4
+        },
+        {
+          "doc_id": "E03",
+          "page": 4,
+          "score": 0.1433148727800037,
+          "chunk_id": "E03:page4",
+          "rank": 5
+        }
+      ]
+    }
+  ],
+  "requested_split": "dev",
+  "corpus_fingerprint": "c61270580514ad7a38bf62e529127bdd282b603094940141786c7ba5e34e9e99"
+}

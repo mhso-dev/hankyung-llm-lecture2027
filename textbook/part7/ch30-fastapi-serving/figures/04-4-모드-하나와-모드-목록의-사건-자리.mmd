@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  same["같은 그래프와 같은 입력<br>질문 반납 기한을 알려 주세요"]:::tool
+  subgraph r1["실행 1 · 모드 하나"]
+    direction TB
+    m1["stream_mode<br>custom"]:::flow
+    e1["사건 여섯<br>모두 dict 진행 값"]:::measure
+    m1 --> e1
+  end
+  subgraph r2["실행 2 · 모드 목록"]
+    direction TB
+    m2["stream_mode 목록<br>custom과 updates"]:::flow
+    e2["자리 1에서 6<br>custom 진행 값 여섯"]:::measure
+    e3["자리 7 updates<br>노드 answer가 낸 갱신"]:::measure
+    m2 --> e2 --> e3
+  end
+  jn["두 실행의<br>이어 붙인 글 같음 True"]:::measure
+  same --> r1
+  same --> r2
+  r1 --> jn
+  r2 --> jn

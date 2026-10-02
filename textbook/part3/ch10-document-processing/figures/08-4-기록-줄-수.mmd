@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  a1["Ch 9 06절이 남긴 기록 한 줄"]:::tool
+  b1["이 절이 남긴 기록 여섯 줄"]:::tool
+  a2["검색 개수 2 · 기록 줄 수 2"]:::measure
+  b2["검색 개수 5 · 기록 줄 수 5"]:::measure
+  gate["Ch 11 지표 계산<br>기록 줄 수가 5 이상일 때만 @5 지표"]
+  note1["두 기록 모두 질문 Q001 하나로 만들었습니다"]
+  a1 --> a2
+  b1 --> b2
+  a2 --> gate
+  b2 --> gate
+  gate -.-> note1

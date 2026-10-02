@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  fake["합성 답<br>출처 표시 E02 1쪽"]:::tool
+  narrow["이번 검색 결과로 만든<br>허용 목록 · 표시 하나"]:::measure
+  wider["손으로 넓힌<br>허용 목록 · 표시 둘"]:::measure
+  r1["목록 밖 표시 하나<br>답을 막음"]:::measure
+  r2["목록 밖 표시 없음<br>답이 통과"]:::measure
+  fake --> narrow
+  fake --> wider
+  narrow --> r1
+  wider --> r2

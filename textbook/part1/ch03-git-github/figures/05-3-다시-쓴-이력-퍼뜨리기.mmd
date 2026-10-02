@@ -1,0 +1,18 @@
+%%{init: {"sequence": {"messageAlign": "left", "actorMargin": 30}}}%%
+sequenceDiagram
+  participant C as 작성자 새 복제본<br>author-clean
+  participant T as 원격 team.git
+  participant R as 리뷰어 옛 복제본<br>reviewer
+  participant N as 리뷰어 새 복제본<br>reviewer-new
+  C->>T: git clone --no-local
+  T-->>C: 옛 이력 4커밋
+  C->>C: git filter-repo
+  Note over C: .env.local을 뺀 새 이력<br>더미 키 검색: 빈 출력
+  C->>T: git push --force origin main
+  T-->>C: (forced update)
+  R->>T: git fetch
+  T-->>R: (forced update)
+  Note over R: ahead 1, behind 2<br>더미 키 검색: 한 줄
+  N->>T: git clone
+  T-->>N: 새 이력
+  Note over N: 더미 키 검색: 빈 출력

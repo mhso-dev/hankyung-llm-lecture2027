@@ -1,0 +1,437 @@
+{
+  "chapter": "ch16-guardrails",
+  "label": "before",
+  "totals": {
+    "G1": 29,
+    "G2": 7,
+    "G3": 40,
+    "G4": 0,
+    "G5": 55,
+    "G6": 93,
+    "G7": 18
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-입출력-출처-검증",
+      "code_cells": 7,
+      "sentences": 85,
+      "counts": {
+        "G1": 5,
+        "G2": 2,
+        "G3": 6,
+        "G4": 0,
+        "G5": 9,
+        "G6": 14,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell8:list_comprehension",
+          "cell8:list_comprehension",
+          "cell8:generator_expression",
+          "cell8:multiple_defs_in_cell"
+        ],
+        "G2": [
+          "cell8:over_15_lines",
+          "cell10:nested_call_2plus"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing",
+          "cell10:first_line_comment_missing",
+          "cell14:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:의료 안내에서는 질문 길이와 금지 입력을 먼저 검사하고, 답변의 약품 코드가 검색된 공식 문서 목록에 있는지 후처리할 수 있습니다",
+          "long:**다른 상황에 적용.** 의료 안내에서는 질문 길이와 금지 입력을 먼저 검사하고, 답변의 약품 코드가 검색된 공식 문서 목록에 있는지 후처리할 수 있습니다",
+          "long:**이 셀의 코드 읽기.** `try` 안의 작업에서 ValueError as error 예외가 발생할 때만 대응하는 `except` 블록이 실행됩니다",
+          "english_start:RAG가 관련 문서를 찾았더라도 모델이 검색하지 않은 문서 ID를 답에 ",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`re.findall(pattern, text)`는 패턴과 일치한 항목 ",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "dense_paragraph:**이 셀의 코드 읽기.** `validate_query(query: str, max_chars: int ="
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-PII-마스킹",
+      "code_cells": 7,
+      "sentences": 82,
+      "counts": {
+        "G1": 1,
+        "G2": 0,
+        "G3": 7,
+        "G4": 0,
+        "G5": 9,
+        "G6": 12,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression"
+        ],
+        "G2": [],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing",
+          "cell10:first_line_comment_missing",
+          "cell12:first_line_comment_missing",
+          "cell14:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:탐지 함수는 합성 이메일과 전화번호 패턴의 시작·끝 위치를 찾고, 마스킹 함수는 실제 문자열을 [EMAIL]·[PHONE] 같은 종류 표지로 바꿉니다",
+          "long:이 결과는 준비한 패턴에서만 관찰한 것이며 띄어쓰기, 국제 전화번호, 오타, 이미지 속 정보까지 탐지한다고 일반화할 수 없습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 대화가 길어질 때 오래된 개인정보가 계속 입력에 남지 않도록 트리밍과 요약을 적용합니다",
+          "long:**호출 표기와 실행 시점.** 탐지 함수는 합성 이메일과 전화번호 패턴의 시작·끝 위치를 찾고, 마스킹 함수는 실제 문자열을 [EMAIL]·[PHONE] 같은 종류 표지로 바꿉니다",
+          "long:**다른 상황에 적용.** 주민등록번호가 필요 없는 문의 분류에서는 [ID_NUMBER] 표지만 남겨도 업무 유형을 판단할 수 있습니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-히스토리-트리밍과-요약",
+      "code_cells": 7,
+      "sentences": 85,
+      "counts": {
+        "G1": 8,
+        "G2": 1,
+        "G3": 7,
+        "G4": 0,
+        "G5": 9,
+        "G6": 10,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell10:list_comprehension",
+          "cell10:list_comprehension",
+          "cell10:list_comprehension",
+          "cell12:list_comprehension",
+          "cell12:generator_expression",
+          "cell12:list_comprehension",
+          "cell14:generator_expression"
+        ],
+        "G2": [
+          "cell10:one_letter_name:m"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing",
+          "cell10:first_line_comment_missing",
+          "cell12:first_line_comment_missing",
+          "cell14:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:문자 수가 줄어도 토큰 수가 같은 비율로 줄지는 않으며, 이 실험에서 요약 결합 문자가 늘어난 결과를 비용 절감으로 해석할 수 없습니다",
+          "long:요약 경로는 여섯 개를 네 개로 줄이고 오래된 ‘두 문장’ 선호를 남겼지만, 문자 수는 원본 168자보다 늘어 이 실행에서는 문자 수 절감을 관찰하지 못했습니다",
+          "long:문자 수가 줄어도 토큰 수가 같은 비율로 줄지는 않으며, 이 실험에서 요약 결합 문자가 늘어난 결과를 비용 절감으로 해석할 수 없습니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-호출-한도와-비용-상한",
+      "code_cells": 7,
+      "sentences": 82,
+      "counts": {
+        "G1": 2,
+        "G2": 1,
+        "G3": 6,
+        "G4": 0,
+        "G5": 9,
+        "G6": 12,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell8:class_def"
+        ],
+        "G2": [
+          "cell8:over_15_lines"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing",
+          "cell10:first_line_comment_missing",
+          "cell14:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:교통카드 잔액을 확인한 뒤 승차 금액을 먼저 확보하는 것처럼, 모델 호출도 실행 전에 최악 조건의 계획 비용이 남아 있는지 확인합니다",
+          "long:**다른 상황에 적용.** 한 질문이 재작성·평가·생성 세 호출을 요구한다면 시작 전에 세 호출의 최악 계획을 예약할 수 있습니다",
+          "long:**이 셀의 코드 읽기.** `try` 안의 작업에서 ValueError as error 예외가 발생할 때만 대응하는 `except` 블록이 실행됩니다",
+          "english_start:reserve()는 다음 호출의 예상 횟수와 계획 비용을 현재 사용량에 ",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`가 나타나는 줄에서 실제 그래프 또는 모델 실",
+          "english_start:`@dataclass`는 아래 클래스의 필드로 초기화 메서드 등을 만들어",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-재시도-폴백과-감사-로그",
+      "code_cells": 7,
+      "sentences": 105,
+      "counts": {
+        "G1": 5,
+        "G2": 2,
+        "G3": 7,
+        "G4": 0,
+        "G5": 9,
+        "G6": 27,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell8:lambda",
+          "cell8:multiple_defs_in_cell",
+          "cell10:multiple_defs_in_cell",
+          "cell12:dict_comprehension"
+        ],
+        "G2": [
+          "cell8:over_15_lines",
+          "cell14:nested_call_2plus"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing",
+          "cell10:first_line_comment_missing",
+          "cell12:first_line_comment_missing",
+          "cell14:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 절은 TimeoutError 재시도 횟수를 반환값과 화면에서 확인하고, 마지막 경로와 마스킹된 질문·질문 해시를 감사 사건으로 저장합니다",
+          "long:지수 백오프(exponential backoff)는 대기 시간을 차례로 늘리는 정책이지만 이 노트북에서는 대기 없이 즉시 재시도합니다",
+          "long:검색 서버의 503 오류는 짧게 재시도한 뒤 캐시된 안내로 전환할 수 있지만, 결제 승인 같은 쓰기 작업은 멱등성 키 없이 반복하면 중복 처리될 수 있습니다",
+          "long:첫 실험은 합성 시간 초과가 두 번 발생한 뒤 고정 문자열 ‘폴백 답’으로 전환했으며 경로는 fallback, 총 시도 표시는 3이었습니다",
+          "long:둘째 실험은 합성 영구 오류 한 번 뒤 실제 모델 폴백이 서비스 지연 안내를 반환했으며 경로는 fallback, 총 시도 표시는 2였습니다",
+          "long:감사 로그 한 건에는 이메일 원문 대신 마스킹된 질문과 고정 구분 문자열을 포함해 계산한 12자리 해시, 둘째 폴백 경로가 기록됐습니다",
+          "long:**호출 표기와 실행 시점.** `retry_with_fallback()`은 `TimeoutError`만 잡아 즉시 다시 호출하고, 모두 실패하면 고정 답이나 대체 모델 함수를 호출합니다",
+          "long:**다른 상황에 적용.** 검색 서버의 503 오류는 짧게 재시도한 뒤 캐시된 안내로 전환할 수 있지만, 결제 승인 같은 쓰기 작업은 멱등성 키 없이 반복하면 중복 처리될 수 있습니다",
+          "long:`safe_audit`는 event, 마스킹된 query, query_hash, detail만 JSONL 한 행으로 저장하며 오류 종류와 호출 횟수는 저장하지 않습니다",
+          "english_start:`retry_with_fallback()`은 `TimeoutError`만",
+          "english_start:`attempts`는 주 처리의 최대 호출 횟수이며, 세 번째 반환값은 ",
+          "english_start:`attempts`는 주 처리의 최대 호출 횟수이며, 세 번째 반환값은 ",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`attempts`는 주 처리의 최대 호출 횟수입니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`safe_audit`는 event, 마스킹된 query, query_h",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`write_text(text)`가 실행되는 줄에서 문자열이 실제 파일에",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "dense_paragraph:**이 셀의 코드 읽기.** `retry_with_fallback(primary: Callable[[], s",
+          "dense_paragraph:**이 셀의 코드 읽기.** `safe_audit(query: str, event: str, detail: "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "06-문서-프롬프트-인젝션과-통합",
+      "code_cells": 8,
+      "sentences": 104,
+      "counts": {
+        "G1": 8,
+        "G2": 1,
+        "G3": 7,
+        "G4": 0,
+        "G5": 10,
+        "G6": 18,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell10:list_comprehension",
+          "cell12:generator_expression",
+          "cell12:multiple_defs_in_cell",
+          "cell14:conditional_expression",
+          "cell16:list_comprehension",
+          "cell16:list_comprehension",
+          "cell16:conditional_expression"
+        ],
+        "G2": [
+          "cell12:over_15_lines"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing",
+          "cell10:first_line_comment_missing",
+          "cell12:first_line_comment_missing",
+          "cell16:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_quotes_no_output",
+          "cell16:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:보호 경로는 전화번호 마스킹→고정한 호출 수·계획값 assert→안전 문서의 패턴 검사→모델 호출→문자 그대로의 출처 태그 검사를 순서대로 적은 코드 블록입니다",
+          "long:이메일 요약 시스템에서도 본문 속 ‘이전 지시를 무시하라’는 문장을 데이터로 격리하고, 외부 전송 도구의 권한을 제한할 수 있습니다",
+          "long:다음 학습과 이어지는 지점 — Ch 22에서는 이 챕터의 PII, 요약, 호출 한도, 재시도 코드를 LangChain Middleware로 옮겨 코드량과 테스트 경계를 비교합니다",
+          "long:보호 경로는 전화번호 마스킹→고정한 호출 수·계획값 assert→안전 문서의 패턴 검사→모델 호출→문자 그대로의 출처 태그 검사를 순서대로 적은 코드 블록입니다",
+          "long:**다른 상황에 적용.** 이메일 요약 시스템에서도 본문 속 ‘이전 지시를 무시하라’는 문장을 데이터로 격리하고, 외부 전송 도구의 권한을 제한할 수 있습니다",
+          "english_start:RAG는 사용자가 직접 쓰지 않은 문서도 모델 입력에 넣습니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`invoke(input)`는 정의한 함수를 뒤에서 호출할 때 해당 함수",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`re.sub(pattern, replacement, text)`는 패턴",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

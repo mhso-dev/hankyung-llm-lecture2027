@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  sheet["빈 진단표<br>질문 아홉 · 답 칸 비어 있음"]:::tool
+  ans["이 절에서 정한 답과 근거<br>앞 절 노트북 출력"]:::tool
+  q["2번 예<br>단계를 미리 적을 수 있음<br>4번 아니오<br>모델도 같은 차례<br>흔들린 때도 있음<br>7번 아니오<br>워크플로우 실패 기록 없음"]:::measure
+  r["권장 구조<br>워크플로우 유지"]:::measure
+  ex["자료의 작성 예시도<br>워크플로우 유지"]
+  sheet --> ans
+  ans --> q
+  q --> r
+  r ~~~ ex

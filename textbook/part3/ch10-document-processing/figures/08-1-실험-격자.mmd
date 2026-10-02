@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph KEEP["같게 유지할 조건"]
+    direction TB
+    k1["말뭉치 PDF 18건 · 93쪽<br>질문 Q001 · 정답 문서 E01"]:::tool
+    k2["임베딩 모델 하나<br>차원 수 1536"]:::model
+    k3["검색 개수 5<br>목표 크기 400자"]:::flow
+    k1 ~~~ k2
+    k2 ~~~ k3
+  end
+  subgraph CHANGE["바꾸는 조건"]
+    direction TB
+    c1["나누기 방식 3가지<br>문자 · 재귀 · 토큰"]:::flow
+    c2["겹침 2가지<br>0자 · 100자"]:::flow
+    c1 ~~~ c2
+  end
+  grid["실험 설정 6개"]:::measure
+  KEEP --> grid
+  CHANGE --> grid

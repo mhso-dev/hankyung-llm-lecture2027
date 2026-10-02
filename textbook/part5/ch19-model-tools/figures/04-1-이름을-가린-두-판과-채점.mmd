@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  tools["두 판 도구 셋<br>공개 이름 같음<br>tool_a · tool_b · tool_c<br>설명만 다름"]
+  bind["bind_tools<br>도구 명세를 요청에 실음"]
+  qs["질문 셋<br>목록 · 한 건 · 건수"]:::tool
+  llm["gpt-5.4-mini<br>질문마다 세 번"]:::model
+  calls["도구 호출 목록<br>고른 도구 이름"]:::measure
+  grade["count_expected<br>기대 도구와 견줌"]:::flow
+  result["기대 도구를 고른 기록<br>짧은 판 6 · 자세한 판 9<br>모두 9번 가운데"]:::measure
+  tools --> bind
+  bind --> llm
+  qs --> llm
+  llm --> calls
+  calls --> grade
+  grade --> result

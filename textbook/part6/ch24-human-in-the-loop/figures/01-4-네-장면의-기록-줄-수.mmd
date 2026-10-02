@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  cm["네 장면 같음<br>주문 키 order-2401<br>노드가 두 번 시작"]
+  subgraph pre["묻기 전에 적는 노드"]
+    direction TB
+    x1["charge_then_ask<br>답 reject<br>결제 기록 두 줄"]:::fail
+    x2["receive_then_ask<br>답 reject<br>append_key_once로<br>접수 기록 한 줄"]:::measure
+    x1 ~~~ x2
+  end
+  subgraph post["묻고 나서 적는 노드"]
+    direction TB
+    y1["ask_then_charge<br>답 reject<br>기록 파일 없음"]:::measure
+    y2["ask_then_charge<br>답 approve<br>결제 기록 한 줄"]:::measure
+    y1 ~~~ y2
+  end
+  cm --> pre
+  cm --> post

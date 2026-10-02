@@ -1,0 +1,55 @@
+{
+  "archive": "part5-practice.zip",
+  "archive_sha256": "faf00151f902de75a951dc603f1a8f8bff56c0cf97602b8bc9732fe50d75ce15",
+  "lessons": [
+    {
+      "notebook": "labs/part5/ch17-agent-overview/notebooks/05-제품-트레이스와-자율성-진단.ipynb",
+      "code_sha256": "f0d0c100f6b2cabded11f20a5f0e9e366fd1124e2ea18744d1dbc0d0d8fdb7a4",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 29,
+        "code_sha256": "f0d0c100f6b2cabded11f20a5f0e9e366fd1124e2ea18744d1dbc0d0d8fdb7a4",
+        "executed_at": "2026-09-24T09:38:13.842785+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "6dbe23cb9870e66296f23a27c207f92118b759aa7b880398c53a6ac10e9bef81",
+        "python_version": "3.12.13",
+        "status": "passed"
+      },
+      "ran_from_notebooks_folder": true,
+      "output": "PASS 05-제품-트레이스와-자율성-진단.ipynb: 29 cells"
+    },
+    {
+      "notebook": "labs/part5/ch19-model-tools/notebooks/01-tool과-Ch4-함수-재사용.ipynb",
+      "code_sha256": "acf002bdaf50666fc54e51e064ff0279a2b6f8faf31c8773af1d6998b1e37d3f",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 21,
+        "code_sha256": "acf002bdaf50666fc54e51e064ff0279a2b6f8faf31c8773af1d6998b1e37d3f",
+        "executed_at": "2026-09-24T09:38:18.569138+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "ee3fb222e97fc404cbde4f009eb2a1ab7bc8e54367dc74528c058a2db30b3522",
+        "python_version": "3.12.13",
+        "status": "passed"
+      },
+      "ran_from_notebooks_folder": true,
+      "output": "PASS 01-tool과-Ch4-함수-재사용.ipynb: 21 cells"
+    },
+    {
+      "notebook": "labs/part5/ch20-tool-node/notebooks/03-recursion-limit과-명시적-종료.ipynb",
+      "code_sha256": "877f2261aa0a3d56f2e876f94dd49b91c1ab246f8ea5043ebf9dcea60d453f90",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 25,
+        "code_sha256": "877f2261aa0a3d56f2e876f94dd49b91c1ab246f8ea5043ebf9dcea60d453f90",
+        "executed_at": "2026-09-24T09:38:22.917674+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "d0339818f64c45375025096b29d7e474376aaa35924c4c49d84005195ae99afe",
+        "python_version": "3.12.13",
+        "status": "passed"
+      },
+      "ran_from_notebooks_folder": true,
+      "output": "PASS 03-recursion-limit과-명시적-종료.ipynb: 25 cells"
+    }
+  ],
+  "scope": "Three representative offline notebooks; no API key copied. Canonical notebooks separately contain full fresh-kernel evidence."
+}

@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q["질문 Q001<br>정답 문서 ID E01"]:::tool
+  top["앞 5자리<br>첫 자리가 E01"]:::measure
+  rule["자리마다 무게 매기기"]:::flow
+  weight["자리 1의 무게 1.0"]:::measure
+  norm["가장 좋은 무게 합<br>1.0으로 나누기"]:::flow
+  score["nDCG 자리 5: 1.0"]:::measure
+  q --> top
+  top --> rule
+  rule --> weight
+  weight --> norm
+  norm --> score

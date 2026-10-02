@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  INPUT["시스템 메시지 없는 입력 9개<br>99·441·1201조각"]:::measure
+  MODEL["언어 모델<br>Qwen2.5-0.5B-Instruct"]:::model
+  FIRST["6절 첫 실행<br>앞 3개 True<br>가운데 3개 False<br>끝 2개 True · 1개 False"]:::measure
+  SECOND["7절 한 번 더<br>같은 답 수 9 / 9"]:::measure
+  INPUT -- "generate()" --> MODEL
+  MODEL -- "첫 실행" --> FIRST
+  MODEL -- "같은 입력으로 다시" --> SECOND

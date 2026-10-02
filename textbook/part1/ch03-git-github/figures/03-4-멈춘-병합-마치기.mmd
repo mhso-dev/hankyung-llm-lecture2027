@@ -1,0 +1,8 @@
+flowchart TB
+  %% classes
+  S1["병합 멈춤 · UU message.txt<br>바로 커밋하면 거절<br>종료 코드: 128"]:::fail
+  S2["policy.txt 두 줄과 비교<br>두 조건을 담은<br>새 줄로 다시 쓰기"]:::flow
+  S3["git add message.txt<br>상태 M  message.txt"]:::measure
+  S4["git commit<br>merge: 출고 기준에 맞춰<br>충돌 해결"]:::tool
+  S5["git push, 리뷰어 git pull<br>충돌 표시가 남아 있음: False"]:::measure
+  S1 --> S2 --> S3 --> S4 --> S5

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  q["질문 Q002<br>정답 부모 E01"]:::tool
+  fuse["두 검색에 같은 몫으로 합치기"]:::flow
+  cand["후보 8개"]:::flow
+  top["보고 자리 5개<br>모두 E01 문서 청크"]:::flow
+  score["부모 문서 차례 한 건<br>문서 청크 정밀도 자리 5 = 1.0"]:::measure
+  ctx["앞 세 자리 본문<br>넣은 글 432자"]:::flow
+  answer["답 쓰기 한 번<br>gpt-5.4-mini"]:::model
+  q --> fuse
+  fuse --> cand
+  cand --> top
+  top --> score
+  top --> ctx
+  ctx --> answer

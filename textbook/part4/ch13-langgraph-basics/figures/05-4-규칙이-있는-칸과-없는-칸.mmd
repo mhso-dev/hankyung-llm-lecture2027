@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph withrule["결과 칸에 규칙을 적은 판"]
+    direction TB
+    c1["넣은 문서 수<br>셋"]:::tool
+    c2["결과 칸의 줄 수<br>셋"]:::measure
+    c1 ~~~ c2
+  end
+  subgraph norule["결과 칸에 규칙이 없는 판"]
+    direction TB
+    d1["넣은 문서 수<br>셋"]:::tool
+    d2["받은 오류<br>InvalidUpdateError"]:::measure
+    d1 ~~~ d2
+  end
+  same["문서 하나만 넣으면<br>두 판 모두 결과 줄 하나"]
+  withrule ~~~ norule
+  norule ~~~ same

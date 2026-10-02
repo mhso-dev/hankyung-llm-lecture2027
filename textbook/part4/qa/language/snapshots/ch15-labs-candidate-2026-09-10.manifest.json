@@ -1,0 +1,63 @@
+{
+  "snapshot": "ch15-labs-candidate-2026-09-10.txt",
+  "sha256": "07d5983c83fda89a99e15d43a14643b46d9aa2d09db265395082648e23c8ee99",
+  "files": 9,
+  "prose_characters": 2557,
+  "items": [
+    {
+      "path": "labs/part4/ch15-evaluation-advanced/README.md",
+      "source_sha256": "941e5d93b60442942a49fb48f13b2596c9a8813289d2f079a5a0f045208fb41a",
+      "prose_characters": 470,
+      "kind": "readme"
+    },
+    {
+      "path": "labs/part4/ch15-evaluation-advanced/notebooks/01-실패-로그와-평가-대상.ipynb",
+      "source_sha256": "0b3d1668e51c0584c2656b4302c00d0f7911cc844ac1e2134bdf84d7d20d0073",
+      "prose_characters": 279,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch15-evaluation-advanced/notebooks/02-4대-RAG-평가자.ipynb",
+      "source_sha256": "ed755a41b39af4f07e658ae5d69791eabe5af2f047bf75b37ca34bff90ca1e83",
+      "prose_characters": 283,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch15-evaluation-advanced/notebooks/03-judge-프롬프트와-편향.ipynb",
+      "source_sha256": "5696cc535955738bde4cc6a159a7495d0d050c8e7e929789f418dc00cbf509cf",
+      "prose_characters": 253,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch15-evaluation-advanced/notebooks/04-제시-라벨과-일치율.ipynb",
+      "source_sha256": "31bdbf93ff3028b22cfcdf51f2d8782da5fa8806b71f2d006fc318c2557811a4",
+      "prose_characters": 254,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch15-evaluation-advanced/notebooks/05-로컬-트레이싱과-지연.ipynb",
+      "source_sha256": "2d5ff8bc475b91f1496eb6c0c58eba3277b2707ae003c2f9370b21a23eed0939",
+      "prose_characters": 257,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch15-evaluation-advanced/notebooks/06-대화당-비용-백분위수.ipynb",
+      "source_sha256": "de7e5e8b77c65551282edbe0717a7167b2b030ed88f52c3d2e9f780d8195ed29",
+      "prose_characters": 248,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch15-evaluation-advanced/notebooks/07-회귀-스위트.ipynb",
+      "source_sha256": "a25197ad6beecea3e4139f790e5f5e6004d6764d6f6d3709e45a59e4de32194b",
+      "prose_characters": 252,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch15-evaluation-advanced/notebooks/08-Batch-평가-입력.ipynb",
+      "source_sha256": "c9304ef5b92dfd8d19c65c9dd1b0c7755df48305adadb225306f7c32b5cb7fb0",
+      "prose_characters": 261,
+      "kind": "notebook_markdown"
+    }
+  ],
+  "note": "Read-only extraction. Notebook code cells, outputs, metadata, and fenced README code blocks are excluded."
+}

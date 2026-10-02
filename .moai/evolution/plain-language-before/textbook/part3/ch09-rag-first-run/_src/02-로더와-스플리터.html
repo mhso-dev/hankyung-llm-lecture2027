@@ -1,0 +1,87 @@
+<!--meta: 강의 1h | 실습 2h | 코드 02-로더와-스플리터.ipynb | 새 용어 5 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul>
+<li>이 절을 마치면 제공된 합성 PDF 한 쪽을 <code>PdfReader</code>로 읽고 <code>Document</code>로 바꿀 수 있습니다.</li>
+<li>이 절을 마치면 <code>page_content</code>와 <code>metadata</code>의 타입·내용을 출력하고, 분할 후 출처 정보가 보존되는지 확인할 수 있습니다.</li>
+<li>이 절을 마치면 <code>chunk_overlap</code>을 유지하고 <code>chunk_size</code>만 500에서 300으로 바꾸어 청크 개수와 길이를 비교할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>왜 지금 이것인가</h2>
+<p>01절 도식의 첫 두 상자입니다. 검색 결과는 청크 단위로 반환되므로, 청크가 어떻게 생겼는지가 이후 모든 절의 품질을 정합니다. 청크에 답의 앞부분만 들어 있으면 모델은 반쪽 답을 하고, 청크에 <code>page</code>가 없으면 출처를 붙일 수 없습니다. 이 절에서 만든 <code>Document</code>의 모양이 그대로 Ch 10(문서 처리 심화), Ch 11(정답 문서 ID 비교), Ch 12(pgvector 스키마)까지 이어집니다.</p>
+<p>커리큘럼이 정한 범위도 확인합니다. 로더·청킹은 <strong>통합 패키지를 그대로 쓰는</strong> 영역입니다(직접 구현 대상은 Ch 12의 하이브리드 병합·리랭킹·질의 재작성입니다). 노트북은 <code>pypdf.PdfReader</code>로 PDF 한 쪽을 읽고, <code>langchain-text-splitters</code>로 나눕니다.</p>
+
+<h2 id="b3"><span class="no">3</span>선수 지식 되짚기</h2>
+<ul>
+<li><strong>Ch 2 자료구조·타입힌트</strong> — <code>list[Document]</code>, <code>dict</code> 기반 <code>metadata</code>, <code>pathlib.Path</code>를 그대로 씁니다.</li>
+<li><strong>Ch 4 문서 파싱 입문</strong> — 그때 다룬 <code>pypdf.PdfReader</code>와 <code>page.extract_text()</code>로 제공된 PDF 2쪽을 읽습니다.</li>
+<li><strong>Ch 5 토크나이저</strong> — "한국어는 토큰 효율이 낮다"를 실측했습니다. 이 절 끝에서 청크 하나로 다시 확인합니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+
+<h3>비유 — 책을 색인 카드로 옮기기</h3>
+<p>도서관 사서가 책 한 권을 색인 카드로 옮긴다고 생각해 보세요. 카드 한 장에는 글이 500자 정도 들어갑니다. 사서는 책을 앞에서부터 500자씩 베껴 쓰되, 문장이 카드 끝에서 잘리지 않도록 문단 경계에서 끊으려 합니다. 그리고 카드마다 구석에 "어느 책, 몇 쪽"을 적어 둡니다. 나중에 카드 한 장만 꺼내 봐도 원래 위치를 확인할 수 있어야 하기 때문입니다. 로더는 책을 쪽 단위로 펼치는 일, 스플리터는 카드에 옮겨 적는 일, <code>metadata</code>는 카드 구석의 메모입니다.</p>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>Document</dt>
+<dd>LangChain이 텍스트 조각을 다루는 기본 단위입니다. 본문 <code>page_content</code>(문자열)와 부가 정보 <code>metadata</code>(딕셔너리) 두 칸으로 이루어집니다. 로더의 출력, 스플리터의 입력·출력, 벡터스토어의 저장 단위로 사용됩니다.</dd>
+<dt>로더 (loader)</dt>
+<dd>파일을 읽어 <code>Document</code> 목록으로 바꾸는 함수입니다. PDF는 쪽마다 하나, HTML은 파일당 하나처럼 "무엇을 한 단위로 볼지"를 로더가 정합니다.</dd>
+<dt>스플리터 (text splitter)</dt>
+<dd><code>Document</code>를 정해진 크기의 청크로 나누는 도구입니다. <code>metadata</code>는 나뉜 청크마다 복사됩니다.</dd>
+<dt>청크 크기 (chunk_size) · 겹침 (chunk_overlap)</dt>
+<dd>청크 하나의 최대 길이와, 이웃 청크가 서로 공유하는 길이입니다. 이 절의 스플리터는 둘 다 <em>글자 수</em>로 셉니다.</dd>
+<dt>구분자 (separators)</dt>
+<dd>어디서 끊을지의 우선순위 목록입니다. <code>["\n\n", "\n", ". ", " ", ""]</code>이면 문단 경계 → 줄 경계 → 문장 경계 → 단어 경계 → 글자 순으로 시도합니다. "재귀적(Recursive)"이라는 이름은 큰 구분자로 잘라도 크기를 넘으면 다음 구분자로 다시 자른다는 뜻입니다.</dd>
+</dl>
+
+<h3>도식 — 청크 경계와 겹침</h3>
+<figure>
+{{svg:02-청크-경계}}
+<figcaption>E01 3쪽이 청크 #3·#4·#5로 나뉩니다. 노란 띠가 겹침 50자입니다. 연체 규정 문장이 #3의 끝과 #4의 앞에 모두 들어가므로 어느 쪽이 검색되어도 문장이 온전합니다.</figcaption>
+</figure>
+<p>겹침이 왜 필요한지는 이 그림 하나로 충분합니다. 겹침이 0이면 "3일 늦게 반납하면 반납일부터 3일"에서 끊기고, "동안 새로 대출할 수 없습니다"는 다음 청크로 넘어갑니다. 검색이 앞 청크만 가져오면 모델은 "3일 뒤에 무엇이 되는지"를 모른 채 답해야 합니다. 겹침은 이러한 절단을 줄입니다. 다만 겹친 만큼 청크 수가 늘고 임베딩 비용이 늘어납니다.</p>
+
+<h3>기본 노트북의 <code>Document</code></h3>
+<p>기본 노트북은 제공된 합성 PDF <code>E01.pdf</code>의 2쪽을 읽고 <code>Document</code>로 만듭니다. 본문과 <code>doc_id</code>·<code>page</code>·<code>source</code>가 한 객체에 함께 저장되는지 타입과 내용을 출력해 확인합니다.</p>
+
+<h3>기본 노트북의 스플리터</h3>
+<p><code>split_documents()</code>는 <code>Document</code> 목록을 받아 <code>Document</code> 목록을 반환합니다. 입력 쪽의 <code>metadata</code>가 출력 청크마다 그대로 복사되므로, 청크 하나만 보고도 "E01의 3쪽"임을 압니다. 여기에 <code>chunk_id</code>를 덧붙여 두면 03절에서 검색 결과를 읽을 때 "#4가 검색되었다"처럼 지칭할 수 있습니다.</p>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>제공된 합성 PDF <code>E01.pdf</code>의 2쪽을 직접 읽습니다. Document 타입·metadata·본문을 확인한 뒤 500/50으로 나누고, 겹침 50은 유지한 채 청크 크기만 300으로 바꾹니다.</p>
+{{notebook:02-로더와-스플리터|example}}
+<p class="look"><b>확인할 점</b> — 분할 결과도 Document 리스트이며 모든 청크에 <code>doc_id=E01</code>과 <code>page=2</code>가 남습니다. 청크 크기를 줄이면 반환 개수와 각 청크의 길이가 바뀌어야 합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before에서 <code>chunk_overlap=501</code>을 <code>chunk_size=500</code>보다 크게 설정해 <code>ValueError</code>를 확인합니다. After에서 겹침을 50으로 수정하고 같은 Document를 나누어 metadata 보존을 검사합니다.</p>
+{{notebook:02-로더와-스플리터|failure}}
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>글자 수 vs 토큰 수.</strong> <code>RecursiveCharacterTextSplitter</code>는 글자를 셉니다. 토큰으로 세고 싶으면 <code>RecursiveCharacterTextSplitter.from_tiktoken_encoder(...)</code>나 <code>TokenTextSplitter</code>를 씁니다(Ch 10). 어느 쪽이든 임베딩 모델의 입력 한도(text-embedding-3-small은 8,192개의 토큰)를 넘지 않게 합니다. 한국어 500자 ≈ 430개의 토큰이므로 이 절 설정은 한도에서 멉니다.</li>
+<li><strong>전체 PDF 확장의 로더 선택.</strong> 기본 노트북은 <code>pypdf</code>를 직접 사용해 제공된 PDF 한 쪽을 읽습니다. 공식 문서 예제의 <code>langchain-community</code> <code>PyPDFLoader</code>는 유지보수 종료가 예고되어 2026-09-07 기준으로 <code>import</code> 경고가 발생했습니다. Ch 10에서는 Docling·Upstage 같은 독립 파서를 비교합니다.</li>
+<li><strong>표는 이 로더로 깨집니다.</strong> <code>extract_text()</code>는 표를 셀 순서대로 줄바꿈해 늘어놓습니다. E05의 요금표, M01의 사양표가 그렇습니다. 이 절에서는 그대로 두고, Ch 10에서 "표가 깨지는 순간"을 파서별로 비교합니다.</li>
+<li><strong>HWP·HWPX.</strong> 한국 실무 문서의 상당수가 이 형식이고 <code>pypdf</code>로는 열 수 없습니다. Ch 10의 별도 절입니다.</li>
+<li><strong>표지·머리글.</strong> 표지 한 쪽이 45자짜리 <code>Document</code>가 됩니다. 검색에서 제목 단어와 겹치면 높은 점수를 받아 자리를 차지합니다(03절). 실무에서는 표지·목차 쪽을 로더 단계에서 거르거나, 청크 최소 길이를 두는 처리를 흔히 합니다. 이 챕터에서는 일부러 두어 그 현상을 보게 합니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul>
+<li><code>PdfReader</code>로 E01 PDF 2쪽의 문자열을 읽고 출처 metadata와 함께 Document로 만들었습니다.</li>
+<li><code>split_documents()</code>는 metadata를 복사한 청크 Document 리스트를 반환했습니다.</li>
+<li>겹침은 50으로 유지하고 청크 크기만 500에서 300으로 줄여 결과를 비교했습니다.</li>
+</ul><p><strong>다음 학습과 이어지는 지점</strong> — 03절에서 Document 리스트를 임베딩해 검색 가능한 벡터스토어로 바꾹니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. Document의 <code>page_content</code>와 <code>metadata</code>에는 각각 무엇을 저장했습니까?</p><p class="quiz-a"><code>page_content</code>에는 PDF 2쪽에서 추출한 본문을, <code>metadata</code>에는 문서 ID·쪽 번호·파일명을 저장했습니다.</p>
+<p class="quiz-q">2. <code>split_documents()</code>의 입력과 반환값은 무엇입니까?</p><p class="quiz-a">Document 리스트를 입력받아 더 작은 청크 Document 리스트를 반환합니다.</p>
+<p class="quiz-q">3. 500/50과 300/50 비교에서 변경한 값은 무엇입니까?</p><p class="quiz-a"><code>chunk_size</code>만 500에서 300으로 변경했고 <code>chunk_overlap=50</code>은 유지했습니다.</p>
+<p class="quiz-q">4. 겹침이 청크 크기보다 큰 Before가 실패한 이유는 무엇입니까?</p><p class="quiz-a">이웃 청크가 공유할 길이가 전체 청크 최대 길이보다 크면 분할 기준이 성립하지 않습니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul>
+<li>LangChain 「Build a RAG agent」 — Split 단계 <code>RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)</code> 예제 — <a href="https://docs.langchain.com/oss/python/langchain/rag">docs.langchain.com/oss/python/langchain/rag</a> · 확인 2026-09-07 · 이 절은 500/50으로 바꿔 씀.</li>
+<li>LangChain Text Splitters API — <a href="https://reference.langchain.com/python/langchain-text-splitters">reference.langchain.com/python/langchain-text-splitters</a> · 확인 2026-09-07 · langchain-text-splitters 1.1.2.</li>
+<li>pypdf 6.17.0 — <code>PdfReader</code>, <code>page.extract_text()</code>. 기본 노트북에서 제공된 PDF 2쪽을 읽을 때 사용합니다.</li>
+<li>langchain-community sunset 안내 — <code>import</code> 시 출력되는 DeprecationWarning의 링크(github.com/langchain-ai/langchain-community/issues/674) · 확인 2026-09-07.</li>
+</ul>

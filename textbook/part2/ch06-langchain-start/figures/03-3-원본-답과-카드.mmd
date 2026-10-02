@@ -1,0 +1,11 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant NB as 노트북 코드
+  participant RM as raw_model
+  participant SV as OpenAI 서버
+  NB->>RM: invoke(messages)
+  RM->>SV: 요청 1번 · JSON 스키마 양식 함께
+  SV-->>RM: JSON 모양 답 글
+  Note over RM: 답 글을 AIMessage에 담고<br>StudyCard로 읽음
+  RM-->>NB: 딕셔너리 키 세 개
+  Note over NB,RM: 8절 출력 · raw AIMessage<br>parsed StudyCard<br>parsing_error None

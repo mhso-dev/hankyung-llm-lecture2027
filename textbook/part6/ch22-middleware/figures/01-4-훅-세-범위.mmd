@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  subgraph E["실행마다 1번"]
+    direction LR
+    e1["before_agent"]:::flow ~~~ e2["after_agent"]:::flow
+  end
+  subgraph MO["모델 호출마다"]
+    direction LR
+    m1["before_model"]:::flow ~~~ m2(["wrap_model_call"]):::flow ~~~ m3["after_model"]:::flow
+  end
+  subgraph TO["도구 호출마다"]
+    direction LR
+    t1(["wrap_tool_call"]):::flow
+  end
+  E ~~~ MO ~~~ TO

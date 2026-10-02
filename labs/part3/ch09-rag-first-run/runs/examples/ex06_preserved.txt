@@ -1,0 +1,4 @@
+run_id=20260907T235802-baseline | chunk_size=500 | k=4 | embedding=text-embedding-3-small | prompt=strict | n_chunks=176 | latency_mean_s=1.79 | input_tokens=9588 | output_tokens=234 | est_cost_usd=0.0093
+run_id=20260907T235817-chunk1000 | chunk_size=1000 | k=4 | embedding=text-embedding-3-small | prompt=strict | n_chunks=107 | latency_mean_s=1.13 | input_tokens=15779 | output_tokens=347 | est_cost_usd=0.0145
+run_id=20260907T235827-k8 | chunk_size=500 | k=8 | embedding=text-embedding-3-small | prompt=strict | n_chunks=176 | latency_mean_s=1.14 | input_tokens=17366 | output_tokens=326 | est_cost_usd=0.0156
+run_id=20260907T235837-helpful | chunk_size=500 | k=4 | embedding=text-embedding-3-small | prompt=helpful | n_chunks=176 | latency_mean_s=1.16 | input_tokens=9164 | output_tokens=584 | est_cost_usd=0.0106

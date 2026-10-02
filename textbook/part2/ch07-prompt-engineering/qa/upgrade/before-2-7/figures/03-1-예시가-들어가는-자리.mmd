@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph LIST["관련 예시 목록 · 메시지 3개"]
+    direction LR
+    S["system<br>페르소나"]:::tool
+    subgraph DEV["developer 메시지 하나"]
+      direction TB
+      T["과업 명세 네 글<br>02절과 같음"]:::tool
+      E["예시 한 쌍<br>셔츠 단추 · B-203<br>예시 답 세 줄"]:::tool
+      T ~~~ E
+    end
+    U["user<br>고객 문의 · A-1042"]:::tool
+    S ~~~ DEV ~~~ U
+  end
+  M["gpt-5.4-mini<br>목록마다 요청 1번"]:::model
+  LIST --> M

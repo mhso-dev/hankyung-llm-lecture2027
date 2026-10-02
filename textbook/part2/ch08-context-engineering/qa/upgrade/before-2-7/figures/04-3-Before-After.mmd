@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 상담 메모만 넣은 목록"]
+    direction LR
+    b1["user 글<br>상담 메모<br>공휴일에는 문을 엽니다"]:::tool
+    b2["gpt-5.4-mini<br>출력 상한 120"]:::model
+    b3["답 공휴일에 문을 엶<br>출처 표시가<br>넣은 기록에 없음<br>빠진 지킬 말 2개"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 원문과 대조한 휴관 기록"]
+    direction LR
+    a1["user 글<br>휴관 기록 E01 p.2<br>법정 공휴일 · 화요일"]:::tool
+    a2["gpt-5.4-mini<br>출력 상한 120"]:::model
+    a3["답 법정 공휴일 · 화요일 휴관<br>출처 표시가<br>넣은 기록과 같음<br>빠진 지킬 말 없음"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  BEFORE ~~~ AFTER

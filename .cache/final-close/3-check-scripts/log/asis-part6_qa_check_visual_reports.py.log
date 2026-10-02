@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part6/qa/check_visual_reports.py", line 38, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part6/qa/check_visual_reports.py", line 26, in main
+    assert path.stat().st_mtime <= report_path.stat().st_mtime, f'Stale visual report: {path}'
+AssertionError: Stale visual report: /sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part6/ch21-create-agent/01-create-agent와-ReAct-루프.html

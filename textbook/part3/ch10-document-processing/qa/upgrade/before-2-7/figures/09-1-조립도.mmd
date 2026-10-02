@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  src["재료 문서 세 개<br>PDF 2쪽 905자 · DOCX 27자 · HWPX 15자"]:::tool
+  rec["기록 붙이기<br>make_source_record · make_unit_record"]:::flow
+  mark["출처 표시 고르기<br>pick_mark"]:::flow
+  run["run_index<br>재귀 200자 → 색인 → 검색 5줄"]:::flow
+  emb["text-embedding-3-small<br>실행마다 요청 2번"]:::model
+  out["print_hit_rows<br>순위 · 출처 표시 · 글자 수 · 점수"]:::measure
+  src --> rec
+  rec --> mark
+  mark --> run
+  run -- 문서 청크와 질문 --> emb
+  run --> out

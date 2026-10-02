@@ -1,0 +1,651 @@
+{
+  "date": "2026-09-10",
+  "files": [
+    {
+      "path": ".moai/context.md",
+      "sha256": "5489f5e64b7cdeb38be5dc70e0c2a356667052381e5684fa89611053e4040619"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/README.md",
+      "sha256": "f2f6df1c09933d5a1d6b12eda7e24284cb3b177a6bcb67cb68777a6f6d10f72d"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/data/autonomy-diagnostic-example.json",
+      "sha256": "9e3ad7da23f06b60d01f592cefb6a20ba88d6c7c5f1d57d46a6e164290229ece"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/data/autonomy-diagnostic-sheet.csv",
+      "sha256": "ede012f3c292f158faa07fc820858a586f518dd188f7f57fa9b994628207492e"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/data/product-trace-evidence.json",
+      "sha256": "639a6bfeea635dd449e84c6b8f687be742857d749039d6fe115e27b77dbac50d"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/data/public-trace-extracts.json",
+      "sha256": "e4bf158c7ca5e30d09c3c5f378e12391d5bbaaf8850171dfc4b7efae47760d8f"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/notebooks/01-워크플로우와-에이전트-경계.ipynb",
+      "sha256": "8495098c89d9e0f656f4e684052ac3ed1a36c4095797464650f02d95f6ec35df"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/notebooks/02-워크플로우가-충분한-조건.ipynb",
+      "sha256": "87db56645b7afed16892d30d17130f91b9e695c42ffb4635d129b0742c456cb5"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/notebooks/03-모델-도구-루프와-정지-조건.ipynb",
+      "sha256": "aaa4b960dd8d661488b0e7780ba585dcdf93c9513455aa3de762e1ced5a55603"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/notebooks/04-자율성의-대가.ipynb",
+      "sha256": "a84258b58aa0b859150190567cf6599206bffdf2d1d37712c468bd6630fc6f21"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/notebooks/05-제품-트레이스와-자율성-진단.ipynb",
+      "sha256": "7700280aae341215906d088e52830ddac18c574311e6b76a982becdf8c37fdad"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/pyproject.toml",
+      "sha256": "33d3766604f5af43b12ed6422238671839d477a889664ac0efd75b4c93bd86aa"
+    },
+    {
+      "path": "labs/part5/ch17-agent-overview/uv.lock",
+      "sha256": "85ba4e87024a74e2045129193b1ecddf617f8db18ca2ce1fa0ce6ab835f16347"
+    },
+    {
+      "path": "labs/part5/ch18-workflow-patterns/README.md",
+      "sha256": "ee2ed151056332f916d30786211fe8445571c838982b86caa9279602f54166d1"
+    },
+    {
+      "path": "labs/part5/ch18-workflow-patterns/notebooks/01-게이트가-있는-프롬프트-체이닝.ipynb",
+      "sha256": "939c2a6bcf133f3cf70085df7d7b51899899f88c954f2272dcdf18604c4bf4d3"
+    },
+    {
+      "path": "labs/part5/ch18-workflow-patterns/notebooks/02-실패를-처리하는-라우팅.ipynb",
+      "sha256": "4f51ff8ce816e949e162ae42104ba3199267649f6a3f552b44fee41e9567c24c"
+    },
+    {
+      "path": "labs/part5/ch18-workflow-patterns/notebooks/03-병렬-섹셔닝과-투표.ipynb",
+      "sha256": "9845a607c00713a39c0fbca6c4e2ae4a6d5946bff99cdde8e42938f8f130405c"
+    },
+    {
+      "path": "labs/part5/ch18-workflow-patterns/notebooks/04-동적-오케스트레이터와-워커.ipynb",
+      "sha256": "30f449a6439c4ceb6917a7f0c87730a0303e33a8180ba3e646c5b8f818ff6bdf"
+    },
+    {
+      "path": "labs/part5/ch18-workflow-patterns/notebooks/05-생성자-평가자와-정지-조건.ipynb",
+      "sha256": "9bdce3588eebe007b1bfc36b17e67761d07ec6e1fcb1724d42bbe2e686ac3112"
+    },
+    {
+      "path": "labs/part5/ch18-workflow-patterns/notebooks/06-같은-과제로-다섯-패턴-비교.ipynb",
+      "sha256": "7bd4a20d1bef95ffe656822837ccdef92b0f57d7ae042379b15a809af6fd4e0b"
+    },
+    {
+      "path": "labs/part5/ch18-workflow-patterns/pyproject.toml",
+      "sha256": "52941e305a8424951c434f7d6b469f8cd434b26770e6658d50f8af659ee6f4c8"
+    },
+    {
+      "path": "labs/part5/ch18-workflow-patterns/uv.lock",
+      "sha256": "7a52addfd34359afe2755250826180b7090a5e31433d85ddb1de8112a5fdabb5"
+    },
+    {
+      "path": "labs/part5/ch19-model-tools/README.md",
+      "sha256": "15d43c735a0c01e45f2fa32277bbad703cd4e7a14c626156137e995fb295f88d"
+    },
+    {
+      "path": "labs/part5/ch19-model-tools/data/orders.csv",
+      "sha256": "f2d1e3ee1e4f6d22fd1cf84b0c77242a66a344ae7925be74c5d471569366ef64"
+    },
+    {
+      "path": "labs/part5/ch19-model-tools/notebooks/01-tool과-Ch4-함수-재사용.ipynb",
+      "sha256": "9a8d2577ca3051d33afead19f8a0b40dd08ab763b21cd338c29b9ab1bc92af83"
+    },
+    {
+      "path": "labs/part5/ch19-model-tools/notebooks/02-Pydantic-인자와-반환-스키마.ipynb",
+      "sha256": "926e2f68e93a3ac045ccceaa6b45c9a37a693cc32c0c32603eb048925c3be5fd"
+    },
+    {
+      "path": "labs/part5/ch19-model-tools/notebooks/03-좋은-도구-이름과-설명.ipynb",
+      "sha256": "7dcb59634820e77a8850c19ae94a7a4651c079a16b4d4b39463a13217db63796"
+    },
+    {
+      "path": "labs/part5/ch19-model-tools/notebooks/04-설명만으로-도구-선택하기.ipynb",
+      "sha256": "69f742125b8406637b7be36c6b7636544dec71fd5e9c179781ec51fd289ba4bf"
+    },
+    {
+      "path": "labs/part5/ch19-model-tools/notebooks/05-bind_tools와-병렬-호출.ipynb",
+      "sha256": "c0888cbddf2c75e9ef86cd92f5c9687e48ea146c2a00620ca63f4f3c394a1b2b"
+    },
+    {
+      "path": "labs/part5/ch19-model-tools/notebooks/06-오류와-읽기-쓰기-분리.ipynb",
+      "sha256": "928d47cafd6488d6667f04abc99dc62672fb208e2c53830919c6ccf05f93ab4f"
+    },
+    {
+      "path": "labs/part5/ch19-model-tools/pyproject.toml",
+      "sha256": "3040b69762a4655d350436f06e9bc75df4ca9e4f5d70c1cb226f350ddd11c52a"
+    },
+    {
+      "path": "labs/part5/ch19-model-tools/uv.lock",
+      "sha256": "904f8752e2ad6bbba2f42523f5300d449ad012123b76d5383e27505043d12e57"
+    },
+    {
+      "path": "labs/part5/ch20-tool-node/README.md",
+      "sha256": "cea28211feff549a7e3d68822a8c2cd5d20822f61333d8374d9c4385baf7e0a8"
+    },
+    {
+      "path": "labs/part5/ch20-tool-node/notebooks/01-ToolNode와-tools-condition.ipynb",
+      "sha256": "7d3ff8a7264fdf9150f9f9b1ded979b5b3362595220632e92451566fdf397fae"
+    },
+    {
+      "path": "labs/part5/ch20-tool-node/notebooks/02-도구-오류와-ToolMessage.ipynb",
+      "sha256": "5f2b10e28d060d0accd8b39831fc34006c593795a18cb294313340c85db21f8e"
+    },
+    {
+      "path": "labs/part5/ch20-tool-node/notebooks/03-recursion-limit과-명시적-종료.ipynb",
+      "sha256": "5000d08bd6886c5b74da39242231d310a34353f2d246bf7359c631534f7ff5e8"
+    },
+    {
+      "path": "labs/part5/ch20-tool-node/notebooks/04-if-분기와-모델-선택-비교.ipynb",
+      "sha256": "75d84d37d761a97081434633902966aa282b558bcf647aed8460ff20631c8749"
+    },
+    {
+      "path": "labs/part5/ch20-tool-node/pyproject.toml",
+      "sha256": "269cd24babe4acf5511594cd598c6c96cdb767f17f284bf3e8e2d1b2deb41952"
+    },
+    {
+      "path": "labs/part5/ch20-tool-node/uv.lock",
+      "sha256": "2c585bfff5ff549b82998fc76d9a34801cc24a2accb797b8c5f80d0b905d21dc"
+    },
+    {
+      "path": "labs/part5/continuity-guide.md",
+      "sha256": "e0ddb44f1bd6747c9089a2381d96fbace204ba84804bcbb553c5414e9588da6a"
+    },
+    {
+      "path": "textbook/downloads/llm-practice.zip",
+      "sha256": "44ad6d4ee177c5232581a333e12b0bd62d1663bf2f7bc370381cbb865ce4c34d"
+    },
+    {
+      "path": "textbook/downloads/part5-practice.zip",
+      "sha256": "19acb30ad8fc7df1b57555d9b3a8c3e4178b8cbcf98e15e670a4e44f547c9227"
+    },
+    {
+      "path": "textbook/index.html",
+      "sha256": "be18103bc1b3ea5c3f09d9b16011532661c618fe1b4f64961b8c8b928b4ccbc6"
+    },
+    {
+      "path": "textbook/part5/_src/index.html",
+      "sha256": "160d152361fffe749fb8954644a5ce4d843e7cfdf978cfa5777b3c8c74eb794a"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/01-워크플로우와-에이전트-경계.html",
+      "sha256": "7c3a1f34ff93749a2fbcdd4629edbe91c7f4afbad6af6e12ffd0d37d08b2dd61"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/02-워크플로우가-충분한-조건.html",
+      "sha256": "8d0fe4c97915ffd4cf65f91252ef768d8bfca9a0666cfe38cf4dfdac6d435eec"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/03-모델-도구-루프와-정지-조건.html",
+      "sha256": "a9ddda3f5dc607ac90496d6a1824ebd1d15c9d35e24eb40dec857fb9283c48d6"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/04-자율성의-대가.html",
+      "sha256": "82f09104b6771d3c215ce65d150cc2fcb99da280fdd76aa4412003d7f4831991"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/05-제품-트레이스와-자율성-진단.html",
+      "sha256": "b2c50f1e67756c7d916d608cd60d9401dfb2ece90db60ebd78b34756b3d5d700"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/_src/01-워크플로우와-에이전트-경계.html",
+      "sha256": "f7b438760419a0fb82b5e0830cd336099d46276787da519d455fb621bca2aadb"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/_src/02-워크플로우가-충분한-조건.html",
+      "sha256": "d782b572bdf377d19714d223ec70c9d51c62808ca920a469fe9721795d32319d"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/_src/03-모델-도구-루프와-정지-조건.html",
+      "sha256": "e1d4f45c5a381bf424d69576bd1ee0e925f6d2ea2e92c2a886b86594860a107c"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/_src/04-자율성의-대가.html",
+      "sha256": "e9fb8407ab60f8d2bb3b7a844812d6d276ea7bbdd446e6f8401fe0e40d9f6917"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/_src/05-제품-트레이스와-자율성-진단.html",
+      "sha256": "6de7b8a3cd8e6d8cf4c5281c95a49cdec5c229dcfa2ff672d14594d076940ae0"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/chapter.json",
+      "sha256": "9cf652995957bf722f75a0acc0c0ddc7a5efdcf7e5d47cf745bd5d0eb52c36e4"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/figures/01-흐름.excalidraw",
+      "sha256": "0d0a88d58d01cb9ca726a5dd946d153c2033018df71e5a6973eee60313bf6c55"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/figures/01-흐름.svg",
+      "sha256": "65ffff2bbcd88c9bd538214afad16b7e1ffadffc8746a83a703938a262517d22"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/figures/02-흐름.excalidraw",
+      "sha256": "34086a945e986f2eb21418c83aa2accffaeb1d87d3dbf7096a7affd62716f00b"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/figures/02-흐름.svg",
+      "sha256": "36c91ae89a3afac5798b31109313e9273ae1eb33c29eaf64299ea4b12f46c460"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/figures/03-흐름.excalidraw",
+      "sha256": "aec2b4cbd0f0baad8548e1636b94ab7ce3c4e465bfe008170941aa38ec0d5ab5"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/figures/03-흐름.svg",
+      "sha256": "506f049241d47a6d8452a9342d81f297c3c0ed9660302154823f904a3e93c45f"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/figures/04-흐름.excalidraw",
+      "sha256": "7f50e6bcd2ec60d89d45360308f242b2398fa756129799b8d9421e040a430d3d"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/figures/04-흐름.svg",
+      "sha256": "21cc6ce1cd94736c62666bef497477571c92ad0a3dac46c72b3bed7cb72078f8"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/figures/05-흐름.excalidraw",
+      "sha256": "d681e6cc8671f264bca02cef68d85a03ca9fb96130144f1ba133c90012386f67"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/figures/05-흐름.svg",
+      "sha256": "1802e37eb0e2d5e4bcb03e0cef577f9927ad569db971382e870937d867ade1ef"
+    },
+    {
+      "path": "textbook/part5/ch17-agent-overview/index.html",
+      "sha256": "942349c7a60f234d4d5a06319301c593b8e26d91508b7572ecd2cad6f3a2faff"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/01-게이트가-있는-프롬프트-체이닝.html",
+      "sha256": "b784e6d102c947dba2b7471ed55feccfb9435858d21e9bc7cf26e06b3c2cc0c6"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/02-실패를-처리하는-라우팅.html",
+      "sha256": "eba16b094fcf61dedd8b6fa62db3bc0831ba1629247a3fd96f69e454033d68df"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/03-병렬-섹셔닝과-투표.html",
+      "sha256": "8acca75ecff6e63ad81f53998d495da26c5f5479ee32f18188dc1f8433410392"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/04-동적-오케스트레이터와-워커.html",
+      "sha256": "bbde15254cc910ee706d0f0c5fa3d912f4e212e90628ecafc7d5ebf12a220d6a"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/05-생성자-평가자와-정지-조건.html",
+      "sha256": "451bed4a5c4eeb6077521e446c79dba014de71f33873534d9bff6a39e46bfd05"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/06-같은-과제로-다섯-패턴-비교.html",
+      "sha256": "384fa18180ef89394032091e68e205c79bc7f7d46d11ab1ba73658873d0dae90"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/_src/01-게이트가-있는-프롬프트-체이닝.html",
+      "sha256": "659523b009819a9bf5d8ae3c8cd4dd037effdbfa233cd7b842afa3bec32a76cf"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/_src/02-실패를-처리하는-라우팅.html",
+      "sha256": "7c7bc26acc31b61cd607a541ec7a6c043364cf34119a7da75a8de6de4cc0cb7d"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/_src/03-병렬-섹셔닝과-투표.html",
+      "sha256": "c51bbc1d66c5b2d9ae14c7b6d793bb50cee005957def70d0122e219ed40be767"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/_src/04-동적-오케스트레이터와-워커.html",
+      "sha256": "33703937c3874f858697d49bff0de84eb68a39ed4781678e67ecec0d0435d8a5"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/_src/05-생성자-평가자와-정지-조건.html",
+      "sha256": "f6f1abe7b3aec3b0bb95389213241161439efb3a5873753599a2a7392285a103"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/_src/06-같은-과제로-다섯-패턴-비교.html",
+      "sha256": "78e12b25ac4280d8218fc719b69a6d145ad91b7a87b689205a8fa0646238b054"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/chapter.json",
+      "sha256": "0af24931737f1e2a22d2a4d55d82ac2dc24146a9d4506258c415489cdf191e80"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/01-흐름.excalidraw",
+      "sha256": "3b32314a35f0a48f249196d4f2fa3a5e9ec3252d1eb4a6ea9df2c6b115cae87f"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/01-흐름.svg",
+      "sha256": "7704c8aed4f34e3fd67b62a34765bc5f4ed619b9319202c065fb703bfe0158c7"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/02-흐름.excalidraw",
+      "sha256": "96ef2d6f7d131ac85a33d7948645ccd0aa58b584d27e66b6437023f9b117b8a8"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/02-흐름.svg",
+      "sha256": "849d211946fdbc633abae2be29f368983af2244980f837a4c3435c2ecef25c8d"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/03-흐름.excalidraw",
+      "sha256": "0da198f5dc3808d3e2ebd2890e63e7b729f59f23db7d648c1d264dc7b85e9756"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/03-흐름.svg",
+      "sha256": "87d835ef65a61b2083765e7afb799364aea9f02944025339fbf84346306fba58"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/04-흐름.excalidraw",
+      "sha256": "bbf6dadf79b5390c50e03b342987ccb54a0f673c7ced14b759b4759b611c0dd0"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/04-흐름.svg",
+      "sha256": "3f30f2ab9f3e1a5b34523a29dbceaa92e4dac413ca519e8c3f1dd4d6c8604d16"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/05-흐름.excalidraw",
+      "sha256": "948f2df62b2c7cae99c5d9fa157cba80c03e779aa8d81243613965f080c3e196"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/05-흐름.svg",
+      "sha256": "3a61c83eb6e62d779a6cedebf4c157deccc7570a5f877717076dbb98abca3ba9"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/06-흐름.excalidraw",
+      "sha256": "682f471e5001861e4cb430728462c3759acaab8ec4b5f1908bfb9f00a92dba99"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/figures/06-흐름.svg",
+      "sha256": "49982ad9029e0dd5dbb8b949b23b05d7edf4bff8462adb524edf2d0292f51019"
+    },
+    {
+      "path": "textbook/part5/ch18-workflow-patterns/index.html",
+      "sha256": "d9d18233299e8ef75a454c9862a69b6d2d163d398596d39cc28598267bbf6d6f"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/01-tool과-Ch4-함수-재사용.html",
+      "sha256": "ea883b2f28eb2cc6392bea89a10f759d1dcf90d7d3b8ba95469d93cd08eb1a39"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/02-Pydantic-인자와-반환-스키마.html",
+      "sha256": "e30b08573a06b041eae4087a429b808e549b16ee67538eca618316ac9eb2fce9"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/03-좋은-도구-이름과-설명.html",
+      "sha256": "83b44c923ace5ba537db47a7d5410c988c18de23768ae686dd12d3ccb4315c78"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/04-설명만으로-도구-선택하기.html",
+      "sha256": "555f607018deae770d6d9784158d49949847b5ae56ee538d141f4e6930562f5c"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/05-bind_tools와-병렬-호출.html",
+      "sha256": "77c3bd20042205acd17e656d9542608f725e397c3d2c9ea0b6526c311d2ee48a"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/06-오류와-읽기-쓰기-분리.html",
+      "sha256": "05c4c625440817983b5119200f801112bbcf63030023ee89c0ffbe3c538e0f43"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/_src/01-tool과-Ch4-함수-재사용.html",
+      "sha256": "533e1dcba52fe30bbe55cbcf3dfdfadb8e9121cc81edb61cf2a764b1aec568f8"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/_src/02-Pydantic-인자와-반환-스키마.html",
+      "sha256": "9440aaf227929ce36e15677a7855de12188d019ff96155e91b01ba18472470c7"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/_src/03-좋은-도구-이름과-설명.html",
+      "sha256": "17567195ae0c2b140de8a1ce41ca4725b5cda3ef9f4903f1d3280643b8570b1d"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/_src/04-설명만으로-도구-선택하기.html",
+      "sha256": "d27a735475e05aed750841b020109fa8306ea7194f8df2033ad612913491a176"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/_src/05-bind_tools와-병렬-호출.html",
+      "sha256": "f975272e115d4905adc75144821974ceba87b0ddbe0bc257aed204e0513f54e0"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/_src/06-오류와-읽기-쓰기-분리.html",
+      "sha256": "92250515e81c0867328da864cbb8f63c3a8d712935cba6fe6b22caa0834ec133"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/chapter.json",
+      "sha256": "06823dbdea1b3a53d1cec9fe566425185940394ed024d97e51fceeb4ba7766d8"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/01-tool과-Ch4-함수-재사용-flow.excalidraw",
+      "sha256": "12ae2aaf54e0a86ea4a23b8c40cbdbe797e68e1b050783b1199324d6f79df8dc"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/01-tool과-Ch4-함수-재사용-flow.svg",
+      "sha256": "76c53d8d779563c349a62216f20be160fc376a07b78b6d81d3f059b7a45f03df"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/02-Pydantic-인자와-반환-스키마-flow.excalidraw",
+      "sha256": "fe6ca7c8cbc7a77c8eb7baedc4a6566ed339a70dad55492943172d45c7f0b888"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/02-Pydantic-인자와-반환-스키마-flow.svg",
+      "sha256": "0ef25d76018c2dde3c9e6c82f7fcef250e442b44d2f12b3c8ef37ce468ea50bc"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/03-좋은-도구-이름과-설명-flow.excalidraw",
+      "sha256": "d962894eca46cea4af164b4cb6b41b24acf19a13775e65bb61b9427e6ff0e3e7"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/03-좋은-도구-이름과-설명-flow.svg",
+      "sha256": "1bba73283a021158dd52ecaaba21b4cc6354adca08ac56793da183577cde2fc1"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/04-설명만으로-도구-선택하기-flow.excalidraw",
+      "sha256": "f3a13691c41d060799b552d34c5ceb1d68a5f52f435fb57aeab11674bb4e3be8"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/04-설명만으로-도구-선택하기-flow.svg",
+      "sha256": "94e68936d247909548a6ee862ea5d0d1c9a4998abda8b500f34ccd5931a2daff"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/05-bind_tools와-병렬-호출-flow.excalidraw",
+      "sha256": "e175654b433a66120e1fa50b3600a1010dcdfe77998067161de56ed755d9dbac"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/05-bind_tools와-병렬-호출-flow.svg",
+      "sha256": "26b7fdd86c34e3895fe2accf7615ade487e8194ec963264b54d694bf2ec3df29"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/06-오류와-읽기-쓰기-분리-flow.excalidraw",
+      "sha256": "ff12062c2e87c0ad0b6627a5838304ced1905bb7db5fd92fa780653c10e10a59"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/figures/06-오류와-읽기-쓰기-분리-flow.svg",
+      "sha256": "67a5e7acf9bf3db16c2cecc335dbf94167f1143eb09d7aed7206ca945bc90fb8"
+    },
+    {
+      "path": "textbook/part5/ch19-model-tools/index.html",
+      "sha256": "5ed9a293a7fefd4daea54390c9600fc7f8773b6274072e75b0924be56b3877a8"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/01-ToolNode와-tools-condition.html",
+      "sha256": "be55edd3c1d34029b6a412cdaeb5f3a4a75af770f80ee3d3c1560d23a3bc7b0a"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/02-도구-오류와-ToolMessage.html",
+      "sha256": "513434d0808bea95b4f2e6ee58b899addcf5147c6e93acd0aac66156c9f45183"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/03-recursion-limit과-명시적-종료.html",
+      "sha256": "e39749e4b3fd3e96ef9269c1d6ed1fd7c03553564df9eb828055e24ef3f90d47"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/04-if-분기와-모델-선택-비교.html",
+      "sha256": "45d1c4af7170444b5503028be186ed550aca130debfd1cca64f8ec939cca2ba2"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/_src/01-ToolNode와-tools-condition.html",
+      "sha256": "93823440ee71f3c4f9536f63825da0354816addb77ced249925029b8f1293737"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/_src/02-도구-오류와-ToolMessage.html",
+      "sha256": "b9a5b7f3ec6ca30e0e27331227d7653c7bb0f2d408632a254c9002c6533980b5"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/_src/03-recursion-limit과-명시적-종료.html",
+      "sha256": "ca6f5b974f9b202fe16a23f2b69bb9c1ac30bbe4a4d768eb46c00702249547bb"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/_src/04-if-분기와-모델-선택-비교.html",
+      "sha256": "086c85dc8e1719352e569ed0dcc047ccbb929a785e2c27383750ff6376e4431f"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/chapter.json",
+      "sha256": "b15774922c2b932c5e674156520c5c03d00462d4d924866774ad62b5d913d74e"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/figures/01-흐름.excalidraw",
+      "sha256": "e8664bebecc3d3a8606e1c5a5fbf93bbb750cfcb9edb0165c836337ef3d6e77e"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/figures/01-흐름.svg",
+      "sha256": "f51862cda45e5f3e88bc6ecd551b4547f53b25e6ea1225ce2085064caf928d51"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/figures/02-흐름.excalidraw",
+      "sha256": "2e316abbdf01aaa33f114f7719ed2957b618fb73b9fb4bd7c2f959431fbe709b"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/figures/02-흐름.svg",
+      "sha256": "e9b6754a16d7cfc5d6a3ede52ff9d1b927a1a496b780c64f7134822854b38ebd"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/figures/03-흐름.excalidraw",
+      "sha256": "c5a0f03834853b4bb12552902b1c4e15f10fcaaa4576b3f7cc29d4011ca17ce3"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/figures/03-흐름.svg",
+      "sha256": "5b9cac834fefe0c615d3e2e0ad78928d1873dfbaf6877bc30189640d362df6a8"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/figures/04-흐름.excalidraw",
+      "sha256": "3f083543fbf162959be555e41ebc4b2d94d1245b171cee5b3b60e843b5460d53"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/figures/04-흐름.svg",
+      "sha256": "2e9c7a1af84bbaf0c44ae56cf13b310339b388cb53693ff641ab45f305b0fc09"
+    },
+    {
+      "path": "textbook/part5/ch20-tool-node/index.html",
+      "sha256": "628a5471177c627d6668549022805f2fbe175e1e4f8e7bb572cb9ac5f95bbbad"
+    },
+    {
+      "path": "textbook/part5/index.html",
+      "sha256": "b24112d75e371cefc1a0a6687f08a5e45890cb0df1063bb61d6f6bddd5f1fcc7"
+    },
+    {
+      "path": "textbook/part5/practice-start.md",
+      "sha256": "5ca16b81221be4881ac4afe31d8584919b5321ccca210f4489bfdf566f6c96c3"
+    },
+    {
+      "path": "textbook/part5/public-files.json",
+      "sha256": "6997bf46735e5fe2c915918a1bd7c30b4e21e86a59bdbba4f9976f505e7d048b"
+    },
+    {
+      "path": "textbook/part5/qa/ch17-technical-review.md",
+      "sha256": "f392f345b1c2c998fbf74580740fd18d3fdd05968305f041645577c812b0e849"
+    },
+    {
+      "path": "textbook/part5/qa/ch18-technical-review.md",
+      "sha256": "be79af853c7284cfcb283f1ff2b0df9c29ae489b8b2a997b5d72c7f04425d2e1"
+    },
+    {
+      "path": "textbook/part5/qa/ch19-technical-review.md",
+      "sha256": "51b842feaf79a5f426d880be723963a49038b472646d82493e9eebebd93ff616"
+    },
+    {
+      "path": "textbook/part5/qa/ch20-technical-review.md",
+      "sha256": "37310f13936736d53173d81b046fb43d020ae79f535f025e8fc01182c187dff8"
+    },
+    {
+      "path": "textbook/part5/qa/common-technical-review.md",
+      "sha256": "ebc2330b16e359a79672d423aa8f2a993ec7aca0b778fc2c41d7a527ae4f4587"
+    },
+    {
+      "path": "textbook/part5/qa/independent-meaning-review.md",
+      "sha256": "c0d0a533a3680549187b9f025f62cbf63476a2065d84bcacff17d53be942e2b0"
+    },
+    {
+      "path": "textbook/part5/qa/language/ch17-final.md",
+      "sha256": "5d8dd651be7dd55818db80ac59b36256954cd8494a68c92733754443ca7523c5"
+    },
+    {
+      "path": "textbook/part5/qa/language/ch18-final.json",
+      "sha256": "8809534c9f84f93147ac3474af1962fb08bceb0bd01aced21cbc840588ee0a8c"
+    },
+    {
+      "path": "textbook/part5/qa/language/ch18-final.md",
+      "sha256": "6480b91e8e93e294a5495e2f2be6bbac6b059041b01031da1042007eccbea360"
+    },
+    {
+      "path": "textbook/part5/qa/language/ch19-final.json",
+      "sha256": "8faaf6260d866956ab6acf4cc7ed5f654b6fdcb44cb5a3c5c5803a1353737cd2"
+    },
+    {
+      "path": "textbook/part5/qa/language/ch19-final.md",
+      "sha256": "220177309de902c034bcea23c49034098d491e914e26751f5dd204bad8c44805"
+    },
+    {
+      "path": "textbook/part5/qa/language/ch20-final.json",
+      "sha256": "e227ca4e91569498246a7af13f3bd584534428f1042f237434643366e2262585"
+    },
+    {
+      "path": "textbook/part5/qa/language/ch20-final.md",
+      "sha256": "907ca0aa4f6c71aea8759dfad5151d46468e0870fb9272157950a7ab336bda0e"
+    },
+    {
+      "path": "textbook/part5/qa/language/part5-guides-final.md",
+      "sha256": "561c5a653472a344d83577f05e3bd71d02432c0af628eb33a98c380d5bc80ef3"
+    },
+    {
+      "path": "textbook/part5/qa/verification.md",
+      "sha256": "274a11e6869a3d44f447c28420595649dae5915852820e84724681bd7d375690"
+    }
+  ],
+  "language_hashes_checked": 77,
+  "delivery": {
+    "html_pages": 27,
+    "local_links": 395,
+    "missing_links": [],
+    "lessons": 21,
+    "code_cells": 151,
+    "max_cell_lines": 24,
+    "quiz_questions": 86,
+    "quiz_errors": [],
+    "svg_figures": 21,
+    "excalidraw_sources": 21,
+    "exposed_credentials": [],
+    "archives": [
+      {
+        "file": "part5-practice.zip",
+        "entries": 59,
+        "part5_notebooks": 21,
+        "sha256": "19acb30ad8fc7df1b57555d9b3a8c3e4178b8cbcf98e15e670a4e44f547c9227"
+      },
+      {
+        "file": "llm-practice.zip",
+        "entries": 269,
+        "part5_notebooks": 21,
+        "sha256": "44ad6d4ee177c5232581a333e12b0bd62d1663bf2f7bc370381cbb865ce4c34d"
+      }
+    ]
+  },
+  "representative_extracted_execution_matches_final_archive": true,
+  "ch17_language_hashes_checked": 15
+}

@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  q["같은 에이전트 그래프<br>같은 시스템 메시지 글<br>바꾼 것은 질문 하나"]:::tool
+  subgraph c5["C05 질문 · 토요일 폐관 시각"]
+    direction TB
+    a1["검색 한 번<br>도구 메시지 하나<br>첫 줄 FAC-003<br>모델 요청 두 번<br>입력 토큰 638"]:::measure
+  end
+  subgraph pk["바꾼 값 · 주차 요금 질문"]
+    direction TB
+    b1["검색 두 번 · 다시 검색 한 번<br>도구 메시지 둘<br>첫 줄 FAC-002 · FAC-004<br>모델 요청 세 번<br>입력 토큰 1189"]:::measure
+  end
+  same["두 질문 공통<br>도구 메시지마다 문서 세 건<br>응답마다 도구 호출 요청<br>한 건 이하<br>호출 ID 짝 True"]
+  q --> c5
+  q --> pk
+  c5 ~~~ same
+  pk ~~~ same

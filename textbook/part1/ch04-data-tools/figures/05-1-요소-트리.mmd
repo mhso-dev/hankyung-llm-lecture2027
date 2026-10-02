@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  SRC["article.html 글<br>270글자 한 줄"]:::tool
+  OUTER["html · body · main<br>기사를 감싼 바깥 요소"]
+  ART["article 요소<br>속성 data-id = A10"]:::tool
+  H1["h1 요소<br>골목상권 매출 회복"]:::tool
+  SUM["p 요소 · class = summary<br>주말 방문객 증가로<br>음식점 매출이 늘었습니다."]:::tool
+  TIME["time 요소<br>속성 datetime = 2026-09-01<br>화면 글 2026년 9월 1일"]:::tool
+  SRC -- "bs4.BeautifulSoup()<br>lxml 파서" --> OUTER
+  OUTER --> ART
+  ART --> H1
+  ART --> SUM
+  ART --> TIME

@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  INPUT["4절 채팅 템플릿 입력<br>400조각"]:::measure
+  MODEL["언어 모델<br>Qwen2.5-0.5B-Instruct"]:::model
+  LONGANS["새 조각 18개<br>끝 표시로 멈춤 True"]:::measure
+  SHORTANS["새 조각 8개<br>환불은 결제일로부터<br>끝 표시로 멈춤 False"]:::measure
+  INPUT -- "generate()" --> MODEL
+  MODEL -- "출력 몫 64" --> LONGANS
+  MODEL -- "출력 몫 8" --> SHORTANS

@@ -1,0 +1,42 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 개발",
+  "chapter": "ch29-agent-evaluation",
+  "title": "Agent 평가 — 답과 실행 경로를 함께 보기",
+  "hours": "총 8h · 강의 3h · 실습 5h",
+  "objectives": [
+    "최종 답 평가·한 단계 평가·궤적 평가가 궤적의 어느 자리를 보는지 가르고, 같은 기준 궤적과 견준 결과로 설명합니다.",
+    "궤적 맞춰 보기의 네 모드와 인자 비교 방식에 따라 판정이 어떻게 갈리는지 출력으로 설명합니다.",
+    "실제로 실행한 에이전트의 궤적을 네 모드와 평가 모델로 함께 판정하고, 모델 요청 수를 셉니다.",
+    "앞 챕터의 실행 기록 두 개를 공통 칸으로 옮겨 담아, 요청 수 셈과 95 백분위수로 읽습니다.",
+    "실습에서 호출 한도만 바꾼 두 실행을 네 모드와 공통 칸으로 견주고, 한도에 닿은 실행을 요청 수 셈으로 가려냅니다."
+  ],
+  "lab_path": "labs/part6/ch29-agent-evaluation",
+  "sections": [
+    {
+      "slug": "01-에이전트-평가-세-전략",
+      "title": "에이전트 평가 세 전략",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-궤적-매칭-네-모드",
+      "title": "궤적 매칭 네 모드",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-LLM-judge로-궤적-평가",
+      "title": "LLM judge로 궤적 평가",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-운영-지표와-Ch18-궤적-비교",
+      "title": "운영 지표와 Ch18 궤적 비교",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-Agent-평가-실습",
+      "title": "Agent 평가 실습: 호출 한도를 줄인 실행을 궤적과 운영 지표로 견주기",
+      "format": "experiment"
+    }
+  ]
+}

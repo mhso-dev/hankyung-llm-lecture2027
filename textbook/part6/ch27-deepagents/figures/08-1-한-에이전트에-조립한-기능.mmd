@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  lim["안전 규칙<br>바깥 호출 한도 10<br>general-purpose 한도 2"]:::tool
+  rule["권한 규칙<br>/sources/** 쓰기 막기"]:::tool
+  hitl["사람 승인 interrupt_on<br>write_file<br>체크포인터 InMemorySaver"]:::tool
+  fn["create_deep_agent<br>한 에이전트에 넘김"]:::flow
+  nodes["더해진 노드<br>ModelCallLimitMiddleware 둘<br>HumanInTheLoopMiddleware<br>.after_model"]:::measure
+  tools["도구 아홉 그대로<br>실행 한도 9999"]:::measure
+  note["권한 규칙은 노드를 더하지 않고<br>파일 도구 안에서 판정"]
+  lim --> fn
+  rule --> fn
+  hitl --> fn
+  fn --> nodes
+  fn --> tools
+  tools ~~~ note

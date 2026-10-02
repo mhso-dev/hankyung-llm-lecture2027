@@ -1,0 +1,20 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  reply["모델의 응답<br>read_visit_log 요청"]:::model
+  subgraph kept[상태 칸 files]
+    direction TB
+    k1["/large_tool_results/ 아래<br>옮겨 둔 파일 수 1"]:::measure
+    k2["방문 기록 전체와 같은가<br>True"]:::measure
+    k1 ~~~ k2
+  end
+  subgraph sent[모델 요청에 실린 것]
+    direction TB
+    a1["도구 메시지<br>안내 글인가 True"]:::measure
+    a2["요청마다 받은 글자 수 합<br>모두 방문 기록보다 작은가 True"]:::measure
+    a1 ~~~ a2
+  end
+  rule["셈<br>요청 수는 도구를 요청한<br>응답 수 더하기 1"]
+  reply --> sent
+  reply --> kept
+  kept ~~~ rule

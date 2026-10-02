@@ -1,0 +1,1188 @@
+--- .cache/final-close/3-check-scripts/before/textbook/part1/qa/check_delivery.py	2026-09-11 05:53:24.742996657 +0000
++++ textbook/part1/qa/check_delivery.py	2026-10-01 00:28:56.927103198 +0000
+@@ -1,4 +1,10 @@
+-"""Check Part 1 navigation, notebook correspondence, diagrams, and archives."""
++"""Check Part 1 navigation, notebook correspondence, diagrams, and archives.
++
++전체 마감 2026-10-01: 챕터 끝 실습 절과 그림 이름 규칙을 지금 구조에 맞게 고침 — 절 수 35 → 40(실습 절 5 포함),
++실습 절(마지막 절 `NN-…-실습`)은 meta 「실습 30분」을 읽고 Part 시수 합(37h·59h)에는 넣지 않음(규격 §7-2),
++절마다 그림 하나(.svg + .excalidraw) 대신 원고가 부르는 Mermaid 그림(.mmd → .svg·.png)이 절마다 3~5장(규격 §5-1)이고
++원본과 렌더의 이름이 같아야 함. 옛 Ch 1~2 기준 파일과 달라진 것은 전처럼 `--revised-existing`으로 허용함.
++"""
+ from __future__ import annotations
+ 
+ import argparse
+@@ -12,6 +18,7 @@
+ from zipfile import ZipFile
+ 
+ ROOT = Path(__file__).resolve().parents[3]
++SECTIONS = 40  # 35절 + 챕터 끝 실습 절 5(2026-10-01)
+ sys.path.insert(0, str(ROOT / "textbook/_notebook"))
+ from execute import secret_values
+ from verify import verify_lesson
+@@ -69,7 +76,8 @@
+         config = json.loads((chapter / "chapter.json").read_text())
+         pages.append(chapter / "index.html")
+         lecture = practice = 0.0
+-        for section in config["sections"]:
++        diagrams_by_section = {}
++        for index, section in enumerate(config["sections"]):
+             slug = section["slug"]
+             page = chapter / f"{slug}.html"
+             notebook = ROOT / "labs/part1" / chapter.name / "notebooks" / f"{slug}.ipynb"
+@@ -77,10 +85,16 @@
+             pages.append(page)
+             source = (chapter / "_src" / f"{slug}.html").read_text()
+             assert re.findall(r'<h2 id="b(\d+)"', source) == [str(i) for i in range(1, 11)]
+-            timing = re.search(r'강의\s*([\d.]+)h\s*[|·]\s*실습\s*([\d.]+)h', source)
+-            assert timing, f"Missing section hours: {page}"
+-            lecture += float(timing[1])
+-            practice += float(timing[2])
++            if index == len(config["sections"]) - 1 and slug.endswith("-실습"):
++                # 챕터 끝 실습 절은 「실습 30분」으로 적고 챕터 시수에 더하지 않는다(규격 §7-2)
++                assert re.search(r'실습\s*\d+\s*분', source), f"Missing section hours: {page}"
++            else:
++                timing = re.search(r'강의\s*([\d.]+)h\s*[|·]\s*실습\s*([\d.]+)h', source)
++                assert timing, f"Missing section hours: {page}"
++                lecture += float(timing[1])
++                practice += float(timing[2])
++            diagrams_by_section[slug] = re.findall(r'\{\{mermaid:([^|}]+)', source)
++            assert 3 <= len(diagrams_by_section[slug]) <= 5, f"Mermaid diagrams per section: {page}"
+             parser = Content()
+             parser.feed(source)
+             assert 3 <= parser.quizzes <= 5, f"Quiz count: {page}: {parser.quizzes}"
+@@ -89,11 +103,14 @@
+             prose.append({"chapter": chapter.name, "section": slug,
+                           "prose_chars": len(re.sub(r"\s", "", visible)),
+                           "quiz_questions": parser.quizzes})
+-        svgs = sorted((chapter / "figures").glob("[0-9]*.svg"))
+-        drawings = sorted((chapter / "figures").glob("[0-9]*.excalidraw"))
+-        assert len(svgs) == len(drawings) == len(config["sections"])
+-        assert {p.stem for p in svgs} == {p.stem for p in drawings}
+-        diagrams.append({"chapter": chapter.name, "svg": len(svgs), "excalidraw": len(drawings)})
++        # 원고가 부르는 Mermaid 그림마다 편집 원본(.mmd)과 렌더(.svg·.png)가 같은 이름으로 있어야 한다
++        drawings = sorted((chapter / "figures").glob("[0-9]*.mmd"))
++        svgs = [p.with_suffix(".svg") for p in drawings if p.with_suffix(".svg").is_file()]
++        pngs = [p.with_suffix(".png") for p in drawings if p.with_suffix(".png").is_file()]
++        referenced = {name for names in diagrams_by_section.values() for name in names}
++        assert len(svgs) == len(pngs) == len(drawings) == len(referenced)
++        assert {p.stem for p in drawings} == referenced
++        diagrams.append({"chapter": chapter.name, "svg": len(svgs), "mmd": len(drawings), "png": len(pngs)})
+         hours.append({"chapter": chapter.name, "lecture": lecture, "practice": practice})
+     assert sum(row["lecture"] for row in hours) == 37
+     assert sum(row["practice"] for row in hours) == 59
+@@ -136,10 +153,10 @@
+                 if any(secret in archive.read(name) for secret in credentials):
+                     exposed.append(f"{filename}:{name}")
+             count = sum("/labs/part1/" in n and n.endswith(".ipynb") for n in names)
+-            assert count == 35
++            assert count == SECTIONS
+             archives.append({"file": filename, "entries": len(names), "part1_notebooks": count,
+                              "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
+-    assert len(lessons) == 35
++    assert len(lessons) == SECTIONS
+     report = {"html_pages": len(pages), "notebooks": len(lessons),
+               "code_cells": sum(row["code_cells"] for row in lessons),
+               "max_cell_lines": max(row["max_cell_lines"] for row in lessons),
+--- .cache/final-close/3-check-scripts/before/textbook/part2/qa/check_delivery.py	2026-09-09 13:41:49.370758355 +0000
++++ textbook/part2/qa/check_delivery.py	2026-10-01 00:30:13.980356356 +0000
+@@ -1,4 +1,8 @@
+-"""Check published Part 2 links, public archives, and notebook totals."""
++"""Check published Part 2 links, public archives, and notebook totals.
++
++전체 마감 2026-10-01: 노트북·코드 셀 고정값(20개·180셀 — 품질 개선 전)을 지금 구조에 맞게 고침 —
++노트북 23개(20 + 챕터 끝 실습 절 3)·코드 셀 470개(2026-10-01에 센 값, 각 노트북 verification.code_cells 합과 같음).
++"""
+ import hashlib
+ import json
+ import re
+@@ -87,6 +91,6 @@
+           'excalidraw_sources':sum(len(list((p/'figures').glob('[0-9]*.excalidraw'))) for p in chapters),
+           'scanned_public_items':scanned, 'exposed_credentials':exposed, 'archives':archives}
+ assert not missing and not exposed, 'Delivery check failed; see report'
+-assert len(notebooks) == 20 and sum(counts) == 180
++assert len(notebooks) == 23 and sum(counts) == 470
+ (part / 'qa/delivery-results.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
+ print(json.dumps(report, ensure_ascii=False, indent=2))
+--- .cache/final-close/3-check-scripts/before/textbook/part3/qa/finalize_continuity_evidence.py	2026-09-19 01:37:14.030202365 +0000
++++ textbook/part3/qa/finalize_continuity_evidence.py	2026-10-01 00:28:36.733166085 +0000
+@@ -1,4 +1,10 @@
+-"""Bind visual and extracted execution evidence to the final delivery files."""
++"""Bind visual and extracted execution evidence to the final delivery files.
++
++전체 마감 2026-10-01: 화면 기록 행 수 고정값 94(실습 절이 붙기 전 쪽 수가 섞인 값)를 지금 구조에 맞게 고침 —
++폴더마다 지금 공개 HTML 쪽 × 두 너비(1280·390)가 모두 기록돼 있어야 하고, 합은 98(ch08 16 + ch09 16 + ch10 20 +
++ch11 16 + ch12 28 + part3 2)이다. ch08(07 실습 쪽 빠짐, 2026-09-14 기록)·ch09(07 실습 쪽 빠짐)를 다시 찍기 전에는
++아래 visual 블록에서 멈추는 것이 맞다(다음 단계 화면 재촬영 뒤 통과).
++"""
+ import hashlib
+ import json
+ from pathlib import Path
+@@ -6,23 +12,28 @@
+ 
+ ROOT = Path(__file__).resolve().parents[3]
+ EVIDENCE = Path(__file__).parent / 'continuity-evidence'
++PAGES = {'ch08-context-engineering': 'textbook/part2/ch08-context-engineering',
++         'ch09-rag-first-run': 'textbook/part3/ch09-rag-first-run',
++         'ch10-document-processing': 'textbook/part3/ch10-document-processing',
++         'ch11-evaluation': 'textbook/part3/ch11-evaluation',
++         'ch12-retrieval-tuning': 'textbook/part3/ch12-retrieval-tuning',
++         'part3': 'textbook/part3'}
+ visual = []
+-for chapter in ('ch08-context-engineering', 'ch09-rag-first-run', 'ch10-document-processing', 'ch11-evaluation', 'ch12-retrieval-tuning', 'part3'):
++for chapter, folder in PAGES.items():
+     path = ROOT / 'textbook/_notebook/checks' / chapter / 'visual-results.json'
+     rows = json.loads(path.read_text())
+     assert all(row['passed'] for row in rows)
++    pages = {page.name for page in (ROOT / folder).glob('*.html')}
++    expected = {(page, width) for page in pages for width in (1280, 390)}
++    recorded = {(row['file'], row['width']) for row in rows}
++    assert recorded == expected and len(rows) == len(expected), (chapter, sorted(expected - recorded), sorted(recorded - expected))
+     visual.extend({'chapter': chapter, **row} for row in rows)
+-# 행 수 = ch08 14 + ch09 14 + ch10 20 + ch11 16 + ch12 28 + part3 2 = 94 (2026-09-19 현재 실제 합).
+-# 2026-09-18: Ch 10 에 실습 절 09 를 붙여 ch10 이 18 → 20 이 되었다(공용 visual.cjs 재실행, 20/20 PASS).
+-# 2026-09-18: Ch 11 에 실습 절 07 을 붙여 ch11 을 8 쪽으로 다시 찍었다(14 → 16, 16/16 PASS).
+-# 2026-09-19: Ch 12 에 실습 절 13 을 붙여 ch12 가 26 → 28 이 되었다(14 쪽, 28/28 PASS).
+-# ch09 는 아직 14 다(Ch 9 실습 절 07 몫). 지금의 94 는 ch09 의 -2 와 ch12 의 +2 가 상쇄돼 맞는 값이고,
+-# ch09 를 다시 찍어 16 이 되면 합은 96 이 된다. 그때 이 줄을 94 → 96 으로 올린다.
+-# 이 값을 92 나 90 으로 내리지 마세요(ch12 28 행·ch11 16 행·ch10 20 행을 버립니다).
++# 이력: 2026-09-18 ch10 18 → 20(실습 절 09) · ch11 14 → 16(실습 절 07) · 2026-09-19 ch12 26 → 28(실습 절 13).
++# 옛 고정값 94는 ch08·ch09 기록에 실습 쪽이 빠진 채 맞아떨어진 값이었다. 98을 94·96 등으로 내리지 마세요.
+ # 전체 마감 순서: (1) part1·part2·part3·llm 묶음 재생성 → (2) part3/qa/run_continuity_bundle.py →
+-# (3) 공용 visual.cjs 로 ch09 8 쪽 재촬영(14 → 16) → (4) 이 줄을 96 으로 올리고 이 스크립트 실행 →
++# (3) 공용 visual.cjs 로 ch08·ch09 8 쪽씩 재촬영(각 14 → 16) → (4) 이 스크립트 실행 →
+ # (5) part3/qa/check_continuity.py 와 qa/check_course_continuity.py 를 끝까지 → (6) part3/_build_index.py 로 Part 3 목차.
+-assert len(visual) == 94, len(visual)
++assert len(visual) == 98, len(visual)
+ (EVIDENCE / 'visual-results.json').write_text(json.dumps(visual, ensure_ascii=False, indent=2))
+ 
+ path = EVIDENCE / 'bundle-execution-results.json'
+--- .cache/final-close/3-check-scripts/before/textbook/part4/qa/check_figures.py	2026-09-10 00:12:18.465892207 +0000
++++ textbook/part4/qa/check_figures.py	2026-10-01 00:24:59.646123139 +0000
+@@ -1,22 +1,137 @@
+-"""Compare visible labels and arrows in SVG and editable Excalidraw sources."""
++"""Compare visible labels and arrows in SVG and editable Excalidraw sources.
++
++전체 마감 2026-10-01: 그림 이름 규칙(figures/NN-k-이름.mmd → .svg·.png, 렌더 도장 .render.json)을 지금 구조에 맞게 고침.
++Mermaid로 렌더한 SVG는 짝 원본 .mmd와 견주고(원본 라벨이 SVG에 보이는지 · 화살촉 수 · 렌더 도장이 지금 원본·설정과 같은지 · PNG),
++.excalidraw 짝이 있는 옛 SVG는 전처럼 견준다. 편집 원본(.mmd·.excalidraw)이 없는 SVG는 전처럼 멈춘다.
++"""
+ from __future__ import annotations
+ 
+ import hashlib
++import html
+ import json
++import re
+ import xml.etree.ElementTree as ET
+ from pathlib import Path
+ 
+ PART = Path(__file__).resolve().parents[1]
+ NS = {'svg': 'http://www.w3.org/2000/svg'}
++MERMAID = PART.parent / '_notebook/mermaid'
++SKIP = re.compile(r'^(?:classDef|class|style|linkStyle|subgraph|direction|click)\b|^end$')
++LINK = re.compile(r'\s*(<?(?:-{2,}|-\.+-|={2,})[>xo]?)\s*')
+ 
+ 
+ def normalized(text):
+     return ' '.join(text.split())
+ 
+ 
++def squeezed(text):
++    return re.sub(r'\s+', '', text)
++
++
++def mermaid_lines(text):
++    body = re.sub(r'(?s)^---\n.*?\n---\n', '', text)
++    return [line.strip() for line in body.splitlines() if line.strip() and not line.strip().startswith('%%')]
++
++
++def entity(text):
++    # Mermaid 글자 코드(#lt;·#35;)와 HTML 이름을 글자로 바꾼다
++    text = re.sub(r'#(\d+);', lambda match: chr(int(match.group(1))), text)
++    text = re.sub(r'#([A-Za-z]+);', lambda match: html.unescape('&' + match.group(1) + ';'), text)
++    return html.unescape(text)
++
++
++def mermaid_labels(text):
++    lines = mermaid_lines(text)
++    kind, labels = lines[0].split()[0], []
++    for line in lines[1:]:
++        if kind == 'flowchart' and (line.startswith('subgraph') or not SKIP.match(line)):
++            labels += re.findall(r'"([^"]*)"', line) + re.findall(r'\|([^|"]+)\|', line)
++            plain = re.sub(r'"[^"]*"', '', line)
++            labels += re.findall(r'<?--\s+([^\s>-][^>]*?)\s+--[->]', plain)
++            labels += re.findall(r'-\.\s+([^.]+?)\s+\.->', plain) + re.findall(r'==\s+([^=]+?)\s+==>', plain)
++            labels += re.findall(r'[\[\(\{]+([^\[\]\(\)\{\}"|]+)[\]\)\}]+', plain)
++            bare = re.match(r'subgraph\s+([^\s\["]+)\s*$', line)
++            labels += [bare.group(1)] if bare else []
++        elif kind == 'sequenceDiagram':
++            member = re.match(r'(?:participant|actor)\s+(\S+)(?:\s+as\s+(.+))?$', line)
++            note = re.match(r'[Nn]ote\s+(?:over|left of|right of)\s+[^:]+:\s*(.+)$', line)
++            block = re.match(r'(?:alt|else|opt|loop|par|and|critical|break)\b\s*(.*)$', line)
++            message = re.match(r'[^:]+?(?:->>|-->>|->|-->|-x|--x|-\)|--\))[+-]?[^:]+:\s*(.*)$', line)
++            if member:
++                labels.append(member.group(2) or member.group(1))
++            elif note or block:
++                labels.append((note or block).group(1))
++            elif message and not line.startswith('rect'):
++                labels.append(message.group(1))
++        elif kind == 'xychart-beta':
++            labels += re.findall(r'"([^"]*)"', line)
++        elif kind == 'gantt' and not re.match(r'(?:dateFormat|axisFormat|tickInterval|todayMarker|excludes)\b', line):
++            heading = re.match(r'(?:title|section)\s+(.+)$', line) or re.match(r'([^:]+):', line)
++            labels += [heading.group(1)] if heading else []
++    return [entity(label) for label in labels if label.strip()]
++
++
++def mermaid_arrows(text):
++    lines = mermaid_lines(text)
++    kind, count = lines[0].split()[0], 0
++    for line in lines[1:]:
++        if kind == 'sequenceDiagram':
++            count += bool(':' in line and re.match(r'[^:]+?(?:->>|-->>|-x|--x|-\)|--\))', line))
++        if kind != 'flowchart' or SKIP.match(line):
++            continue
++        plain = re.sub(r'\|[^|]*\|', '', re.sub(r'"[^"]*"', '""', line))
++        plain = re.sub(r'<--\s[^<>]*?-->', ' <--> ', plain)
++        plain = re.sub(r'(?<![<-])--\s[^<>-]*?-->', ' --> ', plain)
++        plain = re.sub(r'(?<![<-])--\s[^<>-]*?---', ' --- ', plain)
++        plain = re.sub(r'-\.\s[^.]*?\.->', ' -.-> ', plain)
++        parts = LINK.split(re.sub(r'==\s[^=]*?==>', ' ==> ', plain).replace('~~~', ' '))
++        for index in range(1, len(parts), 2):
++            right = parts[index + 1] if index + 1 < len(parts) else ''
++            pairs = (parts[index - 1].count('&') + 1) * (right.count('&') + 1)
++            count += pairs * ((parts[index][-1] in '>xo') + (parts[index][0] == '<'))
++    return count
++
++
++def render_digest(source):
++    # textbook/_notebook/mermaid/render_mermaid.py가 .render.json에 적는 값과 같은 셈
++    classes = (MERMAID / 'classes.mmd').read_text(encoding='utf-8')
++    prepared = re.sub(r'(?m)^\s*%% classes\s*$', classes.rstrip('\n'), source.read_text(encoding='utf-8'))
++    config = (MERMAID / 'config.json').read_text(encoding='utf-8')
++    return hashlib.sha256((prepared + config).encode('utf-8')).hexdigest()
++
++
++def label_visible(label, texts):
++    whole = squeezed(re.sub(r'<br\s*/?>', '', label))
++    if any(whole in text for text in texts):
++        return True
++    parts = [squeezed(part) for part in re.split(r'<br\s*/?>|\\n', label) if squeezed(part)]
++    return bool(parts) and all(any(part in text for text in texts) for part in parts)
++
++
++def mermaid_report(path, source):
++    svg = ET.fromstring(path.read_text())
++    text = source.read_text(encoding='utf-8')
++    texts = [squeezed(''.join(e.itertext())) for e in svg.iter() if e.tag.split('}')[-1] == 'text']
++    labels = mermaid_labels(text)
++    missing = [label for label in labels if not label_visible(label, texts)]
++    svg_arrows = sum(('marker-end' in e.attrib) + ('marker-start' in e.attrib) for e in svg.iter())
++    source_arrows = mermaid_arrows(text)
++    stamp = path.with_suffix('.render.json')
++    current = stamp.is_file() and json.loads(stamp.read_text()).get('sha256') == render_digest(source)
++    return {'file': str(path.relative_to(PART)), 'editable_source': 'mmd',
++            'labels_match': bool(labels) and not missing, 'missing_labels': missing,
++            'svg_arrows': svg_arrows, 'mmd_arrows': source_arrows, 'arrows_match': svg_arrows == source_arrows,
++            'render_current': current, 'png_present': path.with_suffix('.png').is_file(),
++            'svg_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
++            'mmd_sha256': hashlib.sha256(source.read_bytes()).hexdigest()}
++
++
+ def main():
+     reports = []
+     for path in sorted(PART.glob('ch*/figures/[0-9]*.svg')):
++        if path.with_suffix('.mmd').is_file():
++            reports.append(mermaid_report(path, path.with_suffix('.mmd')))
++            continue
+         drawing = path.with_suffix('.excalidraw')
+         assert drawing.is_file(), f'Missing editable source: {path.name}'
+         svg = ET.fromstring(path.read_text())
+@@ -34,8 +149,11 @@
+                         'excalidraw_sha256': hashlib.sha256(drawing.read_bytes()).hexdigest()})
+     assert reports, 'No Part 4 figures found'
+     (PART / 'qa/figure-consistency.json').write_text(json.dumps(reports, ensure_ascii=False, indent=2))
+-    assert all(r['labels_match'] and r['arrows_match'] for r in reports), 'Figure mismatch; see report'
+-    print(f'{len(reports)} SVG/Excalidraw pairs: labels and arrow counts match')
++    assert all(r['labels_match'] and r['arrows_match'] and r.get('render_current', True) and r.get('png_present', True)
++               for r in reports), 'Figure mismatch; see report'
++    mermaid = sum(r.get('editable_source') == 'mmd' for r in reports)
++    print(f'{len(reports)} SVG/source pairs ({mermaid} Mermaid .mmd, {len(reports) - mermaid} Excalidraw): '
++          'labels and arrow counts match, Mermaid renders current')
+ 
+ 
+ if __name__ == '__main__':
+--- .cache/final-close/3-check-scripts/before/textbook/part5/qa/check_figures.py	2026-09-10 05:18:35.402029771 +0000
++++ textbook/part5/qa/check_figures.py	2026-10-01 00:25:17.112556683 +0000
+@@ -1,22 +1,137 @@
+-"""Compare visible labels and arrows in SVG and editable Excalidraw sources."""
++"""Compare visible labels and arrows in SVG and editable Excalidraw sources.
++
++전체 마감 2026-10-01: 그림 이름 규칙(figures/NN-k-이름.mmd → .svg·.png, 렌더 도장 .render.json)을 지금 구조에 맞게 고침.
++Mermaid로 렌더한 SVG는 짝 원본 .mmd와 견주고(원본 라벨이 SVG에 보이는지 · 화살촉 수 · 렌더 도장이 지금 원본·설정과 같은지 · PNG),
++.excalidraw 짝이 있는 옛 SVG는 전처럼 견준다. 편집 원본(.mmd·.excalidraw)이 없는 SVG는 전처럼 멈춘다.
++"""
+ from __future__ import annotations
+ 
+ import hashlib
++import html
+ import json
++import re
+ import xml.etree.ElementTree as ET
+ from pathlib import Path
+ 
+ PART = Path(__file__).resolve().parents[1]
+ NS = {'svg': 'http://www.w3.org/2000/svg'}
++MERMAID = PART.parent / '_notebook/mermaid'
++SKIP = re.compile(r'^(?:classDef|class|style|linkStyle|subgraph|direction|click)\b|^end$')
++LINK = re.compile(r'\s*(<?(?:-{2,}|-\.+-|={2,})[>xo]?)\s*')
+ 
+ 
+ def normalized(text):
+     return ' '.join(text.split())
+ 
+ 
++def squeezed(text):
++    return re.sub(r'\s+', '', text)
++
++
++def mermaid_lines(text):
++    body = re.sub(r'(?s)^---\n.*?\n---\n', '', text)
++    return [line.strip() for line in body.splitlines() if line.strip() and not line.strip().startswith('%%')]
++
++
++def entity(text):
++    # Mermaid 글자 코드(#lt;·#35;)와 HTML 이름을 글자로 바꾼다
++    text = re.sub(r'#(\d+);', lambda match: chr(int(match.group(1))), text)
++    text = re.sub(r'#([A-Za-z]+);', lambda match: html.unescape('&' + match.group(1) + ';'), text)
++    return html.unescape(text)
++
++
++def mermaid_labels(text):
++    lines = mermaid_lines(text)
++    kind, labels = lines[0].split()[0], []
++    for line in lines[1:]:
++        if kind == 'flowchart' and (line.startswith('subgraph') or not SKIP.match(line)):
++            labels += re.findall(r'"([^"]*)"', line) + re.findall(r'\|([^|"]+)\|', line)
++            plain = re.sub(r'"[^"]*"', '', line)
++            labels += re.findall(r'<?--\s+([^\s>-][^>]*?)\s+--[->]', plain)
++            labels += re.findall(r'-\.\s+([^.]+?)\s+\.->', plain) + re.findall(r'==\s+([^=]+?)\s+==>', plain)
++            labels += re.findall(r'[\[\(\{]+([^\[\]\(\)\{\}"|]+)[\]\)\}]+', plain)
++            bare = re.match(r'subgraph\s+([^\s\["]+)\s*$', line)
++            labels += [bare.group(1)] if bare else []
++        elif kind == 'sequenceDiagram':
++            member = re.match(r'(?:participant|actor)\s+(\S+)(?:\s+as\s+(.+))?$', line)
++            note = re.match(r'[Nn]ote\s+(?:over|left of|right of)\s+[^:]+:\s*(.+)$', line)
++            block = re.match(r'(?:alt|else|opt|loop|par|and|critical|break)\b\s*(.*)$', line)
++            message = re.match(r'[^:]+?(?:->>|-->>|->|-->|-x|--x|-\)|--\))[+-]?[^:]+:\s*(.*)$', line)
++            if member:
++                labels.append(member.group(2) or member.group(1))
++            elif note or block:
++                labels.append((note or block).group(1))
++            elif message and not line.startswith('rect'):
++                labels.append(message.group(1))
++        elif kind == 'xychart-beta':
++            labels += re.findall(r'"([^"]*)"', line)
++        elif kind == 'gantt' and not re.match(r'(?:dateFormat|axisFormat|tickInterval|todayMarker|excludes)\b', line):
++            heading = re.match(r'(?:title|section)\s+(.+)$', line) or re.match(r'([^:]+):', line)
++            labels += [heading.group(1)] if heading else []
++    return [entity(label) for label in labels if label.strip()]
++
++
++def mermaid_arrows(text):
++    lines = mermaid_lines(text)
++    kind, count = lines[0].split()[0], 0
++    for line in lines[1:]:
++        if kind == 'sequenceDiagram':
++            count += bool(':' in line and re.match(r'[^:]+?(?:->>|-->>|-x|--x|-\)|--\))', line))
++        if kind != 'flowchart' or SKIP.match(line):
++            continue
++        plain = re.sub(r'\|[^|]*\|', '', re.sub(r'"[^"]*"', '""', line))
++        plain = re.sub(r'<--\s[^<>]*?-->', ' <--> ', plain)
++        plain = re.sub(r'(?<![<-])--\s[^<>-]*?-->', ' --> ', plain)
++        plain = re.sub(r'(?<![<-])--\s[^<>-]*?---', ' --- ', plain)
++        plain = re.sub(r'-\.\s[^.]*?\.->', ' -.-> ', plain)
++        parts = LINK.split(re.sub(r'==\s[^=]*?==>', ' ==> ', plain).replace('~~~', ' '))
++        for index in range(1, len(parts), 2):
++            right = parts[index + 1] if index + 1 < len(parts) else ''
++            pairs = (parts[index - 1].count('&') + 1) * (right.count('&') + 1)
++            count += pairs * ((parts[index][-1] in '>xo') + (parts[index][0] == '<'))
++    return count
++
++
++def render_digest(source):
++    # textbook/_notebook/mermaid/render_mermaid.py가 .render.json에 적는 값과 같은 셈
++    classes = (MERMAID / 'classes.mmd').read_text(encoding='utf-8')
++    prepared = re.sub(r'(?m)^\s*%% classes\s*$', classes.rstrip('\n'), source.read_text(encoding='utf-8'))
++    config = (MERMAID / 'config.json').read_text(encoding='utf-8')
++    return hashlib.sha256((prepared + config).encode('utf-8')).hexdigest()
++
++
++def label_visible(label, texts):
++    whole = squeezed(re.sub(r'<br\s*/?>', '', label))
++    if any(whole in text for text in texts):
++        return True
++    parts = [squeezed(part) for part in re.split(r'<br\s*/?>|\\n', label) if squeezed(part)]
++    return bool(parts) and all(any(part in text for text in texts) for part in parts)
++
++
++def mermaid_report(path, source):
++    svg = ET.fromstring(path.read_text())
++    text = source.read_text(encoding='utf-8')
++    texts = [squeezed(''.join(e.itertext())) for e in svg.iter() if e.tag.split('}')[-1] == 'text']
++    labels = mermaid_labels(text)
++    missing = [label for label in labels if not label_visible(label, texts)]
++    svg_arrows = sum(('marker-end' in e.attrib) + ('marker-start' in e.attrib) for e in svg.iter())
++    source_arrows = mermaid_arrows(text)
++    stamp = path.with_suffix('.render.json')
++    current = stamp.is_file() and json.loads(stamp.read_text()).get('sha256') == render_digest(source)
++    return {'file': str(path.relative_to(PART)), 'editable_source': 'mmd',
++            'labels_match': bool(labels) and not missing, 'missing_labels': missing,
++            'svg_arrows': svg_arrows, 'mmd_arrows': source_arrows, 'arrows_match': svg_arrows == source_arrows,
++            'render_current': current, 'png_present': path.with_suffix('.png').is_file(),
++            'svg_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
++            'mmd_sha256': hashlib.sha256(source.read_bytes()).hexdigest()}
++
++
+ def main():
+     reports = []
+     for path in sorted(PART.glob('ch*/figures/[0-9]*.svg')):
++        if path.with_suffix('.mmd').is_file():
++            reports.append(mermaid_report(path, path.with_suffix('.mmd')))
++            continue
+         drawing = path.with_suffix('.excalidraw')
+         assert drawing.is_file(), f'Missing editable source: {path.name}'
+         svg = ET.fromstring(path.read_text())
+@@ -34,8 +149,11 @@
+                         'excalidraw_sha256': hashlib.sha256(drawing.read_bytes()).hexdigest()})
+     assert reports, 'No Part 5 figures found'
+     (PART / 'qa/figure-consistency.json').write_text(json.dumps(reports, ensure_ascii=False, indent=2))
+-    assert all(r['labels_match'] and r['arrows_match'] for r in reports), 'Figure mismatch; see report'
+-    print(f'{len(reports)} SVG/Excalidraw pairs: labels and arrow counts match')
++    assert all(r['labels_match'] and r['arrows_match'] and r.get('render_current', True) and r.get('png_present', True)
++               for r in reports), 'Figure mismatch; see report'
++    mermaid = sum(r.get('editable_source') == 'mmd' for r in reports)
++    print(f'{len(reports)} SVG/source pairs ({mermaid} Mermaid .mmd, {len(reports) - mermaid} Excalidraw): '
++          'labels and arrow counts match, Mermaid renders current')
+ 
+ 
+ if __name__ == '__main__':
+--- .cache/final-close/3-check-scripts/before/textbook/part6/qa/check_figures.py	2026-09-10 15:44:44.215444891 +0000
++++ textbook/part6/qa/check_figures.py	2026-10-01 00:25:17.117169696 +0000
+@@ -1,22 +1,137 @@
+-"""Compare visible labels and arrows in SVG and editable Excalidraw sources."""
++"""Compare visible labels and arrows in SVG and editable Excalidraw sources.
++
++전체 마감 2026-10-01: 그림 이름 규칙(figures/NN-k-이름.mmd → .svg·.png, 렌더 도장 .render.json)을 지금 구조에 맞게 고침.
++Mermaid로 렌더한 SVG는 짝 원본 .mmd와 견주고(원본 라벨이 SVG에 보이는지 · 화살촉 수 · 렌더 도장이 지금 원본·설정과 같은지 · PNG),
++.excalidraw 짝이 있는 옛 SVG는 전처럼 견준다. 편집 원본(.mmd·.excalidraw)이 없는 SVG는 전처럼 멈춘다.
++"""
+ from __future__ import annotations
+ 
+ import hashlib
++import html
+ import json
++import re
+ import xml.etree.ElementTree as ET
+ from pathlib import Path
+ 
+ PART = Path(__file__).resolve().parents[1]
+ NS = {'svg': 'http://www.w3.org/2000/svg'}
++MERMAID = PART.parent / '_notebook/mermaid'
++SKIP = re.compile(r'^(?:classDef|class|style|linkStyle|subgraph|direction|click)\b|^end$')
++LINK = re.compile(r'\s*(<?(?:-{2,}|-\.+-|={2,})[>xo]?)\s*')
+ 
+ 
+ def normalized(text):
+     return ' '.join(text.split())
+ 
+ 
++def squeezed(text):
++    return re.sub(r'\s+', '', text)
++
++
++def mermaid_lines(text):
++    body = re.sub(r'(?s)^---\n.*?\n---\n', '', text)
++    return [line.strip() for line in body.splitlines() if line.strip() and not line.strip().startswith('%%')]
++
++
++def entity(text):
++    # Mermaid 글자 코드(#lt;·#35;)와 HTML 이름을 글자로 바꾼다
++    text = re.sub(r'#(\d+);', lambda match: chr(int(match.group(1))), text)
++    text = re.sub(r'#([A-Za-z]+);', lambda match: html.unescape('&' + match.group(1) + ';'), text)
++    return html.unescape(text)
++
++
++def mermaid_labels(text):
++    lines = mermaid_lines(text)
++    kind, labels = lines[0].split()[0], []
++    for line in lines[1:]:
++        if kind == 'flowchart' and (line.startswith('subgraph') or not SKIP.match(line)):
++            labels += re.findall(r'"([^"]*)"', line) + re.findall(r'\|([^|"]+)\|', line)
++            plain = re.sub(r'"[^"]*"', '', line)
++            labels += re.findall(r'<?--\s+([^\s>-][^>]*?)\s+--[->]', plain)
++            labels += re.findall(r'-\.\s+([^.]+?)\s+\.->', plain) + re.findall(r'==\s+([^=]+?)\s+==>', plain)
++            labels += re.findall(r'[\[\(\{]+([^\[\]\(\)\{\}"|]+)[\]\)\}]+', plain)
++            bare = re.match(r'subgraph\s+([^\s\["]+)\s*$', line)
++            labels += [bare.group(1)] if bare else []
++        elif kind == 'sequenceDiagram':
++            member = re.match(r'(?:participant|actor)\s+(\S+)(?:\s+as\s+(.+))?$', line)
++            note = re.match(r'[Nn]ote\s+(?:over|left of|right of)\s+[^:]+:\s*(.+)$', line)
++            block = re.match(r'(?:alt|else|opt|loop|par|and|critical|break)\b\s*(.*)$', line)
++            message = re.match(r'[^:]+?(?:->>|-->>|->|-->|-x|--x|-\)|--\))[+-]?[^:]+:\s*(.*)$', line)
++            if member:
++                labels.append(member.group(2) or member.group(1))
++            elif note or block:
++                labels.append((note or block).group(1))
++            elif message and not line.startswith('rect'):
++                labels.append(message.group(1))
++        elif kind == 'xychart-beta':
++            labels += re.findall(r'"([^"]*)"', line)
++        elif kind == 'gantt' and not re.match(r'(?:dateFormat|axisFormat|tickInterval|todayMarker|excludes)\b', line):
++            heading = re.match(r'(?:title|section)\s+(.+)$', line) or re.match(r'([^:]+):', line)
++            labels += [heading.group(1)] if heading else []
++    return [entity(label) for label in labels if label.strip()]
++
++
++def mermaid_arrows(text):
++    lines = mermaid_lines(text)
++    kind, count = lines[0].split()[0], 0
++    for line in lines[1:]:
++        if kind == 'sequenceDiagram':
++            count += bool(':' in line and re.match(r'[^:]+?(?:->>|-->>|-x|--x|-\)|--\))', line))
++        if kind != 'flowchart' or SKIP.match(line):
++            continue
++        plain = re.sub(r'\|[^|]*\|', '', re.sub(r'"[^"]*"', '""', line))
++        plain = re.sub(r'<--\s[^<>]*?-->', ' <--> ', plain)
++        plain = re.sub(r'(?<![<-])--\s[^<>-]*?-->', ' --> ', plain)
++        plain = re.sub(r'(?<![<-])--\s[^<>-]*?---', ' --- ', plain)
++        plain = re.sub(r'-\.\s[^.]*?\.->', ' -.-> ', plain)
++        parts = LINK.split(re.sub(r'==\s[^=]*?==>', ' ==> ', plain).replace('~~~', ' '))
++        for index in range(1, len(parts), 2):
++            right = parts[index + 1] if index + 1 < len(parts) else ''
++            pairs = (parts[index - 1].count('&') + 1) * (right.count('&') + 1)
++            count += pairs * ((parts[index][-1] in '>xo') + (parts[index][0] == '<'))
++    return count
++
++
++def render_digest(source):
++    # textbook/_notebook/mermaid/render_mermaid.py가 .render.json에 적는 값과 같은 셈
++    classes = (MERMAID / 'classes.mmd').read_text(encoding='utf-8')
++    prepared = re.sub(r'(?m)^\s*%% classes\s*$', classes.rstrip('\n'), source.read_text(encoding='utf-8'))
++    config = (MERMAID / 'config.json').read_text(encoding='utf-8')
++    return hashlib.sha256((prepared + config).encode('utf-8')).hexdigest()
++
++
++def label_visible(label, texts):
++    whole = squeezed(re.sub(r'<br\s*/?>', '', label))
++    if any(whole in text for text in texts):
++        return True
++    parts = [squeezed(part) for part in re.split(r'<br\s*/?>|\\n', label) if squeezed(part)]
++    return bool(parts) and all(any(part in text for text in texts) for part in parts)
++
++
++def mermaid_report(path, source):
++    svg = ET.fromstring(path.read_text())
++    text = source.read_text(encoding='utf-8')
++    texts = [squeezed(''.join(e.itertext())) for e in svg.iter() if e.tag.split('}')[-1] == 'text']
++    labels = mermaid_labels(text)
++    missing = [label for label in labels if not label_visible(label, texts)]
++    svg_arrows = sum(('marker-end' in e.attrib) + ('marker-start' in e.attrib) for e in svg.iter())
++    source_arrows = mermaid_arrows(text)
++    stamp = path.with_suffix('.render.json')
++    current = stamp.is_file() and json.loads(stamp.read_text()).get('sha256') == render_digest(source)
++    return {'file': str(path.relative_to(PART)), 'editable_source': 'mmd',
++            'labels_match': bool(labels) and not missing, 'missing_labels': missing,
++            'svg_arrows': svg_arrows, 'mmd_arrows': source_arrows, 'arrows_match': svg_arrows == source_arrows,
++            'render_current': current, 'png_present': path.with_suffix('.png').is_file(),
++            'svg_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
++            'mmd_sha256': hashlib.sha256(source.read_bytes()).hexdigest()}
++
++
+ def main():
+     reports = []
+     for path in sorted(PART.glob('ch*/figures/[0-9]*.svg')):
++        if path.with_suffix('.mmd').is_file():
++            reports.append(mermaid_report(path, path.with_suffix('.mmd')))
++            continue
+         drawing = path.with_suffix('.excalidraw')
+         assert drawing.is_file(), f'Missing editable source: {path.name}'
+         svg = ET.fromstring(path.read_text())
+@@ -34,8 +149,11 @@
+                         'excalidraw_sha256': hashlib.sha256(drawing.read_bytes()).hexdigest()})
+     assert reports, 'No Part 6 figures found'
+     (PART / 'qa/figure-consistency.json').write_text(json.dumps(reports, ensure_ascii=False, indent=2))
+-    assert all(r['labels_match'] and r['arrows_match'] for r in reports), 'Figure mismatch; see report'
+-    print(f'{len(reports)} SVG/Excalidraw pairs: labels and arrow counts match')
++    assert all(r['labels_match'] and r['arrows_match'] and r.get('render_current', True) and r.get('png_present', True)
++               for r in reports), 'Figure mismatch; see report'
++    mermaid = sum(r.get('editable_source') == 'mmd' for r in reports)
++    print(f'{len(reports)} SVG/source pairs ({mermaid} Mermaid .mmd, {len(reports) - mermaid} Excalidraw): '
++          'labels and arrow counts match, Mermaid renders current')
+ 
+ 
+ if __name__ == '__main__':
+--- .cache/final-close/3-check-scripts/before/textbook/part7/qa/check_figures.py	2026-09-11 02:20:01.989812787 +0000
++++ textbook/part7/qa/check_figures.py	2026-10-01 00:25:41.321010556 +0000
+@@ -1,23 +1,172 @@
+-"""Compare real diagram labels and connectors across SVG and Excalidraw."""
++"""Compare real diagram labels and connectors across SVG and Excalidraw.
++
++전체 마감 2026-10-01: 옛 20행(모든 챕터에 figures/_gen_figures.py 요구)을 지금 구조에 맞게 고침 — 개선한 챕터는
++원고가 부르는 Mermaid 원본(.mmd)과 렌더(.svg·.png·.render.json), 삽화(.png·.prompt.md)가 있고 옛 생성기가 막혀
++qa/upgrade/before/generators/blocked/에 있어야 하며, Mermaid 그림도 .excalidraw 짝처럼 원본과 견준다(라벨·화살촉·상자 수·렌더 도장).
++이번 개선에서 제외한 Ch 32·33은 옛 구조(figures/_gen_figures.py + .excalidraw 짝) 그대로 본다.
++"""
+ from __future__ import annotations
+ 
++import ast
++import hashlib
++import html
+ import json
+ import re
+ import xml.etree.ElementTree as ET
+ from pathlib import Path
+ 
+ PART = Path(__file__).resolve().parents[1]
++MERMAID = PART.parent / '_notebook/mermaid'
++EXCLUDED = {'ch32-docker', 'ch33-cicd'}  # 이번 품질 개선에서 제외한 챕터(옛 생성기·옛 그림 구조)
++SKIP = re.compile(r'^(?:classDef|class|style|linkStyle|subgraph|direction|click)\b|^end$')
++LINK = re.compile(r'\s*(<?(?:-{2,}|-\.+-|={2,})[>xo]?)\s*')
+ 
+ 
+ def normalize(value: str) -> str:
+     return re.sub(r'\s+', '', value)
+ 
+ 
++def squeezed(text):
++    return re.sub(r'\s+', '', text)
++
++
++def mermaid_lines(text):
++    body = re.sub(r'(?s)^---\n.*?\n---\n', '', text)
++    return [line.strip() for line in body.splitlines() if line.strip() and not line.strip().startswith('%%')]
++
++
++def entity(text):
++    # Mermaid 글자 코드(#lt;·#35;)와 HTML 이름을 글자로 바꾼다
++    text = re.sub(r'#(\d+);', lambda match: chr(int(match.group(1))), text)
++    text = re.sub(r'#([A-Za-z]+);', lambda match: html.unescape('&' + match.group(1) + ';'), text)
++    return html.unescape(text)
++
++
++def mermaid_labels(text):
++    lines = mermaid_lines(text)
++    kind, labels = lines[0].split()[0], []
++    for line in lines[1:]:
++        if kind == 'flowchart' and (line.startswith('subgraph') or not SKIP.match(line)):
++            labels += re.findall(r'"([^"]*)"', line) + re.findall(r'\|([^|"]+)\|', line)
++            plain = re.sub(r'"[^"]*"', '', line)
++            labels += re.findall(r'<?--\s+([^\s>-][^>]*?)\s+--[->]', plain)
++            labels += re.findall(r'-\.\s+([^.]+?)\s+\.->', plain) + re.findall(r'==\s+([^=]+?)\s+==>', plain)
++            labels += re.findall(r'[\[\(\{]+([^\[\]\(\)\{\}"|]+)[\]\)\}]+', plain)
++            bare = re.match(r'subgraph\s+([^\s\["]+)\s*$', line)
++            labels += [bare.group(1)] if bare else []
++        elif kind == 'sequenceDiagram':
++            member = re.match(r'(?:participant|actor)\s+(\S+)(?:\s+as\s+(.+))?$', line)
++            note = re.match(r'[Nn]ote\s+(?:over|left of|right of)\s+[^:]+:\s*(.+)$', line)
++            block = re.match(r'(?:alt|else|opt|loop|par|and|critical|break)\b\s*(.*)$', line)
++            message = re.match(r'[^:]+?(?:->>|-->>|->|-->|-x|--x|-\)|--\))[+-]?[^:]+:\s*(.*)$', line)
++            if member:
++                labels.append(member.group(2) or member.group(1))
++            elif note or block:
++                labels.append((note or block).group(1))
++            elif message and not line.startswith('rect'):
++                labels.append(message.group(1))
++        elif kind == 'xychart-beta':
++            labels += re.findall(r'"([^"]*)"', line)
++        elif kind == 'gantt' and not re.match(r'(?:dateFormat|axisFormat|tickInterval|todayMarker|excludes)\b', line):
++            heading = re.match(r'(?:title|section)\s+(.+)$', line) or re.match(r'([^:]+):', line)
++            labels += [heading.group(1)] if heading else []
++    return [entity(label) for label in labels if label.strip()]
++
++
++def mermaid_arrows(text):
++    lines = mermaid_lines(text)
++    kind, count = lines[0].split()[0], 0
++    for line in lines[1:]:
++        if kind == 'sequenceDiagram':
++            count += bool(':' in line and re.match(r'[^:]+?(?:->>|-->>|-x|--x|-\)|--\))', line))
++        if kind != 'flowchart' or SKIP.match(line):
++            continue
++        plain = re.sub(r'\|[^|]*\|', '', re.sub(r'"[^"]*"', '""', line))
++        plain = re.sub(r'<--\s[^<>]*?-->', ' <--> ', plain)
++        plain = re.sub(r'(?<![<-])--\s[^<>-]*?-->', ' --> ', plain)
++        plain = re.sub(r'(?<![<-])--\s[^<>-]*?---', ' --- ', plain)
++        plain = re.sub(r'-\.\s[^.]*?\.->', ' -.-> ', plain)
++        parts = LINK.split(re.sub(r'==\s[^=]*?==>', ' ==> ', plain).replace('~~~', ' '))
++        for index in range(1, len(parts), 2):
++            right = parts[index + 1] if index + 1 < len(parts) else ''
++            pairs = (parts[index - 1].count('&') + 1) * (right.count('&') + 1)
++            count += pairs * ((parts[index][-1] in '>xo') + (parts[index][0] == '<'))
++    return count
++
++
++def render_digest(source):
++    # textbook/_notebook/mermaid/render_mermaid.py가 .render.json에 적는 값과 같은 셈
++    classes = (MERMAID / 'classes.mmd').read_text(encoding='utf-8')
++    prepared = re.sub(r'(?m)^\s*%% classes\s*$', classes.rstrip('\n'), source.read_text(encoding='utf-8'))
++    config = (MERMAID / 'config.json').read_text(encoding='utf-8')
++    return hashlib.sha256((prepared + config).encode('utf-8')).hexdigest()
++
++
++def label_visible(label, texts):
++    whole = squeezed(re.sub(r'<br\s*/?>', '', label))
++    if any(whole in text for text in texts):
++        return True
++    parts = [squeezed(part) for part in re.split(r'<br\s*/?>|\\n', label) if squeezed(part)]
++    return bool(parts) and all(any(part in text for text in texts) for part in parts)
++
++
++def is_blocked(script: Path) -> bool:
++    # 맨 위 문장들 가운데 최상위 raise SystemExit(...)가 있으면 실행이 막힌 옛 생성기다
++    for node in ast.parse(script.read_text()).body[:12]:
++        if isinstance(node, ast.Raise) and isinstance(node.exc, ast.Call) and getattr(node.exc.func, 'id', '') == 'SystemExit':
++            return True
++    return False
++
++
++def check_current_sources(chapter: Path) -> None:
++    figures = chapter / 'figures'
++    assert not (figures / '_gen_figures.py').exists(), chapter
++    blocked = chapter / 'qa/upgrade/before/generators/blocked/_gen_figures.py'
++    assert blocked.is_file() and is_blocked(blocked), blocked
++    raw = ''.join(path.read_text() for path in sorted((chapter / '_src').glob('[0-9][0-9]-*.html')))
++    diagrams = re.findall(r'\{\{mermaid:([^|}]+)', raw)
++    assert diagrams, chapter
++    for name in diagrams:
++        for suffix in ('.mmd', '.svg', '.png', '.render.json'):
++            assert (figures / f'{name}{suffix}').is_file(), (chapter.name, name + suffix)
++    for name in re.findall(r'\{\{img:([^|}]+)', raw):
++        for suffix in ('.png', '.prompt.md'):
++            assert (figures / f'{name}{suffix}').is_file(), (chapter.name, name + suffix)
++
++
++def mermaid_report(source: Path) -> dict:
++    svg_path = source.with_suffix('.svg')
++    svg = ET.fromstring(svg_path.read_text())
++    text = source.read_text(encoding='utf-8')
++    kind = mermaid_lines(text)[0].split()[0]
++    labels = mermaid_labels(text)
++    texts = [squeezed(''.join(item.itertext())) for item in svg.iter() if item.tag.split('}')[-1] == 'text']
++    missing = [label for label in labels if not label_visible(label, texts)]
++    assert not missing, (source, missing)
++    assert labels, source
++    arrows = mermaid_arrows(text)
++    svg_arrows = sum(('marker-end' in item.attrib) + ('marker-start' in item.attrib) for item in svg.iter())
++    assert arrows == svg_arrows and (arrows or kind in ('xychart-beta', 'gantt')), (source, arrows, svg_arrows)
++    boxes = None
++    if kind == 'flowchart':
++        boxes = sum(item.tag.split('}')[-1] == 'g' and 'node' in (item.get('class') or '').split() for item in svg.iter())
++        assert 1 <= boxes <= 7, (source, boxes)
++    stamp = json.loads(source.with_suffix('.render.json').read_text())
++    assert stamp.get('sha256') == render_digest(source), f'Stale Mermaid render: {source}'
++    assert source.with_suffix('.png').is_file(), source
++    return {'file': str(svg_path.relative_to(PART)), 'editable_source': 'mmd', 'kind': kind,
++            'labels': len(labels), 'arrows': arrows, 'boxes': boxes, 'render_current': True, 'matched': True}
++
++
+ def main():
+     reports = []
+     for chapter in sorted(PART.glob('ch*')):
+         figures = chapter / 'figures'
+-        assert (figures / '_gen_figures.py').is_file(), chapter
++        if chapter.name in EXCLUDED:
++            assert (figures / '_gen_figures.py').is_file(), chapter
++        else:
++            check_current_sources(chapter)
++            reports.extend(mermaid_report(source) for source in sorted(figures.glob('*.mmd')))
+         for drawing in sorted(figures.glob('*.excalidraw')):
+             doc = json.loads(drawing.read_text())
+             svg = ET.fromstring(drawing.with_suffix('.svg').read_text())
+@@ -39,7 +188,9 @@
+             reports.append({'file':str(drawing.relative_to(PART)), 'labels':len(labels),
+                             'arrows':arrows, 'boxes':boxes, 'matched':True})
+     (PART/'qa/figure-consistency.json').write_text(json.dumps(reports,ensure_ascii=False,indent=2))
+-    print(f'PASS {len(reports)} SVG/Excalidraw pairs: labels, arrows, editable nodes')
++    mermaid = sum(item.get('editable_source') == 'mmd' for item in reports)
++    print(f'PASS {len(reports)} SVG/source pairs ({mermaid} Mermaid .mmd, {len(reports) - mermaid} Excalidraw): '
++          'labels, arrows, editable nodes')
+ 
+ 
+ if __name__=='__main__':
+--- .cache/final-close/3-check-scripts/before/textbook/part5/qa/check_scope.py	2026-09-10 05:28:03.828275606 +0000
++++ textbook/part5/qa/check_scope.py	2026-10-01 00:26:34.396555762 +0000
+@@ -1,4 +1,8 @@
+-"""Measure lesson scope, declared hours and prose without counting rendered code."""
++"""Measure lesson scope, declared hours and prose without counting rendered code.
++
++전체 마감 2026-10-01: 챕터 끝 실습 절(규격 §7-2 — 마지막 절 `NN-…-실습`, meta 「실습 30분」)을 지금 구조에 맞게 읽음 —
++SECTION_COUNTS는 실습 절을 넣은 절 수, 실습 절은 분 단위 meta와 새 용어 수를 읽고 챕터 시수 합에는 넣지 않음(규격 §7-2 「시수」·「절 시수 합」).
++"""
+ from __future__ import annotations
+ 
+ import json
+@@ -9,8 +13,8 @@
+ PART = Path(__file__).resolve().parents[1]
+ EXPECTED = {'ch17-agent-overview': (5, 3), 'ch18-workflow-patterns': (4, 12),
+             'ch19-model-tools': (6, 10), 'ch20-tool-node': (3, 5)}
+-SECTION_COUNTS = {'ch17-agent-overview': 5, 'ch18-workflow-patterns': 6,
+-                  'ch19-model-tools': 6, 'ch20-tool-node': 4}
++SECTION_COUNTS = {'ch17-agent-overview': 6, 'ch18-workflow-patterns': 7,
++                  'ch19-model-tools': 7, 'ch20-tool-node': 5}  # 챕터 끝 실습 절 포함(2026-10-01)
+ 
+ 
+ def main():
+@@ -22,16 +26,23 @@
+         if len(config['sections']) != SECTION_COUNTS[slug]:
+             failures.append(f'{slug}: expected {SECTION_COUNTS[slug]} sections')
+         lessons = []
+-        for item in config['sections']:
++        for index, item in enumerate(config['sections']):
+             path = folder / '_src' / (item['slug'] + '.html')
+             source = path.read_text()
+             assert '[[작성:' not in source, path
+             meta = re.search(r'<!--meta:(.*?)-->', source, re.S)
+             assert meta, path
+-            lecture = re.search(r'강의\s*([\d.]+)h', meta[1])
+-            practice = re.search(r'실습\s*([\d.]+)h', meta[1])
+             terms = re.search(r'새 용어\s*(\d+)', meta[1])
+-            assert lecture and practice and terms, f'Missing scope: {path}'
++            # 챕터 끝 실습 절(마지막 절, 이름 끝 「-실습」)은 「실습 30분」처럼 분으로 적고 챕터 시수에 더하지 않는다(규격 §7-2)
++            chapter_practice = index == len(config['sections']) - 1 and item['slug'].endswith('-실습')
++            if chapter_practice:
++                minutes = re.search(r'실습\s*(\d+)\s*분', meta[1])
++                assert minutes and terms, f'Missing scope: {path}'
++                lecture = practice = ('0', '0')
++            else:
++                lecture = re.search(r'강의\s*([\d.]+)h', meta[1])
++                practice = re.search(r'실습\s*([\d.]+)h', meta[1])
++                assert lecture and practice and terms, f'Missing scope: {path}'
+             prose = re.sub(r'<code\b[^>]*>.*?</code>', '', source, flags=re.S)
+             prose = re.sub(r'<!--.*?-->|<[^>]+>|\{\{.*?\}\}', '', prose, flags=re.S)
+             prose = unescape(prose)
+@@ -39,6 +50,8 @@
+                             'practice_hours': float(practice[1]), 'new_terms': int(terms[1]),
+                             'prose_characters': len(re.sub(r'\s+', '', prose)),
+                             'hangul_characters': len(re.findall(r'[가-힣]', prose))})
++            if chapter_practice:
++                lessons[-1].update({'chapter_end_practice': True, 'practice_minutes': int(minutes[1])})
+             if int(terms[1]) > 7:
+                 failures.append(f'{slug}/{item["slug"]}: more than seven new terms')
+         hours = (sum(r['lecture_hours'] for r in lessons), sum(r['practice_hours'] for r in lessons))
+--- .cache/final-close/3-check-scripts/before/textbook/part6/qa/check_scope.py	2026-09-10 15:46:58.086611090 +0000
++++ textbook/part6/qa/check_scope.py	2026-10-01 00:26:34.398120684 +0000
+@@ -1,4 +1,8 @@
+-"""Measure lesson scope, declared hours and prose without counting rendered code."""
++"""Measure lesson scope, declared hours and prose without counting rendered code.
++
++전체 마감 2026-10-01: 챕터 끝 실습 절(규격 §7-2 — 마지막 절 `NN-…-실습`, meta 「실습 30분」)을 지금 구조에 맞게 읽음 —
++SECTION_COUNTS는 실습 절을 넣은 절 수, 실습 절은 분 단위 meta와 새 용어 수를 읽고 챕터 시수 합에는 넣지 않음(규격 §7-2 「시수」·「절 시수 합」).
++"""
+ from __future__ import annotations
+ 
+ import json
+@@ -12,7 +16,7 @@
+             'ch25-streaming': (3,5), 'ch26-delegation': (4,4),
+             'ch27-deepagents': (8,16), 'ch28-mcp': (5,11),
+             'ch29-agent-evaluation': (3,5)}
+-SECTION_COUNTS = dict(zip(EXPECTED, (6,8,6,3,3,4,8,5,4)))
++SECTION_COUNTS = dict(zip(EXPECTED, (7,9,7,4,4,5,9,6,5)))  # 챕터 끝 실습 절 포함(2026-10-01)
+ 
+ 
+ def main():
+@@ -24,16 +28,23 @@
+         if len(config['sections']) != SECTION_COUNTS[slug]:
+             failures.append(f'{slug}: expected {SECTION_COUNTS[slug]} sections')
+         lessons = []
+-        for item in config['sections']:
++        for index, item in enumerate(config['sections']):
+             path = folder / '_src' / (item['slug'] + '.html')
+             source = path.read_text()
+             assert '[[작성:' not in source, path
+             meta = re.search(r'<!--meta:(.*?)-->', source, re.S)
+             assert meta, path
+-            lecture = re.search(r'강의\s*([\d.]+)h', meta[1])
+-            practice = re.search(r'실습\s*([\d.]+)h', meta[1])
+             terms = re.search(r'새 용어\s*(\d+)', meta[1])
+-            assert lecture and practice and terms, f'Missing scope: {path}'
++            # 챕터 끝 실습 절(마지막 절, 이름 끝 「-실습」)은 「실습 30분」처럼 분으로 적고 챕터 시수에 더하지 않는다(규격 §7-2)
++            chapter_practice = index == len(config['sections']) - 1 and item['slug'].endswith('-실습')
++            if chapter_practice:
++                minutes = re.search(r'실습\s*(\d+)\s*분', meta[1])
++                assert minutes and terms, f'Missing scope: {path}'
++                lecture = practice = ('0', '0')
++            else:
++                lecture = re.search(r'강의\s*([\d.]+)h', meta[1])
++                practice = re.search(r'실습\s*([\d.]+)h', meta[1])
++                assert lecture and practice and terms, f'Missing scope: {path}'
+             prose = re.sub(r'<code\b[^>]*>.*?</code>', '', source, flags=re.S)
+             prose = re.sub(r'<!--.*?-->|<[^>]+>|\{\{.*?\}\}', '', prose, flags=re.S)
+             prose = unescape(prose)
+@@ -41,6 +52,8 @@
+                             'practice_hours': float(practice[1]), 'new_terms': int(terms[1]),
+                             'prose_characters': len(re.sub(r'\s+', '', prose)),
+                             'hangul_characters': len(re.findall(r'[가-힣]', prose))})
++            if chapter_practice:
++                lessons[-1].update({'chapter_end_practice': True, 'practice_minutes': int(minutes[1])})
+             if int(terms[1]) > 7:
+                 failures.append(f'{slug}/{item["slug"]}: more than seven new terms')
+         hours = (sum(r['lecture_hours'] for r in lessons), sum(r['practice_hours'] for r in lessons))
+--- .cache/final-close/3-check-scripts/before/textbook/part5/qa/check_notebook_readiness.py	2026-09-10 06:17:56.502724678 +0000
++++ textbook/part5/qa/check_notebook_readiness.py	2026-10-01 00:26:45.006019943 +0000
+@@ -1,4 +1,8 @@
+-"""Check the beginner-facing constraints that execution alone does not prove."""
++"""Check the beginner-facing constraints that execution alone does not prove.
++
++전체 마감 2026-10-01: 노트북 수 고정값(Part 5 21개·Part 6 47개 — 실습 절 전)을 지금 구조에 맞게 고침 —
++각 챕터 chapter.json의 절 목록(챕터 끝 실습 절 포함)과 노트북 이름이 같아야 한다. 나머지 규칙은 그대로.
++"""
+ from __future__ import annotations
+ 
+ import ast
+@@ -35,10 +39,14 @@
+                         'missing_annotations': missing_annotations, 'assertions': assertions})
+     (Path(__file__).parent / 'notebook-readiness.json').write_text(
+         json.dumps(reports, ensure_ascii=False, indent=2))
+-    assert len(reports) == 21
++    expected = []
++    for config in sorted((ROOT / 'textbook/part5').glob('ch*/chapter.json')):
++        lab = json.loads(config.read_text())['lab_path']
++        expected += [f"{lab}/notebooks/{s['slug']}.ipynb" for s in json.loads(config.read_text())['sections']]
++    assert sorted(r['notebook'] for r in reports) == sorted(expected), 'Notebooks differ from chapter.json sections'
+     assert all(r['max_cell_lines'] <= 25 and not r['missing_comments'] and
+                not r['missing_annotations'] and r['assertions'] for r in reports), reports
+-    print('21 notebooks: annotated functions, purpose comments, assertions, and <=25 lines/cell')
++    print(f'{len(reports)} notebooks: annotated functions, purpose comments, assertions, and <=25 lines/cell')
+ 
+ 
+ if __name__ == '__main__':
+--- .cache/final-close/3-check-scripts/before/textbook/part6/qa/check_notebook_readiness.py	2026-09-10 15:59:57.878900911 +0000
++++ textbook/part6/qa/check_notebook_readiness.py	2026-10-01 00:26:45.007455945 +0000
+@@ -1,4 +1,8 @@
+-"""Check the beginner-facing constraints that execution alone does not prove."""
++"""Check the beginner-facing constraints that execution alone does not prove.
++
++전체 마감 2026-10-01: 노트북 수 고정값(Part 5 21개·Part 6 47개 — 실습 절 전)을 지금 구조에 맞게 고침 —
++각 챕터 chapter.json의 절 목록(챕터 끝 실습 절 포함)과 노트북 이름이 같아야 한다. 나머지 규칙은 그대로.
++"""
+ from __future__ import annotations
+ 
+ import ast
+@@ -40,12 +44,16 @@
+                         'has_install_cell': has_install_cell, 'generic_comments': generic_comments})
+     (Path(__file__).parent / 'notebook-readiness.json').write_text(
+         json.dumps(reports, ensure_ascii=False, indent=2))
+-    assert len(reports) == 47
++    expected = []
++    for config in sorted((ROOT / 'textbook/part6').glob('ch*/chapter.json')):
++        lab = json.loads(config.read_text())['lab_path']
++        expected += [f"{lab}/notebooks/{s['slug']}.ipynb" for s in json.loads(config.read_text())['sections']]
++    assert sorted(r['notebook'] for r in reports) == sorted(expected), 'Notebooks differ from chapter.json sections'
+     assert all(r['max_cell_lines'] <= 25 and not r['missing_comments'] and
+                not r['missing_annotations'] and not r['generic_comments']
+                and r['assertions'] and r['has_install_cell']
+                for r in reports), reports
+-    print('47 notebooks: install cells, annotated functions, purpose comments, assertions, and <=25 lines/cell')
++    print(f'{len(reports)} notebooks: install cells, annotated functions, purpose comments, assertions, and <=25 lines/cell')
+ 
+ 
+ if __name__ == '__main__':
+--- .cache/final-close/3-check-scripts/before/textbook/part6/qa/check_visual_reports.py	2026-09-10 16:40:14.139547787 +0000
++++ textbook/part6/qa/check_visual_reports.py	2026-10-01 00:27:13.751364498 +0000
+@@ -1,4 +1,8 @@
+-"""Require a current desktop/mobile report for every published Part 6 page."""
++"""Require a current desktop/mobile report for every published Part 6 page.
++
++전체 마감 2026-10-01: 화면 수 고정값 116(실습 절 전)을 지금 구조에 맞게 고침 — 챕터마다 chapter.json의 절(챕터 끝 실습 절 포함)과
++index.html, Part 6 목차·전체 목차가 공개 쪽이고, 그 수의 두 너비(1280·390)만큼 기록이 있어야 한다.
++"""
+ from __future__ import annotations
+ 
+ import hashlib
+@@ -27,7 +31,10 @@
+             records.append({'path': str(path.relative_to(ROOT)), 'width': item['width'],
+                             'html_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+                             'passed': True})
+-    assert len(records) == 116
++    published = 2  # textbook/part6/index.html · textbook/index.html
++    for config in sorted((ROOT / 'textbook/part6').glob('ch*/chapter.json')):
++        published += len(json.loads(config.read_text())['sections']) + 1  # 절 쪽 + 챕터 index.html
++    assert len(records) == 2 * published, (len(records), 2 * published)
+     (QA / 'visual-results.json').write_text(json.dumps(
+         {'screens': len(records), 'all_current_and_passed': True, 'records': records},
+         ensure_ascii=False, indent=2))
+--- .cache/final-close/3-check-scripts/before/textbook/part7/qa/check_bundle_execution.py	2026-09-11 02:31:12.318150648 +0000
++++ textbook/part7/qa/check_bundle_execution.py	2026-10-01 00:31:55.411596265 +0000
+@@ -1,4 +1,14 @@
+-"""Smoke-test the public archive from a fresh extraction and notebook cwd."""
++"""Smoke-test the public archive from a fresh extraction and notebook cwd.
++
++전체 마감 2026-10-01: 노트북 실행기를 지금 구조에 맞게 고침 — 옛 32행은 Ch 31 실습 폴더의 macOS `.venv` 파이썬으로
++execute.py를 돌려 작업 기기(Linux)에서 멈췄다. Part 4·5·6 `check_bundle_execution.py`와 같게 묶음 속 챕터 프로젝트에서
++`uv run --project <챕터> --with nbclient==0.11.0 --with python-dotenv==1.2.3 python execute.py`로 돌리고(커널은 그 챕터의
++`uv sync --locked` `.venv`), 보고서에 묶음 이름·해시를 적는다. 실행 대상(SMOKE_SECTIONS)은 그대로다.
++DB가 필요한 절(Ch 31 03)은 학생처럼 README의 Docker 컨테이너를 켜 둔 뒤 돌리거나, 작업 기기에서는 `--pre-exec`를 주어
++그 챕터 `qa/upgrade/pre_exec.sh`(127.0.0.1:55431 PostgreSQL 훅)를 같은 셸에서 먼저 불러 실행한다(셸이 끝나면 훅이 서버를 끔).
++"""
++import argparse
++import hashlib
+ import json
+ import subprocess
+ import tempfile
+@@ -7,12 +17,18 @@
+ 
+ ROOT = Path(__file__).resolve().parents[3]
+ REPORT = ROOT / "textbook/part7/qa/bundle-execution.json"
++SMOKE_SECTIONS = {"ch30-fastapi-serving": "01", "ch31-database": "03", "ch33-cicd": "02"}
+ 
+ 
+ def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--pre-exec", action="store_true",
++                        help="Source textbook/part7/<chapter>/qa/upgrade/pre_exec.sh before a smoke notebook (work machine).")
++    args = parser.parse_args()
++    archive_path = ROOT / "textbook/downloads/part7-practice.zip"
+     results = []
+     with tempfile.TemporaryDirectory(prefix="part7-student-") as folder:
+-        with ZipFile(ROOT / "textbook/downloads/part7-practice.zip") as archive:
++        with ZipFile(archive_path) as archive:
+             archive.extractall(folder)
+         extracted = Path(folder) / "part7-practice"
+         for lab in sorted((extracted / "labs/part7").glob("ch*")):
+@@ -24,15 +40,21 @@
+             subprocess.run([str(python), "-c", "import ipykernel, pip"], check=True)
+             entry = {"chapter": lab.name, "locked_sync": sync.returncode == 0,
+                      "notebook_kernel_import": True}
+-            smoke_sections = {"ch30-fastapi-serving": "01", "ch31-database": "03", "ch33-cicd": "02"}
+-            if lab.name in smoke_sections:
+-                number = smoke_sections[lab.name]
++            if lab.name in SMOKE_SECTIONS:
++                number = SMOKE_SECTIONS[lab.name]
+                 notebook = next((lab / "notebooks").glob(f"{number}-*.ipynb"))
+-                subprocess.run([
+-                    str(ROOT / "labs/part7/ch31-database/.venv/bin/python"),
++                runner = [
++                    "uv", "run", "--project", str(lab), "--with", "nbclient==0.11.0",
++                    "--with", "python-dotenv==1.2.3", "python",
+                     str(ROOT / "textbook/_notebook/execute.py"), str(notebook),
+                     "--cwd", str(lab / "notebooks"), "--kernel-python", str(python),
+-                ], check=True)
++                ]
++                hook = ROOT / "textbook/part7" / lab.name / "qa/upgrade/pre_exec.sh"
++                if args.pre_exec and hook.is_file():
++                    # 훅을 불러 둔 같은 셸에서 실행기를 돌린다(훅의 trap EXIT가 셸이 끝날 때 서버를 끈다)
++                    runner = ["bash", "-c", '. "$1" || exit 1; shift; "$@"', "pre_exec", str(hook), *runner]
++                    entry["pre_exec"] = str(hook.relative_to(ROOT))
++                subprocess.run(runner, cwd=lab, check=True)
+                 nb = json.loads(notebook.read_text())
+                 entry["execution"] = nb["metadata"]["verification"]
+                 entry["notebook"] = notebook.name
+@@ -40,7 +62,9 @@
+             results.append(entry)
+             print(f"PASS extracted archive: {lab.name}", flush=True)
+         assert not list(extracted.rglob(".env"))
+-    REPORT.write_text(json.dumps({"chapters": results, "actual_env_files": 0},
++    REPORT.write_text(json.dumps({"archive": archive_path.name,
++                                  "archive_sha256": hashlib.sha256(archive_path.read_bytes()).hexdigest(),
++                                  "chapters": results, "actual_env_files": 0},
+                                  ensure_ascii=False, indent=2))
+ 
+ 
+--- .cache/final-close/3-check-scripts/before/textbook/part7/qa/check_delivery.py	2026-09-11 02:29:37.656512288 +0000
++++ textbook/part7/qa/check_delivery.py	2026-10-01 00:31:18.886022527 +0000
+@@ -1,7 +1,15 @@
+-"""Check published lessons, local links, archives, and preserved earlier sources."""
++"""Check published lessons, local links, archives, and preserved earlier sources.
++
++전체 마감 2026-10-01: 앞 Part 원본 보존 대조의 기준 파일을 지금 구조에 맞게 바꿈 — 옛 `existing-artifacts-before.json`
++(2026-09-11 Part 7 집필 전 Part 1~6 `_src`·노트북 376개)은 품질 개선으로 375개가 바뀌고 1개가 옮겨져 기준이 될 수 없어
++그대로 두고, 같은 범위(Part 1~6 챕터 `_src/*.html`·`labs/part1~6/ch*/notebooks/*.ipynb`)를 전체 마감 때 다시 적은
++`existing-artifacts-final-close.json`을 읽는다. 기준 파일은 묶음 재생성 뒤 `--write-baseline`으로 한 번만 만든다
++(이미 있으면 덮어쓰지 않음, 없으면 대조 단계에서 멈춤).
++"""
+ 
+ from __future__ import annotations
+ 
++import argparse
+ import hashlib
+ import json
+ import re
+@@ -12,6 +20,7 @@
+ 
+ ROOT = Path(__file__).resolve().parents[3]
+ PART = ROOT / "textbook/part7"
++BASELINE = PART / "qa/existing-artifacts-final-close.json"
+ 
+ 
+ class Links(HTMLParser):
+@@ -25,7 +34,29 @@
+             self.links.append(values["href"])
+ 
+ 
++def earlier_sources():
++    # 옛 existing-artifacts-before.json과 같은 범위: Part 1~6 챕터 _src/*.html과 실습 폴더 노트북
++    paths = []
++    for number in range(1, 7):
++        paths += (ROOT / f"textbook/part{number}").glob("ch*/_src/*.html")
++        paths += (ROOT / f"labs/part{number}").glob("ch*/notebooks/*.ipynb")
++    return {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
++            for path in sorted(paths)}
++
++
++def write_baseline():
++    with BASELINE.open("x", encoding="utf-8") as handle:
++        handle.write(json.dumps(earlier_sources(), ensure_ascii=False, indent=2) + "\n")
++    print(f"Wrote {BASELINE.relative_to(ROOT)}: {len(json.loads(BASELINE.read_text()))} earlier sources")
++
++
+ def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--write-baseline", action="store_true",
++                        help="Record the final-close baseline once (after bundle regeneration) and stop.")
++    if parser.parse_args().write_baseline:
++        write_baseline()
++        return
+     reports, broken = [], []
+     for chapter in sorted(PART.glob("ch*/chapter.json")):
+         config = json.loads(chapter.read_text())
+@@ -68,11 +99,14 @@
+             if not target.is_file():
+                 broken.append({"page": str(page.relative_to(ROOT)), "href": href})
+     assert not broken, broken
+-    prior = json.loads((PART / "qa/existing-artifacts-before.json").read_text())
++    if not BASELINE.is_file():
++        raise SystemExit(f"Missing {BASELINE.relative_to(ROOT)}: run --write-baseline after bundle regeneration")
++    prior = json.loads(BASELINE.read_text())
+     changed = [
+         name
+         for name, digest in prior.items()
+-        if hashlib.sha256((ROOT / name).read_bytes()).hexdigest() != digest
++        if not (ROOT / name).is_file()
++        or hashlib.sha256((ROOT / name).read_bytes()).hexdigest() != digest
+     ]
+     assert not changed, changed
+     archives = []
+--- .cache/final-close/3-check-scripts/before/textbook/qa/check_course_delivery.py	2026-09-17 19:55:58.156148945 +0000
++++ textbook/qa/check_course_delivery.py	2026-10-01 00:30:24.811178260 +0000
+@@ -1,4 +1,8 @@
+-"""Check published Part 3 links, public archives, and notebook totals."""
++"""Check published Part 3 links, public archives, and notebook totals.
++
++전체 마감 2026-10-01: 노트북 수 고정값 87(Part 1~3만 있던 2026-09-09 값)을 지금 구조에 맞게 고침 — 아래 glob이 보는
++Part 1~7 모든 챕터의 학생 노트북 246개(대상 32챕터 + 제외 Ch 32·33, 챕터 끝 실습 절 포함 — 각 챕터 _src 절 수와 같음).
++"""
+ import hashlib
+ import json
+ import re
+@@ -109,8 +113,8 @@
+           'excalidraw_sources':sum(len(list((p/'figures').glob('[0-9]*.excalidraw'))) for p in chapters),
+           'scanned_public_items':scanned, 'exposed_credentials':exposed, 'archives':archives}
+ 
+-assert len(notebooks) == 87, f'Expected 87 student notebooks; found {len(notebooks)}'
+-assert quizzes >= 87 * 3, f'Missing review questions: {quizzes}'
++assert len(notebooks) == 246, f'Expected 246 student notebooks; found {len(notebooks)}'
++assert quizzes >= 246 * 3, f'Missing review questions: {quizzes}'
+ (part / 'qa/continuity-evidence/course-delivery-results.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
+ assert not missing and not exposed, 'Delivery check failed; see report'
+ print(json.dumps(report, ensure_ascii=False, indent=2))

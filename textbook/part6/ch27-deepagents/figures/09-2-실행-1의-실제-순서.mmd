@@ -1,0 +1,17 @@
+%%{init: {"sequence": {"messageAlign": "left", "actorMargin": 30, "width": 120}}}%%
+sequenceDiagram
+  participant U as 우리 코드
+  participant A as 실행 1 에이전트
+  box Lavender
+  participant M as 모델<br>gpt-5.4-mini
+  end
+  U->>A: 요청 글 한 줄로 invoke
+  A->>M: 요청 1
+  M-->>A: write_file 요청 하나
+  Note over A: 승인 노드에서 멈춤<br>메모 파일 없음
+  A-->>U: 결과 키 interrupt와 멈춘 요청 write_file
+  U->>A: 결정 목록 approve 하나로 이어 감
+  Note over A: 도구 실행 노드가<br>멈춘 요청의 글 그대로 적음
+  A->>M: 요청 2
+  M-->>A: 도구 요청 없는 답
+  A-->>U: 결과 메시지 넷과 메모 파일이 든 files

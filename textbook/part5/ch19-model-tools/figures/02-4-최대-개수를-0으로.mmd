@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph two["limit 2 · 4절"]
+    direction TB
+    t1["invoke<br>status paid · limit 2"]:::flow
+    t2["몸통 실행 줄 있음<br>받은 주문 수 2<br>O101 · O103"]:::measure
+    t1 --> t2
+  end
+  subgraph zero["limit 0 · 8절 값 바꿔 보기"]
+    direction TB
+    z1["invoke<br>status paid · limit 0"]:::flow
+    z2["받은 오류 ValidationError<br>limit · greater_than_equal<br>몸통 실행 줄 없음"]:::measure
+    z1 --> z2
+  end
+  rule["두 칸 모두 같은 규칙<br>최대 개수 칸<br>Field · 1 이상 10 이하"]
+  two ~~~ rule
+  zero ~~~ rule

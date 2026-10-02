@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph RUN1["실행 1 · env_file_name = .env"]
+    direction LR
+    a1["색인 비교<br>config.txt만<br>더미 키 False"] --> a2["main 받기<br>충돌 없이 병합<br>종료 코드 0"] --> a3["PR 1 file changed<br>무시 규칙 네 줄<br>더미 키 커밋 수 0"]:::measure
+  end
+  subgraph RUN2["실행 2 · env_file_name = .env.local"]
+    direction LR
+    b1["색인 비교에 더미 키 True<br>규칙에 더하고<br>rm --cached"]:::measure --> b2["main 받기 CONFLICT<br>.gitignore 종료 코드 1<br>두 규칙 남겨 해결"]:::measure --> b3["PR 2 files changed<br>무시 규칙 다섯 줄<br>더미 키 커밋 수 0"]:::measure
+  end
+  RUN1 ~~~ RUN2

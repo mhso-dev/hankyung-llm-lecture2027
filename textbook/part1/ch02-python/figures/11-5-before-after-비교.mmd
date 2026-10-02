@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 파일 맨 위 items = []"]
+    direction LR
+    b1["목록 하나<br>두 테스트가 함께 씀"]:::tool --> b2["run_pytest()"]:::flow --> b3[".F · 1 failed, 1 passed<br>종료 코드: 1"]:::fail
+  end
+  subgraph AFTER["After · @pytest.fixture def items()"]
+    direction LR
+    a1["테스트마다 새 목록<br>SETUP F items 두 번"]:::tool --> a2["run_pytest()"]:::flow --> a3[".. · 2 passed<br>종료 코드: 0"]:::measure
+  end
+  BEFORE ~~~ AFTER

@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph high["점수 칸에 0.82를 넣은 실행"]
+    direction TB
+    h1["넣은 값<br>점수 칸 0.82"]:::tool
+    h2["나온 실행 흔적<br>normalize 다음<br>make_query 다음<br>make_answer"]:::measure
+    h3["나온 답 칸<br>찾은 자료로<br>답을 만듭니다"]:::measure
+    h1 ~~~ h2
+    h2 ~~~ h3
+  end
+  subgraph low["점수 칸에 0.41을 넣은 실행"]
+    direction TB
+    l1["넣은 값<br>점수 칸 0.41"]:::tool
+    l2["나온 실행 흔적<br>normalize 다음<br>make_query 다음<br>ask_more"]:::measure
+    l3["나온 답 칸<br>자료를 더<br>찾아야 합니다"]:::measure
+    l1 ~~~ l2
+    l2 ~~~ l3
+  end
+  common["두 실행 모두<br>같은 그래프와 같은 질문"]
+  high ~~~ low
+  low ~~~ common

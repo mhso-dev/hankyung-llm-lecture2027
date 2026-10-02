@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph one["통제 문장을 붙인 답"]
+    direction TB
+    o1["점수가 기준값보다 작음"]:::measure
+    o2["한 번 고쳐 씀"]:::measure
+    o3["붙인 낱말이 사라짐"]:::measure
+    o1 ~~~ o2
+    o2 ~~~ o3
+  end
+  subgraph two["통제 문장이 없는 답"]
+    direction TB
+    t1["근거 점수 0.98"]:::measure
+    t2["고치지 않음"]:::measure
+    t3["답을 그대로 둠"]:::measure
+    t1 ~~~ t2
+    t2 ~~~ t3
+  end
+  same["두 실행 모두<br>같은 근거 글과<br>같은 기준값 0.9"]
+  one ~~~ two
+  two ~~~ same

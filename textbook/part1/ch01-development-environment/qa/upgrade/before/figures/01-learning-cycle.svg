@@ -1,0 +1,33 @@
+<svg style="min-width:800px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 430" width="800" height="430" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-01-learning-cycle desc-01-learning-cycle">
+<title id="title-01-learning-cycle">예측하고 확인하며 코드를 바꾸는 학습 순환</title>
+<desc id="desc-01-learning-cycle">예측한 결과와 실제 결과를 비교하고, 값 하나를 바꾼 뒤 다시 확인합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="800" height="430" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">예측하고 확인하며 코드를 바꾸는 학습 순환</tspan></text>
+<rect x="45" y="105" width="120" height="72" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="105.0" y="130.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="105.0" dy="0.0">① 예측</tspan><tspan x="105.0" dy="21.6">결과는 6,000</tspan></text>
+<polyline points="165,141 195,141" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="195" y="105" width="120" height="72" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="255.0" y="130.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="255.0" dy="0.0">② 실행</tspan><tspan x="255.0" dy="21.6">3,000 * 2</tspan></text>
+<polyline points="315,141 345,141" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="345" y="105" width="120" height="72" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="405.0" y="130.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="405.0" dy="0.0">③ 관찰</tspan><tspan x="405.0" dy="21.6">6,000</tspan></text>
+<polyline points="465,141 495,141" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="495" y="105" width="120" height="72" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="555.0" y="130.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="555.0" dy="0.0">④ 변경</tspan><tspan x="555.0" dy="21.6">count = 3</tspan></text>
+<polyline points="615,141 645,141" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="645" y="105" width="120" height="72" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="705.0" y="130.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="705.0" dy="0.0">⑤ 검증</tspan><tspan x="705.0" dy="21.6">9,000</tspan></text>
+<polyline points="705,177 705,240 105,240 105,177" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)" stroke-dasharray="7 5"/>
+<text x="405" y="265.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="bold"><tspan x="405" dy="0.0">다음 값으로 반복</tspan></text>
+<text x="170" y="300.0" font-size="16" fill="#166534" text-anchor="middle" dominant-baseline="middle" font-weight="bold"><tspan x="170" dy="0.0">price = 3000</tspan></text>
+<text x="400" y="300.0" font-size="16" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="bold"><tspan x="400" dy="0.0">count = 2  →  count = 3</tspan></text>
+<text x="635" y="300.0" font-size="16" fill="#166534" text-anchor="middle" dominant-baseline="middle" font-weight="bold"><tspan x="635" dy="0.0">total = price * count</tspan></text>
+<text x="400" y="360.0" font-size="15" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="400" dy="0.0">작은 값을 바꾸면 코드와 결과의 관계를 바로 확인할 수 있습니다.</tspan></text>
+</svg>

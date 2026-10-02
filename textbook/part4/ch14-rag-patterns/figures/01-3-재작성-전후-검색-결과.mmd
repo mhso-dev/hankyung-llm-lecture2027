@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph before["재작성 없이 검색"]
+    direction TB
+    b1["검색에 쓴 질문<br>거기 늦게 가면<br>어떻게 되나요"]:::tool
+    b2["첫 자리 문서 LIB-002"]:::measure
+    b3["정답 문서 FAC-001은<br>자리 여덟"]:::measure
+    b1 ~~~ b2
+    b2 ~~~ b3
+  end
+  subgraph after["재작성한 질문으로 검색"]
+    direction TB
+    a1["검색에 쓴 질문<br>스터디룸이 들어간<br>재작성 질문"]:::tool
+    a2["첫 자리 문서 FAC-001"]:::measure
+    a3["정답 문서 FAC-001은<br>자리 하나"]:::measure
+    a1 ~~~ a2
+    a2 ~~~ a3
+  end
+  same["두 검색 모두<br>같은 문서<br>열두 건에서 고름"]
+  before ~~~ after
+  after ~~~ same

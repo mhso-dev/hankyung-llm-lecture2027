@@ -1,0 +1,336 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>병합 충돌 해결 — Ch 3 · Git &amp; GitHub 협업</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 3 · Git &amp; GitHub 협업</p>
+<h1>병합 충돌 해결</h1><div class="meta"><span>강의 1h</span><span>실습 3h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 3h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>공통 커밋 이후 두 이력의 변경을 비교해 충돌 원인을 설명할 수 있습니다.</li><li>충돌 표시에서 현재 로컬 브랜치와 병합 대상 이력의 내용을 구분할 수 있습니다.</li><li>업무 의도를 반영한 결과로 파일을 수정하고 병합 커밋을 완성할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>Git은 서로 다른 파일이나 서로 떨어진 줄의 변경을 대체로 자동으로 합칩니다. 그러나 두 사람이 같은 줄을 다른 내용으로 바꾸면 어느 문장이 맞는지 코드만 보고 판단할 수 없습니다. 최신 커밋을 무조건 고르거나 두 문장을 모두 남기는 선택도 업무 요구와 맞지 않을 수 있습니다. 충돌은 Git이 실패한 상태가 아니라 사람의 판단이 필요한 위치를 표시하고 병합을 멈춘 상태입니다. 개발자는 표시를 제거하는 데서 끝내지 않고, 두 변경의 목적을 확인한 뒤 최종 동작을 선택하고 검사해야 합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>앞 절에서 원격에 게시한 커밋과 로컬 작업이 서로 다른 이력이 될 수 있음을 확인했습니다. 이번 노트북은 <code>message.txt</code>의 첫 문장을 공통 시작점으로 커밋합니다. Alice는 원격 <code>main</code>의 같은 줄을 “오늘 출고”로 바꾸고, Bob은 이전 커밋에서 시작한 로컬 <code>main</code>을 “내일 출고”로 바꿉니다. 실제 서비스 코드는 아니지만 동일한 줄의 업무 문구를 두 사람이 수정하는 충돌 조건을 정확히 재현합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>갈라진 두 편집본을 다시 맞춥니다</h3><p>
+공동 문서의 같은 문장을 두 사람이 각자 고치면 최종 문장은 실제 업무 기준을 담아야 합니다. <strong>병합(merge)</strong>은 갈라진 두 커밋 흐름의 파일 변화를 한 결과로 합치는 작업입니다. Git은 두 이력이 함께 출발한 <strong>공통 조상(merge base)</strong>, 현재 로컬 브랜치의 변경, 병합 대상의 변경을 비교합니다. Alice와 Bob이 같은 출발 커밋의 같은 줄을 다르게 바꾸면 어느 문장이 맞는지 알 수 없어 <strong>병합 충돌(merge conflict)</strong>로 멈춥니다.</p><p>먼저 Bob의 <code>git push origin main</code>이 <code>non-fast-forward</code>로 거절됩니다. 원격 <code>main</code>에는 Alice의 새 커밋이 있고 Bob의 브랜치에는 그 커밋이 없기 때문입니다. <strong>fast-forward</strong>는 현재 참조를 기존 자손 커밋으로 앞으로 옮기기만 하면 되는 관계입니다. Bob의 커밋과 Alice의 커밋은 서로 다른 자손이라 단순 이동으로 합칠 수 없습니다.</p><p><code>git pull --no-rebase origin main</code>은 두 단계를 수행합니다. 먼저 원격 객체를 가져오고(fetch), 이어서 현재 Bob 브랜치에 원격 <code>main</code>을 병합합니다. <code>--no-rebase</code>는 Bob의 커밋을 Alice 커밋 위에서 다시 만들지 않고 병합하라는 뜻입니다. 충돌이 나면 명령은 실패로 끝나지만 저장소가 망가진 것은 아닙니다. 색인에 해결되지 않은 경로가 표시되고 작업 파일에 양쪽 후보가 남습니다.</p><h3>충돌 표시를 파일 변화로 읽습니다</h3><p><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> 아래는 현재 Bob 브랜치의 내용, <code>=======</code> 아래부터 <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>까지는 병합하려는 원격 변경입니다. 표시 세 줄만 삭제하고 한쪽 문장을 무조건 고르면 문법상 병합은 끝나도 업무 규칙은 틀릴 수 있습니다. 이 실습은 <code>policy.txt</code>의 두 출고 조건을 읽고 “14시 이전 결제는 오늘 출고, 14시 이후 결제는 내일 출고”라는 새 문장으로 합칩니다.</p><p>해결한 <code>message.txt</code>를 <code>git add</code>하면 Git은 그 경로의 충돌을 해결했다고 색인에 표시합니다. <code>git commit</code>은 Alice 쪽 부모와 Bob 쪽 부모를 함께 가진 병합 커밋을 만듭니다. 출력의 부모 해시가 두 개라는 사실이 두 흐름을 보존한 증거입니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 695" width="720" height="695" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-03-merge-conflict desc-03-merge-conflict">
+<title id="title-03-merge-conflict">팀 저장소의 병합 충돌 해결</title>
+<desc id="desc-03-merge-conflict">두 작업자가 같은 줄을 다르게 수정하면 원격 push가 거부되고 병합 충돌을 정책 자료에 맞춰 해결합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="720" height="695" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">팀 저장소의 병합 충돌 해결</tspan></text>
+<rect x="80" y="75" width="560" height="76" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="360.0" y="101.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">공통 main</tspan><tspan x="360.0" dy="23.0">출고 정책 기록</tspan></text>
+<polyline points="360,151 360,185" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="185" width="560" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="211.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">Alice 변경</tspan><tspan x="360.0" dy="23.0">14시 이전 오늘 출고</tspan></text>
+<polyline points="360,261 360,295" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="295" width="560" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="321.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">Bob 변경</tspan><tspan x="360.0" dy="23.0">내일 출고</tspan></text>
+<polyline points="360,371 360,405" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="405" width="560" height="76" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="360.0" y="431.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">push 거부와 pull 충돌</tspan><tspan x="360.0" dy="23.0">같은 줄의 다른 내용</tspan></text>
+<polyline points="360,481 360,515" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="515" width="560" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="541.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">정책 근거로 해결</tspan><tspan x="360.0" dy="23.0">원격 main 갱신</tspan></text>
+<text x="360.0" y="669.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg></div><p>공통 <code>main</code>에서 Alice와 Bob의 변경이 같은 줄을 다르게 수정합니다. Bob의 push 거부와 pull 충돌 뒤에는 <code>policy.txt</code>의 출고 기준을 근거로 새 문장을 작성합니다. 해결 커밋을 원격 <code>main</code>에 게시하면 두 부모를 가진 병합 커밋이 됩니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>준비 셀은 공통 안내를 원격에 게시한 직후 Bob의 작업 폴더를 복제합니다. 그 뒤 Alice가 같은 줄을 <code>배송 안내: 14시 이전은 오늘 출고</code>로 바꾸어 push하고, Bob은 자신이 받은 공통 커밋에서 <code>배송 안내: 내일 출고</code>로 바꿉니다. 두 변경이 같은 부모에서 자연스럽게 갈라지므로 브랜치 위치를 따로 옮길 필요가 없습니다.</p><p>이 단계에서 두 이력이 갈라졌다는 사실만으로 충돌이 확정되는 것은 아닙니다. 서로 다른 파일을 수정했거나 같은 파일의 서로 떨어진 줄을 수정했다면 자동 병합될 수 있습니다. 이번 실습에서는 같은 한 줄을 서로 다른 문자열로 바꿨다는 조건 때문에 충돌이 발생합니다.</p><section class="notebook" data-notebook="03-병합-충돌-해결" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="03-병합-충돌-해결.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDrs5Htlakg7Lap64+MIO2VtOqysFxuIiwKICAgICJcbiIsCiAgICAi66qo65OgIOyggOyepeyGjOuKlCDsnoTsi5wg7Y+0642U7JeQIOunjOuTpOupsCDsi6TsoJwgR2l0SHViIOqzhOygleydtOuCmCDsm5Dqsqkg7KCA7J6l7IaM66W8IOuzgOqyve2VmOyngCDslYrsirXri4jri6QuXG4iLAogICAgIlxuIiwKICAgICIjIyDrqoXroLnsnYQg7Iuk7ZaJ7ZWY6riwIOyghOyXkCDslYzslYTrkZggR2l0IOyDge2DnFxuIiwKICAgICJcbiIsCiAgICAiR2l07J2AIO2MjOydvOydhCDshLgg7J6Q66as7JeQ7IScIOu0heuLiOuLpC4gKirsnpHsl4Ug7Y+0642UKHdvcmtpbmcgdHJlZSkqKiDripQg7KeA6riIIO2OuOynke2VmOuKlCDtjIzsnbzsnbQg7J6I64qUIOyekOumrOyeheuLiOuLpC4gKirsg4nsnbgoaW5kZXgpKiog7J2AIOuLpOydjCDsu6TrsIvsl5Ag64Sj7J2EIO2MjOydvCDsg4Htg5zrpbwg6rOo6528IOuRkOuKlCDsnpDrpqzsnbTrqbAsIOyKpO2FjOydtOynlSDsmIHsl60oc3RhZ2luZyBhcmVhKeydtOudvOqzoOuPhCDtlanri4jri6QuICoq7Luk67CLKGNvbW1pdCkqKiDsnYAg7IOJ7J247JeQIOqzoOuluCDsg4Htg5zrpbwg7KCA7J6l7IaMIOydtOugpeyXkCDquLDroZ3tlZwg6rKw6rO87J6F64uI64ukLiDrlLDrnbzshJwgYGdpdCBhZGQgYXBwLnB5YOuKlCDtjIzsnbzsnYQg7JiB6rWsIOyggOyepe2VmOuKlCDrqoXroLnsnbQg7JWE64uI6528IO2YhOyerCBgYXBwLnB5YOulvCDsg4nsnbjsl5Ag7Jis66as64qUIOuqheugueyeheuLiOuLpC4g7J207Ja07IScIGBnaXQgY29tbWl0IC1tIFwi66mU7Iuc7KeAXCJg66W8IOyLpO2Wie2VtOyVvCDqt7gg7IOB7YOc6rCAIOy7pOuwi+ycvOuhnCDquLDroZ3rkKnri4jri6QuXG4iLAogICAgIlxuIiwKICAgICIqKkhFQUQqKiDripQg7ZiE7J6sIOyytO2BrOyVhOybg+2VnCDsu6TrsIvsnYQg6rCA66as7YK164uI64ukLiDrs7TthrUgSEVBROuKlCBgbWFpbmAg6rCZ7J2AICoq67iM656c7LmYKGJyYW5jaCkqKiDsnbTrpoTsnYQg6rCA66as7YKk6rOgLCDruIzrnpzsuZgg7J2066aE7J2AIOuLpOyLnCDstZzsi6Ag7Luk67CL7J2EIOqwgOumrO2CteuLiOuLpC4g7IOIIOy7pOuwi+ydhCDrp4zrk6TrqbQg7ZiE7J6sIOu4jOuenOy5mOqwgCDsg4gg7Luk67CL7Jy866GcIOydtOuPme2VqeuLiOuLpC4g7J20IOygiOyXkOyEnOuKlCDtmITsnqwg67iM656c7LmY7J2YIEhFQUTsmYAgYG9yaWdpbi9tYWluYOydhCDruYTqtZDtlbQg66Gc7Lus6rO8IOybkOqyqeydmCDqsIjrnbzsp4Qg7J2066Cl7J2EIOydveyKteuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgIuuqheugueydgCDsmbzsqr3rtoDthLAgYGdpdGAg4oaSIO2VmOychCDrqoXroLkg4oaSIOyYteyFmCDihpIg64yA7IOB7Jy866GcIOydveyKteuLiOuLpC4g7JiI66W8IOuTpOyWtCBgZ2l0IHN0YXR1cyAtLXNob3J0YOyXkOyEnCBgc3RhdHVzYOuKlCDsg4Htg5zrpbwg67O06rOgLCBgLS1zaG9ydGDripQg7Ken7J2AIO2YleyLneycvOuhnCDtkZzsi5ztlZjrnbzripQg7Ji17IWY7J6F64uI64ukLiDsvZTrk5zsnZggYGdpdChcInN0YXR1c1wiLCBcIi0tc2hvcnRcIiwgY3dkPXJlcG8pYOuKlCDthLDrr7jrhJDsl5DshJwg6rCZ7J2AIOuqheugueydhCDsi6TtlontlZjrj4TroZ0g7J247J6Q66W8IOuCmOuIiCBQeXRob24g7ZGc7ZiE7J6F64uI64ukLlxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAi6rO17JqpIOybkOqyqeqzvCDrkZAg7J6R7JeFIO2PtOuNlOulvCDrp4zrk6Tqs6Ag7Lac6rOgIOq4sOykgOydhCDquLDroZ3tlanri4jri6QuICoq67OR7ZWpKG1lcmdlKSoqIOydgCDqsIjrnbzsp4Qg65GQIOy7pOuwiyDtnZDrpoTsnZgg67OA6rK97J2EIO2VmOuCmOydmCDqsrDqs7zroZwg7ZWp7LmY64qUIOyekeyXheyeheuLiOuLpC4g7ISc66GcIOuLpOuluCDtjIzsnbzsnbTrgpgg7ISc66GcIOuLpOuluCDspITsnYQg67CU6r+o64uk66m0IEdpdOydtCDsnpDrj5nsnLzroZwg7ZWp7LmgIOyImCDsnojsirXri4jri6QuIOqwmeydgCDtjIzsnbzsnZgg6rCZ7J2AIOykhOydhCDshJzroZwg64uk66W06rKMIOuwlOq+uOuptCDslrTripAg64K07Jqp7J2EIOyEoO2Dne2VoOyngCDslYwg7IiYIOyXhuyWtCAqKuuzke2VqSDstqnrj4wobWVyZ2UgY29uZmxpY3QpKiog66GcIOupiOy2peuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgIuydtCDsi6TsirXsnYAgYG1lc3NhZ2UudHh0YCDtlZwg7KSE7J2EIEFsaWNl7JmAIEJvYuydtCDshJzroZwg64uk66W06rKMIOyImOygle2VqeuLiOuLpC4gYHBvbGljeS50eHRg64qUIOygleuLteydhCDsnpDrj5kg7IOd7ISx7ZWY64qUIO2MjOydvOydtCDslYTri4jrnbwg7IKs656M7J20IOy1nOyihSDrrLjsnqXsnYQg7YyQ64uo7ZWgIOq3vOqxsOyeheuLiOuLpC4g7Lap64+MIO2VtOqysOydgCDtkZzsi5zrpbwg7KeA7Jqw64qUIOyekeyXheunjOydtCDslYTri4jrnbwg65GQIOuzgOqyveydmCDsnZjrj4Trpbwg7ZmV7J247ZW0IOyYrOuwlOuluCDtjIzsnbwg64K07Jqp7J2EIOyDiOuhnCDqsrDsoJXtlZjripQg6rO87KCV7J6F64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MjI6MjUuMDMyMTA3WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MjI6MjUuMDMxODkyWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MjI6MjUuMDM4Nzk3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS4wMzgwMDFaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFtdLAogICAic291cmNlIjogWwogICAgIiMg7IWA7J20IOunjOuToCDsoIDsnqXshozrp4wg7IKs7Jqp7ZWY64qUIOyehOyLnCDsnpHsl4Ug7Y+0642U66W8IOykgOu5hO2VqeuLiOuLpC5cbiIsCiAgICAiaW1wb3J0IHN1YnByb2Nlc3NcbiIsCiAgICAiaW1wb3J0IHN5c1xuIiwKICAgICJpbXBvcnQgdGVtcGZpbGVcbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgIndvcmtzcGFjZSA9IHRlbXBmaWxlLlRlbXBvcmFyeURpcmVjdG9yeShwcmVmaXg9XCJnaXQtbGVzc29uLVwiKVxuIiwKICAgICJyb290ID0gUGF0aCh3b3Jrc3BhY2UubmFtZSlcbiIsCiAgICAiIyBjd2TripQg66qF66C57J2EIOyLpO2Wie2VoCDtj7TrjZTsnbTrqbAgY2hlY2s9VHJ1ZeuKlCDrqoXroLkg7Iuk7Yyo66W8IOyYiOyZuOuhnCDslYzrpr3ri4jri6QuXG4iLAogICAgImRlZiBnaXQoKmFyZ3M6IHN0ciwgY3dkOiBQYXRoIHwgTm9uZSA9IE5vbmUsIGNoZWNrOiBib29sID0gVHJ1ZSkgLT4gc3RyOlxuIiwKICAgICIgICAgXCJcIlwi7KeA7KCV7ZWcIOyehOyLnCDsoIDsnqXshozsl5DshJwgR2l0IOuqheugueydhCDsi6Ttlontlanri4jri6QuXCJcIlwiXG4iLAogICAgIiAgICByZXN1bHQgPSBzdWJwcm9jZXNzLnJ1bihbXCJnaXRcIiwgKmFyZ3NdLCBjd2Q9Y3dkIG9yIHJvb3QsXG4iLAogICAgIiAgICAgICAgICAgICAgICAgICAgICAgICAgICB0ZXh0PVRydWUsIGNhcHR1cmVfb3V0cHV0PVRydWUsIGNoZWNrPWNoZWNrKVxuIiwKICAgICIgICAgcmV0dXJuIHJlc3VsdC5zdGRvdXQuc3RyaXAoKSBvciByZXN1bHQuc3RkZXJyLnN0cmlwKClcbiIsCiAgICAiZGVmIGNvbmZpZ3VyZShyZXBvOiBQYXRoKSAtPiBOb25lOlxuIiwKICAgICIgICAgXCJcIlwi7Iuk7Iq1IOyggOyepeyGjOyXkOunjCDsnpHshLHsnpAg7KCV67O066W8IOyEpOygle2VqeuLiOuLpC5cIlwiXCJcbiIsCiAgICAiICAgIGdpdChcImNvbmZpZ1wiLCBcInVzZXIubmFtZVwiLCBcIkdpdCBMZWFybmVyXCIsIGN3ZD1yZXBvKVxuIiwKICAgICIgICAgZ2l0KFwiY29uZmlnXCIsIFwidXNlci5lbWFpbFwiLCBcImxlYXJuZXJAZXhhbXBsZS5pbnZhbGlkXCIsIGN3ZD1yZXBvKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MjI6MjUuMDQwODU5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MjI6MjUuMDQwNzAzWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MjI6MjUuMjM2NDk3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS4yMzYwNzNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi6rO17JqpIOybkOqyqeqzvCBCb2LsnZgg6rO17Ya1IOyLnOyekeygkCDspIDruYQg7JmE66OMXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg65GQIOyekeyXheyekOqwgCDtlajqu5gg7IKs7Jqp7ZWgIOybkOqyqeydhCDspIDruYTtlanri4jri6QuXG4iLAogICAgInJlbW90ZSA9IHJvb3QgLyBcInRlYW0uZ2l0XCJcbiIsCiAgICAiZ2l0KFwiaW5pdFwiLCBcIi0tYmFyZVwiLCBcIi0taW5pdGlhbC1icmFuY2g9bWFpblwiLCByZW1vdGUuYXNfcG9zaXgoKSlcbiIsCiAgICAiYWxpY2UsIGJvYiA9IHJvb3QgLyBcImFsaWNlXCIsIHJvb3QgLyBcImJvYlwiXG4iLAogICAgImdpdChcImNsb25lXCIsIHJlbW90ZS5hc19wb3NpeCgpLCBhbGljZS5hc19wb3NpeCgpKVxuIiwKICAgICJjb25maWd1cmUoYWxpY2UpXG4iLAogICAgIihhbGljZSAvIFwicG9saWN5LnR4dFwiKS53cml0ZV90ZXh0KFxuIiwKICAgICIgICAgXCIxNOyLnCDsnbTsoIQg6rKw7KCcOiDsmKTripgg7Lac6rOgXFxuMTTsi5wg7J207ZuEIOqysOygnDog64K07J28IOy2nOqzoFxcblwiLCBlbmNvZGluZz1cInV0Zi04XCJcbiIsCiAgICAiKVxuIiwKICAgICIoYWxpY2UgLyBcIm1lc3NhZ2UudHh0XCIpLndyaXRlX3RleHQoXCLrsLDshqEg7JWI64K0OiDspIDruYQg7KSRXFxuXCIsIGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAiZ2l0KFwiYWRkXCIsIFwicG9saWN5LnR4dFwiLCBcIm1lc3NhZ2UudHh0XCIsIGN3ZD1hbGljZSlcbiIsCiAgICAiZ2l0KFwiY29tbWl0XCIsIFwiLW1cIiwgXCJkb2NzOiDstpzqs6Ag6riw7KSAIOq4sOuhnVwiLCBjd2Q9YWxpY2UpXG4iLAogICAgImdpdChcInB1c2hcIiwgXCItdVwiLCBcIm9yaWdpblwiLCBcIm1haW5cIiwgY3dkPWFsaWNlKVxuIiwKICAgICIjIEJvYuydgCBBbGljZeydmCDrkZAg67KI7Ke4IOuzgOqyveydtCDqsozsi5zrkJjquLAg7KCE7JeQIOqzte2GtSDsi5zsnpHsoJDsnYQg67O17KCc7ZWp64uI64ukLlxuIiwKICAgICJnaXQoXCJjbG9uZVwiLCByZW1vdGUuYXNfcG9zaXgoKSwgYm9iLmFzX3Bvc2l4KCkpXG4iLAogICAgImNvbmZpZ3VyZShib2IpXG4iLAogICAgInByaW50KFwi6rO17JqpIOybkOqyqeqzvCBCb2LsnZgg6rO17Ya1IOyLnOyekeygkCDspIDruYQg7JmE66OMXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOq4sOuzuCDsi6TtlolcbiIsCiAgICAiXG4iLAogICAgIkFsaWNl6rCAIOygleyxheydhCDrsJjsmIHtlZwg7JWI64K066W8IOuovOyggCDsm5Dqsqnsl5Ag6rKM7Iuc7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDYiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MjI6MjUuMjM3NDY0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MjI6MjUuMjM3Mzg4WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MjI6MjUuMzA1NzMwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS4zMDUyODVaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiZDdlMWU3NyBkb2NzOiDri7nsnbwg7Lac6rOgIOyViOuCtFxuIiwKICAgICAgImUwOGYwNTYgZG9jczog7Lac6rOgIOq4sOykgCDquLDroZ1cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBBbGljZeqwgCDsiJjsoJXtlZwg6rCZ7J2AIOykhOydhCDrqLzsoIAg7JuQ6rKpIG1haW7sl5Ag67CY7JiB7ZWp64uI64ukLlxuIiwKICAgICIoYWxpY2UgLyBcIm1lc3NhZ2UudHh0XCIpLndyaXRlX3RleHQoXCLrsLDshqEg7JWI64K0OiAxNOyLnCDsnbTsoITsnYAg7Jik64qYIOy2nOqzoFxcblwiLCBlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgImdpdChcImFkZFwiLCBcIm1lc3NhZ2UudHh0XCIsIGN3ZD1hbGljZSlcbiIsCiAgICAiZ2l0KFwiY29tbWl0XCIsIFwiLW1cIiwgXCJkb2NzOiDri7nsnbwg7Lac6rOgIOyViOuCtFwiLCBjd2Q9YWxpY2UpXG4iLAogICAgImdpdChcInB1c2hcIiwgY3dkPWFsaWNlKVxuIiwKICAgICJwcmludChnaXQoXCJsb2dcIiwgXCItLW9uZWxpbmVcIiwgXCItMlwiLCBjd2Q9YWxpY2UpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDqsJIg7ZWY64KY66W8IOuwlOq/lCDruYTqtZBcbiIsCiAgICAiXG4iLAogICAgIkJvYuydgCBBbGljZeqwgCDrkZAg67KI7Ke4IOy7pOuwi+ydhCBwdXNo7ZWY6riwIOyghOyXkCDrs7XsoJztlZwg6rO17Ya1IGBtYWluYOyXkOyEnCDqsJnsnYAg7KSE7J2EIOuLpOuluCDrrLjsnqXsnLzroZwg7IiY7KCV7ZWp64uI64ukLiDrlLDrnbzshJwg65GQIOyCrOuejOydgCDqsJnsnYAg67aA66qoIOy7pOuwi+yXkOyEnCDsnpDsl7DsiqTrn73qsowg6rCI65287KeA66mwIOu4jOuenOy5mCDsnITsuZjrpbwg65Sw66GcIOyYruq4uCDtlYTsmpTqsIAg7JeG7Iq164uI64ukLlxuIiwKICAgICJcbiIsCiAgICAiQm9i7J2YIHB1c2jqsIAgYG5vbi1mYXN0LWZvcndhcmRg66GcIOqxsOygiOuQmOuKlCDsnbTsnKDripQg7JuQ6rKpIGBtYWluYOyXkCBCb2LsnbQg6rCW6rOgIOyeiOyngCDslYrsnYAgQWxpY2XsnZgg7Luk67CL7J20IOyeiOq4sCDrlYzrrLjsnoXri4jri6QuIOqwleygnCBwdXNo66GcIOuNruuKlCDrjIDsi6AgYGdpdCBwdWxsIC0tbm8tcmViYXNlIG9yaWdpbiBtYWluYOycvOuhnCDsm5Dqsqkg7Luk67CL7J2EIOqwgOyguOyZgCDrs5Htlantlanri4jri6QuIGAtLW5vLXJlYmFzZWDripQg6rCA7KC47JioIOy7pOuwiyDsnITroZwgQm9i7J2YIOy7pOuwi+ydhCDri6Tsi5wg66eM65Ok7KeAIOyViuqzoCDrkZAg7Z2Q66aE7J2EIOuzke2Vqe2VmOudvOuKlCDrnLvsnoXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiY2VsbC0wOCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS4zMDY2MzNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS4zMDY1NjRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS4zNDU1MzZaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjI1LjM0NTEzMloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJwdXNoIOyiheujjCDsvZTrk5w6IDFcbiIsCiAgICAgICJwdXNoIOqxsOygiDogVHJ1ZVxuIiwKICAgICAgIuqxsOygiCDsnbTsnKAg64Gd7KSEOiBoaW50OiBTZWUgdGhlICdOb3RlIGFib3V0IGZhc3QtZm9yd2FyZHMnIGluICdnaXQgcHVzaCAtLWhlbHAnIGZvciBkZXRhaWxzLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIEJvYuydtCDqs7XthrUg7Iuc7J6R7KCQ7JeQ7IScIOqwmeydgCDspITsnYQg64uk66W06rKMIOyImOygle2VtCDrs4Trj4Qg7Luk67CL7J2EIOunjOuTreuLiOuLpC5cbiIsCiAgICAiKGJvYiAvIFwibWVzc2FnZS50eHRcIikud3JpdGVfdGV4dChcIuuwsOyGoSDslYjrgrQ6IOuCtOydvCDstpzqs6BcXG5cIiwgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJnaXQoXCJhZGRcIiwgXCJtZXNzYWdlLnR4dFwiLCBjd2Q9Ym9iKVxuIiwKICAgICJnaXQoXCJjb21taXRcIiwgXCItbVwiLCBcImRvY3M6IOydteydvCDstpzqs6Ag7JWI64K0XCIsIGN3ZD1ib2IpXG4iLAogICAgInB1c2ggPSBzdWJwcm9jZXNzLnJ1bihbXCJnaXRcIiwgXCJwdXNoXCIsIFwib3JpZ2luXCIsIFwibWFpblwiXSwgY3dkPWJvYixcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICAgIHRleHQ9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSlcbiIsCiAgICAicHJpbnQoXCJwdXNoIOyiheujjCDsvZTrk5w6XCIsIHB1c2gucmV0dXJuY29kZSlcbiIsCiAgICAicHJpbnQoXCJwdXNoIOqxsOygiDpcIiwgcHVzaC5yZXR1cm5jb2RlICE9IDApXG4iLAogICAgInByaW50KFwi6rGw7KCIIOydtOycoCDrgZ3spIQ6XCIsIHB1c2guc3RkZXJyLnN0cmlwKCkuc3BsaXRsaW5lcygpWy0xXSlcbiIsCiAgICAiYXNzZXJ0IHB1c2gucmV0dXJuY29kZSAhPSAwIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wOSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7YyoIOyerO2YhFxuIiwKICAgICJcbiIsCiAgICAiQm9i7J20IOybkOqyqSDrs4Dqsr3snYQg6rCA7KC47JmAIOuzke2Vqe2VmOuptCDqsJnsnYAg7KSE7J2YIOywqOydtOyXkOyEnCDstqnrj4ztlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiY2VsbC0xMCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS4zNDYzODNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS4zNDYzMTZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS40MDAxMDNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjI1LjM5OTY0OVoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyiheujjCDsvZTrk5w6IDFcbiIsCiAgICAgICJVVSBtZXNzYWdlLnR4dFxuIiwKICAgICAgIjw8PDw8PDwgSEVBRFxuIiwKICAgICAgIuuwsOyGoSDslYjrgrQ6IOuCtOydvCDstpzqs6BcbiIsCiAgICAgICI9PT09PT09XG4iLAogICAgICAi67Cw7IahIOyViOuCtDogMTTsi5wg7J207KCE7J2AIOyYpOuKmCDstpzqs6BcbiIsCiAgICAgICI+Pj4+Pj4+IGQ3ZTFlNzdjMmViMzJkYzE1OWYwYWY4YzY3YTM5NjQ3N2U3Y2U3ZmVcbiIsCiAgICAgICJcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyAtLW5vLXJlYmFzZeuhnCDsm5DqsqkgbWFpbuydhCDrs5HtlantlZjrqbQg6rCZ7J2AIOykhOydmCDstqnrj4wg7ZGc7Iuc6rCAIOuCqOyKteuLiOuLpC5cbiIsCiAgICAibWVyZ2UgPSBzdWJwcm9jZXNzLnJ1bihcbiIsCiAgICAiICAgIFtcImdpdFwiLCBcInB1bGxcIiwgXCItLW5vLXJlYmFzZVwiLCBcIm9yaWdpblwiLCBcIm1haW5cIl0sIGN3ZD1ib2IsXG4iLAogICAgIiAgICB0ZXh0PVRydWUsIGNhcHR1cmVfb3V0cHV0PVRydWUpXG4iLAogICAgInByaW50KFwi7KKF66OMIOy9lOuTnDpcIiwgbWVyZ2UucmV0dXJuY29kZSlcbiIsCiAgICAicHJpbnQoZ2l0KFwic3RhdHVzXCIsIFwiLS1zaG9ydFwiLCBjd2Q9Ym9iKSlcbiIsCiAgICAicHJpbnQoKGJvYiAvIFwibWVzc2FnZS50eHRcIikucmVhZF90ZXh0KGVuY29kaW5nPVwidXRmLThcIikpXG4iLAogICAgImFzc2VydCBtZXJnZS5yZXR1cm5jb2RlICE9IDBcbiIsCiAgICAiYXNzZXJ0IFwiPDw8PDw8PFwiIGluIChib2IgLyBcIm1lc3NhZ2UudHh0XCIpLnJlYWRfdGV4dChlbmNvZGluZz1cInV0Zi04XCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xMSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsiJjsoJVcbiIsCiAgICAiXG4iLAogICAgIuyggOyepeyGjOydmCDsoJXssYUg66y47ISc66W8IOq3vOqxsOuhnCDslYjrgrTrpbwg7ZmV7KCV7ZWY6rOgIOybkOqyqeyXkCDqsozsi5ztlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA2LAogICAiaWQiOiAiY2VsbC0xMiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS40MDA5NTNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS40MDA4ODVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoyNS41MDA5MDdaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjI1LjUwMDQ1MFoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiMTTsi5wg7J207KCEIOqysOygnDog7Jik64qYIOy2nOqzoFxuIiwKICAgICAgIjE07IucIOydtO2bhCDqsrDsoJw6IOuCtOydvCDstpzqs6BcbiIsCiAgICAgICLrsLDshqEg7JWI64K0OiAxNOyLnCDsnbTsoIQg6rKw7KCc64qUIOyYpOuKmCDstpzqs6AsIDE07IucIOydtO2bhCDqsrDsoJzripQg64K07J28IOy2nOqzoFxuIiwKICAgICAgIuuzke2VqSDrtoDrqqg6IDU4OTM0MmJmZGNkNTFiZDA1NGMyZWE5MmMzYzQzMzU5YjBhMjliNDMgZDdlMWU3N2MyZWIzMmRjMTU5ZjBhZjhjNjdhMzk2NDc3ZTdjZTdmZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOygleyxheyXkCDrp57stpgg7Iuk7KCcIO2MjOydvOyXkOyEnCDstqnrj4wg7ZGc7IucIOygnOqxsOyZgCDrs5Htlakg7JmE66OM66W8IO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAicmVzb2x2ZWQgPSBcIuuwsOyGoSDslYjrgrQ6IDE07IucIOydtOyghCDqsrDsoJzripQg7Jik64qYIOy2nOqzoCwgMTTsi5wg7J207ZuEIOqysOygnOuKlCDrgrTsnbwg7Lac6rOgXFxuXCJcbiIsCiAgICAiKGJvYiAvIFwibWVzc2FnZS50eHRcIikud3JpdGVfdGV4dChyZXNvbHZlZCwgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJnaXQoXCJhZGRcIiwgXCJtZXNzYWdlLnR4dFwiLCBjd2Q9Ym9iKVxuIiwKICAgICJnaXQoXCJjb21taXRcIiwgXCItbVwiLCBcIm1lcmdlOiDstpzqs6Ag7KCV7LGF7JeQIOunnuy2sCDstqnrj4wg7ZW06rKwXCIsIGN3ZD1ib2IpXG4iLAogICAgImdpdChcInB1c2hcIiwgXCJvcmlnaW5cIiwgXCJtYWluXCIsIGN3ZD1ib2IpXG4iLAogICAgInByaW50KChib2IgLyBcInBvbGljeS50eHRcIikucmVhZF90ZXh0KGVuY29kaW5nPVwidXRmLThcIikuc3RyaXAoKSlcbiIsCiAgICAicHJpbnQoKGJvYiAvIFwibWVzc2FnZS50eHRcIikucmVhZF90ZXh0KGVuY29kaW5nPVwidXRmLThcIikuc3RyaXAoKSlcbiIsCiAgICAicGFyZW50cyA9IGdpdChcInNob3dcIiwgXCItLXByZXR0eT0lUFwiLCBcIi0tbm8tcGF0Y2hcIiwgXCJIRUFEXCIsIGN3ZD1ib2IpXG4iLAogICAgInByaW50KFwi67OR7ZWpIOu2gOuqqDpcIiwgcGFyZW50cylcbiIsCiAgICAic2F2ZWQgPSAoYm9iIC8gXCJtZXNzYWdlLnR4dFwiKS5yZWFkX3RleHQoZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJhc3NlcnQgYWxsKG1hcmtlciBub3QgaW4gc2F2ZWQgZm9yIG1hcmtlciBpbiAoXCI8PDw8PDw8XCIsIFwiPT09PT09PVwiLCBcIj4+Pj4+Pj5cIikpXG4iLAogICAgImFzc2VydCBub3QgZ2l0KFwic3RhdHVzXCIsIFwiLS1wb3JjZWxhaW5cIiwgY3dkPWJvYilcbiIsCiAgICAiYXNzZXJ0IGxlbihwYXJlbnRzLnNwbGl0KCkpID09IDJcbiIsCiAgICAiYXNzZXJ0IGdpdChcInJldi1wYXJzZVwiLCBcIkhFQURcIiwgY3dkPWJvYikgPT0gZ2l0KFwicmV2LXBhcnNlXCIsIFwib3JpZ2luL21haW5cIiwgY3dkPWJvYikiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogInBhaXJlZCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDYsCiAgICJjb2RlX3NoYTI1NiI6ICIyOGE4NTc5ZjUzNGY1MTgyYjAwNTQyM2MxZmU1MmU5YzM2MDBiMDE5ZjhlZGJmNDI0ZTVkNDUyOWMzYjMxYTQxIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDY6MjI6MjUuNjE1ODkyKzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICJkYzU5MmY0NTljYTAxYjc4ZWM2MGQ5ZTU2ZTIzNDU1MzczYjI4MmNiZWZmM2ZjNzFlZDgxM2MyNWI0MjMyZTY5IiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>병합 충돌 해결</h2>
+<p>모든 저장소는 임시 폴더에 만들며 실제 GitHub 계정이나 원격 저장소를 변경하지 않습니다.</p>
+<h3>명령을 실행하기 전에 알아둘 Git 상태</h3>
+<p>Git은 파일을 세 자리에서 봅니다. <strong>작업 폴더(working tree)</strong> 는 지금 편집하는 파일이 있는 자리입니다. <strong>색인(index)</strong> 은 다음 커밋에 넣을 파일 상태를 골라 두는 자리이며, 스테이징 영역(staging area)이라고도 합니다. <strong>커밋(commit)</strong> 은 색인에 고른 상태를 저장소 이력에 기록한 결과입니다. 따라서 <code>git add app.py</code>는 파일을 영구 저장하는 명령이 아니라 현재 <code>app.py</code>를 색인에 올리는 명령입니다. 이어서 <code>git commit -m &quot;메시지&quot;</code>를 실행해야 그 상태가 커밋으로 기록됩니다.</p>
+<p><strong>HEAD</strong> 는 현재 체크아웃한 커밋을 가리킵니다. 보통 HEAD는 <code>main</code> 같은 <strong>브랜치(branch)</strong> 이름을 가리키고, 브랜치 이름은 다시 최신 커밋을 가리킵니다. 새 커밋을 만들면 현재 브랜치가 새 커밋으로 이동합니다. 이 절에서는 현재 브랜치의 HEAD와 <code>origin/main</code>을 비교해 로컬과 원격의 갈라진 이력을 읽습니다.</p>
+<p>명령은 왼쪽부터 <code>git</code> → 하위 명령 → 옵션 → 대상으로 읽습니다. 예를 들어 <code>git status --short</code>에서 <code>status</code>는 상태를 보고, <code>--short</code>는 짧은 형식으로 표시하라는 옵션입니다. 코드의 <code>git(&quot;status&quot;, &quot;--short&quot;, cwd=repo)</code>는 터미널에서 같은 명령을 실행하도록 인자를 나눈 Python 표현입니다.</p></div>
+<div class="nb-markdown"><h3>준비</h3>
+<p>공용 원격과 두 작업 폴더를 만들고 출고 기준을 기록합니다. <strong>병합(merge)</strong> 은 갈라진 두 커밋 흐름의 변경을 하나의 결과로 합치는 작업입니다. 서로 다른 파일이나 서로 다른 줄을 바꿨다면 Git이 자동으로 합칠 수 있습니다. 같은 파일의 같은 줄을 서로 다르게 바꾸면 어느 내용을 선택할지 알 수 없어 <strong>병합 충돌(merge conflict)</strong> 로 멈춥니다.</p>
+<p>이 실습은 <code>message.txt</code> 한 줄을 Alice와 Bob이 서로 다르게 수정합니다. <code>policy.txt</code>는 정답을 자동 생성하는 파일이 아니라 사람이 최종 문장을 판단할 근거입니다. 충돌 해결은 표시를 지우는 작업만이 아니라 두 변경의 의도를 확인해 올바른 파일 내용을 새로 결정하는 과정입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 셀이 만든 저장소만 사용하는 임시 작업 폴더를 준비합니다.
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+workspace = tempfile.TemporaryDirectory(prefix=&quot;git-lesson-&quot;)
+root = Path(workspace.name)
+# cwd는 명령을 실행할 폴더이며 check=True는 명령 실패를 예외로 알립니다.
+def git(*args: str, cwd: Path | None = None, check: bool = True) -&gt; str:
+    &quot;&quot;&quot;지정한 임시 저장소에서 Git 명령을 실행합니다.&quot;&quot;&quot;
+    result = subprocess.run([&quot;git&quot;, *args], cwd=cwd or root,
+                            text=True, capture_output=True, check=check)
+    return result.stdout.strip() or result.stderr.strip()
+def configure(repo: Path) -&gt; None:
+    &quot;&quot;&quot;실습 저장소에만 작성자 정보를 설정합니다.&quot;&quot;&quot;
+    git(&quot;config&quot;, &quot;user.name&quot;, &quot;Git Learner&quot;, cwd=repo)
+    git(&quot;config&quot;, &quot;user.email&quot;, &quot;learner@example.invalid&quot;, cwd=repo)</code></pre></div></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 두 작업자가 함께 사용할 원격을 준비합니다.
+remote = root / &quot;team.git&quot;
+git(&quot;init&quot;, &quot;--bare&quot;, &quot;--initial-branch=main&quot;, remote.as_posix())
+alice, bob = root / &quot;alice&quot;, root / &quot;bob&quot;
+git(&quot;clone&quot;, remote.as_posix(), alice.as_posix())
+configure(alice)
+(alice / &quot;policy.txt&quot;).write_text(
+    &quot;14시 이전 결제: 오늘 출고\n14시 이후 결제: 내일 출고\n&quot;, encoding=&quot;utf-8&quot;
+)
+(alice / &quot;message.txt&quot;).write_text(&quot;배송 안내: 준비 중\n&quot;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;policy.txt&quot;, &quot;message.txt&quot;, cwd=alice)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;docs: 출고 기준 기록&quot;, cwd=alice)
+git(&quot;push&quot;, &quot;-u&quot;, &quot;origin&quot;, &quot;main&quot;, cwd=alice)
+# Bob은 Alice의 두 번째 변경이 게시되기 전에 공통 시작점을 복제합니다.
+git(&quot;clone&quot;, remote.as_posix(), bob.as_posix())
+configure(bob)
+print(&quot;공용 원격과 Bob의 공통 시작점 준비 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">공용 원격과 Bob의 공통 시작점 준비 완료
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p>Alice가 정책을 반영한 안내를 먼저 원격에 게시합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># Alice가 수정한 같은 줄을 먼저 원격 main에 반영합니다.
+(alice / &quot;message.txt&quot;).write_text(&quot;배송 안내: 14시 이전은 오늘 출고\n&quot;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;message.txt&quot;, cwd=alice)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;docs: 당일 출고 안내&quot;, cwd=alice)
+git(&quot;push&quot;, cwd=alice)
+print(git(&quot;log&quot;, &quot;--oneline&quot;, &quot;-2&quot;, cwd=alice))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">d7e1e77 docs: 당일 출고 안내
+e08f056 docs: 출고 기준 기록
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 비교</h3>
+<p>Bob은 Alice가 두 번째 커밋을 push하기 전에 복제한 공통 <code>main</code>에서 같은 줄을 다른 문장으로 수정합니다. 따라서 두 사람은 같은 부모 커밋에서 자연스럽게 갈라지며 브랜치 위치를 따로 옮길 필요가 없습니다.</p>
+<p>Bob의 push가 <code>non-fast-forward</code>로 거절되는 이유는 원격 <code>main</code>에 Bob이 갖고 있지 않은 Alice의 커밋이 있기 때문입니다. 강제 push로 덮는 대신 <code>git pull --no-rebase origin main</code>으로 원격 커밋을 가져와 병합합니다. <code>--no-rebase</code>는 가져온 커밋 위로 Bob의 커밋을 다시 만들지 않고 두 흐름을 병합하라는 뜻입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># Bob이 공통 시작점에서 같은 줄을 다르게 수정해 별도 커밋을 만듭니다.
+(bob / &quot;message.txt&quot;).write_text(&quot;배송 안내: 내일 출고\n&quot;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;message.txt&quot;, cwd=bob)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;docs: 익일 출고 안내&quot;, cwd=bob)
+push = subprocess.run([&quot;git&quot;, &quot;push&quot;, &quot;origin&quot;, &quot;main&quot;], cwd=bob,
+                      text=True, capture_output=True)
+print(&quot;push 종료 코드:&quot;, push.returncode)
+print(&quot;push 거절:&quot;, push.returncode != 0)
+print(&quot;거절 이유 끝줄:&quot;, push.stderr.strip().splitlines()[-1])
+assert push.returncode != 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">push 종료 코드: 1
+push 거절: True
+거절 이유 끝줄: hint: See the &#x27;Note about fast-forwards&#x27; in &#x27;git push --help&#x27; for details.
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — Alice의 최신 log에는 “당일 출고 안내”와 그 아래 “출고 기준 기록”이 있습니다. Bob의 첫 push 종료 코드는 0이 아니며 아직 원격 변경을 통합하지 않았음을 보여 줍니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Bob의 로컬 <code>main</code>에서 <code>git pull --no-rebase origin main</code>을 실행하면 종료 코드가 0이 아닌 값으로 나타납니다. <code>git status --short</code>의 <code>UU</code>는 양쪽에서 수정된 파일이 아직 해결되지 않았음을 뜻합니다. 파일에는 Bob의 “내일 출고”와 원격 <code>main</code>에서 가져온 Alice의 “오늘 출고”가 충돌 표시와 함께 들어 있습니다. 이 출력은 예외 문장을 흉내 낸 것이 아니라 Git이 실제 병합을 중단한 결과입니다.</p><p>수정 셀은 운영 규칙을 한 문장에 반영해 <code>배송 안내: 14시 이전 결제는 오늘 출고, 14시 이후 결제는 내일 출고</code>로 바꿉니다. 양쪽 문장을 단순히 이어 붙이는 대신 서로 다른 약속이 적용되는 조건을 명시합니다. 실제 업무에서는 결제 마감 시각과 휴일 규칙까지 제품 담당자에게 확인해야 합니다. 파일을 스테이징하고 병합 커밋을 만든 뒤 상태가 깨끗한지, 충돌 표시가 사라졌는지, 부모 해시가 두 개인지 검사합니다.</p><section class="notebook" data-notebook="03-병합-충돌-해결" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>Bob이 원격 변경을 가져와 병합하면 같은 줄의 차이에서 충돌합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># --no-rebase로 원격 main을 병합하면 같은 줄의 충돌 표시가 남습니다.
+merge = subprocess.run(
+    [&quot;git&quot;, &quot;pull&quot;, &quot;--no-rebase&quot;, &quot;origin&quot;, &quot;main&quot;], cwd=bob,
+    text=True, capture_output=True)
+print(&quot;종료 코드:&quot;, merge.returncode)
+print(git(&quot;status&quot;, &quot;--short&quot;, cwd=bob))
+print((bob / &quot;message.txt&quot;).read_text(encoding=&quot;utf-8&quot;))
+assert merge.returncode != 0
+assert &quot;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&quot; in (bob / &quot;message.txt&quot;).read_text(encoding=&quot;utf-8&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">종료 코드: 1
+UU message.txt
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+배송 안내: 내일 출고
+=======
+배송 안내: 14시 이전은 오늘 출고
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; d7e1e77c2eb32dc159f0af8c67a396477e7ce7fe
+
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>저장소의 정책 문서를 근거로 안내를 확정하고 원격에 게시합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 정책에 맞춘 실제 파일에서 충돌 표시 제거와 병합 완료를 확인합니다.
+resolved = &quot;배송 안내: 14시 이전 결제는 오늘 출고, 14시 이후 결제는 내일 출고\n&quot;
+(bob / &quot;message.txt&quot;).write_text(resolved, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;message.txt&quot;, cwd=bob)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;merge: 출고 정책에 맞춰 충돌 해결&quot;, cwd=bob)
+git(&quot;push&quot;, &quot;origin&quot;, &quot;main&quot;, cwd=bob)
+print((bob / &quot;policy.txt&quot;).read_text(encoding=&quot;utf-8&quot;).strip())
+print((bob / &quot;message.txt&quot;).read_text(encoding=&quot;utf-8&quot;).strip())
+parents = git(&quot;show&quot;, &quot;--pretty=%P&quot;, &quot;--no-patch&quot;, &quot;HEAD&quot;, cwd=bob)
+print(&quot;병합 부모:&quot;, parents)
+saved = (bob / &quot;message.txt&quot;).read_text(encoding=&quot;utf-8&quot;)
+assert all(marker not in saved for marker in (&quot;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&quot;, &quot;=======&quot;, &quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&quot;))
+assert not git(&quot;status&quot;, &quot;--porcelain&quot;, cwd=bob)
+assert len(parents.split()) == 2
+assert git(&quot;rev-parse&quot;, &quot;HEAD&quot;, cwd=bob) == git(&quot;rev-parse&quot;, &quot;origin/main&quot;, cwd=bob)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">14시 이전 결제: 오늘 출고
+14시 이후 결제: 내일 출고
+배송 안내: 14시 이전 결제는 오늘 출고, 14시 이후 결제는 내일 출고
+병합 부모: 589342bfdcd51bd054c2ea92c3c43359b0a29b43 d7e1e77c2eb32dc159f0af8c67a396477e7ce7fe
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>충돌 표시를 지웠다는 사실만으로 해결이 끝나지 않습니다. 문법 검사와 테스트를 실행하고 최종 문장이 두 변경 목적을 충족하는지 확인합니다.</li><li>현재 병합을 취소하고 시작 전 상태로 돌아가려면 해결 커밋 전에 <code>git merge --abort</code>를 사용할 수 있습니다. 작업 폴더의 다른 변경이 있으면 먼저 상태를 확인합니다.</li><li><code>--ours</code>와 <code>--theirs</code>는 파일 전체를 한쪽 버전으로 선택합니다. 여러 변경이 섞인 파일에 무심코 적용하면 필요한 상대편 변경도 사라질 수 있습니다.</li><li>생성 파일과 잠금 파일의 충돌 해결 방식은 프로젝트 정책을 따릅니다. 원본 설정을 합친 뒤 도구로 다시 생성해야 하는 파일도 있습니다.</li><li>충돌을 줄이려면 기능 브랜치를 짧게 유지하고 큰 파일의 같은 영역을 동시에 수정하는 작업은 먼저 담당 범위를 조율합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>Git은 공통 조상과 두 이력의 변경을 비교하며 자동 선택할 수 없는 부분에서 병합을 멈춥니다.</li><li>충돌 표시는 현재 로컬 브랜치와 병합 대상 이력의 내용을 구분하며 최종 파일에는 남기지 않습니다.</li><li>해결 결과는 업무 의도를 반영해야 하고 스테이징·테스트·병합 커밋으로 검증합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 병합 뒤 공개된 잘못된 변경을 새 커밋으로 되돌리고, 로컬에서 보이지 않게 된 커밋을 reflog로 찾아 복구합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 두 이력이 갈라지면 항상 충돌합니까?</p><p class="quiz-a"><strong>정답:</strong> 아닙니다. Git이 변경을 자동 결합할 수 있으면 충돌하지 않습니다. 이 실습은 같은 파일의 같은 줄을 다르게 수정해 충돌했습니다.</p><p class="quiz-q">2. <code>UU message.txt</code>는 무엇을 뜻합니까?</p><p class="quiz-a"><strong>정답:</strong> 현재 로컬 <code>main</code>과 원격에서 가져온 이력이 모두 수정한 <code>message.txt</code>가 아직 해결되지 않았음을 뜻합니다.</p><p class="quiz-q">3. 실습에서 두 문장 중 하나만 선택하지 않은 이유는 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> 오늘과 내일 출고가 결제 시각이라는 조건에 따라 모두 필요하다고 판단해 조건을 포함한 새 문장으로 통합했기 때문입니다.</p><p class="quiz-q">4. 마지막 셀에서 병합 커밋의 부모 수를 검사하는 이유는 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> 충돌 해결 결과가 두 갈래의 이력을 결합한 병합 커밋으로 기록됐는지 확인하기 위해서입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://git-scm.com/docs/git-merge">Git 공식 문서: git-merge</a> · 확인 2026-09-09 · 기준 Git 2.50.1</li><li><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/about-merge-conflicts">GitHub Docs: 병합 충돌</a> · 확인 2026-09-09 · 웹 문서</li><li><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/resolving-a-merge-conflict-using-the-command-line">GitHub Docs: 명령줄에서 충돌 해결</a> · 확인 2026-09-09 · 웹 문서</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="02-GitHub-Flow와-PR-리뷰.html">← GitHub Flow와 PR 리뷰</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="04-revert-reflog-worktree.html">revert reflog worktree →</a></span></div></div></body></html>

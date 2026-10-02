@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part2/qa/check_delivery.py", line 90, in <module>
+    assert len(notebooks) == 20 and sum(counts) == 180
+AssertionError

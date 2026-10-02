@@ -1,0 +1,300 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pandas로 표 다루기 — Ch 4 · 데이터 다루기 — 도구 제작 관점</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 4 · 데이터 다루기 — 도구 제작 관점</p>
+<h1>Pandas로 표 다루기</h1><div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>DataFrame의 행·열과 자료형을 확인할 수 있습니다.</li><li>조건식과 <code>loc</code>로 필요한 주문만 선택할 수 있습니다.</li><li>금액 열의 자료형 오류를 발견하고 숫자로 변환할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>에이전트가 주문 상태를 답하려면 먼저 주문 파일에서 필요한 행을 정확히 찾아야 합니다. 파일 전체를 모델에 전달하면 관련 없는 정보까지 입력에 포함되고 금액이 문자열인지 숫자인지 구별하지 못하면 합계도 틀릴 수 있습니다. 이번 절에서는 표를 읽고 조건에 맞는 행만 반환하는 과정을 작은 조회 함수로 구현합니다.</p><p>Ch 19에서는 조회 함수를 에이전트 도구로 감쌉니다. 도구 이름과 설명이 좋아도 함수가 잘못된 행을 반환하면 답의 근거가 잘못됩니다. 따라서 모델을 연결하기 전에 입력 열, 선택 조건, 반환 필드를 코드와 테스트로 고정해야 합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch 2의 05절에서는 <code>Path</code>로 파일 경로를 만들고 파일을 읽었습니다. 04절에서는 함수의 매개변수와 반환값을 분리했고, 03절에서는 여러 주문을 사전의 목록으로 표현했습니다. 이번 절은 그 사전 목록을 행과 열이 있는 표로 바꾸어 같은 열의 값을 한 번에 비교합니다. 노트북은 이전 커널의 변수나 프로젝트 전용 모듈을 사용하지 않고 교육용 주문 세 건을 직접 준비합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>표에서 한 열을 먼저 읽습니다</h3><p><code>import pandas as pd</code>는 pandas 라이브러리를 <code>pd</code>라는 짧은 이름으로 불러옵니다. 점 표기인 <code>pd.DataFrame</code>은 pandas 안에 정의된 DataFrame 생성자를 가리킵니다. <code>pd.DataFrame(사전 목록)</code>처럼 괄호 안에 입력을 전달하면 표 객체를 반환합니다.</p><p>주문 장부 전체가 <strong>DataFrame</strong>입니다. 한 주문은 행(row), 주문 번호·상태·금액은 열(column)입니다. DataFrame에는 행을 구분하는 <strong>인덱스(index)</strong>도 있습니다. 이 예제에서 화면 왼쪽에 생략된 0, 1, 2가 인덱스이며 주문 번호인 <code>order_id</code>와 역할이 다릅니다. 인덱스는 pandas가 행을 찾고 맞추는 표식이고, 주문 번호는 업무 데이터에 들어 있는 식별자입니다.</p><p><code>pd.read_csv(경로)</code>는 CSV 파일의 첫 줄을 열 이름으로, 다음 줄부터를 행으로 읽어 DataFrame을 반환합니다. <code>orders["status"]</code>처럼 열 이름 하나를 대괄호 안에 쓰면 표 전체가 아니라 <strong>Series</strong> 하나를 얻습니다. Series는 같은 열의 값과 각 값의 인덱스를 함께 가진 1차원 자료구조입니다. 이 Series를 <code>"paid"</code>와 비교하면 각 행마다 <code>True</code> 또는 <code>False</code>가 만들어집니다. 이 참·거짓 Series가 <strong>불리언 마스크(boolean mask)</strong>입니다.</p><h3><code>loc</code>는 행 조건과 반환 열을 나눠 받습니다</h3><p><code>DataFrame.loc[행 조건, 열 선택]</code>은 레이블을 기준으로 행과 열을 선택합니다. 이 절의 함수는 <code>frame.loc[frame["status"] == status]</code>처럼 행 조건만 전달하므로 조건이 참인 행의 모든 열을 반환합니다. 반환 열까지 제한하려면 <code>frame.loc[mask, ["order_id", "amount"]]</code>처럼 쉼표 뒤에 열 이름 목록을 씁니다. <code>loc</code>라는 이름만 외우기보다 입력이 행 조건이고 반환이 선택된 DataFrame이라는 흐름으로 읽어야 합니다.</p><h3>자료형이 연산의 뜻을 정합니다</h3><p><strong>자료형(dtype)</strong>은 열의 값이 문자열인지 정수인지 나타냅니다. <code>dtypes</code>는 열마다 자료형을 보여 주는 Series입니다. 화면에는 32000처럼 보여도 문자열이면 덧셈 결과가 <code>320001800027000</code>처럼 이어질 수 있습니다. <code>pd.to_numeric(..., errors="raise")</code>는 Series를 입력으로 받아 숫자로 변환한 Series를 반환하며, 변환할 수 없는 값이 있으면 예외를 발생시킵니다. 따라서 잘못된 값을 누락한 채 합계를 계산하지 않습니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270" width="720" height="270" role="img"
+ aria-labelledby="title-01-dataframe-flow desc-01-dataframe-flow">
+<title id="title-01-dataframe-flow">조건 선택과 자료형 확인</title>
+<desc id="desc-01-dataframe-flow">파란 입력에서 노란 처리를 거쳐 초록 결과가 나오며 빨간 상자는 실패 사례를 나타냅니다.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker></defs>
+<rect width="720" height="270" fill="#fff"/>
+<text x="24" y="35" font-size="20" font-weight="700" fill="#111827">조건 선택과 자료형 확인</text>
+<path d="M210 110H265" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M450 110H505" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M360 155V180" stroke="#dc2626" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="30" y="75" width="160" height="70" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="110.0" y="101.0" text-anchor="middle" font-size="16" fill="#111827">주문 3행</text>
+<text x="110.0" y="124.0" text-anchor="middle" font-size="16" fill="#111827">금액: 정수</text>
+<rect x="280" y="75" width="160" height="70" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="101.0" text-anchor="middle" font-size="16" fill="#111827">status == paid</text>
+<text x="360.0" y="124.0" text-anchor="middle" font-size="16" fill="#111827">행·열 선택</text>
+<rect x="530" y="75" width="160" height="70" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="610.0" y="101.0" text-anchor="middle" font-size="16" fill="#111827">O101·O103</text>
+<text x="610.0" y="124.0" text-anchor="middle" font-size="16" fill="#111827">합계 59,000</text>
+<rect x="280" y="185" width="160" height="55" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="360.0" y="203.5" text-anchor="middle" font-size="16" fill="#111827">금액: 문자열</text>
+<text x="360.0" y="226.5" text-anchor="middle" font-size="16" fill="#111827">잘못된 연결</text>
+</svg></div><p>초록 상자는 원본 주문 세 행, 파란 상자는 상태 Series를 비교해 마스크를 만들고 <code>loc</code>에 전달하는 흐름, 노란 상자는 O101과 O103의 합계 59,000을 뜻합니다. 아래쪽 빨간 경로는 금액 열이 문자열일 때 잘못된 합계가 만들어지는 과정을 보여 줍니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>첫 셀에서 pandas 3.0.5를 확인합니다. 다음 셀의 <code>pd.DataFrame([...])</code>은 사전 세 개를 입력으로 받아 3행 3열 DataFrame을 만듭니다. <code>to_csv(..., index=False)</code>의 <code>index=False</code>는 0, 1, 2 인덱스를 CSV의 별도 열로 저장하지 않는다는 뜻입니다. <code>pd.read_csv</code>는 파일을 읽어 새 DataFrame을 반환하고, <code>dtype={"order_id": "string"}</code>은 주문 번호를 계산용 숫자가 아닌 문자열로 유지합니다.</p><p><code>fetch_orders</code>의 입력은 CSV 경로와 선택할 상태입니다. 함수 안에서는 <code>frame["status"]</code> Series를 상태 문자열과 비교하고, <code>loc</code>가 참인 행만 남깁니다. 마지막 <code>to_dict(orient="records")</code>는 DataFrame의 각 행을 사전 하나로 바꾸어 사전 목록을 반환합니다. <code>records</code> 방향을 사용하면 인덱스 대신 열 이름이 각 사전의 키가 됩니다. <code>paid</code> 입력은 O101과 O103을, 조건만 <code>pending</code>으로 바꾼 입력은 O102를 반환합니다.</p><p>DataFrame은 분석 코드에서 열 연산을 이어 가기 좋고 사전 목록은 JSON으로 변환하거나 도구 결과로 전달하기 좋습니다. 함수의 입력, 처리, 반환을 구분하면 호출자는 pandas의 내부 사용 여부를 몰라도 결과를 사용할 수 있습니다.</p><p><code>to_string(index=False)</code>는 행 인덱스를 생략한 표 문자열을 만듭니다. <code>orders.dtypes</code>는 열마다 자료형을 담은 Series이고, 여기에 <code>astype(str)</code>를 적용하면 자료형 이름을 문자열로 바꾼 새 Series를 얻습니다. 마지막 <code>to_dict()</code>는 열 이름과 자료형 이름을 짝지은 사전으로 바꿉니다.</p><p>Ch 2의 07절에서 배운 타입 힌트에 여러 허용 형식을 표시합니다. <code>str | Path</code>는 문자열 경로나 Path 객체를 받을 수 있다는 뜻입니다. 홀로 놓인 <code>*</code> 뒤의 <code>status</code>는 <code>status="paid"</code>처럼 이름을 붙여 전달합니다. <code>str | None = None</code>은 문자열 또는 값 없음을 허용하며, 생략하면 None으로 두어 모든 상태를 읽습니다. <code>-> list[dict]</code>는 사전을 항목으로 담은 목록을 반환한다는 표시입니다.</p><p><code>tolist()</code>는 Series의 값들을 Python 목록으로 반환합니다. <code>[row["order_id"] for row in paid]</code>는 <code>paid</code>를 한 항목씩 <code>row</code>로 읽어 주문 번호만 새 목록에 모으는 표기입니다. 대괄호 안의 <code>for</code>를 이렇게 읽으면 검사 대상이 주문 번호 목록임을 알 수 있습니다.</p><section class="notebook" data-notebook="01-Pandas로-표-다루기" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="01-Pandas로-표-다루기.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBQYW5kYXProZwg7ZGcIOuLpOujqOq4sFxuIiwKICAgICJcbiIsCiAgICAi7KO866y4IO2RnOyXkOyEnCDqsrDsoJwg7JmE66OMIO2WieunjCDqs6jrnbwg7J6s7IKs7JqpIOqwgOuKpe2VnCDrsJjtmZjqsJLsnYQg66eM65Ot64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6Ttlokg7ZmY6rK9IOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAi7J20IOuFuO2KuOu2geydgCDshYAg7JWI7JeQ7IScIOq1kOycoeyaqSDso7zrrLgg642w7J207YSw66W8IOykgOu5hO2VqeuLiOuLpC4gYGltcG9ydCBwYW5kYXMgYXMgcGRg64qUIHBhbmRhc+ulvCBgcGRg652864qUIOydtOumhOycvOuhnCDrtojrn6zsmLXri4jri6QuIOydtO2bhCBgcGQuRGF0YUZyYW1lKC4uLilg6rO8IGBwZC5yZWFkX2NzdiguLi4pYOydmCDsoJDsnYAgcGFuZGFzIOyViOydmCDsg53shLHsnpDsmYAg7ZWo7IiY66W8IOyEoO2Dne2VmOuKlCDtkZzquLDsnoXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNC42NDA3MDlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNC42NDA2MzZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNC45NDA1NjhaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjE3OjI0Ljk0MDE4NVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJwYW5kYXMgMy4wLjVcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtkZwg6rOE7IKw7JeQIOyCrOyaqe2VoCBwYW5kYXPsmYAg7J6E7IucIO2MjOydvCDqsr3roZzrpbwg7KSA67mE7ZWp64uI64ukLlxuIiwKICAgICJmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGhcbiIsCiAgICAiZnJvbSB0ZW1wZmlsZSBpbXBvcnQgVGVtcG9yYXJ5RGlyZWN0b3J5XG4iLAogICAgIlxuIiwKICAgICJpbXBvcnQgcGFuZGFzIGFzIHBkXG4iLAogICAgIlxuIiwKICAgICJwcmludChcInBhbmRhc1wiLCBwZC5fX3ZlcnNpb25fXykiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiAiIyMg6riw67O4IOyLpO2WiVxuXG5gcGQuRGF0YUZyYW1lKOyCrOyghCDrqqnroZ0pYOydgCDsgqzsoITsnZgg7YKk66W8IOyXtCDsnbTrpoTsnLzroZwg7IKs7Jqp7ZWcIO2RnOulvCDrsJjtmZjtlanri4jri6QuIGB0b19jc3Zg64qUIO2RnOulvCBDU1Yg7YyM7J287JeQIOyTsOqzoCBgcGQucmVhZF9jc3Yo6rK966GcKWDripQg7LKrIOykhOydhCDsl7Qg7J2066aE7Jy866GcIOydveyWtCDsg4ggRGF0YUZyYW1l7J2EIOuwmO2ZmO2VqeuLiOuLpC4g7Je0IOydtOumhCDtlZjrgpjrpbwg64yA6rSE7Zi47JeQIOyTsOuptCDsnbjrjbHsiqTsmYAg6rCS7J2EIO2VqOq7mCDqsIDsp4QgMeywqOybkCBgU2VyaWVzYOulvCDslrvsirXri4jri6QuIOydtCDshYDsl5DshJzripQg7IKs7KCEIOyEuCDqsJzrpbwgM+2WiSAz7Je0IO2RnOuhnCDrsJTqvrjqs6Ag7Je067OEIOyekOujjO2YleydhCDtmZXsnbjtlanri4jri6QuXG5cbmB0b19zdHJpbmcoaW5kZXg9RmFsc2UpYOuKlCDtlokg7J24642x7Iqk66W8IOyDneuete2VnCDtkZwg66y47J6Q7Je07J2EIOunjOuTreuLiOuLpC4gYG9yZGVycy5kdHlwZXNg64qUIOyXtOuniOuLpCDsnpDro4ztmJXsnYQg64u07J2AIFNlcmllc+ydtOqzoCwg7Jes6riw7JeQIGBhc3R5cGUoc3RyKWDrpbwg7KCB7Jqp7ZWY66m0IOyekOujjO2YlSDsnbTrpoTsnYQg66y47J6Q7Je066GcIOuwlOq+vCDsg4ggU2VyaWVz66W8IOyWu+yKteuLiOuLpC4g66eI7KeA66eJIGB0b19kaWN0KClg64qUIOyXtCDsnbTrpoTqs7wg7J6Q66OM7ZiVIOydtOumhOydhCDsp53sp4DsnYAg7IKs7KCE7Jy866GcIOuwlOq/ieuLiOuLpC4iCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNC45NDE1MzlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNC45NDE0NDBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNC45NDkzMDNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjE3OjI0Ljk0ODkzNloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJvcmRlcl9pZCAgc3RhdHVzICBhbW91bnRcbiIsCiAgICAgICIgICAgTzEwMSAgICBwYWlkICAgMzIwMDBcbiIsCiAgICAgICIgICAgTzEwMiBwZW5kaW5nICAgMTgwMDBcbiIsCiAgICAgICIgICAgTzEwMyAgICBwYWlkICAgMjcwMDBcbiIsCiAgICAgICJ7J29yZGVyX2lkJzogJ3N0cmluZycsICdzdGF0dXMnOiAnc3RyJywgJ2Ftb3VudCc6ICdpbnQ2NCd9XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg64W47Yq467aBIOyViOyXkOyEnCBDU1Yg7YyM7J287J2EIOunjOuTpOyWtCDtjIzsnbwg7J6F66Cl64+EIOuPheumveyggeycvOuhnCDsnqztmITtlanri4jri6QuXG4iLAogICAgInRlbXBfZGlyID0gVGVtcG9yYXJ5RGlyZWN0b3J5KClcbiIsCiAgICAib3JkZXJzX3BhdGggPSBQYXRoKHRlbXBfZGlyLm5hbWUpIC8gXCJvcmRlcnMuY3N2XCJcbiIsCiAgICAicGQuRGF0YUZyYW1lKFtcbiIsCiAgICAiICAgIHtcIm9yZGVyX2lkXCI6XCJPMTAxXCIsIFwic3RhdHVzXCI6XCJwYWlkXCIsIFwiYW1vdW50XCI6MzIwMDB9LFxuIiwKICAgICIgICAge1wib3JkZXJfaWRcIjpcIk8xMDJcIiwgXCJzdGF0dXNcIjpcInBlbmRpbmdcIiwgXCJhbW91bnRcIjoxODAwMH0sXG4iLAogICAgIiAgICB7XCJvcmRlcl9pZFwiOlwiTzEwM1wiLCBcInN0YXR1c1wiOlwicGFpZFwiLCBcImFtb3VudFwiOjI3MDAwfSxcbiIsCiAgICAiXSkudG9fY3N2KG9yZGVyc19wYXRoLCBpbmRleD1GYWxzZSlcbiIsCiAgICAib3JkZXJzID0gcGQucmVhZF9jc3Yob3JkZXJzX3BhdGgsIGR0eXBlPXtcIm9yZGVyX2lkXCI6XCJzdHJpbmdcIn0pXG4iLAogICAgInByaW50KG9yZGVycy50b19zdHJpbmcoaW5kZXg9RmFsc2UpKVxuIiwKICAgICJwcmludChvcmRlcnMuZHR5cGVzLmFzdHlwZShzdHIpLnRvX2RpY3QoKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiAiIyMg7KSR6rCEIOqysOqzvCDqtIDssLBcblxuYGZyYW1lW1wic3RhdHVzXCJdYOuKlCDsg4Htg5wg7Je07J2YIGBTZXJpZXNg7J6F64uI64ukLiDsnbQgU2VyaWVz66W8IOyeheugpSDsg4Htg5zsmYAg67mE6rWQ7ZWY66m0IO2WieuniOuLpCDssLjCt+qxsOynk+yduCDrtojrpqzslrgg66eI7Iqk7YGs6rCAIOunjOuTpOyWtOynkeuLiOuLpC4gYGxvY2DripQg6re4IOuniOyKpO2BrOqwgCDssLjsnbgg7ZaJ7J2EIOyEoO2Dne2VtCDsg4ggRGF0YUZyYW1l7J2EIOuwmO2ZmO2VmOqzoCwgYHRvX2RpY3Qob3JpZW50PVwicmVjb3Jkc1wiKWDripQg6rCBIO2WieydhCDsgqzsoITsnLzroZwg67CU6r+UIOyCrOyghCDrqqnroZ3snYQg67CY7ZmY7ZWp64uI64ukLlxuXG5DaCAy7J2YIDA37KCI7JeQ7IScIOuwsOyatCDtg4DsnoUg7Z6M7Yq47JeQIOyXrOufrCDtl4jsmqkg7ZiV7Iud7J2EIO2RnOyLnO2VqeuLiOuLpC4gYHN0ciB8IFBhdGhg64qUIOusuOyekOyXtCDqsr3roZzrgpggUGF0aCDqsJ3ssrTrpbwg67Cb7J2EIOyImCDsnojri6TripQg65y77J6F64uI64ukLiDtmYDroZwg64aT7J24IGAqYCDrkqTsnZggYHN0YXR1c2DripQgYHN0YXR1cz1cInBhaWRcImDsspjrn7wg7J2066aE7J2EIOu2meyXrCDsoITri6ztlanri4jri6QuIGBzdHIgfCBOb25lID0gTm9uZWDsnYAg66y47J6Q7Je0IOuYkOuKlCDqsJIg7JeG7J2M7J2EIO2XiOyaqe2VmOupsCwg7IOd65617ZWY66m0IE5vbmXsnLzroZwg65GQ7Ja0IOuqqOuToCDsg4Htg5zrpbwg7J297Iq164uI64ukLiBgLT4gbGlzdFtkaWN0XWDripQg7IKs7KCE7J2EIO2VreuqqeycvOuhnCDri7TsnYAg66qp66Gd7J2EIOuwmO2ZmO2VnOuLpOuKlCDtkZzsi5zsnoXri4jri6QuXG5cbmB0b2xpc3QoKWDripQgU2VyaWVz7J2YIOqwkuuTpOydhCBQeXRob24g66qp66Gd7Jy866GcIOuwmO2ZmO2VqeuLiOuLpC4gYFtyb3dbXCJvcmRlcl9pZFwiXSBmb3Igcm93IGluIHBhaWRdYOuKlCBgcGFpZGDrpbwg7ZWcIO2VreuqqeyUqSBgcm93YOuhnCDsnb3slrQg7KO866y4IOuyiO2YuOunjCDsg4gg66qp66Gd7JeQIOuqqOycvOuKlCDtkZzquLDsnoXri4jri6QuIOuMgOq0hO2YuCDslYjsnZggYGZvcmDrpbwg7J2066CH6rKMIOydveycvOuptCDqsoDsgqwg64yA7IOB7J20IOyjvOusuCDrsojtmLgg66qp66Gd7J6E7J2EIOyVjCDsiJgg7J6I7Iq164uI64ukLiIKICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJjZWxsLTA3IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjE3OjI0Ljk1MDE0M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjE3OjI0Ljk1MDA2N1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjE3OjI0Ljk1NTI0N1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MTc6MjQuOTU0NzU3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyDge2DnCBTZXJpZXM6IFsncGFpZCcsICdwZW5kaW5nJywgJ3BhaWQnXVxuIiwKICAgICAgInBhaWQg66eI7Iqk7YGsOiBbVHJ1ZSwgRmFsc2UsIFRydWVdXG4iLAogICAgICAiW3snb3JkZXJfaWQnOiAnTzEwMScsICdzdGF0dXMnOiAncGFpZCcsICdhbW91bnQnOiAzMjAwMH0sIHsnb3JkZXJfaWQnOiAnTzEwMycsICdzdGF0dXMnOiAncGFpZCcsICdhbW91bnQnOiAyNzAwMH1dXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgU2VyaWVzIOu5hOq1kOqwgCDtlonrp4jri6Qg66eM65Oc64qUIOu2iOumrOyWuCDrp4jsiqTtgazrpbwg66i87KCAIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAic3RhdHVzX3NlcmllcyA9IG9yZGVyc1tcInN0YXR1c1wiXVxuIiwKICAgICJwYWlkX21hc2sgPSBzdGF0dXNfc2VyaWVzID09IFwicGFpZFwiXG4iLAogICAgInByaW50KFwi7IOB7YOcIFNlcmllczpcIiwgc3RhdHVzX3Nlcmllcy50b2xpc3QoKSlcbiIsCiAgICAicHJpbnQoXCJwYWlkIOuniOyKpO2BrDpcIiwgcGFpZF9tYXNrLnRvbGlzdCgpKVxuIiwKICAgICJcbiIsCiAgICAiIyDtjIzsnbwg6rK966Gc7JmAIOyEoO2DnSDsg4Htg5zrpbwg67Cb64qUIOyerOyCrOyaqSDtlajsiJjroZwg67CY7ZmYIO2YleyLneydhCDqs6DsoJXtlanri4jri6QuXG4iLAogICAgImRlZiBmZXRjaF9vcmRlcnMoY3N2X3BhdGg6IHN0ciB8IFBhdGgsICosIHN0YXR1czogc3RyIHwgTm9uZSA9IE5vbmUpIC0+IGxpc3RbZGljdF06XG4iLAogICAgIiAgICBmcmFtZSA9IHBkLnJlYWRfY3N2KGNzdl9wYXRoLCBkdHlwZT17XCJvcmRlcl9pZFwiOlwic3RyaW5nXCJ9KVxuIiwKICAgICIgICAgaWYgc3RhdHVzIGlzIG5vdCBOb25lOlxuIiwKICAgICIgICAgICAgIGZyYW1lID0gZnJhbWUubG9jW2ZyYW1lW1wic3RhdHVzXCJdID09IHN0YXR1c11cbiIsCiAgICAiICAgIHJldHVybiBmcmFtZS50b19kaWN0KG9yaWVudD1cInJlY29yZHNcIilcbiIsCiAgICAicGFpZCA9IGZldGNoX29yZGVycyhvcmRlcnNfcGF0aCwgc3RhdHVzPVwicGFpZFwiKVxuIiwKICAgICJwcmludChwYWlkKVxuIiwKICAgICJhc3NlcnQgW3Jvd1tcIm9yZGVyX2lkXCJdIGZvciByb3cgaW4gcGFpZF0gPT0gW1wiTzEwMVwiLCBcIk8xMDNcIl0iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rCSIO2VmOuCmOulvCDrsJTqv5Qg67mE6rWQXG4iLAogICAgIlxuIiwKICAgICLsnoXroKUg642w7J207YSw7JmAIOyymOumrCDsiJzshJzripQg7Jyg7KeA7ZWY6rOgIOyDge2DnCDsnbjsnpDrp4wgYHBhaWRg7JeQ7IScIGBwZW5kaW5nYOycvOuhnCDrsJTqv4nri4jri6QuIOuwmO2ZmCDrqqnroZ3sl5DshJwgTzEwMiDtlZwg6rG066eMIOuCqOuKlOyngCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiY2VsbC0wOSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNC45NTYxOTNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNC45NTYxMThaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNC45NTg4MDlaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjE3OjI0Ljk1ODQ1NloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJbeydvcmRlcl9pZCc6ICdPMTAyJywgJ3N0YXR1cyc6ICdwZW5kaW5nJywgJ2Ftb3VudCc6IDE4MDAwfV1cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtlYTthLAg6rCS66eMIOuwlOq+uOyWtCDqsJnsnYAg7ZWo7IiY6rCAIOuLpOuluCDsg4Htg5zrpbwg7ISg7YOd7ZWY64qU7KeAIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAicGVuZGluZyA9IGZldGNoX29yZGVycyhvcmRlcnNfcGF0aCwgc3RhdHVzPVwicGVuZGluZ1wiKVxuIiwKICAgICJwcmludChwZW5kaW5nKVxuIiwKICAgICJhc3NlcnQgW3Jvd1tcIm9yZGVyX2lkXCJdIGZvciByb3cgaW4gcGVuZGluZ10gPT0gW1wiTzEwMlwiXSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAic291cmNlIjogIiMjIOyLpO2MqCDsnqztmIRcblxu6riI7JWh7J20IOusuOyekOyXtOydtOuptCDtlanqs4TqsIAg7Iir7J6QIOuNp+yFiOydtCDslYTri4wg66y47J6Q7Je0IOyXsOqysOydtCDrkKnri4jri6QuXG5cbmBvcmRlcnMuYXN0eXBlKHtcImFtb3VudFwiOiBcInN0cmluZ1wifSlg64qUIGFtb3VudCDsl7TsnYQg66y47J6Q7Je066GcIOuwlOq+vCDsg4ggRGF0YUZyYW1l7J2EIOuwmO2ZmO2VqeuLiOuLpC4g67CY7ZmY6rCS7J2EIGBicm9rZW5g7JeQIOyggOyepe2VmOuvgOuhnCDsm5DrnpggYG9yZGVyc2DsnZgg7Iir7J6QIOyXtOydgCDqt7jrjIDroZwg65GQ6rOgIOuRkCDqsr3smrDrpbwg67mE6rWQ7ZWgIOyImCDsnojsirXri4jri6QuIgogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTc6MjQuOTU5NTk4WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTc6MjQuOTU5NTM3WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTc6MjQuOTYxNzkwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNC45NjE0ODBaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLrrLjsnpDsl7Qg7ZWp6rOEOiAzMjAwMDE4MDAwMjcwMDBcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDquIjslaHsnYQg66y47J6Q7Je066GcIOydveycvOuptCBzdW3snbQg66y47J6Q7Je0IOyXsOqysOydhCDsiJjtlontlanri4jri6QuXG4iLAogICAgImJyb2tlbiA9IG9yZGVycy5hc3R5cGUoe1wiYW1vdW50XCI6XCJzdHJpbmdcIn0pXG4iLAogICAgIndyb25nX3RvdGFsID0gYnJva2VuW1wiYW1vdW50XCJdLnN1bSgpXG4iLAogICAgInByaW50KFwi66y47J6Q7Je0IO2VqeqzhDpcIiwgd3JvbmdfdG90YWwpXG4iLAogICAgImFzc2VydCB3cm9uZ190b3RhbCA9PSBcIjMyMDAwMTgwMDAyNzAwMFwiIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xMiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6ICIjIyDsiJjsoJVcblxu7Iir7J6Q66GcIOuzgO2ZmO2VnCDsg4gg7Je07J2EIOyCrOyaqe2VtCDtlanqs4Trpbwg6rOE7IKw7ZWp64uI64ukLlxuXG5gYXNzaWduKGFtb3VudD0uLi4pYOydgCDsmKTrpbjsqr0g6rOE7IKwIOqysOqzvOuhnCBhbW91bnQg7Je07J2EIOq1kOyytO2VnCDsg4ggRGF0YUZyYW1l7J2EIOuwmO2ZmO2VqeuLiOuLpC4g66i87KCAIGBwZC50b19udW1lcmljYOydtCDrrLjsnpDsl7Qg6riI7JWh7J2EIOyIq+yekCBTZXJpZXProZwg67OA7ZmY7ZWY6rOgLCBgYXNzaWduYOydtCDqt7ggU2VyaWVz66W8IOq4iOyVoSDsl7TroZwg7IKs7Jqp7ZWp64uI64ukLiDsm5DrnpggYGJyb2tlbmDsnYQg7KeB7KCRIOqzoOy5nCDqsoPsnbQg7JWE64uI6528IOyDiCDtkZzrpbwgYGZpeGVkYOyXkCDsoIDsnqXtlanri4jri6QuIgogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImNlbGwtMTMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTc6MjQuOTYyNTE1WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTc6MjQuOTYyNDU1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTc6MjQuOTY0Nzk3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNC45NjQ0NThaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyIq+yekCDtlanqs4Q6IDc3MDAwXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7Iir7J6QIOuzgO2ZmCDsi6TtjKjrpbwg65Oc65+s64K06rOgIOygleyImCDtlanqs4Trpbwg64uk7IucIOqzhOyCsO2VqeuLiOuLpC5cbiIsCiAgICAiZml4ZWQgPSBicm9rZW4uYXNzaWduKGFtb3VudD1wZC50b19udW1lcmljKGJyb2tlbltcImFtb3VudFwiXSwgZXJyb3JzPVwicmFpc2VcIikpXG4iLAogICAgImNvcnJlY3RfdG90YWwgPSBpbnQoZml4ZWRbXCJhbW91bnRcIl0uc3VtKCkpXG4iLAogICAgInByaW50KFwi7Iir7J6QIO2VqeqzhDpcIiwgY29ycmVjdF90b3RhbClcbiIsCiAgICAiYXNzZXJ0IGNvcnJlY3RfdG90YWwgPT0gNzcwMDBcbiIsCiAgICAidGVtcF9kaXIuY2xlYW51cCgpIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJwYWlyZWQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA2LAogICAiY29kZV9zaGEyNTYiOiAiZDg2NmY0NWVmZjJiMGU0YjQyYmM5OGNhMjEzZjE2NjEwY2YyMDU0NzIwYzc1NzdhNmE5NTQ0ZGVmNDg5OWQ5MCIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTExVDA2OjE3OjI1LjA3ODU5OSswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiMDcxZDM2Yzk3MTdkZmRiMDM2YTk3ZGM4MTBhNGZiNDM5MTA3NTI4OWRhZGMxNmIzYjAyZGY4Zjk5NzIyYjkwNyIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>Pandas로 표 다루기</h2>
+<p>주문 표에서 결제 완료 행만 골라 재사용 가능한 반환값을 만듭니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>이 노트북은 셀 안에서 교육용 주문 데이터를 준비합니다. <code>import pandas as pd</code>는 pandas를 <code>pd</code>라는 이름으로 불러옵니다. 이후 <code>pd.DataFrame(...)</code>과 <code>pd.read_csv(...)</code>의 점은 pandas 안의 생성자와 함수를 선택하는 표기입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 표 계산에 사용할 pandas와 임시 파일 경로를 준비합니다.
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+import pandas as pd
+
+print(&quot;pandas&quot;, pd.__version__)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">pandas 3.0.5
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p><code>pd.DataFrame(사전 목록)</code>은 사전의 키를 열 이름으로 사용한 표를 반환합니다. <code>to_csv</code>는 표를 CSV 파일에 쓰고 <code>pd.read_csv(경로)</code>는 첫 줄을 열 이름으로 읽어 새 DataFrame을 반환합니다. 열 이름 하나를 대괄호에 쓰면 인덱스와 값을 함께 가진 1차원 <code>Series</code>를 얻습니다. 이 셀에서는 사전 세 개를 3행 3열 표로 바꾸고 열별 자료형을 확인합니다.</p>
+<p><code>to_string(index=False)</code>는 행 인덱스를 생략한 표 문자열을 만듭니다. <code>orders.dtypes</code>는 열마다 자료형을 담은 Series이고, 여기에 <code>astype(str)</code>를 적용하면 자료형 이름을 문자열로 바꾼 새 Series를 얻습니다. 마지막 <code>to_dict()</code>는 열 이름과 자료형 이름을 짝지은 사전으로 바꿉니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 노트북 안에서 CSV 파일을 만들어 파일 입력도 독립적으로 재현합니다.
+temp_dir = TemporaryDirectory()
+orders_path = Path(temp_dir.name) / &quot;orders.csv&quot;
+pd.DataFrame([
+    {&quot;order_id&quot;:&quot;O101&quot;, &quot;status&quot;:&quot;paid&quot;, &quot;amount&quot;:32000},
+    {&quot;order_id&quot;:&quot;O102&quot;, &quot;status&quot;:&quot;pending&quot;, &quot;amount&quot;:18000},
+    {&quot;order_id&quot;:&quot;O103&quot;, &quot;status&quot;:&quot;paid&quot;, &quot;amount&quot;:27000},
+]).to_csv(orders_path, index=False)
+orders = pd.read_csv(orders_path, dtype={&quot;order_id&quot;:&quot;string&quot;})
+print(orders.to_string(index=False))
+print(orders.dtypes.astype(str).to_dict())</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">order_id  status  amount
+    O101    paid   32000
+    O102 pending   18000
+    O103    paid   27000
+{&#x27;order_id&#x27;: &#x27;string&#x27;, &#x27;status&#x27;: &#x27;str&#x27;, &#x27;amount&#x27;: &#x27;int64&#x27;}
+</pre></div>
+<div class="nb-markdown"><h3>중간 결과 관찰</h3>
+<p><code>frame[&quot;status&quot;]</code>는 상태 열의 <code>Series</code>입니다. 이 Series를 입력 상태와 비교하면 행마다 참·거짓인 불리언 마스크가 만들어집니다. <code>loc</code>는 그 마스크가 참인 행을 선택해 새 DataFrame을 반환하고, <code>to_dict(orient=&quot;records&quot;)</code>는 각 행을 사전으로 바꿔 사전 목록을 반환합니다.</p>
+<p>Ch 2의 07절에서 배운 타입 힌트에 여러 허용 형식을 표시합니다. <code>str | Path</code>는 문자열 경로나 Path 객체를 받을 수 있다는 뜻입니다. 홀로 놓인 <code>*</code> 뒤의 <code>status</code>는 <code>status=&quot;paid&quot;</code>처럼 이름을 붙여 전달합니다. <code>str | None = None</code>은 문자열 또는 값 없음을 허용하며, 생략하면 None으로 두어 모든 상태를 읽습니다. <code>-&gt; list[dict]</code>는 사전을 항목으로 담은 목록을 반환한다는 표시입니다.</p>
+<p><code>tolist()</code>는 Series의 값들을 Python 목록으로 반환합니다. <code>[row[&quot;order_id&quot;] for row in paid]</code>는 <code>paid</code>를 한 항목씩 <code>row</code>로 읽어 주문 번호만 새 목록에 모으는 표기입니다. 대괄호 안의 <code>for</code>를 이렇게 읽으면 검사 대상이 주문 번호 목록임을 알 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># Series 비교가 행마다 만드는 불리언 마스크를 먼저 확인합니다.
+status_series = orders[&quot;status&quot;]
+paid_mask = status_series == &quot;paid&quot;
+print(&quot;상태 Series:&quot;, status_series.tolist())
+print(&quot;paid 마스크:&quot;, paid_mask.tolist())
+
+# 파일 경로와 선택 상태를 받는 재사용 함수로 반환 형식을 고정합니다.
+def fetch_orders(csv_path: str | Path, *, status: str | None = None) -&gt; list[dict]:
+    frame = pd.read_csv(csv_path, dtype={&quot;order_id&quot;:&quot;string&quot;})
+    if status is not None:
+        frame = frame.loc[frame[&quot;status&quot;] == status]
+    return frame.to_dict(orient=&quot;records&quot;)
+paid = fetch_orders(orders_path, status=&quot;paid&quot;)
+print(paid)
+assert [row[&quot;order_id&quot;] for row in paid] == [&quot;O101&quot;, &quot;O103&quot;]</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">상태 Series: [&#x27;paid&#x27;, &#x27;pending&#x27;, &#x27;paid&#x27;]
+paid 마스크: [True, False, True]
+[{&#x27;order_id&#x27;: &#x27;O101&#x27;, &#x27;status&#x27;: &#x27;paid&#x27;, &#x27;amount&#x27;: 32000}, {&#x27;order_id&#x27;: &#x27;O103&#x27;, &#x27;status&#x27;: &#x27;paid&#x27;, &#x27;amount&#x27;: 27000}]
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 비교</h3>
+<p>입력 데이터와 처리 순서는 유지하고 상태 인자만 <code>paid</code>에서 <code>pending</code>으로 바꿉니다. 반환 목록에서 O102 한 건만 남는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 필터 값만 바꾸어 같은 함수가 다른 상태를 선택하는지 확인합니다.
+pending = fetch_orders(orders_path, status=&quot;pending&quot;)
+print(pending)
+assert [row[&quot;order_id&quot;] for row in pending] == [&quot;O102&quot;]</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[{&#x27;order_id&#x27;: &#x27;O102&#x27;, &#x27;status&#x27;: &#x27;pending&#x27;, &#x27;amount&#x27;: 18000}]
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — <code>orders["status"]</code>가 Series를 만들고, 비교 결과가 각 행의 선택 여부가 되며, <code>loc</code>가 그 결과로 DataFrame을 줄이는 순서를 확인합니다. 선택 뒤에도 원본 주문 번호와 금액이 유지되는지와 합계 전에 금액 열의 자료형을 확인했는지도 살펴봅니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before는 금액 열을 문자열로 바꾼 뒤 <code>sum()</code>을 호출합니다. 오류가 발생하지 않지만 결과는 77,000이 아니라 세 문자열을 이어 붙인 값입니다. 프로그램이 멈추지 않았다는 사실만으로 결과가 맞다고 판단할 수 없습니다. After는 <code>to_numeric</code>으로 금액을 정수로 변환하고 같은 세 행의 합계를 다시 계산합니다. 출력 77,000과 <code>assert</code> 문이 변환 결과를 확인합니다.</p><p><code>orders.astype({"amount": "string"})</code>는 amount 열을 문자열로 바꾼 새 DataFrame을 반환합니다. 반환값을 <code>broken</code>에 저장하므로 원래 <code>orders</code>의 숫자 열은 그대로 두고 두 경우를 비교할 수 있습니다.</p><p><code>assign(amount=...)</code>은 오른쪽 계산 결과로 amount 열을 교체한 새 DataFrame을 반환합니다. 먼저 <code>pd.to_numeric</code>이 문자열 금액을 숫자 Series로 변환하고, <code>assign</code>이 그 Series를 금액 열로 사용합니다. 원래 <code>broken</code>을 직접 고친 것이 아니라 새 표를 <code>fixed</code>에 저장합니다.</p><section class="notebook" data-notebook="01-Pandas로-표-다루기" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>금액이 문자열이면 합계가 숫자 덧셈이 아닌 문자열 연결이 됩니다.</p>
+<p><code>orders.astype({&quot;amount&quot;: &quot;string&quot;})</code>는 amount 열을 문자열로 바꾼 새 DataFrame을 반환합니다. 반환값을 <code>broken</code>에 저장하므로 원래 <code>orders</code>의 숫자 열은 그대로 두고 두 경우를 비교할 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 금액을 문자열로 읽으면 sum이 문자열 연결을 수행합니다.
+broken = orders.astype({&quot;amount&quot;:&quot;string&quot;})
+wrong_total = broken[&quot;amount&quot;].sum()
+print(&quot;문자열 합계:&quot;, wrong_total)
+assert wrong_total == &quot;320001800027000&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">문자열 합계: 320001800027000
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>숫자로 변환한 새 열을 사용해 합계를 계산합니다.</p>
+<p><code>assign(amount=...)</code>은 오른쪽 계산 결과로 amount 열을 교체한 새 DataFrame을 반환합니다. 먼저 <code>pd.to_numeric</code>이 문자열 금액을 숫자 Series로 변환하고, <code>assign</code>이 그 Series를 금액 열로 사용합니다. 원래 <code>broken</code>을 직접 고친 것이 아니라 새 표를 <code>fixed</code>에 저장합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 숫자 변환 실패를 드러내고 정수 합계를 다시 계산합니다.
+fixed = broken.assign(amount=pd.to_numeric(broken[&quot;amount&quot;], errors=&quot;raise&quot;))
+correct_total = int(fixed[&quot;amount&quot;].sum())
+print(&quot;숫자 합계:&quot;, correct_total)
+assert correct_total == 77000
+temp_dir.cleanup()</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">숫자 합계: 77000
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>CSV의 주문 번호가 숫자로만 보여도 식별자는 문자열로 읽는 편이 안전합니다. 앞의 0은 수량이 아니라 식별 형식의 일부일 수 있습니다.</li><li>결측값을 0으로 바꾸기 전에 0이 실제 금액인지 미수집 값을 대신하는지 확인합니다.</li><li>행이 많은 파일은 필요한 열과 조건을 일찍 선택해야 메모리 사용을 줄일 수 있습니다. 이 절의 세 행으로 큰 파일 성능을 일반화할 수 없습니다.</li><li>반환값은 화면용 표가 아니라 사전 목록처럼 다음 코드가 처리할 수 있는 형식으로 정합니다.</li></ul>
+<p>실제 주문 파일을 함수에 연결할 때는 열 이름과 필수 열 목록도 입력 조건으로 확인합니다. 파일이 열리더라도 status 또는 amount 열이 없으면 조회 결과를 만들 수 없습니다. 값의 범주도 함께 확인해야 합니다. 예를 들어 paid, pending, cancelled 외의 상태가 들어오면 새 업무 상태인지 오타인지 원천 시스템에서 확인합니다. 이러한 검사는 잘못된 행을 조용히 제외하는 것보다 문제를 발견하기 쉽습니다.</p><h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>DataFrame은 레코드를 행과 열로 표현합니다.</li><li>불리언 마스크와 <code>loc</code>는 필요한 행과 열을 선택합니다.</li><li>합계 전에 자료형을 확인하고 변환 실패를 드러냅니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 주문 표의 고객 번호를 고객 표의 기본 키와 연결합니다. 현재 만든 <code>fetch_orders</code> 형태는 Ch 19에서 조회 도구의 실행 함수가 됩니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 한 주문과 주문 금액은 각각 DataFrame의 무엇에 해당하나요?</p><p class="quiz-a"><strong>정답</strong> 한 주문은 행이고 주문 금액은 열입니다.</p><p class="quiz-q">2. 결제 완료 주문만 고를 때 사용하는 조건은 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> <code>orders["status"] == "paid"</code>입니다. 이 참·거짓 결과를 <code>loc</code>에 전달합니다.</p><p class="quiz-q">3. 문자열 금액의 합계가 오류 없이 틀릴 수 있는 이유는 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> 문자열의 덧셈은 숫자 합산 대신 값을 이어 붙일 수 있기 때문입니다.</p><p class="quiz-q">4. 조회 함수의 반환 열을 명시해야 하는 이유는 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> 후속 코드에 필요한 정보만 전달하고 반환 형식을 예측할 수 있게 하기 위해서입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.loc.html">pandas 공식 문서 · DataFrame.loc</a> · 2026-09-09 확인 · pandas 3.0.5</li><li><a href="https://pandas.pydata.org/docs/reference/api/pandas.to_numeric.html">pandas 공식 문서 · to_numeric</a> · 2026-09-09 확인 · pandas 3.0.5</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span>&nbsp;</span><span><a href="index.html">챕터 목차</a></span><span><a href="02-관계형-테이블과-키.html">관계형 테이블과 키 →</a></span></div></div></body></html>

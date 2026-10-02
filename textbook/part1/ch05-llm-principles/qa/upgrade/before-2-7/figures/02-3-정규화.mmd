@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  RAW["원래 0번 벡터<br>길이 3.9723"]:::measure
+  UNIT["정규화한 0번 벡터<br>길이 1.0"]:::measure
+  DOT["정규화한 0번·3번 점곱<br>0.8987"]:::measure
+  COS["원래 벡터의 0번·3번<br>코사인 유사도 0.8987"]:::measure
+  RAW -- "정규화해 다시 encode()" --> UNIT
+  UNIT -- "dot_product()" --> DOT
+  DOT -. "같은 값" .- COS

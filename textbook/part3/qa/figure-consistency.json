@@ -1,0 +1,93 @@
+[
+  {
+    "name": "01-정확-검색",
+    "labels_match": true,
+    "arrows": 3,
+    "arrows_match": true,
+    "sha256": "eadf08678165b96156781d2ecfdefb3e7cad6e39af451a6b88537f120ee2c455"
+  },
+  {
+    "name": "02-HNSW",
+    "labels_match": true,
+    "arrows": 3,
+    "arrows_match": true,
+    "sha256": "be418cba0bf96b47cf1100e0ef9006b09cde0b46a22d6eea33488af01994388b"
+  },
+  {
+    "name": "03-필터-반복탐색",
+    "labels_match": true,
+    "arrows": 4,
+    "arrows_match": true,
+    "sha256": "ddc6b4728dacb542125709a0d762b729dccb32e045dc28bf423164fa4355ea8c"
+  },
+  {
+    "name": "04-Kiwi-BM25",
+    "labels_match": true,
+    "arrows": 3,
+    "arrows_match": true,
+    "sha256": "71292b2d6af204fcf250b870f0e168c5ddb1b7ef420f1d4af113415dd4ebc59e"
+  },
+  {
+    "name": "05-dense-sparse",
+    "labels_match": true,
+    "arrows": 3,
+    "arrows_match": true,
+    "sha256": "e15287cbba5ca14e099989df6ecc209e6fec4118e0e1e7917106a5aadbcfdd23"
+  },
+  {
+    "name": "06-RRF",
+    "labels_match": true,
+    "arrows": 4,
+    "arrows_match": true,
+    "sha256": "55cd00ebe62f5f0e063802474fc0fc4a4848432c873054b93331d461934a1793"
+  },
+  {
+    "name": "07-리랭킹-흐름",
+    "labels_match": true,
+    "arrows": 3,
+    "arrows_match": true,
+    "sha256": "4ec56be35da06300cf0600de1b018e8a6591e72b5644ea7cc863b3c5f968980c"
+  },
+  {
+    "name": "08-후보-모델-격자",
+    "labels_match": true,
+    "arrows": 3,
+    "arrows_match": true,
+    "sha256": "c545dfeb5791327edf505e19669928737f376ee0f01bf6e9dea60970d537a2de"
+  },
+  {
+    "name": "09-부모-자식-검색",
+    "labels_match": true,
+    "arrows": 3,
+    "arrows_match": true,
+    "sha256": "3483bdb944dc4f58fc6a273e0bbb53417f27725ba2f4ce4cfbb5af462a1b3134"
+  },
+  {
+    "name": "10-mmr-선택",
+    "labels_match": true,
+    "arrows": 3,
+    "arrows_match": true,
+    "sha256": "fa877351dff91283a3ab34c8b94162e58a3844f7b3baa9d9aa5cd62c822cb462"
+  },
+  {
+    "name": "11-질문-재작성",
+    "labels_match": true,
+    "arrows": 3,
+    "arrows_match": true,
+    "sha256": "d5fdcbd596e9e7c2c660d861339970062f64759acfcdad3aa1711e03974dfd1e"
+  },
+  {
+    "name": "12-실험-로그",
+    "labels_match": true,
+    "arrows": 4,
+    "arrows_match": true,
+    "sha256": "59533ed3895c2292bce10edd11ca858cb18f9ce219154458b9440295cd2ac0e3"
+  },
+  {
+    "name": "12-통합-RAG",
+    "labels_match": true,
+    "arrows": 6,
+    "arrows_match": true,
+    "sha256": "b73b08d9cf2ba7b07fb054242487ff8ecfa864e3577635d73a154c3022404560"
+  }
+]

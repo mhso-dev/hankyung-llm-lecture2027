@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  same["두 칸 공통<br>늘 429를 보내는 연습용 서버<br>같은 문의 글을 한 번 부름"]
+  subgraph left["max_retries를 적지 않음"]
+    direction TB
+    l1["default_model<br>openai 클라이언트 max_retries 2"]:::tool
+    l2["OpenAIRateLimitError 429<br>서버가 받은 요청 세 번"]:::measure
+    l1 --> l2
+  end
+  subgraph right["max_retries=0"]
+    direction TB
+    r1["zero_model<br>openai 클라이언트 max_retries 0"]:::tool
+    r2["OpenAIRateLimitError 429<br>서버가 받은 요청 한 번"]:::measure
+    r1 --> r2
+  end
+  same --> left
+  same --> right

@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph S6["6절 · 노트북 셀에서 정의"]
+    direction LR
+    p1["class OrderLine<br>정의 셀"]:::flow --> p2["이 노트북의 이름<br>__main__"]:::tool --> p3["자료형 class<br>'__main__.OrderLine'"]
+  end
+  subgraph S7["7절 · 모듈 파일에서 정의"]
+    direction LR
+    q1["모듈 파일 order_tools.py<br>안의 class OrderLine"]:::tool --> q2["모듈의 이름<br>order_tools"]:::tool --> q3["자료형 class<br>'order_tools.OrderLine'"]:::measure
+  end
+  S6 ~~~ S7

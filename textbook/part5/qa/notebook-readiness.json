@@ -1,0 +1,363 @@
+[
+  {
+    "notebook": "labs/part5/ch17-agent-overview/notebooks/01-워크플로우와-에이전트-경계.ipynb",
+    "code_cells": 22,
+    "max_cell_lines": 10,
+    "missing_comments": [],
+    "missing_annotations": [
+      "print_steps",
+      "count_steps",
+      "classify",
+      "pick_next_step"
+    ],
+    "assertions": 2
+  },
+  {
+    "notebook": "labs/part5/ch17-agent-overview/notebooks/02-워크플로우가-충분한-조건.ipynb",
+    "code_cells": 22,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "print_answers",
+      "workflow_score",
+      "recommend",
+      "tool_names"
+    ],
+    "assertions": 4
+  },
+  {
+    "notebook": "labs/part5/ch17-agent-overview/notebooks/03-모델-도구-루프와-정지-조건.ipynb",
+    "code_cells": 30,
+    "max_cell_lines": 10,
+    "missing_comments": [],
+    "missing_annotations": [
+      "run_tool",
+      "build_request",
+      "ask_next",
+      "stop_reason",
+      "stop_line",
+      "turn_lines",
+      "print_results",
+      "run_loop",
+      "print_summary",
+      "run_planned_loop"
+    ],
+    "assertions": 5
+  },
+  {
+    "notebook": "labs/part5/ch17-agent-overview/notebooks/04-자율성의-대가.ipynb",
+    "code_cells": 23,
+    "max_cell_lines": 10,
+    "missing_comments": [],
+    "missing_annotations": [
+      "run_workflow",
+      "send_and_measure",
+      "choose_line",
+      "run_measured_loop",
+      "print_measures",
+      "total_of",
+      "print_costs"
+    ],
+    "assertions": 1
+  },
+  {
+    "notebook": "labs/part5/ch17-agent-overview/notebooks/05-제품-트레이스와-자율성-진단.ipynb",
+    "code_cells": 29,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "read_json",
+      "print_events",
+      "print_after_failures",
+      "key_names",
+      "to_steps",
+      "count_control"
+    ],
+    "assertions": 1
+  },
+  {
+    "notebook": "labs/part5/ch17-agent-overview/notebooks/06-Agent-개요-실습.ipynb",
+    "code_cells": 21,
+    "max_cell_lines": 13,
+    "missing_comments": [],
+    "missing_annotations": [
+      "print_reports",
+      "serve_inquiry"
+    ],
+    "assertions": 1
+  },
+  {
+    "notebook": "labs/part5/ch18-workflow-patterns/notebooks/01-게이트가-있는-프롬프트-체이닝.ipynb",
+    "code_cells": 28,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "add_record",
+      "print_records",
+      "ask_json",
+      "check_plan",
+      "build_write_request",
+      "run_chain_without_gate",
+      "run_gated_chain"
+    ],
+    "assertions": 3
+  },
+  {
+    "notebook": "labs/part5/ch18-workflow-patterns/notebooks/02-실패를-처리하는-라우팅.ipynb",
+    "code_cells": 26,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "check_route",
+      "route_without_check",
+      "route_question"
+    ],
+    "assertions": 3
+  },
+  {
+    "notebook": "labs/part5/ch18-workflow-patterns/notebooks/03-병렬-섹셔닝과-투표.ipynb",
+    "code_cells": 29,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "build_part_request",
+      "ask_all_together",
+      "join_parts",
+      "write_sections",
+      "count_votes",
+      "decide_vote",
+      "run_vote"
+    ],
+    "assertions": 5
+  },
+  {
+    "notebook": "labs/part5/ch18-workflow-patterns/notebooks/04-동적-오케스트레이터와-워커.ipynb",
+    "code_cells": 29,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "pick_tasks",
+      "build_task_requests",
+      "build_summary_request",
+      "find_new_contacts",
+      "plan_tasks",
+      "run_orchestrator"
+    ],
+    "assertions": 5
+  },
+  {
+    "notebook": "labs/part5/ch18-workflow-patterns/notebooks/05-생성자-평가자와-정지-조건.ipynb",
+    "code_cells": 29,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "check_length",
+      "check_draft",
+      "decide_stop",
+      "build_notes",
+      "write_and_judge",
+      "finish_loop",
+      "run_write_judge_loop"
+    ],
+    "assertions": 3
+  },
+  {
+    "notebook": "labs/part5/ch18-workflow-patterns/notebooks/06-같은-과제로-다섯-패턴-비교.ipynb",
+    "code_cells": 27,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "total_tokens",
+      "grade_notice",
+      "make_row"
+    ],
+    "assertions": 3
+  },
+  {
+    "notebook": "labs/part5/ch18-workflow-patterns/notebooks/07-워크플로우-패턴-실습.ipynb",
+    "code_cells": 24,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "summarize_run",
+      "print_summaries",
+      "serve_notice"
+    ],
+    "assertions": 1
+  },
+  {
+    "notebook": "labs/part5/ch19-model-tools/notebooks/01-tool과-Ch4-함수-재사용.ipynb",
+    "code_cells": 21,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "list_orders_by_status",
+      "list_orders_no_hint"
+    ],
+    "assertions": 3
+  },
+  {
+    "notebook": "labs/part5/ch19-model-tools/notebooks/02-Pydantic-인자와-반환-스키마.ipynb",
+    "code_cells": 21,
+    "max_cell_lines": 12,
+    "missing_comments": [],
+    "missing_annotations": [
+      "list_orders_by_status",
+      "search_orders"
+    ],
+    "assertions": 2
+  },
+  {
+    "notebook": "labs/part5/ch19-model-tools/notebooks/03-좋은-도구-이름과-설명.ipynb",
+    "code_cells": 27,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "find_order",
+      "sum_orders",
+      "list_orders_by_status",
+      "get_order_by_id",
+      "sum_amounts_by_status",
+      "list_orders_by_status",
+      "get_order_by_id",
+      "sum_amounts_by_status",
+      "check_tool",
+      "count_met",
+      "spec_length",
+      "order_info"
+    ],
+    "assertions": 2
+  },
+  {
+    "notebook": "labs/part5/ch19-model-tools/notebooks/04-설명만으로-도구-선택하기.ipynb",
+    "code_cells": 27,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "short_list",
+      "short_get",
+      "short_sum",
+      "detailed_list",
+      "detailed_get",
+      "detailed_sum",
+      "tool_call_names",
+      "ask_questions",
+      "count_expected",
+      "records_cost"
+    ],
+    "assertions": 2
+  },
+  {
+    "notebook": "labs/part5/ch19-model-tools/notebooks/05-bind_tools와-병렬-호출.ipynb",
+    "code_cells": 26,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "get_order_by_id",
+      "run_tool_calls",
+      "check_amounts",
+      "ask_until_answer",
+      "sum_usage"
+    ],
+    "assertions": 3
+  },
+  {
+    "notebook": "labs/part5/ch19-model-tools/notebooks/06-오류와-읽기-쓰기-분리.ipynb",
+    "code_cells": 26,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "get_order_by_id",
+      "cancel_order",
+      "pick_tools",
+      "make_tools_table",
+      "spec_names",
+      "show_messages"
+    ],
+    "assertions": 3
+  },
+  {
+    "notebook": "labs/part5/ch19-model-tools/notebooks/07-모델과-도구-실습.ipynb",
+    "code_cells": 23,
+    "max_cell_lines": 13,
+    "missing_comments": [],
+    "missing_annotations": [
+      "get_order_by_id",
+      "request_cancel",
+      "handle_inquiry",
+      "summarize_run",
+      "print_summaries"
+    ],
+    "assertions": 3
+  },
+  {
+    "notebook": "labs/part5/ch20-tool-node/notebooks/01-ToolNode와-tools-condition.ipynb",
+    "code_cells": 28,
+    "max_cell_lines": 16,
+    "missing_comments": [],
+    "missing_annotations": [
+      "lookup_policy",
+      "call_model",
+      "call_id_lists",
+      "run_row"
+    ],
+    "assertions": 2
+  },
+  {
+    "notebook": "labs/part5/ch20-tool-node/notebooks/02-도구-오류와-ToolMessage.ipynb",
+    "code_cells": 25,
+    "max_cell_lines": 15,
+    "missing_comments": [],
+    "missing_annotations": [
+      "lookup_policy",
+      "call_model",
+      "build_graph",
+      "handle_policy_error"
+    ],
+    "assertions": 4
+  },
+  {
+    "notebook": "labs/part5/ch20-tool-node/notebooks/03-recursion-limit과-명시적-종료.ipynb",
+    "code_cells": 25,
+    "max_cell_lines": 11,
+    "missing_comments": [],
+    "missing_annotations": [
+      "lookup_policy",
+      "pick_topic",
+      "find_policy",
+      "next_or_end",
+      "try_limits"
+    ],
+    "assertions": 2
+  },
+  {
+    "notebook": "labs/part5/ch20-tool-node/notebooks/04-if-분기와-모델-선택-비교.ipynb",
+    "code_cells": 32,
+    "max_cell_lines": 15,
+    "missing_comments": [],
+    "missing_annotations": [
+      "lookup_policy",
+      "keyword_topic",
+      "pick_by_rule",
+      "make_rule_request",
+      "call_answer",
+      "call_model",
+      "model_responses",
+      "called_topics",
+      "compare_row"
+    ],
+    "assertions": 2
+  },
+  {
+    "notebook": "labs/part5/ch20-tool-node/notebooks/05-ToolNode-실습.ipynb",
+    "code_cells": 25,
+    "max_cell_lines": 16,
+    "missing_comments": [],
+    "missing_annotations": [
+      "lookup_policy",
+      "handle_policy_error",
+      "call_model"
+    ],
+    "assertions": 1
+  }
+]

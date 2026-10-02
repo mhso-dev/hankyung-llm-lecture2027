@@ -1,0 +1,4 @@
+- 설명 대상 문장: Before와 달라진 곳은 모듈 파일의 int() 줄 하나이고, 테스트 파일과 기대값은 그대로입니다.
+- 캡션: 기대값은 두고 함수만 고쳤습니다. int() 줄이 빠진 Before는 ..F와 종료 코드 1, 한 줄을 더한 After는 3 passed와 종료 코드 0입니다.
+- 읽는 법: 위 칸이 Before, 아래 칸이 After이고, 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 초록 상자는 모듈 파일(262글자, 295글자), 파란 상자는 같은 테스트를 실행한 run_pytest()입니다. Before는 빨간 상자(..F, 1 failed, 2 passed), After는 노란 상자(..., 3 passed)로 이어집니다.
+- alt: Before는 return unit_price_text로 끝나는 262글자 price_tools.py에 run_pytest()로 같은 테스트 파일 두 개(기대값 39000)를 실행해 ..F, 1 failed, 2 passed, 종료 코드 1이 나오고, After는 unit_price = int(unit_price_text) 줄을 더한 295글자 파일에 같은 테스트를 실행해 ..., 3 passed, 종료 코드 0이 나오는 비교 그림

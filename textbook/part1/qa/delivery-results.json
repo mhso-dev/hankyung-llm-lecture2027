@@ -1,0 +1,291 @@
+{
+  "html_pages": 42,
+  "notebooks": 35,
+  "code_cells": 194,
+  "max_cell_lines": 24,
+  "quiz_questions": 135,
+  "local_links": 277,
+  "missing_links": [],
+  "exposed_credentials": [],
+  "diagrams": [
+    {
+      "chapter": "ch01-development-environment",
+      "svg": 5,
+      "excalidraw": 5
+    },
+    {
+      "chapter": "ch02-python",
+      "svg": 12,
+      "excalidraw": 12
+    },
+    {
+      "chapter": "ch03-git-github",
+      "svg": 5,
+      "excalidraw": 5
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "svg": 5,
+      "excalidraw": 5
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "svg": 8,
+      "excalidraw": 8
+    }
+  ],
+  "hours": [
+    {
+      "chapter": "ch01-development-environment",
+      "lecture": 5.0,
+      "practice": 3.0
+    },
+    {
+      "chapter": "ch02-python",
+      "lecture": 12.0,
+      "practice": 28.0
+    },
+    {
+      "chapter": "ch03-git-github",
+      "lecture": 5.0,
+      "practice": 11.0
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "lecture": 5.0,
+      "practice": 11.0
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "lecture": 10.0,
+      "practice": 6.0
+    }
+  ],
+  "existing_files_unchanged": 36,
+  "prose": [
+    {
+      "chapter": "ch01-development-environment",
+      "section": "01-과정-지도와-학습-규칙",
+      "prose_chars": 3383,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch01-development-environment",
+      "section": "02-도구-설치와-터미널",
+      "prose_chars": 3979,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch01-development-environment",
+      "section": "03-Python과-가상환경",
+      "prose_chars": 4062,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch01-development-environment",
+      "section": "04-첫-스크립트와-디버거",
+      "prose_chars": 4610,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch01-development-environment",
+      "section": "05-Git과-Docker-준비",
+      "prose_chars": 6569,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "01-변수와-자료형",
+      "prose_chars": 2273,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "02-조건문과-반복문",
+      "prose_chars": 2431,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "03-자료구조",
+      "prose_chars": 2485,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "04-함수",
+      "prose_chars": 2560,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "05-파일과-예외",
+      "prose_chars": 2653,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "06-클래스",
+      "prose_chars": 2552,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "07-모듈과-타입힌트",
+      "prose_chars": 2653,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "08-pytest",
+      "prose_chars": 2917,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "09-데코레이터와-컨텍스트-매니저",
+      "prose_chars": 2428,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "10-Pydantic",
+      "prose_chars": 2574,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "11-패키징과-테스트-격리",
+      "prose_chars": 2849,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch02-python",
+      "section": "12-async와-await",
+      "prose_chars": 2887,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch03-git-github",
+      "section": "01-커밋과-gitignore",
+      "prose_chars": 2709,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch03-git-github",
+      "section": "02-GitHub-Flow와-PR-리뷰",
+      "prose_chars": 3081,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch03-git-github",
+      "section": "03-병합-충돌-해결",
+      "prose_chars": 2984,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch03-git-github",
+      "section": "04-revert-reflog-worktree",
+      "prose_chars": 3050,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch03-git-github",
+      "section": "05-시크릿-이력-정리와-예방",
+      "prose_chars": 3139,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "section": "01-Pandas로-표-다루기",
+      "prose_chars": 2390,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "section": "02-관계형-테이블과-키",
+      "prose_chars": 2218,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "section": "03-SQL로-조회-함수-만들기",
+      "prose_chars": 2332,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "section": "04-REST와-페이지네이션",
+      "prose_chars": 2393,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "section": "05-문서-파싱과-스크래핑",
+      "prose_chars": 2451,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "section": "01-토큰화와-한국어-효율",
+      "prose_chars": 2559,
+      "quiz_questions": 3
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "section": "02-임베딩과-의미-유사도",
+      "prose_chars": 2507,
+      "quiz_questions": 3
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "section": "03-어텐션-직관",
+      "prose_chars": 1913,
+      "quiz_questions": 3
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "section": "04-컨텍스트-윈도",
+      "prose_chars": 1967,
+      "quiz_questions": 3
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "section": "05-컨텍스트-로트",
+      "prose_chars": 2023,
+      "quiz_questions": 3
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "section": "06-temperature와-샘플링",
+      "prose_chars": 4340,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "section": "07-환각의-구조적-원인",
+      "prose_chars": 5056,
+      "quiz_questions": 4
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "section": "08-모델-선택-기준",
+      "prose_chars": 4174,
+      "quiz_questions": 4
+    }
+  ],
+  "archives": [
+    {
+      "file": "part1-practice.zip",
+      "entries": 61,
+      "part1_notebooks": 35,
+      "sha256": "2acd47549b74633b5050c6dbbfd3bfa7ac60ab48b8e2c1c19ed3dd7571cc247d"
+    },
+    {
+      "file": "llm-practice.zip",
+      "entries": 171,
+      "part1_notebooks": 35,
+      "sha256": "7dbf801c874426b9cb166b39a23bb1f4bef0b197102151fa8dabee0c96298d3a"
+    }
+  ]
+}

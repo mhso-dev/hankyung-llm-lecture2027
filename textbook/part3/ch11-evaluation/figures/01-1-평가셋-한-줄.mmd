@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  file["평가셋 파일 30줄<br>질문 하나가 한 줄"]:::tool
+  row["한 줄의 일곱 칸<br>qid · question · gold_doc_ids<br>tier · type · split · answerable"]:::tool
+  metric["지표가 세는 칸<br>gold_doc_ids 하나<br>문서 단위 라벨"]:::flow
+  slice["나눠 보는 칸의 출력<br>난이도 10 · 10 · 10<br>dev 15 · test 15"]:::measure
+  drop["뺄 질문 고르는 칸<br>answerable<br>이번에 뺀 질문 0건"]:::measure
+  later["답 문장 칸이 없어도<br>지표를 계산함<br>답 판정은 Ch 15 몫"]
+  file --> row
+  row --> metric
+  row --> slice
+  row --> drop
+  metric --> later

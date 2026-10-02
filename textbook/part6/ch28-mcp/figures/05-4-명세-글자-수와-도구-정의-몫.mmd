@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  none["도구 없는 첫 요청<br>입력 토큰 56 · 몫의 기준"]:::measure
+  base["MCP 도구 하나<br>명세 252자 · 몫 131"]:::measure
+  d1["직접 도구 하나<br>명세 221자 · 몫 131"]:::measure
+  d2["설명을 늘린 도구 하나<br>명세 299자 · 몫 162"]:::measure
+  d3["MCP 도구 셋<br>명세 685자 · 몫 196"]:::measure
+  none --> base
+  base -.-> d1
+  base -.-> d2
+  base -.-> d3

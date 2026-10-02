@@ -1,0 +1,23 @@
+flowchart TB
+  %% classes
+  subgraph COMP["Compress · 줄이기"]
+    direction LR
+    O["원문 E01 p.3<br>141토큰"]:::tool
+    K["find_missing_words<br>지킬 말 5개 검사"]:::flow
+    N["줄인 기록 39토큰<br>빠진 지킬 말 없음"]:::measure
+    O --> K
+    K --> N
+  end
+  subgraph ISO["Isolate · 나누기"]
+    direction LR
+    B["build_messages<br>기록 하나 + 질문 하나"]:::flow
+    L["대출 목록<br>E01 p.3 기록 + 질문"]:::tool
+    C2["휴관 목록<br>E01 p.2 기록 + 질문"]:::tool
+    M1["gpt-5.4-mini<br>7절 대출 요청"]:::model
+    M2["gpt-5.4-mini<br>4절 휴관 요청"]:::model
+    B --> L
+    B --> C2
+    L --> M1
+    C2 --> M2
+  end
+  COMP --> ISO

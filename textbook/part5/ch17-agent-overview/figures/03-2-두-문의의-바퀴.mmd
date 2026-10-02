@@ -1,0 +1,23 @@
+flowchart TB
+  %% classes
+  subgraph left["도착 문의"]
+    direction TB
+    a1["바퀴 1<br>주문 조회를 고름<br>결과 배송 완료"]:::measure
+    a2["바퀴 2<br>끝을 고름"]:::measure
+    a3["멈춤 · 모델이 끝을 고름<br>고른 쪽 모델<br>모델 요청 2"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  subgraph right["환불 문의"]
+    direction TB
+    b1["바퀴 1<br>주문 조회를 고름"]:::measure
+    b2["바퀴 2<br>환불 규정 확인을 고름"]:::measure
+    b3["바퀴 3<br>환불 요청 등록을 고름"]:::measure
+    b4["멈춤 · 사람 확인<br>고른 쪽 코드<br>모델 요청 3"]:::measure
+    b1 --> b2
+    b2 --> b3
+    b3 --> b4
+  end
+  same["두 문의 모두 바퀴 한도 4<br>구조는 에이전트 후보"]
+  left ~~~ same
+  right ~~~ same

@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  app["실습 앱 객체 app<br>처리 함수 다섯"]:::tool
+  lib["FastAPI가 처리 함수와<br>양식 클래스를 훑어 적음"]
+  doc["응답 문서 딕셔너리<br>OpenAPI 3.1.0<br>요청 주소 다섯"]:::measure
+  file["실습 폴더 openapi.json<br>새로 만든 글과 같음 True"]:::measure
+  gen["생성기 7.25.0<br>typescript-fetch<br>노트북 밖 README 명령"]
+  sdk["생성 SDK<br>client/generated<br>요청 주소마다 함수 하나"]:::tool
+  app --> lib --> doc --> file --> gen --> sdk

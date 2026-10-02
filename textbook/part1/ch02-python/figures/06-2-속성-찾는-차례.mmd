@@ -1,0 +1,9 @@
+flowchart TD
+  %% classes
+  R["점 뒤 이름 찾기<br>minji_order.items"]:::flow
+  I["먼저 인스턴스 minji_order<br>속성 {'customer': '민지'}<br>items 없음"]:::tool
+  K["다음 클래스 OrderBefore<br>저장된 목록 items<br>['노트', '연필']"]:::tool
+  O["출력<br>민지 주문 · 준호 주문<br>둘 다 ['노트', '연필']"]:::fail
+  R --> I
+  I -->|없으면 클래스에서 찾음| K
+  K --> O

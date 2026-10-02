@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  WINDOW["연습용 전체 한도<br>512조각"]:::tool
+  OUTPUT["출력 몫<br>64조각"]:::tool
+  PARTS["시스템 지시 12<br>사용자 메시지 375<br>템플릿 표시 13"]:::measure
+  BUDGET["입력 한도<br>448조각"]:::measure
+  INPUT["채팅 템플릿 입력<br>400조각"]:::measure
+  LEFT["남는 칸<br>48조각"]:::measure
+  WINDOW -- "빼기" --> BUDGET
+  OUTPUT -- "빼기" --> BUDGET
+  PARTS -- "합치기" --> INPUT
+  BUDGET -- "입력 넣기" --> LEFT
+  INPUT -- "입력 넣기" --> LEFT

@@ -1,0 +1,89 @@
+<!--meta: 강의 1h | 실습 2h | 코드 document_processing.py · examples/ex02_pdf_tables.py | 새 용어 5 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 디지털 PDF와 스캔 PDF의 차이를 설명하고, 텍스트 추출과 OCR 적용 조건을 구분할 수 있습니다.</li>
+<li>이 절을 마치면 일반 텍스트 추출 결과에서 표의 행·열 관계와 읽기 순서가 손실되는 사례를 원본 쪽과 대조할 수 있습니다.</li>
+<li>이 절을 마치면 같은 PDF를 두 가지 추출 모드로 처리하고, 글자 수·한글 비율·표 보존 여부를 근거로 결과를 기록할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>왜 지금 이것인가</h2>
+<p>Ch 9의 <code>load_pdfs()</code>는 <code>pypdf</code>의 기본 텍스트 추출로 RAG를 완주하는 데 충분했습니다. 그러나 중간 난이도 문서의 표와 어려운 문서의 두 단 레이아웃에서는 글자가 추출되어도 의미가 보존되지 않을 수 있습니다. 스캔 변형본 세 건은 이미지 안에 글자가 있으므로 추출 결과가 비어 있습니다. 파일을 열 수 있다는 사실과 검색에 사용할 수 있는 본문을 얻었다는 사실을 구분해야 합니다.</p>
+<p>PDF는 화면이나 인쇄 결과를 정확히 배치하기 위한 형식입니다. 일부 PDF는 태그나 구조 정보를 가질 수 있지만, 일반적인 텍스트 추출이 문단·표·머리말이라는 의미 구조를 항상 복원할 수 있는 것은 아닙니다. 글자가 쪽의 절대 좌표에 놓여 있으면 추출기는 어느 글자가 같은 행과 열인지 추정해야 합니다. 따라서 파서의 성공 여부를 “문자열이 반환되었다” 하나로 판정해서는 안 됩니다. 원본에서 중요했던 구조가 검색 가능한 표현으로 남았는지 확인해야 합니다.</p>
+
+<h2 id="b3"><span class="no">3</span>선수 지식 되짚기</h2>
+<ul>
+<li><strong>Ch 4 PDF 파싱</strong> — <code>PdfReader</code>와 <code>extract_text()</code>로 디지털 PDF의 텍스트를 읽었습니다.</li>
+<li><strong>Ch 9 <code>load_pdfs()</code></strong> — 텍스트가 비어 있는 쪽을 건너뛰었고, 그 결과 스캔 PDF 세 건이 오류 없이 누락될 수 있음을 확인했습니다.</li>
+<li><strong>01절 입력 목록</strong> — 처리 전 PDF 21건을 텍스트 PDF 18건과 스캔 PDF 3건으로 구분했습니다. 이제 각 입력이 어떤 결과를 만들었는지 같은 <code>doc_id</code>로 비교합니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유 — 좌석 배치도와 참석자 명단</h3>
+<p>회의장 좌석 배치도에는 사람 이름이 공간에 놓여 있습니다. 글자를 위에서 아래로만 읽으면 왼쪽 열과 오른쪽 열의 이름이 섞일 수 있습니다. 표도 같습니다. 사람은 선과 간격을 보고 같은 행을 알아보지만, 텍스트 추출기는 좌표를 읽기 순서로 바꾸는 규칙이 필요합니다. OCR은 사진 속 이름표를 문자로 바꾸는 일입니다. 문자로 바꾼 뒤에도 어느 좌석에 해당하는지 정리하는 작업은 별도로 남습니다.</p>
+<h3>정의</h3>
+<dl class="term">
+<dt>텍스트 레이어 (text layer)</dt><dd>PDF 안에서 선택·검색할 수 있는 문자 정보입니다. 스캔 PDF는 페이지 이미지밖에 없어 텍스트 레이어가 없을 수 있습니다.</dd>
+<dt>레이아웃 (layout)</dt><dd>글자·문단·열·표가 쪽 위에 배치된 공간 관계입니다. 문자열 추출 과정에서 이 관계의 일부가 사라질 수 있습니다.</dd>
+<dt>읽기 순서 (reading order)</dt><dd>사람이 문서 내용을 따라가는 순서입니다. 두 단 문서에서는 왼쪽 단을 끝까지 읽은 뒤 오른쪽 단으로 가야 하지만, 좌표 해석에 따라 줄별로 섞일 수 있습니다.</dd>
+<dt>표 추출 (table extraction)</dt><dd>표의 셀 경계와 행·열 관계를 찾아 구조화된 값으로 복원하는 처리입니다. 일반 텍스트 추출과 별도의 검출 전략이 필요할 수 있습니다.</dd>
+<dt>광학 문자 인식 (optical character recognition, OCR)</dt><dd>페이지 이미지의 글자 모양을 문자로 인식하는 처리입니다. OCR은 오탈자를 만들 수 있으며 표 구조를 자동으로 보장하지 않습니다.</dd>
+</dl>
+
+<figure>{{svg:02-표-구조}}<figcaption>셀 텍스트만 나열하면 머리글과 행의 대응이 사라집니다. 각 행에 머리글을 포함하여 직렬화하면 검색된 조각만으로도 값의 의미를 읽을 수 있습니다.</figcaption></figure>
+<p><code>pypdf</code>의 기본 추출과 <code>extraction_mode="layout"</code>는 서로 다른 제품 두 개가 아니라 같은 라이브러리의 두 추출 모드입니다. 이번 실습의 로컬 기준선은 이 두 모드의 차이를 확인하는 범위입니다. 레이아웃 모드는 시각적 간격을 일부 보존하려 하지만, 표의 셀을 구조화된 행과 열로 반환한다고 보장하지 않습니다. PyMuPDF의 <code>Page.find_tables()</code>처럼 선이나 텍스트 위치로 표 후보를 찾는 기능은 다음 비교 단계의 후보이며, 검출 전략과 허용오차에 따라 결과가 달라집니다.</p>
+<p>OCR 적용 여부는 파일 단위보다 쪽 단위로 결정하는 편이 안전합니다. 디지털 PDF 전체를 이미지로 바꿔 OCR하면 원래 PDF에 있던 글꼴·인코딩 정보가 사라지고, 비슷한 문자를 잘못 인식할 수 있습니다. 처리 시간도 늘어납니다. 먼저 추출 문자열 길이, 한글 비율, 대체 문자 수를 기록하고, 값이 낮은 쪽을 사람 검토 대상으로 표시합니다. OCR을 적용한 쪽에는 <code>ocr_used=true</code>와 사용한 엔진·언어 설정을 메타데이터에 남깁니다.</p>
+<table><tr><th>검사</th><th>확인하는 문제</th><th>자동 판정의 한계</th></tr>
+<tr><td>추출 글자 수</td><td>빈 스캔 쪽, 지나치게 짧은 결과</td><td>표지처럼 실제로 짧은 쪽도 있습니다.</td></tr>
+<tr><td>한글 비율</td><td>글꼴 인코딩 오류, OCR 언어 설정 오류</td><td>영문 사양표에는 낮은 값이 정상일 수 있습니다.</td></tr>
+<tr><td>표 머리글과 값의 인접성</td><td>행·열 관계 손실</td><td>문자열 규칙만으로 병합 셀을 확정하기 어렵습니다.</td></tr>
+<tr><td>원본 쪽 대조</td><td>누락·순서·표 구조</td><td>사람 검토가 필요하지만 대표 쪽에 한정할 수 있습니다.</td></tr></table>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>다음 노트북은 저장소의 디지털 PDF와 스캔 변형을 직접 읽습니다. 기본 텍스트, 레이아웃 텍스트, 표 개수와 OCR 후보 쪽을 짧은 셀에서 확인합니다.</p>
+{{notebook:02-PDF와-표-OCR|example}}
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before 셀은 스캔 PDF에서도 텍스트가 바로 추출된다고 가정해 실패합니다. After 셀은 빈 텍스트 층을 확인해 OCR 후보 쪽을 분류합니다. OCR 자체는 실행하지 않으므로 이 결과는 OCR 정확도를 뜻하지 않습니다.</p>
+{{notebook:02-PDF와-표-OCR|failure}}
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>PDF는 의미 구조를 항상 보장하지 않습니다.</strong> 태그가 있는 PDF도 있지만, 일반 텍스트 추출이 표·문단 구조를 안정적으로 복원한다고 전제하지 않습니다.</li>
+<li><strong>OCR 엔진은 별도 의존성입니다.</strong> PyMuPDF의 통합 OCR도 Tesseract 설치가 필요합니다. 설치·언어 데이터·버전을 실행 환경에 기록합니다.</li>
+<li><strong>메모리를 확인합니다.</strong> 압축된 콘텐츠 스트림이 매우 크게 풀리는 PDF가 있으므로 파일 크기만으로 처리 비용을 판단하지 않습니다.</li>
+<li><strong>라이선스를 확인합니다.</strong> PyMuPDF/MuPDF는 AGPL 또는 상용 라이선스 체계입니다. 교육 실습과 제품 배포의 조건을 별도로 검토합니다.</li>
+<li><strong>상용 API 가격은 확인일과 함께 적습니다.</strong> Upstage의 Parse only 가격은 2026-09-08 기준 페이지당 미화 0.01달러로 표시되지만 변경될 수 있습니다. LlamaParse는 티어와 파서 버전을 실행 기록에 고정합니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>디지털 PDF의 문자 추출, 표 구조 복원, 스캔 이미지 OCR은 서로 다른 문제입니다.</li>
+<li>기본 추출과 레이아웃 추출은 <code>pypdf</code> 안의 두 모드이며, 표 구조를 보장하는 독립 파서 비교가 아닙니다.</li>
+<li>텍스트 품질을 쪽 단위로 검사하고 필요한 쪽만 OCR 후보로 보내며, 표와 읽기 순서는 원본과 대조합니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 현재 로더가 붙인 <code>parser</code>·<code>page</code>와 OCR을 실제로 연결할 때 추가할 <code>ocr_used</code>는 Ch 11에서 실패 질의를 묶는 기준이 됩니다. 이번 실행은 S01의 5쪽만 판정했으며, S02·S03은 같은 함수로 확인하는 학습자 과제입니다. 다음 03절에서는 DOCX·HTML·CSV의 구조를 공통 계약으로 옮깁니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. [하] 텍스트 추출과 OCR의 차이는 무엇입니까?</p><p class="quiz-a">텍스트 추출은 PDF에 이미 저장된 문자 정보를 읽습니다. OCR은 페이지 이미지의 글자 모양을 새 문자로 인식합니다.</p>
+<p class="quiz-q">2. [중] PDF에서 모든 숫자가 추출되었는데도 표 질의에 답하지 못하는 이유는 무엇입니까?</p><p class="quiz-a">숫자와 행·열 머리글의 관계가 사라질 수 있기 때문입니다. 표 질의에는 값 자체뿐 아니라 그 값이 어떤 조건과 항목에 해당하는지 필요합니다.</p>
+<p class="quiz-q">3. [중] 디지털 PDF 전체에 OCR을 강제로 적용하지 않는 이유를 두 가지 쓰세요.</p><p class="quiz-a">원래의 정확한 문자·인코딩 정보를 잃고 OCR 오탈자가 생길 수 있으며, 이미지 렌더링과 인식 때문에 처리 시간과 자원이 늘어납니다.</p>
+<p class="quiz-q">4. [상] 두 단 PDF의 읽기 순서가 잘못된 상태에서 청크 크기만 조정하면 해결되지 않는 이유는 무엇입니까?</p><p class="quiz-a">청킹은 입력 문자열의 순서를 신뢰합니다. 파서가 서로 다른 단의 문장을 이미 섞었다면 청크 크기를 바꾸어도 잘못 연결된 문장 관계가 남으므로 파서나 레이아웃 처리 단계에서 고쳐야 합니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>강사 노트</h2>
+<details class="instructor"><summary>시간 배분 · 시연 순서 · 예상 질문 · 막히는 지점 · A/B 트랙</summary>
+<p><strong>시간 배분(3h)</strong> — 강의 60분: PDF 내부 구조와 읽기 순서(15) · 표 추출(15) · OCR 분기(15) · 로컬/상용 비교 범위(15). 실습 120분: 예제 실행(25) · 표 원본 대조(30) · 스캔 세 건 검사(25) · 실패 사례 재현(25) · 결과표 작성(15).</p>
+<p><strong>시연 순서</strong> — ① 표가 있는 원본 쪽을 띄웁니다. ② 기본 모드와 레이아웃 모드 출력을 나란히 봅니다. ③ 머리글과 값의 관계를 표시합니다. ④ 스캔 PDF에서 빈 결과를 확인합니다. ⑤ OCR 후보 판정과 메타데이터를 출력합니다.</p>
+<p><strong>예상 질문</strong> — “레이아웃 모드가 더 좋은 파서인가요?” → 같은 <code>pypdf</code>의 추출 모드이며 문서에 따라 결과가 달라진다고 답합니다. “OCR을 적용하면 표도 복원되나요?” → 문자를 얻는 것과 셀 구조를 복원하는 것은 별도 문제라고 설명합니다. “상용 파서 중 무엇이 최고인가요?” → 같은 한국어 PDF와 질의셋으로 측정하기 전에는 결정하지 않는다고 답합니다.</p>
+<p><strong>학생이 자주 막히는 지점</strong> — 문자가 많으면 성공이라고 판단하고 원본 표 대조를 생략합니다. 대표 질의 하나를 정해 답에 필요한 머리글·조건·값 세 요소를 표시하게 합니다.</p>
+<p><strong>A/B 트랙</strong> — A트랙은 기본·레이아웃 출력과 스캔 판정을 정확히 기록합니다. B트랙은 PyMuPDF의 표 검출 전략 후보를 조사하고, 동일 쪽에서 셀 경계가 달라지는 설정을 실험하되 라이선스 메모를 함께 남깁니다.</p>
+</details>
+
+<h2 id="b11"><span class="no">11</span>참고 자료</h2>
+<ul>
+<li>pypdf 공식 문서 「Extract Text from a PDF」 — <a href="https://pypdf.readthedocs.io/en/stable/user/extract-text.html">pypdf.readthedocs.io/en/stable/user/extract-text.html</a> · 확인 2026-09-08 · pypdf 6.18.0.</li>
+<li>PyMuPDF 공식 문서 「Page.find_tables」·「OCR」·「License and Copyright」 — <a href="https://pymupdf.readthedocs.io/en/latest/page.html#Page.find_tables">표 검출</a> · <a href="https://pymupdf.readthedocs.io/en/latest/recipes-ocr.html">OCR</a> · <a href="https://pymupdf.readthedocs.io/en/latest/about.html#license-and-copyright">라이선스</a> · 확인 2026-09-08.</li>
+<li>pdfplumber 공식 저장소 문서·라이선스 — <a href="https://github.com/jsvine/pdfplumber/blob/stable/README.md">README</a> · <a href="https://github.com/jsvine/pdfplumber/blob/stable/LICENSE.txt">MIT License</a> · 확인 2026-09-08 · 기계 생성 PDF의 표 추출 기준선.</li>
+<li>Upstage API Pricing — <a href="https://www.upstage.ai/pricing/api">upstage.ai/pricing/api</a> · 확인 2026-09-08 · 가격은 변경 가능.</li>
+<li>LlamaIndex API 「Parse File」 — <a href="https://developers.api.llamaindex.ai/api/python/resources/parsing/methods/create/">developers.api.llamaindex.ai</a> · 확인 2026-09-08 · 티어와 날짜 버전 기록 기준.</li>
+</ul>

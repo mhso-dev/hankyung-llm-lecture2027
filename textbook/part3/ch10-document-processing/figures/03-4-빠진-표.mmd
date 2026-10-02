@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 문단 목록만 읽음"]
+    direction LR
+    b1["sample.docx"]:::tool
+    b2["문단 2개를 이어 붙임"]:::flow
+    b3["본문 26자<br>표 머리글 추가 일수 없음"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 표 목록도 읽음"]
+    direction LR
+    a1["sample.docx"]:::tool
+    a2["표 행에 머리글을 붙여 더함"]:::flow
+    a3["본문 45자<br>표 머리글 추가 일수 있음"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  note1["출처 기록은 두 실행이 같음<br>doc_id sample · parser python-docx"]
+  BEFORE ~~~ AFTER
+  AFTER ~~~ note1

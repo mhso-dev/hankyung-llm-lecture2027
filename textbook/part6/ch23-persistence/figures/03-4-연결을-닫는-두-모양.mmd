@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph cz["5절 · 메서드 close"]
+    direction TB
+    a1["first_conn.close"]:::flow
+    a2["첫 그래프로 읽기<br>받은 오류 ProgrammingError"]:::measure
+    a1 --> a2
+  end
+  subgraph wb["9절 · with 블록"]
+    direction TB
+    b1["블록 안에서 읽은<br>메시지 여섯"]:::measure
+    b2["블록이 끝난 뒤 읽기<br>받은 오류 ProgrammingError"]:::measure
+    b1 --> b2
+  end
+  cm["두 모양 모두<br>파일 chat.sqlite는 남음<br>연결을 모두 닫은 뒤<br>옆 파일 없음"]
+  cz ~~~ cm
+  wb ~~~ cm

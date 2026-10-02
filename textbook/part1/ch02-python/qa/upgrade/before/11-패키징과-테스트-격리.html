@@ -1,0 +1,392 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>패키징과 테스트 격리 — Ch 2 · 파이썬 프로그래밍</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 2 · 파이썬 프로그래밍</p>
+<h1>패키징과 테스트 격리</h1><div class="meta"><span>강의 1h</span><span>실습 3h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 3h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li><code>pyproject.toml</code>에 빌드 시스템을 선언하고 uv로 휠을 만들 수 있습니다.</li><li>만든 휠을 격리된 위치에 설치하고 새 프로세스에서 가져올 수 있습니다.</li><li>pytest fixture와 monkeypatch로 테스트의 목록·환경 변수를 분리할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>코드가 현재 폴더에서 실행된다는 사실만으로 다른 컴퓨터나 프로젝트에서 사용할 수 있다고 판단할 수 없습니다. 패키징은 소스 파일과 버전 정보를 정해진 배포 형식으로 묶고, 설치 과정을 거쳐 가져올 수 있는지 확인합니다. 테스트도 한 번 통과한 결과보다 같은 조건에서 반복해도 같은 결과가 나오는지가 중요합니다. 공유 목록이나 개인 환경 변수에 기대면 테스트 순서와 컴퓨터 설정에 따라 결과가 달라질 수 있습니다. 이 절은 B 경로 선택 학습입니다. Ch 18에서 API 클라이언트를 모듈로 관리하고 Ch 30에서 서비스를 배포할 때 빌드와 격리 검증을 다시 사용합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>07절에서 <code>.py</code> 파일을 모듈로 가져왔고, 08절에서 pytest가 <code>test_</code> 함수와 <code>assert</code>를 실행하는 방법을 배웠습니다. 09절에서 <code>@이름</code>이 바로 아래 함수를 데코레이터에 전달하는 표기임을 배웠으므로 <code>@pytest.fixture</code>도 같은 방식으로 읽을 수 있습니다. Ch 1에서는 실행 환경을 맞추기 위해 uv 프로젝트와 잠금 파일을 만들었습니다. 여기서는 설치 가능한 배포 파일을 만드는 별도 예제 프로젝트에 <code>[build-system]</code>을 선언합니다. 10절의 Pydantic은 이 절의 필수 선행 지식이 아닙니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>쉬운 예</h3><p>작성 중인 원고 폴더와 출판된 책은 역할이 다릅니다. 원고 폴더를 다른 사람에게 그대로 전달하면 어떤 파일을 어디에 두어야 하는지 알기 어렵습니다. 패키지는 설치 도구가 읽을 이름, 버전, 소스 위치를 함께 제공합니다. 테스트 격리는 시험지를 풀 때마다 새 답안지를 지급하는 것과 비슷합니다. 이전 테스트가 남긴 표시가 다음 테스트의 정답에 영향을 주지 않아야 합니다.</p><h3>정의와 표기 읽기</h3><p><strong>패키지(package)</strong>는 함께 배포하고 가져올 Python 모듈의 묶음입니다. 이 실습에서 <code>src/report_tools/__init__.py</code>는 import할 코드이고, <code>pyproject.toml</code>은 프로젝트 이름·버전·빌드 방법을 설명하는 설정 파일입니다. TOML의 <code>[project]</code>와 <code>[build-system]</code>은 설정 구역 이름이며, 아래의 <code>name = "report-tools"</code> 같은 문장은 키와 값을 연결합니다. 배포 이름에는 하이픈을 사용하지만 Python 코드에서는 <code>import report_tools</code>처럼 밑줄 이름으로 가져옵니다.</p><p><strong>빌드 백엔드(build backend)</strong>는 소스와 설정을 읽어 배포 파일을 만드는 도구입니다. <code>uv build --wheel</code>을 호출하면 uv가 <code>[build-system]</code>에 지정된 <code>uv_build</code>를 사용합니다. <strong>휠(wheel)</strong>은 설치할 코드와 메타데이터를 담은 <code>.whl</code> 파일입니다. 빌드는 휠 파일을 만드는 처리이고, 설치는 그 파일을 Python 환경에 배치해 import할 수 있게 하는 별도 처리입니다.</p><p><strong>테스트 격리(test isolation)</strong>는 각 테스트가 독립된 준비 상태에서 실행되게 하는 원칙입니다. <code>@pytest.fixture</code> 아래의 <code>items()</code>는 준비 함수입니다. 테스트가 <code>def test_add_alpha(items):</code>처럼 같은 이름을 매개변수로 적으면 pytest가 호출 직전에 fixture를 실행하고 반환된 빈 목록을 전달합니다. 기본 함수 범위에서는 각 테스트 호출마다 새 목록이 반환됩니다.</p><p><strong>monkeypatch</strong>는 테스트 동안 속성이나 환경 변수를 임시로 바꾸는 pytest fixture입니다. <code>monkeypatch.setattr(status_service, "fetch_status", fake_status)</code>는 검사 대상 모듈이 참조하는 함수 이름을 바꾸고, <code>setenv()</code>는 첫 테스트 안에서 환경 변수를 지정합니다. 이 노트북은 첫 테스트 안의 환경 변수 값과 다음 테스트에서 원래 함수가 반환한 <code>대기</code>를 직접 검사합니다. 환경 변수의 테스트 후 복원값은 별도로 출력하거나 단언하지 않습니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:900px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 680" width="900" height="680" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-11-concept desc-11-concept">
+<title id="title-11-concept">패키지 설치를 확인하고 테스트의 준비 상태를 분리합니다</title>
+<desc id="desc-11-concept">위쪽은 소스에서 휠·설치 후 실행까지, 아래쪽은 같은 테스트의 목록 상태를 비교합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="900" height="680" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">패키지 설치를 확인하고 테스트의 준비 상태를 분리합니다</tspan></text>
+<rect x="30" y="80" width="250" height="105" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="155.0" y="110.9" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="155.0" dy="0.0">src/report_tools</tspan><tspan x="155.0" dy="21.6">pyproject.toml</tspan><tspan x="155.0" dy="21.6">이름·버전·빌드 시스템</tspan></text>
+<polyline points="280,133 325,133" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="325" y="80" width="250" height="105" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="450.0" y="121.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">uv build --wheel</tspan><tspan x="450.0" dy="21.6">버전 0.1.0 휠 생성</tspan></text>
+<polyline points="575,133 620,133" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="620" y="80" width="250" height="105" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="745.0" y="110.9" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="745.0" dy="0.0">별도 가상환경에 설치</tspan><tspan x="745.0" dy="21.6">새 프로세스 import</tspan><tspan x="745.0" dy="21.6">반환: Agent Log</tspan></text>
+<rect x="40" y="275" width="360" height="140" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="220.0" y="312.6" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="220.0" dy="0.0">Before: 같은 목록 공유</tspan><tspan x="220.0" dy="21.6">alpha 추가 → beta 추가</tspan><tspan x="220.0" dy="21.6">실제: [alpha, beta]</tspan><tspan x="220.0" dy="21.6">1 failed, 1 passed</tspan></text>
+<rect x="500" y="275" width="360" height="140" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="680.0" y="312.6" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="680.0" dy="0.0">After: fixture로 새 목록</tspan><tspan x="680.0" dy="21.6">각 테스트는 빈 목록부터 시작</tspan><tspan x="680.0" dy="21.6">검사: [alpha] / [beta]</tspan><tspan x="680.0" dy="21.6">2 passed</tspan></text>
+<polyline points="400,345 500,345" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="415.0" y="318.0" width="70.0" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="450.0" y="330.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">준비 분리</tspan></text>
+<rect x="200" y="490" width="500" height="95" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="450.0" y="526.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">monkeypatch: 테스트 동안 값 변경</tspan><tspan x="450.0" dy="21.6">테스트가 끝나면 원래 설정으로 복원</tspan></text>
+<text x="450" y="635.0" font-size="15" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450" dy="0.0">파랑: 작성한 처리 · 초록: 소스·입력 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg></div><p>도식의 위쪽은 <code>src/report_tools</code>와 <code>pyproject.toml</code>을 입력으로 받아 빌드 백엔드가 휠을 만들고, 그 휠을 새 환경에 설치한 뒤 새 프로세스가 <code>report_tools</code>를 가져오는 흐름입니다. 아래쪽은 공유 목록 하나를 연속으로 수정하는 Before와, 각 테스트 호출 직전에 fixture가 새 목록을 반환하는 After를 비교합니다. 마지막 상자는 첫 테스트에서 함수를 대체하고 다음 테스트에서 원래 함수의 반환값을 확인하는 범위를 나타냅니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>준비 셀은 임시 프로젝트의 <code>src/report_tools/__init__.py</code>에 <code>make_title()</code>을 저장합니다. 함수의 입력은 문자열이며 양쪽 공백을 제거하고 각 단어의 첫 글자를 바꾼 문자열을 반환합니다. 같은 셀은 <code>pyproject.toml</code>에 배포 이름 <code>report-tools</code>, 버전 <code>0.1.0</code>, 빌드 백엔드 <code>uv_build</code>를 기록합니다.</p><p>다음 셀은 현재 Python에서 uv의 <code>build --wheel</code> 명령을 호출합니다. 입력은 임시 프로젝트 폴더이고 산출물은 <code>dist</code> 폴더의 휠입니다. 이어서 새 가상환경을 만들고 그 휠을 설치합니다. 마지막 하위 프로세스는 설치 환경의 Python으로 <code>import report_tools</code>를 실행하고 <code>make_title("  agent log  ")</code>의 반환값을 출력합니다. <code>report_tools-0.1.0-py3-none-any.whl -&gt; Agent Log</code>는 빌드 파일 이름과 설치 뒤 함수 결과를 한 줄에 보여 줍니다.</p><p>결과 확인 셀은 휠 파일이 실제로 존재하는지, 첫 입력이 <code>Agent Log</code>인지, 바꾼 입력이 <code>Weekly Note</code>인지 각각 검사합니다. 두 문자열은 같은 설치된 함수에 서로 다른 입력을 전달한 결과입니다.</p><section class="notebook" data-notebook="11-패키징과-테스트-격리" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="11-패키징과-테스트-격리.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyB1diDtjKjtgqTsp5Xqs7wgcHl0ZXN0IO2FjOyKpO2KuCDqsqnrpqxcbiIsCiAgICAiXG4iLAogICAgIuuhnOy7rCDtjKjtgqTsp4Drpbwg7Iuk7KCc66GcIOu5jOuTnMK37ISk7LmYwrfqsIDsoLjsmKTqs6AsIGZpeHR1cmXsmYAgbW9ua2V5cGF0Y2jroZwg67CY67O1IOqwgOuKpe2VnCDthYzsiqTtirjrpbwg66eM65Oc64qUIOqzvOygleydhCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEXG4iLAogICAgIlxuIiwKICAgICJQeXRob24gMy4xMuyZgCDqs6DsoJXrkJwgdXbCt3V2LWJ1aWxkwrdweXRlc3TCt3BpcCDrsoTsoITsnYQg7IKs7Jqp7ZWp64uI64ukLiAwN+ygiOydmCDrqqjrk4gsIDA47KCI7J2YIHB5dGVzdCwgMDnsoIjsnZgg642w7L2U66CI7J207YSwIO2RnOq4sOulvCDsl7DqsrDtlanri4jri6QuIDEw7KCI7J2YIFB5ZGFudGlj7J2AIO2VhOyalO2VmOyngCDslYrsirXri4jri6QuIOuqqOuToCDtjIzsnbzsnYAg7J6E7IucIO2PtOuNlOyXkCDrp4zrk6Tqs6Ag7Iuk7Iq1IOuSpCDsnpDrj5nsnLzroZwg7KCc6rGw65Cp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MjI6MTIuNzY3ODkwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MjI6MTIuNzY3NzI0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MjI6MTMuMTM3MjA0WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMy4xMzY3ODFaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiTm90ZTogeW91IG1heSBuZWVkIHRvIHJlc3RhcnQgdGhlIGtlcm5lbCB0byB1c2UgdXBkYXRlZCBwYWNrYWdlcy4iCiAgICAgXQogICAgfSwKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg6rWQ7J6s7JmAIOqwmeydgCDtjKjtgqTsp5XCt+2FjOyKpO2KuCDrj4Tqtawg67KE7KCE7J2EIOyEpOy5mO2VqeuLiOuLpC5cbiIsCiAgICAiJXBpcCBpbnN0YWxsIC1xIHB5dGVzdD09OS4xLjEgdXY9PTAuMTIuMTEgdXYtYnVpbGQ9PTAuMTIuMTEgcGlwPT0yNi4yIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOq4sOuzuCDsi6Ttlok6IOqwgOyepSDsnpHsnYAg7Yyo7YKk7KeAIOunjOuTpOq4sFxuIiwKICAgICJcbiIsCiAgICAiYHNyYy9yZXBvcnRfdG9vbHMvX19pbml0X18ucHlg7JeQ64qUIOyEpOy5mCDrkqQgYGltcG9ydCByZXBvcnRfdG9vbHNg66GcIOqwgOyguOyYrCDsvZTrk5zrpbwg7JSB64uI64ukLiBgcHlwcm9qZWN0LnRvbWxg7J2YIGBbcHJvamVjdF1gIOq1rOyXreydgCDrsLDtj6wg7J2066aE6rO8IOuyhOyghOydhCwgYFtidWlsZC1zeXN0ZW1dYCDqtazsl63snYAg7IaM7Iqk66W8IO2coOuhnCDrsJTqv4Ag64+E6rWs66W8IOyngOygle2VqeuLiOuLpC4g67Cw7Y+sIOydtOumhCBgcmVwb3J0LXRvb2xzYOyZgCBpbXBvcnQg7J2066aEIGByZXBvcnRfdG9vbHNg7J2YIO2VmOydtO2UiMK367CR7KSEIOywqOydtOuPhCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMy4xMzgyNDJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMy4xMzgxNTlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMy4xNDA5OTVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjE0MDY2OFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJ0bXB3X2hweV94MSDtjKjtgqTsp4Ag7IaM7IqkIOykgOu5hFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyehOyLnCDtj7TrjZTsl5Ag7Yyo7YKk7KeAIOyGjOyKpOyZgCDruYzrk5wg7ISk7KCV7J2EIOykgOu5hO2VqeuLiOuLpC5cbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgImZyb20gdGVtcGZpbGUgaW1wb3J0IFRlbXBvcmFyeURpcmVjdG9yeVxuIiwKICAgICJpbXBvcnQgb3NcbiIsCiAgICAiaW1wb3J0IHN1YnByb2Nlc3NcbiIsCiAgICAiaW1wb3J0IHN5c1xuIiwKICAgICJcbiIsCiAgICAid29ya3NwYWNlID0gVGVtcG9yYXJ5RGlyZWN0b3J5KClcbiIsCiAgICAicm9vdCA9IFBhdGgod29ya3NwYWNlLm5hbWUpXG4iLAogICAgInBhY2thZ2UgPSByb290IC8gXCJzcmNcIiAvIFwicmVwb3J0X3Rvb2xzXCJcbiIsCiAgICAicGFja2FnZS5ta2RpcihwYXJlbnRzPVRydWUpXG4iLAogICAgIihwYWNrYWdlIC8gXCJfX2luaXRfXy5weVwiKS53cml0ZV90ZXh0KFwiXCJcImRlZiBtYWtlX3RpdGxlKG5hbWU6IHN0cikgLT4gc3RyOlxuIiwKICAgICIgICAgcmV0dXJuIG5hbWUuc3RyaXAoKS50aXRsZSgpXG4iLAogICAgIlwiXCJcIilcbiIsCiAgICAiKHJvb3QgLyBcInB5cHJvamVjdC50b21sXCIpLndyaXRlX3RleHQoXCJcIlwiW3Byb2plY3RdXG4iLAogICAgIm5hbWUgPSBcInJlcG9ydC10b29sc1wiXG4iLAogICAgInZlcnNpb24gPSBcIjAuMS4wXCJcbiIsCiAgICAiW2J1aWxkLXN5c3RlbV1cbiIsCiAgICAicmVxdWlyZXMgPSBbXCJ1dl9idWlsZD09MC4xMi4xMVwiXVxuIiwKICAgICJidWlsZC1iYWNrZW5kID0gXCJ1dl9idWlsZFwiXG4iLAogICAgIlwiXCJcIilcbiIsCiAgICAicHJpbnQocm9vdC5uYW1lLCBcIu2MqO2CpOyngCDshozsiqQg7KSA67mEXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOu5jOuTnMK37ISk7LmYwrfqsIDsoLjsmKTquLBcbiIsCiAgICAiXG4iLAogICAgIu2YhOyerCDsu6TrhJDsnZggUHl0aG9u7Jy866GcIGB1diBidWlsZCAtLXdoZWVsYOydhCDtmLjstpztlZjrqbQg7J6E7IucIO2UhOuhnOygne2KuOydmCDshozsiqTsmYAg7ISk7KCV7J2EIOyeheugpeycvOuhnCDrsJvslYQgYC53aGxgIO2MjOydvOydhCDrp4zrk63ri4jri6QuIOydtOyWtOyEnCDsg4gg6rCA7IOB7ZmY6rK97J2EIOunjOuTpOqzoCDqt7gg7Zyg7J2EIOyEpOy5mO2VqeuLiOuLpC4g66eI7KeA66eJ7Jy866GcIOyEpOy5mCDtmZjqsr3snZgg7IOIIFB5dGhvbiDtlITroZzshLjsiqTqsIAg7Yyo7YKk7KeA66W8IOqwgOyguOyZgCDtlajsiJjrpbwg7Zi47Lac7ZWp64uI64ukLiDruYzrk5wsIOyEpOy5mCwgaW1wb3J064qUIOyEnOuhnCDri6Trpbgg64uo6rOE7J6F64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MjI6MTMuMTQxNzkxWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MjI6MTMuMTQxNzExWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MjI6MTMuMzA5NjQ1WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMy4zMDkyMDdaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAicmVwb3J0X3Rvb2xzLTAuMS4wLXB5My1ub25lLWFueS53aGwgLT4gQWdlbnQgTG9nXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7Zyg7J2EIOu5jOuTnO2VmOqzoCDqsqnrpqzrkJwg7JyE7LmY7JeQIOyEpOy5mO2VnCDrkqQg7IOIIO2UhOuhnOyEuOyKpOuhnCDqsIDsoLjsmLXri4jri6QuXG4iLAogICAgImJ1aWx0ID0gc3VicHJvY2Vzcy5ydW4oXG4iLAogICAgIiAgICBbc3lzLmV4ZWN1dGFibGUsIFwiLW1cIiwgXCJ1dlwiLCBcImJ1aWxkXCIsIFwiLS13aGVlbFwiXSxcbiIsCiAgICAiICAgIGN3ZD1yb290LCB0ZXh0PVRydWUsIGNhcHR1cmVfb3V0cHV0PVRydWUsIGNoZWNrPVRydWUsXG4iLAogICAgIilcbiIsCiAgICAid2hlZWwgPSBuZXh0KChyb290IC8gXCJkaXN0XCIpLmdsb2IoXCIqLndobFwiKSlcbiIsCiAgICAidmVudiA9IHJvb3QgLyBcIi52ZW52XCJcbiIsCiAgICAic3VicHJvY2Vzcy5ydW4oW3N5cy5leGVjdXRhYmxlLCBcIi1tXCIsIFwidXZcIiwgXCJ2ZW52XCIsXG4iLAogICAgIiAgICAgICAgICAgICAgICBzdHIodmVudiksIFwiLS1weXRob25cIiwgc3lzLmV4ZWN1dGFibGVdLFxuIiwKICAgICIgICAgICAgICAgICAgICBjaGVjaz1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlKVxuIiwKICAgICJlbnZfcHl0aG9uID0gdmVudiAvIChcIlNjcmlwdHMvcHl0aG9uLmV4ZVwiIGlmIG9zLm5hbWUgPT0gXCJudFwiIGVsc2UgXCJiaW4vcHl0aG9uXCIpXG4iLAogICAgInN1YnByb2Nlc3MucnVuKFtzeXMuZXhlY3V0YWJsZSwgXCItbVwiLCBcInV2XCIsIFwicGlwXCIsIFwiaW5zdGFsbFwiLFxuIiwKICAgICIgICAgICAgICAgICAgICAgXCItLXB5dGhvblwiLCBzdHIoZW52X3B5dGhvbiksIHN0cih3aGVlbCldLFxuIiwKICAgICIgICAgICAgICAgICAgICBjaGVjaz1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlKVxuIiwKICAgICJpbXBvcnRlZCA9IHN1YnByb2Nlc3MucnVuKFxuIiwKICAgICIgICAgW3N0cihlbnZfcHl0aG9uKSwgXCItY1wiLFxuIiwKICAgICIgICAgIFwiaW1wb3J0IHJlcG9ydF90b29sczsgcHJpbnQocmVwb3J0X3Rvb2xzLm1ha2VfdGl0bGUoJyAgYWdlbnQgbG9nICAnKSlcIl0sXG4iLAogICAgIiAgICB0ZXh0PVRydWUsIGNhcHR1cmVfb3V0cHV0PVRydWUsIGNoZWNrPVRydWUsIGN3ZD1yb290LFxuIiwKICAgICIpXG4iLAogICAgInByaW50KHdoZWVsLm5hbWUsIFwiLT5cIiwgaW1wb3J0ZWQuc3Rkb3V0LnN0cmlwKCkpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wOCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOqysOqzvCDtmZXsnbg6IOuwsO2PrCDsgrDstpzrrLzqs7wgaW1wb3J0XG4iLAogICAgIlxuIiwKICAgICLtnKAg7YyM7J287J20IOyhtOyerO2VmOuKlOyngOunjOycvOuhnCDshKTsuZgg7ISx6rO17J2EIOyVjCDsiJgg7JeG7Iq164uI64ukLiDsg4ggUHl0aG9uIO2UhOuhnOyEuOyKpOqwgCDshKTsuZjrkJwgYG1ha2VfdGl0bGUoKWDsl5Ag66y47J6Q7Je07J2EIOyeheugpe2VmOqzoCBgQWdlbnQgTG9nYOulvCDrsJjtmZjrsJvslZjripTsp4Ag6rKA7IKs7ZWp64uI64ukLiDsnbTslrTshJwg7J6F66Cl66eMIGB3ZWVrbHkgbm90ZWDroZwg67CU6r647Ja0IOqwmeydgCDshKTsuZjrkJwg7ZWo7IiY6rCAIGBXZWVrbHkgTm90ZWDrpbwg67CY7ZmY7ZWY64qU7KeAIO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjMxMDU0M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjMxMDQ3MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjMyNDM1NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjI6MTMuMzIzOTkxWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIu2coCDsobTsnqw6IFRydWVcbiIsCiAgICAgICLssqsg7J6F66ClOiBBZ2VudCBMb2dcbiIsCiAgICAgICLrsJTqvrwg7J6F66ClOiBXZWVrbHkgTm90ZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOu5jOuTnCDtjIzsnbzqs7wg7ISk7LmYIO2bhCDtlajsiJgg6rKw6rO866W8IO2VqOq7mCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgInByaW50KFwi7ZygIOyhtOyerDpcIiwgd2hlZWwuZXhpc3RzKCkpXG4iLAogICAgInByaW50KFwi7LKrIOyeheugpTpcIiwgaW1wb3J0ZWQuc3Rkb3V0LnN0cmlwKCkpXG4iLAogICAgImNoYW5nZWQgPSBzdWJwcm9jZXNzLnJ1bihcbiIsCiAgICAiICAgIFtzdHIoZW52X3B5dGhvbiksIFwiLWNcIixcbiIsCiAgICAiICAgICBcImltcG9ydCByZXBvcnRfdG9vbHM7IHByaW50KHJlcG9ydF90b29scy5tYWtlX3RpdGxlKCcgIHdlZWtseSBub3RlICAnKSlcIl0sXG4iLAogICAgIiAgICB0ZXh0PVRydWUsIGNhcHR1cmVfb3V0cHV0PVRydWUsIGNoZWNrPVRydWUsIGN3ZD1yb290LFxuIiwKICAgICIpXG4iLAogICAgInByaW50KFwi67CU6r68IOyeheugpTpcIiwgY2hhbmdlZC5zdGRvdXQuc3RyaXAoKSlcbiIsCiAgICAiYXNzZXJ0IHdoZWVsLmV4aXN0cygpXG4iLAogICAgImFzc2VydCBpbXBvcnRlZC5zdGRvdXQuc3RyaXAoKSA9PSBcIkFnZW50IExvZ1wiXG4iLAogICAgImFzc2VydCBjaGFuZ2VkLnN0ZG91dC5zdHJpcCgpID09IFwiV2Vla2x5IE5vdGVcIiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIEJlZm9yZTog6rO17JygIOyDge2DnCDrlYzrrLjsl5Ag65GQIOuyiOynuCDthYzsiqTtirjqsIAg7Iuk7Yyo7ZWoXG4iLAogICAgIlxuIiwKICAgICLrkZAg7YWM7Iqk7Yq46rCAIOqwmeydgCDrqqnroZ3snYQg7IiY7KCV7ZWY66m0IOyLpO2WiSDsiJzshJzqsIAg6rKw6rO87JeQIOyYge2WpeydhCDspI3ri4jri6QuIHB5dGVzdOulvCDsi6TsoJwg7Iuk7ZaJ7ZWY6rOgIOyLpO2MqCDsvZTrk5zsmYAg7JqU7JW97J2EIOq0gOywsO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjZWxsLTExIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjMyNTI0NloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjMyNTE4NVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjQxMDMzOFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjI6MTMuNDA5ODYzWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7KKF66OMIOy9lOuTnDogMVxuIiwKICAgICAgIjEgZmFpbGVkLCAxIHBhc3NlZCBpbiAwLjAxc1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOqzteycoCDrqqnroZ0g65WM66y47JeQIOuRkCDrsojsp7gg7YWM7Iqk7Yq46rCAIOyLpO2MqO2VmOuKlCDtjIzsnbzsnYQg7Iuk7ZaJ7ZWp64uI64ukLlxuIiwKICAgICJiYWRfdGVzdCA9IHJvb3QgLyBcInRlc3Rfc2hhcmVkLnB5XCJcbiIsCiAgICAiYmFkX3Rlc3Qud3JpdGVfdGV4dChcIlwiXCJpdGVtczogbGlzdFtzdHJdID0gW11cbiIsCiAgICAiZGVmIHRlc3RfYWRkX2FscGhhKCkgLT4gTm9uZTpcbiIsCiAgICAiICAgIGl0ZW1zLmFwcGVuZChcImFscGhhXCIpXG4iLAogICAgIiAgICBhc3NlcnQgaXRlbXMgPT0gW1wiYWxwaGFcIl1cbiIsCiAgICAiZGVmIHRlc3RfYWRkX2JldGEoKSAtPiBOb25lOlxuIiwKICAgICIgICAgaXRlbXMuYXBwZW5kKFwiYmV0YVwiKVxuIiwKICAgICIgICAgYXNzZXJ0IGl0ZW1zID09IFtcImJldGFcIl1cbiIsCiAgICAiXCJcIlwiKVxuIiwKICAgICJmYWlsZWQgPSBzdWJwcm9jZXNzLnJ1bihcbiIsCiAgICAiICAgIFtzeXMuZXhlY3V0YWJsZSwgXCItbVwiLCBcInB5dGVzdFwiLCBcIi1xXCIsIGJhZF90ZXN0Lm5hbWVdLFxuIiwKICAgICIgICAgY3dkPXJvb3QsIHRleHQ9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSxcbiIsCiAgICAiKVxuIiwKICAgICJwcmludChcIuyiheujjCDsvZTrk5w6XCIsIGZhaWxlZC5yZXR1cm5jb2RlKVxuIiwKICAgICJwcmludChmYWlsZWQuc3Rkb3V0LnN0cmlwKCkuc3BsaXRsaW5lcygpWy0xXSlcbiIsCiAgICAiYXNzZXJ0IGZhaWxlZC5yZXR1cm5jb2RlID09IDEiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEyIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIEFmdGVyOiBmaXh0dXJl7JmAIG1vbmtleXBhdGNo66GcIOyeheugpeydhCDrtoTrpqztlahcbiIsCiAgICAiXG4iLAogICAgImBAcHl0ZXN0LmZpeHR1cmVg64qUIOuwlOuhnCDslYTrnpggYGl0ZW1zKClg66W8IOykgOu5hCDtlajsiJjroZwg65Ox66Gd7ZWp64uI64ukLiDthYzsiqTtirgg7ZWo7IiY6rCAIOqwmeydgCDsnbTrpoTsnZggYGl0ZW1zYCDrp6TqsJzrs4DsiJjrpbwg7KCB7Jy866m0IHB5dGVzdOqwgCDtmLjstpwg7KeB7KCE7JeQIGZpeHR1cmXrpbwg7Iuk7ZaJ7ZWY6rOgIOuwmO2ZmOuQnCDruYgg66qp66Gd7J2EIOyghOuLrO2VqeuLiOuLpC4g6rCBIO2FjOyKpO2KuCDtmLjstpzsnbQg7IOIIOuqqeuhneydhCDrsJvsnLzrr4DroZwg7JWeIO2FjOyKpO2KuOydmCBgYXBwZW5kKClgIOqysOqzvOqwgCDsnbTslrTsp4Dsp4Ag7JWK7Iq164uI64ukLiBgbW9ua2V5cGF0Y2hg64qUIOuSpOydmCDrs4Trj4Qg7JiI7KCc7JeQ7IScIOuLpOujueuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDYsCiAgICJpZCI6ICJjZWxsLTEzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjQxMTE3NloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjQxMTEwNloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjQ4OTI1MloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjI6MTMuNDg4ODE4WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICIyIHBhc3NlZCBpbiAwLjAwc1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOqwmeydgCDrkZAg7YWM7Iqk7Yq466W8IOycoOyngO2VmOqzoCBmaXh0dXJl66GcIOykgOu5hCDrqqnroZ3rp4wg67aE66as7ZWp64uI64ukLlxuIiwKICAgICJnb29kX3Rlc3QgPSByb290IC8gXCJ0ZXN0X2lzb2xhdGVkLnB5XCJcbiIsCiAgICAiZ29vZF90ZXN0LndyaXRlX3RleHQoXCJcIlwiaW1wb3J0IHB5dGVzdFxuIiwKICAgICJAcHl0ZXN0LmZpeHR1cmVcbiIsCiAgICAiZGVmIGl0ZW1zKCkgLT4gbGlzdFtzdHJdOlxuIiwKICAgICIgICAgcmV0dXJuIFtdXG4iLAogICAgImRlZiB0ZXN0X2FkZF9hbHBoYShpdGVtczogbGlzdFtzdHJdKSAtPiBOb25lOlxuIiwKICAgICIgICAgaXRlbXMuYXBwZW5kKFwiYWxwaGFcIilcbiIsCiAgICAiICAgIGFzc2VydCBpdGVtcyA9PSBbXCJhbHBoYVwiXVxuIiwKICAgICJkZWYgdGVzdF9hZGRfYmV0YShpdGVtczogbGlzdFtzdHJdKSAtPiBOb25lOlxuIiwKICAgICIgICAgaXRlbXMuYXBwZW5kKFwiYmV0YVwiKVxuIiwKICAgICIgICAgYXNzZXJ0IGl0ZW1zID09IFtcImJldGFcIl1cbiIsCiAgICAiXCJcIlwiKVxuIiwKICAgICJwYXNzZWQgPSBzdWJwcm9jZXNzLnJ1bihcbiIsCiAgICAiICAgIFtzeXMuZXhlY3V0YWJsZSwgXCItbVwiLCBcInB5dGVzdFwiLCBcIi1xXCIsIGdvb2RfdGVzdC5uYW1lXSxcbiIsCiAgICAiICAgIGN3ZD1yb290LCB0ZXh0PVRydWUsIGNhcHR1cmVfb3V0cHV0PVRydWUsIGNoZWNrPVRydWUsXG4iLAogICAgIilcbiIsCiAgICAicHJpbnQocGFzc2VkLnN0ZG91dC5zdHJpcCgpLnNwbGl0bGluZXMoKVstMV0pXG4iLAogICAgImFzc2VydCBcIjIgcGFzc2VkXCIgaW4gcGFzc2VkLnN0ZG91dFxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xNCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDstpTqsIAg7ZmV7J24OiDtlajsiJgg64yA7LK07JmAIO2VqOyImCDrs7Xsm5BcbiIsCiAgICAiXG4iLAogICAgIuuqqeuhnSDqs7XsnKAg66y47KCc66W8IOqzoOy5nCDrkZAg7YWM7Iqk7Yq47JmAIOuzhOuPhOuhnCBtb25rZXlwYXRjaOulvCDtmZXsnbjtlanri4jri6QuIGBzZXRhdHRyKClg7J2AIGBzdGF0dXNfc2VydmljZS5mZXRjaF9zdGF0dXNg66W8IO2FjOyKpO2KuCDrj5nslYggYGZha2Vfc3RhdHVzYOyXkCDsl7DqsrDtlZjqs6AsIGBzZXRlbnYoKWDripQg7LKrIO2FjOyKpO2KuCDslYjsl5DshJwgYEFQUF9NT0RFYOulvCBgdGVzdGDroZwg7KeA7KCV7ZWp64uI64ukLiDsvZTrk5zripQg7LKrIO2FjOyKpO2KuCDslYjsnZgg7ZmY6rK9IOuzgOyImCDqsJLqs7wsIOuLpOydjCDthYzsiqTtirjsl5DshJwg7JuQ656YIO2VqOyImOqwgCDrsJjtmZjtlZjripQgYOuMgOq4sGDrpbwg7KeB7KCRIO2ZleyduO2VqeuLiOuLpC4g7ZmY6rK9IOuzgOyImOydmCDthYzsiqTtirgg7ZuEIOuzteybkOqwkuydgCDsnbQg7Lac66Cl7JeQ7IScIOuUsOuhnCDqsoDsgqztlZjsp4Ag7JWK7Iq164uI64ukLiDslYTrnpgg7ISc67mE7IqkIOuqqOuTiOydgCDrhKTtirjsm4ztgazrpbwg7Zi47Lac7ZWY7KeAIOyViuyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDcsCiAgICJpZCI6ICJjZWxsLTE1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjQ5MDIwMVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjQ5MDEyN1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjQ5MjAxOVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjI6MTMuNDkxNzUxWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsi6TsirXsmqkg7IOB7YOcIOuqqOuTiCDspIDruYQg7JmE66OMXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg64yA7LK07ZWgIO2VqOyImOyZgCDqt7gg7ZWo7IiY66W8IO2YuOy2nO2VmOuKlCDsvZTrk5zrpbwg67OE64+EIOuqqOuTiOuhnCDrp4zrk63ri4jri6QuXG4iLAogICAgInNlcnZpY2Vfc291cmNlID0gXCJcIlwiZGVmIGZldGNoX3N0YXR1cygpIC0+IHN0cjpcbiIsCiAgICAiICAgIHJldHVybiBcIuuMgOq4sFwiXG4iLAogICAgIlxuIiwKICAgICJkZWYgcmVwb3J0X3N0YXR1cygpIC0+IHN0cjpcbiIsCiAgICAiICAgIHJldHVybiBcIuyymOumrCDsg4Htg5w6IFwiICsgZmV0Y2hfc3RhdHVzKClcbiIsCiAgICAiXCJcIlwiXG4iLAogICAgIihyb290IC8gXCJzdGF0dXNfc2VydmljZS5weVwiKS53cml0ZV90ZXh0KHNlcnZpY2Vfc291cmNlLCBlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgInByaW50KFwi7Iuk7Iq17JqpIOyDge2DnCDrqqjrk4gg7KSA67mEIOyZhOujjFwiKVxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA4LAogICAiaWQiOiAiY2VsbC0xNiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMy40OTI2OTZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMy40OTI2NDRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMy40OTQzODVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjQ5NDA4MloiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7ZWo7IiYIOuMgOyytOyZgCDrs7Xsm5Ag6rKA7IKsIOuRkCDqsJwg7KSA67mEIOyZhOujjFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIO2VqOyImCDrjIDssrTsmYAg64uk7J2MIO2FjOyKpO2KuOydmCDsm5Drnpgg7ZWo7IiYIOuwmO2ZmOydhCDqsoDsgqztlanri4jri6QuXG4iLAogICAgIm1vY2tfc291cmNlID0gXCJcIlwiaW1wb3J0IG9zXG4iLAogICAgImltcG9ydCBweXRlc3RcbiIsCiAgICAiaW1wb3J0IHN0YXR1c19zZXJ2aWNlXG4iLAogICAgIlxuIiwKICAgICJkZWYgdGVzdF9mYWtlX3N0YXR1cyhtb25rZXlwYXRjaDogcHl0ZXN0Lk1vbmtleVBhdGNoKSAtPiBOb25lOlxuIiwKICAgICIgICAgZGVmIGZha2Vfc3RhdHVzKCkgLT4gc3RyOlxuIiwKICAgICIgICAgICAgIHJldHVybiBcIuyZhOujjFwiXG4iLAogICAgIiAgICBtb25rZXlwYXRjaC5zZXRhdHRyKHN0YXR1c19zZXJ2aWNlLCBcImZldGNoX3N0YXR1c1wiLCBmYWtlX3N0YXR1cylcbiIsCiAgICAiICAgIG1vbmtleXBhdGNoLnNldGVudihcIkFQUF9NT0RFXCIsIFwidGVzdFwiKVxuIiwKICAgICIgICAgYXNzZXJ0IHN0YXR1c19zZXJ2aWNlLnJlcG9ydF9zdGF0dXMoKSA9PSBcIuyymOumrCDsg4Htg5w6IOyZhOujjFwiXG4iLAogICAgIiAgICBhc3NlcnQgb3MuZW52aXJvbltcIkFQUF9NT0RFXCJdID09IFwidGVzdFwiXG4iLAogICAgIlxuIiwKICAgICJkZWYgdGVzdF9vcmlnaW5hbF9zdGF0dXMoKSAtPiBOb25lOlxuIiwKICAgICIgICAgYXNzZXJ0IHN0YXR1c19zZXJ2aWNlLnJlcG9ydF9zdGF0dXMoKSA9PSBcIuyymOumrCDsg4Htg5w6IOuMgOq4sFwiXG4iLAogICAgIlwiXCJcIlxuIiwKICAgICIocm9vdCAvIFwidGVzdF9tb2NrLnB5XCIpLndyaXRlX3RleHQobW9ja19zb3VyY2UsIGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAicHJpbnQoXCLtlajsiJgg64yA7LK07JmAIOuzteybkCDqsoDsgqwg65GQIOqwnCDspIDruYQg7JmE66OMXCIpXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDksCiAgICJpZCI6ICJjZWxsLTE3IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjQ5NTAzNFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjQ5NDk4OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjU3NDk0OVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjI6MTMuNTc0NTY1WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICIyIHBhc3NlZCBpbiAwLjAwc1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOuqqeuhnSDthYzsiqTtirjsmYAg67OE64+EIO2MjOydvOydhCDsi6TtlontlbQg7ZWo7IiYIOuMgOyytMK367O17JuQIOqysOqzvOulvCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgIm1vY2tlZCA9IHN1YnByb2Nlc3MucnVuKFxuIiwKICAgICIgICAgW3N5cy5leGVjdXRhYmxlLCBcIi1tXCIsIFwicHl0ZXN0XCIsIFwiLXFcIiwgXCJ0ZXN0X21vY2sucHlcIl0sXG4iLAogICAgIiAgICBjd2Q9cm9vdCwgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlLCBjaGVjaz1UcnVlLFxuIiwKICAgICIpXG4iLAogICAgInByaW50KG1vY2tlZC5zdGRvdXQuc3RyaXAoKS5zcGxpdGxpbmVzKClbLTFdKVxuIiwKICAgICJhc3NlcnQgXCIyIHBhc3NlZFwiIGluIG1vY2tlZC5zdGRvdXRcbiIsCiAgICAid29ya3NwYWNlLmNsZWFudXAoKVxuIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJwYWlyZWQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA5LAogICAiY29kZV9zaGEyNTYiOiAiMWMyNmE0OTc2NzcwMmIwOGI3M2VhZWU3NGY5ZjQwOTYxY2U4MjYyNTM5ZTkxYmE5NDNhOGYxMWNlNGM1OGNhOSIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTExVDA2OjIyOjEzLjY4OTQyNiswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiOGM5YmEyNWQ2NjQyNmVmNjE1NmUwYTE4OGU4ZDA3MGFhYzQ2MjhjYmRiOWM4OTBmYzQ3MzMxZmU5NzhhYjNhMCIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>uv 패키징과 pytest 테스트 격리</h2>
+<p>로컬 패키지를 실제로 빌드·설치·가져오고, fixture와 monkeypatch로 반복 가능한 테스트를 만드는 과정을 확인합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>Python 3.12와 고정된 uv·uv-build·pytest·pip 버전을 사용합니다. 07절의 모듈, 08절의 pytest, 09절의 데코레이터 표기를 연결합니다. 10절의 Pydantic은 필요하지 않습니다. 모든 파일은 임시 폴더에 만들고 실습 뒤 자동으로 제거됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 교재와 같은 패키징·테스트 도구 버전을 설치합니다.
+%pip install -q pytest==9.1.1 uv==0.12.11 uv-build==0.12.11 pip==26.2</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행: 가장 작은 패키지 만들기</h3>
+<p><code>src/report_tools/__init__.py</code>에는 설치 뒤 <code>import report_tools</code>로 가져올 코드를 씁니다. <code>pyproject.toml</code>의 <code>[project]</code> 구역은 배포 이름과 버전을, <code>[build-system]</code> 구역은 소스를 휠로 바꿀 도구를 지정합니다. 배포 이름 <code>report-tools</code>와 import 이름 <code>report_tools</code>의 하이픈·밑줄 차이도 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 임시 폴더에 패키지 소스와 빌드 설정을 준비합니다.
+from pathlib import Path
+from tempfile import TemporaryDirectory
+import os
+import subprocess
+import sys
+
+workspace = TemporaryDirectory()
+root = Path(workspace.name)
+package = root / &quot;src&quot; / &quot;report_tools&quot;
+package.mkdir(parents=True)
+(package / &quot;__init__.py&quot;).write_text(&quot;&quot;&quot;def make_title(name: str) -&gt; str:
+    return name.strip().title()
+&quot;&quot;&quot;)
+(root / &quot;pyproject.toml&quot;).write_text(&quot;&quot;&quot;[project]
+name = &quot;report-tools&quot;
+version = &quot;0.1.0&quot;
+[build-system]
+requires = [&quot;uv_build==0.12.11&quot;]
+build-backend = &quot;uv_build&quot;
+&quot;&quot;&quot;)
+print(root.name, &quot;패키지 소스 준비&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">tmpw_hpy_x1 패키지 소스 준비
+</pre></div>
+<div class="nb-markdown"><h3>빌드·설치·가져오기</h3>
+<p>현재 커널의 Python으로 <code>uv build --wheel</code>을 호출하면 임시 프로젝트의 소스와 설정을 입력으로 받아 <code>.whl</code> 파일을 만듭니다. 이어서 새 가상환경을 만들고 그 휠을 설치합니다. 마지막으로 설치 환경의 새 Python 프로세스가 패키지를 가져와 함수를 호출합니다. 빌드, 설치, import는 서로 다른 단계입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 휠을 빌드하고 격리된 위치에 설치한 뒤 새 프로세스로 가져옵니다.
+built = subprocess.run(
+    [sys.executable, &quot;-m&quot;, &quot;uv&quot;, &quot;build&quot;, &quot;--wheel&quot;],
+    cwd=root, text=True, capture_output=True, check=True,
+)
+wheel = next((root / &quot;dist&quot;).glob(&quot;*.whl&quot;))
+venv = root / &quot;.venv&quot;
+subprocess.run([sys.executable, &quot;-m&quot;, &quot;uv&quot;, &quot;venv&quot;,
+                str(venv), &quot;--python&quot;, sys.executable],
+               check=True, capture_output=True)
+env_python = venv / (&quot;Scripts/python.exe&quot; if os.name == &quot;nt&quot; else &quot;bin/python&quot;)
+subprocess.run([sys.executable, &quot;-m&quot;, &quot;uv&quot;, &quot;pip&quot;, &quot;install&quot;,
+                &quot;--python&quot;, str(env_python), str(wheel)],
+               check=True, capture_output=True)
+imported = subprocess.run(
+    [str(env_python), &quot;-c&quot;,
+     &quot;import report_tools; print(report_tools.make_title(&#x27;  agent log  &#x27;))&quot;],
+    text=True, capture_output=True, check=True, cwd=root,
+)
+print(wheel.name, &quot;-&gt;&quot;, imported.stdout.strip())</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">report_tools-0.1.0-py3-none-any.whl -&gt; Agent Log
+</pre></div>
+<div class="nb-markdown"><h3>결과 확인: 배포 산출물과 import</h3>
+<p>휠 파일이 존재하는지만으로 설치 성공을 알 수 없습니다. 새 Python 프로세스가 설치된 <code>make_title()</code>에 문자열을 입력하고 <code>Agent Log</code>를 반환받았는지 검사합니다. 이어서 입력만 <code>weekly note</code>로 바꾸어 같은 설치된 함수가 <code>Weekly Note</code>를 반환하는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 빌드 파일과 설치 후 함수 결과를 함께 확인합니다.
+print(&quot;휠 존재:&quot;, wheel.exists())
+print(&quot;첫 입력:&quot;, imported.stdout.strip())
+changed = subprocess.run(
+    [str(env_python), &quot;-c&quot;,
+     &quot;import report_tools; print(report_tools.make_title(&#x27;  weekly note  &#x27;))&quot;],
+    text=True, capture_output=True, check=True, cwd=root,
+)
+print(&quot;바꾼 입력:&quot;, changed.stdout.strip())
+assert wheel.exists()
+assert imported.stdout.strip() == &quot;Agent Log&quot;
+assert changed.stdout.strip() == &quot;Weekly Note&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">휠 존재: True
+첫 입력: Agent Log
+바꾼 입력: Weekly Note
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 소스 폴더를 현재 커널의 검색 경로에 직접 추가하지 않습니다. 빌드, 설치, 새 프로세스 import는 서로 다른 처리 단계입니다. 휠 존재 여부만으로 import 성공을 판단하지 않고 새 프로세스의 실제 반환 문자열까지 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before 테스트 두 개는 모듈 전역의 같은 <code>items</code> 목록을 수정합니다. 첫 테스트가 <code>alpha</code>를 추가한 뒤 둘째 테스트가 <code>beta</code>를 추가하므로, 둘째 테스트가 기대한 <code>["beta"]</code>와 실제 목록이 다릅니다. pytest의 실제 출력은 <code>1 failed, 1 passed</code>와 종료 코드 1입니다. After에서는 두 테스트가 이름이 같은 fixture를 요청하며 fixture는 호출될 때마다 빈 목록을 반환합니다. 동일한 두 동작과 검사를 다시 실행하면 출력은 <code>2 passed</code>가 됩니다. 이 두 테스트와 별도로 <code>test_mock.py</code>의 검사 두 개를 실행합니다. 첫 검사는 <code>fetch_status</code>를 완료를 반환하는 함수로 임시 대체하고 환경 변수를 지정합니다. 다음 검사는 원래 함수가 대기를 반환하는지 확인합니다. 이 별도 검사도 <code>2 passed</code>이며, 실제 네트워크를 호출하지 않는 연습용 함수입니다. 실패를 숨긴 것이 아니라 각 테스트의 입력 상태를 분리한 결과입니다.</p><section class="notebook" data-notebook="11-패키징과-테스트-격리" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>Before: 공유 상태 때문에 두 번째 테스트가 실패함</h3>
+<p>두 테스트가 같은 목록을 수정하면 실행 순서가 결과에 영향을 줍니다. pytest를 실제 실행하고 실패 코드와 요약을 관찰합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 공유 목록 때문에 두 번째 테스트가 실패하는 파일을 실행합니다.
+bad_test = root / &quot;test_shared.py&quot;
+bad_test.write_text(&quot;&quot;&quot;items: list[str] = []
+def test_add_alpha() -&gt; None:
+    items.append(&quot;alpha&quot;)
+    assert items == [&quot;alpha&quot;]
+def test_add_beta() -&gt; None:
+    items.append(&quot;beta&quot;)
+    assert items == [&quot;beta&quot;]
+&quot;&quot;&quot;)
+failed = subprocess.run(
+    [sys.executable, &quot;-m&quot;, &quot;pytest&quot;, &quot;-q&quot;, bad_test.name],
+    cwd=root, text=True, capture_output=True,
+)
+print(&quot;종료 코드:&quot;, failed.returncode)
+print(failed.stdout.strip().splitlines()[-1])
+assert failed.returncode == 1</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">종료 코드: 1
+1 failed, 1 passed in 0.01s
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>After: fixture와 monkeypatch로 입력을 분리함</h3>
+<p><code>@pytest.fixture</code>는 바로 아래 <code>items()</code>를 준비 함수로 등록합니다. 테스트 함수가 같은 이름의 <code>items</code> 매개변수를 적으면 pytest가 호출 직전에 fixture를 실행하고 반환된 빈 목록을 전달합니다. 각 테스트 호출이 새 목록을 받으므로 앞 테스트의 <code>append()</code> 결과가 이어지지 않습니다. <code>monkeypatch</code>는 뒤의 별도 예제에서 다룹니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 같은 두 테스트를 유지하고 fixture로 준비 목록만 분리합니다.
+good_test = root / &quot;test_isolated.py&quot;
+good_test.write_text(&quot;&quot;&quot;import pytest
+@pytest.fixture
+def items() -&gt; list[str]:
+    return []
+def test_add_alpha(items: list[str]) -&gt; None:
+    items.append(&quot;alpha&quot;)
+    assert items == [&quot;alpha&quot;]
+def test_add_beta(items: list[str]) -&gt; None:
+    items.append(&quot;beta&quot;)
+    assert items == [&quot;beta&quot;]
+&quot;&quot;&quot;)
+passed = subprocess.run(
+    [sys.executable, &quot;-m&quot;, &quot;pytest&quot;, &quot;-q&quot;, good_test.name],
+    cwd=root, text=True, capture_output=True, check=True,
+)
+print(passed.stdout.strip().splitlines()[-1])
+assert &quot;2 passed&quot; in passed.stdout
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">2 passed in 0.00s
+</pre></div>
+<div class="nb-markdown"><h3>추가 확인: 함수 대체와 함수 복원</h3>
+<p>목록 공유 문제를 고친 두 테스트와 별도로 monkeypatch를 확인합니다. <code>setattr()</code>은 <code>status_service.fetch_status</code>를 테스트 동안 <code>fake_status</code>에 연결하고, <code>setenv()</code>는 첫 테스트 안에서 <code>APP_MODE</code>를 <code>test</code>로 지정합니다. 코드는 첫 테스트 안의 환경 변수 값과, 다음 테스트에서 원래 함수가 반환하는 <code>대기</code>를 직접 확인합니다. 환경 변수의 테스트 후 복원값은 이 출력에서 따로 검사하지 않습니다. 아래 서비스 모듈은 네트워크를 호출하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 대체할 함수와 그 함수를 호출하는 코드를 별도 모듈로 만듭니다.
+service_source = &quot;&quot;&quot;def fetch_status() -&gt; str:
+    return &quot;대기&quot;
+
+def report_status() -&gt; str:
+    return &quot;처리 상태: &quot; + fetch_status()
+&quot;&quot;&quot;
+(root / &quot;status_service.py&quot;).write_text(service_source, encoding=&quot;utf-8&quot;)
+print(&quot;실습용 상태 모듈 준비 완료&quot;)
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">실습용 상태 모듈 준비 완료
+</pre></div>
+<div class="nb-cell"><div class="nb-prompt">In [8]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 함수 대체와 다음 테스트의 원래 함수 반환을 검사합니다.
+mock_source = &quot;&quot;&quot;import os
+import pytest
+import status_service
+
+def test_fake_status(monkeypatch: pytest.MonkeyPatch) -&gt; None:
+    def fake_status() -&gt; str:
+        return &quot;완료&quot;
+    monkeypatch.setattr(status_service, &quot;fetch_status&quot;, fake_status)
+    monkeypatch.setenv(&quot;APP_MODE&quot;, &quot;test&quot;)
+    assert status_service.report_status() == &quot;처리 상태: 완료&quot;
+    assert os.environ[&quot;APP_MODE&quot;] == &quot;test&quot;
+
+def test_original_status() -&gt; None:
+    assert status_service.report_status() == &quot;처리 상태: 대기&quot;
+&quot;&quot;&quot;
+(root / &quot;test_mock.py&quot;).write_text(mock_source, encoding=&quot;utf-8&quot;)
+print(&quot;함수 대체와 복원 검사 두 개 준비 완료&quot;)
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">함수 대체와 복원 검사 두 개 준비 완료
+</pre></div>
+<div class="nb-cell"><div class="nb-prompt">In [9]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 목록 테스트와 별도 파일을 실행해 함수 대체·복원 결과를 확인합니다.
+mocked = subprocess.run(
+    [sys.executable, &quot;-m&quot;, &quot;pytest&quot;, &quot;-q&quot;, &quot;test_mock.py&quot;],
+    cwd=root, text=True, capture_output=True, check=True,
+)
+print(mocked.stdout.strip().splitlines()[-1])
+assert &quot;2 passed&quot; in mocked.stdout
+workspace.cleanup()
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">2 passed in 0.00s
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li><code>dependencies</code>에 <code>uv-build</code>를 넣는 것과 <code>[build-system]</code>에서 백엔드를 선언하는 것은 역할이 다릅니다. 실제 패키지 프로젝트에는 빌드 시스템 선언이 필요합니다.</li><li><code>uv_build</code>는 순수 Python 프로젝트를 위한 백엔드입니다. 네이티브 확장 모듈이 필요한 프로젝트는 지원 범위와 다른 백엔드를 확인합니다.</li><li>테스트 순서를 바꿔 실패를 피하지 않습니다. 어떤 순서에서도 독립되도록 입력 상태를 fixture로 만듭니다.</li><li>monkeypatch는 검사 대상 코드가 참조하는 이름에 적용합니다. pytest 자체나 표준 라이브러리 전역을 넓게 바꾸면 테스트 실행기까지 영향을 받을 수 있습니다.</li><li>이 실습은 임시 폴더만 사용하며 끝에서 제거합니다. 실제 배포 저장소에 업로드하는 과정은 포함하지 않습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li><code>pyproject.toml</code>의 빌드 시스템 선언을 바탕으로 uv가 설치 가능한 휠을 만듭니다.</li><li>빌드 결과는 격리된 위치에 설치하고 새 프로세스에서 가져와 확인합니다.</li><li>fixture와 monkeypatch는 테스트마다 입력 상태와 외부 설정을 분리합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 12절에서는 여러 대기 작업을 동시에 진행할 때 실행 순서를 관찰합니다. Ch 18의 API 코드와 Ch 30의 서비스 코드를 패키지로 관리하고 외부 의존을 테스트에서 대체할 때 이 절의 방법을 사용합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. <code>[build-system]</code>은 무엇을 지정하나요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> 소스 트리를 휠이나 소스 배포 파일로 바꾸는 데 필요한 패키지와 빌드 백엔드를 지정합니다.</p></details><details class="quiz"><summary>2. 휠을 만들기만 하고 가져오기 검사를 생략하면 무엇을 알 수 없나요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> 빌드 파일이 실제로 설치되고 새 Python 프로세스에서 원하는 모듈을 가져올 수 있는지 알 수 없습니다.</p></details><details class="quiz"><summary>3. 기본 함수 범위의 fixture가 테스트 격리에 도움이 되는 이유는 무엇인가요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> 각 테스트가 fixture를 요청할 때 준비 코드가 다시 실행되어 새 값을 받기 때문입니다. 이전 테스트가 수정한 목록을 이어받지 않습니다.</p></details><details class="quiz"><summary>4. monkeypatch로 환경 변수를 바꾼 뒤 직접 복구 코드가 없어도 되는 이유는 무엇인가요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> pytest의 monkeypatch fixture가 해당 테스트가 끝날 때 변경을 자동으로 되돌리기 때문입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.astral.sh/uv/concepts/build-backend/">uv build backend</a> · 확인 2026-09-09 · 기준 uv/uv_build 0.12.11</li><li><a href="https://docs.pytest.org/en/stable/how-to/fixtures.html">pytest fixtures</a> · 확인 2026-09-09 · 실행 기준 pytest 9.1.1</li><li><a href="https://docs.pytest.org/en/stable/how-to/monkeypatch.html">pytest monkeypatch</a> · 확인 2026-09-09 · 실행 기준 pytest 9.1.1</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="10-Pydantic.html">← Pydantic</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="12-async와-await.html">async와 await →</a></span></div></div></body></html>

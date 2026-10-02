@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  runcall["run_once 부르기<br>자르는 자리 5"]:::flow
+  rowsfn["score_rows_at<br>질문마다 세 지표"]:::flow
+  rows["질문별 네 줄<br>Q001 자리 1 nDCG 1.0<br>Q003 자리 3 nDCG 0.5"]:::measure
+  meanfn["group_mean<br>지표마다 한 번씩 세 번"]:::flow
+  means["질문 평균<br>재현율 1.0 정밀도 0.2 nDCG 0.75"]:::measure
+  record["기록 한 줄<br>칸 일곱 개"]:::flow
+  runcall --> rowsfn
+  rowsfn --> rows
+  rows --> meanfn
+  meanfn --> means
+  means --> record

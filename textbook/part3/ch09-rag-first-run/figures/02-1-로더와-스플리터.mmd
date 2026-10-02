@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph LOAD["로더 · 2절 PDF를 쪽마다 읽기"]
+    direction LR
+    pdf["E01.pdf<br>5쪽"]:::tool
+    ld["load_pdf_pages<br>쪽마다 extract_text"]:::flow
+    docs["Document 5개<br>본문 str<br>메타데이터 dict"]:::tool
+    pdf --> ld
+    ld --> docs
+  end
+  subgraph SPLIT["스플리터 · 3~5절 문서 청크로 나누기"]
+    direction LR
+    sp["RecursiveCharacter<br>TextSplitter<br>500자 · 겹침 50자"]:::flow
+    ch["문서 청크 8개<br>메타데이터 복사"]:::tool
+    sp --> ch
+  end
+  emb["03절 임베딩<br>이 절에서 실행 안 함"]
+  LOAD --> SPLIT
+  SPLIT -.-> emb

@@ -1,0 +1,15 @@
+flowchart TD
+  %% classes
+  src["src/price_tools/<br>__init__.py<br>295글자"]:::tool
+  toml["pyproject.toml<br>name = price-tools · 0.1.0"]:::tool
+  build["uv build --wheel<br>종료 코드 0"]:::flow
+  wheel["dist/price_tools-0.1.0-<br>py3-none-any.whl"]:::tool
+  install["uv pip install<br>--python install_env"]:::flow
+  env["install_env<br>price-tools 0.1.0"]:::tool
+  out["새 환경 Python<br>calculate_line_total<br>(39000, 2)<br>출력: 78000"]:::measure
+  src --> build
+  toml --> build
+  build --> wheel
+  wheel --> install
+  install --> env
+  env --> out

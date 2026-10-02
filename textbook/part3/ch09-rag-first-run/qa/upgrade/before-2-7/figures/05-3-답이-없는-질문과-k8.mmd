@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph K1["4절 · 와이파이 질문 k=1로 보냄"]
+    direction LR
+    s1["검색 출처<br>E01 p.1 표지"]:::tool
+    m1["gpt-5.4-mini"]:::model
+    a1["답 보류 문장 True<br>끝에 E01 p.1"]:::measure
+    s1 --> m1
+    m1 --> a1
+  end
+  subgraph K8["5절 · 같은 질문 k=8로 검색만"]
+    direction LR
+    s8["검색 결과 8개<br>문서 청크 전부"]:::tool
+    c8["와이파이 말이 든<br>검색 결과 0개"]:::measure
+    n8["모델에<br>보내지 않음"]
+    s8 --> c8
+    c8 -.-> n8
+  end
+  note["두 칸 모두<br>정답 출처 빈 목록<br>답이 없는 질문"]
+  K1 ~~~ K8
+  K8 ~~~ note

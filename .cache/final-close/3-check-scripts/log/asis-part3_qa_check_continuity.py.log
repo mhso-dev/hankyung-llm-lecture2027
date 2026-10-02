@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part3/qa/check_continuity.py", line 171, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part3/qa/check_continuity.py", line 154, in main
+    assert data == (ROOT / entry['path']).read_bytes(), f'Stale archive: {name}/{entry["path"]}'
+AssertionError: Stale archive: part2-practice.zip/labs/part2/ch06-langchain-start/notebooks/04-스트리밍과-content-blocks.ipynb

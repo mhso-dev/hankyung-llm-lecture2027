@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  e["messages 사건 하나<br>둘짜리 튜플"]:::measure
+  subgraph front["앞 값 · 스트림 청크"]
+    direction TB
+    k["AIMessageChunk<br>글자가 든 것과<br>글자 없는 것"]:::measure
+    j["글을 차례로 이어 붙임<br>갱신의 답 글과 같음<br>True"]:::measure
+    k --> j
+  end
+  subgraph back["뒤 값 · 칸 metadata"]
+    direction TB
+    mk["첫 스트림 청크의<br>langgraph_node<br>write_answer"]:::measure
+    x["모든 스트림 청크의<br>노드 이름<br>write_answer 하나"]:::measure
+    mk ~~~ x
+  end
+  e --> front
+  e --> back

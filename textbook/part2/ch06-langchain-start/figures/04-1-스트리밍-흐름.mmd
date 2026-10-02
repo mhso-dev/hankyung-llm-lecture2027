@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  G["메시지 목록<br>system · user"]:::tool
+  S["model.stream<br>제너레이터 · 요청 0번"]:::flow
+  F["for로 꺼내기<br>요청 1번"]:::flow
+  M["gpt-5.4-mini"]:::model
+  C["chunks 목록<br>청크 18개"]:::measure
+  A["청크 더하기 +"]:::flow
+  R["AIMessageChunk<br>답 · 출력 17토큰 · stop"]:::measure
+  G --> S --> F --> M --> C --> A --> R

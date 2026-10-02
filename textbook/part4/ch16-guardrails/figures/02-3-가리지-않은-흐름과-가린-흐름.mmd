@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph before["Before · 가리지 않고 쓰는 흐름"]
+    direction TB
+    b0["받은 질문<br>원문 값 넷"]:::tool
+    b1["보낼 메시지<br>원문 값 넷"]:::fail
+    b2["기록 한 줄<br>원문 값 넷"]:::fail
+    b0 --> b1
+    b0 --> b2
+  end
+  subgraph after["After · 가린 뒤에 쓰는 흐름"]
+    direction TB
+    a1["받은 질문 가리기<br>mask_pii"]:::flow
+    a2["보낼 메시지<br>원문 값 없음"]:::measure
+    a3["기록 한 줄<br>원문 값 없음"]:::measure
+    a1 --> a2
+    a1 --> a3
+  end
+  same["두 칸에 넣은 질문은 같습니다"]
+  before ~~~ same
+  after ~~~ same

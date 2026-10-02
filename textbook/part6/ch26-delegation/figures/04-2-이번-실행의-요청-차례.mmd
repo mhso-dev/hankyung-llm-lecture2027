@@ -1,0 +1,23 @@
+flowchart LR
+  %% classes
+  subgraph sa ["서브에이전트 이번 실행"]
+    direction TB
+    s1["중앙 에이전트 요청<br>한 응답에 도구 요청 둘"]:::model
+    s2["loan_desk · facility_desk<br>전문 에이전트 요청 하나씩"]:::model
+    s3["중앙 에이전트 요청<br>도구 요청 없는 최종 답"]:::model
+    sr["모델 요청 수 4<br>중앙 2 + 전문 2"]:::measure
+    s1 --> s2
+    s2 --> s3
+    s3 --> sr
+  end
+  subgraph ra ["라우터 이번 실행"]
+    direction TB
+    r1["분류 모델 요청<br>두 분야를 고름"]:::model
+    r2["loan_desk · facility_desk<br>전문 에이전트 요청 하나씩"]:::model
+    r3["종합 노드 join_answers<br>코드라 요청 없음"]:::flow
+    rr["모델 요청 수 3<br>분류 1 + 고른 분야 수 2"]:::measure
+    r1 --> r2
+    r2 --> r3
+    r3 --> rr
+  end
+  sa ~~~ ra

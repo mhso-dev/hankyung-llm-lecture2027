@@ -1,0 +1,15 @@
+start 2026-10-01T01:11:24Z root_free=1173M sessions_free= 569M (연결 폴더 안 uv sync 불가 → 풀어 둘 곳 /tmp/fc5-part7)
+[keep_run] 지우지 않는 임시 폴더: /tmp/fc5-part7/part7-student-5qnehocj
+Installed 18 packages in 5ms
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+PASS 01-비동기-라우팅과-스키마.ipynb: 22 cells
+PASS extracted archive: ch30-fastapi-serving
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+PASS 03-Alembic-적용과-롤백.ipynb: 31 cells
+PASS extracted archive: ch31-database
+PASS extracted archive: ch32-docker
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+PASS 02-평가-회귀를-CI에-연결하기.ipynb: 4 cells
+PASS extracted archive: ch33-cicd
+PASS extracted archive: ch34-cost-rate-limits
+exit=0 end 2026-10-01T01:11:36Z root_free= 660M

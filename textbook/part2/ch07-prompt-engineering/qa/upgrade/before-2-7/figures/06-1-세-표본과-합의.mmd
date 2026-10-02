@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  L["같은 목록 label_messages<br>system 페르소나<br>developer 과업 명세<br>+ 분류 이름 규칙<br>user 고객 문의 A-1042"]:::tool
+  M["gpt-5.4-mini<br>따로 요청 3번<br>입력 155토큰씩"]:::model
+  S1["표본 1 첫 줄<br>교환"]:::measure
+  S2["표본 2 첫 줄<br>교환"]:::measure
+  S3["표본 3 첫 줄<br>교환"]:::measure
+  F["find_label<br>count_labels<br>decide_consensus"]:::flow
+  R["분류별 표 수 교환 3<br>합의한 분류 교환"]:::measure
+  L --> M
+  M --> S1
+  M --> S2
+  M --> S3
+  S1 --> F
+  S2 --> F
+  S3 --> F
+  F --> R

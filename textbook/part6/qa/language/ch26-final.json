@@ -1,0 +1,29 @@
+{
+  "chapter": "ch26-delegation",
+  "date": "2026-09-11",
+  "genre": "산문",
+  "minimum_severity": "S1",
+  "verdict": "corrected",
+  "code_output_preserved": true,
+  "technical_corrections": [
+    "01: 실제 기록에 없는 main_agent 호출 서술 제거",
+    "04: policy_tool.invoke 및 요청 핵심어 분기 서술을 실제 제어 흐름으로 교정",
+    "04: 캐시 입력 0개를 명시",
+    "네 절의 공통 복습 문제를 실제 실습 관찰값과 조건으로 교체"
+  ],
+  "phase6": {
+    "meaning_preservation_15": "pass",
+    "residual_slop": "none at S1",
+    "over_humanization": "none",
+    "gates": {
+      "01-Subagent-도구-위임": {"exit_code": 0, "reason": "8.0% change; P1/P2/P3 pass"},
+      "02-Handoff-상태-전환": {"exit_code": 0, "reason": "7.2% change; P1/P2/P3 pass"},
+      "03-Router-분류와-병렬-실행": {"exit_code": 0, "reason": "6.9% change; P1/P2/P3 pass"},
+      "04-호출-수-비용-종료-조건-비교": {"exit_code": 0, "reason": "7.7% change; P1/P2/P3 pass"}
+    }
+  },
+  "spell_check": {
+    "external_service": "skipped",
+    "reason": "상업적 대량 사용 제한; 로컬 정독 수행"
+  }
+}

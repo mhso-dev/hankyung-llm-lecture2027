@@ -1,0 +1,4 @@
+- 설명 대상 문장: 틀의 invoke는 빈자리만 채우고, 요청은 모델의 invoke에서 나갑니다.
+- 캡션: 틀의 invoke에서는 요청이 0번이고, 모델의 invoke에서 요청이 한 번 나갑니다.
+- 읽는 법: 세로선 셋은 노트북, 틀 `prompt`, OpenAI 서버. 첫 실선 = 4절 `prompt.invoke(fill_values)`, 점선 = `채운 값 종류: ChatPromptValue`. 첫 노란 메모 = 4절 `to_messages()`로 꺼낸 메시지 객체 3개, 요청 0번. 둘째 실선 = 5절 `timed_invoke()` 안 `model.invoke`, 요청 1번. 점선 = 응답 객체 `AIMessage`(답과 사용량). 마지막 노란 메모 = 5절 출력 `입력 토큰 수: 134`(응답 뒤 기록). 모델 객체는 따로 그리지 않고 요청이 가는 곳만 그림. 요청 실선·응답 점선, `messageAlign: left`.
+- alt: 노트북 틀 prompt OpenAI 서버 세로선 셋이 있고, 노트북에서 틀로 prompt.invoke inquiry 채우기 실선, 틀에서 노트북으로 ChatPromptValue 점선, 노란 메모 to_messages 메시지 3개 요청 0번, 노트북에서 서버로 model.invoke 요청 1번 실선, 서버에서 노트북으로 AIMessage 답과 사용량 점선, 노란 메모 5절 출력 입력 토큰 수 134가 차례로 있는 순서 그림

@@ -1,0 +1,25 @@
+{
+  "chapter": "ch10-document-processing",
+  "include": [
+    "textbook/part3/ch10-document-processing/*.html",
+    "labs/part3/ch10-document-processing/README.md",
+    "labs/part3/ch10-document-processing/pyproject.toml",
+    "labs/part3/ch10-document-processing/uv.lock",
+    "labs/part3/ch10-document-processing/notebooks/*.ipynb",
+    "labs/part3/ch10-document-processing/notebooks/rag_tools.py",
+    "labs/part3/ch10-document-processing/fixtures/*",
+    "labs/part3/ch10-document-processing/runs/continuity-ch10-indexing.jsonl",
+    "labs/part3/ch11-evaluation/data/evaluation-queries.jsonl",
+    "labs/data/rag-corpus/pdf/*/*.pdf",
+    "labs/data/rag-corpus/manifest.json"
+  ],
+  "exclude": [
+    ".env",
+    "**/.venv/**",
+    "**/.ruff_cache/**",
+    "**/.pytest_cache/**",
+    "**/*.failure.json",
+    "**/__pycache__/**"
+  ],
+  "note": "Part 3 묶음은 textbook/part3/_build_index.py가 textbook/_notebook/build_bundle.py의 practice_files()로 만든다. 노트북·README·pyproject·uv.lock은 그 안의 목록으로, runs 기록·도구 파일 rag_tools.py는 textbook/part3/public-files.json으로, fixtures/와 labs/data/rag-corpus/ 자료·Ch 11 평가셋은 build_bundle.py의 FIXTURES·data 목록과 Part 3 목록으로 들어간다(rag_tools.py 추가 2026-09-21 §2-7). document_processing.py·experiment.py·examples/·tests/는 노트북이 쓰지 않아 넣지 않는다."
+}

@@ -1,0 +1,80 @@
+<!--meta: 강의 1h | 실습 2h | 코드 document_processing.py · examples/ex04_hwpx.py | 새 용어 4 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 HWP와 HWPX가 내부 구조와 처리 방법에서 어떻게 다른지 설명할 수 있습니다.</li>
+<li>이 절을 마치면 HWPX의 ZIP 컨테이너와 XML 항목을 조사하여 텍스트 단위를 추출하고 출처 메타데이터를 붙일 수 있습니다.</li>
+<li>이 절을 마치면 HWP 처리에서 변환·전용 SDK·상용 파서를 선택해야 하는 경계를 정하고, 실행하지 않은 기능을 지원한다고 단정하지 않을 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>왜 지금 이것인가</h2>
+<p>한국의 공공기관과 기업 문서 저장소에는 HWP와 HWPX가 함께 있습니다. PDF만 처리하는 RAG는 결재문, 공고문, 회의 자료의 일부를 놓칠 수 있습니다. 그러나 두 확장자를 같은 방식으로 읽을 수 있다고 생각하면 구현 범위를 잘못 잡게 됩니다. HWP는 전용 구조를 해석해야 하는 네이티브 형식이고, HWPX는 XML 파일을 ZIP 컨테이너에 묶은 개방형 형식입니다. 이번 절은 모든 한글 문서를 완벽하게 파싱한다고 약속하는 대신, 형식을 식별하고 검증 가능한 처리 경로를 선택하는 방법을 다룹니다.</p>
+<p>현재 <code>labs/data/rag-corpus/</code>의 기본 21건은 PDF입니다. HWP/HWPX 전용 샘플의 성공 여부는 실습 폴더에 실제 파일이 있고 코드가 실행된 경우에만 기록합니다. 샘플이 없다면 HWPX 구조 관찰용 최소 픽스처와 실패 메시지만 검증하고, 실제 업무 문서 호환성을 주장하지 않습니다. 자기 도메인 문서 100건도 아직 저장소에 없으므로 HWP/HWPX 비율이나 성공률을 제시하지 않습니다.</p>
+
+<h2 id="b3"><span class="no">3</span>선수 지식 되짚기</h2>
+<ul><li><strong>Ch 2 ZIP·XML 처리</strong> — 표준 라이브러리로 압축 항목을 열고 XML 요소를 순회하는 기본 절차를 사용합니다.</li>
+<li><strong>01절 공통 계약</strong> — 원본 형식, 파서, 문서 ID, 출처 경로를 모든 결과에 남깁니다.</li>
+<li><strong>03절 형식 보존 단위</strong> — DOCX의 표 구분 표식과 HTML 줄 경계는 본문에, CSV 행 번호는 메타데이터에 남겼습니다. 더 세밀한 단위 필드는 확장 과제로 구분했습니다.</li></ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유 — 잠긴 서류함과 라벨이 붙은 상자</h3>
+<p>HWP를 규격에 맞는 열쇠와 해석표가 필요한 서류함이라고 생각해 보세요. HWPX는 여러 XML 문서를 라벨이 붙은 상자에 나누어 담고, 그 상자를 ZIP으로 묶은 형태에 가깝습니다. HWPX는 상자를 열어 항목을 확인하기가 더 수월하지만, 라벨을 읽었다고 문단·표·각주가 저절로 완성되는 것은 아닙니다. 어떤 XML이 본문이고 요소의 순서가 무엇인지 해석해야 합니다.</p>
+<h3>정의</h3>
+<dl class="term">
+<dt>HWP 네이티브 형식 (HWP native format)</dt><dd>한컴 한글의 전용 문서 형식입니다. 내부 레코드와 구조를 이해하는 전용 도구 또는 변환 경로가 필요하며, 범용 ZIP/XML 처리만으로 읽을 수 없습니다.</dd>
+<dt>HWPX</dt><dd>OWPML에 기반하고 국가표준 KS X 6101에 등록된 XML 기반 개방형 파일 형식입니다. 여러 XML과 자원을 ZIP 컨테이너에 담습니다.</dd>
+<dt>개방형 워드프로세서 마크업 언어 (Open Word-Processor Markup Language, OWPML)</dt><dd>HWPX 문서의 구조와 내용을 XML로 표현하는 규격입니다. 본문, 설정, 메타데이터가 여러 항목으로 나뉠 수 있습니다.</dd>
+<dt>ZIP 컨테이너 (ZIP container)</dt><dd>여러 XML·이미지·설정 파일을 하나의 문서 파일로 묶는 저장 방식입니다. 확장자가 <code>.hwpx</code>여도 내부 항목과 필수 파일을 검사해야 합니다.</dd>
+</dl>
+
+<figure>{{svg:04-hwp-hwpx}}<figcaption>HWP는 전용 바이너리 해석기나 변환 도구를 거치고, HWPX는 ZIP 안의 XML을 검사합니다. 두 경로의 결과는 공통 <code>Document</code>와 출처 메타데이터로 합쳐집니다.</figcaption></figure>
+<p>HWPX 처리의 첫 단계는 파일을 열어 항목 목록을 확인하는 것입니다. 그다음 본문 XML을 문서 순서대로 읽고, 텍스트 노드와 문단 경계를 추출합니다. 파일 안의 모든 XML 텍스트를 합치면 스타일 이름, 설정값, 메타데이터가 본문에 섞일 수 있습니다. 본문 항목을 명시적으로 선택하고, 문단 번호나 구역 파일명을 <code>section</code>에 남깁니다. 표와 병합 셀은 별도의 구조 해석이 필요하므로 기본 텍스트 로더가 어느 요소를 지원하는지 문서화합니다.</p>
+<p>HWP에는 세 가지 현실적인 경로가 있습니다. 첫째, 신뢰할 수 있는 환경에서 HWPX나 PDF로 변환한 뒤 변환 산출물을 처리합니다. 둘째, 한컴이 제공하는 도구나 SDK를 사용합니다. 셋째, 조직의 보안 정책이 허용하면 상용 문서 파서에 전달합니다. 어느 경로든 원본과 변환본의 관계, 변환 도구 버전, 실패 파일을 기록합니다. 변환에 성공했다는 사실이 표·각주·변경 내용까지 보존되었다는 뜻은 아니므로 대표 문서를 원본과 대조합니다.</p>
+<table><tr><th>경로</th><th>장점</th><th>확인할 조건</th></tr>
+<tr><td>HWP → HWPX/PDF 변환</td><td>뒤의 처리 도구를 통일하기 쉽습니다.</td><td>변환 도구 설치, 자동화 권한, 표·각주 보존</td></tr>
+<tr><td>한컴 도구·SDK</td><td>공급자가 지원하는 형식 경로를 사용할 수 있습니다.</td><td>운영체제, 라이선스, 서버 실행 조건</td></tr>
+<tr><td>상용 파서 API</td><td>OCR·표 처리 옵션을 함께 제공할 수 있습니다.</td><td>외부 전송 승인, 자격증명, 비용, 버전 고정</td></tr>
+<tr><td>HWPX ZIP/XML 직접 처리</td><td>기본 텍스트와 구조를 로컬에서 검사할 수 있습니다.</td><td>OWPML 해석 범위, 표·개체·각주 지원 수준</td></tr></table>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>다음 노트북은 HWPX의 ZIP 항목과 본문 XML을 직접 검사합니다. 최소 표식 파일을 사용하므로 한컴오피스 호환 문서나 레거시 HWP 파서의 성공을 나타내지 않습니다.</p>
+{{notebook:04-HWP와-HWPX|example}}
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before 셀은 레거시 HWP를 ZIP으로 열어 <code>BadZipFile</code>을 포착합니다. After 셀은 파일 시그니처를 확인해 HWPX만 ZIP/XML로 읽고, 레거시 HWP는 전용 파서가 필요한 미지원 형식으로 분류합니다.</p>
+{{notebook:04-HWP와-HWPX|failure}}
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul><li><strong>HWP와 HWPX를 같은 형식으로 취급하지 않습니다.</strong> 확장자별 처리 경로와 실패 메시지를 분리합니다.</li>
+<li><strong>HWPX도 완전한 평문 형식은 아닙니다.</strong> ZIP 안의 여러 XML, 이미지, 표, 각주 관계를 해석해야 합니다.</li>
+<li><strong>변환본의 출처를 남깁니다.</strong> 원본 HWP의 ID, 변환 파일 경로, 변환 도구와 시각을 기록해야 갱신과 오류 조사가 가능합니다.</li>
+<li><strong>외부 전송 정책을 먼저 확인합니다.</strong> 계약서·인사 문서·개인정보가 든 HWP를 상용 API에 보내기 전에 조직의 승인과 보관 정책을 확인합니다.</li>
+<li><strong>호환성 표는 실제 샘플로 만듭니다.</strong> 문단, 표, 병합 셀, 각주, 이미지, 암호화 문서를 각각 검사하고 성공·부분 성공·실패로 구분합니다.</li></ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>HWP는 전용 해석 또는 변환 경로가 필요하고, HWPX는 OWPML 기반 XML을 ZIP에 담은 개방형 형식입니다.</li>
+<li>HWPX는 본문 XML과 문서 순서를 명시적으로 해석하며, 모든 XML 텍스트를 무분별하게 합치지 않습니다.</li>
+<li>실제 샘플과 실행 결과가 없는 HWP/HWPX 지원 범위, 상용 파서 품질, 100건 처리 성공률은 주장하지 않습니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 01~04절에서 만든 <code>Document</code>가 다음 청킹 절의 입력입니다. 현재 HWPX 로더는 구역 번호를 남기며, 문단·표·각주 단위는 추가 구현이 필요합니다. Ch 11에서는 <code>file_type</code>과 <code>parser</code>별로 검색 실패를 묶어 어느 형식의 처리부터 개선할지 결정합니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. [하] HWP와 HWPX의 내부 구조 차이를 한 문장으로 설명하세요.</p><p class="quiz-a">HWP는 전용 구조를 해석해야 하는 네이티브 형식이고, HWPX는 OWPML 기반 XML과 자원을 ZIP 컨테이너에 담은 개방형 형식입니다.</p>
+<p class="quiz-q">2. [중] HWPX 안의 모든 XML 텍스트를 합치면 어떤 문제가 생깁니까?</p><p class="quiz-a">설정·메타데이터가 본문에 섞이고 구역 순서가 어긋날 수 있으며, 표·각주 관계도 잃을 수 있습니다. 본문 항목과 필요한 요소를 명시해야 합니다.</p>
+<p class="quiz-q">3. [중] HWP를 HWPX로 변환한 뒤에도 원본 대조가 필요한 이유는 무엇입니까?</p><p class="quiz-a">변환 성공은 문단·표·병합 셀·각주·이미지가 모두 보존되었다는 보장이 아닙니다. 검색에 필요한 구조와 값이 남았는지 대표 문서로 확인해야 합니다.</p>
+<p class="quiz-q">4. [상] 상용 파서 API를 HWP 처리 경로로 채택하기 전에 확인할 항목을 네 가지 쓰세요.</p><p class="quiz-a">공식 입력 형식 지원, 실제 한국어 샘플 결과, 외부 전송·보관 정책, 자격증명과 비용, 파서 버전 고정 가운데 네 가지 이상을 확인합니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>강사 노트</h2>
+<details class="instructor"><summary>시간 배분 · 시연 순서 · 예상 질문 · 막히는 지점 · A/B 트랙</summary>
+<p><strong>시간 배분(3h)</strong> — 강의 60분: 국내 문서 형식 맥락(10) · HWP/HWPX 차이(20) · HWPX ZIP/XML 구조(15) · 처리 경로와 정책(15). 실습 120분: 예제 실행(30) · 압축 항목 조사(25) · 본문 선택과 메타데이터 확인(25) · 손상/오형식 실패 재현(20) · 호환성 표 설계(20).</p>
+<p><strong>시연 순서</strong> — ① HWP와 HWPX 확장자를 나란히 보여 줍니다. ② HWPX를 ZIP으로 열어 항목을 확인합니다. ③ 본문 XML 일부와 추출 단위를 대응시킵니다. ④ 잘못된 파일을 넣어 실패가 기록되는지 확인합니다. ⑤ 실제로 검증한 기능만 호환성 표에 표시합니다.</p>
+<p><strong>예상 질문</strong> — “HWPX는 XML이므로 모든 문서를 읽을 수 있나요?” → 기본 텍스트 접근은 수월하지만 표·각주·개체까지 올바르게 복원하려면 규격 해석이 필요하다고 답합니다. “HWP를 파이썬에서 바로 읽을 수 없나요?” → 도구가 존재하더라도 운영체제·라이선스·샘플 호환성을 검증해야 한다고 설명합니다. “상용 파서가 더 정확한가요?” → 같은 문서와 질의로 측정하기 전에는 결론 내리지 않는다고 답합니다.</p>
+<p><strong>학생이 자주 막히는 지점</strong> — ZIP을 열 수 있다는 사실을 문서 구조를 완전히 해석한 것으로 오해합니다. 본문·표·각주를 각각 다른 검증 항목으로 나누게 합니다.</p>
+<p><strong>A/B 트랙</strong> — A트랙은 HWPX 항목과 기본 텍스트 단위를 확인하고 실패를 기록합니다. B트랙은 네임스페이스와 구역 순서를 추적하거나, 변환본과 원본의 표·각주 보존을 검사하는 호환성 테스트 설계를 추가합니다.</p>
+</details>
+
+<h2 id="b11"><span class="no">11</span>참고 자료</h2>
+<ul><li>한컴 공식 FAQ 「HWPX 형식」 — <a href="https://www.hancom.co.kr/support/faqCenter/faq/detail/2784">hancom.co.kr/support/faqCenter/faq/detail/2784</a> · 확인 2026-09-08 · OWPML·KS X 6101 설명.</li>
+<li>한컴 개발자 문서 「HwpCtrl.Open」 — <a href="https://developer.hancom.com/en-us/webhwp/devguide/hwpctrl/methods/open">developer.hancom.com</a> · 확인 2026-09-08 · HWP 네이티브 형식과 HWPX 표준 형식 구분.</li>
+<li>한컴 기술 블로그 「HWP·HWPX data extraction」 — <a href="https://blog.hancom.com/en/hwp-hwpx-data-extraction-format-library/">blog.hancom.com</a> · 확인 2026-09-08 · 공급자 기술 설명이며 제품 API 계약은 아닙니다.</li></ul>

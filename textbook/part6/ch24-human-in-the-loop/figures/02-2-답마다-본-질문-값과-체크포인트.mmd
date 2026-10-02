@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  q1["첫 실행 질문 값<br>주문 키 order-2402<br>오류 글 빈 글 · 체크포인트 둘"]:::measure
+  m["사람의 답 maybe"]:::tool
+  q2["다음 질문 값 오류 글<br>허용하지 않는 값 maybe<br>노드 두 번 시작<br>체크포인트 셋"]:::measure
+  y["사람의 답 yes"]:::tool
+  q3["다음 질문 값 오류 글<br>허용하지 않는 값 yes<br>노드 두 번 시작<br>체크포인트 넷"]:::measure
+  a["사람의 답 approve"]:::tool
+  r["칸 answer approve<br>다음 노드 없음<br>체크포인트 다섯"]:::measure
+  q1 --> m
+  m --> q2
+  q2 --> y
+  y --> q3
+  q3 --> a
+  a --> r

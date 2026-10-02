@@ -1,0 +1,12 @@
+flowchart TD
+  %% classes
+  P["예상 적기<br>예상 합계 6000"]:::flow
+  R["실행<br>total = price * count"]:::flow
+  O["출력 확인<br>계산한 합계 6000"]:::measure
+  C{"비교<br>예상과 같은가?"}:::measure
+  V["값 하나 바꾸기<br>수량 2 → 3"]:::flow
+  K["예상과 코드 다시 보기"]
+  P --> R --> O --> C
+  C -- "True" --> V
+  C -- "False" --> K
+  V -- "다시 예상" --> P

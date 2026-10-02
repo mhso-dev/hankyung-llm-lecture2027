@@ -1,0 +1,26 @@
+{
+  "scope": "Ch 2 notebooks 01-12",
+  "method": "SHA-256 over canonical jq extraction",
+  "fields": {
+    "code_sha256": "all code-cell source arrays",
+    "outputs_sha256": "all code-cell execution_count and outputs arrays"
+  },
+  "notebooks": [
+    {"name": "01-변수와-자료형.ipynb", "code_sha256": "801b8c9f4ec384043070c7d45f38586dbe13635c0c42815df92ce2d14b62b2bc", "outputs_sha256": "eec37fb4b96a0d750170568a6e052e9ed8b54562dbdd32f01d59d8571aa43165"},
+    {"name": "02-조건문과-반복문.ipynb", "code_sha256": "2ff5e13d8c68f0396e4266575818febdfb10e6df590d89b55013c4c6647f3e14", "outputs_sha256": "d444b8299b484b4644fd847bc0f219c4132bd36b44f0453ccb34ed56f785db57"},
+    {"name": "03-자료구조.ipynb", "code_sha256": "0583b3c9dfc28d26100d6f9fea1b08c997c567fb9f5301deb273179c5b86b495", "outputs_sha256": "c308a71a8e790b26f194de6ef3181a5d8a9ace86fa15fe52d841ad92b9da89bb"},
+    {"name": "04-함수.ipynb", "code_sha256": "d44f31dea1e87287be66229fd9d6cd35fb60f31403a5c44e9c583ef5c8675c49", "outputs_sha256": "0c54a209f48c3a06992d968364cda96f3207324c970d2f79403ba8d80084baa4"},
+    {"name": "05-파일과-예외.ipynb", "code_sha256": "81aea1db243b85289f34517e363534de4b93c6a1949065505b5c73275d7e36d6", "outputs_sha256": "83f1944a10baa4a8d2915c715d6cde43bc3fd7cd6fcd320555916230627ccbce"},
+    {"name": "06-클래스.ipynb", "code_sha256": "7695634bc308455c0fd593bdb489c397e82c6a76796087262f4c5a7ac6f7ca9d", "outputs_sha256": "1aae102a0c1626b7a2ee78baea8c7b14fdbeff9b12c27b4f5606ae8a9f2494bd"},
+    {"name": "07-모듈과-타입힌트.ipynb", "code_sha256": "f74a5cc27dcad8bc0451826ef1fa90cf64c935775168bd60e2e757d93c83750a", "outputs_sha256": "0af90dae6bb7208a9eba636bb1a53e06320902f518f5c98250b1a435c85e1f6f"},
+    {"name": "08-pytest.ipynb", "code_sha256": "a09a8e5b024faeb9b257651310717177f1230e13e40832349dcc146d20898036", "outputs_sha256": "c29c175f7a030844bc176102878342835ab93c4b7a3728eff4a0ef37013df24f"},
+    {"name": "09-데코레이터와-컨텍스트-매니저.ipynb", "code_sha256": "3aa04929b88a2dfca854251f0bc8833ddb31a49c349beccd4015b3a07db795c1", "outputs_sha256": "9e02927e429c46f1dbe26d8cac0496225f9f4742bba9545c26ac7be8d5f5d4c7"},
+    {"name": "10-Pydantic.ipynb", "code_sha256": "be6948c45e6d673b4ff0127e7e6a034c4244ee7a8181c4073860a62228018348", "outputs_sha256": "c123eebfab70f8eba4ec7c3159452ed424f46dcc39906f8c49db49e398b811b5"},
+    {"name": "11-패키징과-테스트-격리.ipynb", "code_sha256": "7e0a1c58ed6819e61c7e22db9ac0e34704b832939db6238cbaf64a3513fc83f7", "outputs_sha256": "00ff8430f28c8e9b21e3cae981d544a87f3e2e2e622dd341ad5c2a0565d613c4"},
+    {"name": "12-async와-await.ipynb", "code_sha256": "c516a373d5764991bd6b132204840a183813362948ac571d81829396052706b1", "outputs_sha256": "1bbb0561dfd7fda2c554d8f040e04c5814868110599054afbd67619c7e857c80"}
+  ],
+  "direct_release_match": ["01", "02", "03", "04", "09", "10", "11", "12"],
+  "parent_code_comment_edits": ["05", "06", "07", "08"],
+  "parent_validation": "../../../comment-validation.json",
+  "language_audit_note": "Language edits touched Markdown cells only. Parent-owned Korean code comments in 05-08 were retained."
+}

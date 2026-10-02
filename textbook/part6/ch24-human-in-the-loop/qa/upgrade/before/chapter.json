@@ -1,0 +1,30 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 개발",
+  "chapter": "ch24-human-in-the-loop",
+  "title": "Human-in-the-Loop와 Time Travel",
+  "hours": "총 8h · 강의 3h · 실습 5h",
+  "objectives": [
+    "interrupt와 Command(resume=)로 승인 게이트를 구현할 수 있습니다.",
+    "승인 입력을 검증하고 같은 스레드의 중단된 실행을 재개할 수 있습니다.",
+    "상태 기록에서 과거 체크포인트를 골라 다른 값으로 새 분기를 실행할 수 있습니다."
+  ],
+  "lab_path": "labs/part6/ch24-human-in-the-loop",
+  "sections": [
+    {
+      "slug": "01-interrupt-승인-게이트",
+      "title": "interrupt 승인 게이트",
+      "format": "paired"
+    },
+    {
+      "slug": "02-Command-resume으로-실행-재개",
+      "title": "Command resume으로 실행 재개",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-상태-기록과-다른-분기-재실행",
+      "title": "상태 기록과 다른 분기 재실행",
+      "format": "experiment"
+    }
+  ]
+}

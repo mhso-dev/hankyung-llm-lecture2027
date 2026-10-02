@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before — 마스킹 없음"]
+    direction LR
+    b1["질문"]:::flow --> b2["기록 훅"]:::flow --> b3["모델 입력<br>learner@example.com"]:::fail
+  end
+  subgraph AFTER["After — PIIMiddleware 등록"]
+    direction LR
+    a1["질문"]:::flow --> a2["이메일 마스킹"]:::flow --> a3["기록 훅"]:::flow --> a4["모델 입력<br>learner@****.com"]:::model
+  end
+  BEFORE ~~~ AFTER

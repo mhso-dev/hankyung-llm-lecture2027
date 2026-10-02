@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  QUESTIONS["지어낸 질문 두 개<br>해바라기 연구소 · 노을 워커 3"]:::tool
+  INPUTS["입력 여섯 가지<br>4절 그대로 · 6절 가상 빼기<br>7절 답 첫머리 · 8절 근거 문서<br>9절 보류 지시<br>문서 없음과 있음"]:::tool
+  MODEL["언어 모델<br>뽑기 끔 · 출력 몫 64"]:::model
+  ANSWERS["답 12개"]:::measure
+  RULES["코드 판정 세 규칙<br>새 숫자 · 정답 숫자<br>보류 문장"]:::flow
+  HUMAN["사람이 읽어 확인할 것<br>숫자 없는 주장<br>다른 말로 한 보류"]
+  QUESTIONS --> INPUTS
+  INPUTS --> MODEL
+  MODEL --> ANSWERS
+  ANSWERS --> RULES
+  ANSWERS --> HUMAN

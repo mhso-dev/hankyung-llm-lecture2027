@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph ONE["페르소나만 · 메시지 2개"]
+    direction LR
+    a1["입력 56토큰<br>출력 117토큰"]:::measure
+    a2["195자 · 10줄<br>주문번호·사진에 더해<br>성함·연락처·주소 요청"]:::measure
+    a1 ~~~ a2
+  end
+  subgraph TASK["페르소나 + 과업 명세 · 메시지 3개"]
+    direction LR
+    b1["입력 134토큰<br>출력 99토큰"]:::measure
+    b2["159자 · 3줄<br>주문번호 · 사진 요청"]:::measure
+    b1 ~~~ b2
+  end
+  subgraph NOTE["두 줄을 비교하면"]
+    direction LR
+    d1["입력 차이 78토큰"]:::measure
+    d2["한 번 실행<br>속도 순위는 정하지 않음"]
+    d1 ~~~ d2
+  end
+  ONE ~~~ TASK ~~~ NOTE

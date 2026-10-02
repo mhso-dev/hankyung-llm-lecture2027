@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph sec["나눠 쓰기 · write_sections"]
+    direction TB
+    s1["지시 글 하나 · 요청 글 셋<br>공통 사실 + 쓸 부분<br>목적 · 절차 · 문의"]:::tool
+    s2["gpt-5.4-mini<br>요청 셋을 함께 보냄"]:::model
+    s3["부분 글 셋을<br>넣은 차례로 이은 안내문"]:::measure
+    s1 --> s2
+    s2 --> s3
+  end
+  subgraph vote["투표 · run_vote"]
+    direction TB
+    v1["지시 글 셋 · 요청 글 하나<br>평가자 셋 · 후보 A와 B"]:::tool
+    v2["gpt-5.4-mini<br>요청 셋을 함께 보냄"]:::model
+    v3["표 셋 A · A · B<br>필요한 표 수 2의 결과 A"]:::measure
+    v1 --> v2
+    v2 --> v3
+  end
+  same["두 칸 모두 ask_all_together<br>asyncio.to_thread와<br>asyncio.gather"]
+  sec ~~~ same
+  vote ~~~ same

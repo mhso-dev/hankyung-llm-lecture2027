@@ -1,0 +1,335 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pgvector 체크포인터 공존과 백업 — Ch 31 · DB &amp; 상태 영속화</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · Agent 서비스 개발 · Ch 31 · DB &amp; 상태 영속화</p>
+<h1>pgvector 체크포인터 공존과 백업</h1><div class="meta"><span>강의 1h · 실습 3h</span><span>새 용어 5</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h · 실습 3h | 코드 Jupyter Notebook | 새 용어 5 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>벡터 표와 체크포인터 표가 같은 PostgreSQL에 있을 때 역할과 소유권을 구분할 수 있습니다.</li><li>HNSW 인덱스 존재와 실제 EXPLAIN 계획의 사용 여부를 구분할 수 있습니다.</li><li>논리 덤프를 복원한 데이터베이스에서 문서·체크포인트 행과 인덱스를 확인할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>에이전트 서비스는 검색 문서와 실행 상태를 같은 PostgreSQL에 저장할 수 있습니다. 벡터 표만 백업하면 대화 재개 정보가 사라지고, 체크포인터 표만 백업하면 검색 결과를 다시 만들 시간과 원본이 필요합니다. 마지막 절에서는 두 표 집합이 함께 존재하는 구조와 HNSW 인덱스, 논리 백업의 포함 범위를 확인합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch12에서 pgvector의 거리 연산과 HNSW를 사용했고 Ch23에서는 PostgresSaver의 `setup()`이 체크포인터 표를 만든다는 점을 확인했습니다. 이번 절은 두 결과를 한 운영 스키마에서 함께 관리합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>구체적인 상황</h3><p>한 창고에 상품과 배송 장부를 함께 보관하면 창고 주소는 하나지만 재고와 장부의 수명과 복구 우선순위는 다릅니다.</p><h3>정의</h3><p>PostgreSQL 스키마는 관련 표의 이름 공간을 나누며, 인덱스는 특정 표의 조회 경로를 추가합니다. HNSW(Hierarchical Navigable Small World)는 여러 층의 근접 그래프를 탐색하는 근사 최근접 이웃 인덱스입니다. 코사인 거리 쿼리에는 `vector_cosine_ops` 연산자 클래스를 맞춰야 합니다. 체크포인터는 그래프 실행 단계의 상태와 중간 쓰기를 저장합니다. 논리 백업(logical backup)은 `pg_dump`가 스키마와 행을 SQL 또는 아카이브 형식으로 추출하는 방식입니다. 백업 파일의 존재만으로 복구가 보장되지 않으므로 별도 데이터베이스에 복원하고 애플리케이션 조회까지 확인해야 합니다.</p><p><strong>이 절의 새 용어</strong> — HNSW, 연산자 클래스, 체크포인터, 논리 백업, 복원 연습</p><h3>운영에서 경계를 정하는 방법</h3><p>공존 설계에서는 같은 서버를 쓴다는 사실보다 소유권과 복구 순서를 문서로 남기는 일이 중요합니다. 애플리케이션 마이그레이션이 체크포인터 패키지가 만든 표를 변경하지 않게 스키마와 권한을 나눌 수 있습니다. 백업 범위에는 표뿐 아니라 확장, 함수, 인덱스, 시퀀스와 필요한 역할을 검토합니다. HNSW 인덱스는 원본 벡터 행에서 다시 만들 수 있으므로 복구 시간을 줄이기 위해 백업할지, 백업 크기를 줄이고 복원 뒤 재생성할지 선택할 수 있습니다. 선택은 데이터량과 허용 복구 시간에 달려 있습니다. 체크포인터는 오래된 스레드를 계속 보관하면 빠르게 늘 수 있으므로 제품의 보존 기간과 삭제 작업을 정합니다. `pg_dump`는 실행 시점의 서로 맞는 스냅샷을 만들지만, 지속 복제나 시점 복구 전체를 대신하지 않습니다. 정기 복원 훈련에서는 새 데이터베이스에 확장을 설치하고 덤프를 복원한 뒤 최근 스레드 재개, 문서 검색, 인덱스 존재와 권한을 애플리케이션 경로로 확인합니다.</p><h3>코드 읽기와 개념 경계</h3><p>pgvector 표의 임베딩은 의미 검색용 애플리케이션 데이터이고, LangGraph 체크포인터 표는 실행 상태를 이어가기 위한 운영 데이터입니다. 같은 PostgreSQL 스키마에 놓을 수 있어도 생성 주체와 복구 기준이 다릅니다. HNSW 인덱스는 근사 최근접 이웃 검색을 돕지만, 행이 세 개인 실습에서는 최적화기가 순차 스캔을 선택할 수 있습니다. 인덱스가 존재한다는 사실과 실제 계획에서 사용됐다는 사실을 구분합니다.</p><p>논리 백업에 두 종류의 표 정의가 들어갔다는 검사는 백업 범위를 확인합니다. 이것만으로 벡터 값, 체크포인트 행, 확장 설치, 복구 후 검색 결과까지 보장되지는 않습니다. 운영 검증은 새 데이터베이스에 복원한 뒤 행 수와 대표 벡터 검색, 스레드 재개를 실행해야 합니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 430" style="width:340px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="한 스키마의 검색과 실행 상태"><title>한 스키마의 검색과 실행 상태</title><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190 85 L190 116" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><path d="M190 185 L190 216" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><path d="M190 285 L190 316" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><rect x="30" y="120" width="320" height="65" rx="10" fill="#F4D9D5" stroke="#334155" stroke-width="2"/><rect x="30" y="220" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><rect x="30" y="320" width="320" height="65" rx="10" fill="#E8E2F4" stroke="#334155" stroke-width="2"/><text x="190" y="59" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">documents + HNSW</text><text x="190" y="159" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">체크포인터 표</text><text x="190" y="259" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">ch31_shared</text><text x="190" y="359" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">pg_dump 백업</text></svg></div><p>푸른 문서·HNSW와 붉은 체크포인터 표가 초록색 ch31_shared 스키마에 공존합니다. 보라색 pg_dump 상자는 이 스키마를 선택한 논리 백업입니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>노트북은 문서 세 건과 코사인 HNSW 인덱스를 만들고 대표 벡터 검색과 `EXPLAIN` 계획을 확인합니다. 이어 PostgresSaver 체크포인트를 저장하고, 전용 스키마의 논리 덤프를 별도 데이터베이스에 복원합니다.</p><section class="notebook" data-notebook="05-pgvector-체크포인터-공존과-백업" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="05-pgvector-체크포인터-공존과-백업.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBwZ3ZlY3RvcsK37LK07YGs7Y+s7J247YSwIOqzteyhtOqzvCDrsLHsl4VcbiIsCiAgICAiXG4iLAogICAgIuyLpOygnCBQb3N0Z3JlU1FMIDE37JeQ7IScIOyatOyYgSDrjbDsnbTthLDrsqDsnbTsiqTsnZgg7ZWcIOqwgOyngCDrrLjsoJzrpbwg7J6s7ZiE7ZWY6rOgIO2VtOqysO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIu2VnCDsiqTtgqTrp4jsl5Ag7JWg7ZSM66as7LyA7J207IWYIOuyoe2EsCDtkZzsmYAgTGFuZ0dyYXBoIOyytO2BrO2PrOyduO2EsCDtkZzrpbwg66eM65Ok6rOgIOuFvOumrCDrsLHsl4Xsl5Ag7ZWo6ruYIO2PrO2VqOuQmOuKlOyngCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAicHJlcC0zMS0wNS0wIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDspIDruYQg7IWA7J20IO2VmOuKlCDsnbxcbiIsCiAgICAiXG4iLAogICAgIuyVnuydmCBgJXBpcCBpbnN0YWxsYCDshYDsnYAg7J20IOuFuO2KuOu2geydhCDsi6TtlontlZjripQg7ZiE7J6sIOy7pOuEkOyXkCBDaDMx7JeQ7IScIOqzoOygle2VnCBTUUxBbGNoZW15wrdQb3N0Z3JlU1FMwrdwZ3ZlY3RvcsK3TGFuZ0dyYXBoIO2MqO2CpOyngOulvCDshKTsuZjtlanri4jri6QuIOyEpOy5mCDrqoXroLnsnZgg7Lac66Cl7J2AIOyIqOq4sOyngOunjCwg64uk7J2MIOyFgOydmCBpbXBvcnTqsIAg7ISx6rO17ZWY66Ck66m0IOydtCDri6jqs4TqsIAg66i87KCAIOuBneuCmOyVvCDtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjowODoxOC45NjA1NjJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjowODoxOC45NjA0OTZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjowODoyMC4xMzY1NDVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjA4OjIwLjEzNjAxNVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJOb3RlOiB5b3UgbWF5IG5lZWQgdG8gcmVzdGFydCB0aGUga2VybmVsIHRvIHVzZSB1cGRhdGVkIHBhY2thZ2VzLlxuIgogICAgIF0KICAgIH0sCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIk5vdGU6IHlvdSBtYXkgbmVlZCB0byByZXN0YXJ0IHRoZSBrZXJuZWwgdG8gdXNlIHVwZGF0ZWQgcGFja2FnZXMuXG4iCiAgICAgXQogICAgfSwKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiTm90ZTogeW91IG1heSBuZWVkIHRvIHJlc3RhcnQgdGhlIGtlcm5lbCB0byB1c2UgdXBkYXRlZCBwYWNrYWdlcy5cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnbQg7LGV7YSw7JeQ7IScIOqzoOygle2VnCDtjKjtgqTsp4Drpbwg7ISk7LmY7ZWp64uI64ukLlxuIiwKICAgICIlcGlwIGluc3RhbGwgLXEgJ3NxbGFsY2hlbXlbYXN5bmNpb109PTIuMC40MycgYXN5bmNwZz09MC4zMC4wIGFsZW1iaWM9PTEuMTYuNVxuIiwKICAgICIlcGlwIGluc3RhbGwgLXEgJ3BzeWNvcGdbYmluYXJ5LHBvb2xdPT0zLjMuMycgcGd2ZWN0b3I9PTAuNC4xXG4iLAogICAgIiVwaXAgaW5zdGFsbCAtcSBsYW5nZ3JhcGg9PTEuMi4xMSBsYW5nZ3JhcGgtY2hlY2twb2ludC1wb3N0Z3Jlcz09My4wLjUiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJwcmVwLTMxLTA1LTEiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg7J20IOykgOu5hCDshYDsnbQg7ZWY64qUIOydvFxuIiwKICAgICJcbiIsCiAgICAi65GQIOuyiOynuCDspIDruYQg7IWA7J2AIGBDSDMxX0RBVEFCQVNFX1VSTGDsnYQg7J296rOgIOyXhuycvOuptCDroZzsu6wg7Iuk7Iq17JqpIOyjvOyGjOulvCDsgqzsmqntlanri4jri6QuIOqwmeydgCDrjbDsnbTthLDrsqDsnbTsiqTrpbwg67mE64+Z6riwIFNRTEFsY2hlbXksIHBzeWNvcGcsIFBvc3RncmVTUUwg66qF66C57JeQ7IScIOyCrOyaqe2VoCDsiJgg7J6I64+E66GdIOuTnOudvOydtOuyhCDtkZzquLDrp4wg67CU6r68IOyEuCBVUkzsnYQg66eM65Ot64uI64ukLiDtmZTrqbTsl5DripQg642w7J207YSw67Kg7J207IqkIOydtOumhOqzvCDruYTrsIDqsJLsnYQg7Iio6rK864uk64qUIOyCrOyLpOunjCDstpzroKXtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjowODoyMC4xMzc4OTdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjowODoyMC4xMzc3ODlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjowODoyMC4xNDAyNzRaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjA4OjIwLjEzOTg0M1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJkYXRhYmFzZTogY2gzMV9sYWIsIGNyZWRlbnRpYWxzOiBoaWRkZW5cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsoITsmqkg7Iuk7Iq1IOuNsOydtO2EsOuyoOydtOyKpCDso7zshozrp4wg7KSA67mE7ZWY66mwIOu5hOuwgCDqsJLsnYAg7Lac66Cl7ZWY7KeAIOyViuyKteuLiOuLpC5cbiIsCiAgICAiaW1wb3J0IG9zXG4iLAogICAgIkFTWU5DX1VSTCA9IG9zLmdldGVudihcbiIsCiAgICAiICAgIFwiQ0gzMV9EQVRBQkFTRV9VUkxcIixcbiIsCiAgICAiICAgIFwicG9zdGdyZXNxbCthc3luY3BnOi8vcG9zdGdyZXM6cG9zdGdyZXNAbG9jYWxob3N0OjU1NDMxL2NoMzFfbGFiXCIsXG4iLAogICAgIilcbiIsCiAgICAiU1lOQ19VUkwgPSBBU1lOQ19VUkwucmVwbGFjZShcInBvc3RncmVzcWwrYXN5bmNwZ1wiLCBcInBvc3RncmVzcWwrcHN5Y29wZ1wiKVxuIiwKICAgICJOQVRJVkVfVVJMID0gQVNZTkNfVVJMLnJlcGxhY2UoXCJwb3N0Z3Jlc3FsK2FzeW5jcGdcIiwgXCJwb3N0Z3Jlc3FsXCIpXG4iLAogICAgInByaW50KFwiZGF0YWJhc2U6IGNoMzFfbGFiLCBjcmVkZW50aWFsczogaGlkZGVuXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAicHJlcC0zMS0wNS0yIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOyXsOqysCDspIDruYTsmYAg7Iuk7Iq1IOyKpO2CpOuniCDsg53shLFcblxu7J20IOyFgOydgCBgcHN5Y29wZ2DsmYAgYFBvc3RncmVzU2F2ZXJg66W8IOqwgOyguOyYpOqzoCwg7JWe7JeQ7IScIOykgOu5hO2VnCBgTkFUSVZFX1VSTGDroZwgUG9zdGdyZVNRTOyXkCDsl7DqsrDtlanri4jri6QuIGBhdXRvY29tbWl0PVRydWVg64qUIOqwgSBTUUwg66y47J6l7J2EIOuzhOuPhCDrqoXsi5zsoIEg7Luk67CLIOyXhuydtCDrsJjsmIHtlZjripQg7ISk7KCV7J6F64uI64ukLiB2ZWN0b3Ig7ZmV7J6l7J2EIOykgOu5hO2VmOqzoCDquLDsobQg7Iuk7Iq17JqpIGBjaDMxX3NoYXJlZGAg7Iqk7YKk66eI66W8IOygnOqxsO2VnCDrkqQg64uk7IucIOunjOuTreuLiOuLpC4g65Sw65287IScIOydtCDsnbTrpoTsnZgg7Iqk7YKk66eI7JeQ64qUIOyLpOyKtSDsnpDro4zrp4wg65GQ7Ja07JW8IO2VqeuLiOuLpC4gYHNoYXJlZF91cmxg7J2AIOuLpOydjCDsl7DqsrDsl5DshJwg7IKs7Jqp7ZWgIOyKpO2CpOuniCDqsoDsg4kg7Iic7ISc66W8IO2PrO2VqO2VnCDso7zshozsnoXri4jri6QuXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjA4OjIwLjE0MTI0OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjA4OjIwLjE0MTE1MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjA4OjIwLjMwODg3M1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MDg6MjAuMzA4NDQwWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInNjaGVtYTogY2gzMV9zaGFyZWRcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IG9zLCBzdWJwcm9jZXNzXG4iLAogICAgImltcG9ydCBwc3ljb3BnXG4iLAogICAgImZyb20gbGFuZ2dyYXBoLmNoZWNrcG9pbnQucG9zdGdyZXMgaW1wb3J0IFBvc3RncmVzU2F2ZXJcbiIsCiAgICAiXG4iLAogICAgIkJBU0VfVVJMID0gTkFUSVZFX1VSTFxuIiwKICAgICJ3aXRoIHBzeWNvcGcuY29ubmVjdChCQVNFX1VSTCwgYXV0b2NvbW1pdD1UcnVlKSBhcyBjb25uOlxuIiwKICAgICIgICAgY29ubi5leGVjdXRlKFwiQ1JFQVRFIEVYVEVOU0lPTiBJRiBOT1QgRVhJU1RTIHZlY3RvclwiKVxuIiwKICAgICIgICAgY29ubi5leGVjdXRlKFwiRFJPUCBTQ0hFTUEgSUYgRVhJU1RTIGNoMzFfc2hhcmVkIENBU0NBREVcIilcbiIsCiAgICAiICAgIGNvbm4uZXhlY3V0ZShcIkNSRUFURSBTQ0hFTUEgY2gzMV9zaGFyZWRcIilcbiIsCiAgICAic2hhcmVkX3VybCA9IEJBU0VfVVJMICsgXCI/b3B0aW9ucz0tY3NlYXJjaF9wYXRoJTNEY2gzMV9zaGFyZWQlMkNwdWJsaWNcIlxuIiwKICAgICJwcmludChcInNjaGVtYTogY2gzMV9zaGFyZWRcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg67Kh7YSwIO2RnOyZgCBITlNXIOyduOuNseyKpFxuIiwKICAgICJcbiIsCiAgICAi7IS4IOusuOyEnOulvCDsoIDsnqXtlZjqs6Ag7L2U7IKs7J24IOqxsOumrOyaqSBITlNXIOyduOuNseyKpOulvCDrp4zrk63ri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY29uY2VwdC0zMS0wNS1hIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOuwlOuhnCDri6TsnYwg7L2U65Oc66W8IOydveuKlCDrsKnrspVcbiIsCiAgICAiXG4iLAogICAgInBndmVjdG9yIO2RnOydmCDsnoTrsqDrlKnsnYAg7J2Y66+4IOqygOyDieyaqSDslaDtlIzrpqzsvIDsnbTshZgg642w7J207YSw7J206rOgLCBMYW5nR3JhcGgg7LK07YGs7Y+s7J247YSwIO2RnOuKlCDsi6Ttlokg7IOB7YOc66W8IOydtOyWtOqwgOq4sCDsnITtlZwg7Jq07JiBIOuNsOydtO2EsOyeheuLiOuLpC4g6rCZ7J2AIFBvc3RncmVTUUwg7Iqk7YKk66eI7JeQIOuGk+ydhCDsiJgg7J6I7Ja064+EIOyDneyEsSDso7zssrTsmYAg67O16rWsIOq4sOykgOydtCDri6TrpoXri4jri6QuIEhOU1cg7J24642x7Iqk64qUIOq3vOyCrCDstZzqt7zsoJEg7J207JuDIOqygOyDieydhCDrj5Xsp4Drp4wsIO2WieydtCDshLgg6rCc7J24IOyLpOyKteyXkOyEnOuKlCDstZzsoIHtmZTquLDqsIAg7Iic7LCoIOyKpOy6lOydhCDshKDtg53tlaAg7IiYIOyeiOyKteuLiOuLpC4g7J24642x7Iqk6rCAIOyhtOyerO2VnOuLpOuKlCDsgqzsi6Tqs7wg7Iuk7KCcIOqzhO2ajeyXkOyEnCDsgqzsmqnrkJDri6TripQg7IKs7Iuk7J2EIOq1rOu2hO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA3IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjA4OjIwLjMwOTY5M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjA4OjIwLjMwOTYzOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjA4OjIwLjMyNDY4NVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MDg6MjAuMzI0MzYyWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIm5lYXJlc3Q6IFsn67Cw7IahJywgJ+2ZmOu2iCddXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIndpdGggcHN5Y29wZy5jb25uZWN0KHNoYXJlZF91cmwsIGF1dG9jb21taXQ9VHJ1ZSkgYXMgY29ubjpcbiIsCiAgICAiICAgIGNvbm4uZXhlY3V0ZShcIkNSRUFURSBUQUJMRSBkb2N1bWVudHMoaWQgaW50IHByaW1hcnkga2V5LCBjb250ZW50IHRleHQsIGVtYmVkZGluZyB2ZWN0b3IoMykpXCIpXG4iLAogICAgIiAgICByb3dzID0gXCIoMSwn67Cw7IahJywnWzEsMCwwXScpLCgyLCftmZjrtognLCdbMCwxLDBdJyksKDMsJ+qysOygnCcsJ1swLDAsMV0nKVwiXG4iLAogICAgIiAgICBjb25uLmV4ZWN1dGUoXCJJTlNFUlQgSU5UTyBkb2N1bWVudHMgVkFMVUVTIFwiICsgcm93cylcbiIsCiAgICAiICAgIGluZGV4X2RkbCA9IChcbiIsCiAgICAiICAgICAgICBcIkNSRUFURSBJTkRFWCBkb2N1bWVudHNfZW1iZWRkaW5nX2huc3cgT04gZG9jdW1lbnRzIFwiXG4iLAogICAgIiAgICAgICAgXCJVU0lORyBobnN3IChlbWJlZGRpbmcgdmVjdG9yX2Nvc2luZV9vcHMpXCJcbiIsCiAgICAiICAgIClcbiIsCiAgICAiICAgIGNvbm4uZXhlY3V0ZShpbmRleF9kZGwpXG4iLAogICAgIndpdGggcHN5Y29wZy5jb25uZWN0KHNoYXJlZF91cmwpIGFzIGNvbm46XG4iLAogICAgIiAgICBuZWFyZXN0ID0gY29ubi5leGVjdXRlKFxuIiwKICAgICIgICAgICAgIFwiU0VMRUNUIGNvbnRlbnQgRlJPTSBkb2N1bWVudHMgXCJcbiIsCiAgICAiICAgICAgICBcIk9SREVSIEJZIGVtYmVkZGluZyA8PT4gJ1swLjksMC4xLDBdJyBMSU1JVCAyXCJcbiIsCiAgICAiICAgICkuZmV0Y2hhbGwoKVxuIiwKICAgICJwcmludChcIm5lYXJlc3Q6XCIsIFtyb3dbMF0gZm9yIHJvdyBpbiBuZWFyZXN0XSlcbiIsCiAgICAiYXNzZXJ0IG5lYXJlc3RbMF1bMF0gPT0gXCLrsLDshqFcIiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDgiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TsoJwg7L+866asIOqzhO2ajVxuIiwKICAgICJcbiIsCiAgICAi7ZaJ7J20IOyEuCDqsJzrv5Dsnbgg7ZGc7JeQ7IScIOy1nOygge2ZlOq4sOqwgCBITlNX67O064ukIOyInOywqCDsiqTsupTsnYQg7ISg7YOd7ZWY64qU7KeAIOyLpO2WiSDqs4Ttmo3snYQg7J297Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogImNlbGwtMDkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MDg6MjAuMzI1NDU5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MDg6MjAuMzI1NDAyWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MDg6MjAuMzMyNTA0WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjowODoyMC4zMzIwNjVaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiTGltaXQgKGFjdHVhbCB0aW1lPTAuMDE0Li4wLjAxNSByb3dzPTIgbG9vcHM9MSlcbiIsCiAgICAgICIgIEJ1ZmZlcnM6IHNoYXJlZCBoaXQ9NFxuIiwKICAgICAgIiAgLT4gIFNvcnQgKGFjdHVhbCB0aW1lPTAuMDE0Li4wLjAxNCByb3dzPTIgbG9vcHM9MSlcbiIsCiAgICAgICIgICAgICAgIFNvcnQgS2V5OiAoKGVtYmVkZGluZyA8PT4gJ1swLjksMC4xLDBdJzo6dmVjdG9yKSlcbiIsCiAgICAgICIgICAgICAgIFNvcnQgTWV0aG9kOiBxdWlja3NvcnQgIE1lbW9yeTogMjVrQlxuIiwKICAgICAgIiAgICAgICAgQnVmZmVyczogc2hhcmVkIGhpdD00XG4iLAogICAgICAiICAgICAgICAtPiAgU2VxIFNjYW4gb24gZG9jdW1lbnRzIChhY3R1YWwgdGltZT0wLjAwMi4uMC4wMDMgcm93cz0zIGxvb3BzPTEpXG4iLAogICAgICAiICAgICAgICAgICAgICBCdWZmZXJzOiBzaGFyZWQgaGl0PTFcbiIsCiAgICAgICJQbGFubmluZzpcbiIsCiAgICAgICIgIEJ1ZmZlcnM6IHNoYXJlZCBoaXQ9OTZcbiIsCiAgICAgICJQbGFubmluZyBUaW1lOiAwLjExNyBtc1xuIiwKICAgICAgIkV4ZWN1dGlvbiBUaW1lOiAwLjAyOSBtc1xuIiwKICAgICAgInVzZXMgaG5zdzogRmFsc2VcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAid2l0aCBwc3ljb3BnLmNvbm5lY3Qoc2hhcmVkX3VybCkgYXMgY29ubjpcbiIsCiAgICAiICAgIHBsYW5fcm93cyA9IGNvbm4uZXhlY3V0ZShcbiIsCiAgICAiICAgICAgICBcIkVYUExBSU4gKEFOQUxZWkUsIEJVRkZFUlMsIENPU1RTIE9GRikgXCJcbiIsCiAgICAiICAgICAgICBcIlNFTEVDVCBjb250ZW50IEZST00gZG9jdW1lbnRzIFwiXG4iLAogICAgIiAgICAgICAgXCJPUkRFUiBCWSBlbWJlZGRpbmcgPD0+ICdbMC45LDAuMSwwXScgTElNSVQgMlwiXG4iLAogICAgIiAgICApLmZldGNoYWxsKClcbiIsCiAgICAicGxhbiA9IFwiXFxuXCIuam9pbihyb3dbMF0gZm9yIHJvdyBpbiBwbGFuX3Jvd3MpXG4iLAogICAgInByaW50KHBsYW4pXG4iLAogICAgInByaW50KFwidXNlcyBobnN3OlwiLCBcImRvY3VtZW50c19lbWJlZGRpbmdfaG5zd1wiIGluIHBsYW4pXG4iLAogICAgImFzc2VydCBcIlNjYW5cIiBpbiBwbGFuIGFuZCBcIkV4ZWN1dGlvbiBUaW1lXCIgaW4gcGxhbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDssrTtgaztj6zsnbjthLAg7ZGcIOqzteyhtFxuIiwKICAgICJcbiIsCiAgICAi6rO17IudIOyytO2BrO2PrOyduO2EsCDqtaztmITsnZggYHNldHVwKClg7Jy866GcIOqwmeydgCDsiqTtgqTrp4jsl5Ag7Jq07JiBIO2RnOulvCDstpTqsIDtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA2LAogICAiaWQiOiAiY2VsbC0xMSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjowODoyMC4zMzMyOTNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjowODoyMC4zMzMyNDJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjowODoyMC41NDEwNjVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjA4OjIwLjU0MDU3NVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJzYXZlZDogeyd2YWx1ZSc6IDEyfSBjaGVja3BvaW50IHJvd3M6IDNcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAid2l0aCBQb3N0Z3Jlc1NhdmVyLmZyb21fY29ubl9zdHJpbmcoc2hhcmVkX3VybCkgYXMgc2F2ZXI6XG4iLAogICAgIiAgICBzYXZlci5zZXR1cCgpXG4iLAogICAgIiAgICBmcm9tIHR5cGluZ19leHRlbnNpb25zIGltcG9ydCBUeXBlZERpY3RcbiIsCiAgICAiICAgIGZyb20gbGFuZ2dyYXBoLmdyYXBoIGltcG9ydCBFTkQsIFNUQVJULCBTdGF0ZUdyYXBoXG4iLAogICAgIiAgICBjbGFzcyBTdGF0ZShUeXBlZERpY3QpOlxuIiwKICAgICIgICAgICAgIHZhbHVlOiBpbnRcbiIsCiAgICAiICAgIGdyYXBoX2J1aWxkZXIgPSBTdGF0ZUdyYXBoKFN0YXRlKVxuIiwKICAgICIgICAgZ3JhcGhfYnVpbGRlci5hZGRfbm9kZShcImRvdWJsZVwiLCBsYW1iZGEgc3RhdGU6IHtcInZhbHVlXCI6IHN0YXRlW1widmFsdWVcIl0gKiAyfSlcbiIsCiAgICAiICAgIGdyYXBoX2J1aWxkZXIuYWRkX2VkZ2UoU1RBUlQsIFwiZG91YmxlXCIpXG4iLAogICAgIiAgICBncmFwaF9idWlsZGVyLmFkZF9lZGdlKFwiZG91YmxlXCIsIEVORClcbiIsCiAgICAiICAgIGdyYXBoID0gZ3JhcGhfYnVpbGRlci5jb21waWxlKGNoZWNrcG9pbnRlcj1zYXZlcilcbiIsCiAgICAiICAgIHNhdmVkID0gZ3JhcGguaW52b2tlKHtcInZhbHVlXCI6IDZ9LCB7XCJjb25maWd1cmFibGVcIjoge1widGhyZWFkX2lkXCI6IFwiYmFja3VwLWRlbW9cIn19KVxuIiwKICAgICJ3aXRoIHBzeWNvcGcuY29ubmVjdChCQVNFX1VSTCkgYXMgY29ubjpcbiIsCiAgICAiICAgIHRhYmxlcyA9IFtyb3dbMF0gZm9yIHJvdyBpbiBjb25uLmV4ZWN1dGUoXG4iLAogICAgIiAgICAgICAgXCJTRUxFQ1QgdGFibGVfbmFtZSBGUk9NIGluZm9ybWF0aW9uX3NjaGVtYS50YWJsZXMgXCJcbiIsCiAgICAiICAgICAgICBcIldIRVJFIHRhYmxlX3NjaGVtYT0nY2gzMV9zaGFyZWQnIE9SREVSIEJZIHRhYmxlX25hbWVcIlxuIiwKICAgICIgICAgKV1cbiIsCiAgICAiICAgIGNoZWNrcG9pbnRfY291bnQgPSBjb25uLmV4ZWN1dGUoXG4iLAogICAgIiAgICAgICAgXCJTRUxFQ1QgY291bnQoKikgRlJPTSBjaDMxX3NoYXJlZC5jaGVja3BvaW50c1wiXG4iLAogICAgIiAgICApLmZldGNob25lKClbMF1cbiIsCiAgICAicHJpbnQoXCJzYXZlZDpcIiwgc2F2ZWQsIFwiY2hlY2twb2ludCByb3dzOlwiLCBjaGVja3BvaW50X2NvdW50KVxuIiwKICAgICJhc3NlcnQgc2F2ZWRbXCJ2YWx1ZVwiXSA9PSAxMiBhbmQgY2hlY2twb2ludF9jb3VudCA+IDAiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg64W866asIOuwseyXhSDtmZXsnbhcbiIsCiAgICAiXG4iLAogICAgIuyghOyaqSDsiqTtgqTrp4jrpbwgU1FMIO2YleyLneycvOuhnCDrjaTtlITtlZjqs6Ag65GQIOyiheulmOydmCDtkZwg7KCV7J2Y6rCAIOuqqOuRkCDtj6ztlajrkJjripTsp4Ag6rKA7IKs7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNvbmNlcHQtMzEtMDUtYiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDrsLHsl4XsnYQg7IOIIOuNsOydtO2EsOuyoOydtOyKpOyXkCDrs7Xsm5DtlZjsl6wg7ZmV7J24XG5cbuydtCDshYDsnYAgRG9ja2VyIOy7qO2FjOydtOuEiCDslYjsl5DshJwgYHBnX2R1bXBg66W8IOyLpO2Wie2VtCBgY2gzMV9zaGFyZWRg7J2YIOuFvOumrCDrsLHsl4XsnYQg66y47J6Q7Je066GcIOuwm+yKteuLiOuLpC4gYHN1YnByb2Nlc3MucnVuKC4uLiwgY2hlY2s9VHJ1ZSlg64qUIOyZuOu2gCDrqoXroLnsnbQg7Iuk7Yyo7ZWY66m0IOyYiOyZuOuhnCDspJHri6jtlZjrqbAsIGB0ZXh0PVRydWVg7JmAIGBjYXB0dXJlX291dHB1dD1UcnVlYOuKlCDstpzroKXsnYQg66y47J6Q7Je066GcIOyImOynke2VmOuPhOuhnSDsp4DsoJXtlanri4jri6QuIOuzhOuPhOydmCDsi6TsirXsmqkgYGNoMzFfcmVzdG9yZWAg642w7J207YSw67Kg7J207Iqk66W8IOuLpOyLnCDrp4zrk6Ag65KkIOuwseyXheydhCDrs7Xsm5DtlZjqs6Ag66y47IScwrfssrTtgaztj6zsnbjtirgg7ZaJIOyImOyZgCBITlNXIOyduOuNseyKpCDsobTsnqzrpbwg7ZmV7J247ZWp64uI64ukLiDsnbQg6rKA7IKs64qUIOuqqOuToCDrsqHthLAg6rCS7J2YIOydvOy5mOuCmCDsiqTroIjrk5wg7J6s6rCc6rmM7KeAIO2ZleyduO2VmOyngOuKlCDslYrsirXri4jri6QuIOuRkCDtla3rqqnsnYAg7LaU6rCAIOuzteq1rCDqsoDsgqzroZwg6rWs67aE7ZWp64uI64ukLlxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA3LAogICAiaWQiOiAiY2VsbC0xMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjowODoyMC41NDIwNDBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjowODoyMC41NDE5NzRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjowODoyMS4wMTA2NTRaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjA4OjIxLjAxMDI5NFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJyZXN0b3JlZCByb3dzOiAoMywgMykgaG5zdzogVHJ1ZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJjb250YWluZXIgPSBvcy5nZXRlbnYoXCJDSDMxX1BPU1RHUkVTX0NPTlRBSU5FUlwiLCBcImtkdC1jaDMxLXBvc3RncmVzXCIpXG4iLAogICAgImR1bXAgPSBzdWJwcm9jZXNzLnJ1bihcbiIsCiAgICAiICAgIFtcImRvY2tlclwiLCBcImV4ZWNcIiwgY29udGFpbmVyLCBcInBnX2R1bXBcIiwgXCItVVwiLCBcInBvc3RncmVzXCIsIFwiLWRcIiwgXCJjaDMxX2xhYlwiLFxuIiwKICAgICIgICAgIFwiLS1zY2hlbWE9Y2gzMV9zaGFyZWRcIiwgXCItLW5vLW93bmVyXCIsIFwiLS1uby1wcml2aWxlZ2VzXCJdLFxuIiwKICAgICIgICAgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlLCBjaGVjaz1UcnVlLFxuIiwKICAgICIpLnN0ZG91dFxuIiwKICAgICJmb3IgY29tbWFuZCBpbiAoW1wiZHJvcGRiXCIsIFwiLVVcIiwgXCJwb3N0Z3Jlc1wiLCBcIi0taWYtZXhpc3RzXCIsIFwiY2gzMV9yZXN0b3JlXCJdLFxuIiwKICAgICIgICAgICAgICAgICAgICAgW1wiY3JlYXRlZGJcIiwgXCItVVwiLCBcInBvc3RncmVzXCIsIFwiY2gzMV9yZXN0b3JlXCJdKTpcbiIsCiAgICAiICAgIHN1YnByb2Nlc3MucnVuKFtcImRvY2tlclwiLCBcImV4ZWNcIiwgY29udGFpbmVyLCAqY29tbWFuZF0sIGNoZWNrPVRydWUpXG4iLAogICAgInN1YnByb2Nlc3MucnVuKFxuIiwKICAgICIgICAgW1wiZG9ja2VyXCIsIFwiZXhlY1wiLCBjb250YWluZXIsIFwicHNxbFwiLCBcIi1VXCIsIFwicG9zdGdyZXNcIiwgXCItZFwiLCBcImNoMzFfcmVzdG9yZVwiLFxuIiwKICAgICIgICAgIFwiLWNcIiwgXCJDUkVBVEUgRVhURU5TSU9OIHZlY3RvclwiXSwgY2hlY2s9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSxcbiIsCiAgICAiKVxuIiwKICAgICJzdWJwcm9jZXNzLnJ1bihcbiIsCiAgICAiICAgIFtcImRvY2tlclwiLCBcImV4ZWNcIiwgXCItaVwiLCBjb250YWluZXIsIFwicHNxbFwiLCBcIi1VXCIsIFwicG9zdGdyZXNcIiwgXCItZFwiLCBcImNoMzFfcmVzdG9yZVwiXSxcbiIsCiAgICAiICAgIGlucHV0PWR1bXAsIHRleHQ9VHJ1ZSwgY2hlY2s9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSxcbiIsCiAgICAiKVxuIiwKICAgICJyZXN0b3JlX3VybCA9IEJBU0VfVVJMLnJlcGxhY2UoXCIvY2gzMV9sYWJcIiwgXCIvY2gzMV9yZXN0b3JlXCIpXG4iLAogICAgIndpdGggcHN5Y29wZy5jb25uZWN0KHJlc3RvcmVfdXJsKSBhcyBjb25uOlxuIiwKICAgICIgICAgcmVzdG9yZWQgPSBjb25uLmV4ZWN1dGUoXCJTRUxFQ1QgKFNFTEVDVCBjb3VudCgqKSBGUk9NIGNoMzFfc2hhcmVkLmRvY3VtZW50cyksIFwiXG4iLAogICAgIiAgICAgICAgICAgICAgICAgICAgICAgICAgICBcIihTRUxFQ1QgY291bnQoKikgRlJPTSBjaDMxX3NoYXJlZC5jaGVja3BvaW50cylcIikuZmV0Y2hvbmUoKVxuIiwKICAgICIgICAgaW5kZXhfb2sgPSBjb25uLmV4ZWN1dGUoXCJTRUxFQ1QgdG9fcmVnY2xhc3MoJ2NoMzFfc2hhcmVkLmRvY3VtZW50c19lbWJlZGRpbmdfaG5zdycpIElTIE5PVCBOVUxMXCIpLmZldGNob25lKClbMF1cbiIsCiAgICAicHJpbnQoXCJyZXN0b3JlZCByb3dzOlwiLCByZXN0b3JlZCwgXCJobnN3OlwiLCBpbmRleF9vaylcbiIsCiAgICAiYXNzZXJ0IFwiQ1JFQVRFIFRBQkxFIGNoMzFfc2hhcmVkLmRvY3VtZW50c1wiIGluIGR1bXBcbiIsCiAgICAiYXNzZXJ0IHJlc3RvcmVkWzBdID09IDMgYW5kIHJlc3RvcmVkWzFdID4gMCBhbmQgaW5kZXhfb2siCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogImV4cGVyaW1lbnQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA3LAogICAiY29kZV9zaGEyNTYiOiAiZTBjNGQzODAxY2ZmN2Y3MWU4NmE1MDAxOTEzYjg4NWFjNjIyODlkNjE1NDczM2ViNDk1NjZlMGY3NWQ1MThmZiIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTExVDAyOjA4OjIxLjEyNzg2MiswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiODRhYjJkM2ZiOTJiZWMzMDEyOWRkZmI4MThiNTBlMDgxNzdmOGQzZDU4Zjc3NTg0M2ZiZDM0YmJiNmEzZjAxMiIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>pgvector·체크포인터 공존과 백업</h2>
+<p>실제 PostgreSQL 17에서 운영 데이터베이스의 한 가지 문제를 재현하고 해결합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>한 스키마에 애플리케이션 벡터 표와 LangGraph 체크포인터 표를 만들고 논리 백업에 함께 포함되는지 확인합니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>앞의 <code>%pip install</code> 셀은 이 노트북을 실행하는 현재 커널에 Ch31에서 고정한 SQLAlchemy·PostgreSQL·pgvector·LangGraph 패키지를 설치합니다. 설치 명령의 출력은 숨기지만, 다음 셀의 import가 성공하려면 이 단계가 먼저 끝나야 합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 챕터에서 고정한 패키지를 설치합니다.
+%pip install -q &#x27;sqlalchemy[asyncio]==2.0.43&#x27; asyncpg==0.30.0 alembic==1.16.5
+%pip install -q &#x27;psycopg[binary,pool]==3.3.3&#x27; pgvector==0.4.1
+%pip install -q langgraph==1.2.11 langgraph-checkpoint-postgres==3.0.5</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>두 번째 준비 셀은 <code>CH31_DATABASE_URL</code>을 읽고 없으면 로컬 실습용 주소를 사용합니다. 같은 데이터베이스를 비동기 SQLAlchemy, psycopg, PostgreSQL 명령에서 사용할 수 있도록 드라이버 표기만 바꾼 세 URL을 만듭니다. 화면에는 데이터베이스 이름과 비밀값을 숨겼다는 사실만 출력합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 전용 실습 데이터베이스 주소만 준비하며 비밀 값은 출력하지 않습니다.
+import os
+ASYNC_URL = os.getenv(
+    &quot;CH31_DATABASE_URL&quot;,
+    &quot;postgresql+asyncpg://postgres:postgres@localhost:55431/ch31_lab&quot;,
+)
+SYNC_URL = ASYNC_URL.replace(&quot;postgresql+asyncpg&quot;, &quot;postgresql+psycopg&quot;)
+NATIVE_URL = ASYNC_URL.replace(&quot;postgresql+asyncpg&quot;, &quot;postgresql&quot;)
+print(&quot;database: ch31_lab, credentials: hidden&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">database: ch31_lab, credentials: hidden
+</pre></div>
+<div class="nb-markdown"><h4>연결 준비와 실습 스키마 생성</h4>
+<p>이 셀은 <code>psycopg</code>와 <code>PostgresSaver</code>를 가져오고, 앞에서 준비한 <code>NATIVE_URL</code>로 PostgreSQL에 연결합니다. <code>autocommit=True</code>는 각 SQL 문장을 별도 명시적 커밋 없이 반영하는 설정입니다. vector 확장을 준비하고 기존 실습용 <code>ch31_shared</code> 스키마를 제거한 뒤 다시 만듭니다. 따라서 이 이름의 스키마에는 실습 자료만 두어야 합니다. <code>shared_url</code>은 다음 연결에서 사용할 스키마 검색 순서를 포함한 주소입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import os, subprocess
+import psycopg
+from langgraph.checkpoint.postgres import PostgresSaver
+
+BASE_URL = NATIVE_URL
+with psycopg.connect(BASE_URL, autocommit=True) as conn:
+    conn.execute(&quot;CREATE EXTENSION IF NOT EXISTS vector&quot;)
+    conn.execute(&quot;DROP SCHEMA IF EXISTS ch31_shared CASCADE&quot;)
+    conn.execute(&quot;CREATE SCHEMA ch31_shared&quot;)
+shared_url = BASE_URL + &quot;?options=-csearch_path%3Dch31_shared%2Cpublic&quot;
+print(&quot;schema: ch31_shared&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">schema: ch31_shared
+</pre></div>
+<div class="nb-markdown"><h3>벡터 표와 HNSW 인덱스</h3>
+<p>세 문서를 저장하고 코사인 거리용 HNSW 인덱스를 만듭니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>pgvector 표의 임베딩은 의미 검색용 애플리케이션 데이터이고, LangGraph 체크포인터 표는 실행 상태를 이어가기 위한 운영 데이터입니다. 같은 PostgreSQL 스키마에 놓을 수 있어도 생성 주체와 복구 기준이 다릅니다. HNSW 인덱스는 근사 최근접 이웃 검색을 돕지만, 행이 세 개인 실습에서는 최적화기가 순차 스캔을 선택할 수 있습니다. 인덱스가 존재한다는 사실과 실제 계획에서 사용됐다는 사실을 구분합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">with psycopg.connect(shared_url, autocommit=True) as conn:
+    conn.execute(&quot;CREATE TABLE documents(id int primary key, content text, embedding vector(3))&quot;)
+    rows = &quot;(1,&#x27;배송&#x27;,&#x27;[1,0,0]&#x27;),(2,&#x27;환불&#x27;,&#x27;[0,1,0]&#x27;),(3,&#x27;결제&#x27;,&#x27;[0,0,1]&#x27;)&quot;
+    conn.execute(&quot;INSERT INTO documents VALUES &quot; + rows)
+    index_ddl = (
+        &quot;CREATE INDEX documents_embedding_hnsw ON documents &quot;
+        &quot;USING hnsw (embedding vector_cosine_ops)&quot;
+    )
+    conn.execute(index_ddl)
+with psycopg.connect(shared_url) as conn:
+    nearest = conn.execute(
+        &quot;SELECT content FROM documents &quot;
+        &quot;ORDER BY embedding &lt;=&gt; &#x27;[0.9,0.1,0]&#x27; LIMIT 2&quot;
+    ).fetchall()
+print(&quot;nearest:&quot;, [row[0] for row in nearest])
+assert nearest[0][0] == &quot;배송&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">nearest: [&#x27;배송&#x27;, &#x27;환불&#x27;]
+</pre></div>
+<div class="nb-markdown"><h3>실제 쿼리 계획</h3>
+<p>행이 세 개뿐인 표에서 최적화기가 HNSW보다 순차 스캔을 선택하는지 실행 계획을 읽습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">with psycopg.connect(shared_url) as conn:
+    plan_rows = conn.execute(
+        &quot;EXPLAIN (ANALYZE, BUFFERS, COSTS OFF) &quot;
+        &quot;SELECT content FROM documents &quot;
+        &quot;ORDER BY embedding &lt;=&gt; &#x27;[0.9,0.1,0]&#x27; LIMIT 2&quot;
+    ).fetchall()
+plan = &quot;\n&quot;.join(row[0] for row in plan_rows)
+print(plan)
+print(&quot;uses hnsw:&quot;, &quot;documents_embedding_hnsw&quot; in plan)
+assert &quot;Scan&quot; in plan and &quot;Execution Time&quot; in plan</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Limit (actual time=0.014..0.015 rows=2 loops=1)
+  Buffers: shared hit=4
+  -&gt;  Sort (actual time=0.014..0.014 rows=2 loops=1)
+        Sort Key: ((embedding &lt;=&gt; &#x27;[0.9,0.1,0]&#x27;::vector))
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: shared hit=4
+        -&gt;  Seq Scan on documents (actual time=0.002..0.003 rows=3 loops=1)
+              Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=96
+Planning Time: 0.117 ms
+Execution Time: 0.029 ms
+uses hnsw: False
+</pre></div>
+<div class="nb-markdown"><h3>체크포인터 표 공존</h3>
+<p>공식 체크포인터 구현의 <code>setup()</code>으로 같은 스키마에 운영 표를 추가합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">with PostgresSaver.from_conn_string(shared_url) as saver:
+    saver.setup()
+    from typing_extensions import TypedDict
+    from langgraph.graph import END, START, StateGraph
+    class State(TypedDict):
+        value: int
+    graph_builder = StateGraph(State)
+    graph_builder.add_node(&quot;double&quot;, lambda state: {&quot;value&quot;: state[&quot;value&quot;] * 2})
+    graph_builder.add_edge(START, &quot;double&quot;)
+    graph_builder.add_edge(&quot;double&quot;, END)
+    graph = graph_builder.compile(checkpointer=saver)
+    saved = graph.invoke({&quot;value&quot;: 6}, {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;backup-demo&quot;}})
+with psycopg.connect(BASE_URL) as conn:
+    tables = [row[0] for row in conn.execute(
+        &quot;SELECT table_name FROM information_schema.tables &quot;
+        &quot;WHERE table_schema=&#x27;ch31_shared&#x27; ORDER BY table_name&quot;
+    )]
+    checkpoint_count = conn.execute(
+        &quot;SELECT count(*) FROM ch31_shared.checkpoints&quot;
+    ).fetchone()[0]
+print(&quot;saved:&quot;, saved, &quot;checkpoint rows:&quot;, checkpoint_count)
+assert saved[&quot;value&quot;] == 12 and checkpoint_count &gt; 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">saved: {&#x27;value&#x27;: 12} checkpoint rows: 3
+</pre></div>
+<div class="nb-markdown"><h3>논리 백업 확인</h3>
+<p>전용 스키마를 SQL 형식으로 덤프하고 두 종류의 표 정의가 모두 포함되는지 검사합니다.</p></div>
+<div class="nb-markdown"><h4>백업을 새 데이터베이스에 복원하여 확인</h4>
+<p>이 셀은 Docker 컨테이너 안에서 <code>pg_dump</code>를 실행해 <code>ch31_shared</code>의 논리 백업을 문자열로 받습니다. <code>subprocess.run(..., check=True)</code>는 외부 명령이 실패하면 예외로 중단하며, <code>text=True</code>와 <code>capture_output=True</code>는 출력을 문자열로 수집하도록 지정합니다. 별도의 실습용 <code>ch31_restore</code> 데이터베이스를 다시 만든 뒤 백업을 복원하고 문서·체크포인트 행 수와 HNSW 인덱스 존재를 확인합니다. 이 검사는 모든 벡터 값의 일치나 스레드 재개까지 확인하지는 않습니다. 두 항목은 추가 복구 검사로 구분합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">container = os.getenv(&quot;CH31_POSTGRES_CONTAINER&quot;, &quot;kdt-ch31-postgres&quot;)
+dump = subprocess.run(
+    [&quot;docker&quot;, &quot;exec&quot;, container, &quot;pg_dump&quot;, &quot;-U&quot;, &quot;postgres&quot;, &quot;-d&quot;, &quot;ch31_lab&quot;,
+     &quot;--schema=ch31_shared&quot;, &quot;--no-owner&quot;, &quot;--no-privileges&quot;],
+    text=True, capture_output=True, check=True,
+).stdout
+for command in ([&quot;dropdb&quot;, &quot;-U&quot;, &quot;postgres&quot;, &quot;--if-exists&quot;, &quot;ch31_restore&quot;],
+                [&quot;createdb&quot;, &quot;-U&quot;, &quot;postgres&quot;, &quot;ch31_restore&quot;]):
+    subprocess.run([&quot;docker&quot;, &quot;exec&quot;, container, *command], check=True)
+subprocess.run(
+    [&quot;docker&quot;, &quot;exec&quot;, container, &quot;psql&quot;, &quot;-U&quot;, &quot;postgres&quot;, &quot;-d&quot;, &quot;ch31_restore&quot;,
+     &quot;-c&quot;, &quot;CREATE EXTENSION vector&quot;], check=True, capture_output=True,
+)
+subprocess.run(
+    [&quot;docker&quot;, &quot;exec&quot;, &quot;-i&quot;, container, &quot;psql&quot;, &quot;-U&quot;, &quot;postgres&quot;, &quot;-d&quot;, &quot;ch31_restore&quot;],
+    input=dump, text=True, check=True, capture_output=True,
+)
+restore_url = BASE_URL.replace(&quot;/ch31_lab&quot;, &quot;/ch31_restore&quot;)
+with psycopg.connect(restore_url) as conn:
+    restored = conn.execute(&quot;SELECT (SELECT count(*) FROM ch31_shared.documents), &quot;
+                            &quot;(SELECT count(*) FROM ch31_shared.checkpoints)&quot;).fetchone()
+    index_ok = conn.execute(&quot;SELECT to_regclass(&#x27;ch31_shared.documents_embedding_hnsw&#x27;) IS NOT NULL&quot;).fetchone()[0]
+print(&quot;restored rows:&quot;, restored, &quot;hnsw:&quot;, index_ok)
+assert &quot;CREATE TABLE ch31_shared.documents&quot; in dump
+assert restored[0] == 3 and restored[1] &gt; 0 and index_ok</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">restored rows: (3, 3) hnsw: True
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 가장 가까운 문서, Seq Scan 실행 계획, 체크포인트 결과값, 복원 뒤 문서·체크포인트 행 수와 HNSW 인덱스 이름을 확인합니다. 그래프 스레드 재개 자체는 이 노트북의 실행 범위가 아닙니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>전용 `ch31_shared` 스키마에 문서 세 건과 코사인 HNSW 인덱스를 만들었습니다. `[0.9,0.1,0]`에 가장 가까운 문서는 ‘배송’이었습니다. 데이터가 세 행뿐이어서 실제 `EXPLAIN (ANALYZE, BUFFERS)`에서는 최적화기가 순차 스캔을 선택했습니다. 인덱스를 만들었다는 사실만으로 모든 쿼리가 그 인덱스를 사용하지 않음을 확인했습니다. PostgresSaver로 value 6을 12로 계산한 체크포인트를 실제 저장했습니다. 논리 덤프를 별도 `ch31_restore` 데이터베이스에 복원한 뒤 문서 3행, 1개 이상의 체크포인트 행, HNSW 인덱스를 다시 조회했습니다.</p><p>이 결과는 Docker의 독립 PostgreSQL 17.8 컨테이너와 작은 데이터에서 측정했습니다. 행 수, 네트워크, 디스크, 동시 요청 수가 달라지면 시간과 실행 계획도 달라집니다.</p><p>실행 계획의 Seq Scan은 HNSW 생성 실패가 아닙니다. 세 행에서는 전체를 읽고 정렬하는 비용이 작아 최적화기가 순차 스캔을 선택했습니다. 행 수와 통계를 운영 규모에 맞춘 뒤 같은 EXPLAIN을 반복해야 인덱스 선택과 버퍼 사용을 판단할 수 있습니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>근사 인덱스는 정확 검색과 속도·재현율 특성이 다르므로 Ch11 평가셋으로 변경 전후를 측정합니다.</li><li>WAL과 정기 논리 백업은 목적이 다릅니다. 필요한 복구 시점과 허용 손실 시간을 먼저 정합니다.</li><li>백업에는 확장 설치 명령과 역할·권한이 환경에 따라 다르게 포함될 수 있으므로 깨끗한 복원 대상에서 연습합니다.</li><li>벡터를 원문에서 다시 만들 수 있더라도 사용한 임베딩 모델 버전과 전처리 설정을 함께 보관해야 같은 결과를 재현할 수 있습니다.</li></ul><h3>운영 전 확인 순서</h3><p>복원 검증은 빈 대상에 확장을 준비하고 덤프를 적용하는 순간부터 시작합니다. 문서 수와 체크포인트 수를 원본과 대조하고, 인덱스 정의와 실제 검색·스레드 재개를 확인합니다. 이번 실습은 행 수와 인덱스 존재까지 실행했으며 그래프 스레드 재개는 추가 검증 항목으로 남깁니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>HNSW 인덱스는 거리 연산자 클래스와 쿼리가 맞아야 하며 작은 표에서는 선택되지 않을 수 있습니다.</li><li>문서 표와 실제 체크포인트 행을 같은 스키마에 저장했습니다.</li><li>논리 덤프를 별도 데이터베이스에 복원해 문서 행, 체크포인트 행, HNSW 인덱스를 확인했습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — Ch32에서는 이 애플리케이션과 PostgreSQL·pgvector를 Compose 서비스로 묶고 헬스체크와 시크릿을 설정합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. 코사인 거리용 HNSW 인덱스에 사용한 연산자 클래스는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — `vector_cosine_ops`입니다.</p></details><details class="quiz"><summary>2. 검색 표와 체크포인터 표를 함께 확인한 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 한 에이전트 서비스의 검색 데이터와 실행 재개 상태가 같은 백업 범위에 포함되는지 확인하기 위해서입니다.</p></details><details class="quiz"><summary>3. 백업 파일이 만들어지면 복구 준비가 끝났다고 볼 수 있나요?</summary><p class="quiz-a"><b>해설</b> — 볼 수 없습니다. 별도 데이터베이스에 복원하고 표, 행, 인덱스, 애플리케이션 조회를 확인해야 합니다.</p></details><details class="quiz"><summary>4. 벡터를 다시 생성할 때 함께 보관해야 할 정보는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 원문뿐 아니라 임베딩 모델 버전과 전처리 설정을 함께 보관해야 합니다.</p></details><details class="quiz"><summary>5. HNSW를 추가하면 정확 검색과 결과가 항상 같나요?</summary><p class="quiz-a"><b>해설</b> — 항상 같지 않습니다. 근사 검색이므로 평가셋에서 재현율과 지연을 함께 측정해야 합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://github.com/pgvector/pgvector">pgvector·체크포인터 공존과 백업 공식 문서</a> · 확인 2026-09-11 · pgvector 0.8.1 실습</li><li><a href="https://www.postgresql.org/docs/current/app-pgdump.html">pgvector·체크포인터 공존과 백업 공식 문서</a> · 확인 2026-09-11 · PostgreSQL 18 문서</li><li><a href="https://github.com/langchain-ai/langgraph/tree/main/libs/checkpoint-postgres">pgvector·체크포인터 공존과 백업 공식 문서</a> · 확인 2026-09-11 · checkpoint-postgres 3.0</li></ul><p><strong>확인 필요 항목</strong> — 운영 배포 전에는 조직의 허용 연결 수, 백업 보존 기간, 복구 목표 시간과 실제 데이터 규모를 별도로 확인해야 합니다.</p>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="04-커넥션-풀-고갈과-대응.html">← 커넥션 풀 고갈과 대응</a></span><span><a href="index.html">챕터 목차</a></span><span>챕터 끝</span></div></div></body></html>

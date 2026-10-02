@@ -1,0 +1,46 @@
+{
+  "part": 1,
+  "part_title": "Part 1 · 개발 기반",
+  "chapter": "ch04-data-tools",
+  "title": "데이터 다루기 — 도구 제작 관점",
+  "hours": "총 16h · 강의 5h · 실습 11h",
+  "objectives": [
+    "Pandas로 표 데이터를 선택·정리하고 주문 조회 함수의 반환값을 설명합니다.",
+    "테이블의 기본 키와 외래 키를 읽고 중복을 줄인 구조를 설계합니다.",
+    "SQL과 httpx로 조건 조회·REST 페이지네이션 함수를 구현하고 테스트합니다.",
+    "HTML 문서를 파싱하며 접근 정책과 이용 조건을 확인하는 절차를 적용합니다."
+  ],
+  "lab_path": "labs/part1/ch04-data-tools",
+  "sections": [
+    {
+      "slug": "01-Pandas로-표-다루기",
+      "title": "Pandas로 표 다루기",
+      "format": "paired"
+    },
+    {
+      "slug": "02-관계형-테이블과-키",
+      "title": "관계형 테이블과 키",
+      "format": "paired"
+    },
+    {
+      "slug": "03-SQL로-조회-함수-만들기",
+      "title": "SQL로 조회 함수 만들기",
+      "format": "paired"
+    },
+    {
+      "slug": "04-REST와-페이지네이션",
+      "title": "REST와 페이지네이션",
+      "format": "paired"
+    },
+    {
+      "slug": "05-문서-파싱과-스크래핑",
+      "title": "문서 파싱과 스크래핑",
+      "format": "paired"
+    },
+    {
+      "slug": "06-데이터-도구-실습",
+      "title": "데이터 도구 실습: 주문 서비스에서 고객별 합계 내기",
+      "format": "experiment"
+    }
+  ]
+}

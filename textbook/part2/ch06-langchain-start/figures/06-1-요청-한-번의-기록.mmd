@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  I["model.invoke 앞뒤로<br>perf_counter 읽기"]:::flow
+  M["gpt-5.4-mini<br>요청 1번"]:::model
+  U["usage_metadata<br>입력 27 · 출력 36<br>캐시 입력 0"]:::measure
+  T["걸린 초 0.97"]:::measure
+  P["mini 요금표<br>100만 토큰당 달러<br>0.75 · 0.075 · 4.50"]:::tool
+  C["estimate_cost 함수"]:::flow
+  R["예상 비용<br>0.00018225달러"]:::measure
+  I --> M
+  M --> U
+  M --> T
+  U --> C
+  P --> C
+  C --> R

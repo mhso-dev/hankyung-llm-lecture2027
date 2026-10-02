@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q["일상 말로 짧게 적은<br>원 질문"]:::tool
+  p["우리가 적은<br>안내문 머리글"]:::flow
+  m["답 모델 gpt-5.4-mini"]:::model
+  v["가상 문서 두 문장"]:::measure
+  s["우리가 적은<br>가상 문서로 거리 검색"]:::flow
+  g["정답 문서 LIB-004가<br>첫 자리"]:::measure
+  q --> p
+  p --> m
+  m --> v
+  v --> s
+  s --> g

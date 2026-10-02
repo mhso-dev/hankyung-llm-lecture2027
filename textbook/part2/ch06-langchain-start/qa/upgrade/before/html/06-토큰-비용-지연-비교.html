@@ -1,0 +1,398 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>토큰 비용 지연 비교 — Ch 6 · LangChain 시작</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 2 · LangChain과 프롬프트 · Ch 6 · LangChain 시작</p>
+<h1>토큰 비용 지연 비교</h1><div class="meta"><span>강의 1h</span><span>실습 배정 포함</span><span>새 용어 7개 이하</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 배정 포함 | 코드 Jupyter Notebook | 새 용어 7개 이하 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul><li><code>usage_metadata</code>에서 제공자가 보고한 입력·출력 토큰을 읽을 수 있습니다.</li><li><code>perf_counter()</code>로 한 번의 전체 호출 지연을 측정할 수 있습니다.</li><li>실행일의 공식 요금과 캐시 입력을 구분하여 예상 비용을 계산할 수 있습니다.</li><li>실행되지 않았거나 사용량이 누락된 행을 제외하고 비교 범위를 판정할 수 있습니다.</li></ul></div>
+
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>모델이 원하는 답을 만들더라도 호출당 비용과 대기 시간이 서비스 요구 조건을 넘으면 실제 기능에 적용하기 어렵습니다. 반대로 한 번 빠르게 답한 모델을 선택해도 다른 시간과 질문에서는 결과가 달라질 수 있습니다. 모델을 비교하려면 답의 내용과 함께 호출 조건과 원자료를 남겨야 합니다.</p>
+<p>토큰 수만 나란히 적는 것으로는 충분하지 않습니다. 제공자마다 같은 문장을 토큰으로 나누는 방식이 다를 수 있고, 입력과 출력의 단가도 다릅니다. 이미 처리한 입력을 다시 사용하는 캐시 입력에는 별도 요금이 적용되기도 합니다. 입력 토큰 전체를 일반 입력 단가로 계산하면 캐시 할인을 반영하지 못합니다.</p>
+<p>키가 없는 제공자나 사용량 정보를 보내지 않은 호출을 0으로 채우면 비교표가 사실과 달라집니다. 0초, 0토큰, 0달러는 측정 결과처럼 보이기 때문입니다. 이번 절에서는 실행 상태와 값의 확인 상태를 숫자와 분리해 기록합니다.</p>
+
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>첫 절에서 <code>AIMessage</code>와 <code>usage_metadata</code>를 확인했고, 두 번째 절에서 제공자별 원본 메타데이터와 표준 필드를 구분했습니다. 앞 절에서는 <code>timeout</code>과 최대 시도 횟수를 명시하여 한 호출이 끝없이 이어지지 않게 했습니다.</p>
+<p>이번 절은 OpenAI, Anthropic, Google의 모델 객체를 같은 <code>init_chat_model()</code> 형태로 준비합니다. 세 제공자 모두 같은 사용자 메시지와 출력 상한을 사용합니다. 각 API 키가 있을 때만 실제 호출하며, 키가 없으면 환경 변수 이름과 건너뜀 상태만 기록합니다. 키의 실제 값은 읽어서 출력하거나 결과 파일에 저장하지 않습니다.</p>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비교표의 한 행이 담아야 할 값</h3>
+<p>비교표의 한 행은 한 제공자에 대한 결론이 아니라 한 번의 실행 기록입니다. 최소한 <code>provider</code>, <code>model_id</code>, 실행 상태, 응답 텍스트, 전체 지연, 입력 토큰, 출력 토큰, 예상 비용을 함께 둡니다. 모델 이름을 기록하지 않으면 같은 제공자의 다른 모델 결과와 섞일 수 있습니다. 응답 원문이 없으면 토큰과 지연이 어떤 품질의 답에 대응하는지도 알 수 없습니다.</p>
+<p>비교 조건에는 사용자 메시지, 반복 횟수, 출력 토큰 상한을 기록합니다. 가능하다면 모델의 고정 스냅샷과 실행 지역도 함께 남깁니다. 이번 실습은 호출 형태를 배우기 위한 한 번의 작은 표본이므로 제공자 전체의 성능 순위를 만들지 않습니다.</p>
+
+<h3>제공자가 보고한 토큰 읽기</h3>
+<p><code>AIMessage.usage_metadata</code>는 제공자가 사용량을 보냈을 때 입력 토큰, 출력 토큰, 전체 토큰을 LangChain의 공통 필드로 제공합니다. 이 값은 로컬에서 문자열 길이를 세어 추정한 수치가 아닙니다. 제공자가 보고한 값이므로 모델과 제공자에 따라 같은 문장에서도 달라질 수 있습니다.</p>
+<p><code>usage_metadata</code>가 <code>None</code>이거나 필요한 필드가 없으면 비용도 확인할 수 없습니다. 이때 <code>dict.get(..., 0)</code>으로 바꾸면 안 됩니다. 토큰이 없었던 실행과 사용량을 받지 못한 실행을 구분할 수 없기 때문입니다. 레코드에는 <code>usage_status="unknown"</code>과 <code>estimated_cost_usd=None</code>처럼 상태를 분명히 남깁니다.</p>
+
+<h3>전체 호출 지연 측정</h3>
+<p><code>time.perf_counter()</code>는 시스템 시각 변경의 영향을 받지 않는 단조 시계입니다. 모델 호출 직전에 시작 값을 읽고, <code>invoke()</code>가 반환된 직후 종료 값을 읽습니다. 두 값의 차이는 요청을 보내기 시작한 때부터 완성된 응답을 받은 때까지의 전체 지연입니다.</p>
+<p>이 측정값에는 네트워크 왕복, 제공자 대기, 모델 생성 시간이 함께 들어 있습니다. 어느 구간이 느렸는지는 이 값 하나로 알 수 없습니다. 사용자에게 표시할 첫 비어 있지 않은 텍스트 청크가 도착할 때까지의 지연과도 다릅니다. 이번 절에서는 모든 제공자에 같은 측정 경계를 적용하여 한 번의 전체 지연 원자료만 남깁니다.</p>
+<h3>문자 수·토큰 수·응답 시간은 서로 다른 관찰입니다</h3>
+<p>한국어 한 문장이 30글자라고 해서 입력 토큰도 30개인 것은 아닙니다. 토큰은 모델이 텍스트를 처리하기 위해 나눈 단위이며, 공백·문장 부호·한글 음절·영문 조각을 나누는 방식은 토크나이저와 모델에 따라 달라질 수 있습니다. 같은 질문을 세 제공자에 보내도 입력 토큰 수가 같아야 한다는 조건을 두지 않습니다. 비교할 때는 제공자가 보고한 값을 각 모델의 관찰값으로 보존합니다.</p>
+<div class="tw"><table><thead><tr><th>관찰값</th><th>답하는 질문</th><th>답하지 못하는 질문</th><th>예시 해석</th></tr></thead><tbody>
+<tr><td>문자 수</td><td>화면에 표시된 답이 얼마나 긴가?</td><td>모델이 몇 토큰을 처리했는가?</td><td>짧은 문장 형식을 지켰는지 확인합니다.</td></tr>
+<tr><td>입력 토큰</td><td>해당 모델이 입력을 몇 단위로 처리했는가?</td><td>답이 정확한가?</td><td>같은 문장도 모델별 값이 다를 수 있습니다.</td></tr>
+<tr><td>출력 토큰</td><td>생성에 사용된 출력 단위는 얼마인가?</td><td>사용자가 읽은 글자 수와 같은가?</td><td>추론 토큰 세부 정보가 별도로 있을 수 있습니다.</td></tr>
+<tr><td>첫 텍스트 지연</td><td>첫 비어 있지 않은 텍스트 청크를 언제 받았는가?</td><td>전체 답이 언제 끝났는가?</td><td>채팅 화면이 처음 반응한 시점과 관련됩니다.</td></tr>
+<tr><td>전체 지연</td><td>완성 응답을 받는 데 얼마나 걸렸는가?</td><td>네트워크와 생성 중 무엇이 느렸는가?</td><td>이번 <code>invoke()</code> 실습이 측정한 값입니다.</td></tr>
+<tr><td>성공 상태</td><td>정한 조건에서 응답을 받았는가?</td><td>응답 내용이 유용한가?</td><td>성공률에는 반복 실행과 판정 기준이 필요합니다.</td></tr>
+</tbody></table></div>
+<p>설명용 가정으로, 두 모델이 모두 2초 만에 끝났더라도 사용 경험은 다를 수 있습니다. 모델 A가 0.3초에 첫 글자를 보여 주고 나머지를 이어서 생성했다면 채팅 화면은 일찍 반응합니다. 모델 B가 2초 뒤 완성 문장을 한 번에 반환했다면 전체 지연은 같지만 첫 표시 시점은 늦습니다. 반대로 화면이 빨리 시작해도 마지막 문장이 오래 걸리면 후속 저장이나 검증은 늦어집니다.</p>
+<p>이번 노트북은 <code>invoke()</code>의 시작과 반환 시점만 측정했으므로 첫 텍스트 지연을 관찰하지 않았습니다. 04절의 스트림에 시작 시각과 첫 비어 있지 않은 텍스트 청크 시각을 추가해야 그 값을 측정할 수 있습니다. 실제로 수집하지 않은 지표를 전체 지연에서 추정하지 않습니다.</p>
+<h3>성공 여부와 답의 품질을 분리합니다</h3>
+<p>API 호출이 성공했다는 것은 응답 객체를 받았다는 뜻입니다. “한 문장의 한국어로 설명하라”는 과제를 잘 수행했는지는 응답 원문을 읽어 별도로 판단해야 합니다. 내용이 사실인지, 초보자가 이해할 수 있는지, 요구한 형식을 지켰는지는 서로 다른 평가 항목입니다. 토큰과 지연이 더 작은 행이 자동으로 더 좋은 답은 아닙니다.</p>
+<p>비교를 확장할 때는 고객 문의, 개념 설명, 정보 추출처럼 성격이 다른 질문을 섞어 평균 하나로 만들기 전에 과제별 결과를 봅니다. 정보 추출에는 필드 누락률이 중요하고, 개념 설명에는 정확성과 설명 가능성이 중요하며, 채팅 화면에는 첫 텍스트 지연이 중요할 수 있습니다. 모델 선택 기준은 측정 가능한 숫자와 실제 과제의 성공 조건을 연결해 정합니다.</p>
+
+<h3>실행일 단가와 캐시 입력</h3>
+<p>예상 비용은 <code>(일반 입력 토큰 × 일반 입력 단가 + 캐시 입력 토큰 × 캐시 입력 단가 + 출력 토큰 × 출력 단가) ÷ 1,000,000</code>으로 계산합니다. 단가는 100만 토큰 기준이고 비용의 통화는 미국 달러입니다. 캐시 입력 토큰이 입력 토큰 합계에 포함되어 있다면 일반 입력 토큰은 전체 입력에서 캐시 입력을 뺀 값입니다.</p>
+<p>2026-09-09에 확인한 GPT-5.4 mini 공식 요금은 일반 입력 100만 토큰당 0.75달러, 캐시 입력 0.075달러, 출력 4.50달러입니다. 캐시 사용량 세부 정보가 제공된 OpenAI 행은 두 입력 단가를 나누어 적용합니다. Anthropic Claude Haiku 4.5의 표준 입력·출력 요금은 각각 1달러와 5달러이며, Google Gemini 2.5 Flash-Lite의 표준 입력·출력 요금은 각각 0.10달러와 0.40달러입니다. 이 두 제공자의 캐시 쓰기·읽기 조건은 표준 입출력과 별도일 수 있으므로 이번 기본 계산에 캐시 사용량을 임의로 추정하지 않습니다.</p>
+<p>가격은 모델, 사용 방식, 날짜에 따라 바뀔 수 있습니다. 소스 코드의 숫자가 영구적인 사실은 아닙니다. 레코드 필드에 가격 기준일을 포함하고, 수업 배포와 실제 서비스 적용 전에 공식 가격 페이지를 다시 확인합니다.</p>
+
+<h3>도식 읽기</h3>
+<figure><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 410" role="img" aria-labelledby="title desc"><title id="title">같은 과제의 제공자별 측정</title><desc id="desc">동일 과제를 세 제공자에 보내고 실행 상태와 토큰, 지연, 비용을 기록합니다.</desc><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#5B5B55"/></marker></defs><rect width="800" height="410" fill="#fff"/><text x="400" y="32" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="700">같은 과제의 제공자별 측정</text><rect x="30" y="150" width="130" height="62" rx="11" fill="#DDEDE8" stroke="#5B5B55" stroke-width="2"/><text x="95.0" y="181.0" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#252522">동일 과제</text><rect x="245" y="55" width="140" height="58" rx="11" fill="#E9E0F3" stroke="#5B5B55" stroke-width="2"/><text x="315.0" y="84.0" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#252522">OpenAI</text><rect x="245" y="150" width="140" height="58" rx="11" fill="#E9E0F3" stroke="#5B5B55" stroke-width="2"/><text x="315.0" y="179.0" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#252522">Anthropic</text><rect x="245" y="245" width="140" height="58" rx="11" fill="#E9E0F3" stroke="#5B5B55" stroke-width="2"/><text x="315.0" y="274.0" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#252522">Google</text><rect x="555" y="70" width="205" height="220" rx="11" fill="#F7EDC7" stroke="#5B5B55" stroke-width="2"/><text x="657.5" y="180.0" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#252522"><tspan x="657.5" dy="-5">토큰 · 지연 · 비용</tspan><tspan x="657.5" dy="20">실행 상태 포함</tspan></text><path d="M160 181 L245 84" stroke="#5B5B55" stroke-width="2.5"  marker-end="url(#arr)"/><path d="M160 181 L245 179" stroke="#5B5B55" stroke-width="2.5"  marker-end="url(#arr)"/><path d="M160 181 L245 274" stroke="#5B5B55" stroke-width="2.5"  marker-end="url(#arr)"/><path d="M385 84 L555 105" stroke="#5B5B55" stroke-width="2.5"  marker-end="url(#arr)"/><path d="M385 179 L555 180" stroke="#5B5B55" stroke-width="2.5"  marker-end="url(#arr)"/><path d="M385 274 L555 255" stroke="#5B5B55" stroke-width="2.5"  marker-end="url(#arr)"/><rect x="25" y="365" width="15" height="15" fill="#DDEDE8"/><text x="46" y="379" font-size="15">입력·맥락</text><rect x="155" y="365" width="15" height="15" fill="#DDEAF4"/><text x="176" y="379" font-size="15">프로그램 흐름</text><rect x="320" y="365" width="15" height="15" fill="#E9E0F3"/><text x="341" y="379" font-size="15">모델·응답</text><rect x="465" y="365" width="15" height="15" fill="#F7EDC7"/><text x="486" y="379" font-size="15">측정·검증</text><rect x="620" y="365" width="15" height="15" fill="#F4D9D5"/><text x="641" y="379" font-size="15">오류</text></svg></div><figcaption>같은 질문이 세 제공자 분기로 전달되고, 각 응답에서 텍스트·사용량·전체 지연·예상 비용을 한 행으로 모으는 흐름입니다. 키가 없는 분기는 숫자 행으로 합쳐지지 않고 건너뜀 상태로 남습니다.<span class="gaze">가운데의 모델 호출보다 오른쪽 레코드에서 상태와 숫자가 분리되어 있는지 먼저 확인합니다.</span></figcaption></figure>
+
+<!-- learning-sequence-20260914-06 -->
+<h3>측정 기록의 값과 상태를 함께 읽기</h3>
+<p><code>usage_metadata</code>는 응답 객체에 붙은 사용량 자료입니다. 사용자 질문 문자열의 길이를 센 값과 구분합니다. <code>usage.get(&quot;input_tokens&quot;)</code>는 딕셔너리에서 해당 키의 값을 읽고 키가 없으면 <code>None</code>을 반환합니다. 사용량 전체가 없을 때 <code>answer.usage_metadata or {}</code>는 계산이 중단되지 않도록 빈 딕셔너리를 준비하지만, 토큰을 0개 사용했다는 측정값을 새로 만드는 것은 아닙니다.</p>
+<p><code>time.perf_counter()</code>는 두 시점 사이에 지난 시간을 재기 위한 시계입니다. 날짜를 뜻하지 않습니다. 시작값을 저장하고 호출 반환 뒤 값에서 빼면 경과 초를 얻습니다. 예를 들어 차이가 1.5초라면 1000을 곱해 1500밀리초로 나타냅니다. 이 계산 예와 아래 실행에 저장된 실제 지연값은 구분합니다.</p>
+<p>개념 설명 요청과 상품명 추출 요청을 각각 측정한다고 생각해 봅니다. 둘 다 입력·출력 토큰과 지연을 기록할 수 있지만 성공 기준은 다릅니다. 전자는 설명의 사실성과 이해 가능성을, 후자는 필요한 필드의 정확성을 확인해야 합니다. 공통 숫자를 같은 열에 모으는 것은 기록 형식을 통일하는 일이며 서로 다른 과제를 같은 난이도로 만드는 일은 아닙니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>노트북은 OpenAI, Anthropic, Google의 환경 변수 이름과 모델 ID를 표로 준비합니다. 같은 사용자 메시지, 반복 횟수 1회, 같은 출력 상한을 모든 실행에 적용합니다. 각 반복에서 키의 존재만 확인하고, 키가 있는 제공자만 <code>init_chat_model()</code>과 <code>invoke()</code>를 실행합니다. 키가 없는 제공자는 <code>skipped</code> 상태를 남깁니다.</p>
+<p>실행된 행은 응답의 <code>text</code> 원문, <code>usage_metadata</code>, <code>perf_counter()</code>로 측정한 전체 지연을 저장합니다. 사용량이 있으면 실행일 단가로 예상 비용을 계산합니다. OpenAI 행에서 <code>input_token_details.cache_read</code>가 제공되면 캐시 입력과 일반 입력을 나누어 계산합니다. 필요한 사용량 필드가 없으면 비용을 0으로 만들지 않고 <code>None</code>으로 남깁니다.</p><p>마지막 셀은 공통 조건과 제공자별 원자료를 <code>runs/provider-comparison-continuity.json</code>에 저장하고, 같은 내용을 <code>runs/continuity/&lt;실행 시각&gt;/</code>에도 보존합니다. Ch 7은 정본의 <code>run_id</code>와 파일 지문을 읽어 이전 실행의 출처를 확인합니다.</p>
+<section class="notebook" data-notebook="06-토큰-비용-지연-비교" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-09</span><button type="button" class="copy-all">전체 코드 복사</button><a download="06-토큰-비용-지연-비교.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyAwNi4g7Yag7YGwIOu5hOyaqSDsp4Dsl7Ag67mE6rWQXG4iLAogICAgIlxuIiwKICAgICLqsJnsnYAg6rO87KCc66W8IOyXrOufrCDsoJzqs7XsnpDsl5Ag67O064K8IOuVjCDslrTrlqQg7JuQ7J6Q66OM66W8IOuCqOqyqOyVvCDqs7XsoJXtlZjqsowg67mE6rWQ7ZWgIOyImCDsnojsnYTquYzsmpQ/IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEXG4iLAogICAgIlxuIiwKICAgICJQeXRob24gMy4xMiDsg4gg7Luk64SQ7JeQ7IScIO2MqO2CpOyngOyZgCBBUEkg7YKkIOyhtOyerCDsl6zrtoDrpbwg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6MzY6NTMuMjQ2MTg5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6MzY6NTMuMjQ2MTMwWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6MzY6NTMuNzQ0NjM5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzozNjo1My43NDQwNTNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiTm90ZTogeW91IG1heSBuZWVkIHRvIHJlc3RhcnQgdGhlIGtlcm5lbCB0byB1c2UgdXBkYXRlZCBwYWNrYWdlcy5cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtmITsnqwg7Luk64SQ7JeQIOyEuCBwcm92aWRlciDruYTqtZDsl5Ag7ZWE7JqU7ZWcIO2Gte2VqSDtjKjtgqTsp4Ag67KE7KCE7J2EIOyEpOy5mO2VqeuLiOuLpC5cbiIsCiAgICAiIyDtmITsnqwg7Luk64SQ7JeQIOyImOyXheyXkOyEnCDqsoDspp3tlZwg67KE7KCE7J2EIOyEpOy5mO2VqeuLiOuLpC5cbiIsCiAgICAiJXBpcCBpbnN0YWxsIC1xIFwibGFuZ2NoYWluPT0xLjQuMFwiIFwibGFuZ2NoYWluLW9wZW5haT09MS42LjBcIiBcImxhbmdjaGFpbi1hbnRocm9waWM9PTEuNy4xXCIgXCJsYW5nY2hhaW4tZ29vZ2xlLWdlbmFpPT00LjQuMFwiIFwicHlkYW50aWM9PTIuMTMuNVwiIFwicHl0aG9uLWRvdGVudj09MS4yLjNcIiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6MzY6NTMuNzQ1ODE0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6MzY6NTMuNzQ1NjkxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6MzY6NTMuNzUyMjAwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzozNjo1My43NTE4OTFaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiT1BFTkFJX0FQSV9LRVkg7ZmV7J24IOyZhOujjFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyDgeychCDtj7TrjZTsl5DshJwgLmVuduulvCDssL7qs6AgT3BlbkFJIO2CpOydmCDsobTsnqwg7Jes67aA66eMIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiZnJvbSBkb3RlbnYgaW1wb3J0IGZpbmRfZG90ZW52LCBsb2FkX2RvdGVudlxuIiwKICAgICJpbXBvcnQgb3NcbiIsCiAgICAiXG4iLAogICAgImVudl9wYXRoID0gZmluZF9kb3RlbnYodXNlY3dkPVRydWUpXG4iLAogICAgImlmIG5vdCBlbnZfcGF0aDpcbiIsCiAgICAiICAgIHJhaXNlIEZpbGVOb3RGb3VuZEVycm9yKFwi7ZiE7J6sIO2PtOuNlOydmCDsg4HsnIQg6rK966Gc7JeQ7IScIC5lbnbrpbwg7LC+7KeAIOuqu+2WiOyKteuLiOuLpC5cIilcbiIsCiAgICAibG9hZF9kb3RlbnYoZW52X3BhdGgpXG4iLAogICAgImlmIG5vdCBvcy5nZXRlbnYoXCJPUEVOQUlfQVBJX0tFWVwiKTpcbiIsCiAgICAiICAgIHJhaXNlIFJ1bnRpbWVFcnJvcihcIi5lbnbsl5AgT1BFTkFJX0FQSV9LRVnqsIAg7JeG7Iq164uI64ukLlwiKVxuIiwKICAgICJwcmludChcIk9QRU5BSV9BUElfS0VZIO2ZleyduCDsmYTro4xcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjM2OjUzLjc1MzMwMVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjM2OjUzLjc1MzIzN1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjM2OjU0LjM5NTQ3NloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MzY6NTQuMzk1MDM5WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIkNoYXRPcGVuQUlcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDruYTqtZAg7Zi47Lac7JeQIOqzte2GteycvOuhnCDsk7gg66qo6424IElEwrfstIgg64uo7JyEIOygnO2VnMK37Lac66ClIO2GoO2BsCDsg4HtlZzsnYQg65Gh64uI64ukLlxuIiwKICAgICJmcm9tIGxhbmdjaGFpbi5jaGF0X21vZGVscyBpbXBvcnQgaW5pdF9jaGF0X21vZGVsXG4iLAogICAgIlxuIiwKICAgICIjIHByb3ZpZGVyOm1vZGVs7J2AIO2Gte2VqSDtjKjtgqTsp4DsmYAg66qo64247J2EIO2VqOq7mCDsp4DsoJXtlanri4jri6QuXG4iLAogICAgIiMgdGltZW91dOydgCDtlZwg7JqU7LKt7J2YIOy1nOuMgCDrjIDquLAg7LSILCBtYXhfcmV0cmllc+uKlCBTREvsnZgg7LaU6rCAIOyLnOuPhCDsg4HtlZzsnoXri4jri6QuXG4iLAogICAgIiMgbWF4X3Rva2Vuc+uKlCDsg53shLHtlaAg7Lac66ClIO2GoO2BsCDsiJjsnZgg7IOB7ZWc7J6F64uI64ukLlxuIiwKICAgICJtb2RlbCA9IGluaXRfY2hhdF9tb2RlbChcbiIsCiAgICAiICAgIFwib3BlbmFpOmdwdC01LjQtbWluaVwiLFxuIiwKICAgICIgICAgcmVhc29uaW5nX2VmZm9ydD1cIm5vbmVcIixcbiIsCiAgICAiICAgIG1heF90b2tlbnM9MTgwLFxuIiwKICAgICIgICAgdGltZW91dD0zMCxcbiIsCiAgICAiICAgIG1heF9yZXRyaWVzPTEsXG4iLAogICAgIilcbiIsCiAgICAicHJpbnQodHlwZShtb2RlbCkuX19uYW1lX18pIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOu5hOq1kCDsobDqsbQg6rOg7KCVXG4iLAogICAgIlxuIiwKICAgICLsp4jrrLgsIOuwmOuztSDtmp/siJgsIOy2nOugpSDsg4HtlZzsnYQg6riw66Gd7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6MzY6NTQuMzk2MzIwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6MzY6NTQuMzk2MjY2WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6MzY6NTQuMzk4NTY3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzozNjo1NC4zOTgyNzdaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAieydyZXBldGl0aW9ucyc6IDEsICdtYXhfdG9rZW5zJzogMTgwLCAnc2FtZV9tZXNzYWdlcyc6IFRydWV9XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg6rCZ7J2AIOuplOyLnOyngOyZgCDrsJjrs7Ug7IiYLCBVU0QvMTAw66eMIO2GoO2BsCDri6jqsIDrpbwgcHJvdmlkZXLrs4TroZwg6riw66Gd7ZWp64uI64ukLlxuIiwKICAgICJpbXBvcnQganNvblxuIiwKICAgICJpbXBvcnQgdGltZVxuIiwKICAgICJcbiIsCiAgICAibWVzc2FnZXMgPSBbKFwidXNlclwiLCBcIkFJTWVzc2FnZeydmCDsl63tlaDsnYQg7ZWcIOusuOyepeycvOuhnCDshKTrqoXtlZjshLjsmpQuXCIpXVxuIiwKICAgICJjb25kaXRpb25zID0ge1wicmVwZXRpdGlvbnNcIjogMSwgXCJtYXhfdG9rZW5zXCI6IDE4MCwgXCJzYW1lX21lc3NhZ2VzXCI6IFRydWV9XG4iLAogICAgInByb3ZpZGVyX3NwZWNzID0ge1xuIiwKICAgICIgICAgXCJvcGVuYWlcIjogKFwiT1BFTkFJX0FQSV9LRVlcIiwgXCJvcGVuYWk6Z3B0LTUuNC1taW5pXCIsIDAuNzUsIDAuMDc1LCA0LjUwKSxcbiIsCiAgICAiICAgIFwiYW50aHJvcGljXCI6IChcIkFOVEhST1BJQ19BUElfS0VZXCIsIFwiYW50aHJvcGljOmNsYXVkZS1oYWlrdS00LTVcIiwgMS4wMCwgTm9uZSwgNS4wMCksXG4iLAogICAgIiAgICBcImdvb2dsZVwiOiAoXCJHT09HTEVfQVBJX0tFWVwiLCBcImdvb2dsZV9nZW5haTpnZW1pbmktMi41LWZsYXNoLWxpdGVcIiwgMC4xMCwgTm9uZSwgMC40MCksXG4iLAogICAgIn1cbiIsCiAgICAicHJpbnQoY29uZGl0aW9ucykiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgT3BlbkFJIOyLpOygnCDsuKHsoJVcbiIsCiAgICAiXG4iLAogICAgIu2YuOy2nCDsp4HsoITqs7wg7KeB7ZuE7J2YIOuLqOyhsCDsi5zqs4Trpbwg7J296rOgIEFQSeqwgCDrs7Tqs6DtlZwg7Yag7YGwIOyImOulvCDsoIDsnqXtlanri4jri6QuXG4iLAogICAgIlxuIiwKICAgICJgdGltZS5wZXJmX2NvdW50ZXIoKWDsnZgg65GQIOqwkuydhCDrubzrqbQg6re4IOyCrOydtOydmCDqsr3qs7wg7LSI66W8IOyWu+qzoCwgMTAwMOydhCDqs7HtlZjrqbQg67CA66as7LSI7J6F64uI64ukLiDri6zroKXsnZgg64Kg7Kec7JmAIOq1rOu2hO2VmOuKlCDsuKHsoJXsmqkg7Iuc6rOE7J6F64uI64ukLiBgdXNhZ2VfbWV0YWRhdGFg64qUIOygnOqzteyekOqwgCDsnZHri7Xsl5Ag64u07JWEIOykgCDsgqzsmqnrn4kg7J6Q66OM7J2066mwIOyniOusuCDrrLjsnpDsl7TsnZgg6riA7J6QIOyImOqwgCDslYTri5nri4jri6QuXG4iLAogICAgIlxuIiwKICAgICJgdXNhZ2UuZ2V0KFwiaW5wdXRfdG9rZW5zXCIpYOuKlCDtgqTqsIAg7JeG7Jy866m0IGBOb25lYOyeheuLiOuLpC4gYGFuc3dlci51c2FnZV9tZXRhZGF0YSBvciB7fWDripQg7J6Q66OM6rCAIOyXhuydhCDrlYwg67mIIOuUleyFlOuEiOumrOulvCDspIDruYTtlZjrr4DroZwg64uk7J2MIO2VhOuTnCDtmZXsnbjsnbQg6rCA64ql7ZWp64uI64ukLiDsnbQg67mIIOyekOujjOulvCDsgqzsmqnrn4kgMOycvOuhnCDtjJDsoJXtlZjsp4Ag7JWK7Iq164uI64ukLiDsi6Ttlokg7IOB7YOc66W8IOuovOyggCDsnb3snYAg65KkIOyLpOygnCDrs7Tqs6DrkJwg7Iir7J6Q66eMIOu5hOq1kO2VqeuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgIuyEpOuqheusuCDsg53shLHqs7wg7KO866y4IOygleuztCDstpTstpzsnYAg6rCZ7J2AIOq4sOuhnSDtmJXsi53snYQg7IKs7Jqp7ZWgIOyImCDsnojsp4Drp4wg7ISx6rO1IOq4sOykgOydtCDri6TrpoXri4jri6QuIOy4oeyglSDsl7TsnYQg7Ya17J287ZaI64uk64qUIOydtOycoOunjOycvOuhnCDrkZAg6rO87KCc7J2YIOyGjeuPhOuCmCDthqDtgbAg7IiY66W8IOuqqOuNuCDsiJzsnITroZwg67CU6r647KeAIOyViuyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjM2OjU0LjM5OTIxMFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjM2OjU0LjM5OTE3MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjM2OjU0LjQwMDg5NVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MzY6NTQuNDAwNjIyWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyeheugpSDthqDtgbDsl5DshJwg7LqQ7IucIOyCrOyaqeufieydhCDrubzqs6Ag7J2867CYwrfsupDsi5wg64uo6rCA66W8IOuCmOuIhOyWtCDsoIHsmqntlanri4jri6QuXG4iLAogICAgImRlZiBlc3RpbWF0ZV9jb3N0KHVzYWdlLCBpbnB1dF9yYXRlLCBjYWNoZWRfaW5wdXRfcmF0ZSwgb3V0cHV0X3JhdGUpOlxuIiwKICAgICIgICAgaW5wdXRfdG9rZW5zID0gdXNhZ2UuZ2V0KFwiaW5wdXRfdG9rZW5zXCIpXG4iLAogICAgIiAgICBvdXRwdXRfdG9rZW5zID0gdXNhZ2UuZ2V0KFwib3V0cHV0X3Rva2Vuc1wiKVxuIiwKICAgICIgICAgaWYgaW5wdXRfdG9rZW5zIGlzIE5vbmUgb3Igb3V0cHV0X3Rva2VucyBpcyBOb25lOlxuIiwKICAgICIgICAgICAgIHJldHVybiBOb25lXG4iLAogICAgIiAgICBjYWNoZV9yZWFkID0gKHVzYWdlLmdldChcImlucHV0X3Rva2VuX2RldGFpbHNcIikgb3Ige30pLmdldChcImNhY2hlX3JlYWRcIikgb3IgMFxuIiwKICAgICIgICAgaWYgY2FjaGVfcmVhZCBhbmQgY2FjaGVkX2lucHV0X3JhdGUgaXMgTm9uZTpcbiIsCiAgICAiICAgICAgICByZXR1cm4gTm9uZVxuIiwKICAgICIgICAgbm9ybWFsX2lucHV0ID0gaW5wdXRfdG9rZW5zIC0gY2FjaGVfcmVhZFxuIiwKICAgICIgICAgcmV0dXJuIChub3JtYWxfaW5wdXQgKiBpbnB1dF9yYXRlICsgY2FjaGVfcmVhZCAqIChjYWNoZWRfaW5wdXRfcmF0ZSBvciBpbnB1dF9yYXRlKVxuIiwKICAgICIgICAgICAgICAgICArIG91dHB1dF90b2tlbnMgKiBvdXRwdXRfcmF0ZSkgLyAxXzAwMF8wMDAiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDYsCiAgICJpZCI6ICJjZWxsLTEwIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjM2OjU0LjQwMTUwNVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjM2OjU0LjQwMTQ2N1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjM2OjU1LjkxMjYwM1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MzY6NTUuOTEyMDMwWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInsncHJvdmlkZXInOiAnb3BlbmFpJywgJ21vZGVsX2lkJzogJ29wZW5haTpncHQtNS40LW1pbmknLCAnc3RhdHVzJzogJ2V4ZWN1dGVkJywgJ3RleHQnOiAnQUlNZXNzYWdl64qUICoq64yA7ZmU7JeQ7IScIEFJ6rCAIOyDneyEse2VnCDsnZHri7Ug64K07Jqp7J2EIO2RnO2YhO2VmOuKlCDrqZTsi5zsp4Ag6rCd7LK0KirsnoXri4jri6QuJywgJ2xhdGVuY3lfbXMnOiAxNTA3LjgsICd1c2FnZSc6IHsnaW5wdXRfdG9rZW5zJzogMTgsICdvdXRwdXRfdG9rZW5zJzogMjUsICd0b3RhbF90b2tlbnMnOiA0MywgJ2lucHV0X3Rva2VuX2RldGFpbHMnOiB7J2F1ZGlvJzogMCwgJ2NhY2hlX3JlYWQnOiAwfSwgJ291dHB1dF90b2tlbl9kZXRhaWxzJzogeydhdWRpbyc6IDAsICdyZWFzb25pbmcnOiAwfX0sICdjYWNoZV9yZWFkX3Rva2Vucyc6IDAsICdlc3RpbWF0ZWRfY29zdF91c2QnOiAwLjAwMDEyNiwgJ3ByaWNpbmdfZGF0ZSc6ICcyMDI2LTA5LTA5J31cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtgqTqsIAg7J6I64qUIOygnOqzteyekOulvCDtmLjstpztlZjqs6Ag7IKs7Jqp65+Jwrfsp4Dsl7DCt+yYiOyDgSDruYTsmqnsnYQg7ZWcIOugiOy9lOuTnOuhnCDrgqjquYHri4jri6QuXG4iLAogICAgInJlY29yZHMgPSBbXVxuIiwKICAgICJmb3IgbmFtZSwgcmF0ZXMgaW4gcHJvdmlkZXJfc3BlY3MuaXRlbXMoKTpcbiIsCiAgICAiICAgIGtleV9uYW1lLCBtb2RlbF9pZCwgaW5wdXRfcmF0ZSwgY2FjaGVkX2lucHV0X3JhdGUsIG91dHB1dF9yYXRlID0gcmF0ZXNcbiIsCiAgICAiICAgIGlmIG5vdCBvcy5nZXRlbnYoa2V5X25hbWUpOiAgIyDtgqQg7ZWE7JqUXG4iLAogICAgIiAgICAgICAgcmVjb3Jkcy5hcHBlbmQoe1wicHJvdmlkZXJcIjogbmFtZSwgXCJtb2RlbF9pZFwiOiBtb2RlbF9pZCxcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICAgICAgXCJzdGF0dXNcIjogZlwic2tpcHBlZDoge2tleV9uYW1lfSDtlYTsmpRcIn0pXG4iLAogICAgIiAgICAgICAgY29udGludWVcbiIsCiAgICAiICAgIGN1cnJlbnQgPSBpbml0X2NoYXRfbW9kZWwobW9kZWxfaWQsIHRpbWVvdXQ9MzAsIG1heF9yZXRyaWVzPTEsIG1heF90b2tlbnM9MTgwKVxuIiwKICAgICIgICAgc3RhcnRlZCA9IHRpbWUucGVyZl9jb3VudGVyKClcbiIsCiAgICAiICAgIGFuc3dlciA9IGN1cnJlbnQuaW52b2tlKG1lc3NhZ2VzKVxuIiwKICAgICIgICAgZWxhcHNlZF9tcyA9IHJvdW5kKCh0aW1lLnBlcmZfY291bnRlcigpIC0gc3RhcnRlZCkgKiAxMDAwLCAxKVxuIiwKICAgICIgICAgdXNhZ2UgPSBhbnN3ZXIudXNhZ2VfbWV0YWRhdGEgb3Ige31cbiIsCiAgICAiICAgIGNhY2hlX3JlYWQgPSAodXNhZ2UuZ2V0KFwiaW5wdXRfdG9rZW5fZGV0YWlsc1wiKSBvciB7fSkuZ2V0KFwiY2FjaGVfcmVhZFwiKSBvciAwXG4iLAogICAgIiAgICBjb3N0ID0gZXN0aW1hdGVfY29zdCh1c2FnZSwgaW5wdXRfcmF0ZSwgY2FjaGVkX2lucHV0X3JhdGUsIG91dHB1dF9yYXRlKVxuIiwKICAgICIgICAgcmVjb3Jkcy5hcHBlbmQoe1wicHJvdmlkZXJcIjogbmFtZSwgXCJtb2RlbF9pZFwiOiBtb2RlbF9pZCxcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICBcInN0YXR1c1wiOiBcImV4ZWN1dGVkXCIsIFwidGV4dFwiOiBhbnN3ZXIudGV4dCxcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICBcImxhdGVuY3lfbXNcIjogZWxhcHNlZF9tcywgXCJ1c2FnZVwiOiB1c2FnZSxcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICBcImNhY2hlX3JlYWRfdG9rZW5zXCI6IGNhY2hlX3JlYWQsXG4iLAogICAgIiAgICAgICAgICAgICAgICAgICAgXCJlc3RpbWF0ZWRfY29zdF91c2RcIjogTm9uZSBpZiBjb3N0IGlzIE5vbmUgZWxzZSByb3VuZChjb3N0LCA4KSxcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICBcInByaWNpbmdfZGF0ZVwiOiBcIjIwMjYtMDktMDlcIn0pXG4iLAogICAgIiAgICBwcmludChyZWNvcmRzWy0xXSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTExIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7KSA67mE65CY7KeAIOyViuydgCDsoJzqs7XsnpAg6riw66GdXG4iLAogICAgIlxuIiwKICAgICLtgqTqsIAg7JeG64qUIOygnOqzteyekOuKlCAw7Jy866GcIOyxhOyasOyngCDslYrqs6Ag6rG064SI65yAIOyDge2DnOuhnCDrgqjquYHri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA3LAogICAiaWQiOiAiY2VsbC0xMiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNzozNjo1NS45MTQyMjhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNzozNjo1NS45MTQxMDBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNzozNjo1NS45MTY4MTZaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE3OjM2OjU1LjkxNjI2M1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJvcGVuYWkgZXhlY3V0ZWRcbiIsCiAgICAgICJhbnRocm9waWMgc2tpcHBlZDogQU5USFJPUElDX0FQSV9LRVkg7ZWE7JqUXG4iLAogICAgICAiZ29vZ2xlIHNraXBwZWQ6IEdPT0dMRV9BUElfS0VZIO2VhOyalFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyVniDshYDsnZggcmVjb3Jkc+yXkOyEnCBwcm92aWRlciDsnbTrpoTqs7wgZXhlY3V0ZWTCt3NraXBwZWQg7IOB7YOc66eMIOuqqOyVhCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgIiMg7JyEIOyFgOydgCDtgqTqsIAg7J6I64qUIOygnOqzteyekOulvCDrqqjrkZAg7Iuk7ZaJ7ZWY6rOgLCDsl4bripQg7KCc6rO17J6Q64qUIOqxtOuEiOucgeuLiOuLpC5cbiIsCiAgICAiZm9yIHJlY29yZCBpbiByZWNvcmRzOlxuIiwKICAgICIgICAgcHJpbnQocmVjb3JkW1wicHJvdmlkZXJcIl0sIHJlY29yZFtcInN0YXR1c1wiXSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEzIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rSA7LCwIOuylOychFxuIiwKICAgICJcbiIsCiAgICAi7ZWcIOuyiOydmCDsuKHsoJXsnLzroZwg7KCc6rO17J6QIOyghOyytCDshLHriqXsnYQg64uo7KCV7ZWY7KeAIOyViuqzoCDsi6Ttlokg7Jes67aA7JmAIOybkOyekOujjCDsmYTsoITshLHsnYQg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogOCwKICAgImlkIjogImNlbGwtMTQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6MzY6NTUuOTE4MDAzWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6MzY6NTUuOTE3ODkxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6MzY6NTUuOTIwNzAzWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzozNjo1NS45MjAxNDNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7Iuk7ZaJIOqxtOyImDogMVxuIiwKICAgICAgIuu5hOq1kCDqsIDriqXtlZwg7KCc6rO17J6QIOyImDogMVxuIiwKICAgICAgIuyXrOufrCDsoJzqs7XsnpAg7Lih7KCV6rCSIOyeiOydjDogRmFsc2VcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsi6Ttlokg7ZaJ7J2EIOyEuOyWtCDsl6zrn6wgcHJvdmlkZXLsnZgg7Lih7KCV6rCS7J20IOyeiOuKlOyngOunjCDtjJDri6jtlZjqs6Ag7Jqw7Je07J2AIOuLqOygle2VmOyngCDslYrsirXri4jri6QuXG4iLAogICAgImV4ZWN1dGVkID0gW3IgZm9yIHIgaW4gcmVjb3JkcyBpZiByW1wic3RhdHVzXCJdID09IFwiZXhlY3V0ZWRcIl1cbiIsCiAgICAicHJpbnQoXCLsi6Ttlokg6rG07IiYOlwiLCBsZW4oZXhlY3V0ZWQpKVxuIiwKICAgICJwcmludChcIuu5hOq1kCDqsIDriqXtlZwg7KCc6rO17J6QIOyImDpcIiwgbGVuKGV4ZWN1dGVkKSlcbiIsCiAgICAicHJpbnQoXCLsl6zrn6wg7KCc6rO17J6QIOy4oeygleqwkiDsnojsnYw6XCIsIGxlbihleGVjdXRlZCkgPj0gMilcbiIsCiAgICAiYXNzZXJ0IGV4ZWN1dGVkWzBdW1wibGF0ZW5jeV9tc1wiXSA+IDAiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTE1IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIOq4sOuhnSDrs7TsobRcbiIsCiAgICAiXG4iLAogICAgIkNoIDfsl5DshJwg6rO17Ya1IO2VhOuTnOulvCDri6Tsi5wg7J297J2EIOyImCDsnojrj4TroZ0g7KCV67O46rO8IOyLpO2WieuzhCDsgqzrs7jsnYQg7ZWo6ruYIOyggOyepe2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDksCiAgICJpZCI6ICJjZWxsLTE2IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjM2OjU1LjkyMTg1OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjM2OjU1LjkyMTc2M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjM2OjU1LjkyNjQ4N1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MzY6NTUuOTI2MDM2WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgImxhYnMvcGFydDIvY2gwNi1sYW5nY2hhaW4tc3RhcnQvcnVucy9wcm92aWRlci1jb21wYXJpc29uLWNvbnRpbnVpdHkuanNvbiDrs7TsobQg7IKs67O4OiBsYWJzL3BhcnQyL2NoMDYtbGFuZ2NoYWluLXN0YXJ0L3J1bnMvY29udGludWl0eS8yMDI2MDkwOVQxNzM2NTU5MjM0NTRaL3Byb3ZpZGVyLWNvbXBhcmlzb24tY29udGludWl0eS5qc29uXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgQ2ggN+ydtCDsnb3snYQg7KCV67O46rO8IOydtOuyiCDsi6TtlonsnZgg67aI67OAIOyCrOuzuOydhCDqsJnsnYAgSlNPTuycvOuhnCDsoIDsnqXtlanri4jri6QuXG4iLAogICAgImZyb20gZGF0ZXRpbWUgaW1wb3J0IGRhdGV0aW1lLCB0aW1lem9uZVxuIiwKICAgICJmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGhcbiIsCiAgICAiXG4iLAogICAgInJ1bl9hdCA9IGRhdGV0aW1lLm5vdyh0aW1lem9uZS51dGMpXG4iLAogICAgInNlc3Npb25faWQgPSBydW5fYXQuc3RyZnRpbWUoXCIlWSVtJWRUJUglTSVTJWZaXCIpXG4iLAogICAgInByaWNpbmcgPSB7XCJkYXRlXCI6IFwiMjAyNi0wOS0wOVwiLCBcInVuaXRcIjogXCJVU0QgcGVyIDFNIHRva2Vuc1wiLFxuIiwKICAgICIgICAgICAgICAgIFwib3BlbmFpXCI6IHtcIm9yZGluYXJ5X2lucHV0XCI6IDAuNzUsIFwiY2FjaGVkX2lucHV0XCI6IDAuMDc1LCBcIm91dHB1dFwiOiA0LjUwfX1cbiIsCiAgICAicmVjb3JkID0ge1wicnVuX2lkXCI6IGZcImNoMDYtcHJvdmlkZXIte3Nlc3Npb25faWR9XCIsIFwicnVuX2RhdGVcIjogcnVuX2F0LmRhdGUoKS5pc29mb3JtYXQoKSxcbiIsCiAgICAiICAgICAgICAgIFwic291cmNlX2NoYXB0ZXJcIjogXCJjaDA2XCIsIFwiY29uZGl0aW9uc1wiOiBjb25kaXRpb25zLCBcInByaWNpbmdcIjogcHJpY2luZywgXCJyZWNvcmRzXCI6IHJlY29yZHN9XG4iLAogICAgImNvdXJzZV9yb290ID0gbmV4dCgocGF0aCBmb3IgcGF0aCBpbiBbUGF0aC5jd2QoKSwgKlBhdGguY3dkKCkucGFyZW50c11cbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICBpZiAocGF0aCAvIFwibGFicy9wYXJ0Mi9jaDA2LWxhbmdjaGFpbi1zdGFydFwiKS5pc19kaXIoKSksIE5vbmUpXG4iLAogICAgImlmIGNvdXJzZV9yb290IGlzIE5vbmU6XG4iLAogICAgIiAgICByYWlzZSBGaWxlTm90Rm91bmRFcnJvcihcIuyLpOyKtSDrrLbsnYzsnZggbGFicy9wYXJ0MiDtj7TrjZTrpbwg7LC+7KeAIOuqu+2WiOyKteuLiOuLpC5cIilcbiIsCiAgICAicnVuc19kaXIgPSBjb3Vyc2Vfcm9vdCAvIFwibGFicy9wYXJ0Mi9jaDA2LWxhbmdjaGFpbi1zdGFydC9ydW5zXCJcbiIsCiAgICAiY2Fub25pY2FsX3BhdGggPSBydW5zX2RpciAvIFwicHJvdmlkZXItY29tcGFyaXNvbi1jb250aW51aXR5Lmpzb25cIlxuIiwKICAgICJzZXNzaW9uX3BhdGggPSBydW5zX2RpciAvIFwiY29udGludWl0eVwiIC8gc2Vzc2lvbl9pZCAvIGNhbm9uaWNhbF9wYXRoLm5hbWVcbiIsCiAgICAic2Vzc2lvbl9wYXRoLnBhcmVudC5ta2RpcihwYXJlbnRzPVRydWUsIGV4aXN0X29rPUZhbHNlKVxuIiwKICAgICJwYXlsb2FkID0ganNvbi5kdW1wcyhyZWNvcmQsIGVuc3VyZV9hc2NpaT1GYWxzZSwgaW5kZW50PTIpXG4iLAogICAgImNhbm9uaWNhbF9wYXRoLndyaXRlX3RleHQocGF5bG9hZCwgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJzZXNzaW9uX3BhdGgud3JpdGVfdGV4dChwYXlsb2FkLCBlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgInByaW50KGNhbm9uaWNhbF9wYXRoLnJlbGF0aXZlX3RvKGNvdXJzZV9yb290KSwgXCLrs7TsobQg7IKs67O4OlwiLCBzZXNzaW9uX3BhdGgucmVsYXRpdmVfdG8oY291cnNlX3Jvb3QpKSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAiZXhwZXJpbWVudCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDksCiAgICJjb2RlX3NoYTI1NiI6ICI0ODhhYTNkMjk3MmRhMmE5ZDE1NWM5Yjk4MDg5ZGNjMTJhMmM1YzU1NWViNTg2MmYxYzI3MzUxNzY5NTg1Mzc4IiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMDlUMTc6MzY6NTYuMDQ3NzczKzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICIzODNhN2U3NTQxMWYwOWE3YzMyMTNhMGIxODVkYWZhMzNjMmQyZjE4YTRjZGFjZjY4MWM0NWIxMjk0MDk2MzExIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>06. 토큰 비용 지연 비교</h2>
+<p>같은 과제를 여러 제공자에 보낼 때 어떤 원자료를 남겨야 공정하게 비교할 수 있을까요?</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>Python 3.12 새 커널에서 패키지와 API 키 존재 여부를 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 현재 커널에 세 provider 비교에 필요한 통합 패키지 버전을 설치합니다.
+# 현재 커널에 수업에서 검증한 버전을 설치합니다.
+%pip install -q &quot;langchain==1.4.0&quot; &quot;langchain-openai==1.6.0&quot; &quot;langchain-anthropic==1.7.1&quot; &quot;langchain-google-genai==4.4.0&quot; &quot;pydantic==2.13.5&quot; &quot;python-dotenv==1.2.3&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 상위 폴더에서 .env를 찾고 OpenAI 키의 존재 여부만 확인합니다.
+from dotenv import find_dotenv, load_dotenv
+import os
+
+env_path = find_dotenv(usecwd=True)
+if not env_path:
+    raise FileNotFoundError(&quot;현재 폴더의 상위 경로에서 .env를 찾지 못했습니다.&quot;)
+load_dotenv(env_path)
+if not os.getenv(&quot;OPENAI_API_KEY&quot;):
+    raise RuntimeError(&quot;.env에 OPENAI_API_KEY가 없습니다.&quot;)
+print(&quot;OPENAI_API_KEY 확인 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">OPENAI_API_KEY 확인 완료
+</pre></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 비교 호출에 공통으로 쓸 모델 ID·초 단위 제한·출력 토큰 상한을 둡니다.
+from langchain.chat_models import init_chat_model
+
+# provider:model은 통합 패키지와 모델을 함께 지정합니다.
+# timeout은 한 요청의 최대 대기 초, max_retries는 SDK의 추가 시도 상한입니다.
+# max_tokens는 생성할 출력 토큰 수의 상한입니다.
+model = init_chat_model(
+    &quot;openai:gpt-5.4-mini&quot;,
+    reasoning_effort=&quot;none&quot;,
+    max_tokens=180,
+    timeout=30,
+    max_retries=1,
+)
+print(type(model).__name__)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">ChatOpenAI
+</pre></div>
+<div class="nb-markdown"><h3>비교 조건 고정</h3>
+<p>질문, 반복 횟수, 출력 상한을 기록합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 같은 메시지와 반복 수, USD/100만 토큰 단가를 provider별로 기록합니다.
+import json
+import time
+
+messages = [(&quot;user&quot;, &quot;AIMessage의 역할을 한 문장으로 설명하세요.&quot;)]
+conditions = {&quot;repetitions&quot;: 1, &quot;max_tokens&quot;: 180, &quot;same_messages&quot;: True}
+provider_specs = {
+    &quot;openai&quot;: (&quot;OPENAI_API_KEY&quot;, &quot;openai:gpt-5.4-mini&quot;, 0.75, 0.075, 4.50),
+    &quot;anthropic&quot;: (&quot;ANTHROPIC_API_KEY&quot;, &quot;anthropic:claude-haiku-4-5&quot;, 1.00, None, 5.00),
+    &quot;google&quot;: (&quot;GOOGLE_API_KEY&quot;, &quot;google_genai:gemini-2.5-flash-lite&quot;, 0.10, None, 0.40),
+}
+print(conditions)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;repetitions&#x27;: 1, &#x27;max_tokens&#x27;: 180, &#x27;same_messages&#x27;: True}
+</pre></div>
+<div class="nb-markdown"><h3>OpenAI 실제 측정</h3>
+<p>호출 직전과 직후의 단조 시계를 읽고 API가 보고한 토큰 수를 저장합니다.</p>
+<p><code>time.perf_counter()</code>의 두 값을 빼면 그 사이의 경과 초를 얻고, 1000을 곱하면 밀리초입니다. 달력의 날짜와 구분하는 측정용 시계입니다. <code>usage_metadata</code>는 제공자가 응답에 담아 준 사용량 자료이며 질문 문자열의 글자 수가 아닙니다.</p>
+<p><code>usage.get(&quot;input_tokens&quot;)</code>는 키가 없으면 <code>None</code>입니다. <code>answer.usage_metadata or {}</code>는 자료가 없을 때 빈 딕셔너리를 준비하므로 다음 필드 확인이 가능합니다. 이 빈 자료를 사용량 0으로 판정하지 않습니다. 실행 상태를 먼저 읽은 뒤 실제 보고된 숫자만 비교합니다.</p>
+<p>설명문 생성과 주문 정보 추출은 같은 기록 형식을 사용할 수 있지만 성공 기준이 다릅니다. 측정 열을 통일했다는 이유만으로 두 과제의 속도나 토큰 수를 모델 순위로 바꾸지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 입력 토큰에서 캐시 사용량을 빼고 일반·캐시 단가를 나누어 적용합니다.
+def estimate_cost(usage, input_rate, cached_input_rate, output_rate):
+    input_tokens = usage.get(&quot;input_tokens&quot;)
+    output_tokens = usage.get(&quot;output_tokens&quot;)
+    if input_tokens is None or output_tokens is None:
+        return None
+    cache_read = (usage.get(&quot;input_token_details&quot;) or {}).get(&quot;cache_read&quot;) or 0
+    if cache_read and cached_input_rate is None:
+        return None
+    normal_input = input_tokens - cache_read
+    return (normal_input * input_rate + cache_read * (cached_input_rate or input_rate)
+            + output_tokens * output_rate) / 1_000_000</code></pre></div></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 키가 있는 제공자를 호출하고 사용량·지연·예상 비용을 한 레코드로 남깁니다.
+records = []
+for name, rates in provider_specs.items():
+    key_name, model_id, input_rate, cached_input_rate, output_rate = rates
+    if not os.getenv(key_name):  # 키 필요
+        records.append({&quot;provider&quot;: name, &quot;model_id&quot;: model_id,
+                        &quot;status&quot;: f&quot;skipped: {key_name} 필요&quot;})
+        continue
+    current = init_chat_model(model_id, timeout=30, max_retries=1, max_tokens=180)
+    started = time.perf_counter()
+    answer = current.invoke(messages)
+    elapsed_ms = round((time.perf_counter() - started) * 1000, 1)
+    usage = answer.usage_metadata or {}
+    cache_read = (usage.get(&quot;input_token_details&quot;) or {}).get(&quot;cache_read&quot;) or 0
+    cost = estimate_cost(usage, input_rate, cached_input_rate, output_rate)
+    records.append({&quot;provider&quot;: name, &quot;model_id&quot;: model_id,
+                    &quot;status&quot;: &quot;executed&quot;, &quot;text&quot;: answer.text,
+                    &quot;latency_ms&quot;: elapsed_ms, &quot;usage&quot;: usage,
+                    &quot;cache_read_tokens&quot;: cache_read,
+                    &quot;estimated_cost_usd&quot;: None if cost is None else round(cost, 8),
+                    &quot;pricing_date&quot;: &quot;2026-09-09&quot;})
+    print(records[-1])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;provider&#x27;: &#x27;openai&#x27;, &#x27;model_id&#x27;: &#x27;openai:gpt-5.4-mini&#x27;, &#x27;status&#x27;: &#x27;executed&#x27;, &#x27;text&#x27;: &#x27;AIMessage는 **대화에서 AI가 생성한 응답 내용을 표현하는 메시지 객체**입니다.&#x27;, &#x27;latency_ms&#x27;: 1507.8, &#x27;usage&#x27;: {&#x27;input_tokens&#x27;: 18, &#x27;output_tokens&#x27;: 25, &#x27;total_tokens&#x27;: 43, &#x27;input_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;cache_read&#x27;: 0}, &#x27;output_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;reasoning&#x27;: 0}}, &#x27;cache_read_tokens&#x27;: 0, &#x27;estimated_cost_usd&#x27;: 0.000126, &#x27;pricing_date&#x27;: &#x27;2026-09-09&#x27;}
+</pre></div>
+<div class="nb-markdown"><h3>준비되지 않은 제공자 기록</h3>
+<p>키가 없는 제공자는 0으로 채우지 않고 건너뜀 상태로 남깁니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 앞 셀의 records에서 provider 이름과 executed·skipped 상태만 모아 확인합니다.
+# 위 셀은 키가 있는 제공자를 모두 실행하고, 없는 제공자는 건너뜁니다.
+for record in records:
+    print(record[&quot;provider&quot;], record[&quot;status&quot;])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">openai executed
+anthropic skipped: ANTHROPIC_API_KEY 필요
+google skipped: GOOGLE_API_KEY 필요
+</pre></div>
+<div class="nb-markdown"><h3>관찰 범위</h3>
+<p>한 번의 측정으로 제공자 전체 성능을 단정하지 않고 실행 여부와 원자료 완전성을 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [8]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 실행 행을 세어 여러 provider의 측정값이 있는지만 판단하고 우열은 단정하지 않습니다.
+executed = [r for r in records if r[&quot;status&quot;] == &quot;executed&quot;]
+print(&quot;실행 건수:&quot;, len(executed))
+print(&quot;비교 가능한 제공자 수:&quot;, len(executed))
+print(&quot;여러 제공자 측정값 있음:&quot;, len(executed) &gt;= 2)
+assert executed[0][&quot;latency_ms&quot;] &gt; 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">실행 건수: 1
+비교 가능한 제공자 수: 1
+여러 제공자 측정값 있음: False
+</pre></div>
+<div class="nb-markdown"><h3>실행 기록 보존</h3>
+<p>Ch 7에서 공통 필드를 다시 읽을 수 있도록 정본과 실행별 사본을 함께 저장합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [9]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># Ch 7이 읽을 정본과 이번 실행의 불변 사본을 같은 JSON으로 저장합니다.
+from datetime import datetime, timezone
+from pathlib import Path
+
+run_at = datetime.now(timezone.utc)
+session_id = run_at.strftime(&quot;%Y%m%dT%H%M%S%fZ&quot;)
+pricing = {&quot;date&quot;: &quot;2026-09-09&quot;, &quot;unit&quot;: &quot;USD per 1M tokens&quot;,
+           &quot;openai&quot;: {&quot;ordinary_input&quot;: 0.75, &quot;cached_input&quot;: 0.075, &quot;output&quot;: 4.50}}
+record = {&quot;run_id&quot;: f&quot;ch06-provider-{session_id}&quot;, &quot;run_date&quot;: run_at.date().isoformat(),
+          &quot;source_chapter&quot;: &quot;ch06&quot;, &quot;conditions&quot;: conditions, &quot;pricing&quot;: pricing, &quot;records&quot;: records}
+course_root = next((path for path in [Path.cwd(), *Path.cwd().parents]
+                    if (path / &quot;labs/part2/ch06-langchain-start&quot;).is_dir()), None)
+if course_root is None:
+    raise FileNotFoundError(&quot;실습 묶음의 labs/part2 폴더를 찾지 못했습니다.&quot;)
+runs_dir = course_root / &quot;labs/part2/ch06-langchain-start/runs&quot;
+canonical_path = runs_dir / &quot;provider-comparison-continuity.json&quot;
+session_path = runs_dir / &quot;continuity&quot; / session_id / canonical_path.name
+session_path.parent.mkdir(parents=True, exist_ok=False)
+payload = json.dumps(record, ensure_ascii=False, indent=2)
+canonical_path.write_text(payload, encoding=&quot;utf-8&quot;)
+session_path.write_text(payload, encoding=&quot;utf-8&quot;)
+print(canonical_path.relative_to(course_root), &quot;보존 사본:&quot;, session_path.relative_to(course_root))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">labs/part2/ch06-langchain-start/runs/provider-comparison-continuity.json 보존 사본: labs/part2/ch06-langchain-start/runs/continuity/20260909T173655923454Z/provider-comparison-continuity.json
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<p class="look"><b>확인할 점</b> — 먼저 각 행의 <code>status</code>와 <code>model_id</code>를 확인합니다. 실행된 행에서 응답 원문, 사용량, 전체 지연, 가격 기준일을 차례로 읽습니다. 건너뛴 행과 사용량 미확인 행에는 측정값처럼 보이는 0이 없어야 합니다.</p>
+
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2>
+<p>2026-09-09 최종 새 커널 실행에서는 OpenAI의 <code>openai:gpt-5.4-mini</code> 행만 완료되었습니다. 제공자가 보고한 사용량은 입력 18토큰, 출력 25토큰, 전체 43토큰이었습니다. 전체 호출 지연은 1,507.8밀리초였고, 해당 실행의 캐시 입력은 없었습니다. 기준일의 일반 입출력 단가로 계산한 예상 비용은 0.000126달러였습니다. 생성 문장과 토큰, 지연은 다시 실행하면 달라질 수 있습니다.</p>
+<p>Anthropic과 Google 행은 각각 필요한 API 키가 없어 <code>skipped</code>로 기록되었습니다. 0토큰이나 0밀리초로 기록하지 않았습니다. 실제 측정값이 있는 제공자는 한 개뿐이므로 여러 제공자의 수치를 비교할 수 없다는 판정이 출력되었습니다. 이 결과는 두 통합의 코드 분기가 준비되었다는 사실만 보여 주며, 두 모델의 품질·속도·비용을 관찰한 결과는 아닙니다.</p>
+<p>OpenAI 한 행도 모델 전체의 성능을 나타내지 않습니다. 이 실험은 한 질문을 한 번 실행한 예시입니다. 생성된 문장의 길이와 내용, 네트워크 상태가 달라지면 출력 토큰과 지연도 달라집니다. 공정한 평가를 이어가려면 실제 업무를 대표하는 질문 집합을 만들고, 같은 날짜와 실행 지역에서 각 조건을 여러 번 반복해야 합니다.</p>
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul><li><strong>누락된 값은 0으로 바꾸지 않습니다.</strong> 0은 측정값이고, <code>None</code>은 확인하지 못한 값입니다. 상태 열과 숫자 열을 분리합니다.</li><li><strong>캐시 입력을 일반 입력과 구분합니다.</strong> 제공자가 캐시 사용량 세부 정보를 보냈을 때만 할인 단가를 적용합니다. 제공되지 않은 캐시 토큰을 추정하지 않습니다.</li><li><strong>비용은 예상값으로 표시합니다.</strong> 공식 청구서에는 반올림, 요청 종류, 장기 컨텍스트, 배치 처리 같은 별도 조건이 반영될 수 있습니다.</li><li><strong>한 번의 지연값을 평균처럼 사용하지 않습니다.</strong> 예열, 네트워크 혼잡, 출력 길이의 영향을 줄이려면 반복 횟수와 중앙값 또는 백분위수를 미리 정합니다.</li><li><strong>API 키와 개인정보를 기록하지 않습니다.</strong> 키는 존재 여부만 확인하고, 프롬프트 원문을 저장할 때도 공개 가능한 입력인지 확인합니다.</li></ul>
+<div class="callout yellow"><b>확인 필요 항목</b>Anthropic과 Google 호출은 API 키가 없어 실행되지 않았습니다. 두 제공자의 실제 사용량·지연·비용은 키가 준비된 환경에서 같은 조건으로 다시 실행해야 합니다. 가격과 모델 접근 권한은 배포 직전에 공식 문서와 계정 화면에서 다시 확인합니다.</div>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>한 실행 행에는 제공자·모델·상태·응답 원문·사용량·전체 지연·예상 비용·가격 기준일을 함께 기록합니다.</li><li>사용량과 캐시 세부 정보가 제공된 범위에서만 비용을 계산하고, 누락된 값은 미확인으로 남깁니다.</li><li>한 질문의 1회 실행은 호출 기록의 예시이며 제공자 전체의 순위를 정하는 근거가 아닙니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — Ch 7의 08절은 이 파일을 읽어 실행 출처를 확인한 뒤, 별도의 고객 문의와 세 프롬프트 버전을 같은 측정 필드로 기록합니다. 질문과 실험 단위가 다르므로 두 챕터의 수치를 직접 비교하지 않습니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz"><summary>문제 1</summary><p class="quiz-q"><code>usage_metadata</code>가 없을 때 입력·출력 토큰을 0으로 기록하면 왜 안 되나요?</p><p class="quiz-a"><b>해설</b> — 0은 토큰을 사용하지 않았다는 측정값처럼 보입니다. 메타데이터가 없으면 사용량을 확인하지 못한 것이므로 <code>None</code>이나 <code>unknown</code>으로 기록해야 합니다.</p></details>
+<details class="quiz"><summary>문제 2</summary><p class="quiz-q">전체 입력 토큰 중 일부가 캐시 입력이라면 비용을 어떻게 계산하나요?</p><p class="quiz-a"><b>해설</b> — 전체 입력에서 캐시 입력을 뺀 토큰에는 일반 입력 단가를 적용하고, 캐시 입력에는 캐시 단가를 적용합니다. 출력 토큰 비용을 더한 뒤 100만으로 나눕니다.</p></details>
+<details class="quiz"><summary>문제 3</summary><p class="quiz-q">키가 없는 제공자의 행에 0밀리초와 0달러를 적어도 되나요?</p><p class="quiz-a"><b>해설</b> — 적으면 안 됩니다. 호출하지 않은 행은 <code>skipped</code> 상태로 남기고 수치 필드는 비워야 실제 측정 결과와 구분할 수 있습니다.</p></details>
+<details class="quiz"><summary>문제 4</summary><p class="quiz-q">세 제공자가 모두 한 번씩 실행되면 가장 좋은 모델을 고를 수 있나요?</p><p class="quiz-a"><b>해설</b> — 고를 수 없습니다. 한 질문과 한 번의 실행은 표본이 너무 작고 답의 품질 기준도 포함하지 않습니다. 대표 질문 집합, 반복 측정, 품질 평가 기준을 함께 준비해야 합니다.</p></details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<p>개념·API 확인 날짜: 2026-09-11. 가격은 기존 실행일인 2026-09-09에 확인한 값을 유지합니다. 고정 환경은 LangChain 1.4.0, langchain-core 1.6.2와 세 제공자 통합의 잠금 버전입니다. 온라인 문서는 이후 버전 설명을 포함할 수 있으며 이 절의 수치는 저장된 노트북 실행에서 가져온 값입니다.</p><ul><li><a href="https://docs.langchain.com/oss/python/langchain/messages">LangChain Messages</a> · <code>usage_metadata</code>와 토큰 세부 정보</li><li><a href="https://docs.langchain.com/oss/python/langchain/models">LangChain Models</a> · invoke·stream과 측정 경계</li><li><a href="https://docs.langchain.com/oss/python/integrations/chat/openai">LangChain ChatOpenAI integration</a> · OpenAI 사용량 메타데이터</li><li><a href="https://developers.openai.com/api/docs/models/gpt-5.4-mini">OpenAI GPT-5.4 mini</a> · 확인 2026-09-09 · 일반 입력·캐시 입력·출력 단가</li><li><a href="https://www.anthropic.com/claude/haiku">Anthropic Claude Haiku 4.5</a> · 확인 2026-09-09 · 모델 ID와 표준 입출력 단가</li><li><a href="https://ai.google.dev/gemini-api/docs/models">Google Gemini models</a> 및 <a href="https://ai.google.dev/gemini-api/docs/pricing">Gemini Developer API pricing</a> · 확인 2026-09-09 · 모델 ID와 표준 입출력 단가</li><li><a href="https://github.com/langchain-ai/langchain/blob/master/LICENSE">LangChain LICENSE</a> · MIT</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="05-타임아웃-재시도-폴백.html">← 타임아웃 재시도 폴백</a></span><span><a href="index.html">챕터 목차</a></span><span>챕터 끝</span></div></div></body></html>

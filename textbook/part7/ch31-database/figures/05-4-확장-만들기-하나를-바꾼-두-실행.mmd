@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  same["두 실행 같음<br>같은 덤프 파일<br>함수 restore_copy<br>새 데이터베이스 ch31_restore"]
+  subgraph r1["실행 1 · 확장 만들기 False"]
+    direction TB
+    b1["확장 없이<br>pg_restore"]:::flow
+    m1["종료 코드 1<br>표 넷 · 문서 표 없음"]:::measure
+    b1 --> m1
+  end
+  subgraph r2["실행 2 · 확장 만들기 True"]
+    direction TB
+    b2["CREATE EXTENSION<br>vector 뒤 pg_restore"]:::flow
+    m2["종료 코드 0<br>표 다섯<br>documents 줄 셋"]:::measure
+    p2["enable_seqscan off 계획<br>Index Scan using<br>documents_<br>embedding_hnsw"]:::measure
+    b2 --> m2 --> p2
+  end
+  both["두 실행 모두<br>checkpoints 줄 셋<br>저장된 값 value 12"]:::measure
+  same --> r1
+  same --> r2
+  r1 --> both
+  r2 --> both

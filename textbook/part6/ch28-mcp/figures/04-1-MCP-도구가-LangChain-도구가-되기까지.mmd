@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  srv["서버 파일 course_server.py<br>도구 lookup_policy"]:::tool
+  cfg["stdio_config 설정 한 벌<br>keep_alive False"]:::flow
+  ad["MCPAdapter<br>list_tools"]:::flow
+  st["StructuredTool lookup_policy<br>입력 형식 dict<br>ainvoke로만 부름"]:::measure
+  tn["ToolNode<br>도구 실행 노드"]:::flow
+  ag["create_agent<br>에이전트"]:::flow
+  srv --> cfg --> ad --> st
+  st -.-> tn
+  st -.-> ag

@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  req["요청 글 셋<br>목적 · 절차 · 문의"]:::tool
+  wrap["asyncio.to_thread 셋<br>ask_json을 감싼 코루틴<br>아직 보내지 않음"]
+  ask["gpt-5.4-mini<br>요청 셋 · 기다림이 겹침"]:::model
+  gat["asyncio.gather<br>셋이 모두 끝날 때까지 기다림"]
+  ans["받은 답 목록<br>목적 · 절차 · 문의<br>넣은 차례"]:::measure
+  rec["기록 줄<br>응답이 도착한 차례로 쌓임<br>넣은 차례와 다를 수 있음"]:::measure
+  req --> wrap
+  wrap --> ask
+  ask --> gat
+  gat --> ans
+  ask --> rec

@@ -1,0 +1,4 @@
+- 설명 대상 문장: Before와 달라진 곳은 관리자 함수 한 곳입니다. yield 줄을 try 블록에 넣고, 닫는 두 줄을 finally 블록으로 옮깁니다.
+- 캡션: 같은 오류, 다른 정리. 닫는 줄이 yield 아래에만 있으면 False, finally 블록에 있으면 True입니다.
+- 읽는 법: 위 칸이 Before, 아래 칸이 After이고 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 가운데 파란 상자의 int('많이') ValueError는 두 칸이 같고, 빨간 상자 False와 노란 상자 True만 다릅니다.
+- alt: Before는 yield order_file 아래에 order_file.close()를 둔 관리자에서 블록의 int('많이') ValueError가 yield 자리에서 다시 일어나 닫는 줄을 건너뛰고 파일이 닫혔나요? False가 나오고, After는 try: yield order_file과 finally: close()로 고친 관리자에서 같은 ValueError가 나도 finally가 먼저 실행되어 파일을 닫았습니다와 파일이 닫혔나요? True가 나오는 비교 그림

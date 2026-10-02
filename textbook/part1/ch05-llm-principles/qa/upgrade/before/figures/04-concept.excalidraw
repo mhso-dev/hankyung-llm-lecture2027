@@ -1,0 +1,178 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "ch05",
+  "elements": [
+    {
+      "id": "box-0",
+      "type": "rectangle",
+      "x": 20,
+      "y": 55,
+      "width": 165,
+      "height": 90,
+      "strokeColor": "#334155",
+      "backgroundColor": "#dcfce7"
+    },
+    {
+      "id": "text-0",
+      "type": "text",
+      "x": 40,
+      "y": 88,
+      "width": 125,
+      "height": 24,
+      "fontSize": 17,
+      "text": "총 512",
+      "originalText": "총 512",
+      "strokeColor": "#172033",
+      "backgroundColor": "transparent",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "box-0"
+    },
+    {
+      "id": "arrow-0",
+      "type": "arrow",
+      "x": 185,
+      "y": 100,
+      "width": 25,
+      "height": 0,
+      "strokeColor": "#475569",
+      "backgroundColor": "transparent",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          25,
+          0
+        ]
+      ],
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "box-1",
+      "type": "rectangle",
+      "x": 215,
+      "y": 55,
+      "width": 165,
+      "height": 90,
+      "strokeColor": "#334155",
+      "backgroundColor": "#dbeafe"
+    },
+    {
+      "id": "text-1",
+      "type": "text",
+      "x": 235,
+      "y": 88,
+      "width": 125,
+      "height": 24,
+      "fontSize": 17,
+      "text": "출력 64 예약",
+      "originalText": "출력 64 예약",
+      "strokeColor": "#172033",
+      "backgroundColor": "transparent",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "box-1"
+    },
+    {
+      "id": "arrow-1",
+      "type": "arrow",
+      "x": 380,
+      "y": 100,
+      "width": 25,
+      "height": 0,
+      "strokeColor": "#475569",
+      "backgroundColor": "transparent",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          25,
+          0
+        ]
+      ],
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "box-2",
+      "type": "rectangle",
+      "x": 410,
+      "y": 55,
+      "width": 165,
+      "height": 90,
+      "strokeColor": "#334155",
+      "backgroundColor": "#fef3c7"
+    },
+    {
+      "id": "text-2",
+      "type": "text",
+      "x": 430,
+      "y": 88,
+      "width": 125,
+      "height": 24,
+      "fontSize": 17,
+      "text": "입력 448",
+      "originalText": "입력 448",
+      "strokeColor": "#172033",
+      "backgroundColor": "transparent",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "box-2"
+    },
+    {
+      "id": "arrow-2",
+      "type": "arrow",
+      "x": 575,
+      "y": 100,
+      "width": 25,
+      "height": 0,
+      "strokeColor": "#475569",
+      "backgroundColor": "transparent",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          25,
+          0
+        ]
+      ],
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "box-3",
+      "type": "rectangle",
+      "x": 605,
+      "y": 55,
+      "width": 165,
+      "height": 90,
+      "strokeColor": "#334155",
+      "backgroundColor": "#fef3c7"
+    },
+    {
+      "id": "text-3",
+      "type": "text",
+      "x": 625,
+      "y": 88,
+      "width": 125,
+      "height": 24,
+      "fontSize": 17,
+      "text": "실제 토큰 측정",
+      "originalText": "실제 토큰 측정",
+      "strokeColor": "#172033",
+      "backgroundColor": "transparent",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "box-3"
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}

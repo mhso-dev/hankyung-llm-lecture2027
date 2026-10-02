@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  q["자료의 질문 하나"]:::tool
+  s1["거리 검색으로<br>앞 세 문서 고르기"]:::flow
+  m1["답 모델 gpt-5.4-mini가<br>답 초안 쓰기"]:::model
+  sc["받은 근거 점수"]:::measure
+  judge["근거 점수 기준값 0.9와<br>견주기"]:::flow
+  m2["답 모델이<br>한 번 고쳐 쓰기"]:::model
+  out["고친 답에<br>붙인 낱말이 없음"]:::measure
+  q --> s1
+  s1 --> m1
+  m1 --> sc
+  sc --> judge
+  judge -.-> m2
+  m2 --> out

@@ -1,0 +1,45 @@
+{
+  "snapshot": "ch16-labs-review-2026-09-10.txt",
+  "sha256": "e8153d9db363fb54bbdbe0430e5f4229bf2d956cb7a8f4a7fa74aeeae292ea47",
+  "files": 6,
+  "prose_characters": 2594,
+  "items": [
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/01-입출력-출처-검증.ipynb",
+      "source_sha256": "8f2eb1fd9c0c1a3e0069fa97cd342ffc28ab638961070337271af229826b670a",
+      "prose_characters": 422,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/02-PII-마스킹.ipynb",
+      "source_sha256": "d986f009b4e8deafad593a6b19ce863466f8f06ffaecae8d56ac4f17ed9d27bd",
+      "prose_characters": 405,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/03-히스토리-트리밍과-요약.ipynb",
+      "source_sha256": "8ad1c0bae7c5904a5ab171a6bd1e49f061f1948c8e80ba29428535e27f227662",
+      "prose_characters": 393,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/04-호출-한도와-비용-상한.ipynb",
+      "source_sha256": "4239650c06945e54471a20babd6b5927ea2c0d89420206f94e9d80dc08f1fdba",
+      "prose_characters": 383,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/05-재시도-폴백과-감사-로그.ipynb",
+      "source_sha256": "b5408414f54af05fbab5c0776c1ebcc5cb3f2982765032e660aef4ee82f9c1ce",
+      "prose_characters": 447,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/06-문서-프롬프트-인젝션과-통합.ipynb",
+      "source_sha256": "27d0558ed759739045763fbeb61cf8633a795869b8d84070dd09e372a6b26380",
+      "prose_characters": 544,
+      "kind": "notebook_markdown"
+    }
+  ],
+  "note": "Read-only extraction. Notebook code cells, outputs, metadata, and fenced README code blocks are excluded."
+}

@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph keep["이 절의 제시 라벨"]
+    direction TB
+    k1["Q090 라벨 1<br>없다고 답한 것도<br>맞는 답으로 셈"]:::tool
+    k2["02절 판 일치율 0.75<br>규칙 함수 0.75"]:::measure
+    k1 --> k2
+  end
+  subgraph other["값 바꿔 보기"]
+    direction TB
+    o1["Q090 라벨만 0<br>없다는 답을<br>0으로 세는 기준"]:::tool
+    o2["02절 판 일치율 1.0<br>규칙 함수 0.5"]:::measure
+    o1 --> o2
+  end
+  same["두 쪽 모두 같은 판정<br>모델 요청 없음<br>새 판은 이번 두 실행에서<br>02절 판과 같은 값"]
+  keep ~~~ same
+  other ~~~ same

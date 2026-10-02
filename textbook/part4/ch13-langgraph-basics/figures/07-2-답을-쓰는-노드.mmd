@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  p1["보고 자리 칸<br>문서 청크 다섯"]:::tool
+  p2["노드 make_reply"]:::flow
+  p3["앞 세 자리 본문과<br>출처 표시"]:::tool
+  p4["모델 gpt-5.4-mini"]:::model
+  p5["답 칸에 담긴 답"]:::measure
+  p1 --> p2
+  p2 --> p3
+  p3 --> p4
+  p4 --> p5

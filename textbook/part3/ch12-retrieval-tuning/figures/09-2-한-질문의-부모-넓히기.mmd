@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  question["질문 Q002<br>대출 권수와 기간"]:::tool
+  cands["후보 문서 청크 8개"]:::flow
+  order["부모 문서 차례 E01 · E02"]:::flow
+  first["E01 조각 1913"]:::measure
+  second["E02 조각 1799"]:::measure
+  both["두 건 합 3712"]:::measure
+  over["입력 가용분 3400을 넘음"]:::measure
+  question --> cands
+  cands --> order
+  order --> first
+  order --> second
+  first --> both
+  second --> both
+  both --> over

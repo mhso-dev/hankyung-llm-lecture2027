@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph A["3번 소제목 · import order_tools"]
+    direction LR
+    a1["import<br>order_tools"]:::flow --> a2["노트북에<br>생긴 이름<br>order_tools"]:::tool --> a3["order_tools.<br>OrderLine<br>('연필', 3)"]:::flow --> a4["pencil<br>수량: 5"]:::measure
+  end
+  subgraph B["5번 소제목 · from order_tools import OrderLine"]
+    direction LR
+    b1["from order_tools<br>import OrderLine"]:::flow --> b2["노트북에<br>생긴 이름<br>OrderLine"]:::tool --> b3["OrderLine<br>('노트', 2)"]:::flow --> b4["note<br>수량: 4"]:::measure
+  end
+  A ~~~ B

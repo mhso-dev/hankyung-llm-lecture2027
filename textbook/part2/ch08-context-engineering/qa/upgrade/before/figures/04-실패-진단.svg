@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 490" width="800" height="490" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif" role="img" aria-label="무엇을 넣었고 어떤 답이 나왔는지 함께 확인합니다">
+<title>무엇을 넣었고 어떤 답이 나왔는지 함께 확인합니다</title>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+</defs>
+<rect width="800" height="490" fill="#ffffff"/>
+<text x="20" y="32.0" font-size="20" fill="#1e293b" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">무엇을 넣었고 어떤 답이 나왔는지 함께 확인합니다</tspan></text>
+<rect x="45" y="110" width="170" height="80" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="130.0" y="137.8" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="130.0" dy="0.0">잘못된 정보</tspan><tspan x="130.0" dy="24.3">틀린 메모를 재사용</tspan></text>
+<rect x="235" y="110" width="170" height="80" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="320.0" y="137.8" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="320.0" dy="0.0">불필요한 자료</tspan><tspan x="320.0" dy="24.3">중요한 내용을 놓침</tspan></text>
+<rect x="45" y="245" width="170" height="80" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="130.0" y="274.2" font-size="16" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="130.0" dy="0.0">비슷한 대상</tspan><tspan x="130.0" dy="21.6">이름·내용을 혼동</tspan></text>
+<rect x="235" y="245" width="170" height="80" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="320.0" y="272.9" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="320.0" dy="0.0">서로 다른 규정</tspan><tspan x="320.0" dy="24.3">어느 것을 따를까?</tspan></text>
+<polyline points="215,150 475,205" fill="none" stroke="#dc2626" stroke-width="2.5" marker-end="url(#m-red)"/>
+<polyline points="405,150 475,215" fill="none" stroke="#dc2626" stroke-width="2.5" marker-end="url(#m-red)"/>
+<polyline points="215,285 475,235" fill="none" stroke="#dc2626" stroke-width="2.5" marker-end="url(#m-red)"/>
+<polyline points="405,285 475,225" fill="none" stroke="#dc2626" stroke-width="2.5" marker-end="url(#m-red)"/>
+<rect x="475" y="165" width="280" height="120" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="615.0" y="203.4" font-size="16" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="615.0" dy="0.0">입력과 답 비교</tspan><tspan x="615.0" dy="21.6">무슨 자료를 넣었는가?</tspan><tspan x="615.0" dy="21.6">답에서 무엇이 틀렸는가?</tspan></text>
+<text x="475" y="334.2" font-size="16" fill="#92400e" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="475" dy="0.0">오답 문장만 보면</tspan><tspan x="475" dy="21.6">네 가지 원인을 구분하기 어렵습니다.</tspan></text>
+</svg>

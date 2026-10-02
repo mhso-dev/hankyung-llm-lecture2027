@@ -1,0 +1,107 @@
+<!--meta: 강의 1h · 실습은 챕터 전체 10h 안에서 진행합니다. -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><p>이 절을 마치면 다음을 할 수 있습니다.</p><ul><li>모델 객체의 인자 <code>timeout</code>과 <code>max_retries</code>를 직접 적고, 적지 않았을 때 쓰이는 값을 출력으로 확인할 수 있습니다.</li><li>메서드 <code>with_retry()</code>에 다시 시도할 오류와 전체 시도 횟수를 적고, 시도한 횟수를 셀 수 있습니다.</li><li>메서드 <code>with_fallbacks()</code>로 정한 오류일 때만 대체 모델로 넘기고, 응답한 모델 이름을 기록할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>04절까지는 요청이 제시간에 끝났습니다. 서비스 모델은 인터넷 너머의 서버에서 답을 만듭니다. 그래서 네트워크나 서버 사정으로 답이 늦거나 오류가 날 수 있습니다.</p>
+<p>아무 제한 없이 기다리면 사용자는 화면이 멈춘 것으로 생각합니다. 실패할 때마다 같은 요청을 끝없이 다시 보내면 기다리는 시간과 요청 수가 늘어납니다. 모델 이름 오타처럼, 다시 보내도 고쳐지지 않는 오류도 있습니다.</p>
+<p>그래서 세 가지를 정합니다. 얼마나 기다릴지, 어떤 오류를 몇 번까지 다시 보낼지, 끝내 실패하면 어느 경로로 넘길지입니다. 다른 경로가 답했다면 그 사실도 기록해야 합니다.</p>
+<p><strong>이 절의 질문</strong> — 요청이 늦거나 실패하면, 기다릴 시간과 다시 시도할 횟수, 넘길 경로를 어떻게 정하고 확인할까요?</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<table><thead><tr><th>앞 절</th><th>배운 것</th><th>이 절에서 이어지는 곳</th></tr></thead><tbody>
+<tr><td>01절</td><td><code>invoke()</code>·<code>AIMessage</code>·끝난 이유, 모델 객체를 만들 때는 요청 0번, 인자를 더해 새 모델 객체 만들기(출력 상한 12)</td><td>4절 두 값을 적은 모델 객체, 5절 요청 없이 모델 객체 만들기</td></tr>
+<tr><td>02절</td><td>모델 이름만 바꾼 <code>gpt-5.4-nano</code>, 모델 없음 오류 <code>ModelNotFoundError</code>와 404, 기록표의 실행 상태</td><td>8절·10절 없는 모델 이름, 10절 대체 모델</td></tr>
+<tr><td>03절</td><td>양식을 붙이는 줄은 호출 객체 <code>RunnableSequence</code>만 만들고 요청 0번</td><td>7절 <code>RunnableRetry</code>, 10절 <code>RunnableWithFallbacks</code></td></tr>
+<tr><td>04절</td><td>모르는 사용량은 0이 아니라 <code>None</code>, 받는 도중의 오류는 실행하지 않음</td><td>3절 비어 있는 설정 <code>None</code>, 주의 메모의 스트리밍</td></tr>
+<tr><td>Ch 2 04·05·12절</td><td>함수 정의, <code>try/except 이름 as error</code>, <code>time.perf_counter()</code></td><td>7절 <code>ask_current_model()</code>, 5~10절 오류 받기, 걸린 초</td></tr>
+<tr><td>Ch 5 08절</td><td>바깥 이름에 후보를 담고 함수 부르기, <code>round(값, 1)</code>, 한 번 잰 시간은 모델 속도가 아님</td><td>7·8절 <code>current_model</code> 바꾸기, 걸린 초 읽기</td></tr>
+</tbody></table>
+<p>01~04절의 모델 객체는 인자 <code>timeout</code>과 <code>max_retries</code>를 적지 않았습니다. 이 절에서 두 인자를 처음 적습니다. 적지 않았을 때 어떤 값이 쓰였는지도 노트북 3절에서 확인합니다.</p>
+<p>04절 주의 메모에는 연결이 중간에 끊긴 스트리밍을 실행하지 않았다고 적었습니다. 이 절도 스트리밍 도중의 오류는 다루지 않고, <code>invoke()</code> 요청만 봅니다.</p>
+<p>실습 폴더와 <code>.env</code> 파일의 <code>OPENAI_API_KEY</code>는 01절과 같습니다. 노트북은 앞 절 없이 새 커널에서 시작합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유로 시작하기</h3>
+<p>구슬을 나무 레일에 굴려 컵에 넣는 놀이를 떠올려 봅니다. 레일 끝의 문이 닫혀 있으면 구슬은 문 앞에서 멈춥니다.</p>
+<p>모래시계가 다 떨어질 때까지 기다려도 문이 열리지 않으면, 같은 레일로 구슬을 몇 번 더 굴려 볼 수 있습니다. 그래도 막혀 있으면 옆길로 굴려 컵에 넣습니다.</p>
+{{img:05-5-막힌-길과-옆길|나무 탁자 위 곧은 나무 레일 끝의 닫힌 작은 문 앞에 초록 구슬 세 알이 멈춰 있고 문 옆에 모래가 거의 다 떨어진 모래시계가 있으며, 레일 가운데에서 갈라진 옆길 끝의 둥근 컵에 주황 구슬 한 알이 들어 있는 삽화|같은 길로 보낸 초록 구슬 셋은 닫힌 문 앞에서 멈췄고, 갈라진 옆길로 간 주황 구슬만 컵에 도착했습니다.}}
+<p><strong>그림 읽기</strong> — 나무 탁자 위 곧은 레일의 끝을 작은 문이 막고 있습니다. 문 앞에는 초록 구슬 세 알이 멈춰 있고, 문 옆에는 모래가 거의 다 떨어진 모래시계가 있습니다. 레일 가운데에서 옆길이 오른쪽 아래로 갈라지고, 그 끝 컵에 주황 구슬 한 알이 들어 있습니다.</p>
+<p>모래시계는 기다리는 시간의 제한(타임아웃)입니다. 같은 레일로 굴린 구슬 셋은 같은 경로로 보낸 세 번의 시도(재시도)입니다. 옆길로 컵에 들어간 주황 구슬은 다른 모델이 보낸 답(폴백)입니다.</p>
+<p>04절 그림의 구슬은 스트림 청크였지만, 이 그림의 구슬 한 알은 요청을 한 번 보내 보는 일입니다. 그림의 옆길은 구슬 셋보다 앞에서 갈라집니다. 노트북은 재시도와 폴백을 따로 실행했고, 한 호출에 함께 붙이지 않았습니다.</p>
+<h3>타임아웃과 적지 않은 값</h3>
+<p>타임아웃(timeout)은 답을 기다리는 최대 시간이고, 단위는 초입니다. 전화 신호음이 오래 가면 끊는 것과 비슷합니다. 노트북 4절은 인자 <code>timeout=30</code>을 적어 <code>timeout: 30.0</code>을 확인했습니다.</p>
+<p>인자를 적지 않은 모델 객체는 어떨까요? 노트북 3절 출력은 <code>모델 객체 timeout: None</code>과 <code>openai 클라이언트 timeout: None</code>이었습니다. 설치한 langchain-openai 1.6.0과 openai 3.10.0 소스를 확인했습니다. 이 <code>None</code>은 시간 제한을 두지 않는다는 뜻이었습니다.</p>
+<p>같은 출력의 <code>openai 클라이언트 max_retries: 2</code>도 봅니다. 모델 객체의 <code>max_retries</code>가 비어 있으면, 요청을 보내는 openai 패키지의 기본값 2가 쓰였습니다. 적지 않은 값도 어딘가에서 정해져 있으므로, 두 값은 코드에 적습니다.</p>
+<h3>재시도와 다시 시도할 오류</h3>
+<p>재시도(retry)는 실패한 요청을 같은 설정으로 다시 보내는 일입니다. 다시 보내 보는 한 번 한 번을 시도라고 부릅니다. 첫 시도를 포함해 센 수가 전체 시도 횟수입니다.</p>
+<p>재시도는 모든 오류에 쓰지 않습니다. 서버가 잠깐 늦어서 난 시간 초과는 다시 보내면 성공할 수도 있습니다. 없는 모델 이름은 몇 번을 보내도 같은 404가 옵니다.</p>
+<p>라이브러리 LangChain은 오류 종류마다 속성 <code>is_retryable</code>에 이 구분을 적어 둡니다. 노트북 5절의 시간 초과 오류는 <code>다시 시도할 수 있는 오류인가: True</code>였습니다. 8절의 모델 없음 오류는 <code>False</code>였습니다.</p>
+<p>메서드 <code>with_retry()</code>는 호출 객체에 다시 시도 규칙을 붙입니다. 인자 <code>retry_if_exception_type</code>에는 다시 시도할 오류 이름을 적습니다. 인자 <code>stop_after_attempt</code>에는 전체 시도 횟수를 적습니다.</p>
+<p>노트북 7절은 시도를 세려고, 요청을 보내는 함수를 클래스 <code>RunnableLambda</code>로 감쌌습니다. 감싼 결과는 03절의 <code>RunnableSequence</code>처럼 <code>invoke()</code>로 부르는 호출 객체입니다.</p>
+<h3>폴백과 응답한 모델</h3>
+<p>폴백(fallback)은 기본 경로가 실패하면 미리 정해 둔 다른 경로로 넘기는 일입니다. 전화가 안 되면 문자를 보내는 것과 비슷합니다. 메서드 <code>with_fallbacks()</code>는 대체 경로 목록과 넘길 오류 이름을 받습니다.</p>
+<p>폴백으로 받은 답은 기본 경로가 성공했다는 뜻이 아닙니다. 노트북 10절에서 기본 경로는 <code>gpt-5.4-mini</code>였고, 응답한 모델은 <code>gpt-5.4-nano-2026-03-17</code>이었습니다. 그래서 답과 함께 응답 메타데이터의 키 <code>model_name</code>을 기록합니다.</p>
+{{mermaid:05-1-세-가지-장치|맨 위 보라 상자 기본 경로 tiny_model gpt-5.4-mini timeout 0.001초가 노란 상자 5절 OpenAITimeoutError is_retryable True로 가고, 왼쪽 갈래는 파란 상자 재시도 with_retry 같은 경로로 모두 3번에서 노란 상자 7절 시도한 횟수 3으로, 오른쪽 갈래는 파란 상자 폴백 with_fallbacks에서 보라 상자 대체 경로 gpt-5.4-nano를 거쳐 노란 상자 10절 AIMessage 응답한 모델 gpt-5.4-nano로 이어지는 흐름도|기다리는 시간 0.001초에서 시간 초과 오류가 나자, 재시도는 같은 경로로 3번 시도했고 폴백은 gpt-5.4-nano로 넘겨 답을 받았습니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 읽습니다. 맨 위 보라 상자는 기다리는 시간을 0.001초로 둔 기본 경로이고, 노란 상자는 출력으로 확인한 오류와 결과입니다. 파란 상자 두 개는 우리가 붙인 코드 줄입니다.</p>
+<p>시간 초과 오류 아래에서 두 갈래로 나뉩니다. 왼쪽 갈래는 같은 경로로 모두 3번 시도했지만 세 번 모두 시간 초과였습니다. 오른쪽 갈래는 대체 경로 <code>gpt-5.4-nano</code>로 넘겨 <code>AIMessage</code>를 받았습니다. 두 갈래는 노트북 7절과 10절에서 따로 실행했습니다.</p>
+<h3>이 절에서 쓰는 말</h3>
+<table><thead><tr><th>용어</th><th>뜻</th><th>이 절에서 보이는 모습</th></tr></thead><tbody>
+<tr><td>타임아웃(timeout)</td><td>답을 기다리는 최대 시간(초). 전화 신호음이 오래 가면 끊는 것과 비슷함</td><td><code>timeout: 30.0</code></td></tr>
+<tr><td>재시도(retry)</td><td>실패한 요청을 같은 설정으로 다시 보내는 일. 모델 객체의 <code>max_retries</code>나 <code>with_retry()</code>로 정함</td><td><code>openai 클라이언트 max_retries: 2</code></td></tr>
+<tr><td>시도</td><td>요청을 한 번 보내 보는 일. 첫 시도를 포함해 셈</td><td><code>시도한 횟수: 3</code></td></tr>
+<tr><td>시간 초과 오류</td><td>정한 시간 안에 답이 오지 않을 때 나는 오류 <code>ModelTimeoutError</code></td><td><code>오류 종류: OpenAITimeoutError</code></td></tr>
+<tr><td>다시 시도할 수 있는 오류</td><td>같은 요청을 다시 보내면 성공할 수도 있다고 LangChain이 정해 둔 오류. 속성 <code>is_retryable</code></td><td><code>다시 시도할 수 있는 오류인가: True</code></td></tr>
+<tr><td>폴백(fallback)</td><td>기본 경로가 실패하면 미리 정한 다른 경로로 넘기는 일. 전화가 안 되면 문자를 보내는 것과 비슷함</td><td><code>호출 객체 종류: RunnableWithFallbacks</code></td></tr>
+<tr><td>응답한 모델</td><td>실제로 답을 보낸 모델 이름. 응답 메타데이터의 키 <code>model_name</code></td><td><code>응답한 모델: gpt-5.4-nano-2026-03-17</code></td></tr>
+</tbody></table>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>노트북은 적지 않은 두 값을 먼저 봅니다. 두 값을 적은 모델로 답을 받고, 기다리는 시간 0.001초로 실제 시간 초과 오류를 받습니다. 그다음 모델 객체 안의 재시도와 <code>with_retry()</code>의 재시도를 차례로 봅니다.</p>
+<p>실제 OpenAI 모델을 temperature 0으로 부릅니다. 이 페이지의 출력은 2026-09-17에 실행한 결과입니다. 요청 시도는 Before·After까지 모두 13번이고, 답을 받은 요청은 2번입니다. 예상 비용은 0.01달러 미만이고, 답 문장과 걸린 시간은 실행마다 달라질 수 있습니다.</p>
+<p>강의 시간에는 노트북 3~5절, 7절, 9·10절(Before·After)을 설명합니다. 6·8절 값 바꿔 보기는 셀을 함께 실행하고, 결과 읽기는 실습 시간에 읽습니다.</p>
+{{notebook:05-타임아웃-재시도-폴백|example}}
+<p class="look"><b>확인할 점</b> — 3절의 <code>openai 클라이언트 max_retries: 2</code>와 5절의 <code>오류 종류: OpenAITimeoutError</code>를 봅니다. 7절에서는 <code>시도한 횟수: 3</code>을, 8절에서는 <code>시도한 횟수: 1</code>을 나란히 봅니다.</p>
+<h3>다시 시도한 순서</h3>
+<p>노트북 7절의 호출 객체 <code>retry_runnable</code>이 한 일을 시간 순서로 놓아 봅니다. 함수 <code>ask_current_model()</code>은 불릴 때마다 목록에 한 줄을 적고, <code>tiny_model</code>로 요청을 보냈습니다.</p>
+{{mermaid:05-2-다시-시도-순서|노트북 코드, retry_runnable, ask_current_model 세 세로줄 사이에서 invoke 뒤 retry_runnable이 함수를 시도 1로 부르고 OpenAITimeoutError를 받은 뒤 1~2초 기다림 메모, 시도 2와 오류 뒤 2~3초 기다림 메모, 시도 3과 오류 뒤 셋째 시도의 OpenAITimeoutError를 노트북 코드로 넘기고 7절 출력 시도 기록 세 줄 시도한 횟수 3 걸린 초 4.5 메모가 붙은 순서도|호출 객체 retry_runnable은 시간 초과 오류를 받을 때마다 조금씩 더 기다린 뒤 함수를 다시 불렀고, 셋째 시도의 오류를 노트북 코드로 넘겼습니다.}}
+<p><strong>도식 읽기</strong> — 세로줄은 왼쪽부터 노트북 코드, 호출 객체 <code>retry_runnable</code>, 함수 <code>ask_current_model</code>입니다. 위에서 아래로 시간 순서이고, 실선은 부르기, 점선은 받은 오류입니다.</p>
+<p>호출 객체는 오류를 받을 때마다 조금 기다린 뒤 함수를 다시 불렀습니다. 기다린 시간은 설치한 langchain-core 1.6.2와 tenacity 9.1.4 소스로 계산한 범위입니다. 첫 기다림은 1~2초, 둘째는 2~3초이고, 노트북은 기다린 시간을 따로 재지 않았습니다.</p>
+<p>셋째 시도의 오류는 노트북 코드까지 그대로 왔습니다. 맨 아래 노란 메모는 셀 출력 <code>시도한 횟수: 3</code>과 <code>걸린 초: 4.5</code>입니다. 두 기다림을 더하면 3~5초이고, 걸린 시간이 그 범위에 듭니다.</p>
+<h3>다시 시도하는 두 자리</h3>
+<p>노트북 6·7·8절은 다시 시도가 일어나는 두 자리를 봤습니다. 하나는 모델 객체 안의 openai 클라이언트이고, 다른 하나는 우리가 붙인 <code>with_retry()</code>입니다.</p>
+{{mermaid:05-3-다시-시도-비교|위 칸 6절 모델 객체 안의 재시도는 초록 상자 max_retries 적지 않음 클라이언트 기본값 2가 노란 상자 걸린 초 1.3 5절의 0.0초보다 김 시도 수는 세지 못함으로, 가운데 칸 7절은 파란 상자 stop_after_attempt=3 ModelTimeoutError만이 노란 상자 시도한 횟수 3 걸린 초 4.5로, 아래 칸 8절은 파란 상자 같은 retry_runnable current_model = typo_model이 노란 상자 시도한 횟수 1 is_retryable False로 이어지는 비교 그림|적지 않은 max_retries도 기다린 시간을 늘렸고, with_retry는 시간 초과만 3번 시도했으며 모델 없음 오류는 1번으로 멈췄습니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 세 칸을 읽고, 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 초록 상자는 적지 않은 설정, 파란 상자는 코드 줄, 노란 상자는 출력으로 확인한 결과입니다.</p>
+<p>위 칸은 <code>max_retries</code>를 적지 않은 6절입니다. 오류는 5절과 같았지만 <code>걸린 초: 1.3</code>으로 5절의 0.0초보다 길었습니다. openai 3.10.0 소스로는 시도 사이에 0.375~0.5초와 0.75~1초를 기다립니다. 두 기다림이 이 시간과 맞지만, 시도 수는 세지 못했습니다.</p>
+<p>가운데 칸 7절은 시간 초과 오류만 다시 시도해서 시도가 3번이었습니다. 아래 칸 8절은 같은 호출 객체에 없는 모델 이름을 담았고, 모델 없음 오류로 1번에 멈췄습니다.</p>
+<p>두 자리를 한 경로에 함께 두면 시도 수가 곱해집니다. 모델 객체 안에서 2번 더 시도하면 한 번 부를 때 요청은 3번입니다. 바깥 <code>with_retry()</code>가 이것을 3번 부르면 요청은 최대 3 × 3 = 9번입니다. 이 곱은 소스로 계산한 수이고, 이번에 실행하지 않았습니다.</p>
+<p>그래서 노트북 7절은 안쪽에서 다시 시도하지 않는 모델(<code>max_retries: 0</code>)을 썼습니다. 함수가 센 시도 수가 요청을 보내 본 횟수와 같아지게 하려는 것입니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before에서는 기본 경로 <code>tiny_model</code> 하나에만 요청을 보냅니다. 서버가 제시간에 답하지 못한 상황을 기다리는 시간 0.001초로 대신합니다. 받은 답을 담을 변수는 <code>None</code>으로 시작합니다.</p>
+<p>After에서는 같은 기본 경로에 <code>with_fallbacks()</code>로 대체 모델 <code>gpt-5.4-nano</code>를 붙입니다. 넘길 오류는 <code>ModelTimeoutError</code> 하나만 적습니다. 끝으로 기본 경로를 없는 모델 이름으로 바꿔, 목록에 없는 오류도 넘기는지 봅니다.</p>
+{{notebook:05-타임아웃-재시도-폴백|failure}}
+<p>Before 출력은 <code>오류 종류: OpenAITimeoutError</code>와 <code>받은 답: None</code>이었습니다. 셀은 오류를 받아 끝까지 실행했지만, 사용자에게 보여 줄 답이 없습니다. 구문 <code>try</code>가 없었다면 이 셀은 오류로 멈췄을 것입니다.</p>
+<p>After 출력은 <code>응답 객체 종류: AIMessage</code>와 <code>응답한 모델: gpt-5.4-nano-2026-03-17</code>이었습니다. 기본 경로 모델은 <code>gpt-5.4-mini</code>였으므로, 답은 대체 경로가 보냈습니다. 응답한 모델 이름에 nano가 들어 있는지 <code>assert</code>로 확인했습니다.</p>
+<p>기본 경로를 <code>typo_model</code>로 바꾼 확인에서는 <code>오류 종류: OpenAIModelNotFoundError</code>와 <code>받은 답: None</code>이었습니다. 넘길 오류를 좁혀 두어서, 고쳐야 할 모델 이름 오류가 대체 모델의 답에 가려지지 않았습니다.</p>
+{{mermaid:05-4-Before-After|위 칸 Before 9절 폴백 없음은 보라 상자 tiny_model gpt-5.4-mini 0.001초가 빨간 상자 OpenAITimeoutError 받은 답 None으로, 가운데 칸 After 10절은 보라 상자 tiny_model에서 보라 상자 fallback_model gpt-5.4-nano 30초를 거쳐 노란 상자 AIMessage 응답한 모델 gpt-5.4-nano-2026-03-17로, 아래 칸 After 확인은 초록 상자 기본 경로 typo_model gpt-5.4-mimi가 노란 상자 OpenAIModelNotFoundError 대체 모델로 넘기지 않음 받은 답 None으로 이어지는 비교 그림|폴백이 없는 Before는 답을 받지 못했고, After는 시간 초과 뒤 gpt-5.4-nano가 답했으며, 모델 없음 오류는 대체 모델로 넘기지 않았습니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 세 칸을 읽고, 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 보라 상자는 실행한 모델이고, 초록 상자는 없는 모델 이름을 넣은 설정입니다.</p>
+<p>위 칸 끝의 빨간 상자는 답을 받지 못한 Before 결과입니다. 오류는 받아 출력했지만 사용자에게 답이 없으므로, 결함 결과로 칠했습니다. 가운데 칸과 아래 칸의 노란 상자는 출력으로 확인한 After 결과입니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul><li>두 번째 시도에서 성공하는 장면은 이번에 실행하지 않았습니다. 수업 중에 서버를 잠깐만 늦게 만들 방법이 없었습니다. 노트북 7절의 세 시도는 모두 같은 원인으로 실패했습니다.</li>
+<li>기다리는 시간 0.001초, 전체 시도 3번, 대체 모델 <code>gpt-5.4-nano</code>는 흐름을 보여 주려고 정한 예입니다. 교재를 만들 때 탐색 실행으로 시간 초과 오류, 시도 수, 대체 모델의 답을 먼저 확인한 뒤 정했습니다. 실제 서비스의 시간 제한은 사용자가 기다릴 수 있는 시간에 맞춰 정합니다.</li>
+<li>시간 초과로 끝난 시도가 서버에 닿았는지는 이번 출력으로 알 수 없습니다. 그런 시도의 사용량과 요금도 이번에 확인하지 않았습니다. 기다림을 멈춘 것과 서버의 처리가 멈춘 것은 같은 일이라고 볼 수 없습니다.</li>
+<li>걸린 시간은 한 번씩 잰 값입니다. Ch 5 08절처럼, 한 번 잰 시간으로 모델이나 네트워크의 속도를 말하지 않습니다.</li>
+<li>온라인 LangChain Models 문서는 채팅 모델이 기본으로 6번까지 다시 시도한다고 안내합니다. 설치한 langchain-openai 1.6.0에서는 노트북 3절 출력대로 openai 클라이언트 값 2가 쓰였습니다. openai 패키지 설명서의 기본 시간 제한 10분도, 이 판 조합의 모델 객체에서는 <code>None</code>이었습니다. 판마다 다를 수 있으니 3절처럼 출력해 확인합니다.</li>
+<li>요청 제한(429)·서버 오류(5xx)·인증 실패(401)는 이번에 실행하지 않았습니다. 설치한 langchain-core 1.6.2 소스에서 앞의 둘은 <code>is_retryable</code>이 <code>True</code>, 인증 실패는 <code>False</code>입니다. 설치한 openai 3.10.0 소스는 시간 초과·연결 오류·408·409·429·5xx만 스스로 다시 시도합니다. 404는 다시 시도하지 않습니다.</li>
+<li>대체 경로까지 모두 실패하면, 설치한 langchain-core 1.6.2 소스에서는 기본 경로의 첫 오류가 납니다. 대체 경로의 오류가 아니라는 점을 기록할 때 헷갈리지 않습니다. 이번에 실행하지 않았습니다.</li>
+<li>모델 호출 뒤의 저장이나 결제를 같은 함수에 넣고 다시 시도하지 않습니다. 다시 시도할 때마다 저장도 다시 일어날 수 있기 때문입니다. 이번에 실행하지 않았습니다.</li>
+<li>스트리밍 도중의 시간 초과와 연결 끊김은 이번에 실행하지 않았습니다. 04절 주의 메모대로, 받는 도중의 오류는 <code>for</code> 줄에서 다시 납니다. 메서드 <code>with_retry()</code>를 스트리밍에 붙였을 때의 모습도 확인하지 않았습니다.</li>
+<li>교재 출력은 Linux의 Python 3.12.13으로 만들었습니다. 패키지는 langchain 1.4.0, langchain-core 1.6.2, langchain-openai 1.6.0입니다. openai 3.10.0, tenacity 9.1.4, python-dotenv 1.2.3도 함께 썼습니다. 다른 버전과 Windows·macOS에서는 실행하지 않았습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>인자 <code>timeout</code>과 <code>max_retries</code>를 적지 않은 모델 객체는 시간 제한이 없었고, openai 클라이언트가 두 번 더 시도하게 되어 있었습니다.</li><li>메서드 <code>with_retry()</code>는 목록에 적은 시간 초과 오류만 모두 3번 시도했고, 모델 없음 오류는 1번에 멈췄습니다.</li><li>메서드 <code>with_fallbacks()</code>로 시간 초과일 때만 <code>gpt-5.4-nano</code>가 답했으므로, 답과 함께 응답한 모델 이름을 기록합니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 06절에서는 같은 과제를 보내고 토큰 수, 비용, 걸린 시간을 한 기록에 모아 비교합니다. 다시 시도와 대체 경로는 요청 수와 응답한 모델을 바꾸므로, 그 기록에도 함께 적어야 합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz"><summary>문제 1 · 적지 않은 시간 제한</summary><p class="quiz-q">함수 <code>init_chat_model()</code>에 인자 <code>timeout</code>을 적지 않은 모델 객체는 몇 초까지 기다리나요?</p><p class="quiz-a"><b>해설</b> — 이 교재의 판 조합에서는 시간 제한이 없습니다. 노트북 3절 출력이 <code>openai 클라이언트 timeout: None</code>이었습니다. 늦은 요청을 끊으려면 인자 <code>timeout</code>을 적습니다.</p></details>
+<details class="quiz"><summary>문제 2 · 전체 시도 횟수</summary><p class="quiz-q">인자 <code>stop_after_attempt=3</code>이면 첫 실패 뒤에 세 번을 더 시도하나요?</p><p class="quiz-a"><b>해설</b> — 아닙니다. 첫 시도를 포함해 모두 3번입니다. 노트북 7절의 시도 기록도 세 줄이었습니다.</p></details>
+<details class="quiz"><summary>문제 3 · 다시 시도하지 않은 오류</summary><p class="quiz-q">노트북 8절에서 같은 <code>retry_runnable</code>로 보냈는데 시도가 1번에 멈췄습니다. 왜 그런가요?</p><p class="quiz-a"><b>해설</b> — 모델 없음 오류는 인자 <code>retry_if_exception_type</code>의 목록에 없었기 때문입니다. 없는 모델 이름은 다시 보내도 같은 404가 오고, 오류의 <code>is_retryable</code>도 <code>False</code>였습니다. 모델 이름을 고쳐야 합니다.</p></details>
+<details class="quiz"><summary>문제 4 · 겹친 재시도</summary><p class="quiz-q">안쪽 모델 객체가 <code>max_retries=2</code>이고, 바깥에 <code>stop_after_attempt=3</code>인 <code>with_retry()</code>를 붙였습니다. 계속 시간 초과가 나면 요청은 최대 몇 번 나갈까요?</p><p class="quiz-a"><b>해설</b> — 한 번 부를 때 안쪽에서 요청이 3번 나가고, 바깥에서 그것을 3번 부릅니다. 그래서 최대 3 × 3 = 9번입니다. 소스로 계산한 수이고, 이번 노트북에서는 실행하지 않았습니다.</p></details>
+<details class="quiz"><summary>문제 5 · 폴백으로 받은 답의 기록</summary><p class="quiz-q">노트북 10절 After의 답을 기본 경로 모델 <code>gpt-5.4-mini</code>의 답으로 기록해도 되나요?</p><p class="quiz-a"><b>해설</b> — 안 됩니다. 응답한 모델은 <code>gpt-5.4-nano-2026-03-17</code>이었습니다. 기본 경로 이름으로 적으면 사용량과 답의 품질을 다른 모델의 것으로 셉니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<p>문서는 2026-09-17에 다시 열어 확인했습니다. 기본값, 다시 시도하는 오류, 기다리는 시간, 폴백 순서는 실습 가상환경에 설치한 패키지 소스에서도 확인했습니다. 확인한 판은 <code>langchain-core 1.6.2</code>, <code>langchain-openai 1.6.0</code>, <code>openai 3.10.0</code>, <code>tenacity 9.1.4</code>입니다.</p>
+<ul><li><div><a href="https://docs.langchain.com/oss/python/langchain/models">LangChain Models</a></div>모델 초기화 인자 timeout·max_retries · 확인 2026-09-17</li><li><div><a href="https://reference.langchain.com/python/langchain-core/runnables/base/Runnable/with_retry">Runnable.with_retry reference</a></div>다시 시도할 오류와 전체 시도 횟수 · 확인 2026-09-17</li><li><div><a href="https://reference.langchain.com/python/langchain-core/runnables/base/Runnable/with_fallbacks">Runnable.with_fallbacks reference</a></div>대체 경로와 넘길 오류 · 확인 2026-09-17</li><li><div><a href="https://github.com/openai/openai-python">openai-python README</a></div>기본 재시도 횟수와 시간 제한 · 확인 2026-09-17</li><li><div><a href="https://github.com/langchain-ai/langchain/blob/master/LICENSE">LangChain MIT License</a></div>예제의 질문과 설명은 이 교재에 맞게 새로 썼습니다</li></ul>

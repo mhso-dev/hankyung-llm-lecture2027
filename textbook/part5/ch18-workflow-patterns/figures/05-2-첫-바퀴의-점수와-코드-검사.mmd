@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  write["gpt-5.4-mini 쓰기 요청<br>첫 초안 · 150자보다 짧음"]:::model
+  judge["gpt-5.4-mini 평가 요청<br>점수 · 고칠 점"]:::model
+  check["check_draft<br>150~170자 · 꼭 담을 말 넷"]:::flow
+  score["평가 점수가<br>기준값 이상인가 True"]:::measure
+  prob["코드 검사 문제<br>글자 수가 150자보다 적음"]:::measure
+  decide["decide_stop<br>둘 다 통과해야 멈춤"]:::flow
+  cont["정지 판정 계속<br>둘째 바퀴로"]:::measure
+  write --> judge
+  write --> check
+  judge --> score
+  check --> prob
+  score --> decide
+  prob --> decide
+  decide --> cont

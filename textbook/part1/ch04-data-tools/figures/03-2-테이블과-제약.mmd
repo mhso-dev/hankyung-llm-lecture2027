@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  CON["sqlite3.connect(shop.db)<br>PRAGMA<br>foreign_keys = ON"]:::flow
+  CRT["CREATE TABLE customers<br>CREATE TABLE orders"]:::flow
+  DB["shop.db 안의 두 테이블<br>기본 키 · 외래 키 customer_id"]:::tool
+  INS["INSERT INTO → commit()<br>넣은 행 수 2 · 3"]:::flow
+  PK["C001 한 번 더 넣기<br>UNIQUE constraint failed"]:::measure
+  FK["O104 · C003 넣기<br>FOREIGN KEY<br>constraint failed"]:::measure
+  CNT["남은 행 수<br>고객 2 · 주문 3"]:::measure
+  CON --> CRT --> DB --> INS
+  INS --> PK
+  INS --> FK
+  PK --> CNT
+  FK --> CNT

@@ -1,0 +1,394 @@
+{
+  "chapter": "ch23-persistence",
+  "label": "before",
+  "totals": {
+    "G1": 19,
+    "G2": 14,
+    "G3": 0,
+    "G4": 0,
+    "G5": 32,
+    "G6": 122,
+    "G7": 18
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-체크포인터와-스레드",
+      "code_cells": 4,
+      "sentences": 75,
+      "counts": {
+        "G1": 0,
+        "G2": 1,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 22,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [
+          "cell4:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 절에서는 customer-a가 3 뒤에 4를 더해 7이 되는지, customer-b의 4가 독립적으로 시작하는지를 같은 그래프에서 확인합니다",
+          "long:이번 절에서는 실행이 끝난 뒤에도 값을 찾을 수 있도록 compile(checkpointer=memory)를 사용하고, config의 configurable.thread_id가 어느 기록을 읽을지 지정합니다",
+          "long:체크포인터(checkpointer)는 그래프의 단계별 상태 스냅샷을 저장하고, 스레드(thread)는 관련 체크포인트를 묶는 식별자입니다",
+          "long:상태의 `events`가 누적되는 방식은 상태 스키마와 노드가 반환하는 값에 달려 있으며, 체크포인터가 모든 리스트를 자동으로 합치는 것은 아닙니다",
+          "long:확인할 점 — 같은 thread_id의 두 실행은 total 7로 이어졌고 다른 thread_id는 total 4에서 독립적으로 시작했습니다",
+          "long:체크포인터(checkpointer)는 그래프의 단계별 상태 스냅샷을 저장하고, 스레드(thread)는 관련 체크포인트를 묶는 식별자입니다",
+          "long:상태의 `events`가 누적되는 방식은 상태 스키마와 노드가 반환하는 값에 달려 있으며, 체크포인터가 모든 리스트를 자동으로 합치는 것은 아닙니다",
+          "english_start:Ch13의 StateGraph는 한 번의 invoke 안에서 State를",
+          "english_start:Ch20의 도구 반복도 같은 실행 안에서 메시지를 누적했습니다",
+          "english_start:StateSnapshot의 values는 그 시점의 채널 값이고 next",
+          "english_start:get_state_history()는 입력, 노드 실행, 종료 뒤에 만들",
+          "english_start:`InMemorySaver`는 현재 Python 프로세스의 메모리에만 저",
+          "english_start:`get_state(config)`는 선택한 스레드의 최신 `StateS",
+          "english_start:customer-a는 ‘같은 스레드 재개’로 이동하고 customer-b",
+          "english_start:customer-a의 첫 결과는 3, 두 번째 결과는 7이며 저장된 최신",
+          "english_start:customer-b는 4에서 시작합니다",
+          "english_start:InMemorySaver의 내용은 Python 프로세스가 끝나면 사라집니",
+          "english_start:thread_id를 사용자 입력에서 그대로 받기보다 인증된 사용자와 대화",
+          "english_start:InMemorySaver는 프로세스 종료 뒤 상태가 남지 않으므로 다음 ",
+          "english_start:`InMemorySaver`를 연결한 작은 누적 그래프를 만듭니다",
+          "english_start:`InMemorySaver`는 현재 Python 프로세스의 메모리에만 저",
+          "english_start:`get_state(config)`는 선택한 스레드의 최신 `StateS"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-PostgresSaver-준비와-스키마",
+      "code_cells": 4,
+      "sentences": 77,
+      "counts": {
+        "G1": 2,
+        "G2": 1,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 28,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:lambda",
+          "cell8:list_comprehension"
+        ],
+        "G2": [
+          "cell4:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:PostgreSQL은 여러 프로세스가 같은 저장소를 사용할 수 있지만, PostgresSaver가 사용할 표를 먼저 준비해야 합니다",
+          "long:setup()은 checkpoint_migrations, checkpoints, checkpoint_blobs, checkpoint_writes 표를 생성하거나 필요한 마이그레이션을 적용합니다",
+          "long:After는 setup을 호출한 뒤 thread_id after를 실행하고 information_schema에서 표 이름을 읽습니다",
+          "long:확인할 점 — setup 전에는 UndefinedTable이 발생했고 setup 뒤에는 value 12와 checkpoints, checkpoint_writes 표를 확인했습니다",
+          "long:Before의 오류는 학생이 만든 검사 함수가 아니라 PostgreSQL이 존재하지 않는 checkpoints 관계를 조회하며 반환한 오류입니다",
+          "long:setup 전에는 UndefinedTable이 발생했고 setup 뒤에는 value 12와 checkpoints, checkpoint_writes 표를 확인했습니다",
+          "long:수동 psycopg 연결을 넘길 때는 autocommit=True와 row_factory=dict_row 요구를 공식 README에서 다시 확인합니다",
+          "english_start:PostgresSaver.setup()이 준비하는 저장 표의 역할을 설명",
+          "english_start:PostgreSQL은 여러 프로세스가 같은 저장소를 사용할 수 있지만, ",
+          "english_start:PostgresSaver는 PostgreSQL에 체크포인트와 중간 쓰기를",
+          "english_start:setup()은 checkpoint_migrations, checkpoi",
+          "english_start:`PostgresSaver`는 체크포인트와 pending write를 P",
+          "english_start:`PostgresSaver(conn)`은 이미 열린 연결을 사용하며, `",
+          "english_start:Before는 새 스키마에서 `setup()` 없이 그래프를 실행해 실제",
+          "english_start:After는 같은 연결에서 `setup()`을 먼저 호출한 뒤 체크포인터",
+          "english_start:`checkpoints`는 상태 스냅샷을, `checkpoint_writ",
+          "english_start:Before의 UndefinedTable은 두 번째 상자를 건너뛴 경로이",
+          "english_start:Before는 setup 없이 thread_id before를 실행해 실",
+          "english_start:After는 setup을 호출한 뒤 thread_id after를 실행하",
+          "english_start:Before의 오류는 학생이 만든 검사 함수가 아니라 PostgreSQL",
+          "english_start:After의 value는 6에서 12가 됐고 checkpoints와 ch",
+          "english_start:setup을 명시적 트랜잭션 안에서 호출하지 않습니다",
+          "english_start:setup은 배포 준비 단계이며, 일반 요청마다 실행하는 그래프 동작이 ",
+          "english_start:`PostgresSaver`는 체크포인트와 pending write를 P",
+          "english_start:`PostgresSaver(conn)`은 이미 열린 연결을 사용하며, `",
+          "english_start:Before는 새 스키마에서 `setup()` 없이 그래프를 실행해 실제",
+          "english_start:After는 같은 연결에서 `setup()`을 먼저 호출한 뒤 체크포인터",
+          "english_start:`checkpoints`는 상태 스냅샷을, `checkpoint_writ"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-스레드-재개와-대화-이어가기",
+      "code_cells": 5,
+      "sentences": 76,
+      "counts": {
+        "G1": 2,
+        "G2": 2,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 12,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell4:generator_expression"
+        ],
+        "G2": [
+          "cell4:one_letter_name:p",
+          "cell4:one_letter_name:p"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이번 절은 설치 부담을 줄이기 위해 SQLiteSaver를 사용하지만, 첫 연결을 닫고 새 연결과 새 그래프 객체를 만드는 방식으로 프로세스 경계를 모사합니다",
+          "long:두 번째 요청의 코드가 첫 번째 graph 변수를 참조하지 않아도 저장 파일과 thread_id가 같으면 앞선 턴을 불러올 수 있어야 합니다",
+          "long:재개(resume)는 같은 thread_id의 최신 체크포인트를 읽고 새 입력을 기존 상태에 합쳐 다음 실행을 시작하는 동작입니다",
+          "long:`SqliteSaver`는 체크포인트를 SQLite 파일에 저장하므로 Python 그래프 객체를 새로 만들어도 같은 파일과 `thread_id`를 사용하면 상태를 읽을 수 있습니다",
+          "long:이번 출력의 네 턴은 파일 지속성과 리스트 리듀서가 함께 만든 결과이며, SQLite가 자동으로 대화 의미를 관리한 것은 아닙니다",
+          "long:`SqliteSaver`는 체크포인트를 SQLite 파일에 저장하므로 Python 그래프 객체를 새로 만들어도 같은 파일과 `thread_id`를 사용하면 상태를 읽을 수 있습니다",
+          "long:이번 출력의 네 턴은 파일 지속성과 리스트 리듀서가 함께 만든 결과이며, SQLite가 자동으로 대화 의미를 관리한 것은 아닙니다",
+          "english_start:`SqliteSaver`는 체크포인트를 SQLite 파일에 저장하므로 P",
+          "english_start:saved.next가 빈 튜플이므로 두 번째 호출도 끝까지 완료됐습니다",
+          "english_start:SQLite는 이 실습과 단일 프로세스 개발에 알맞지만 다중 서버 운영의",
+          "english_start:operator.add가 질문과 답변을 기존 turns 목록 뒤에 이어 ",
+          "english_start:`SqliteSaver`는 체크포인트를 SQLite 파일에 저장하므로 P"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-내구-실행-모드-비교",
+      "code_cells": 6,
+      "sentences": 83,
+      "counts": {
+        "G1": 7,
+        "G2": 3,
+        "G3": 0,
+        "G4": 0,
+        "G5": 4,
+        "G6": 27,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell4:generator_expression",
+          "cell6:conditional_expression",
+          "cell8:long_function",
+          "cell10:list_comprehension",
+          "cell10:generator_expression",
+          "cell12:conditional_expression"
+        ],
+        "G2": [
+          "cell4:one_letter_name:p",
+          "cell4:one_letter_name:p",
+          "cell8:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell12:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 종료 시점에서는 exit가 first를 다시 실행했고, async와 sync는 first 결과를 읽어 second만 다시 실행했습니다",
+          "long:SQLiteSaver와 같은 thread_id는 유지하고, 두 번째 노드에 들어간 자식 프로세스를 운영체제 수준에서 종료해 durability 인자만 비교합니다",
+          "long:복구 뒤 first를 다시 실행해야 하는지, second부터 시작할 수 있는지는 first 결과가 종료 전에 저장됐는지에 달려 있습니다",
+          "long:sync는 저장 완료 뒤 다음 단계로 가고, async는 다음 단계와 저장을 겹쳐 실행하며, exit는 실행이 끝날 때 저장합니다",
+          "long:async는 저장과 second 실행을 겹치므로 지연을 줄일 수 있지만 매우 이른 종료에서는 저장 완료 여부가 달라질 수 있습니다",
+          "long:`sync`는 다음 단계로 진행하기 전에 저장 완료를 기다리고, `async`는 저장을 진행하면서 다음 작업을 이어 가며, `exit`는 실행이 끝날 때 상태를 기록합니다",
+          "long:`kill_and_resume(mode)`는 같은 그래프와 입력을 자식 프로세스에서 실행하고, 두 번째 노드 진입을 알리는 ready 파일이 생기면 프로세스를 종료합니다",
+          "long:부모 셀은 ready를 확인하면 kill()로 프로세스를 종료하고 get_tuple로 중단 상태를 읽은 다음 새 자식 프로세스에서 같은 스레드를 실제 재개합니다",
+          "long:exit의 before는 None이고 재개 과정은 입력부터 다시 시작해 calls가 first, second, first, second입니다",
+          "long:이번 실행의 async와 sync에는 completed=['first']가 남아 calls가 first, second, second였습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 같은 단계의 병렬 노드 중 일부만 성공했을 때 pending writes를 확인합니다",
+          "long:`sync`는 다음 단계로 진행하기 전에 저장 완료를 기다리고, `async`는 저장을 진행하면서 다음 작업을 이어 가며, `exit`는 실행이 끝날 때 상태를 기록합니다",
+          "long:`kill_and_resume(mode)`는 같은 그래프와 입력을 자식 프로세스에서 실행하고, 두 번째 노드 진입을 알리는 ready 파일이 생기면 프로세스를 종료합니다",
+          "english_start:SQLiteSaver와 같은 thread_id는 유지하고, 두 번째 노드",
+          "english_start:sync는 저장 완료 뒤 다음 단계로 가고, async는 다음 단계와 저",
+          "english_start:sync는 first 체크포인트 저장이 완료된 뒤 second를 시작합니",
+          "english_start:async는 저장과 second 실행을 겹치므로 지연을 줄일 수 있지만 ",
+          "english_start:exit는 그래프가 끝날 때만 저장하므로 중간 종료에서 완료된 노드 결과",
+          "english_start:`sync`는 다음 단계로 진행하기 전에 저장 완료를 기다리고, `asy",
+          "english_start:`kill_and_resume(mode)`는 같은 그래프와 입력을 자식 ",
+          "english_start:`read_saved`는 SQLite에서 최신 `channel_value",
+          "english_start:durability_worker.py는 first와 second 이름을 ",
+          "english_start:exit의 before는 None이고 재개 과정은 입력부터 다시 시작해 ",
+          "english_start:exit는 중간 checkpoint가 없어 first와 second를 다",
+          "english_start:`sync`는 다음 단계로 진행하기 전에 저장 완료를 기다리고, `asy",
+          "english_start:`kill_and_resume(mode)`는 같은 그래프와 입력을 자식 ",
+          "english_start:`read_saved`는 SQLite에서 최신 `channel_value"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-pending-writes와-장애-복구",
+      "code_cells": 5,
+      "sentences": 83,
+      "counts": {
+        "G1": 5,
+        "G2": 4,
+        "G3": 0,
+        "G4": 0,
+        "G5": 5,
+        "G6": 19,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell4:generator_expression",
+          "cell4:lambda",
+          "cell6:multiple_defs_in_cell",
+          "cell8:list_comprehension"
+        ],
+        "G2": [
+          "cell4:over_15_lines",
+          "cell4:one_letter_name:p",
+          "cell4:one_letter_name:p",
+          "cell6:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:첫 실행 뒤 good은 한 번, flaky는 한 번 기록되며, 실패 원인을 없애고 재개하면 flaky만 한 번 더 실행되는지를 확인합니다",
+          "long:checkpoint_writes 계열의 pending writes는 superstep이 완전히 끝나기 전에 각 task가 반환한 쓰기를 보존합니다",
+          "long:오류를 받은 뒤 snapshot.tasks를 읽고, allow_path를 만든 다음 graph.invoke(None, config)으로 같은 superstep을 재개합니다",
+          "long:최종 results에 good-result와 flaky-result가 모두 있으므로 성공한 중간 쓰기는 보존되고 실패한 task만 다시 실행됐습니다",
+          "long:pending writes는 같은 superstep에서 런타임이 받은 상태 쓰기를 보존하며 외부 시스템의 부작용을 되돌리지 않습니다",
+          "english_start:StateSnapshot.tasks의 성공 result와 실패 error",
+          "english_start:LangGraph의 한 superstep에서는 여러 노드가 병렬로 실행될",
+          "english_start:`good`과 `flaky`는 START에서 동시에 갈라지는 같은 단계의",
+          "english_start:`flaky`가 오류를 내더라도 `good`이 이미 반환한 쓰기는 pen",
+          "english_start:`graph.invoke(None, config)`는 새 입력을 넣지 않",
+          "english_start:good은 ‘pending write’에 도달하고 flaky는 실패합니다",
+          "english_start:trace_path는 실제 함수 호출 이름을 한 줄씩 기록합니다",
+          "english_start:allow_path가 없을 때 flaky는 RuntimeError를 냅니",
+          "english_start:good의 성공 result와 flaky의 오류가 같은 상태 기록에 남았",
+          "english_start:`good`과 `flaky`를 같은 단계에 놓고 로컬 로그로 호출 횟수를",
+          "english_start:LangGraph의 한 superstep에서는 여러 노드가 병렬로 실행될",
+          "english_start:`good`과 `flaky`는 START에서 동시에 갈라지는 같은 단계의",
+          "english_start:`flaky`가 오류를 내더라도 `good`이 이미 반환한 쓰기는 pen",
+          "english_start:`graph.invoke(None, config)`는 새 입력을 넣지 않"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "06-노드-재시작과-멱등성",
+      "code_cells": 5,
+      "sentences": 79,
+      "counts": {
+        "G1": 3,
+        "G2": 3,
+        "G3": 0,
+        "G4": 0,
+        "G5": 5,
+        "G6": 14,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell4:generator_expression",
+          "cell6:long_function"
+        ],
+        "G2": [
+          "cell4:one_letter_name:p",
+          "cell4:one_letter_name:p",
+          "cell6:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:같은 SQLite 상태로 재개했을 때 단순 추가는 두 줄을 남기고, operation_id를 확인한 경로는 한 줄만 남기는지를 확인합니다",
+          "long:`interrupt_then_resume(strategy)`는 자식 프로세스가 외부 쓰기를 마친 직후 종료 신호 파일을 만들게 하고, 부모가 그 프로세스를 강제로 종료한 뒤 같은 SQLite와 전략으로 재개합니다",
+          "long:로컬에서 먼저 조회한 뒤 쓰는 방식은 두 프로세스가 동시에 통과할 수 있으므로 운영 저장소에서는 고유 제약이나 원자적 삽입을 사용해야 합니다",
+          "long:`interrupt_then_resume(strategy)`는 자식 프로세스가 외부 쓰기를 마친 직후 종료 신호 파일을 만들게 하고, 부모가 그 프로세스를 강제로 종료한 뒤 같은 SQLite와 전략으로 재개합니다",
+          "long:로컬에서 먼저 조회한 뒤 쓰는 방식은 두 프로세스가 동시에 통과할 수 있으므로 운영 저장소에서는 고유 제약이나 원자적 삽입을 사용해야 합니다",
+          "english_start:operation_id를 검사한 경로와 단순 추가 경로의 로그를 비교할 ",
+          "english_start:operation_id를 이미 처리한 키로 기록하면 재시작한 노드가 중복",
+          "english_start:operation_id는 비즈니스 작업 한 건을 식별합니다",
+          "english_start:`interrupt_then_resume(strategy)`는 자식 프로",
+          "english_start:`operation_id=&quot;order-2306&quot;`은 논",
+          "english_start:idempotency_worker.py는 order-2306을 파일에 쓴",
+          "english_start:operation_id의 보존 기간은 외부 서비스의 재시도 가능 기간보다",
+          "english_start:`interrupt_then_resume(strategy)`는 자식 프로",
+          "english_start:`operation_id=\"order-2306\"`은 논리적 작업을 식별합"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

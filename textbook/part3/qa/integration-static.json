@@ -1,0 +1,18 @@
+{
+  "checked_scripts": [
+    "textbook/part3/_build_index.py",
+    "textbook/part3/qa/check_delivery.py",
+    "textbook/_notebook/build_index.py",
+    "textbook/_notebook/build_bundle.py",
+    "textbook/part3/ch12-retrieval-tuning/figures/_gen_figures.py",
+    "textbook/_notebook/render.py",
+    "textbook/_notebook/tests/test_render.py",
+    "textbook/part3/ch09-rag-first-run/_build.py"
+  ],
+  "syntax": "passed",
+  "runtime_tests": 38,
+  "runtime_subtests": 16,
+  "runtime_evidence": "runtime-tests.txt",
+  "typecheck": "not applicable: no typed application changed",
+  "regression": "Carriage-return output failed before renderer repair and passed after HTML numeric-entity preservation."
+}

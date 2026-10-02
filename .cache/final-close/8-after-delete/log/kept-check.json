@@ -1,0 +1,743 @@
+{
+ "manifest": {
+  "rows": 1345,
+  "left": [],
+  "kept": [
+   [
+    "labs/part7/ch31-database/.venv",
+    true
+   ],
+   [
+    ".cache/vm/pgdata",
+    true
+   ]
+  ],
+  "pgenv": true,
+  "deleted_rows_bytes": {
+   "connected": [
+    1239,
+    31271070330
+   ],
+   "device": [
+    104,
+    2581827826
+   ]
+  },
+  "render_json_in_tsv": 0,
+  "env_in_tsv": 0
+ },
+ "chapters": {
+  "ch01-development-environment": {
+   "before": 27,
+   "review-pack": 6,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch02-python": {
+   "before": 62,
+   "review-pack": 13,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch03-git-github": {
+   "before": 28,
+   "review-pack": 6,
+   "before-2-7": 38,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json",
+    "gates-after-2-7.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch04-data-tools": {
+   "before": 28,
+   "review-pack": 6,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch05-llm-principles": {
+   "before": 55,
+   "review-pack": 9,
+   "before-2-7": 119,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json",
+    "gates-after-2-7.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch06-langchain-start": {
+   "before": 58,
+   "review-pack": 7,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch07-prompt-engineering": {
+   "before": 96,
+   "review-pack": 9,
+   "before-2-7": 147,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json",
+    "gates-after-2-7.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch08-context-engineering": {
+   "before": 120,
+   "review-pack": 7,
+   "before-2-7": 119,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json",
+    "gates-after-2-7.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch09-rag-first-run": {
+   "before": 135,
+   "review-pack": 7,
+   "before-2-7": 108,
+   "qa/before": 9,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json",
+    "gates-after-2-7.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch10-document-processing": {
+   "before": 223,
+   "review-pack": 9,
+   "before-2-7": 145,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json",
+    "gates-after-2-7.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch11-evaluation": {
+   "before": 39,
+   "review-pack": 7,
+   "before-2-7": 107,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json",
+    "gates-after-2-7.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch12-retrieval-tuning": {
+   "before": 84,
+   "review-pack": 13,
+   "before-2-7": 193,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json",
+    "gates-after-2-7.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch13-langgraph-basics": {
+   "before": 37,
+   "review-pack": 8,
+   "before-2-7": 38,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json",
+    "gates-after-2-7.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch14-rag-patterns": {
+   "before": 49,
+   "review-pack": 10,
+   "before-2-7": 88,
+   "blocked_generators": 0,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json",
+    "gates-after-2-7.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch15-evaluation-advanced": {
+   "before": 47,
+   "review-pack": 9,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch16-guardrails": {
+   "before": 43,
+   "review-pack": 7,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch17-agent-overview": {
+   "before": 38,
+   "review-pack": 6,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch18-workflow-patterns": {
+   "before": 44,
+   "probe": 10,
+   "review-pack": 7,
+   "blocked_generators": 3,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch19-model-tools": {
+   "before": 44,
+   "probe": 5,
+   "review-pack": 7,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch20-tool-node": {
+   "before": 36,
+   "probe": 12,
+   "review-pack": 5,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch21-create-agent": {
+   "before": 47,
+   "probe": 24,
+   "review-pack": 7,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch22-middleware": {
+   "before": 56,
+   "review-pack": 9,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch23-persistence": {
+   "before": 47,
+   "review-pack": 7,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch24-human-in-the-loop": {
+   "before": 29,
+   "review-pack": 4,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch25-streaming": {
+   "before": 34,
+   "probe": 9,
+   "review-pack": 4,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch26-delegation": {
+   "before": 40,
+   "probe": 19,
+   "review-pack": 5,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch27-deepagents": {
+   "before": 65,
+   "probe": 17,
+   "review-pack": 9,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch28-mcp": {
+   "before": 42,
+   "probe": 6,
+   "review-pack": 6,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch29-agent-evaluation": {
+   "before": 41,
+   "probe": 4,
+   "review-pack": 5,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch30-fastapi-serving": {
+   "before": 106,
+   "probe": 2,
+   "review-pack": 10,
+   "blocked_generators": 3,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch31-database": {
+   "before": 57,
+   "review-pack": 6,
+   "blocked_generators": 2,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch32-docker": {
+   "blocked_generators": 0,
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch33-cicd": {
+   "blocked_generators": 0,
+   "gates_wip_left_in_qa_upgrade": 0
+  },
+  "ch34-cost-rate-limits": {
+   "before": 47,
+   "probe": 19,
+   "review-pack": 6,
+   "blocked_generators": 1,
+   "gates_kept": [
+    "gates-before.json",
+    "gates-after.json"
+   ],
+   "gates_wip_left_in_qa_upgrade": 0
+  }
+ },
+ "review_pack_total": 236,
+ "ch12_continuity": {
+  "20260910T012326": 3,
+  "20260910T013850": 3,
+  "20260910T014213": 3,
+  "20260910T020805": 3,
+  "20260918T232052": 3,
+  "20260921T082024": 3
+ },
+ "ch12_deleted_copies_gone": true,
+ "ch09_ch10_runs_continuity": {
+  "labs/part3/ch09-rag-first-run/runs/continuity": 10,
+  "labs/part3/ch10-document-processing/runs/continuity": 54
+ },
+ "render_json_count": 967,
+ "pre_exec": {
+  "textbook/part3/ch12-retrieval-tuning/qa/upgrade/pre_exec.sh": "910741d2",
+  "textbook/part6/ch23-persistence/qa/upgrade/pre_exec.sh": "8f078591",
+  "textbook/part7/ch31-database/qa/upgrade/pre_exec.sh": "3a838c92"
+ },
+ "env_exists": true,
+ "moai_exists": true,
+ "data_tool_hashes": {
+  "0177cebc": [
+   "labs/part4/ch15-evaluation-advanced/runs/batch-eval-input.jsonl"
+  ],
+  "ae2fe4f4": [
+   "labs/part4/ch16-guardrails/data/retrieved-documents.json"
+  ],
+  "92e3d109": [
+   "labs/part4/ch16-guardrails/runs/05-audit.jsonl"
+  ],
+  "736271dd": [
+   "labs/part4/ch16-guardrails/runs/06-audit.jsonl"
+  ],
+  "d4f76099": [
+   "labs/part4/ch16-guardrails/notebooks/guardrails.py"
+  ],
+  "18209add": [
+   "labs/part5/ch17-agent-overview/notebooks/agent_tools.py"
+  ],
+  "5a158a68": [
+   "labs/part5/ch18-workflow-patterns/notebooks/workflow_tools.py"
+  ],
+  "fa5975b5": [
+   "labs/part5/ch19-model-tools/notebooks/order_tools.py"
+  ],
+  "34161a6f": [
+   "labs/part5/ch20-tool-node/notebooks/graph_tools.py"
+  ],
+  "f4113158": [
+   "labs/part6/ch21-create-agent/notebooks/runner_tools.py"
+  ],
+  "25cfe5df": [
+   "labs/part6/ch21-create-agent/data/rag-comparison.json"
+  ],
+  "a850b2cd": [
+   "labs/part6/ch23-persistence/notebooks/checkpoint_tools.py"
+  ],
+  "c60467bd": [
+   "labs/part6/ch23-persistence/durability_worker.py"
+  ],
+  "b0201de7": [
+   "labs/part6/ch23-persistence/idempotency_worker.py"
+  ],
+  "295bfaf6": [
+   "labs/part6/ch24-human-in-the-loop/notebooks/approval_tools.py"
+  ],
+  "6df804b8": [
+   "labs/part6/ch25-streaming/notebooks/stream_tools.py"
+  ],
+  "0748a8eb": [
+   "labs/part6/ch26-delegation/notebooks/delegation_tools.py"
+  ],
+  "ed5c4240": [
+   "labs/part6/ch27-deepagents/notebooks/harness_tools.py"
+  ],
+  "570ed3cc": [
+   "labs/part6/ch28-mcp/notebooks/connect_tools.py"
+  ],
+  "5dc77333": [
+   "labs/part6/ch28-mcp/course_server.py"
+  ],
+  "b75636c4": [
+   "labs/part6/ch29-agent-evaluation/notebooks/eval_tools.py"
+  ],
+  "333e9a62": [
+   "labs/part7/ch30-fastapi-serving/notebooks/serve_tools.py"
+  ]
+ },
+ "zips": {
+  "ch01": {
+   "same": true,
+   "entries": 12,
+   "disk_missing_raw": 2,
+   "disk_diff_raw": 0
+  },
+  "ch02": {
+   "same": true,
+   "entries": 18,
+   "disk_missing_raw": 2,
+   "disk_diff_raw": 0
+  },
+  "llm": {
+   "same": true,
+   "entries": 517,
+   "disk_missing_raw": 3,
+   "disk_diff_raw": 0
+  },
+  "part1": {
+   "same": true,
+   "entries": 69,
+   "disk_missing_raw": 2,
+   "disk_diff_raw": 0
+  },
+  "part2": {
+   "same": true,
+   "entries": 40,
+   "disk_missing_raw": 3,
+   "disk_diff_raw": 0
+  },
+  "part3": {
+   "same": true,
+   "entries": 96,
+   "disk_missing_raw": 3,
+   "disk_diff_raw": 0
+  },
+  "part4": {
+   "same": true,
+   "entries": 101,
+   "disk_missing_raw": 3,
+   "disk_diff_raw": 0
+  },
+  "part5": {
+   "same": true,
+   "entries": 68,
+   "disk_missing_raw": 3,
+   "disk_diff_raw": 0
+  },
+  "part6": {
+   "same": true,
+   "entries": 113,
+   "disk_missing_raw": 3,
+   "disk_diff_raw": 0
+  },
+  "part7": {
+   "same": true,
+   "entries": 117,
+   "disk_missing_raw": 3,
+   "disk_diff_raw": 0
+  }
+ },
+ "pack_inputs": {
+  "n": 2955,
+  "missing": [
+   "textbook/part2/ch08-context-engineering/figures/01-책상-예산.caption.md",
+   "textbook/part3/ch09-rag-first-run/figures/01-오픈북-비유.caption.md",
+   "textbook/part3/ch09-rag-first-run/figures/05-지어낸-숫자.caption.md",
+   "textbook/part3/ch09-rag-first-run/figures/06-실험-노트.caption.md",
+   "textbook/part3/ch10-document-processing/figures/01-문서-계약.caption.md",
+   "textbook/part3/ch10-document-processing/figures/02-표-구조.caption.md",
+   "textbook/part3/ch10-document-processing/figures/03-형식별-단위.caption.md",
+   "textbook/part3/ch10-document-processing/figures/04-hwp-hwpx.caption.md",
+   "textbook/part3/ch10-document-processing/figures/05-청크-경계.caption.md",
+   "textbook/part3/ch10-document-processing/figures/06-구조-의미-청킹.caption.md",
+   "textbook/part3/ch10-document-processing/figures/07-임베딩-캐시.caption.md",
+   "textbook/part3/ch10-document-processing/figures/08-실험-격자.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/01-정확-검색.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/02-HNSW.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/03-필터-반복탐색.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/04-Kiwi-BM25.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/05-dense-sparse.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/06-RRF.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/07-리랭킹-흐름.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/08-후보-모델-격자.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/09-부모-자식-검색.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/10-mmr-선택.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/11-질문-재작성.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/12-실험-로그.caption.md",
+   "textbook/part3/ch12-retrieval-tuning/figures/12-통합-RAG.caption.md",
+   "textbook/part4/ch13-langgraph-basics/figures/01-흐름.caption.md",
+   "textbook/part4/ch13-langgraph-basics/figures/02-흐름.caption.md",
+   "textbook/part4/ch13-langgraph-basics/figures/03-흐름.caption.md",
+   "textbook/part4/ch13-langgraph-basics/figures/04-흐름.caption.md",
+   "textbook/part4/ch13-langgraph-basics/figures/05-흐름.caption.md",
+   "textbook/part4/ch13-langgraph-basics/figures/06-흐름.caption.md",
+   "textbook/part4/ch13-langgraph-basics/figures/07-흐름.caption.md",
+   "textbook/part4/ch14-rag-patterns/figures/01-대화-히스토리와-질문-재작성-flow.caption.md",
+   "textbook/part4/ch14-rag-patterns/figures/02-Multi-Query-flow.caption.md",
+   "textbook/part4/ch14-rag-patterns/figures/03-질의-분해-flow.caption.md",
+   "textbook/part4/ch14-rag-patterns/figures/04-Step-back-flow.caption.md",
+   "textbook/part4/ch14-rag-patterns/figures/05-HyDE-flow.caption.md",
+   "textbook/part4/ch14-rag-patterns/figures/06-CRAG-flow.caption.md",
+   "textbook/part4/ch14-rag-patterns/figures/07-Self-RAG-flow.caption.md",
+   "textbook/part4/ch14-rag-patterns/figures/08-RAPTOR-계층-요약-flow.caption.md",
+   "textbook/part4/ch14-rag-patterns/figures/09-패턴-비교와-선택-flow.caption.md",
+   "textbook/part4/ch15-evaluation-advanced/figures/01-평가-흐름.caption.md",
+   "textbook/part4/ch15-evaluation-advanced/figures/02-평가-흐름.caption.md",
+   "textbook/part4/ch15-evaluation-advanced/figures/03-평가-흐름.caption.md",
+   "textbook/part4/ch15-evaluation-advanced/figures/04-평가-흐름.caption.md",
+   "textbook/part4/ch15-evaluation-advanced/figures/05-평가-흐름.caption.md",
+   "textbook/part4/ch15-evaluation-advanced/figures/06-평가-흐름.caption.md",
+   "textbook/part4/ch15-evaluation-advanced/figures/07-평가-흐름.caption.md",
+   "textbook/part4/ch15-evaluation-advanced/figures/08-평가-흐름.caption.md",
+   "textbook/part4/ch16-guardrails/figures/01-흐름.caption.md",
+   "textbook/part4/ch16-guardrails/figures/02-흐름.caption.md",
+   "textbook/part4/ch16-guardrails/figures/03-흐름.caption.md",
+   "textbook/part4/ch16-guardrails/figures/04-흐름.caption.md",
+   "textbook/part4/ch16-guardrails/figures/05-흐름.caption.md",
+   "textbook/part4/ch16-guardrails/figures/06-흐름.caption.md",
+   "textbook/part5/ch17-agent-overview/figures/01-흐름.caption.md",
+   "textbook/part5/ch17-agent-overview/figures/02-흐름.caption.md",
+   "textbook/part5/ch17-agent-overview/figures/03-흐름.caption.md",
+   "textbook/part5/ch17-agent-overview/figures/04-흐름.caption.md",
+   "textbook/part5/ch17-agent-overview/figures/05-흐름.caption.md",
+   "textbook/part5/ch18-workflow-patterns/figures/01-흐름.caption.md",
+   "textbook/part5/ch18-workflow-patterns/figures/02-흐름.caption.md",
+   "textbook/part5/ch18-workflow-patterns/figures/03-흐름.caption.md",
+   "textbook/part5/ch18-workflow-patterns/figures/04-흐름.caption.md",
+   "textbook/part5/ch18-workflow-patterns/figures/05-흐름.caption.md",
+   "textbook/part5/ch18-workflow-patterns/figures/06-흐름.caption.md",
+   "textbook/part5/ch19-model-tools/figures/01-tool과-Ch4-함수-재사용-flow.caption.md",
+   "textbook/part5/ch19-model-tools/figures/02-Pydantic-인자와-반환-스키마-flow.caption.md",
+   "textbook/part5/ch19-model-tools/figures/03-좋은-도구-이름과-설명-flow.caption.md",
+   "textbook/part5/ch19-model-tools/figures/04-설명만으로-도구-선택하기-flow.caption.md",
+   "textbook/part5/ch19-model-tools/figures/05-bind_tools와-병렬-호출-flow.caption.md",
+   "textbook/part5/ch19-model-tools/figures/06-오류와-읽기-쓰기-분리-flow.caption.md",
+   "textbook/part5/ch20-tool-node/figures/01-흐름.caption.md",
+   "textbook/part5/ch20-tool-node/figures/02-흐름.caption.md",
+   "textbook/part5/ch20-tool-node/figures/03-흐름.caption.md",
+   "textbook/part5/ch20-tool-node/figures/04-흐름.caption.md",
+   "textbook/part6/ch21-create-agent/figures/01-흐름.caption.md",
+   "textbook/part6/ch21-create-agent/figures/02-흐름.caption.md",
+   "textbook/part6/ch21-create-agent/figures/03-흐름.caption.md",
+   "textbook/part6/ch21-create-agent/figures/04-흐름.caption.md",
+   "textbook/part6/ch21-create-agent/figures/05-흐름.caption.md",
+   "textbook/part6/ch21-create-agent/figures/06-흐름.caption.md",
+   "textbook/part6/ch23-persistence/figures/01-흐름.caption.md",
+   "textbook/part6/ch23-persistence/figures/02-흐름.caption.md",
+   "textbook/part6/ch23-persistence/figures/03-흐름.caption.md",
+   "textbook/part6/ch23-persistence/figures/04-흐름.caption.md",
+   "textbook/part6/ch23-persistence/figures/05-흐름.caption.md",
+   "textbook/part6/ch23-persistence/figures/06-흐름.caption.md",
+   "textbook/part6/ch24-human-in-the-loop/figures/01-흐름.caption.md",
+   "textbook/part6/ch24-human-in-the-loop/figures/02-흐름.caption.md",
+   "textbook/part6/ch24-human-in-the-loop/figures/03-흐름.caption.md",
+   "textbook/part6/ch25-streaming/figures/01-흐름.caption.md",
+   "textbook/part6/ch25-streaming/figures/02-흐름.caption.md",
+   "textbook/part6/ch25-streaming/figures/03-흐름.caption.md",
+   "textbook/part6/ch26-delegation/figures/01-흐름.caption.md",
+   "textbook/part6/ch26-delegation/figures/02-흐름.caption.md",
+   "textbook/part6/ch26-delegation/figures/03-흐름.caption.md",
+   "textbook/part6/ch26-delegation/figures/04-흐름.caption.md",
+   "textbook/part6/ch27-deepagents/figures/01-흐름.caption.md",
+   "textbook/part6/ch27-deepagents/figures/02-흐름.caption.md",
+   "textbook/part6/ch27-deepagents/figures/03-흐름.caption.md",
+   "textbook/part6/ch27-deepagents/figures/04-흐름.caption.md",
+   "textbook/part6/ch27-deepagents/figures/05-흐름.caption.md",
+   "textbook/part6/ch27-deepagents/figures/06-흐름.caption.md",
+   "textbook/part6/ch27-deepagents/figures/07-흐름.caption.md",
+   "textbook/part6/ch27-deepagents/figures/08-흐름.caption.md",
+   "textbook/part6/ch28-mcp/figures/01-흐름.caption.md",
+   "textbook/part6/ch28-mcp/figures/02-흐름.caption.md",
+   "textbook/part6/ch28-mcp/figures/03-흐름.caption.md",
+   "textbook/part6/ch28-mcp/figures/04-흐름.caption.md",
+   "textbook/part6/ch28-mcp/figures/05-흐름.caption.md",
+   "textbook/part6/ch29-agent-evaluation/figures/01-흐름.caption.md",
+   "textbook/part6/ch29-agent-evaluation/figures/02-흐름.caption.md",
+   "textbook/part6/ch29-agent-evaluation/figures/03-흐름.caption.md",
+   "textbook/part6/ch29-agent-evaluation/figures/04-흐름.caption.md",
+   "textbook/part7/ch30-fastapi-serving/figures/01-흐름.caption.md",
+   "textbook/part7/ch30-fastapi-serving/figures/02-흐름.caption.md",
+   "textbook/part7/ch30-fastapi-serving/figures/03-흐름.caption.md",
+   "textbook/part7/ch30-fastapi-serving/figures/04-흐름.caption.md",
+   "textbook/part7/ch30-fastapi-serving/figures/05-흐름.caption.md",
+   "textbook/part7/ch30-fastapi-serving/figures/06-흐름.caption.md",
+   "textbook/part7/ch30-fastapi-serving/figures/07-흐름.caption.md",
+   "textbook/part7/ch30-fastapi-serving/figures/08-흐름.caption.md",
+   "textbook/part7/ch30-fastapi-serving/figures/09-흐름.caption.md",
+   "textbook/part7/ch31-database/figures/01-흐름.caption.md",
+   "textbook/part7/ch31-database/figures/02-흐름.caption.md",
+   "textbook/part7/ch31-database/figures/03-흐름.caption.md",
+   "textbook/part7/ch31-database/figures/04-흐름.caption.md",
+   "textbook/part7/ch31-database/figures/05-흐름.caption.md"
+  ],
+  "changed": []
+ },
+ "final_close_log_tools": {
+  ".cache/final-close/1-generators-chunk/log": true,
+  ".cache/final-close/1-generators-chunk/tools": true,
+  ".cache/final-close/2-tools-head/log": true,
+  ".cache/final-close/2-tools-head/tools": true,
+  ".cache/final-close/3-check-scripts/log": true,
+  ".cache/final-close/4-index-zip/log": true,
+  ".cache/final-close/4-index-zip/tools": true,
+  ".cache/final-close/5-checks/log": true,
+  ".cache/final-close/5-checks/tools": true,
+  ".cache/final-close/6-docs/log": true,
+  ".cache/final-close/6-docs/tools": true,
+  ".cache/final-close/8-after-delete/log": true,
+  ".cache/final-close/8-after-delete/tools": true
+ },
+ "excluded_kept": {
+  "ch22_old_fig_files": 196,
+  "ch13_graph_integrated": true
+ },
+ "user_venvs": {
+  "labs/part1/ch01-development-environment/.venv": true,
+  "labs/part1/ch02-python/.venv": true,
+  "labs/part1/ch03-git-github/.venv": true,
+  "labs/part1/ch04-data-tools/.venv": true,
+  "labs/part1/ch05-llm-principles/.venv": true,
+  "labs/part2/ch06-langchain-start/.venv": true,
+  "labs/part2/ch07-prompt-engineering/.venv": true,
+  "labs/part2/ch08-context-engineering/.venv": true,
+  "labs/part3/ch09-rag-first-run/.venv": true,
+  "labs/part3/ch10-document-processing/.venv": true,
+  "labs/part3/ch11-evaluation/.venv": true,
+  "labs/part4/ch14-rag-patterns/.venv": true,
+  "labs/part4/ch15-evaluation-advanced/.venv": true,
+  "labs/part6/ch22-middleware/.venv": true,
+  "labs/part7/ch31-database/.venv": true,
+  "labs/part7/ch32-docker/.venv": true,
+  "labs/part7/ch33-cicd/.venv": true
+ },
+ "figures": {
+  "src_files": 252,
+  "src_refs": 1159,
+  "src_missing": [],
+  "html_files": 288,
+  "html_img_file_refs": 10,
+  "html_img_data": 235,
+  "html_img_missing": [],
+  "captions": 1168,
+  "caption_without_figure": [
+   "textbook/part1/ch04-data-tools/figures/02-5-쪽지와-카드-상자.caption.md"
+  ],
+  "caption_named_file_missing": []
+ },
+ "public_lists": {
+  "lists": 49,
+  "entries": 788,
+  "patterns": 30,
+  "missing": [
+   "textbook/part5/ch18-workflow-patterns/qa/public-files.json: figures/*.svg",
+   "textbook/part5/ch18-workflow-patterns/qa/public-files.json: notebooks/*.ipynb",
+   "textbook/part5/ch18-workflow-patterns/qa/public-files.json: notebooks/workflow_tools.py",
+   "textbook/part5/ch20-tool-node/qa/public-files.json: figures/*.svg",
+   "textbook/part5/ch20-tool-node/qa/public-files.json: notebooks/*.ipynb",
+   "textbook/part5/ch20-tool-node/qa/public-files.json: notebooks/graph_tools.py"
+  ]
+ }
+}

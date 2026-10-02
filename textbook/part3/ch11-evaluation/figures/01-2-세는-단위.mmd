@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  gold["질문 Q001의 라벨<br>정답 문서 ID E01"]:::tool
+  doc["문서 단위로 세기<br>이 챕터 지표의 단위"]:::flow
+  page["쪽·문서 청크 단위로 읽기<br>page 칸 · chunk_id 칸"]:::flow
+  docout["말뭉치 목록의 E01 쪽 수 5<br>문서로는 한 건"]:::measure
+  pageout["Ch 9 기록 1위 항목의 쪽 1<br>2위 항목의 쪽 2"]:::measure
+  rule["문서 청크를 작게 나눠도<br>정답 문서는 한 번만 센다"]:::flow
+  gold --> doc
+  gold --> page
+  doc --> docout
+  page --> pageout
+  docout --> rule

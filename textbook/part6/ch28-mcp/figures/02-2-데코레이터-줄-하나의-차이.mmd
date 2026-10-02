@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  cm["두 판 같음<br>함수 count_rules<br>몸통 · 독스트링<br>서버 practice 연습 자료실"]
+  subgraph nodeco["데코레이터 줄 없음"]
+    direction TB
+    a1["def count_rules만 정의"]:::flow
+    a2["받은 도구 수 0<br>ToolError<br>Unknown tool count_rules"]:::measure
+    a1 --> a2
+  end
+  subgraph withdeco["데코레이터 줄 @practice.tool"]
+    direction TB
+    b1["같은 함수 위에<br>줄 하나 더함"]:::flow
+    b2["받은 도구 수 1<br>도구 설명은 독스트링 글<br>부른 결과 글 2"]:::measure
+    b1 --> b2
+  end
+  cm --> nodeco
+  cm --> withdeco

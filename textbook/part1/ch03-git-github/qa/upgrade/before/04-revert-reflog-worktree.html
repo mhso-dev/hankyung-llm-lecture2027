@@ -1,0 +1,338 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>revert reflog worktree — Ch 3 · Git &amp; GitHub 협업</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 3 · Git &amp; GitHub 협업</p>
+<h1>revert reflog worktree</h1><div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>공유된 변경과 로컬 변경의 상태에 따라 <code>revert</code>와 이력 이동을 구분할 수 있습니다.</li><li><code>reflog</code>에서 사라진 커밋의 참조 이동 기록을 찾아 새 브랜치로 복구할 수 있습니다.</li><li><code>worktree</code>로 한 저장소의 서로 다른 브랜치를 별도 작업 폴더에서 열 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>코드를 되돌린다는 말에는 서로 다른 상황이 섞여 있습니다. 팀이 이미 받은 커밋의 효과를 취소해야 할 수도 있고, 내 컴퓨터에서 실수로 브랜치 이름을 옮겨 커밋이 보이지 않을 수도 있습니다. 작업 중인 긴 기능을 그대로 둔 채 긴급 수정을 별도 폴더에서 처리해야 할 때도 있습니다. 모든 상황에 <code>reset --hard</code>를 사용하면 공유 이력을 다시 쓰거나 아직 저장하지 않은 변경을 잃을 수 있습니다. 이 절에서는 이력을 보존하는 취소, 로컬 참조 기록을 이용한 복구, 여러 작업 폴더의 분리를 각각 실제 커밋으로 확인합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>앞 절에서 브랜치가 커밋을 가리키는 이름이고 병합 커밋은 두 부모를 가질 수 있음을 확인했습니다. 여기서는 직선 이력에서 할인율을 잘못 바꾼 커밋을 만들고 그 효과를 되돌립니다. <code>Path</code>와 임시 폴더를 사용하므로 실제 프로젝트 파일은 수정하지 않습니다. <code>reset --hard</code>는 실패 재현용 임시 브랜치에서만 실행합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>공유 기록은 남기고 반대 변경을 추가합니다</h3><p>
+공용 장부의 잘못된 항목을 지우기보다 취소 항목을 다음 줄에 기록하면 무엇이 있었고 왜 취소했는지 모두 확인할 수 있습니다. <strong><code>git revert</code></strong>는 지정한 커밋의 변경을 반대로 적용한 새 커밋을 만듭니다. <code>discount=10</code>을 90으로 바꾼 커밋을 revert하면 작업 파일은 다시 10이 되지만 90 커밋은 사라지지 않습니다. “90으로 변경”, “그 변경을 취소”라는 두 사건이 모두 이력에 남습니다. <code>git revert --no-edit bad</code>에서 <code>bad</code>는 취소할 커밋 해시를 담은 변수이고 <code>--no-edit</code>는 Git의 기본 되돌림 메시지를 그대로 사용합니다.</p><p><strong><code>git reset</code></strong>은 현재 브랜치가 가리키는 위치를 옮깁니다. <code>git reset --hard HEAD~1</code>에서 <code>HEAD~1</code>은 현재 커밋의 첫 번째 부모 한 단계 전이며, <code>--hard</code>는 브랜치뿐 아니라 색인과 작업 폴더까지 그 커밋 상태로 맞춥니다. 따라서 커밋하지 않은 파일 변화도 사라질 수 있습니다. 실습은 임시 저장소의 미공유 커밋에만 사용합니다.</p><p><strong>reflog(reference log)</strong>는 이 로컬 저장소에서 HEAD와 브랜치 참조가 어디로 이동했는지 기록합니다. reset 뒤 일반 <code>git log</code>는 현재 브랜치에서 도달하는 커밋만 보여 주므로 아이디어 커밋이 보이지 않습니다. reflog에는 reset 전 HEAD 위치가 남아 있어 해당 해시에 <code>recovered-idea</code>라는 브랜치 이름을 붙일 수 있습니다. reflog는 만료될 수 있는 로컬 복구 단서이며 원격 백업을 대신하지 않습니다.</p><h3>worktree는 브랜치마다 작업 폴더를 분리합니다</h3><p><strong>worktree</strong>는 한 저장소의 객체 이력을 공유하면서 다른 브랜치를 별도 폴더에 체크아웃하는 기능입니다. <code>git worktree add -b fix/urgent urgent-fix</code>에서 <code>add</code>는 새 작업 폴더를 추가하고, <code>-b fix/urgent</code>는 새 브랜치를 만들며, <code>urgent-fix</code>는 폴더 경로입니다. 기본 폴더의 <code>main</code> 작업을 그대로 둔 채 추가 폴더에서 긴급 수정 커밋을 만들 수 있습니다. 별도 복제본과 달리 객체 저장소와 참조 관리 정보는 함께 사용합니다.</p><p>세 도구는 순서대로 실행하는 복구 절차가 아닙니다. 공유된 잘못된 커밋의 효과를 취소하려면 revert, 로컬에서 보이지 않게 된 커밋의 위치를 찾으려면 reflog, 두 브랜치를 동시에 편집하려면 worktree를 선택합니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 455" width="720" height="455" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-04-recovery-tools desc-04-recovery-tools">
+<title id="title-04-recovery-tools">상황에 맞는 Git 도구 선택</title>
+<desc id="desc-04-recovery-tools">세 행은 서로 다른 상황입니다. 공개 변경 취소에는 revert, 로컬 참조 복구에는 reflog, 두 작업 폴더 사용에는 worktree를 선택합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="720" height="455" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">상황에 맞는 Git 도구 선택</tspan></text>
+<rect x="30" y="90" width="295" height="65" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="177.5" y="122.5" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="177.5" dy="0.0">공유한 변경을 취소할 때</tspan></text>
+<rect x="410" y="90" width="280" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="550.0" y="111.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="550.0" dy="0.0">revert</tspan><tspan x="550.0" dy="21.6">취소하는 새 커밋</tspan></text>
+<polyline points="325,122 410,122" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="30" y="205" width="295" height="65" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="177.5" y="237.5" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="177.5" dy="0.0">로컬 커밋을 다시 찾을 때</tspan></text>
+<rect x="410" y="205" width="280" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="550.0" y="226.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="550.0" dy="0.0">reflog</tspan><tspan x="550.0" dy="21.6">참조 이동 기록 확인</tspan></text>
+<polyline points="325,237 410,237" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="30" y="320" width="295" height="65" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="177.5" y="352.5" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="177.5" dy="0.0">두 브랜치를 함께 작업할 때</tspan></text>
+<rect x="410" y="320" width="280" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="550.0" y="341.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="550.0" dy="0.0">worktree</tspan><tspan x="550.0" dy="21.6">브랜치별 작업 폴더</tspan></text>
+<polyline points="325,352 410,352" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<text x="360.0" y="429.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg></div><p>세 행은 순서대로 실행하는 절차가 아니라 서로 다른 상황을 보여 줍니다. 공유한 변경을 취소할 때는 <code>revert</code>로 반대 변경을 새 커밋에 기록합니다. 로컬 커밋을 다시 찾을 때는 <code>reflog</code>에서 참조 이동을 확인합니다. 두 브랜치를 함께 작업할 때는 <code>worktree</code>로 브랜치별 작업 폴더를 만듭니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>저장소는 정상 설정 <code>discount=10</code>을 먼저 커밋합니다. 다음 커밋이 값을 90으로 바꾸면 <code>git revert</code>가 반대 패치를 적용해 파일 내용을 다시 10으로 만듭니다. 출력의 최신 세 커밋에는 되돌림, 잘못된 변경, 최초 설정이 모두 남습니다. 잘못된 커밋을 이력에서 지운 것이 아니라 효과를 상쇄한 것입니다.</p><p>다음 셀은 <code>urgent-fix</code> 폴더에 <code>fix/urgent</code> 브랜치를 연결합니다. 기본 폴더는 <code>main</code>, 추가 폴더는 <code>fix/urgent</code>를 가리킵니다. 두 폴더는 객체 데이터베이스를 공유하지만 작업 파일은 별도로 가집니다. 긴급 수정이 끝나면 변경을 커밋하고 병합한 뒤 <code>git worktree remove</code>로 추가 폴더를 정리할 수 있습니다.</p><section class="notebook" data-notebook="04-revert-reflog-worktree" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="04-revert-reflog-worktree.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyByZXZlcnQsIHJlZmxvZywgd29ya3RyZWVcbiIsCiAgICAiXG4iLAogICAgIuuqqOuToCDsoIDsnqXshozripQg7J6E7IucIO2PtOuNlOyXkCDrp4zrk6TrqbAg7Iuk7KCcIEdpdEh1YiDqs4TsoJXsnbTrgpgg7JuQ6rKpIOyggOyepeyGjOulvCDrs4Dqsr3tlZjsp4Ag7JWK7Iq164uI64ukLlxuIiwKICAgICJcbiIsCiAgICAiIyMg66qF66C57J2EIOyLpO2Wie2VmOq4sCDsoITsl5Ag7JWM7JWE65GYIEdpdCDsg4Htg5xcbiIsCiAgICAiXG4iLAogICAgIkdpdOydgCDtjIzsnbzsnYQg7IS4IOyekOumrOyXkOyEnCDrtIXri4jri6QuICoq7J6R7JeFIO2PtOuNlCh3b3JraW5nIHRyZWUpKiog64qUIOyngOq4iCDtjrjsp5HtlZjripQg7YyM7J287J20IOyeiOuKlCDsnpDrpqzsnoXri4jri6QuICoq7IOJ7J24KGluZGV4KSoqIOydgCDri6TsnYwg7Luk67CL7JeQIOuEo+ydhCDtjIzsnbwg7IOB7YOc66W8IOqzqOudvCDrkZDripQg7J6Q66as7J2066mwLCDsiqTthYzsnbTsp5Ug7JiB7JetKHN0YWdpbmcgYXJlYSnsnbTrnbzqs6Drj4Qg7ZWp64uI64ukLiAqKuy7pOuwiyhjb21taXQpKiog7J2AIOyDieyduOyXkCDqs6Drpbgg7IOB7YOc66W8IOyggOyepeyGjCDsnbTroKXsl5Ag6riw66Gd7ZWcIOqysOqzvOyeheuLiOuLpC4g65Sw65287IScIGBnaXQgYWRkIGFwcC5weWDripQg7YyM7J287J2EIOyYgeq1rCDsoIDsnqXtlZjripQg66qF66C57J20IOyVhOuLiOudvCDtmITsnqwgYGFwcC5weWDrpbwg7IOJ7J247JeQIOyYrOumrOuKlCDrqoXroLnsnoXri4jri6QuIOydtOyWtOyEnCBgZ2l0IGNvbW1pdCAtbSBcIuuplOyLnOyngFwiYOulvCDsi6TtlontlbTslbwg6re4IOyDge2DnOqwgCDsu6TrsIvsnLzroZwg6riw66Gd65Cp64uI64ukLlxuIiwKICAgICJcbiIsCiAgICAiKipIRUFEKiog64qUIO2YhOyerCDssrTtgazslYTsm4PtlZwg7Luk67CL7J2EIOqwgOumrO2CteuLiOuLpC4g67O07Ya1IEhFQUTripQgYG1haW5gIOqwmeydgCAqKuu4jOuenOy5mChicmFuY2gpKiog7J2066aE7J2EIOqwgOumrO2CpOqzoCwg67iM656c7LmYIOydtOumhOydgCDri6Tsi5wg7LWc7IugIOy7pOuwi+ydhCDqsIDrpqztgrXri4jri6QuIOyDiCDsu6TrsIvsnYQg66eM65Ok66m0IO2YhOyerCDruIzrnpzsuZjqsIAg7IOIIOy7pOuwi+ycvOuhnCDsnbTrj5ntlanri4jri6QuIOydtCDsoIjsl5DshJzripQgYEhFQUR+MWDsnYQg7ZiE7J6sIOy7pOuwi+ydmCDssqsg67KI7Ke4IOu2gOuqqCDtlZwg64uo6rOEIOyghOycvOuhnCDsnb3sirXri4jri6QuXG4iLAogICAgIlxuIiwKICAgICLrqoXroLnsnYAg7Jm87Kq967aA7YSwIGBnaXRgIOKGkiDtlZjsnIQg66qF66C5IOKGkiDsmLXshZgg4oaSIOuMgOyDgeycvOuhnCDsnb3sirXri4jri6QuIOyYiOulvCDrk6TslrQgYGdpdCBzdGF0dXMgLS1zaG9ydGDsl5DshJwgYHN0YXR1c2DripQg7IOB7YOc66W8IOuztOqzoCwgYC0tc2hvcnRg64qUIOynp+ydgCDtmJXsi53snLzroZwg7ZGc7Iuc7ZWY652864qUIOyYteyFmOyeheuLiOuLpC4g7L2U65Oc7J2YIGBnaXQoXCJzdGF0dXNcIiwgXCItLXNob3J0XCIsIGN3ZD1yZXBvKWDripQg7YSw66+464SQ7JeQ7IScIOqwmeydgCDrqoXroLnsnYQg7Iuk7ZaJ7ZWY64+E66GdIOyduOyekOulvCDrgpjriIggUHl0aG9uIO2RnO2YhOyeheuLiOuLpC5cbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIuygleyDgSDshKTsoJUg7YyM7J286rO8IOyyqyDsu6TrsIvsnYQg66eM65Ot64uI64ukLiDsnbQg7KCI7J2YIOyEuCDrj4TqtazripQg6rCZ7J2AIOyiheulmOydmCDquLDriqXsnbQg7JWE64uZ64uI64ukLiAqKnJldmVydCoq64qUIOydtOuvuCDqs7XsnKDtlZwg7Luk67CL7J2YIO2aqOqzvOulvCDst6jshoztlZjripQg7IOIIOy7pOuwi+ydhCDrp4zrk63ri4jri6QuICoqcmVmbG9nKirripQg7J20IOuhnOy7rCDsoIDsnqXshozsl5DshJwgSEVBROuCmCDruIzrnpzsuZjqsIAg7J2064+Z7ZWcIOq4sOuhneydhCDrs7Tsl6wg7KSN64uI64ukLiAqKndvcmt0cmVlKirripQg6rCZ7J2AIOyggOyepeyGjOydmCDri6Trpbgg67iM656c7LmY66W8IOuzhOuPhCDsnpHsl4Ug7Y+0642U7JeQIOyXsOqysO2VqeuLiOuLpC4g66y47KCcIOyDge2ZqeydhCDrqLzsoIAg6rWs67aE7ZWcIOuSpCDrj4Tqtazrpbwg7ISg7YOd7ZW07JW8IO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICJjZWxsLTAzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjE3OjUxLjgwNTM0OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjE3OjUxLjgwNDcwNFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjE3OjUxLjgxMjY4NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MTc6NTEuODExODk3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyFgOydtCDrp4zrk6Ag7KCA7J6l7IaM66eMIOyCrOyaqe2VmOuKlCDsnoTsi5wg7J6R7JeFIO2PtOuNlOulvCDspIDruYTtlanri4jri6QuXG4iLAogICAgImltcG9ydCBzdWJwcm9jZXNzXG4iLAogICAgImltcG9ydCBzeXNcbiIsCiAgICAiaW1wb3J0IHRlbXBmaWxlXG4iLAogICAgImZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aFxuIiwKICAgICJ3b3Jrc3BhY2UgPSB0ZW1wZmlsZS5UZW1wb3JhcnlEaXJlY3RvcnkocHJlZml4PVwiZ2l0LWxlc3Nvbi1cIilcbiIsCiAgICAicm9vdCA9IFBhdGgod29ya3NwYWNlLm5hbWUpXG4iLAogICAgIiMgY3dk64qUIOuqheugueydhCDsi6TtlontlaAg7Y+0642U7J2066mwIGNoZWNrPVRydWXripQg66qF66C5IOyLpO2MqOulvCDsmIjsmbjroZwg7JWM66a964uI64ukLlxuIiwKICAgICJkZWYgZ2l0KCphcmdzOiBzdHIsIGN3ZDogUGF0aCB8IE5vbmUgPSBOb25lLCBjaGVjazogYm9vbCA9IFRydWUpIC0+IHN0cjpcbiIsCiAgICAiICAgIFwiXCJcIuyngOygle2VnCDsnoTsi5wg7KCA7J6l7IaM7JeQ7IScIEdpdCDrqoXroLnsnYQg7Iuk7ZaJ7ZWp64uI64ukLlwiXCJcIlxuIiwKICAgICIgICAgcmVzdWx0ID0gc3VicHJvY2Vzcy5ydW4oW1wiZ2l0XCIsICphcmdzXSwgY3dkPWN3ZCBvciByb290LFxuIiwKICAgICIgICAgICAgICAgICAgICAgICAgICAgICAgICAgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlLCBjaGVjaz1jaGVjaylcbiIsCiAgICAiICAgIHJldHVybiByZXN1bHQuc3Rkb3V0LnN0cmlwKCkgb3IgcmVzdWx0LnN0ZGVyci5zdHJpcCgpXG4iLAogICAgImRlZiBjb25maWd1cmUocmVwbzogUGF0aCkgLT4gTm9uZTpcbiIsCiAgICAiICAgIFwiXCJcIuyLpOyKtSDsoIDsnqXshozsl5Drp4wg7J6R7ISx7J6QIOygleuztOulvCDshKTsoJXtlanri4jri6QuXCJcIlwiXG4iLAogICAgIiAgICBnaXQoXCJjb25maWdcIiwgXCJ1c2VyLm5hbWVcIiwgXCJHaXQgTGVhcm5lclwiLCBjd2Q9cmVwbylcbiIsCiAgICAiICAgIGdpdChcImNvbmZpZ1wiLCBcInVzZXIuZW1haWxcIiwgXCJsZWFybmVyQGV4YW1wbGUuaW52YWxpZFwiLCBjd2Q9cmVwbykiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjE3OjUxLjgxNDMyOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjE3OjUxLjgxNDE3MloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjE3OjUxLjkwNTMyOVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MTc6NTEuOTA0OTI2WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIjYwNTU5NzYgZmVhdDog7ZWg7J247JyoIDEwIOyEpOyglVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOuzteq1rCDsi6TsirXsmqkg7KCA7J6l7IaM66W8IOykgOu5hO2VqeuLiOuLpC5cbiIsCiAgICAicmVwbyA9IHJvb3QgLyBcInJlY292ZXJ5XCJcbiIsCiAgICAicmVwby5ta2RpcigpXG4iLAogICAgImdpdChcImluaXRcIiwgXCItYlwiLCBcIm1haW5cIiwgY3dkPXJlcG8pXG4iLAogICAgImNvbmZpZ3VyZShyZXBvKVxuIiwKICAgICIocmVwbyAvIFwiY29uZmlnLnR4dFwiKS53cml0ZV90ZXh0KFwiZGlzY291bnQ9MTBcXG5cIiwgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJnaXQoXCJhZGRcIiwgXCJjb25maWcudHh0XCIsIGN3ZD1yZXBvKVxuIiwKICAgICJnaXQoXCJjb21taXRcIiwgXCItbVwiLCBcImZlYXQ6IO2VoOyduOycqCAxMCDshKTsoJVcIiwgY3dkPXJlcG8pXG4iLAogICAgImdvb2QgPSBnaXQoXCJyZXYtcGFyc2VcIiwgXCJIRUFEXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJwcmludChnaXQoXCJsb2dcIiwgXCItLW9uZWxpbmVcIiwgXCItMVwiLCBjd2Q9cmVwbykpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOq4sOuzuCDsi6TtlolcbiIsCiAgICAiXG4iLAogICAgIuyemOuqu+uQnCDqs7XqsJwg67OA6rK97J2AIHJldmVydOuhnCDrsJjrjIAg67OA6rK97J2EIOyDiCDsu6TrsIvsl5Ag6riw66Gd7ZWp64uI64ukLiBgZ2l0IHJldmVydCAtLW5vLWVkaXQgPOy7pOuwiz5g7JeQ7IScIGA87Luk67CLPmDsnYAg7Leo7IaM7ZWgIOuMgOyDgeydtOqzoCwgYC0tbm8tZWRpdGDripQgR2l07J20IOunjOuToCDquLDrs7gg65CY64+M66a8IOuplOyLnOyngOulvCDtjrjsp5HquLAg7JeG7J20IOyCrOyaqe2VqeuLiOuLpC4gYGRpc2NvdW50PTkwYCDsu6TrsIvsnYAg7J2066Cl7JeQIOuCqOqzoCDsg4gg7Luk67CL7J20IOq3uCDtjKjsuZjrpbwg67CY64yA66GcIOyggeyaqe2VtCDtjIzsnbzsnYQgYGRpc2NvdW50PTEwYOycvOuhnCDrkJjrj4zrpr3ri4jri6QuXG4iLAogICAgIlxuIiwKICAgICLrsJjrqbQgcmVzZXTsnYAg7ZiE7J6sIOu4jOuenOy5mOqwgCDqsIDrpqztgqTripQg7JyE7LmY66W8IOyYruq5geuLiOuLpC4g7YyM7J28IOqysOqzvOqwgCDqsJnslYQg67O07J28IOyImCDsnojslrTrj4Qg7J2066Cl7J2YIOuqqOyWkeydtCDri6TrpoXri4jri6QuIOqzteycoO2VnCDsnpjrqrvsnYQg6rOg7LmgIOuVjOuKlCDquLDsobQg7Luk67CL7J2EIOuztOyhtO2VmOuKlCByZXZlcnTqsIAg7ZiR7JeF7J6Q6rCAIOydtOuvuCDrsJvsnYAg7J2066Cl6rO8IOunnuy2lOq4sCDsib3sirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoxNzo1MS45MDYzMjBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoxNzo1MS45MDYyNDFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoxNzo1MS45NTgxNDZaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjE3OjUxLjk1NzcxNVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJkaXNjb3VudD0xMFxuIiwKICAgICAgIjdmMDBmOWUgUmV2ZXJ0IFwiZml4OiDtlaDsnbjsnKggOTAg7ISk7KCVXCJcbiIsCiAgICAgICI5Njc2YmZkIGZpeDog7ZWg7J247JyoIDkwIOyEpOyglVxuIiwKICAgICAgIjYwNTU5NzYgZmVhdDog7ZWg7J247JyoIDEwIOyEpOyglVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIHJldmVydOuKlCDtlaDsnbjsnKjsnYQg65CY64+M66as64qUIOyDiCDsu6TrsIvsnYQg66eM65Ok7Ja0IOq4sOyhtCDsnbTroKXsnYQg7Jyg7KeA7ZWp64uI64ukLlxuIiwKICAgICIocmVwbyAvIFwiY29uZmlnLnR4dFwiKS53cml0ZV90ZXh0KFwiZGlzY291bnQ9OTBcXG5cIiwgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJnaXQoXCJhZGRcIiwgXCJjb25maWcudHh0XCIsIGN3ZD1yZXBvKVxuIiwKICAgICJnaXQoXCJjb21taXRcIiwgXCItbVwiLCBcImZpeDog7ZWg7J247JyoIDkwIOyEpOyglVwiLCBjd2Q9cmVwbylcbiIsCiAgICAiYmFkID0gZ2l0KFwicmV2LXBhcnNlXCIsIFwiSEVBRFwiLCBjd2Q9cmVwbylcbiIsCiAgICAiZ2l0KFwicmV2ZXJ0XCIsIFwiLS1uby1lZGl0XCIsIGJhZCwgY3dkPXJlcG8pXG4iLAogICAgInByaW50KChyZXBvIC8gXCJjb25maWcudHh0XCIpLnJlYWRfdGV4dChlbmNvZGluZz1cInV0Zi04XCIpLnN0cmlwKCkpXG4iLAogICAgInByaW50KGdpdChcImxvZ1wiLCBcIi0tb25lbGluZVwiLCBcIi0zXCIsIGN3ZD1yZXBvKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA3IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgd29ya3RyZWXroZwg65GQIOyekeyXhSDtj7TrjZQg7IKs7JqpXG4iLAogICAgIlxuIiwKICAgICLrs4Trj4Qg67iM656c7LmY66W8IOuzhOuPhCDtj7TrjZTsl5Ag7Jew6rKw7ZWp64uI64ukLiBgZ2l0IHdvcmt0cmVlIGFkZCAtYiBmaXgvdXJnZW50IDzqsr3roZw+YOyXkOyEnCBgYWRkYOuKlCDsnpHsl4Ug7Y+0642U66W8IOy2lOqwgO2VmOqzoCwgYC1iIGZpeC91cmdlbnRg64qUIOyDiCDruIzrnpzsuZjrpbwg66eM65Ok66mwLCDrp4jsp4Drp4kg7J247J6Q64qUIO2PtOuNlCDsnITsuZjsnoXri4jri6QuIOq4sOuzuCDtj7TrjZTripQgYG1haW5g7J2YIGBjb25maWcudHh0YOulvCDsnKDsp4DtlZjqs6Ag7LaU6rCAIO2PtOuNlOuKlCBgZml4L3VyZ2VudGDsl5DshJwgYGhvdGZpeC50eHRg66W8IOy7pOuwi+2VqeuLiOuLpC4g65GQIO2PtOuNlOuKlCDsu6TrsIsg6rCd7LK066W8IOqzteycoO2VmOyngOunjCDssrTtgazslYTsm4PtlZwg67iM656c7LmY7JmAIOyekeyXhSDtjIzsnbzsnYAg6rWs67aE65Cp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImNlbGwtMDgiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTc6NTEuOTU5MDUyWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTc6NTEuOTU4OTg3WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTc6NTIuMDI0OTk3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNzo1Mi4wMjQ2MTBaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi6riw67O4IO2PtOuNlCDruIzrnpzsuZg6IG1haW5cbiIsCiAgICAgICLstpTqsIAg7Y+0642UIOu4jOuenOy5mDogZml4L3VyZ2VudFxuIiwKICAgICAgIndvcmt0cmVlIC9wcml2YXRlL3Zhci9mb2xkZXJzLzE0LzNzcTAzZjZzM183YnMwdHlnZnFxdmNfYzAwMDBnbi9UL2dpdC1sZXNzb24tZmRyaWgwcW4vcmVjb3ZlcnlcbiIsCiAgICAgICJIRUFEIDdmMDBmOWUwNzExYTg2Yzg0Y2ZiZDIzMTgzNzBiNTA5ZDlkNmFmYWFcbiIsCiAgICAgICJicmFuY2ggcmVmcy9oZWFkcy9tYWluXG4iLAogICAgICAiXG4iLAogICAgICAid29ya3RyZWUgL3ByaXZhdGUvdmFyL2ZvbGRlcnMvMTQvM3NxMDNmNnMzXzdiczB0eWdmcXF2Y19jMDAwMGduL1QvZ2l0LWxlc3Nvbi1mZHJpaDBxbi91cmdlbnQtZml4XG4iLAogICAgICAiSEVBRCAyNGI5NDgyMTk5N2MzODQwYzc0OTg1NWU1YTk4NDA1NzU0NGE2ODdkXG4iLAogICAgICAiYnJhbmNoIHJlZnMvaGVhZHMvZml4L3VyZ2VudFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOuzhOuPhCB3b3JrdHJlZeyXkOyEnCDquLTquIkg7IiY7KCVIOu4jOuenOy5mOulvCDsgqzsmqntlZjqs6Ag6riw67O4IO2PtOuNlOyZgCDruYTqtZDtlanri4jri6QuXG4iLAogICAgIndvcmt0cmVlID0gcm9vdCAvIFwidXJnZW50LWZpeFwiXG4iLAogICAgImdpdChcIndvcmt0cmVlXCIsIFwiYWRkXCIsIFwiLWJcIiwgXCJmaXgvdXJnZW50XCIsIHdvcmt0cmVlLmFzX3Bvc2l4KCksIGN3ZD1yZXBvKVxuIiwKICAgICIod29ya3RyZWUgLyBcImhvdGZpeC50eHRcIikud3JpdGVfdGV4dChcInVyZ2VudD10cnVlXFxuXCIsIGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAiZ2l0KFwiYWRkXCIsIFwiaG90Zml4LnR4dFwiLCBjd2Q9d29ya3RyZWUpXG4iLAogICAgImdpdChcImNvbW1pdFwiLCBcIi1tXCIsIFwiZml4OiDquLTquIkg7ISk7KCVIOy2lOqwgFwiLCBjd2Q9d29ya3RyZWUpXG4iLAogICAgInByaW50KFwi6riw67O4IO2PtOuNlCDruIzrnpzsuZg6XCIsIGdpdChcImJyYW5jaFwiLCBcIi0tc2hvdy1jdXJyZW50XCIsIGN3ZD1yZXBvKSlcbiIsCiAgICAicHJpbnQoXCLstpTqsIAg7Y+0642UIOu4jOuenOy5mDpcIiwgZ2l0KFwiYnJhbmNoXCIsIFwiLS1zaG93LWN1cnJlbnRcIiwgY3dkPXdvcmt0cmVlKSlcbiIsCiAgICAicHJpbnQoZ2l0KFwid29ya3RyZWVcIiwgXCJsaXN0XCIsIFwiLS1wb3JjZWxhaW5cIiwgY3dkPXJlcG8pKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDkiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2MqCDsnqztmIRcbiIsCiAgICAiXG4iLAogICAgIuyVhOyngSDqs7XsnKDtlZjsp4Ag7JWK7J2AIOy7pOuwi+ydhCBoYXJkIHJlc2V07Jy866GcIOyngOyasOuptCDsnbzrsJggbG9n7JeQ7IScIOuztOydtOyngCDslYrsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiY2VsbC0xMCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoxNzo1Mi4wMjU4NjdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoxNzo1Mi4wMjU3OTZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoxNzo1Mi4wOTAxNzZaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjE3OjUyLjA4OTcwMloiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuydvOuwmCBsb2fsl5Ag7J6I7J2MOiBGYWxzZVxuIiwKICAgICAgIu2MjOydvCDsobTsnqw6IEZhbHNlXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7J6E7IucIOyggOyepeyGjOydmCDrr7jqs7XsnKAg7Luk67CL66eMIOydtOuPmeyLnOy8nCDsnbzrsJggbG9n7JeQ7IScIOyCrOudvOynkOydhCDqtIDssLDtlanri4jri6QuXG4iLAogICAgImdpdChcInN3aXRjaFwiLCBcIi1jXCIsIFwiZXhwZXJpbWVudFwiLCBjd2Q9cmVwbylcbiIsCiAgICAiKHJlcG8gLyBcImlkZWEudHh0XCIpLndyaXRlX3RleHQoXCJyZWNvdmVyIG1lXFxuXCIsIGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAiZ2l0KFwiYWRkXCIsIFwiaWRlYS50eHRcIiwgY3dkPXJlcG8pXG4iLAogICAgImdpdChcImNvbW1pdFwiLCBcIi1tXCIsIFwiZXhwZXJpbWVudDog67O16rWs7ZWgIOyVhOydtOuUlOyWtFwiLCBjd2Q9cmVwbylcbiIsCiAgICAibG9zdCA9IGdpdChcInJldi1wYXJzZVwiLCBcIkhFQURcIiwgY3dkPXJlcG8pXG4iLAogICAgImdpdChcInJlc2V0XCIsIFwiLS1oYXJkXCIsIFwiSEVBRH4xXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJ2aXNpYmxlID0gZ2l0KFwibG9nXCIsIFwiLS1mb3JtYXQ9JUhcIiwgXCItM1wiLCBjd2Q9cmVwbylcbiIsCiAgICAicHJpbnQoXCLsnbzrsJggbG9n7JeQIOyeiOydjDpcIiwgbG9zdCBpbiB2aXNpYmxlKVxuIiwKICAgICJwcmludChcIu2MjOydvCDsobTsnqw6XCIsIChyZXBvIC8gXCJpZGVhLnR4dFwiKS5leGlzdHMoKSlcbiIsCiAgICAiYXNzZXJ0IGxvc3Qgbm90IGluIHZpc2libGUiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTExIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyImOyglVxuIiwKICAgICJcbiIsCiAgICAicmVmbG9n7JeQ7IScIOydtOuPmSDsoIQg7Luk67CL7J2EIOywvuyVhCDsg4gg67iM656c7LmYIOydtOumhOydhCDrtpnsnoXri4jri6QuIGBnaXQgcmVmbG9nIC0tZm9ybWF0PSVIJXgwOSVncyAtNWDripQg7LWc6re8IDXqsJwg7ZaJ7J2EIGDsoITssrQg7ZW07IucYCwg7YOtIOusuOyekCwgYOydtOuPmSDsnbTsnKBgIOyInOyEnOuhnCDstpzroKXtlanri4jri6QuXG4iLAogICAgIlxuIiwKICAgICJgcmVmbG9nLnNwbGl0bGluZXMoKWDripQg7Lac66ClIOusuOyekOyXtOydhCDtlokg66qp66Gd7Jy866GcIOuwmO2ZmO2VqeuLiOuLpC4gYG5leHQoLi4uKWDripQg66mU7Iuc7KeA7JeQIGBjb21taXQ6IGV4cGVyaW1lbnQ6IOuzteq1rO2VoCDslYTsnbTrlJTslrRg6rCAIO2PrO2VqOuQnCDssqsg7ZaJ7J2EIOqzoOumheuLiOuLpC4gYGxpbmUuc3BsaXQoXCJcXHRcIiwgMSlbMF1g7J2AIOyyqyDrsojsp7gg7YOt7JeQ7IScIO2WieydhCDstZzrjIAg7ZWcIOuyiCDrgpjriITqs6Ag7YOtIOyVnuydmCDtlbTsi5zrpbwg67CY7ZmY7ZWp64uI64ukLiDsnbQg7ZW07Iuc6rCAIGBnaXQgYnJhbmNoIHJlY292ZXJlZC1pZGVhIDztlbTsi5w+YOydmCDrs7Xqtawg64yA7IOB7J6F64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImNlbGwtMTIiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTc6NTIuMDkxNjEwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTc6NTIuMDkxNDgyWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTc6NTIuMTI3OTMzWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNzo1Mi4xMjc1MThaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIjdmMDBmOWUwNzExYTg2Yzg0Y2ZiZDIzMTgzNzBiNTA5ZDlkNmFmYWFcdHJlc2V0OiBtb3ZpbmcgdG8gSEVBRH4xXG4iLAogICAgICAiMzMwMWY5MDEwMWYxYzdhMDRjZDgyZWQyYjRkODhiMGMwOGYxYjIwOVx0Y29tbWl0OiBleHBlcmltZW50OiDrs7XqtaztlaAg7JWE7J2065SU7Ja0XG4iLAogICAgICAiN2YwMGY5ZTA3MTFhODZjODRjZmJkMjMxODM3MGI1MDlkOWQ2YWZhYVx0Y2hlY2tvdXQ6IG1vdmluZyBmcm9tIG1haW4gdG8gZXhwZXJpbWVudFxuIiwKICAgICAgIjdmMDBmOWUwNzExYTg2Yzg0Y2ZiZDIzMTgzNzBiNTA5ZDlkNmFmYWFcdHJldmVydDogUmV2ZXJ0IFwiZml4OiDtlaDsnbjsnKggOTAg7ISk7KCVXCJcbiIsCiAgICAgICI5Njc2YmZkNTRhYTdhYWQ5ODA1MGZlNTFmYWZhZTEwZmU5ZWUwMzRlXHRjb21taXQ6IGZpeDog7ZWg7J247JyoIDkwIOyEpOyglVxuIgogICAgIF0KICAgIH0sCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuuzteq1rCDrgrTsmqk6IHJlY292ZXIgbWVcbiIsCiAgICAgICLrs7Xqtawg67iM656c7LmYOiAzMzAxZjkwXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgcmVmbG9n7J2YIOy7pOuwiyDrqZTsi5zsp4DroZwg67O16rWsIOuMgOyDgeydhCDssL7slYQg7IOIIOu4jOuenOy5mCDsnbTrpoTsnYQg67aZ7J6F64uI64ukLlxuIiwKICAgICJyZWZsb2cgPSBnaXQoXCJyZWZsb2dcIiwgXCItLWZvcm1hdD0lSCV4MDklZ3NcIiwgXCItNVwiLCBjd2Q9cmVwbylcbiIsCiAgICAicHJpbnQocmVmbG9nKVxuIiwKICAgICJhc3NlcnQgbG9zdCBpbiByZWZsb2dcbiIsCiAgICAiY2FuZGlkYXRlID0gbmV4dChcbiIsCiAgICAiICAgIGxpbmUuc3BsaXQoXCJcXHRcIiwgMSlbMF0gZm9yIGxpbmUgaW4gcmVmbG9nLnNwbGl0bGluZXMoKVxuIiwKICAgICIgICAgaWYgXCJjb21taXQ6IGV4cGVyaW1lbnQ6IOuzteq1rO2VoCDslYTsnbTrlJTslrRcIiBpbiBsaW5lXG4iLAogICAgIilcbiIsCiAgICAiZ2l0KFwiYnJhbmNoXCIsIFwicmVjb3ZlcmVkLWlkZWFcIiwgY2FuZGlkYXRlLCBjd2Q9cmVwbylcbiIsCiAgICAicmVjb3ZlcmVkID0gZ2l0KFwic2hvd1wiLCBcInJlY292ZXJlZC1pZGVhOmlkZWEudHh0XCIsIGN3ZD1yZXBvKVxuIiwKICAgICJwcmludChcIuuzteq1rCDrgrTsmqk6XCIsIHJlY292ZXJlZClcbiIsCiAgICAicHJpbnQoXCLrs7Xqtawg67iM656c7LmYOlwiLCBnaXQoXCJyZXYtcGFyc2VcIiwgXCItLXNob3J0XCIsIFwicmVjb3ZlcmVkLWlkZWFcIiwgY3dkPXJlcG8pKVxuIiwKICAgICJhc3NlcnQgY2FuZGlkYXRlID09IGxvc3RcbiIsCiAgICAiYXNzZXJ0IHJlY292ZXJlZCA9PSBcInJlY292ZXIgbWVcIiIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAicGFpcmVkIiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNiwKICAgImNvZGVfc2hhMjU2IjogIjBlOWFhZGQyNzYxYTc1NzA2ZTQ5YTBjNTg3NmY0ZWFhYWRhNjUyMjVmNTRlMzYzNzE3N2NjNzQ2MmYwYjhmN2MiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwNjoxNzo1Mi4yNDI0MDIrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjhmNzA2MTU2OWRlMWZmNjI1ZTM3MjMyZWFkOWVhZWFlZGQ1YzY4MjYzMjg1NWMzMWQ3NTg4MTJlZTU5YzU2NjAiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>revert, reflog, worktree</h2>
+<p>모든 저장소는 임시 폴더에 만들며 실제 GitHub 계정이나 원격 저장소를 변경하지 않습니다.</p>
+<h3>명령을 실행하기 전에 알아둘 Git 상태</h3>
+<p>Git은 파일을 세 자리에서 봅니다. <strong>작업 폴더(working tree)</strong> 는 지금 편집하는 파일이 있는 자리입니다. <strong>색인(index)</strong> 은 다음 커밋에 넣을 파일 상태를 골라 두는 자리이며, 스테이징 영역(staging area)이라고도 합니다. <strong>커밋(commit)</strong> 은 색인에 고른 상태를 저장소 이력에 기록한 결과입니다. 따라서 <code>git add app.py</code>는 파일을 영구 저장하는 명령이 아니라 현재 <code>app.py</code>를 색인에 올리는 명령입니다. 이어서 <code>git commit -m &quot;메시지&quot;</code>를 실행해야 그 상태가 커밋으로 기록됩니다.</p>
+<p><strong>HEAD</strong> 는 현재 체크아웃한 커밋을 가리킵니다. 보통 HEAD는 <code>main</code> 같은 <strong>브랜치(branch)</strong> 이름을 가리키고, 브랜치 이름은 다시 최신 커밋을 가리킵니다. 새 커밋을 만들면 현재 브랜치가 새 커밋으로 이동합니다. 이 절에서는 <code>HEAD~1</code>을 현재 커밋의 첫 번째 부모 한 단계 전으로 읽습니다.</p>
+<p>명령은 왼쪽부터 <code>git</code> → 하위 명령 → 옵션 → 대상으로 읽습니다. 예를 들어 <code>git status --short</code>에서 <code>status</code>는 상태를 보고, <code>--short</code>는 짧은 형식으로 표시하라는 옵션입니다. 코드의 <code>git(&quot;status&quot;, &quot;--short&quot;, cwd=repo)</code>는 터미널에서 같은 명령을 실행하도록 인자를 나눈 Python 표현입니다.</p></div>
+<div class="nb-markdown"><h3>준비</h3>
+<p>정상 설정 파일과 첫 커밋을 만듭니다. 이 절의 세 도구는 같은 종류의 기능이 아닙니다. <strong>revert</strong>는 이미 공유한 커밋의 효과를 취소하는 새 커밋을 만듭니다. <strong>reflog</strong>는 이 로컬 저장소에서 HEAD나 브랜치가 이동한 기록을 보여 줍니다. <strong>worktree</strong>는 같은 저장소의 다른 브랜치를 별도 작업 폴더에 연결합니다. 문제 상황을 먼저 구분한 뒤 도구를 선택해야 합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 셀이 만든 저장소만 사용하는 임시 작업 폴더를 준비합니다.
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+workspace = tempfile.TemporaryDirectory(prefix=&quot;git-lesson-&quot;)
+root = Path(workspace.name)
+# cwd는 명령을 실행할 폴더이며 check=True는 명령 실패를 예외로 알립니다.
+def git(*args: str, cwd: Path | None = None, check: bool = True) -&gt; str:
+    &quot;&quot;&quot;지정한 임시 저장소에서 Git 명령을 실행합니다.&quot;&quot;&quot;
+    result = subprocess.run([&quot;git&quot;, *args], cwd=cwd or root,
+                            text=True, capture_output=True, check=check)
+    return result.stdout.strip() or result.stderr.strip()
+def configure(repo: Path) -&gt; None:
+    &quot;&quot;&quot;실습 저장소에만 작성자 정보를 설정합니다.&quot;&quot;&quot;
+    git(&quot;config&quot;, &quot;user.name&quot;, &quot;Git Learner&quot;, cwd=repo)
+    git(&quot;config&quot;, &quot;user.email&quot;, &quot;learner@example.invalid&quot;, cwd=repo)</code></pre></div></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 복구 실습용 저장소를 준비합니다.
+repo = root / &quot;recovery&quot;
+repo.mkdir()
+git(&quot;init&quot;, &quot;-b&quot;, &quot;main&quot;, cwd=repo)
+configure(repo)
+(repo / &quot;config.txt&quot;).write_text(&quot;discount=10\n&quot;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;config.txt&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;feat: 할인율 10 설정&quot;, cwd=repo)
+good = git(&quot;rev-parse&quot;, &quot;HEAD&quot;, cwd=repo)
+print(git(&quot;log&quot;, &quot;--oneline&quot;, &quot;-1&quot;, cwd=repo))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">6055976 feat: 할인율 10 설정
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p>잘못된 공개 변경은 revert로 반대 변경을 새 커밋에 기록합니다. <code>git revert --no-edit &lt;커밋&gt;</code>에서 <code>&lt;커밋&gt;</code>은 취소할 대상이고, <code>--no-edit</code>는 Git이 만든 기본 되돌림 메시지를 편집기 없이 사용합니다. <code>discount=90</code> 커밋은 이력에 남고 새 커밋이 그 패치를 반대로 적용해 파일을 <code>discount=10</code>으로 되돌립니다.</p>
+<p>반면 reset은 현재 브랜치가 가리키는 위치를 옮깁니다. 파일 결과가 같아 보일 수 있어도 이력의 모양이 다릅니다. 공유한 잘못을 고칠 때는 기존 커밋을 보존하는 revert가 협업자가 이미 받은 이력과 맞추기 쉽습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># revert는 할인율을 되돌리는 새 커밋을 만들어 기존 이력을 유지합니다.
+(repo / &quot;config.txt&quot;).write_text(&quot;discount=90\n&quot;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;config.txt&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;fix: 할인율 90 설정&quot;, cwd=repo)
+bad = git(&quot;rev-parse&quot;, &quot;HEAD&quot;, cwd=repo)
+git(&quot;revert&quot;, &quot;--no-edit&quot;, bad, cwd=repo)
+print((repo / &quot;config.txt&quot;).read_text(encoding=&quot;utf-8&quot;).strip())
+print(git(&quot;log&quot;, &quot;--oneline&quot;, &quot;-3&quot;, cwd=repo))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">discount=10
+7f00f9e Revert &quot;fix: 할인율 90 설정&quot;
+9676bfd fix: 할인율 90 설정
+6055976 feat: 할인율 10 설정
+</pre></div>
+<div class="nb-markdown"><h3>worktree로 두 작업 폴더 사용</h3>
+<p>별도 브랜치를 별도 폴더에 연결합니다. <code>git worktree add -b fix/urgent &lt;경로&gt;</code>에서 <code>add</code>는 작업 폴더를 추가하고, <code>-b fix/urgent</code>는 새 브랜치를 만들며, 마지막 인자는 폴더 위치입니다. 기본 폴더는 <code>main</code>의 <code>config.txt</code>를 유지하고 추가 폴더는 <code>fix/urgent</code>에서 <code>hotfix.txt</code>를 커밋합니다. 두 폴더는 커밋 객체를 공유하지만 체크아웃한 브랜치와 작업 파일은 구분됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 별도 worktree에서 긴급 수정 브랜치를 사용하고 기본 폴더와 비교합니다.
+worktree = root / &quot;urgent-fix&quot;
+git(&quot;worktree&quot;, &quot;add&quot;, &quot;-b&quot;, &quot;fix/urgent&quot;, worktree.as_posix(), cwd=repo)
+(worktree / &quot;hotfix.txt&quot;).write_text(&quot;urgent=true\n&quot;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;hotfix.txt&quot;, cwd=worktree)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;fix: 긴급 설정 추가&quot;, cwd=worktree)
+print(&quot;기본 폴더 브랜치:&quot;, git(&quot;branch&quot;, &quot;--show-current&quot;, cwd=repo))
+print(&quot;추가 폴더 브랜치:&quot;, git(&quot;branch&quot;, &quot;--show-current&quot;, cwd=worktree))
+print(git(&quot;worktree&quot;, &quot;list&quot;, &quot;--porcelain&quot;, cwd=repo))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">기본 폴더 브랜치: main
+추가 폴더 브랜치: fix/urgent
+worktree /private/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/git-lesson-fdrih0qn/recovery
+HEAD 7f00f9e0711a86c84cfbd2318370b509d9d6afaa
+branch refs/heads/main
+
+worktree /private/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/git-lesson-fdrih0qn/urgent-fix
+HEAD 24b94821997c3840c749855e5a984057544a687d
+branch refs/heads/fix/urgent
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — revert 뒤 파일 값은 10이지만 잘못된 90 커밋도 log에 남습니다. worktree 출력의 임시 경로는 실행마다 달라집니다. 경로 문자열 대신 기본 폴더의 브랜치가 <code>main</code>, 추가 폴더의 브랜치가 <code>fix/urgent</code>인지 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p><code>experiment</code> 브랜치에서 <code>idea.txt</code>를 커밋한 뒤 <code>git reset --hard HEAD~1</code>을 실행합니다. 브랜치가 이전 커밋으로 이동하고 작업 폴더도 그 상태에 맞춰지므로 파일이 사라집니다. 현재 브랜치에서 시작하는 일반 log에는 아이디어 커밋이 나타나지 않습니다. 실습은 복구 결과를 검사하기 위해 원래 커밋 해시를 별도 변수에 보관하지만, 실제 복구 명령은 reflog 출력에서 찾은 후보를 사용해야 합니다.</p><p><code>git reflog --format=%H%x09%gs -5</code>는 최근 5개 행을 전체 해시, 탭 문자, 이동 이유 순서로 출력합니다. <code>reflog.splitlines()</code>는 행 목록을 반환하고, <code>next(...)</code>는 메시지에 <code>commit: experiment: 복구할 아이디어</code>가 포함된 첫 행을 고릅니다. <code>line.split("\t", 1)[0]</code>은 첫 번째 탭에서 최대 한 번 나눈 뒤 탭 앞의 해시를 반환합니다. 그 해시로 <code>recovered-idea</code> 브랜치를 만들고 <code>idea.txt</code>의 <code>recover me</code>를 확인합니다.</p><section class="notebook" data-notebook="04-revert-reflog-worktree" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>아직 공유하지 않은 커밋을 hard reset으로 지우면 일반 log에서 보이지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 임시 저장소의 미공유 커밋만 이동시켜 일반 log에서 사라짐을 관찰합니다.
+git(&quot;switch&quot;, &quot;-c&quot;, &quot;experiment&quot;, cwd=repo)
+(repo / &quot;idea.txt&quot;).write_text(&quot;recover me\n&quot;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;idea.txt&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;experiment: 복구할 아이디어&quot;, cwd=repo)
+lost = git(&quot;rev-parse&quot;, &quot;HEAD&quot;, cwd=repo)
+git(&quot;reset&quot;, &quot;--hard&quot;, &quot;HEAD~1&quot;, cwd=repo)
+visible = git(&quot;log&quot;, &quot;--format=%H&quot;, &quot;-3&quot;, cwd=repo)
+print(&quot;일반 log에 있음:&quot;, lost in visible)
+print(&quot;파일 존재:&quot;, (repo / &quot;idea.txt&quot;).exists())
+assert lost not in visible</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">일반 log에 있음: False
+파일 존재: False
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>reflog에서 이동 전 커밋을 찾아 새 브랜치 이름을 붙입니다. <code>git reflog --format=%H%x09%gs -5</code>는 최근 5개 행을 <code>전체 해시</code>, 탭 문자, <code>이동 이유</code> 순서로 출력합니다.</p>
+<p><code>reflog.splitlines()</code>는 출력 문자열을 행 목록으로 반환합니다. <code>next(...)</code>는 메시지에 <code>commit: experiment: 복구할 아이디어</code>가 포함된 첫 행을 고릅니다. <code>line.split(&quot;\t&quot;, 1)[0]</code>은 첫 번째 탭에서 행을 최대 한 번 나누고 탭 앞의 해시를 반환합니다. 이 해시가 <code>git branch recovered-idea &lt;해시&gt;</code>의 복구 대상입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># reflog의 커밋 메시지로 복구 대상을 찾아 새 브랜치 이름을 붙입니다.
+reflog = git(&quot;reflog&quot;, &quot;--format=%H%x09%gs&quot;, &quot;-5&quot;, cwd=repo)
+print(reflog)
+assert lost in reflog
+candidate = next(
+    line.split(&quot;\t&quot;, 1)[0] for line in reflog.splitlines()
+    if &quot;commit: experiment: 복구할 아이디어&quot; in line
+)
+git(&quot;branch&quot;, &quot;recovered-idea&quot;, candidate, cwd=repo)
+recovered = git(&quot;show&quot;, &quot;recovered-idea:idea.txt&quot;, cwd=repo)
+print(&quot;복구 내용:&quot;, recovered)
+print(&quot;복구 브랜치:&quot;, git(&quot;rev-parse&quot;, &quot;--short&quot;, &quot;recovered-idea&quot;, cwd=repo))
+assert candidate == lost
+assert recovered == &quot;recover me&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">7f00f9e0711a86c84cfbd2318370b509d9d6afaa	reset: moving to HEAD~1
+3301f90101f1c7a04cd82ed2b4d88b0c08f1b209	commit: experiment: 복구할 아이디어
+7f00f9e0711a86c84cfbd2318370b509d9d6afaa	checkout: moving from main to experiment
+7f00f9e0711a86c84cfbd2318370b509d9d6afaa	revert: Revert &quot;fix: 할인율 90 설정&quot;
+9676bfd54aa7aad98050fe51fafae10fe9ee034e	commit: fix: 할인율 90 설정
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">복구 내용: recover me
+복구 브랜치: 3301f90
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>팀이 이미 받은 커밋에 <code>reset</code>과 강제 push를 적용하면 협업자의 이력이 갈라질 수 있습니다. 공개 변경 취소에는 저장소 정책에 따라 revert를 우선 검토합니다.</li><li>revert가 항상 자동 성공하는 것은 아닙니다. 이후 커밋이 같은 줄을 바꿨다면 반대 패치를 적용하는 과정에서도 충돌할 수 있습니다.</li><li>reflog는 각 로컬 저장소의 참조 이동 기록입니다. 다른 사람의 reflog나 삭제된 컴퓨터의 기록을 원격에서 조회할 수 없습니다.</li><li><code>reset --hard</code>는 커밋하지 않은 작업 폴더 변경까지 덮어쓸 수 있습니다. 대상 저장소와 현재 상태를 확인한 뒤 사용합니다.</li><li>worktree 폴더를 파일 탐색기에서 바로 삭제하면 관리 정보가 남을 수 있습니다. <code>git worktree remove</code>와 <code>git worktree prune</code>을 상황에 맞게 사용합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li><code>revert</code>는 기존 커밋 효과를 취소하는 새 커밋을 만들어 공유 이력을 보존합니다.</li><li><code>reflog</code>는 로컬 참조 이동을 기록하며 보이지 않게 된 커밋을 찾는 단서가 될 수 있습니다.</li><li><code>worktree</code>는 한 저장소의 여러 브랜치를 서로 다른 작업 폴더에 연결합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 일반 코드가 아니라 자격 증명이 이력에 들어간 경우를 다룹니다. 파일을 되돌리는 것만으로 부족한 이유와 이력 재작성 뒤 필요한 키 교체·협업 조치를 확인합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 공개된 잘못된 커밋을 <code>revert</code>하면 기존 커밋은 사라집니까?</p><p class="quiz-a"><strong>정답:</strong> 사라지지 않습니다. 기존 변경과 반대되는 새 커밋이 추가되어 파일 효과를 취소합니다.</p><p class="quiz-q">2. 일반 log에서 아이디어 커밋이 보이지 않았지만 reflog에서 찾을 수 있었던 이유는 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> reset으로 현재 브랜치가 이전 위치로 이동했지만 로컬 reflog에는 이동 전 참조 위치가 남아 있었기 때문입니다.</p><p class="quiz-q">3. reflog를 영구 백업으로 사용할 수 없는 이유는 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> 로컬 기록이며 만료와 객체 정리 정책에 따라 삭제될 수 있기 때문입니다.</p><p class="quiz-q">4. worktree를 사용한 두 폴더의 브랜치는 각각 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> 기본 폴더는 <code>main</code>, 추가 폴더는 <code>fix/urgent</code>입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://git-scm.com/docs/git-revert">Git 공식 문서: git-revert</a> · 확인 2026-09-09 · 기준 Git 2.50.1</li><li><a href="https://git-scm.com/docs/git-reflog">Git 공식 문서: git-reflog</a> · 확인 2026-09-09 · 기준 Git 2.50.1</li><li><a href="https://git-scm.com/docs/git-worktree">Git 공식 문서: git-worktree</a> · 확인 2026-09-09 · 기준 Git 2.50.1</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="03-병합-충돌-해결.html">← 병합 충돌 해결</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="05-시크릿-이력-정리와-예방.html">시크릿 이력 정리와 예방 →</a></span></div></div></body></html>

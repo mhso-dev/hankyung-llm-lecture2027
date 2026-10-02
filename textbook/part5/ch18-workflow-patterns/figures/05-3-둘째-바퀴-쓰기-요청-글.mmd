@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  row["7절 바퀴 줄<br>초안 · 글자 수 · 점수<br>고칠 점 · 문제"]:::measure
+  notes["build_notes<br>마지막 바퀴 줄을 읽음"]:::flow
+  add["덧붙인 줄 넷<br>앞 초안 · 앞 초안 글자 수<br>평가 모델의 고칠 점<br>코드 검사의 문제"]:::measure
+  first["첫 쓰기 요청 글<br>머리글 · 과제 글 · 공통 사실"]:::tool
+  second["둘째 쓰기 요청 글<br>첫 쓰기 요청 글 뒤에<br>덧붙인 줄 넷"]:::measure
+  row --> notes
+  notes --> add
+  add --> second
+  first --> second

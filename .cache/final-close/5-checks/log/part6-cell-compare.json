@@ -1,0 +1,42 @@
+[
+  {
+    "run": "~/tmp/fc5-part6/part6-bundle-tezxjmgg/part6-practice/labs/part6/ch24-human-in-the-loop/notebooks/01-interrupt-승인-게이트.ipynb",
+    "saved": "labs/part6/ch24-human-in-the-loop/notebooks/01-interrupt-승인-게이트.ipynb",
+    "code_cells": 28,
+    "run_code_cells": 28,
+    "same_cells": 28,
+    "stream_split_only_cells": 0,
+    "diff_cells": 0,
+    "code_sha256_same": true,
+    "outputs_sha256_run": "fbaaa8908bd18c3b40364f4e558903e8eafe43b0a9e34eaaa0ca401323f09970",
+    "outputs_sha256_saved": "fbaaa8908bd18c3b40364f4e558903e8eafe43b0a9e34eaaa0ca401323f09970",
+    "saved_file_sha256": "a7476f9b193918dd28636ef19ed1ee38cf345f079672eb9d24ac18685d3433e2",
+    "diffs": []
+  },
+  {
+    "run": "~/tmp/fc5-part6/part6-bundle-tezxjmgg/part6-practice/labs/part6/ch28-mcp/notebooks/01-MCP-구조와-capability-협상.ipynb",
+    "saved": "labs/part6/ch28-mcp/notebooks/01-MCP-구조와-capability-협상.ipynb",
+    "code_cells": 25,
+    "run_code_cells": 25,
+    "same_cells": 24,
+    "stream_split_only_cells": 0,
+    "diff_cells": 1,
+    "code_sha256_same": true,
+    "outputs_sha256_run": "1dee52fb83470df5a7e861ac92fd304531be327a67456536d0c9f8fbb8a3d2c5",
+    "outputs_sha256_saved": "32ff72d6ace0897d33215ea848dd88eace9d8cd9540e28d045d9614bba8357ac",
+    "saved_file_sha256": "ee6068c3d25a76d259ff224f0253bd9eeaae5126a149f349e0b70fb0af9c3f56",
+    "diffs": [
+      {
+        "code_cell": 3,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -2 +2 @@",
+          "-고른 파일 위치: labs/part6/ch28-mcp/course_server.py",
+          "+고른 파일 위치: ../course_server.py"
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  rec["실행 기록 한 줄<br>단계 · 한 쪽 · 고른 쪽"]:::tool
+  ask["칸 고른 쪽에서<br>모델인 줄을 셈"]:::flow
+  side["칸 한 쪽<br>도구 수와 모델이 한 일<br>가르는 데 쓰지 않음"]
+  wf["워크플로우<br>모든 단계를 코드가 고름"]:::measure
+  ag["에이전트 후보<br>모델이 고른 단계가 있음"]:::measure
+  rec --> ask
+  rec ~~~ side
+  ask -.->|없으면| wf
+  ask -.->|하나라도 있으면| ag

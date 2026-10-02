@@ -1,0 +1,23 @@
+{
+  "run_id": "2026-09-11-001",
+  "genre": "산문",
+  "phase6_verdict": "accept",
+  "changed_files": [],
+  "gate": {
+    "exit_code": 1,
+    "verdict": "WARN",
+    "P0": "WARN: 0.0% change rate because no revision was warranted",
+    "P1": "PASS",
+    "P2": "PASS",
+    "P3": "PASS",
+    "P5": "REPORT: within reference range"
+  },
+  "meaning_preservation_15": "PASS",
+  "overediting": "none",
+  "spell_check": "skipped: external commercial bulk transfer avoided",
+  "source_hashes_after": {
+    "index.html": "e2d466dc6bd3e8683f1492ef6dfb44edcadbc6ac937e67502c272920706034a1",
+    "practice-start.md": "ac65b1a644aefc090507e3b31abebab881ddb261a165c37d45be5d4a72dae36d",
+    "continuity-guide.md": "2bc2cadc94652ab41dbe55d31a2ffd0a917043e6e99c918a93bc594406edc4a7"
+  }
+}

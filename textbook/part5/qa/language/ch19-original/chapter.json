@@ -1,0 +1,46 @@
+{
+  "part": 5,
+  "part_title": "Part 5 · Agent 입문",
+  "chapter": "ch19-model-tools",
+  "title": "모델과 도구",
+  "hours": "총 16h · 강의 6h · 실습 10h",
+  "objectives": [
+    "Ch4의 조회 함수를 LangChain 도구로 감싸고 입력·반환 스키마를 설명할 수 있습니다.",
+    "이름과 설명만 보고 모델이 고른 실제 tool_calls를 기록하고 평가할 수 있습니다.",
+    "bind_tools 요청, 도구 실행, ToolMessage 반환을 구분할 수 있습니다.",
+    "도구 오류를 구조화하고 읽기 도구와 쓰기 도구의 제공 경로를 분리할 수 있습니다."
+  ],
+  "lab_path": "labs/part5/ch19-model-tools",
+  "sections": [
+    {
+      "slug": "01-tool과-Ch4-함수-재사용",
+      "title": "tool과 Ch4 함수 재사용",
+      "format": "paired"
+    },
+    {
+      "slug": "02-Pydantic-인자와-반환-스키마",
+      "title": "Pydantic 인자와 반환 스키마",
+      "format": "paired"
+    },
+    {
+      "slug": "03-좋은-도구-이름과-설명",
+      "title": "좋은 도구 이름과 설명",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-설명만으로-도구-선택하기",
+      "title": "설명만으로 도구 선택하기",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-bind_tools와-병렬-호출",
+      "title": "bind_tools와 병렬 호출",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-오류와-읽기-쓰기-분리",
+      "title": "오류와 읽기 쓰기 분리",
+      "format": "paired"
+    }
+  ]
+}

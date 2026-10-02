@@ -1,0 +1,125 @@
+{
+  "status": "passed",
+  "chapters": [
+    {
+      "chapter": "ch01-development-environment",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch01-development-environment/.venv",
+      "pip_magic": "not needed: no student pip cell"
+    },
+    {
+      "chapter": "ch02-python",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch02-python/.venv",
+      "pip_magic": "passed: pip 26.2"
+    },
+    {
+      "chapter": "ch03-git-github",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch03-git-github/.venv",
+      "pip_magic": "not needed: no student pip cell"
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch04-data-tools/.venv",
+      "pip_magic": "not needed: no student pip cell"
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch05-llm-principles/.venv",
+      "pip_magic": "not needed: no student pip cell"
+    },
+    {
+      "chapter": "ch06-langchain-start",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch06-langchain-start/.venv",
+      "pip_magic": "passed: pip 26.2"
+    },
+    {
+      "chapter": "ch07-prompt-engineering",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch07-prompt-engineering/.venv",
+      "pip_magic": "passed: pip 26.2"
+    },
+    {
+      "chapter": "ch08-context-engineering",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch08-context-engineering/.venv",
+      "pip_magic": "passed: pip 26.2"
+    },
+    {
+      "chapter": "ch09-rag-first-run",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch09-rag-first-run/.venv",
+      "pip_magic": "passed: pip 26.2"
+    },
+    {
+      "chapter": "ch10-document-processing",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch10-document-processing/.venv",
+      "pip_magic": "passed: pip 26.2"
+    },
+    {
+      "chapter": "ch11-evaluation",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch11-evaluation/.venv",
+      "pip_magic": "not needed: no student pip cell"
+    },
+    {
+      "chapter": "ch12-retrieval-tuning",
+      "sync_locked": true,
+      "fresh_kernel": true,
+      "runner_extras_in_student_environment": false,
+      "python": "3.12.13",
+      "ipykernel": "7.3.0",
+      "environment": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/course-locked-environments-h4dgpr85/ch12-retrieval-tuning/.venv",
+      "pip_magic": "passed: pip 26.2"
+    }
+  ]
+}

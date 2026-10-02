@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  infile["입력 파일<br>요청 다섯 줄 · 모델 하나"]:::tool
+  upload["파일 올리기<br>purpose batch"]
+  create["일괄 작업 만들기<br>처리 기한 24h"]
+  state["작업 상태 completed<br>완료 넷 · 실패 하나"]:::measure
+  outfile["결과 파일<br>네 줄"]:::tool
+  errfile["오류 파일<br>한 줄"]:::tool
+  infile -. 노트북 밖에서 한 번 .-> upload
+  upload -.-> create
+  create -.-> state
+  state --> outfile
+  state --> errfile

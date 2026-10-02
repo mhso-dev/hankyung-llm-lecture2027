@@ -1,0 +1,18 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant A as 작성자<br>run-1/author
+  participant T as 원격<br>run-1/team.git
+  participant R as 리뷰어<br>run-1/reviewer
+  R->>T: 재료 단계 push, .venv/ 규칙 커밋
+  A->>A: switch -c, git add .
+  Note over A: 색인 비교에 config.txt만<br>색인의 더미 키 | False
+  A->>A: commit 할인율 설정 추가
+  A->>T: git fetch
+  T-->>A: main -> origin/main
+  A->>A: merge origin/main
+  Note over A: 충돌 없이 병합<br>main 받기 종료 코드 | 0
+  A->>T: push -u origin feature/discount
+  R->>T: git fetch
+  R->>R: merge --no-ff
+  R->>T: git push
+  Note over R: 더미 키 검색 빈 출력<br>더미 키 커밋 수 | 0

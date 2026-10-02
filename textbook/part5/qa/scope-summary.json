@@ -1,0 +1,230 @@
+{
+  "chapters": [
+    {
+      "chapter": "ch17-agent-overview",
+      "lessons": [
+        {
+          "slug": "01-워크플로우와-에이전트-경계",
+          "lecture_hours": 1.0,
+          "practice_hours": 0.5,
+          "new_terms": 5,
+          "prose_characters": 2115,
+          "hangul_characters": 1847
+        },
+        {
+          "slug": "02-워크플로우가-충분한-조건",
+          "lecture_hours": 1.0,
+          "practice_hours": 0.5,
+          "new_terms": 5,
+          "prose_characters": 2107,
+          "hangul_characters": 1837
+        },
+        {
+          "slug": "03-모델-도구-루프와-정지-조건",
+          "lecture_hours": 1.0,
+          "practice_hours": 0.5,
+          "new_terms": 6,
+          "prose_characters": 2084,
+          "hangul_characters": 1783
+        },
+        {
+          "slug": "04-자율성의-대가",
+          "lecture_hours": 1.0,
+          "practice_hours": 0.5,
+          "new_terms": 6,
+          "prose_characters": 2050,
+          "hangul_characters": 1751
+        },
+        {
+          "slug": "05-제품-트레이스와-자율성-진단",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.0,
+          "new_terms": 6,
+          "prose_characters": 2890,
+          "hangul_characters": 2111
+        }
+      ],
+      "hours": [
+        5.0,
+        3.0
+      ],
+      "expected_hours": [
+        5,
+        3
+      ],
+      "prose_characters": 11246
+    },
+    {
+      "chapter": "ch18-workflow-patterns",
+      "lessons": [
+        {
+          "slug": "01-게이트가-있는-프롬프트-체이닝",
+          "lecture_hours": 0.7,
+          "practice_hours": 1.5,
+          "new_terms": 5,
+          "prose_characters": 2017,
+          "hangul_characters": 1624
+        },
+        {
+          "slug": "02-실패를-처리하는-라우팅",
+          "lecture_hours": 0.7,
+          "practice_hours": 1.5,
+          "new_terms": 5,
+          "prose_characters": 1870,
+          "hangul_characters": 1535
+        },
+        {
+          "slug": "03-병렬-섹셔닝과-투표",
+          "lecture_hours": 0.7,
+          "practice_hours": 2.0,
+          "new_terms": 6,
+          "prose_characters": 1940,
+          "hangul_characters": 1521
+        },
+        {
+          "slug": "04-동적-오케스트레이터와-워커",
+          "lecture_hours": 0.7,
+          "practice_hours": 2.5,
+          "new_terms": 6,
+          "prose_characters": 2004,
+          "hangul_characters": 1680
+        },
+        {
+          "slug": "05-생성자-평가자와-정지-조건",
+          "lecture_hours": 0.7,
+          "practice_hours": 2.0,
+          "new_terms": 6,
+          "prose_characters": 1942,
+          "hangul_characters": 1556
+        },
+        {
+          "slug": "06-같은-과제로-다섯-패턴-비교",
+          "lecture_hours": 0.5,
+          "practice_hours": 2.5,
+          "new_terms": 6,
+          "prose_characters": 2148,
+          "hangul_characters": 1708
+        }
+      ],
+      "hours": [
+        4.0,
+        12.0
+      ],
+      "expected_hours": [
+        4,
+        12
+      ],
+      "prose_characters": 11921
+    },
+    {
+      "chapter": "ch19-model-tools",
+      "lessons": [
+        {
+          "slug": "01-tool과-Ch4-함수-재사용",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 5,
+          "prose_characters": 2488,
+          "hangul_characters": 1936
+        },
+        {
+          "slug": "02-Pydantic-인자와-반환-스키마",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 5,
+          "prose_characters": 2290,
+          "hangul_characters": 1785
+        },
+        {
+          "slug": "03-좋은-도구-이름과-설명",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.0,
+          "new_terms": 5,
+          "prose_characters": 2367,
+          "hangul_characters": 1893
+        },
+        {
+          "slug": "04-설명만으로-도구-선택하기",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 5,
+          "prose_characters": 2632,
+          "hangul_characters": 2028
+        },
+        {
+          "slug": "05-bind_tools와-병렬-호출",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 5,
+          "prose_characters": 2561,
+          "hangul_characters": 1927
+        },
+        {
+          "slug": "06-오류와-읽기-쓰기-분리",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.0,
+          "new_terms": 5,
+          "prose_characters": 2381,
+          "hangul_characters": 1874
+        }
+      ],
+      "hours": [
+        6.0,
+        10.0
+      ],
+      "expected_hours": [
+        6,
+        10
+      ],
+      "prose_characters": 14719
+    },
+    {
+      "chapter": "ch20-tool-node",
+      "lessons": [
+        {
+          "slug": "01-ToolNode와-tools-condition",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 5,
+          "prose_characters": 2813,
+          "hangul_characters": 1576
+        },
+        {
+          "slug": "02-도구-오류와-ToolMessage",
+          "lecture_hours": 0.75,
+          "practice_hours": 1.25,
+          "new_terms": 4,
+          "prose_characters": 2414,
+          "hangul_characters": 1499
+        },
+        {
+          "slug": "03-recursion-limit과-명시적-종료",
+          "lecture_hours": 0.75,
+          "practice_hours": 1.0,
+          "new_terms": 4,
+          "prose_characters": 2325,
+          "hangul_characters": 1464
+        },
+        {
+          "slug": "04-if-분기와-모델-선택-비교",
+          "lecture_hours": 0.5,
+          "practice_hours": 1.25,
+          "new_terms": 5,
+          "prose_characters": 2617,
+          "hangul_characters": 1637
+        }
+      ],
+      "hours": [
+        3.0,
+        5.0
+      ],
+      "expected_hours": [
+        3,
+        5
+      ],
+      "prose_characters": 10169
+    }
+  ],
+  "failures": [],
+  "prose_note": "Whitespace, HTML tags, inline code and notebook placeholders excluded; character counts support manual depth review."
+}

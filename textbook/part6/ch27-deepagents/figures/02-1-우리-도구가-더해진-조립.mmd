@@ -1,0 +1,13 @@
+%%{init: {"flowchart": {"rankSpacing": 28}}}%%
+flowchart TB
+  %% classes
+  rules["교재용 규정 글 넷<br>library_rules"]:::tool
+  tooldef["도구 lookup_rule<br>주제어 하나로 규정 글"]:::flow
+  maker["create_deep_agent<br>tools에 lookup_rule 하나"]:::flow
+  registered["그래프에 등록된 도구 열<br>기본 아홉과 lookup_rule"]:::measure
+  backend["기본 백엔드 StateBackend<br>명령을 실행할 수 있는가 False"]:::measure
+  seen["모델이 받은 도구 아홉<br>execute만 빠짐"]:::measure
+  rules --> tooldef --> maker --> registered
+  maker ~~~ backend
+  registered --> seen
+  backend --> seen

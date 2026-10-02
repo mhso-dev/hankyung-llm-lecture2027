@@ -1,0 +1,9 @@
+flowchart TD
+  %% classes
+  S0["git init 직후<br>상태 출력 0줄"]:::measure
+  S1["?? hello.py<br>처음 보는 파일"]:::measure
+  S2["A  hello.py<br>기록할 목록에 올림"]:::measure
+  S3["상태 출력 0줄<br>기록과 파일이 같음"]:::measure
+  S0 -- "write_text()로 hello.py 저장" --> S1
+  S1 -- "git add hello.py" --> S2
+  S2 -- "git commit" --> S3

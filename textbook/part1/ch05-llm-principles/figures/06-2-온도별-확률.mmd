@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  SCORES["교재 후보 점수<br>2.0 · 1.0 · 0.0"]:::tool
+  LOW["temperature 0.3<br>확률 0.9644<br>0.0344 · 0.0012<br>남는 후보 1개"]:::measure
+  MID["temperature 1.0<br>확률 0.6652<br>0.2447 · 0.09<br>남는 후보 2개"]:::measure
+  HIGH["temperature 2.0<br>확률 0.5065<br>0.3072 · 0.1863<br>남는 후보 3개"]:::measure
+  SCORES -- "0.3으로 나누기" --> LOW
+  SCORES -- "1.0으로 나누기" --> MID
+  SCORES -- "2.0으로 나누기" --> HIGH

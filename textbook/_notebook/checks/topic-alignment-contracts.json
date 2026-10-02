@@ -1,0 +1,182 @@
+[
+  {
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/01-컨텍스트와-토큰-예산.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 13,
+    "executed_at": "2026-09-09T10:41:47.299410+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/02-Write와-Select.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 15,
+    "executed_at": "2026-09-09T11:06:13.330911+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/03-Compress와-Isolate.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 13,
+    "executed_at": "2026-09-09T10:53:35.114408+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/04-네-가지-실패-모드.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 12,
+    "executed_at": "2026-09-09T11:07:37.979471+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/05-Context-rot-측정.ipynb",
+    "changed_code": false,
+    "format": "experiment",
+    "code_cells": 9,
+    "executed_at": "2026-09-09T09:48:31.525601+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/06-단계적-공개와-설계-비교.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 15,
+    "executed_at": "2026-09-09T10:43:06.729441+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch09-rag-first-run/notebooks/01-RAG-지도.ipynb",
+    "changed_code": false,
+    "format": "paired",
+    "code_cells": 13,
+    "executed_at": "2026-09-09T06:03:53.506875+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch09-rag-first-run/notebooks/02-로더와-스플리터.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 7,
+    "executed_at": "2026-09-09T10:48:20.501658+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch09-rag-first-run/notebooks/03-임베딩과-벡터스토어.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 8,
+    "executed_at": "2026-09-09T10:48:32.751326+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch09-rag-first-run/notebooks/04-생성과-출처-인용.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 10,
+    "executed_at": "2026-09-09T10:48:44.449690+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch09-rag-first-run/notebooks/05-첫-실패-보기.ipynb",
+    "changed_code": false,
+    "format": "paired",
+    "code_cells": 10,
+    "executed_at": "2026-09-09T06:04:04.240934+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch09-rag-first-run/notebooks/06-실험-하네스.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 13,
+    "executed_at": "2026-09-09T10:48:54.649982+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch10-document-processing/notebooks/01-문서와-메타데이터.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 7,
+    "executed_at": "2026-09-09T10:48:23.569578+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch10-document-processing/notebooks/02-PDF와-표-OCR.ipynb",
+    "changed_code": false,
+    "format": "paired",
+    "code_cells": 8,
+    "executed_at": "2026-09-09T05:42:12.412809+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch10-document-processing/notebooks/03-DOCX-HTML-CSV.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 8,
+    "executed_at": "2026-09-09T10:48:24.756725+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch10-document-processing/notebooks/04-HWP와-HWPX.ipynb",
+    "changed_code": false,
+    "format": "paired",
+    "code_cells": 8,
+    "executed_at": "2026-09-09T05:42:13.978833+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch10-document-processing/notebooks/05-문자-재귀-토큰-청킹.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 8,
+    "executed_at": "2026-09-09T10:58:26.032831+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch10-document-processing/notebooks/06-구조와-시맨틱-청킹.ipynb",
+    "changed_code": true,
+    "format": "experiment",
+    "code_cells": 8,
+    "executed_at": "2026-09-09T10:48:32.073826+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch10-document-processing/notebooks/07-한국어-임베딩과-캐시.ipynb",
+    "changed_code": true,
+    "format": "paired",
+    "code_cells": 9,
+    "executed_at": "2026-09-09T10:52:13.771705+00:00",
+    "verified": true,
+    "toc_matches": true
+  },
+  {
+    "notebook": "labs/part3/ch10-document-processing/notebooks/08-인덱싱-비교-실험.ipynb",
+    "changed_code": true,
+    "format": "experiment",
+    "code_cells": 13,
+    "executed_at": "2026-09-09T10:48:37.412828+00:00",
+    "verified": true,
+    "toc_matches": true
+  }
+]

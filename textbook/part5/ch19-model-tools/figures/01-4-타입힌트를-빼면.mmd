@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph hint["타입힌트 있음 · status: str"]
+    direction TB
+    h1["입력 형식<br>title Status · type string"]:::measure
+    h2["명세 인자<br>status · type string"]:::measure
+    h1 ~~~ h2
+  end
+  subgraph nohint["타입힌트 없음 · status"]
+    direction TB
+    n1["입력 형식<br>title Status만"]:::measure
+    n2["명세 인자<br>status · 빈 딕셔너리"]:::measure
+    n1 ~~~ n2
+  end
+  same["두 도구 모두 paid 주문 두 건<br>결과가 같은가 True"]
+  hint ~~~ same
+  nohint ~~~ same

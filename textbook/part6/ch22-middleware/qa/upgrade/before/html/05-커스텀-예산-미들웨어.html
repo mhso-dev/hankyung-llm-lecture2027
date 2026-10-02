@@ -1,0 +1,279 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>커스텀 예산 미들웨어 — Ch 22 · Middleware</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 6 · Agent 개발 · Ch 22 · Middleware</p>
+<h1>커스텀 예산 미들웨어</h1><div class="meta"><span>강의 1h · 실습 2h</span><span>새 용어 6개</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h · 실습 2h | 코드 Jupyter Notebook | 새 용어 6개 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>커스텀 AgentMiddleware 클래스를 작성할 수 있습니다.</li><li>wrap_model_call에서 handler 호출 전 예산을 예약할 수 있습니다.</li><li>Ch16 CallBudget과 미들웨어 구현의 코드 위치 차이를 비교할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>내장 ModelCallLimitMiddleware는 호출 횟수를 제한하지만 프로젝트가 사용하는 가격표와 예상 토큰으로 비용 상한을 계산하지는 않습니다. Ch16의 CallBudget은 이 정책을 직접 구현했습니다. 에이전트마다 같은 reserve 호출을 넣는 대신 커스텀 미들웨어 하나로 모델 호출 경계를 감싸면 정책 코드를 재사용하고 독립적으로 검사할 수 있습니다.</p><p><strong>이 절의 질문</strong> — 모델 호출 수뿐 아니라 예상비용 상한을 호출 직전에 어떻게 검사할까요?</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch16 CallBudget은 max_calls, max_cost_usd, calls, cost_usd를 보관하고 reserve에서 다음 호출이 한도를 넘는지 검사했습니다. 이번 구현은 그 계산을 wrap_model_call 앞에 옮깁니다. 가격과 토큰 예상치는 수업용 고정값이며 실제 청구액과 구분합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>비유로 시작하기</h3><p>교통카드 선불 한도를 생각해 봅니다. 버스를 탄 뒤 잔액을 검사하면 이미 비용이 발생했습니다. 호출 전 예약은 다음 호출의 예상비용을 먼저 더해 상한을 넘으면 handler를 호출하지 않습니다. BudgetMiddleware는 estimated_cost_per_call과 max_cost_usd를 받아 같은 인스턴스가 처리한 요청의 예약 비용을 누적합니다. 이 예제는 한 인스턴스에 두 번의 invoke를 순차적으로 전달하며, 운영의 동시 요청에서는 상태나 외부 저장소에 실행별 카운터를 분리해야 합니다.</p><h3>코드를 읽는 순서</h3><p>예산 미들웨어는 모델 호출 직전에 예상 사용량을 예약하고 상한을 넘는 호출을 시작하지 않게 하는 제어 장치입니다. <code>BudgetMiddleware(max_cost_usd, estimated_cost_per_call)</code>은 누적 예약값 <code>reserved</code>를 보관합니다. <code>wrap_model_call</code>은 다음 예약값을 계산한 뒤 허용되면 <code>handler(request)</code>를 한 번 호출하고, 넘으면 <code>BudgetExceeded</code>를 발생시킵니다. 반환값은 모델 응답이며 예산 숫자가 아닙니다.</p><p>여기서 <code>estimated_cost_per_call</code>은 실제 사용량에서 계산한 청구 금액이 아니라 실습용 예약 단위입니다. 호출 전에 정확한 출력 길이를 알 수 없기 때문에 보수적인 예상치나 토큰 상한으로 입장을 결정할 수 있습니다. 호출 뒤 실제 사용량을 정산하는 방식과 호출 전 차단은 목적과 오차가 다릅니다.</p><h3>도식 읽기</h3><p>파란 요청이 노란 예상비용 예약 상자에 들어갑니다. 예약 합계가 0.006달러 이하이면 보라색 handler와 모델 호출로 이어집니다. 두 번째 요청처럼 0.008달러가 되면 빨간 BudgetExceeded로 이동하고 모델 호출 화살표는 생기지 않습니다. 차단 전후의 guarded.index가 호출 시점을 확인하는 값입니다.</p><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 430" style="width:360px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="커스텀 예산 미들웨어는 모델 호출 전에 예상비용을 예약합니다"><title>커스텀 예산 미들웨어는 모델 호출 전에 예상비용을 예약합니다</title><defs><marker id="05-커스텀-예산-미들웨어-흐름-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190,85 L190,116" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#05-커스텀-예산-미들웨어-흐름-arrow)"/><path d="M190,185 L190,216" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#05-커스텀-예산-미들웨어-흐름-arrow)"/><path d="M190,285 L190,316" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#05-커스텀-예산-미들웨어-흐름-arrow)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="59.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">요청</text><rect x="30" y="120" width="320" height="65" rx="10" fill="#F7EDC7" stroke="#334155" stroke-width="2"/><text x="190.0" y="159.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">예상비용 예약</text><rect x="30" y="220" width="320" height="65" rx="10" fill="#E9E0F3" stroke="#334155" stroke-width="2"/><text x="190.0" y="259.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">handler와 모델</text><rect x="30" y="320" width="320" height="65" rx="10" fill="#F4D9D5" stroke="#334155" stroke-width="2"/><text x="190.0" y="359.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">상한 초과 차단</text></svg></div>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>Before는 두 모델 호출을 제한 없이 실행합니다. After는 같은 미들웨어 인스턴스에 두 번의 invoke를 전달하고, 누적 예산을 넘는 두 번째 요청을 중단하는 커스텀 미들웨어를 사용합니다.</p><section class="notebook" data-notebook="05-커스텀-예산-미들웨어" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-14</span><button type="button" class="copy-all">전체 코드 복사</button><a download="05-커스텀-예산-미들웨어.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsu6TsiqTthYAg7JiI7IKwIOuvuOuTpOybqOyWtFxuIiwKICAgICJcbiIsCiAgICAi66qo6424IO2YuOy2nCDsiJjrv5Ag7JWE64uI6528IOyYiOyDgeu5hOyaqSDsg4HtlZzsnYQg7Zi47LacIOyngeyghOyXkCDslrTrlrvqsowg6rKA7IKs7ZWg6rmM7JqUP1xuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLsi6TsirUg7YyM7J287J2AIGBsYWJzL3BhcnQ2L2NoMjItbWlkZGxld2FyZS9ub3RlYm9va3MvMDUt7Luk7Iqk7YWALeyYiOyCsC3rr7jrk6Tsm6jslrQuaXB5bmJg7J6F64uI64ukLiBQeXRob24gMy4xMiDsg4gg7Luk64SQ7JeQ7IScIOychOyXkOyEnOu2gO2EsCDsi6Ttlontlanri4jri6QuXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAzIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Yyo7YKk7KeAIOuyhOyghCDtmZXsnbhcbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTRUMDQ6MDU6MDAuMDc3NTQzWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTRUMDQ6MDU6MDAuMDc3NDU4WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTRUMDQ6MDU6MDAuNzI4MDkxWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xNFQwNDowNTowMC43Mjc2MjZaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiTm90ZTogeW91IG1heSBuZWVkIHRvIHJlc3RhcnQgdGhlIGtlcm5lbCB0byB1c2UgdXBkYXRlZCBwYWNrYWdlcy5cbiIsCiAgICAgICJsYW5nY2hhaW4gMS40LjBcbiIsCiAgICAgICJsYW5nY2hhaW4tb3BlbmFpIDEuNi4wXG4iLAogICAgICAibGFuZ2dyYXBoIDEuMi4xMVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOydtCDshYDsnYAg7Yyo7YKk7KeAIOuyhOyghCDtmZXsnbgg7J6R7JeF7J2EIOyImO2Wie2VmOqzoCDtmZXsnbjtlaAg6rCS7J2EIOy2nOugpe2VqeuLiOuLpC5cbiIsCiAgICAiJXBpcCBpbnN0YWxsIC1xIFwibGFuZ2NoYWluPT0xLjQuMFwiIFwibGFuZ2NoYWluLW9wZW5haT09MS42LjBcIiBcImxhbmdncmFwaD09MS4yLjExXCIgXCJweXRob24tZG90ZW52PT0xLjIuM1wiXG4iLAogICAgImZyb20gaW1wb3J0bGliLm1ldGFkYXRhIGltcG9ydCB2ZXJzaW9uXG4iLAogICAgInByaW50KFwibGFuZ2NoYWluXCIsIHZlcnNpb24oXCJsYW5nY2hhaW5cIikpXG4iLAogICAgInByaW50KFwibGFuZ2NoYWluLW9wZW5haVwiLCB2ZXJzaW9uKFwibGFuZ2NoYWluLW9wZW5haVwiKSlcbiIsCiAgICAicHJpbnQoXCJsYW5nZ3JhcGhcIiwgdmVyc2lvbihcImxhbmdncmFwaFwiKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rKw7KCV7KCBIOuqqOuNuCDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIuydtCDrqqjrjbjsnYAg7KCV7ZW0IOuRlCDsnZHri7XsnLzroZwg7ZuFIOqyveqzhOulvCDqtIDssLDtlZjripQg6rKw7KCV7KCBIOqygOyCrCDsnqXsuZjsnoXri4jri6QuIGBCYXNlQ2hhdE1vZGVsYCDsg4Hsho0g6rWs7ZiEIOyekOyytOuKlCDsnbQg7KCI7J2YIO2VmeyKtSDrjIDsg4HsnbQg7JWE64uZ64uI64ukLlxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xNFQwNDowNTowMC43MjkxMDRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xNFQwNDowNTowMC43MjkwNDNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xNFQwNDowNTowMS4xMDkwMDNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTE0VDA0OjA1OjAxLjEwODU1M1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogW10sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnbQg7IWA7J2AIOqysOygleyggSDrqqjrjbgg7KSA67mEIOyekeyXheydhCDsiJjtlontlZjqs6Ag7ZmV7J247ZWgIOqwkuydhCDstpzroKXtlanri4jri6QuXG4iLAogICAgIiMg7KCV7ZW0IOuRlCDsnZHri7XsnLzroZwg66+465Ok7Juo7Ja0IOyLpO2WiSDsiJzshJzrpbwg7J6s7ZiE7ZWp64uI64ukLlxuIiwKICAgICJmcm9tIHR5cGluZyBpbXBvcnQgQW55XG4iLAogICAgImZyb20gbGFuZ2NoYWluLmFnZW50cyBpbXBvcnQgY3JlYXRlX2FnZW50XG4iLAogICAgImZyb20gbGFuZ2NoYWluLmFnZW50cy5taWRkbGV3YXJlIGltcG9ydCBBZ2VudE1pZGRsZXdhcmVcbiIsCiAgICAiZnJvbSBsYW5nY2hhaW4udG9vbHMgaW1wb3J0IHRvb2xcbiIsCiAgICAiZnJvbSBsYW5nY2hhaW5fY29yZS5sYW5ndWFnZV9tb2RlbHMuY2hhdF9tb2RlbHMgaW1wb3J0IEJhc2VDaGF0TW9kZWxcbiIsCiAgICAiZnJvbSBsYW5nY2hhaW5fY29yZS5tZXNzYWdlcyBpbXBvcnQgQUlNZXNzYWdlXG4iLAogICAgImZyb20gbGFuZ2NoYWluX2NvcmUub3V0cHV0cyBpbXBvcnQgQ2hhdEdlbmVyYXRpb24sIENoYXRSZXN1bHRcbiIsCiAgICAiY2xhc3MgU2NyaXB0ZWRNb2RlbChCYXNlQ2hhdE1vZGVsKTpcbiIsCiAgICAiICAgIHJlcGxpZXM6IGxpc3RbQUlNZXNzYWdlXVxuIiwKICAgICIgICAgaW5kZXg6IGludCA9IDBcbiIsCiAgICAiICAgIEBwcm9wZXJ0eVxuIiwKICAgICIgICAgZGVmIF9sbG1fdHlwZShzZWxmKSAtPiBzdHI6IHJldHVybiBcInNjcmlwdGVkLW1vZGVsXCJcbiIsCiAgICAiICAgIGRlZiBfZ2VuZXJhdGUoc2VsZiwgbWVzc2FnZXM6IEFueSwgc3RvcDogQW55ID0gTm9uZSwgcnVuX21hbmFnZXI6IEFueSA9IE5vbmUsICoqa3dhcmdzOiBBbnkpIC0+IENoYXRSZXN1bHQ6XG4iLAogICAgIiAgICAgICAgcmVwbHkgPSBzZWxmLnJlcGxpZXNbbWluKHNlbGYuaW5kZXgsIGxlbihzZWxmLnJlcGxpZXMpIC0gMSldXG4iLAogICAgIiAgICAgICAgc2VsZi5pbmRleCArPSAxXG4iLAogICAgIiAgICAgICAgcmV0dXJuIENoYXRSZXN1bHQoZ2VuZXJhdGlvbnM9W0NoYXRHZW5lcmF0aW9uKG1lc3NhZ2U9cmVwbHkpXSlcbiIsCiAgICAiICAgIGRlZiBiaW5kX3Rvb2xzKHNlbGYsIHRvb2xzOiBBbnksICosIHRvb2xfY2hvaWNlOiBBbnkgPSBOb25lLCAqKmt3YXJnczogQW55KSAtPiBcIlNjcmlwdGVkTW9kZWxcIjpcbiIsCiAgICAiICAgICAgICByZXR1cm4gc2VsZlxuIiwKICAgICJAdG9vbFxuIiwKICAgICJkZWYgbG9va3VwX2hvdXJzKGRheTogc3RyKSAtPiBzdHI6XG4iLAogICAgIiAgICBcIlwiXCLsnpDro4zsi6Qg7Jq07JiBIOyLnOqwhOydhCDsmpTsnbzroZwg7KGw7ZqM7ZWp64uI64ukLlwiXCJcIlxuIiwKICAgICIgICAgcmV0dXJuIFwi7Y+J7J28IDA5OjAwfjIwOjAwXCIgaWYgZGF5ID09IFwi7Y+J7J28XCIgZWxzZSBcIu2GoOyalOydvCAxMDowMH4xNzowMFwiIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgQmVmb3JlOiDruYTsmqkg6rKA7IKsIOyXhuuKlCDrkZAg7Zi47LacXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTE0VDA0OjA1OjAxLjExMDAyNloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTE0VDA0OjA1OjAxLjEwOTk2MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTE0VDA0OjA1OjAxLjExMzE4MloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTRUMDQ6MDU6MDEuMTEyOTMzWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiY2FsbHM6IDJcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnbQg7IWA7J2AIEJlZm9yZTog67mE7JqpIOqygOyCrCDsl4bripQg65GQIO2YuOy2nCDsnpHsl4XsnYQg7IiY7ZaJ7ZWY6rOgIO2ZleyduO2VoCDqsJLsnYQg7Lac66Cl7ZWp64uI64ukLlxuIiwKICAgICJwbGFpbj1TY3JpcHRlZE1vZGVsKHJlcGxpZXM9W0FJTWVzc2FnZShcIuyyqyDsnZHri7VcIiksQUlNZXNzYWdlKFwi65GY7Ke4IOydkeuLtVwiKV0pXG4iLAogICAgInBsYWluLmludm9rZShcIuyyqyDtmLjstpxcIik7IHBsYWluLmludm9rZShcIuuRmOynuCDtmLjstpxcIilcbiIsCiAgICAicHJpbnQoXCJjYWxsczpcIixwbGFpbi5pbmRleClcbiIsCiAgICAiYXNzZXJ0IHBsYWluLmluZGV4PT0yIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wOSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyBBZnRlcjog7JiI7IKwIOuvuOuTpOybqOyWtCDsnpHshLFcbiIsCiAgICAiXG4iLAogICAgIuyYiOyCsCDrr7jrk6Tsm6jslrTripQg66qo6424IO2YuOy2nCDsp4HsoITsl5Ag7JiI7IOBIOyCrOyaqeufieydhCDsmIjslb3tlZjqs6Ag7IOB7ZWc7J2EIOuEmOuKlCDtmLjstpzsnYQg7Iuc7J6R7ZWY7KeAIOyViuqyjCDtlZjripQg7KCc7Ja0IOyepey5mOyeheuLiOuLpC4gYEJ1ZGdldE1pZGRsZXdhcmUobWF4X2Nvc3RfdXNkLCBlc3RpbWF0ZWRfY29zdF9wZXJfY2FsbClg7J2AIOuIhOyggSDsmIjslb3qsJIgYHJlc2VydmVkYOulvCDrs7TqtIDtlanri4jri6QuIOydtCDqtaztmITsnZggYHJlc2VydmVkYOuKlCDtlZwgaW52b2tl7J2YIOqwkuydtCDslYTri4jrnbwg6rCZ7J2AIOuvuOuTpOybqOyWtCDsnbjsiqTthLTsiqTqsIAg7LKY66as7ZWcIOyalOyyrSDsoITssrTsl5Ag64iE7KCB65Cp64uI64ukLiBgd3JhcF9tb2RlbF9jYWxsYOydgCDri6TsnYwg7JiI7JW96rCS7J2EIOqzhOyCsO2VnCDrkqQg7ZeI7Jqp65CY66m0IGBoYW5kbGVyKHJlcXVlc3QpYOulvCDtlZwg67KIIO2YuOy2nO2VmOqzoCwg64SY7Jy866m0IGBCdWRnZXRFeGNlZWRlZGDrpbwg67Cc7IOd7Iuc7YK164uI64ukLiDrsJjtmZjqsJLsnYAg66qo6424IOydkeuLteydtOupsCDsmIjsgrAg7Iir7J6Q6rCAIOyVhOuLmeuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgIuyXrOq4sOyEnCBgZXN0aW1hdGVkX2Nvc3RfcGVyX2NhbGxg7J2AIOyLpOygnCDsgqzsmqnrn4nsl5DshJwg6rOE7IKw7ZWcIOyyreq1rCDquIjslaHsnbQg7JWE64uI6528IOyLpOyKteyaqSDsmIjslb0g64uo7JyE7J6F64uI64ukLiDtmLjstpwg7KCE7JeQIOygle2Zle2VnCDstpzroKUg6ri47J2066W8IOyVjCDsiJgg7JeG6riwIOuVjOusuOyXkCDrs7TsiJjsoIHsnbgg7JiI7IOB7LmY64KYIO2GoO2BsCDsg4HtlZzsnLzroZwg7J6F7J6l7J2EIOqysOygle2VoCDsiJgg7J6I7Iq164uI64ukLiDtmLjstpwg65KkIOyLpOygnCDsgqzsmqnrn4nsnYQg7KCV7IKw7ZWY64qUIOuwqeyLneqzvCDtmLjstpwg7KCEIOywqOuLqOydgCDrqqnsoIHqs7wg7Jik7LCo6rCAIOuLpOumheuLiOuLpC5cbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTRUMDQ6MDU6MDEuMTEzOTA5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTRUMDQ6MDU6MDEuMTEzODU1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTRUMDQ6MDU6MDEuMTE1NjEzWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xNFQwNDowNTowMS4xMTUzNzlaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOydtCDshYDsnYAgQWZ0ZXI6IOyYiOyCsCDrr7jrk6Tsm6jslrQg7J6R7ISxIOyekeyXheydhCDsiJjtlontlZjqs6Ag7ZmV7J247ZWgIOqwkuydhCDstpzroKXtlanri4jri6QuXG4iLAogICAgImNsYXNzIEJ1ZGdldEV4Y2VlZGVkKFJ1bnRpbWVFcnJvcik6IHBhc3NcbiIsCiAgICAiY2xhc3MgQnVkZ2V0TWlkZGxld2FyZShBZ2VudE1pZGRsZXdhcmUpOlxuIiwKICAgICIgICAgZGVmIF9faW5pdF9fKHNlbGYsIG1heF9jb3N0X3VzZDogZmxvYXQsIGVzdGltYXRlZF9jb3N0X3Blcl9jYWxsOiBmbG9hdCkgLT4gTm9uZTpcbiIsCiAgICAiICAgICAgICBzZWxmLm1heF9jb3N0X3VzZD1tYXhfY29zdF91c2Q7IHNlbGYuZXN0aW1hdGVkPWVzdGltYXRlZF9jb3N0X3Blcl9jYWxsOyBzZWxmLnJlc2VydmVkPTAuMFxuIiwKICAgICIgICAgZGVmIHdyYXBfbW9kZWxfY2FsbChzZWxmLCByZXF1ZXN0OiBBbnksIGhhbmRsZXI6IEFueSkgLT4gQW55OlxuIiwKICAgICIgICAgICAgIG5leHRfY29zdD1zZWxmLnJlc2VydmVkK3NlbGYuZXN0aW1hdGVkXG4iLAogICAgIiAgICAgICAgaWYgbmV4dF9jb3N0ID4gc2VsZi5tYXhfY29zdF91c2Q6IHJhaXNlIEJ1ZGdldEV4Y2VlZGVkKFwi7J20IOuvuOuTpOybqOyWtCDsnbjsiqTthLTsiqTsnZgg64iE7KCBIOyYiOyDgeu5hOyaqSDsg4HtlZzsnYQg7LSI6rO87ZWp64uI64ukLlwiKVxuIiwKICAgICIgICAgICAgIHNlbGYucmVzZXJ2ZWQ9bmV4dF9jb3N0XG4iLAogICAgIiAgICAgICAgcmV0dXJuIGhhbmRsZXIocmVxdWVzdCkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTExIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyyqyDtmLjstpwg7ZeI7Jqp6rO8IOuRkCDrsojsp7gg7LCo64uoXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjZWxsLTEyIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTE0VDA0OjA1OjAxLjExNjI0M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTE0VDA0OjA1OjAxLjExNjE5M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTE0VDA0OjA1OjAxLjEyMTk4MloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTRUMDQ6MDU6MDEuMTIxNzEyWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJCdWRnZXRFeGNlZWRlZCDsnbQg66+465Ok7Juo7Ja0IOyduOyKpO2EtOyKpOydmCDriITsoIEg7JiI7IOB67mE7JqpIOyDge2VnOydhCDstIjqs7ztlanri4jri6QuXG4iLAogICAgICAibW9kZWxfY2FsbHM6IDEgcmVzZXJ2ZWQ6IDAuMDA0XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7J20IOyFgOydgCDssqsg7Zi47LacIO2XiOyaqeqzvCDrkZAg67KI7Ke4IOywqOuLqCDsnpHsl4XsnYQg7IiY7ZaJ7ZWY6rOgIO2ZleyduO2VoCDqsJLsnYQg7Lac66Cl7ZWp64uI64ukLlxuIiwKICAgICJidWRnZXQ9QnVkZ2V0TWlkZGxld2FyZShtYXhfY29zdF91c2Q9MC4wMDYsZXN0aW1hdGVkX2Nvc3RfcGVyX2NhbGw9MC4wMDQpXG4iLAogICAgImd1YXJkZWQ9U2NyaXB0ZWRNb2RlbChyZXBsaWVzPVtBSU1lc3NhZ2UoXCLssqsg7J2R64u1XCIpLEFJTWVzc2FnZShcIuuRmOynuCDsnZHri7VcIildKVxuIiwKICAgICJhZ2VudD1jcmVhdGVfYWdlbnQoZ3VhcmRlZCx0b29scz1bXSxtaWRkbGV3YXJlPVtidWRnZXRdKVxuIiwKICAgICJmaXJzdD1hZ2VudC5pbnZva2Uoe1wibWVzc2FnZXNcIjpbe1wicm9sZVwiOlwidXNlclwiLFwiY29udGVudFwiOlwi7LKrIO2YuOy2nFwifV19KVxuIiwKICAgICJ0cnk6XG4iLAogICAgIiAgICBhZ2VudC5pbnZva2Uoe1wibWVzc2FnZXNcIjpbe1wicm9sZVwiOlwidXNlclwiLFwiY29udGVudFwiOlwi65GY7Ke4IO2YuOy2nFwifV19KVxuIiwKICAgICJleGNlcHQgQnVkZ2V0RXhjZWVkZWQgYXMgZXJyb3I6XG4iLAogICAgIiAgICBwcmludCh0eXBlKGVycm9yKS5fX25hbWVfXyxzdHIoZXJyb3IpKVxuIiwKICAgICJwcmludChcIm1vZGVsX2NhbGxzOlwiLGd1YXJkZWQuaW5kZXgsXCJyZXNlcnZlZDpcIixidWRnZXQucmVzZXJ2ZWQpXG4iLAogICAgImFzc2VydCBndWFyZGVkLmluZGV4PT0xIGFuZCBidWRnZXQucmVzZXJ2ZWQ9PTAuMDA0IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDruYTsmqkg6riw66GdXG4iLAogICAgIlxuIiwKICAgICLsgqzsmqnsnpDrs4Qg7J287J28IO2VnOuPhOudvOuptCBgcmVzZXJ2ZWRg66W8IOuvuOuTpOybqOyWtCDqsJ3ssrTsnZgg66mU66qo66as7JeQ66eMIOuRkOyngCDslYrqs6Ag7IKs7Jqp7J6QIElE7JmAIOuCoOynnOulvCDtgqTroZwg7ZWY64qUIOqzteycoCDsoIDsnqXshozsl5Ag6riw66Gd7ZW07JW8IO2VqeuLiOuLpC4g7Jes65+sIO2UhOuhnOyEuOyKpOqwgCDrj5nsi5zsl5Ag7JqU7LKt7J2EIOuwm+ycvOuptCDsnb3quLDsmYAg7JiI7JW97J2EIO2VmOuCmOydmCDsm5DsnpDsoIEg7Jew7IKw7Jy866GcIOyymOumrO2VtOyVvCDrkZAg7JqU7LKt7J20IOqwmeydgCDrgqjsnYAg7JiI7IKw7J2EIO2VqOq7mCDsgqzsmqntlZjripQg7J287J2EIOunieydhCDsiJgg7J6I7Iq164uI64ukLlxuIiwKICAgICJcbiIsCiAgICAi7Zi47LacIO2VnOuPhOuKlCDtmp/siJjrpbwg7KCc7ZWc7ZWY6rOgIOyYiOyCsCDtlZzrj4TripQg7ISc66GcIOuLpOuluCDrqqjrjbjCt+yeheugpSDquLjsnbTrpbwg6rO17Ya1IOuLqOychOuhnCDruYTqtZDtlZjroKTripQg7KCV7LGF7J6F64uI64ukLiDsnbTrsogg7IWA7J2YIOuRkCDrsojsp7gg7LCo64uo7J2AIDAuMDA0KzAuMDA06rCAIDAuMDA27J2EIOuEmOuKlCDqs4TsgrDsnYQg6rKA7Kad7ZWgIOu/kCwg7Iuk7KCcIOuqqOuNuCDruYTsmqnsnYQg7Lih7KCV7ZWY6rGw64KYIOygnOqzteyekOydmCDssq3qtazrpbwg64yA7LK07ZWY7KeAIOyViuyKteuLiOuLpC5cbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImNlbGwtMTQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTRUMDQ6MDU6MDEuMTIyNzA1WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTRUMDQ6MDU6MDEuMTIyNjU0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTRUMDQ6MDU6MDEuMTI0MjAzWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xNFQwNDowNTowMS4xMjM4OTdaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInsnbWF4X2Nvc3RfdXNkJzogMC4wMDYsICdyZXNlcnZlZF9jb3N0X3VzZCc6IDAuMDA0LCAnYWN0dWFsX2FwaV9jb3N0X3VzZCc6IDAuMH1cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnbQg7IWA7J2AIOu5hOyaqSDquLDroZ0g7J6R7JeF7J2EIOyImO2Wie2VmOqzoCDtmZXsnbjtlaAg6rCS7J2EIOy2nOugpe2VqeuLiOuLpC5cbiIsCiAgICAicHJpbnQoe1wibWF4X2Nvc3RfdXNkXCI6YnVkZ2V0Lm1heF9jb3N0X3VzZCxcInJlc2VydmVkX2Nvc3RfdXNkXCI6YnVkZ2V0LnJlc2VydmVkLFwiYWN0dWFsX2FwaV9jb3N0X3VzZFwiOjAuMH0pXG4iLAogICAgImFzc2VydCBidWRnZXQucmVzZXJ2ZWQgPCAxLjAiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogInBhaXJlZCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDYsCiAgICJjb2RlX3NoYTI1NiI6ICIzZTAyZDk5ZDc0MWIyYzhhOGNlNDEyN2UzMmE2MzRiNjZjNmM5MDE3MTUzMjZjNmU1Y2QxNGJiNzJkOWQ0NjM4IiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTRUMDQ6MDU6MDEuMjM3MjMyKzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICIwOTAxZTllNmUxMzEzZmQ3ZGQzY2NlMzAyMjRiZTA4MjlmMGNiNjcyYTY2NzQyMmU2MzBjYjVhNzRiYzA2MzZjIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>커스텀 예산 미들웨어</h2>
+<p>모델 호출 수뿐 아니라 예상비용 상한을 호출 직전에 어떻게 검사할까요?</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>실습 파일은 <code>labs/part6/ch22-middleware/notebooks/05-커스텀-예산-미들웨어.ipynb</code>입니다. Python 3.12 새 커널에서 위에서부터 실행합니다.</p></div>
+<div class="nb-markdown"><h3>패키지 버전 확인</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 패키지 버전 확인 작업을 수행하고 확인할 값을 출력합니다.
+%pip install -q &quot;langchain==1.4.0&quot; &quot;langchain-openai==1.6.0&quot; &quot;langgraph==1.2.11&quot; &quot;python-dotenv==1.2.3&quot;
+from importlib.metadata import version
+print(&quot;langchain&quot;, version(&quot;langchain&quot;))
+print(&quot;langchain-openai&quot;, version(&quot;langchain-openai&quot;))
+print(&quot;langgraph&quot;, version(&quot;langgraph&quot;))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+langchain 1.4.0
+langchain-openai 1.6.0
+langgraph 1.2.11
+</pre></div>
+<div class="nb-markdown"><h3>결정적 모델 준비</h3>
+<p>이 모델은 정해 둔 응답으로 훅 경계를 관찰하는 결정적 검사 장치입니다. <code>BaseChatModel</code> 상속 구현 자체는 이 절의 학습 대상이 아닙니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 결정적 모델 준비 작업을 수행하고 확인할 값을 출력합니다.
+# 정해 둔 응답으로 미들웨어 실행 순서를 재현합니다.
+from typing import Any
+from langchain.agents import create_agent
+from langchain.agents.middleware import AgentMiddleware
+from langchain.tools import tool
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import AIMessage
+from langchain_core.outputs import ChatGeneration, ChatResult
+class ScriptedModel(BaseChatModel):
+    replies: list[AIMessage]
+    index: int = 0
+    @property
+    def _llm_type(self) -&gt; str: return &quot;scripted-model&quot;
+    def _generate(self, messages: Any, stop: Any = None, run_manager: Any = None, **kwargs: Any) -&gt; ChatResult:
+        reply = self.replies[min(self.index, len(self.replies) - 1)]
+        self.index += 1
+        return ChatResult(generations=[ChatGeneration(message=reply)])
+    def bind_tools(self, tools: Any, *, tool_choice: Any = None, **kwargs: Any) -&gt; &quot;ScriptedModel&quot;:
+        return self
+@tool
+def lookup_hours(day: str) -&gt; str:
+    &quot;&quot;&quot;자료실 운영 시간을 요일로 조회합니다.&quot;&quot;&quot;
+    return &quot;평일 09:00~20:00&quot; if day == &quot;평일&quot; else &quot;토요일 10:00~17:00&quot;</code></pre></div></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 첫 요청의 예약·사용 기록과 두 번째 요청의 차단 기록을 구분해 확인합니다.</p>
+<h3>다른 상황과 적용 경계</h3><p>사용자별 일일 한도라면 <code>reserved</code>를 미들웨어 객체의 메모리에만 두지 않고 사용자 ID와 날짜를 키로 하는 공유 저장소에 기록해야 합니다. 여러 프로세스가 동시에 요청을 받으면 읽기와 예약을 하나의 원자적 연산으로 처리해야 두 요청이 같은 남은 예산을 함께 사용하는 일을 막을 수 있습니다.</p><p>호출 한도는 횟수를 제한하고 예산 한도는 서로 다른 모델·입력 길이를 공통 단위로 비교하려는 정책입니다. 이번 셀의 두 번째 차단은 0.004+0.004가 0.006을 넘는 계산을 검증할 뿐, 실제 모델 비용을 측정하거나 제공자의 청구를 대체하지 않습니다.</p><h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before에서는 두 번의 모델 호출이 모두 실행됩니다. After에서는 첫 invoke가 0.004달러를 예약하고 성공하지만 같은 인스턴스에 전달한 두 번째 invoke는 0.008달러가 0.006달러 상한을 넘으므로 handler 실행 전에 BudgetExceeded가 발생합니다. 모델의 calls 값이 1인 것으로 차단 시점이 호출 전임을 확인합니다.</p><section class="notebook" data-notebook="05-커스텀-예산-미들웨어" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>Before: 비용 검사 없는 두 호출</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 Before: 비용 검사 없는 두 호출 작업을 수행하고 확인할 값을 출력합니다.
+plain=ScriptedModel(replies=[AIMessage(&quot;첫 응답&quot;),AIMessage(&quot;둘째 응답&quot;)])
+plain.invoke(&quot;첫 호출&quot;); plain.invoke(&quot;둘째 호출&quot;)
+print(&quot;calls:&quot;,plain.index)
+assert plain.index==2</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">calls: 2
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>After: 예산 미들웨어 작성</h3>
+<p>예산 미들웨어는 모델 호출 직전에 예상 사용량을 예약하고 상한을 넘는 호출을 시작하지 않게 하는 제어 장치입니다. <code>BudgetMiddleware(max_cost_usd, estimated_cost_per_call)</code>은 누적 예약값 <code>reserved</code>를 보관합니다. 이 구현의 <code>reserved</code>는 한 invoke의 값이 아니라 같은 미들웨어 인스턴스가 처리한 요청 전체에 누적됩니다. <code>wrap_model_call</code>은 다음 예약값을 계산한 뒤 허용되면 <code>handler(request)</code>를 한 번 호출하고, 넘으면 <code>BudgetExceeded</code>를 발생시킵니다. 반환값은 모델 응답이며 예산 숫자가 아닙니다.</p>
+<p>여기서 <code>estimated_cost_per_call</code>은 실제 사용량에서 계산한 청구 금액이 아니라 실습용 예약 단위입니다. 호출 전에 정확한 출력 길이를 알 수 없기 때문에 보수적인 예상치나 토큰 상한으로 입장을 결정할 수 있습니다. 호출 뒤 실제 사용량을 정산하는 방식과 호출 전 차단은 목적과 오차가 다릅니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 After: 예산 미들웨어 작성 작업을 수행하고 확인할 값을 출력합니다.
+class BudgetExceeded(RuntimeError): pass
+class BudgetMiddleware(AgentMiddleware):
+    def __init__(self, max_cost_usd: float, estimated_cost_per_call: float) -&gt; None:
+        self.max_cost_usd=max_cost_usd; self.estimated=estimated_cost_per_call; self.reserved=0.0
+    def wrap_model_call(self, request: Any, handler: Any) -&gt; Any:
+        next_cost=self.reserved+self.estimated
+        if next_cost &gt; self.max_cost_usd: raise BudgetExceeded(&quot;이 미들웨어 인스턴스의 누적 예상비용 상한을 초과합니다.&quot;)
+        self.reserved=next_cost
+        return handler(request)</code></pre></div></div>
+<div class="nb-markdown"><h3>첫 호출 허용과 두 번째 차단</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 첫 호출 허용과 두 번째 차단 작업을 수행하고 확인할 값을 출력합니다.
+budget=BudgetMiddleware(max_cost_usd=0.006,estimated_cost_per_call=0.004)
+guarded=ScriptedModel(replies=[AIMessage(&quot;첫 응답&quot;),AIMessage(&quot;둘째 응답&quot;)])
+agent=create_agent(guarded,tools=[],middleware=[budget])
+first=agent.invoke({&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;첫 호출&quot;}]})
+try:
+    agent.invoke({&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;둘째 호출&quot;}]})
+except BudgetExceeded as error:
+    print(type(error).__name__,str(error))
+print(&quot;model_calls:&quot;,guarded.index,&quot;reserved:&quot;,budget.reserved)
+assert guarded.index==1 and budget.reserved==0.004</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">BudgetExceeded 이 미들웨어 인스턴스의 누적 예상비용 상한을 초과합니다.
+model_calls: 1 reserved: 0.004
+</pre></div>
+<div class="nb-markdown"><h3>비용 기록</h3>
+<p>사용자별 일일 한도라면 <code>reserved</code>를 미들웨어 객체의 메모리에만 두지 않고 사용자 ID와 날짜를 키로 하는 공유 저장소에 기록해야 합니다. 여러 프로세스가 동시에 요청을 받으면 읽기와 예약을 하나의 원자적 연산으로 처리해야 두 요청이 같은 남은 예산을 함께 사용하는 일을 막을 수 있습니다.</p>
+<p>호출 한도는 횟수를 제한하고 예산 한도는 서로 다른 모델·입력 길이를 공통 단위로 비교하려는 정책입니다. 이번 셀의 두 번째 차단은 0.004+0.004가 0.006을 넘는 계산을 검증할 뿐, 실제 모델 비용을 측정하거나 제공자의 청구를 대체하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 비용 기록 작업을 수행하고 확인할 값을 출력합니다.
+print({&quot;max_cost_usd&quot;:budget.max_cost_usd,&quot;reserved_cost_usd&quot;:budget.reserved,&quot;actual_api_cost_usd&quot;:0.0})
+assert budget.reserved &lt; 1.0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;max_cost_usd&#x27;: 0.006, &#x27;reserved_cost_usd&#x27;: 0.004, &#x27;actual_api_cost_usd&#x27;: 0.0}
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>예상비용은 실제 토큰 사용량과 다를 수 있습니다. 응답 후 usage_metadata를 기록해 예상값과 차이를 측정합니다.</li><li>미들웨어 인스턴스 필드에 사용자별 값을 두면 동시 요청이 섞일 수 있습니다. 실제 서비스에서는 state, runtime context 또는 원자적 저장소를 사용합니다.</li><li>비용 상한 오류 메시지에 계정 잔액이나 내부 가격표 전체를 노출하지 않습니다.</li></ul><p>실습의 결정적 모델은 미들웨어 실행 경계를 재현하기 위한 검사 도구입니다. 실제 모델 품질, 공급자 장애율, 운영 비용을 대신 측정하지 않습니다. 적용 전에는 사용 중인 모델과 계정의 실제 사용량을 다시 확인합니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>BudgetMiddleware는 handler 호출 전에 예상비용을 예약하고 인스턴스의 누적 상한을 넘는 요청을 차단합니다.</li><li>같은 인스턴스에 두 invoke를 전달해 첫 요청만 모델에 도달하고 두 번째 요청은 호출 전에 차단됨을 확인했습니다.</li><li>운영에서는 예산 범위와 동시성에 맞게 누적값을 state, runtime context 또는 원자적 저장소에 분리합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 입력과 도구 호출을 비밀값 없이 추적하는 두 번째 커스텀 미들웨어를 만듭니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 비용을 handler 호출 전에 예약하는 이유는 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 상한을 넘는 호출 자체를 실행하지 않기 위해서입니다.</p><p class="quiz-q">2. 호출당 예상비용의 한계는 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 실제 입력·출력 토큰과 캐시 조건에 따라 청구액이 달라질 수 있습니다.</p><p class="quiz-q">3. 공유 인스턴스 필드가 운영에서 위험한 이유는 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 여러 요청의 카운터가 섞여 사용자별 한도가 잘못 적용될 수 있습니다.</p><p class="quiz-q">4. 내장 호출 한도와 커스텀 예산 미들웨어를 함께 쓸 수 있나요?</p><p class="quiz-a"><b>해설</b> — 가능하며 호출 수와 프로젝트별 비용 정책을 각각 검사할 수 있습니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.langchain.com/oss/python/langchain/middleware/custom">LangChain Custom middleware</a> · 확인 2026-09-14 · LangChain 1.4.0</li><li><a href="https://docs.langchain.com/oss/python/langchain/middleware/built-in">LangChain Prebuilt middleware</a> · 확인 2026-09-14 · LangChain 1.4.0</li><li><a href="https://reference.langchain.com/python/langchain/agents/middleware">LangChain middleware API reference</a> · 확인 2026-09-14 · LangChain 1.4.0</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="04-호출-한도와-재시도-폴백.html">← 호출 한도와 재시도 폴백</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="06-커스텀-감사-미들웨어.html">커스텀 감사 미들웨어 →</a></span></div></div></body></html>

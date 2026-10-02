@@ -1,0 +1,8 @@
+{
+  "command": "uv run --project labs/part5/ch20-tool-node --with pytest --with pillow python -m pytest textbook/_notebook/tests -q",
+  "exit_code": 0,
+  "passed_tests": 44,
+  "passed_subtests": 26,
+  "result": "44 passed, 26 subtests passed in 2.67s",
+  "scope": "Shared notebook rendering, validation, download and bundle tooling; lesson execution is recorded separately."
+}

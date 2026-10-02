@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · int() 줄이 빠진 read_unit_price"]
+    direction LR
+    b1["price_tools.py 262글자<br>return unit_price_text"]:::tool --> b2["run_pytest()<br>같은 테스트 파일 두 개<br>기대값 39000"]:::flow --> b3["..F<br>1 failed, 2 passed<br>종료 코드: 1"]:::fail
+  end
+  subgraph AFTER["After · int() 줄 하나를 더함"]
+    direction LR
+    a1["price_tools.py 295글자<br>unit_price =<br>int(unit_price_text)"]:::tool --> a2["run_pytest()<br>같은 테스트 파일 두 개<br>기대값 39000"]:::flow --> a3["...<br>3 passed<br>종료 코드: 0"]:::measure
+  end
+  BEFORE ~~~ AFTER

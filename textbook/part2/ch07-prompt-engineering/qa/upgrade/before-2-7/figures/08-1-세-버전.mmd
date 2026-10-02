@@ -1,0 +1,18 @@
+flowchart TB
+  %% classes
+  S["system 페르소나<br>세 버전 모두 같음"]:::tool
+  subgraph DEV["developer 과업 명세만 버전마다 다름"]
+    direction LR
+    V1["v1 기준선 · 2줄<br>목표<br>필수 정보"]:::tool
+    V2["v2 · 4줄<br>+ 금지 사항<br>+ 출력 형식"]:::tool
+    V3["v3 · 10줄<br>+ 관련 예시 한 쌍"]:::tool
+    V1 -->|덧붙임| V2
+    V2 -->|덧붙임| V3
+  end
+  U["user 텀블러 문의<br>세 버전 모두 같음"]:::tool
+  M["gpt-5.4-mini<br>버전마다 한 번"]:::model
+  R["버전 기록 세 개<br>원문 · 바꾼 것 · 측정 항목"]:::measure
+  S --> DEV
+  DEV --> U
+  U --> M
+  M --> R

@@ -1,0 +1,53 @@
+{
+  "reviewed_at": "2026-09-09",
+  "scope": "Ch 5 lessons 05–08: source HTML and notebook Markdown language audit; notebook code and outputs protected",
+  "hash_method": {
+    "canonical": "textbook/_notebook/execute.py code_hash/output_hash: UTF-8 JSON with ensure_ascii=False; output keys sorted after text normalization",
+    "markdown": "SHA-256 of the UTF-8 JSON serialization (ensure_ascii=False) of ordered Markdown cell source arrays",
+    "source": "SHA-256 of raw UTF-8 _src HTML"
+  },
+  "notebooks": [
+    {
+      "name": "05-컨텍스트-로트",
+      "code_cells": 4,
+      "markdown_cells": 4,
+      "canonical_code_sha256": "534d977e8c4e19b7566789b83c0423675175a7c5733bdec67d84eea7abcd1dc2",
+      "canonical_output_sha256": "a2779300e18d0cc285f6e6cd582ad30c5de09797a2108c5b807b16e7885dea10",
+      "markdown_sha256": "11bb9ab6be5485163b2c5cceb637811227f1ba52af955983d2cf0869048c6481",
+      "source_sha256": "f2448defc803d00ceb0eb00aeb13fc50bed0470e035717ab50578132b1268e09",
+      "metadata_comparison": "match"
+    },
+    {
+      "name": "06-temperature와-샘플링",
+      "code_cells": 5,
+      "markdown_cells": 5,
+      "canonical_code_sha256": "741ea54b1ac279bba9802d12f56d2109980f8b953561a3a68d5911396b2c02e8",
+      "canonical_output_sha256": "d8bbb77d2cd5d1d05d382056065ed154c325f36db3a8314b84d24c9d61e45a4a",
+      "markdown_sha256": "a212d63d8fea0309af65047e195591191b73797d8633fe0de78ede79fbbb44cd",
+      "source_sha256": "2ddc651ed61d24138317063071127a64625b1e0c1fc46ebde35a077afa22255d",
+      "metadata_comparison": "match"
+    },
+    {
+      "name": "07-환각의-구조적-원인",
+      "code_cells": 5,
+      "markdown_cells": 5,
+      "canonical_code_sha256": "6c089bdc42aadf08e53f2c9fb71ca50a0c4ad0f54fc625984434e58495c55064",
+      "canonical_output_sha256": "7461c3db7a87089d0d1385baec331e519944fb39a6e84a8d14f91a5812a3a0e7",
+      "markdown_sha256": "df229f75d012a9e2950ab22b7e5fb95891566b5feb6516733d868cf6af1fc784",
+      "source_sha256": "f466bf5bc4d62519bb6c16c82e3b8a8802976090302e31ccc6d63b6de52821c5",
+      "metadata_comparison": "match"
+    },
+    {
+      "name": "08-모델-선택-기준",
+      "code_cells": 4,
+      "markdown_cells": 5,
+      "canonical_code_sha256": "6aa9ab3e0d92714cd985a313633f28a32003d543976aa0306b3e1d3a3f46fe45",
+      "canonical_output_sha256": "75ca112f53e99dda4c8e7fb83824c04f2ed3ed067daa179ee96581266c571891",
+      "markdown_sha256": "e015bbe045a42c65b5242275d5076a6e6f07e92058d481b40b9cc87f8e37cae3",
+      "source_sha256": "36984e61ae6d4c957a9972df62ee22589095957e3254e73aeb6352e73f91504c",
+      "metadata_comparison": "match"
+    }
+  ],
+  "canonical_verification_hash_comparison": "PASS: all eight computed code/output hashes match each notebook metadata.verification value. No code or output was changed by this audit.",
+  "note": "The Markdown and source hashes are audit snapshots, not execution-verification fields."
+}

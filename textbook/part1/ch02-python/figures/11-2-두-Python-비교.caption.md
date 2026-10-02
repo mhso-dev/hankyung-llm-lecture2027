@@ -1,0 +1,4 @@
+- 설명 대상 문장: 값 바꿔 보기는 이름 python_path의 값만 sys.executable로 바꿨습니다. 휠을 설치하지 않은 커널의 Python은 ModuleNotFoundError와 종료 코드 1로 끝났습니다.
+- 캡션: 같은 코드 글을 두 Python으로 실행한 결과. 휠을 설치한 환경의 Python만 price_tools를 불러옵니다.
+- 읽는 법: 위에서 아래로 읽습니다. 맨 위 파란 상자는 같은 코드 글, 가운데 초록 상자 두 개는 python_path에 담은 Python입니다. 왼쪽 install_env Python은 노란 상자 출력 78000, 오른쪽 커널 Python은 빨간 상자 ModuleNotFoundError와 종료 코드 1로 이어집니다.
+- alt: 파란 상자 check_code에서 두 갈래로 나뉘어, 왼쪽 초록 상자 python_path = env_python install_env/bin/python price-tools 0.1.0 설치됨은 노란 상자 출력 78000 종료 코드 0으로, 오른쪽 초록 상자 python_path = sys.executable 커널의 Python 휠을 설치하지 않음은 빨간 상자 ModuleNotFoundError No module named 'price_tools' 종료 코드 1로 이어지는 흐름도

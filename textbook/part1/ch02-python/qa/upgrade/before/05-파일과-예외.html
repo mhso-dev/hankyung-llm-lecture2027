@@ -1,0 +1,324 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>파일과 예외 — Ch 2 · 파이썬 프로그래밍</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 2 · 파이썬 프로그래밍</p>
+<h1>파일과 예외</h1><div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>텍스트 파일을 UTF-8로 저장하고 다시 읽을 수 있습니다.</li><li>파일의 여러 줄을 자료구조로 바꾸고 실제 값을 확인할 수 있습니다.</li><li><code>FileNotFoundError</code>만 선택하여 처리하고 다른 오류는 그대로 드러낼 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>프로그램을 종료하면 변수에 있던 값은 사라집니다. 다음 실행에서도 주문 목록을 사용하려면 값을 파일에 기록해야 합니다. 이때 한글이 깨지지 않게 문자 인코딩을 정하고, 파일이 없거나 내용이 예상과 다를 때 어떤 행동을 할지도 정해야 합니다. 파일 읽기와 예외 처리는 데이터를 프로그램 바깥에서 받아들이는 첫 경계입니다. 이후 CSV, JSON, 환경 설정, 문서 자료를 다룰 때도 같은 원칙을 적용합니다.</p><p>오류를 모두 무시하면 화면은 조용하지만 데이터가 사라진 이유를 찾기 어렵습니다. 반대로 예상 가능한 누락까지 매번 프로그램 전체를 중단하면 사용 흐름이 불편해집니다. 이번 절에서는 “주문 파일이 없음”이라는 한 상황만 빈 목록으로 처리합니다. 숫자로 바꿀 수 없는 수량처럼 다른 문제는 그대로 알려 주어 원인을 확인하게 합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>03절에서 목록과 튜플로 여러 값을 묶었고, 04절에서 입력을 받아 결과를 반환하는 함수를 만들었습니다. 이번 노트북의 <code>read_items()</code>는 파일 경로를 입력으로 받아 문자열 목록을 반환합니다. <code>parse_order()</code>는 한 줄을 상품명과 정수 수량으로 나눕니다. 이전 노트북의 변수에는 의존하지 않으며 첫 셀부터 순서대로 실행하면 실습 폴더와 입력 파일이 새로 준비됩니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>쉬운 예</h3><p>종이에 주문을 기록할 때는 어떤 글자를 썼는지 사람이 바로 알아봅니다. 컴퓨터 파일은 문자를 바이트로 바꾸어 저장하므로 문자와 바이트 사이의 규칙이 필요합니다. 문자 인코딩(character encoding)은 이 변환 규칙입니다. 같은 UTF-8 규칙으로 쓰고 읽으면 <code>연필</code>과 <code>노트</code>가 그대로 복원됩니다.</p><h3>정의</h3><p><strong>경로(path)</strong>는 파일의 위치를 나타내는 값입니다. <code>from pathlib import Path</code>는 표준 라이브러리에서 <code>Path</code>라는 이름을 가져옵니다. 모듈 가져오기는 07절에서 자세히 배웁니다. <code>training_dir / "orders.txt"</code>의 빗금은 나눗셈이 아니라 <code>Path</code>에 폴더와 파일 이름을 연결합니다. <code>write_text()</code>는 문자열을 입력받아 파일에 쓰고, <code>read_text()</code>는 파일을 읽어 하나의 문자열을 반환합니다.</p><p><code>text.splitlines()</code>는 전체 문자열을 줄바꿈에서 나누어 문자열 목록을 반환합니다. <code>line.split(",")</code>는 한 줄을 쉼표에서 나눕니다. 반환된 두 문자열을 <code>name, count_text</code>에 차례로 저장하고, <code>int(count_text)</code>가 수량을 정수로 변환합니다. 노트북은 아직 배우지 않은 목록 컴프리헨션 대신 02절의 <code>for</code>와 03절의 <code>append()</code>를 사용합니다. 타입 힌트는 07절에서 배웁니다.</p><p><strong>예외(exception)</strong>는 실행 중 정상 흐름을 계속할 수 없을 때 만들어지는 오류 객체입니다. <code>try</code>는 실행을 시도할 블록이고, <code>except</code>는 지정한 예외가 발생했을 때 실행할 블록입니다. <strong>FileNotFoundError</strong>는 요청한 경로에 파일이 없을 때 발생합니다. <code>except Exception</code>처럼 넓게 처리하면 파일 누락뿐 아니라 프로그래밍 실수도 빈 결과로 바뀔 수 있습니다. 이번 함수는 파일 누락만 빈 목록으로 반환하며, <code>연필,많이</code>의 정수 변환에서 생기는 <code>ValueError</code>는 그대로 알려 줍니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:900px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 550" width="900" height="550" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-05-concept desc-05-concept">
+<title id="title-05-concept">UTF-8 파일 읽기와 누락 파일 처리</title>
+<desc id="desc-05-concept">정상 파일은 줄 목록과 주문 튜플로 변환하고, 누락 파일은 FileNotFoundError만 처리하여 빈 목록을 반환합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="900" height="550" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">UTF-8 파일 읽기와 누락 파일 처리</tspan></text>
+<text x="20" y="72.0" font-size="16" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">같은 읽기 함수가 파일 존재 여부에 따라 갈라집니다</tspan></text>
+<rect x="335" y="95" width="230" height="78" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="450.0" y="122.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">read_items(path)</tspan><tspan x="450.0" dy="23.0">UTF-8 읽기</tspan></text>
+<polyline points="420,173 420,210 205,245" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="262.1" y="182.0" width="100.8" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="312.5" y="194.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="312.5" dy="0.0">orders.txt</tspan></text>
+<polyline points="480,173 480,210 695,245" fill="none" stroke="#dc2626" stroke-width="2" marker-end="url(#m-red)"/>
+<rect x="532.8" y="182.0" width="109.5" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="587.5" y="194.0" font-size="14" fill="#991b1b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="587.5" dy="0.0">missing.txt</tspan></text>
+<rect x="25" y="245" width="360" height="90" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="205.0" y="278.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="205.0" dy="0.0">정상 파일</tspan><tspan x="205.0" dy="23.0">['연필,3', '노트,2']</tspan></text>
+<polyline points="205,335 205,380" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="150.3" y="330.5" width="109.5" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="205.0" y="342.5" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="205.0" dy="0.0">parse_order</tspan></text>
+<rect x="25" y="380" width="360" height="82" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="205.0" y="410.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="205.0" dy="0.0">주문 튜플</tspan><tspan x="205.0" dy="21.6">[('연필', 3), ('노트', 2)]</tspan></text>
+<rect x="515" y="245" width="360" height="90" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="695.0" y="278.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="695.0" dy="0.0">누락 파일</tspan><tspan x="695.0" dy="23.0">FileNotFoundError</tspan></text>
+<polyline points="695,335 695,380" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="648.9" y="330.5" width="92.1" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="695.0" y="342.5" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="695.0" dy="0.0">해당 예외만 처리</tspan></text>
+<rect x="515" y="380" width="360" height="82" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="695.0" y="409.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="695.0" dy="0.0">read_items_or_empty()</tspan><tspan x="695.0" dy="23.0">[] 반환</tspan></text>
+<text x="450.0" y="524.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg></div><p>위쪽의 파일 읽기에서 정상 파일과 누락 파일을 나누어 봅니다. 왼쪽은 UTF-8 본문을 두 줄로 나누고 각 줄을 상품명과 정수 수량의 쌍으로 변환한 결과입니다. 오른쪽은 파일이 없어 <code>FileNotFoundError</code>가 발생한 경우입니다. <code>read_items_or_empty</code>는 그 예외만 처리하여 빈 목록을 반환합니다. 정상 주문이 누락 파일로 바뀌는 흐름이 아니라, 서로 다른 파일 경로를 읽은 두 결과입니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>실습은 운영체제의 임시 폴더 안에 전용 디렉터리를 만듭니다. 입력 문자열 두 줄을 <code>write_text()</code>가 UTF-8 바이트로 기록합니다. <code>read_items()</code>는 파일 경로를 입력받고, <code>read_text()</code>로 전체 문자열을 처리한 뒤 <code>splitlines()</code>의 문자열 목록 <code>['연필,3', '노트,2']</code>를 반환합니다. 주문 줄 수 출력 2는 목록에 두 항목이 있음을 보여 줍니다.</p><p><code>parse_order()</code>는 문자열 한 줄을 입력받습니다. 쉼표로 나눈 두 문자열 중 수량을 정수로 변환하고 <code>('연필', 3)</code> 같은 튜플을 반환합니다. <code>for</code>가 각 줄을 처리해 반환값을 <code>parsed</code>에 추가합니다. 마지막 비교에서도 같은 반복과 함수를 사용하고 입력 파일의 연필 수량만 3에서 5로 바꿉니다. 출력의 첫 수량이 3에서 5로 바뀌고 노트 주문은 유지됩니다.</p><section class="notebook" data-notebook="05-파일과-예외" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="05-파일과-예외.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtjIzsnbzqs7wg7JiI7Jm4XG4iLAogICAgIlxuIiwKICAgICJVVEYtOCDthY3siqTtirgg7YyM7J287J2EIOyViOyghO2VmOqyjCDsnb3qs6AsIOyYiOyDge2VnCDsmKTrpZjrp4wg7LKY66as7ZWY66Ck66m0IOyWtOuWu+qyjCDtlbTslbwg7ZWg6rmM7JqUPyIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6Ttlokg7ZmY6rK9IOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAiUHl0aG9uIDMuMTIg7ZGc7KSAIOudvOydtOu4jOufrOumrOunjCDsgqzsmqntlanri4jri6QuIGBmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGhg64qUIO2RnOykgCDrnbzsnbTruIzrn6zrpqzsl5DshJwg6rK966Gc66W8IOuLpOujqOuKlCBgUGF0aGDrnbzripQg7J2066aE7J2EIOqwgOyguOyYteuLiOuLpC4g66qo65OIIOqwgOyguOyYpOq4sOuKlCAwN+ygiOyXkOyEnCDsnpDshLjtnogg67Cw7JuB64uI64ukLiBgVGVtcG9yYXJ5RGlyZWN0b3J5KClg64qUIOyLpOyKtSDsoITsmqkg7Y+0642U66W8IOunjOuTpOqzoCDqt7gg7JyE7LmY66W8IOuwmO2ZmO2VmOuvgOuhnCDqsJzsnbgg7YyM7J287J2EIOuzgOqyve2VmOyngCDslYrsirXri4jri6QuIGAvYOuKlCBgUGF0aGAg65Kk7JeQ7IScIOyCrOyaqe2VoCDrlYwg7Y+0642U7JmAIO2MjOydvCDsnbTrpoTsnYQg7Jew6rKw7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTA0MDkwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTAzOTQ5WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTEwMDYxWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNjo0OS4xMDk2NjNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7KSA67mE7ZWcIO2MjOydvDogb3JkZXJzLnR4dFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyLpOyKtSDsoITsmqkg7J6E7IucIO2PtOuNlOyXkCBVVEYtOCDso7zrrLgg7YyM7J287J2EIOunjOuTreuLiOuLpC5cbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgImZyb20gdGVtcGZpbGUgaW1wb3J0IFRlbXBvcmFyeURpcmVjdG9yeVxuIiwKICAgICJcbiIsCiAgICAid29ya3NwYWNlID0gVGVtcG9yYXJ5RGlyZWN0b3J5KHByZWZpeD1cImNoMDJfMDVfXCIpXG4iLAogICAgInRyYWluaW5nX2RpciA9IFBhdGgod29ya3NwYWNlLm5hbWUpXG4iLAogICAgIm9yZGVyc19wYXRoID0gdHJhaW5pbmdfZGlyIC8gXCJvcmRlcnMudHh0XCJcbiIsCiAgICAib3JkZXJzX3BhdGgud3JpdGVfdGV4dChcIlwiXCLsl7DtlYQsM1xuIiwKICAgICLrhbjtirgsMlxuIiwKICAgICJcIlwiXCIsIGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAicHJpbnQoXCLspIDruYTtlZwg7YyM7J28OlwiLCBvcmRlcnNfcGF0aC5uYW1lKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDquLDrs7gg7Iuk7ZaJXG4iLAogICAgIlxuIiwKICAgICJgcmVhZF9pdGVtcyhwYXRoKWDsnZgg7J6F66Cl7J2AIOydveydhCDtjIzsnbzsnZgg6rK966Gc7J6F64uI64ukLiBgcGF0aC5yZWFkX3RleHQoZW5jb2Rpbmc9XCJ1dGYtOFwiKWDqsIAg7YyM7J287J2YIOuwlOydtO2KuOulvCBVVEYtOCDqt5zsuZnsnLzroZwg7ZW07ISd7ZW0IO2VmOuCmOydmCDrrLjsnpDsl7TsnYQg67CY7ZmY7ZWp64uI64ukLiDsnbTslrTshJwgYHRleHQuc3BsaXRsaW5lcygpYOqwgCDspITrsJTqv4jsnYQg6riw7KSA7Jy866GcIOusuOyekOyXtOydhCDrgpjriITslrQg66y47J6Q7Je0IOuqqeuhneydhCDrsJjtmZjtlanri4jri6QuIO2DgOyehSDtnoztirjripQgMDfsoIjsl5DshJwg67Cw7Jqw66+A66GcIOyXrOq4sOyEnOuKlCDtlajsiJjsnZgg7J6F66Cl6rO8IOuwmO2ZmOydhCDrrLjsnqXsnLzroZwg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTExNDI0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTExMzEzWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTEzOTIwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNjo0OS4xMTM1MzNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiWyfsl7DtlYQsMycsICfrhbjtirgsMiddXG4iLAogICAgICAi7KO866y4IOykhCDsiJg6IDJcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtjIzsnbwg67O466y47J2EIOydveyWtCDspITrp4jri6Qg7ZWY64KY7J2YIOusuOyekOyXtOuhnCDrgpjriJXri4jri6QuXG4iLAogICAgImRlZiByZWFkX2l0ZW1zKHBhdGgpOlxuIiwKICAgICIgICAgdGV4dCA9IHBhdGgucmVhZF90ZXh0KGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAiICAgIHJldHVybiB0ZXh0LnNwbGl0bGluZXMoKVxuIiwKICAgICJcbiIsCiAgICAiaXRlbXMgPSByZWFkX2l0ZW1zKG9yZGVyc19wYXRoKVxuIiwKICAgICJwcmludChpdGVtcylcbiIsCiAgICAicHJpbnQoXCLso7zrrLgg7KSEIOyImDpcIiwgbGVuKGl0ZW1zKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7KSR6rCEIOqysOqzvCDqtIDssLBcbiIsCiAgICAiXG4iLAogICAgIuydveydgCDqsIEg7KSE7J2EIOyJvO2RnOyXkOyEnCDrgpjriITslrQg7IOB7ZKI66qF6rO8IOyImOufieydhCDtmZXsnbjtlanri4jri6QuIGBsaW5lLnNwbGl0KFwiLFwiKWDsnYAg7ZWcIOusuOyekOyXtOydhCDsnoXroKXrsJvslYQg7Im87ZGcIOq4sOykgOydmCDrrLjsnpDsl7Qg66qp66Gd7J2EIOuwmO2ZmO2VqeuLiOuLpC4g7Jm87Kq97J2YIGBuYW1lLCBjb3VudF90ZXh0YOuKlCDrsJjtmZjrkJwg65GQIO2VreuqqeydhCDssKjroYDroZwg64KY64iE7Ja0IOyggOyepe2VqeuLiOuLpC4g7YyM7J287JeQ7IScIOydveydgCBgY291bnRfdGV4dGDripQg66y47J6Q7Je07J2066+A66GcIGBpbnQoKWDroZwg7KCV7IiY66GcIOuwlOq+vCDrkqQgYCjsg4HtkojrqoUsIOyImOufiSlgIO2KnO2UjOydhCDrsJjtmZjtlanri4jri6QuIOuwmOuzteusuOycvOuhnCDqsIEg7KSE7J2YIOuwmO2ZmOqwkuydhCBgcGFyc2VkYCDrqqnroZ3sl5Ag7LaU6rCA7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTE1MTMxWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTE1MDQxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTE3NjgwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNjo0OS4xMTcxNzNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiWygn7Jew7ZWEJywgMyksICgn64W47Yq4JywgMildXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7Im87ZGcIOyYpOuluOyqveydmCDsiJjrn4nsnYQg7KCV7IiY66GcIOuwlOq+uOyWtCDso7zrrLjsnYQg6rWs7ISx7ZWp64uI64ukLlxuIiwKICAgICJkZWYgcGFyc2Vfb3JkZXIobGluZSk6XG4iLAogICAgIiAgICBuYW1lLCBjb3VudF90ZXh0ID0gbGluZS5zcGxpdChcIixcIilcbiIsCiAgICAiICAgIHJldHVybiBuYW1lLCBpbnQoY291bnRfdGV4dClcbiIsCiAgICAiXG4iLAogICAgInBhcnNlZCA9IFtdXG4iLAogICAgImZvciBsaW5lIGluIGl0ZW1zOlxuIiwKICAgICIgICAgcGFyc2VkLmFwcGVuZChwYXJzZV9vcmRlcihsaW5lKSlcbiIsCiAgICAicHJpbnQocGFyc2VkKVxuIiwKICAgICJhc3NlcnQgcGFyc2VkWzBdID09IChcIuyXsO2VhFwiLCAzKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDgiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDqsJIg7ZWY64KY66W8IOuwlOq/lCDruYTqtZBcbiIsCiAgICAiXG4iLAogICAgIuqwmeydgCDsnbjsvZTrlKnqs7wg7LKY66asIO2VqOyImOulvCDsnKDsp4DtlZjqs6Ag7YyM7J28IOuCtOyaqeydmCDsiJjrn4nrp4wg67CU6r+J64uI64ukLiDtjIzsnbzsnYQg64uk7IucIOydveydgCDqsrDqs7zrj4Qg6riw67O4IOuwmOuzteusuOycvOuhnCDsspjrpqztlanri4jri6QuIGBwYXJzZWRbMF1bMV1g7J2AIOyyqyDrsojsp7gg7KO866y4IO2KnO2UjOydmCDrkZAg67KI7Ke4IOqwkuyduCDsiJjrn4nsnYQg7J297Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImNlbGwtMDkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTE4NzYyWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTE4Njg1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTIxMjc4WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNjo0OS4xMjA4MTBaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi67OA6rK9IOyghCDssqsg7IiY65+JOiAzXG4iLAogICAgICAi67OA6rK9IO2bhCDssqsg7IiY65+JOiA1XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7LKrIOyDge2SiOydmCDsiJjrn4nrp4wgM+yXkOyEnCA166GcIOuwlOq+uOqzoCDqsrDqs7zrpbwg67mE6rWQ7ZWp64uI64ukLlxuIiwKICAgICJvcmRlcnNfcGF0aC53cml0ZV90ZXh0KFwiXCJcIuyXsO2VhCw1XG4iLAogICAgIuuFuO2KuCwyXG4iLAogICAgIlwiXCJcIiwgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJjaGFuZ2VkID0gW11cbiIsCiAgICAiZm9yIGxpbmUgaW4gcmVhZF9pdGVtcyhvcmRlcnNfcGF0aCk6XG4iLAogICAgIiAgICBjaGFuZ2VkLmFwcGVuZChwYXJzZV9vcmRlcihsaW5lKSlcbiIsCiAgICAicHJpbnQoXCLrs4Dqsr0g7KCEIOyyqyDsiJjrn4k6XCIsIHBhcnNlZFswXVsxXSlcbiIsCiAgICAicHJpbnQoXCLrs4Dqsr0g7ZuEIOyyqyDsiJjrn4k6XCIsIGNoYW5nZWRbMF1bMV0pXG4iLAogICAgImFzc2VydCBjaGFuZ2VkWzBdWzFdID09IDUiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEwIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TtjKgg7J6s7ZiEXG4iLAogICAgIlxuIiwKICAgICLsobTsnqztlZjsp4Ag7JWK64qUIO2MjOydvCDqsr3roZzrpbwgYHJlYWRfaXRlbXMoKWDsl5Ag7J6F66Cl7ZWY66m0IO2MjOydvCDsnb3quLAg7LKY66as7JeQ7IScIGBGaWxlTm90Rm91bmRFcnJvcmDqsIAg67Cc7IOd7ZWY66mwIOygleyDgSDrsJjtmZjqsJLsnYAg66eM65Ok7Ja07KeA7KeAIOyViuyKteuLiOuLpC4gYHRyeWAg67iU66Gd7J20IOydveq4sOulvCDsi5zrj4TtlZjqs6AsIGBleGNlcHQgRmlsZU5vdEZvdW5kRXJyb3IgYXMgZXJyb3Jg6rCAIOq3uCDsooXrpZjsnZgg7JiI7Jm466eMIOuwm+yVhCDri6TsnYwg66y47J6l7J2EIOyLpO2Wie2VqeuLiOuLpC4gYGVsc2Vg64qUIOyYiOyZuOqwgCDrsJzsg53tlZjsp4Ag7JWK7JWY7J2EIOuVjCDsi6TtlonrkJjrqbAsIOydtCDsi6Ttl5jsl5DshJzripQg7JiI7IOB7ZWcIOyLpO2MqOqwgCDsl4bsl4jri6TripQg65y77J2066+A66GcIGBBc3NlcnRpb25FcnJvcmDrpbwg67Cc7IOd7Iuc7YK164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTIyMzQ1WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTIyMjU1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTI0NDYwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNjo0OS4xMjQwODlaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJGaWxlTm90Rm91bmRFcnJvciBtaXNzaW5nLnR4dFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyhtOyerO2VmOyngCDslYrripQg7YyM7J287J2EIOydveydhCDrlYwg67Cc7IOd7ZWY64qUIOyYiOyZuOulvCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgIm1pc3NpbmdfcGF0aCA9IHRyYWluaW5nX2RpciAvIFwibWlzc2luZy50eHRcIlxuIiwKICAgICJ0cnk6XG4iLAogICAgIiAgICByZWFkX2l0ZW1zKG1pc3NpbmdfcGF0aClcbiIsCiAgICAiZXhjZXB0IEZpbGVOb3RGb3VuZEVycm9yIGFzIGVycm9yOlxuIiwKICAgICIgICAgcHJpbnQodHlwZShlcnJvcikuX19uYW1lX18sIG1pc3NpbmdfcGF0aC5uYW1lKVxuIiwKICAgICJlbHNlOlxuIiwKICAgICIgICAgcmFpc2UgQXNzZXJ0aW9uRXJyb3IoXCJGaWxlTm90Rm91bmRFcnJvcuqwgCDrsJzsg53tlbTslbwg7ZWp64uI64ukLlwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTIiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7IiY7KCVXG4iLAogICAgIlxuIiwKICAgICLtjIzsnbwg6rK966Gc66W8IOyeheugpeuwm+yVhCDquLDsobQgYHJlYWRfaXRlbXMoKWDroZwg7LKY66as7ZWY65CYLCDtjIzsnbzsnbQg7JeG7J2EIOuVjOunjCDruYgg66qp66Gd7J2EIOuwmO2ZmO2VmOuKlCDtlajsiJjrpbwg66eM65Ot64uI64ukLiDsoJXsg4Eg7YyM7J287J2066m0IOusuOyekOyXtCDrqqnroZ3snbQg67CY7ZmY65CY6rOgLCDriITrnb0g7YyM7J287J2066m0IGBleGNlcHQgRmlsZU5vdEZvdW5kRXJyb3Jg7J2YIOu5iCDrqqnroZ3snbQg67CY7ZmY65Cp64uI64ukLiDri6Trpbgg7KKF66WY7J2YIOyYpOulmOuKlCDsnbQg67iU66Gd6rO8IOydvOy5mO2VmOyngCDslYrsnLzrr4DroZwg6rCQ7LaU7KeAIOyViuqzoCDtmLjstpztlZwg6rOz7Jy866GcIOydtOyWtOynkeuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgIuuniOyngOunieyXkOuKlCDtjIzsnbwg64iE65296rO8IOuLpOuluCDsmKTrpZjrpbwg7ZmV7J247ZWp64uI64ukLiBgcGFyc2Vfb3JkZXIoXCLsl7DtlYQs66eO7J20XCIpYOuKlCDtjIzsnbzsnYQg7J2964qUIOuMgOyLoCDsoITri6ztlZwg66y47J6Q7Je07J2YIOyImOufieydhCDsoJXsiJjroZwg67CU6r6466Ck64ukIOyLpO2MqO2VqeuLiOuLpC4g67CU6rml7J2YIGBleGNlcHQgVmFsdWVFcnJvcmDripQg7Iuk7KCcIOyYpOulmCDsnbTrpoTqs7wg66mU7Iuc7KeA66W8IOy2nOugpe2VmOupsCwg7KO866y4IOyymOumrCDtlajsiJjqsIAg7J6Y66q765CcIOyImOufieydhCDsoJXsg4Eg6rCS7Jy866GcIOuwlOq+vCDqsoPsnYAg7JWE64uZ64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImNlbGwtMTMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTI1NDczWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTI1NDAwWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMTI3ODc4WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNjo0OS4xMjc1NDdaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuuIhOudvSDtjIzsnbwg6rKw6rO8OiBbXVxuIiwKICAgICAgIlZhbHVlRXJyb3IgaW52YWxpZCBsaXRlcmFsIGZvciBpbnQoKSB3aXRoIGJhc2UgMTA6ICfrp47snbQnXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7YyM7J28IOuIhOudveunjCDruYgg66qp66Gd7Jy866GcIOyymOumrO2VmOqzoCDri6Trpbgg7JiI7Jm464qUIOq3uOuMgOuhnCDrkaHri4jri6QuXG4iLAogICAgImRlZiByZWFkX2l0ZW1zX29yX2VtcHR5KHBhdGgpOlxuIiwKICAgICIgICAgdHJ5OlxuIiwKICAgICIgICAgICAgIHJldHVybiByZWFkX2l0ZW1zKHBhdGgpXG4iLAogICAgIiAgICBleGNlcHQgRmlsZU5vdEZvdW5kRXJyb3I6XG4iLAogICAgIiAgICAgICAgcmV0dXJuIFtdXG4iLAogICAgIlxuIiwKICAgICJyZXN1bHQgPSByZWFkX2l0ZW1zX29yX2VtcHR5KG1pc3NpbmdfcGF0aClcbiIsCiAgICAicHJpbnQoXCLriITrnb0g7YyM7J28IOqysOqzvDpcIiwgcmVzdWx0KVxuIiwKICAgICJhc3NlcnQgcmVzdWx0ID09IFtdXG4iLAogICAgIlxuIiwKICAgICIjIO2MjOydvCDriITrnb3qs7wg64us66asIOygleyImOuhnCDrsJTqv4Ag7IiYIOyXhuuKlCDsiJjrn4nsnYAg67OA7ZmYIOyYpOulmOyeheuLiOuLpC5cbiIsCiAgICAidHJ5OlxuIiwKICAgICIgICAgcGFyc2Vfb3JkZXIoXCLsl7DtlYQs66eO7J20XCIpXG4iLAogICAgImV4Y2VwdCBWYWx1ZUVycm9yIGFzIGVycm9yOlxuIiwKICAgICIgICAgcHJpbnQodHlwZShlcnJvcikuX19uYW1lX18sIHN0cihlcnJvcikpXG4iLAogICAgImVsc2U6XG4iLAogICAgIiAgICByYWlzZSBBc3NlcnRpb25FcnJvcihcIlZhbHVlRXJyb3LqsIAg67Cc7IOd7ZW07JW8IO2VqeuLiOuLpC5cIikiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogInBhaXJlZCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDYsCiAgICJjb2RlX3NoYTI1NiI6ICIzYjYzZmZjZGI1MGYyYWYwMjAwMjgxM2E3MTI0YzQ1ODExYTU0NGUwYjYxODYyYzBhNDc2MWU2ZjFkODNhYWY0IiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDY6MTY6NDkuMjQ3MTE4KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICI0MzE4NmM1ZjllMmFmMDJiZDZmYmMxMzBmYTc2N2M0OGM2M2YwMWYxYjE0MGZmZGQwZjg5ZTAxZWMyM2QxNTYzIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>파일과 예외</h2>
+<p>UTF-8 텍스트 파일을 안전하게 읽고, 예상한 오류만 처리하려면 어떻게 해야 할까요?</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>Python 3.12 표준 라이브러리만 사용합니다. <code>from pathlib import Path</code>는 표준 라이브러리에서 경로를 다루는 <code>Path</code>라는 이름을 가져옵니다. 모듈 가져오기는 07절에서 자세히 배웁니다. <code>TemporaryDirectory()</code>는 실습 전용 폴더를 만들고 그 위치를 반환하므로 개인 파일을 변경하지 않습니다. <code>/</code>는 <code>Path</code> 뒤에서 사용할 때 폴더와 파일 이름을 연결합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 실습 전용 임시 폴더에 UTF-8 주문 파일을 만듭니다.
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+workspace = TemporaryDirectory(prefix=&quot;ch02_05_&quot;)
+training_dir = Path(workspace.name)
+orders_path = training_dir / &quot;orders.txt&quot;
+orders_path.write_text(&quot;&quot;&quot;연필,3
+노트,2
+&quot;&quot;&quot;, encoding=&quot;utf-8&quot;)
+print(&quot;준비한 파일:&quot;, orders_path.name)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">준비한 파일: orders.txt
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p><code>read_items(path)</code>의 입력은 읽을 파일의 경로입니다. <code>path.read_text(encoding=&quot;utf-8&quot;)</code>가 파일의 바이트를 UTF-8 규칙으로 해석해 하나의 문자열을 반환합니다. 이어서 <code>text.splitlines()</code>가 줄바꿈을 기준으로 문자열을 나누어 문자열 목록을 반환합니다. 타입 힌트는 07절에서 배우므로 여기서는 함수의 입력과 반환을 문장으로 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 파일 본문을 읽어 줄마다 하나의 문자열로 나눕니다.
+def read_items(path):
+    text = path.read_text(encoding=&quot;utf-8&quot;)
+    return text.splitlines()
+
+items = read_items(orders_path)
+print(items)
+print(&quot;주문 줄 수:&quot;, len(items))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[&#x27;연필,3&#x27;, &#x27;노트,2&#x27;]
+주문 줄 수: 2
+</pre></div>
+<div class="nb-markdown"><h3>중간 결과 관찰</h3>
+<p>읽은 각 줄을 쉼표에서 나누어 상품명과 수량을 확인합니다. <code>line.split(&quot;,&quot;)</code>은 한 문자열을 입력받아 쉼표 기준의 문자열 목록을 반환합니다. 왼쪽의 <code>name, count_text</code>는 반환된 두 항목을 차례로 나누어 저장합니다. 파일에서 읽은 <code>count_text</code>는 문자열이므로 <code>int()</code>로 정수로 바꾼 뒤 <code>(상품명, 수량)</code> 튜플을 반환합니다. 반복문으로 각 줄의 반환값을 <code>parsed</code> 목록에 추가합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 쉼표 오른쪽의 수량을 정수로 바꾸어 주문을 구성합니다.
+def parse_order(line):
+    name, count_text = line.split(&quot;,&quot;)
+    return name, int(count_text)
+
+parsed = []
+for line in items:
+    parsed.append(parse_order(line))
+print(parsed)
+assert parsed[0] == (&quot;연필&quot;, 3)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[(&#x27;연필&#x27;, 3), (&#x27;노트&#x27;, 2)]
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 비교</h3>
+<p>같은 인코딩과 처리 함수를 유지하고 파일 내용의 수량만 바꿉니다. 파일을 다시 읽은 결과도 기본 반복문으로 처리합니다. <code>parsed[0][1]</code>은 첫 번째 주문 튜플의 두 번째 값인 수량을 읽습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 첫 상품의 수량만 3에서 5로 바꾸고 결과를 비교합니다.
+orders_path.write_text(&quot;&quot;&quot;연필,5
+노트,2
+&quot;&quot;&quot;, encoding=&quot;utf-8&quot;)
+changed = []
+for line in read_items(orders_path):
+    changed.append(parse_order(line))
+print(&quot;변경 전 첫 수량:&quot;, parsed[0][1])
+print(&quot;변경 후 첫 수량:&quot;, changed[0][1])
+assert changed[0][1] == 5</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">변경 전 첫 수량: 3
+변경 후 첫 수량: 5
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 파일명만 출력되며 개인 컴퓨터의 절대 경로는 나타나지 않습니다. 한글 상품명이 유지되고, 수량은 문자열이 아닌 정수로 변환됩니다. 파일 내용에서 한 값만 바꾼 뒤에도 같은 함수가 사용됩니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before 셀은 준비하지 않은 <code>missing.txt</code>를 같은 읽기 함수에 전달합니다. 실제로 발생한 예외가 <code>FileNotFoundError</code>인지 확인하고 파일명도 함께 출력합니다. 의도한 오류가 발생하지 않으면 <code>else</code>에서 <code>AssertionError</code>를 발생시키므로 실패 재현이 우연히 통과하지 않습니다.</p><p>After 셀은 같은 누락 경로를 <code>read_items_or_empty()</code>에 전달합니다. 달라진 조건은 읽기 호출을 구체적인 예외 처리로 감싼 것입니다. 결과는 빈 목록이며 단언문으로 확인합니다. 모든 예외를 처리하지 않았기 때문에 잘못된 UTF-8 바이트나 정수가 아닌 수량까지 정상으로 표시하지 않습니다. 빈 목록이 “주문이 실제로 0건”인지 “선택 파일이 없었음”인지 구분해야 하는 서비스에서는 빈 목록과 함께 상태값을 반환하거나 로그를 남기는 설계가 더 알맞습니다.</p><p>After 셀 마지막은 <code>parse_order("연필,많이")</code>를 별도로 호출합니다. 파일은 읽지 않고 수량 문자열을 정수로 바꾸다가 실제 <code>ValueError</code>가 발생하는 것을 확인합니다. 바깥의 예외 처리문은 오류를 관찰하기 위한 것이며, 파일 누락을 빈 목록으로 처리하는 규칙과 잘못된 수량의 변환 실패를 구분합니다.</p><section class="notebook" data-notebook="05-파일과-예외" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>존재하지 않는 파일 경로를 <code>read_items()</code>에 입력하면 파일 읽기 처리에서 <code>FileNotFoundError</code>가 발생하며 정상 반환값은 만들어지지 않습니다. <code>try</code> 블록이 읽기를 시도하고, <code>except FileNotFoundError as error</code>가 그 종류의 예외만 받아 다음 문장을 실행합니다. <code>else</code>는 예외가 발생하지 않았을 때 실행되며, 이 실험에서는 예상한 실패가 없었다는 뜻이므로 <code>AssertionError</code>를 발생시킵니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 존재하지 않는 파일을 읽을 때 발생하는 예외를 확인합니다.
+missing_path = training_dir / &quot;missing.txt&quot;
+try:
+    read_items(missing_path)
+except FileNotFoundError as error:
+    print(type(error).__name__, missing_path.name)
+else:
+    raise AssertionError(&quot;FileNotFoundError가 발생해야 합니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">FileNotFoundError missing.txt
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>파일 경로를 입력받아 기존 <code>read_items()</code>로 처리하되, 파일이 없을 때만 빈 목록을 반환하는 함수를 만듭니다. 정상 파일이면 문자열 목록이 반환되고, 누락 파일이면 <code>except FileNotFoundError</code>의 빈 목록이 반환됩니다. 다른 종류의 오류는 이 블록과 일치하지 않으므로 감추지 않고 호출한 곳으로 이어집니다.</p>
+<p>마지막에는 파일 누락과 다른 오류를 확인합니다. <code>parse_order(&quot;연필,많이&quot;)</code>는 파일을 읽는 대신 전달한 문자열의 수량을 정수로 바꾸려다 실패합니다. 바깥의 <code>except ValueError</code>는 실제 오류 이름과 메시지를 출력하며, 주문 처리 함수가 잘못된 수량을 정상 값으로 바꾼 것은 아닙니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 파일 누락만 빈 목록으로 처리하고 다른 예외는 그대로 둡니다.
+def read_items_or_empty(path):
+    try:
+        return read_items(path)
+    except FileNotFoundError:
+        return []
+
+result = read_items_or_empty(missing_path)
+print(&quot;누락 파일 결과:&quot;, result)
+assert result == []
+
+# 파일 누락과 달리 정수로 바꿀 수 없는 수량은 변환 오류입니다.
+try:
+    parse_order(&quot;연필,많이&quot;)
+except ValueError as error:
+    print(type(error).__name__, str(error))
+else:
+    raise AssertionError(&quot;ValueError가 발생해야 합니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">누락 파일 결과: []
+ValueError invalid literal for int() with base 10: &#x27;많이&#x27;
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li><code>write_text()</code>는 기존 내용을 교체합니다. 기록을 이어 붙여야 한다면 추가 모드를 검토하고, 먼저 요구사항을 분명히 정합니다.</li><li>텍스트를 쓸 때와 읽을 때 모두 <code>encoding="utf-8"</code>을 명시합니다. 기본 인코딩은 실행 환경에 따라 달라질 수 있습니다.</li><li>파일을 직접 열 때는 <code>with open(...)</code>을 사용하면 블록이 끝날 때 닫기 처리가 수행됩니다. <code>Path.read_text()</code>와 <code>write_text()</code>는 한 번의 전체 읽기·쓰기에 알맞습니다.</li><li>큰 파일은 전체를 한꺼번에 메모리에 올리지 말고 줄 단위 처리 방식을 검토합니다. 이번 두 줄 결과만으로 큰 파일의 메모리 사용량을 판단할 수는 없습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>텍스트 파일은 같은 문자 인코딩으로 쓰고 읽어야 한글이 유지됩니다.</li><li>파일의 문자열 수량은 필요한 자료형으로 명시적으로 변환합니다.</li><li>예외는 처리 가능한 구체적인 종류만 선택하여 처리합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 상품명과 수량처럼 함께 움직이는 데이터와 동작을 클래스 하나로 묶습니다. 09절에서는 파일을 자동으로 닫는 <code>with</code> 문이 컨텍스트 매니저와 어떻게 연결되는지 다시 확인합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 한글 텍스트 파일을 읽고 쓸 때 UTF-8을 양쪽에 명시하는 이유는 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> 문자와 바이트를 바꾸는 규칙을 일치시키기 위해서입니다. 한쪽이 다른 인코딩을 사용하면 글자가 깨지거나 해석 오류가 발생할 수 있습니다.</p><p class="quiz-q">2. <code>read_items()</code>의 반환값이 문자열 목록인 이유를 출력과 연결해 설명해 보세요.</p><p class="quiz-a"><strong>정답</strong> <code>splitlines()</code>가 파일의 각 줄을 문자열 항목으로 만든 목록을 반환하기 때문입니다. 실제 출력도 <code>['연필,3', '노트,2']</code> 형태입니다.</p><p class="quiz-q">3. 누락 파일을 처리할 때 <code>except Exception</code>보다 <code>except FileNotFoundError</code>가 나은 이유는 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> 파일 누락만 의도한 방식으로 처리하고, 다른 오류는 감추지 않아 원인을 확인할 수 있기 때문입니다.</p><p class="quiz-q">4. <code>연필,많이</code>를 읽으면 어느 단계에서 어떤 예외가 발생하나요?</p><p class="quiz-a"><strong>정답</strong> <code>parse_order()</code>가 <code>int("많이")</code>를 실행하는 단계에서 <code>ValueError</code>가 발생합니다. 현재 예외 처리 함수는 이 오류를 처리하지 않습니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.python.org/3.12/tutorial/inputoutput.html#reading-and-writing-files">Python 3.12 자습서 · 파일 읽기와 쓰기</a> · 2026-09-09 확인 · Python 3.12.14 문서</li><li><a href="https://docs.python.org/3.12/tutorial/errors.html">Python 3.12 자습서 · 오류와 예외</a> · 2026-09-09 확인 · Python 3.12.14 문서</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="04-함수.html">← 함수</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="06-클래스.html">클래스 →</a></span></div></div></body></html>

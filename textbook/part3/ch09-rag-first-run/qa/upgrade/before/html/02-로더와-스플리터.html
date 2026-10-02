@@ -1,0 +1,432 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · 로더와 스플리터 — PDF가 청크가 되기까지 — Ch 9 · RAG 첫 완주 + 실험 하네스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>{if(!window.hljs)return;document.querySelectorAll("pre:not(.out) code").forEach(el=>hljs.highlightElement(el));});</script>
+<style>
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+pre{white-space:pre-wrap;overflow-wrap:anywhere} .nav-foot>span{min-width:0;overflow-wrap:anywhere} .goal li::before{content:none!important}.goal li{padding-left:0!important}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+.diagram-scroll{overflow-x:auto;max-width:100%}figure svg{width:100%;min-width:760px;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media print{body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style>
+</head><body><div class="page">
+<!-- 생성: _build.py · 원본 조각 _src/02-로더와-스플리터.html · 도식 figures/*.svg · 삽화 figures/*.png (Higgsfield nano_banana_pro, 2026-09-07) -->
+<header class="top">
+<p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 3 RAG · Ch 9 · RAG 첫 완주 + 실험 하네스</p>
+<h1>02 · 로더와 스플리터 — PDF가 청크가 되기까지</h1>
+<div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 5</span></div>
+</header>
+<nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 02-로더와-스플리터.ipynb | 새 용어 5 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul>
+<li>이 절을 마치면 제공된 합성 PDF 한 쪽을 <code>PdfReader</code>로 읽고 <code>Document</code>로 바꿀 수 있습니다.</li>
+<li>이 절을 마치면 <code>page_content</code>와 <code>metadata</code>의 타입·내용을 출력하고, 분할 후 출처 정보가 보존되는지 확인할 수 있습니다.</li>
+<li>이 절을 마치면 <code>chunk_overlap</code>을 유지하고 <code>chunk_size</code>만 500에서 300으로 바꾸어 청크 개수와 길이를 비교할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>01절 도식의 첫 두 상자입니다. 검색 결과는 청크 단위로 반환되므로, 청크가 어떻게 생겼는지가 이후 모든 절의 품질을 정합니다. 청크에 답의 앞부분만 들어 있으면 모델은 반쪽 답을 하고, 청크에 <code>page</code>가 없으면 출처를 붙일 수 없습니다. 이 절에서 만든 <code>Document</code>의 모양이 그대로 Ch 10(문서 처리 심화), Ch 11(정답 문서 ID 비교), Ch 12(pgvector에서 데이터를 저장할 열 구조)까지 이어집니다.</p>
+<p>커리큘럼이 정한 범위도 확인합니다. 로더·청킹은 <strong>통합 패키지를 그대로 쓰는</strong> 영역입니다(직접 구현 대상은 Ch 12의 키워드 검색과 의미 검색 결과 합치기·후보 순서 다시 매기기·질문 다시 쓰기입니다). 노트북은 <code>pypdf.PdfReader</code>로 PDF 한 쪽을 읽고, <code>langchain-text-splitters</code>로 나눕니다.</p>
+
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<ul>
+<li><strong>Ch 2 자료구조와 값의 종류 표시</strong> — <code>list[Document]</code>, <code>dict</code> 기반 <code>metadata</code>, <code>pathlib.Path</code>를 그대로 씁니다.</li>
+<li><strong>Ch 4 문서 파싱 입문</strong> — HTML에서 필요한 본문을 고르고 추출 결과를 확인했습니다. PDF 파싱은 Ch 9 01절에서 처음 도입했으며, 이 절은 <code>pypdf.PdfReader</code>와 <code>page.extract_text()</code>의 반환값을 쪽별로 자세히 확인합니다.</li>
+<li><strong>Ch 5 글을 토큰으로 나누는 도구</strong> — 모델이 글을 처리하는 단위인 토큰을 확인했습니다. 이 절 끝에서 청크 하나로 다시 확인합니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+
+<h3>비유 — 책을 색인 카드로 옮기기</h3>
+<p>도서관 사서가 책 한 권을 색인 카드로 옮긴다고 생각해 보세요. 카드 한 장에는 글이 500자 정도 들어갑니다. 사서는 책을 앞에서부터 500자씩 베껴 쓰되, 문장이 카드 끝에서 잘리지 않도록 문단 경계에서 끊으려 합니다. 그리고 카드마다 구석에 "어느 책, 몇 쪽"을 적어 둡니다. 나중에 카드 한 장만 꺼내 봐도 원래 위치를 확인할 수 있어야 하기 때문입니다. 로더는 책을 쪽 단위로 펼치는 일, 스플리터는 카드에 옮겨 적는 일, <code>metadata</code>는 문서 ID와 쪽 번호 같은 출처 정보를 적은 카드 구석의 메모입니다.</p>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>Document</dt>
+<dd>LangChain이 텍스트 조각을 다루는 기본 단위입니다. 본문 <code>page_content</code>(문자열)와 부가 정보 <code>metadata</code>(딕셔너리) 두 칸으로 이루어집니다. 로더의 출력, 스플리터의 입력·출력, 벡터스토어의 저장 단위로 사용됩니다.</dd>
+<dt>로더 (loader)</dt>
+<dd>파일을 읽어 <code>Document</code> 목록으로 바꾸는 함수입니다. PDF는 쪽마다 하나, HTML은 파일당 하나처럼 "무엇을 한 단위로 볼지"를 로더가 정합니다.</dd>
+<dt>스플리터 (text splitter)</dt>
+<dd><code>Document</code>를 정해진 크기의 청크로 나누는 도구입니다. <code>metadata</code>는 나뉜 청크마다 복사됩니다.</dd>
+<dt>청크 크기 (chunk_size) · 겹침 (chunk_overlap)</dt>
+<dd>청크 하나의 최대 길이와, 이웃 청크가 서로 공유하는 길이입니다. 이 절의 스플리터는 둘 다 <em>글자 수</em>로 셉니다.</dd>
+<dt>구분자 (separators)</dt>
+<dd>어디서 끊을지의 우선순위 목록입니다. <code>["\n\n", "\n", ". ", " ", ""]</code>이면 문단 경계 → 줄 경계 → 문장 경계 → 단어 경계 → 글자 순으로 시도합니다. "재귀적(Recursive)"이라는 이름은 큰 구분자로 잘라도 크기를 넘으면 다음 구분자로 다시 자른다는 뜻입니다.</dd>
+</dl>
+
+<h3>도식 — 청크 경계와 겹침</h3>
+<figure>
+<div class="diagram-scroll" role="region" aria-label="가로로 이동하여 도식 보기" tabindex="0"><svg style="min-width:800px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" width="800" height="440" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" role="img" aria-label="PDF 한 쪽을 작은 청크로 나누고 이웃 청크의 글을 겹치기">
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a9eed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ef4444"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#757575"/></marker>
+</defs>
+<rect width="800" height="440" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="18" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">PDF 한 쪽을 작은 청크로 나누고 이웃 청크의 글을 겹치기</tspan></text>
+<rect x="40" y="60" width="720" height="50" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="400.0" y="85.0" font-size="15" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="400.0" dy="0.0">E01 p.2 Document   출처 정보: {doc_id: E01, page: 2}</tspan></text>
+<polyline points="200,110 200,160" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<text x="215" y="135.0" font-size="14" fill="#2563eb" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="215" dy="0.0">RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)</tspan></text>
+<rect x="40" y="165" width="340" height="68" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="210.0" y="189.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="210.0" dy="0.0">청크 #0 (최대 500자)</tspan><tspan x="210.0" dy="18.9">PDF 본문 앞부분…</tspan></text>
+<rect x="330" y="245" width="340" height="68" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="500.0" y="269.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="500.0" dy="0.0">청크 #1</tspan><tspan x="500.0" dy="18.9">앞 청크의 끝 50자 + 다음 본문…</tspan></text>
+<rect x="640" y="245" width="120" height="68" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="700.0" y="279.0" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="700.0" dy="0.0">다음 청크…</tspan></text>
+<rect x="330" y="160" width="50" height="150" rx="12" fill="#fff8dc" fill-opacity="0.35" stroke="#f59e0b" stroke-width="1"/>
+<text x="355" y="325.0" font-size="14" fill="#92400e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="355" dy="0.0">겹침 50자</tspan></text>
+<text x="40" y="360.0" font-size="15" fill="#15803d" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="40" dy="0.0">모든 청크에 출처 정보가 복사된다 → {doc_id: E01, page: 2}</tspan></text>
+<text x="40" y="390.0" font-size="14" fill="#757575" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="40" dy="0.0">경계 근처의 글자는 겹쳐 남을 수 있습니다. 겹침이 0이면 단어나 문장이 경계에서 잘릴 수 있습니다.</tspan></text>
+<text x="40" y="415.0" font-size="14" fill="#757575" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="40" dy="0.0">500은 토큰 수가 아니라 글자 수다. 이 실습은 실제 청크 길이를 출력해 확인한다.</tspan></text>
+</svg></div>
+<figcaption>E01 2쪽이 청크 #0과 #1로 나뉩니다. 노란 띠가 겹침 50자입니다. 문장이 청크 경계에 걸리면 겹친 글자가 앞 청크의 끝과 뒤 청크의 앞에 모두 남습니다.</figcaption>
+</figure>
+<p>겹침이 왜 필요한지는 이 그림 하나로 충분합니다. 겹침이 0이면 "3일 늦게 반납하면 반납일부터 3일"에서 끊기고, "동안 새로 대출할 수 없습니다"는 다음 청크로 넘어갑니다. 검색이 앞 청크만 가져오면 모델은 "3일 뒤에 무엇이 되는지"를 모른 채 답해야 합니다. 겹침은 이러한 절단을 줄입니다. 다만 겹친 만큼 청크 수가 늘고 임베딩 비용이 늘어납니다.</p>
+
+<h3>기본 노트북의 <code>Document</code></h3>
+<p>기본 노트북은 제공된 합성 PDF <code>E01.pdf</code>의 2쪽을 읽고 <code>Document</code>로 만듭니다. 본문과 <code>doc_id</code>·<code>page</code>·<code>source</code>가 한 객체에 함께 저장되는지 타입과 내용을 출력해 확인합니다.</p>
+
+<h3>기본 노트북의 스플리터</h3>
+<p><code>split_documents()</code>는 <code>Document</code> 목록을 받아 <code>Document</code> 목록을 반환합니다. 입력 쪽의 <code>metadata</code>가 출력 청크마다 그대로 복사되므로, 청크 하나만 보고도 "E01의 2쪽"임을 압니다. 여기에 <code>chunk_id</code>를 덧붙여 두면 03절에서 검색 결과를 읽을 때 "#0이 검색되었다"처럼 지칭할 수 있습니다.</p>
+
+<h3>호출 표기와 반환값 읽기</h3>
+<p><code>reader.pages[1]</code>에서 대괄호는 목록에서 한 항목을 고르는 표기이며, Python의 인덱스가 0부터 시작하므로 두 번째 쪽을 뜻합니다. <code>extract_text()</code>는 그 쪽 객체를 문자열로 바꾸어 반환합니다. 반환 문자열과 문서 ID·쪽 번호를 <code>Document</code>에 넣으면 검색 단계가 본문과 출처를 함께 전달할 수 있습니다.</p>
+<p><code>split_documents([document])</code>는 <code>Document</code> 목록을 입력받아 더 짧은 <code>Document</code> 목록을 반환하며, 이 호출만으로 임베딩이나 검색이 실행되지는 않습니다. <code>split_text(text)</code>가 문자열만 나누는 것과 비교하면, <code>split_documents()</code>는 기존 <code>metadata</code>를 청크에 복사한다는 차이가 있습니다. 계약서처럼 조항 번호가 중요한 문서에서는 쪽 번호 외에 조항 ID도 먼저 메타데이터에 넣어야 분할 뒤 추적할 수 있습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>제공된 합성 PDF <code>E01.pdf</code>의 2쪽을 직접 읽습니다. Document 타입·출처 정보(metadata)·본문을 확인한 뒤 500/50으로 나누고, 겹침 50은 유지한 채 청크 크기만 300으로 바꿉니다. 끝으로 <code>text-embedding-3-small</code>에 대응하는 <code>cl100k_base</code> 토크나이저로 실제 첫 청크의 토큰 수를 출력합니다.</p>
+<section class="notebook" data-notebook="02-로더와-스플리터" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-09</span><button type="button" class="copy-all">전체 코드 복사</button><a download="02-로더와-스플리터.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI5NTc5MzU1ZCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIjxoMz7si6TsirUg7JWI64K0PC9oMz48cD7siJjsl4XsnYQg7JyE7ZW0IOunjOuToCBQREYgPGNvZGU+RTAxLnBkZjwvY29kZT7rpbwg7KeB7KCRIOydveyKteuLiOuLpC4gUERGIO2VnCDsqr3snbQg67O466y46rO8IOy2nOyymCDsoJXrs7Trpbwg64u07J2AIERvY3VtZW506rCAIOuQmOqzoCwg64uk7IucIOyekeydgCDqsoDsg4kg7KGw6rCB7J24IOyyre2BrOuhnCDrgpjriZjripQg6rO87KCV7J2EIO2ZleyduO2VqeuLiOuLpC48L3A+XG4iLAogICAgIjxoMz7tmLjstpwg7ZGc6riw7JmAIOuwmO2ZmOqwkiDsnb3quLA8L2gzPjxwPjxjb2RlPnJlYWRlci5wYWdlc1sxXTwvY29kZT7snYAgMOu2gO2EsCDshLjripQg66qp66Gd7J2YIOuRkCDrsojsp7gg7Kq97J2EIOqzoOultOqzoCwgPGNvZGU+ZXh0cmFjdF90ZXh0KCk8L2NvZGU+64qUIOq3uCDsqr3snYQg66y47J6Q7Je066GcIOuwmO2ZmO2VqeuLiOuLpC4gPGNvZGU+c3BsaXRfZG9jdW1lbnRzKFtkb2N1bWVudF0pPC9jb2RlPuuKlCBEb2N1bWVudCDrqqnroZ3snYQg67Cb7JWEIOuNlCDsp6fsnYAgRG9jdW1lbnQg66qp66Gd7J2EIOuwmO2ZmO2VmOupsCDsnbTrlYwg7J6E67Kg65Sp7J2064KYIOqygOyDieydgCDsi6TtlonrkJjsp4Ag7JWK7Iq164uI64ukLjwvcD48cD7rrLjsnpDsl7Trp4wg67CY7ZmY7ZWY64qUIDxjb2RlPnNwbGl0X3RleHQoKTwvY29kZT7smYAg64us66asIDxjb2RlPnNwbGl0X2RvY3VtZW50cygpPC9jb2RlPuuKlCDquLDsobQg66mU7YOA642w7J207YSw66W8IOyyre2BrOyXkCDrs7Xsgqztlanri4jri6QuIOyhsO2VreydhCDstpTsoIHtlbTslbwg7ZWY64qUIOusuOyEnOuKlCDrtoTtlaAg7KCE7JeQIOyhsO2VrSBJROuPhCDrqZTtg4DrjbDsnbTthLDsl5Ag64Sj7Iq164uI64ukLjwvcD4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICJhOGFmZDE5MCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi4yNDY3NzdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi4yNDY1ODhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi42NzA2ODZaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE3OjIwOjA2LjY3MDE4NloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJOb3RlOiB5b3UgbWF5IG5lZWQgdG8gcmVzdGFydCB0aGUga2VybmVsIHRvIHVzZSB1cGRhdGVkIHBhY2thZ2VzLiIKICAgICBdCiAgICB9LAogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBQREYg7YWN7Iqk7Yq4IOy2lOy2nOqzvCBEb2N1bWVudCDrtoTtlaDsl5Ag7ZWE7JqU7ZWcIO2MqO2CpOyngOulvCDshKTsuZjtlanri4jri6QuXG4iLAogICAgIiMg7J20IOygiOydgCDsmbjrtoAgQVBJ66W8IO2YuOy2nO2VmOyngCDslYrsnLzrr4DroZwgLmVuduulvCDsnb3sp4Ag7JWK7Iq164uI64ukLlxuIiwKICAgICIlcGlwIGluc3RhbGwgLXEgXCJweXBkZj09Ni4xNy4wXCIgXCJsYW5nY2hhaW49PTEuNC4wXCIgXCJsYW5nY2hhaW4tdGV4dC1zcGxpdHRlcnM9PTEuMS4yXCIgXCJ0aWt0b2tlbj09MC4xNC4wXCIiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI5ZDAxNjlhNiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIjxoMz4xLiBQREYg6rK966GcIOywvuq4sDwvaDM+PHA+7ZiE7J6sIO2PtOuNlOyZgCDrtoDrqqgg7Y+0642U66W8IOywqOuhgOuhnCDtmZXsnbjtlbQg7Iuk7Iq1IFBERuqwgCDrqqjsl6wg7J6I64qUIO2PtOuNlOulvCDssL7sirXri4jri6QuPC9wPiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogIjdkYzM3ZjI4IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjIwOjA2LjY3MTk4MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjIwOjA2LjY3MTg1NFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjIwOjA2LjY3NTUwMFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MjA6MDYuNjc1MDA5WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyLpOyKtSDtjIzsnbw6IGxhYnMvZGF0YS9yYWctY29ycHVzL3BkZi9lYXN5L0UwMS5wZGZcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBwcm9qZWN0X3Jvb3TripQgbGFicy9kYXRhL3JhZy1jb3JwdXPqsIAg7KG07J6s7ZWY64qUIOyyqyDsg4HsnIQg7Y+0642U7J6F64uI64ukLlxuIiwKICAgICIjIGJyZWFr64qUIO2MjOydvOydhCDssL7snYAg7KaJ7IucIGZvciDrsJjrs7XsnYQg7KKF66OM7ZWp64uI64ukLlxuIiwKICAgICJmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGhcbiIsCiAgICAiXG4iLAogICAgInN0YXJ0ID0gUGF0aC5jd2QoKS5yZXNvbHZlKClcbiIsCiAgICAicHJvamVjdF9yb290ID0gTm9uZVxuIiwKICAgICJmb2xkZXJzID0gW3N0YXJ0XVxuIiwKICAgICJmb2xkZXJzLmV4dGVuZChzdGFydC5wYXJlbnRzKVxuIiwKICAgICJmb3IgZm9sZGVyIGluIGZvbGRlcnM6XG4iLAogICAgIiAgICBpZiAoZm9sZGVyIC8gXCJsYWJzL2RhdGEvcmFnLWNvcnB1c1wiKS5leGlzdHMoKTpcbiIsCiAgICAiICAgICAgICBwcm9qZWN0X3Jvb3QgPSBmb2xkZXJcbiIsCiAgICAiICAgICAgICBicmVha1xuIiwKICAgICJhc3NlcnQgcHJvamVjdF9yb290IGlzIG5vdCBOb25lLCBcIuyLpOyKtSDrp5DrrYnsuZjrpbwg7LC+7KeAIOuqu+2WiOyKteuLiOuLpC5cIlxuIiwKICAgICJwZGZfcGF0aCA9IHByb2plY3Rfcm9vdCAvIFwibGFicy9kYXRhL3JhZy1jb3JwdXMvcGRmL2Vhc3kvRTAxLnBkZlwiXG4iLAogICAgImFzc2VydCBwZGZfcGF0aC5leGlzdHMoKSwgZlwiUERG6rCAIOyXhuyKteuLiOuLpDoge3BkZl9wYXRofVwiXG4iLAogICAgInByaW50KFwi7Iuk7Iq1IO2MjOydvDpcIiwgcGRmX3BhdGgucmVsYXRpdmVfdG8ocHJvamVjdF9yb290KSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI2NTQ0MzJjMCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIjxoMz4yLiBQREYg7ZWcIOyqveydhCBEb2N1bWVudOuhnCDrsJTqvrjquLA8L2gzPjxwPuygleq4sCDtnLTqtIDsnbzsnbQg7J6I64qUIDLsqr3snYQg6rOg66W06rOgIOuzuOusuMK366y47IScIElEwrfsqr3Ct+2MjOydvOuqheydhCDtlajqu5gg7KCA7J6l7ZWp64uI64ukLjwvcD4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICIzMWRhNzc4YSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi42NzY1NjVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi42NzY0OTFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi43NDY5MDhaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE3OjIwOjA2Ljc0NjUwMVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJEb2N1bWVudCDtg4DsnoU6IERvY3VtZW50XG4iLAogICAgICAibWV0YWRhdGE6IHsnZG9jX2lkJzogJ0UwMScsICdwYWdlJzogMiwgJ3NvdXJjZSc6ICdFMDEucGRmJ31cbiIsCiAgICAgICJjb250ZW50OiAxLiDrj4TshJzqtIAg7IaM6rCcXG4iLAogICAgICAi66+466W07Iuc66a964+E7ISc6rSA7J2AIDE5OTjrhYQgMTDsm5Qg66+466W07IucIOykkeyVmeuPmeyXkCDrrLjsnYQg7JewIOqzteqzteuPhOyEnOq0gOyeheuLiOuLpC4g7KeA7IOBIDTsuLUsIOyngO2VmCAx7Li1IOq3nOuqqFxuIiwKICAgICAgIuydtOupsCDsnqXshJwgNDLrp4wg6raM6rO8IOyghOyekOyxhSA266eMIOyiheydhCDrs7TsnKDtlZjqs6Ag7J6I7Iq164uI64ukLiAyMDI064WEIOumrOuqqOuNuOungeydhCDrp4jsuZjqs6AgM+y4teyXkCAn66mU7J207LukIOyKpFxuIiwKICAgICAgIu2OmOydtOyKpCfsmYAgJ+yhsOyaqe2VnCDsl7Trnozsi6Qn7J2EIOyDiOuhnCDsl7Tsl4jsirXri4jri6QuXG4iLAogICAgICAi64+E7ISc6rSA7J2YIOyCrOuqheydgCBcIuuIhOq1rOuCmCwg7Ja47KCc64KYLCDrrLTro4zroZxcIuyeheuLiOuLpC4g7Iuc66+8IOuqqOuRkOqwgCDsnpDro4zrpbwg7J6Q7Jyg66Gt6rKMIOydtOyaqe2VmOqzoCDrsLDsmrgg7IiYIOyeiOuPhFxuIiwKICAgICAgIuuhnSDrj5XripQg6rKD7J2EIOy1nOyasOyEoOycvOuhnCDtlanri4jri6QuXG4iLAogICAgICAiMi4g7J207JqpIFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIHJlYWRlci5wYWdlc1sxXeydmCDsnbjrjbHsiqQgMeydgCBQREbsnZgg65GQIOuyiOynuCDsqr3snYQg7ISg7YOd7ZWp64uI64ukLlxuIiwKICAgICIjIERvY3VtZW5064qUIHBhZ2VfY29udGVudOyXkCDrs7jrrLgsIG1ldGFkYXRh7JeQIOy2nOyymCDsoJXrs7Trpbwg67O06rSA7ZWp64uI64ukLlxuIiwKICAgICJmcm9tIHB5cGRmIGltcG9ydCBQZGZSZWFkZXJcbiIsCiAgICAiZnJvbSBsYW5nY2hhaW5fY29yZS5kb2N1bWVudHMgaW1wb3J0IERvY3VtZW50XG4iLAogICAgIlxuIiwKICAgICJyZWFkZXIgPSBQZGZSZWFkZXIocGRmX3BhdGgpXG4iLAogICAgInBhZ2VfdGV4dCA9IHJlYWRlci5wYWdlc1sxXS5leHRyYWN0X3RleHQoKVxuIiwKICAgICJkb2N1bWVudCA9IERvY3VtZW50KFxuIiwKICAgICIgICAgcGFnZV9jb250ZW50PXBhZ2VfdGV4dCxcbiIsCiAgICAiICAgIG1ldGFkYXRhPXtcImRvY19pZFwiOiBcIkUwMVwiLCBcInBhZ2VcIjogMiwgXCJzb3VyY2VcIjogcGRmX3BhdGgubmFtZX0sXG4iLAogICAgIilcbiIsCiAgICAicHJpbnQoXCJEb2N1bWVudCDtg4DsnoU6XCIsIHR5cGUoZG9jdW1lbnQpLl9fbmFtZV9fKVxuIiwKICAgICJwcmludChcIm1ldGFkYXRhOlwiLCBkb2N1bWVudC5tZXRhZGF0YSlcbiIsCiAgICAicHJpbnQoXCJjb250ZW50OlwiLCBkb2N1bWVudC5wYWdlX2NvbnRlbnRbOjI0MF0pIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiMzUyNzU4YzUiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICI8aDM+My4g6riw67O4IOu2hO2VoCDsi6Ttlok8L2gzPjxwPuyyre2BrCDtlZwg6rCc7J2YIOy1nOuMgCDquIDsnpAg7IiY66W8IDUwMOycvOuhnCwg7J207JuDIOyyre2BrOqwgCDtlajqu5gg6rCA7KeA64qUIOq4gOyekCDsiJjrpbwgNTDsnLzroZwg7KCV7ZWp64uI64ukLiDrgpjriIgg65KkIOyyre2BrCDqsJzsiJjCt+q4uOydtMK37Lac7LKYIOygleuztChtZXRhZGF0YSnrpbwg7Lac66Cl7ZWp64uI64ukLjwvcD4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICI0MzUzMzYxZCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi43NDc3MzlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi43NDc2ODlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi43ODkwOTVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE3OjIwOjA2Ljc4ODc3OFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLssq3tgawg7IiYOiAyXG4iLAogICAgICAiMSDquLjsnbQ6IDQ5OCBtZXRhZGF0YTogeydkb2NfaWQnOiAnRTAxJywgJ3BhZ2UnOiAyLCAnc291cmNlJzogJ0UwMS5wZGYnfVxuIiwKICAgICAgIjEuIOuPhOyEnOq0gCDshozqsJxcbiIsCiAgICAgICLrr7jrpbTsi5zrpr3rj4TshJzqtIDsnYAgMTk5OOuFhCAxMOyblCDrr7jrpbTsi5wg7KSR7JWZ64+Z7JeQIOusuOydhCDsl7Ag6rO16rO164+E7ISc6rSA7J6F64uI64ukLiDsp4Dsg4EgNOy4tSwg7KeA7ZWYIDHsuLUg6rec66qoXG4iLAogICAgICAi7J2066mwIOyepeyEnCA0MuunjCDqtozqs7wg7KCE7J6Q7LGFIDbrp4wg7KKF7J2EIOuztOycoO2VmOqzoCDsnojsirXri4hcbiIsCiAgICAgICIyIOq4uOydtDogNDUyIG1ldGFkYXRhOiB7J2RvY19pZCc6ICdFMDEnLCAncGFnZSc6IDIsICdzb3VyY2UnOiAnRTAxLnBkZid9XG4iLAogICAgICAi6rWs7JetIO2PieydvCDso7zrp5Ag67mE6rOgXG4iLAogICAgICAi7KKF7ZWp7J6Q66OM7IukKDLsuLUpIDA5OjAwfjIyOjAwIDA5OjAwfjE4OjAwXG4iLAogICAgICAi7Ja066aw7J207J6Q66OM7IukKDHsuLUpIDA5OjAwfjE4OjAwIDA5OjAwfjE4OjAwIOuztO2YuOyekCDrj5nrsJgg6raM7J6lXG4iLAogICAgICAi65SU7KeA7YS47J6Q66OM7IukKDLsuLVcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBzcGxpdF9kb2N1bWVudHMoKeuKlCBEb2N1bWVudCDrpqzsiqTtirjrpbwg67Cb7Jy866+A66GcIFtkb2N1bWVudF3roZwg6rCQ7IyN64uI64ukLlxuIiwKICAgICIjIOuwmO2ZmOuQnCBjaHVua3Prj4QgRG9jdW1lbnQg66as7Iqk7Yq47J2066mwIOybkOuzuCBtZXRhZGF0YeqwgCDrs7XsgqzrkKnri4jri6QuXG4iLAogICAgImZyb20gbGFuZ2NoYWluX3RleHRfc3BsaXR0ZXJzIGltcG9ydCBSZWN1cnNpdmVDaGFyYWN0ZXJUZXh0U3BsaXR0ZXJcbiIsCiAgICAiXG4iLAogICAgInNwbGl0dGVyID0gUmVjdXJzaXZlQ2hhcmFjdGVyVGV4dFNwbGl0dGVyKGNodW5rX3NpemU9NTAwLCBjaHVua19vdmVybGFwPTUwKVxuIiwKICAgICJjaHVua3MgPSBzcGxpdHRlci5zcGxpdF9kb2N1bWVudHMoW2RvY3VtZW50XSlcbiIsCiAgICAicHJpbnQoXCLssq3tgawg7IiYOlwiLCBsZW4oY2h1bmtzKSlcbiIsCiAgICAiZm9yIG51bWJlciwgY2h1bmsgaW4gZW51bWVyYXRlKGNodW5rcywgc3RhcnQ9MSk6XG4iLAogICAgIiAgICBwcmludChudW1iZXIsIFwi6ri47J20OlwiLCBsZW4oY2h1bmsucGFnZV9jb250ZW50KSwgXCJtZXRhZGF0YTpcIiwgY2h1bmsubWV0YWRhdGEpXG4iLAogICAgIiAgICBwcmludChjaHVuay5wYWdlX2NvbnRlbnRbOjEwMF0pIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiOTcyZjJlNDUiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICI8aDM+NC4g6rCSIO2VmOuCmOunjCDrsJTqvrjslrQg67mE6rWQPC9oMz48cD48Y29kZT5jaHVua19vdmVybGFwPTUwPC9jb2RlPuydgCDqt7jrjIDroZwg65GQ6rOgIDxjb2RlPmNodW5rX3NpemU8L2NvZGU+66eMIDUwMOyXkOyEnCAzMDDsnLzroZwg7KSE7J6F64uI64ukLjwvcD4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICIyMWJiYjZlZCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi43ODk4NjBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi43ODk4MTJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi43OTE3MTVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE3OjIwOjA2Ljc5MTM4N1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLquLDrs7ggNTAwOiAyIOqwnCwg7LKrIOq4uOydtCA0OThcbiIsCiAgICAgICLrs4Dqsr0gMzAwOiA0IOqwnCwg7LKrIOq4uOydtCAyNDJcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBzbWFsbGVy7JmAIHNwbGl0dGVy7J2YIOywqOydtOuKlCBjaHVua19zaXplIO2VmOuCmOu/kOyeheuLiOuLpC5cbiIsCiAgICAiIyDquLDrs7jCt+uzgOqyvSDqsrDqs7zsnZgg6rCc7IiY7JmAIOyyqyDssq3tgawg6ri47J2066W8IOqwmeydgCDtmJXsi53snLzroZwg67mE6rWQ7ZWp64uI64ukLlxuIiwKICAgICJzbWFsbGVyID0gUmVjdXJzaXZlQ2hhcmFjdGVyVGV4dFNwbGl0dGVyKGNodW5rX3NpemU9MzAwLCBjaHVua19vdmVybGFwPTUwKVxuIiwKICAgICJzbWFsbF9jaHVua3MgPSBzbWFsbGVyLnNwbGl0X2RvY3VtZW50cyhbZG9jdW1lbnRdKVxuIiwKICAgICJwcmludChcIuq4sOuzuCA1MDA6XCIsIGxlbihjaHVua3MpLCBcIuqwnCwg7LKrIOq4uOydtFwiLCBsZW4oY2h1bmtzWzBdLnBhZ2VfY29udGVudCkpXG4iLAogICAgInByaW50KFwi67OA6rK9IDMwMDpcIiwgbGVuKHNtYWxsX2NodW5rcyksIFwi6rCcLCDssqsg6ri47J20XCIsIGxlbihzbWFsbF9jaHVua3NbMF0ucGFnZV9jb250ZW50KSlcbiIsCiAgICAiYXNzZXJ0IGxlbihzbWFsbF9jaHVua3MpID49IGxlbihjaHVua3MpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAidG9rZW4tY291bnQtbm90ZSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIjxoMz41LiDsi6TsoJwg7LKt7YGs7J2YIO2GoO2BsCDsiJgg7ZmV7J24PC9oMz48cD48Y29kZT50ZXh0LWVtYmVkZGluZy0zLXNtYWxsPC9jb2RlPuydtCDsgqzsmqntlZjripQgPGNvZGU+Y2wxMDBrX2Jhc2U8L2NvZGU+IO2GoO2BrOuCmOydtOyggOuhnCDssqsg7LKt7YGs66W8IOyduOy9lOuUqe2VqeuLiOuLpC4gQ2ggNeydmCBHUFQtMsK3S0xVRSDthqDtgazrgpjsnbTsoIDsmYAg6rOE7IKwIOuLqOychOqwgCDri6TrpbTrr4DroZwg6re465WM7J2YIOyImOy5mOyZgCDsp4HsoJEg67mE6rWQ7ZWY7KeAIOyViuyKteuLiOuLpC48L3A+IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA2LAogICAiaWQiOiAidG9rZW4tY291bnQtY29kZSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi43OTIzNzZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi43OTIzMzZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi44NDA4MDFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE3OjIwOjA2Ljg0MDQzOFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLthqDtgazrgpjsnbTsoIA6IGNsMTAwa19iYXNlXG4iLAogICAgICAi7LKrIOyyre2BrCDquIDsnpAg7IiYOiA0OThcbiIsCiAgICAgICLssqsg7LKt7YGsIO2GoO2BsCDsiJg6IDQ5MVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGVuY29kaW5nX2Zvcl9tb2RlbCgp66GcIOyehOuyoOuUqSDrqqjrjbjsl5Ag66ee64qUIO2GoO2BrOuCmOydtOyggOulvCDrqoXsi5ztlanri4jri6QuXG4iLAogICAgIiMg6rCZ7J2AIOusuOyekOyXtOuPhCDthqDtgazrgpjsnbTsoIDqsIAg64uk66W066m0IO2GoO2BsCDsiJjqsIAg64us65287KeIIOyImCDsnojsirXri4jri6QuXG4iLAogICAgImltcG9ydCB0aWt0b2tlblxuIiwKICAgICJcbiIsCiAgICAiZW1iZWRkaW5nX3Rva2VuaXplciA9IHRpa3Rva2VuLmVuY29kaW5nX2Zvcl9tb2RlbChcInRleHQtZW1iZWRkaW5nLTMtc21hbGxcIilcbiIsCiAgICAiZmlyc3RfY2h1bmtfdGV4dCA9IGNodW5rc1swXS5wYWdlX2NvbnRlbnRcbiIsCiAgICAiZmlyc3RfY2h1bmtfdG9rZW5zID0gZW1iZWRkaW5nX3Rva2VuaXplci5lbmNvZGUoZmlyc3RfY2h1bmtfdGV4dClcbiIsCiAgICAicHJpbnQoXCLthqDtgazrgpjsnbTsoIA6XCIsIGVtYmVkZGluZ190b2tlbml6ZXIubmFtZSlcbiIsCiAgICAicHJpbnQoXCLssqsg7LKt7YGsIOq4gOyekCDsiJg6XCIsIGxlbihmaXJzdF9jaHVua190ZXh0KSlcbiIsCiAgICAicHJpbnQoXCLssqsg7LKt7YGsIO2GoO2BsCDsiJg6XCIsIGxlbihmaXJzdF9jaHVua190b2tlbnMpKVxuIiwKICAgICJhc3NlcnQgbGVuKGZpcnN0X2NodW5rX3Rva2VucykgPiAwIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiNDFiNmMxN2QiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICI8aDM+7KCV66asPC9oMz48cD5Eb2N1bWVudOydmCDrrLjshJwgSUTsmYAg7Kq9IOuyiO2YuChtZXRhZGF0YSnripQg64KY64iIIOuSpOyXkOuPhCDrgqjslZjsirXri4jri6QuIOydtOybgyDssq3tgazqsIAg7ZWo6ruYIOqwgOyngOuKlCDquIDsnpAg7IiY64qUIOq3uOuMgOuhnCDrkZDqs6AsIOyyre2BrCDstZzrjIAg6ri47J2066eMIOykhOydtOyekCDssq3tgawg6rCc7IiY7JmAIOq4uOydtOqwgCDrsJTrgIzsl4jsirXri4jri6QuIOyyqyDssq3tgazsnZgg6riA7J6QIOyImOyZgCDsnoTrsqDrlKkg66qo6424IO2GoO2BrOuCmOydtOyggOydmCDthqDtgbAg7IiY64qUIOyEnOuhnCDri6Trpbgg6rCS7Jy866GcIO2ZleyduO2WiOyKteuLiOuLpC48L3A+IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiOGZjOWE2NGQiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAic291cmNlIjogWwogICAgIjxwPjxzdHJvbmc+7JuQ7J24PC9zdHJvbmc+IOKAlCDqsrnsuajsnbQg7JeG7Jy866m0IOyyre2BrCDqsr3qs4Tsl5Ag64aT7J24IOKAnOyblOyalOydvOKAneydtCDrkZAg7KGw6rCB7Jy866GcIOqwiOudvOyguCDslrTripAg7LKt7YGs7JeQ64+EIOyYqOyghO2eiCDrgqjsp4Ag7JWK7J2EIOyImCDsnojsirXri4jri6QuPC9wPiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNywKICAgImlkIjogIjcwYzAyZTgzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjIwOjA2Ljg0MTUyOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjIwOjA2Ljg0MTQ4M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjIwOjA2Ljg0MzY4NloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MjA6MDYuODQzMzMxWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiQmVmb3JlIOyyre2BrDogWyfqsIDrgpjri6Trnbzrp4jrsJTsgqzslYTsnpDssKjqsIDrgpjri6Trnbzrp4jrsJTsgqzslYTsnpDssKjqsIDrgpjri6Trnbzrp4jrsJTsgqzslYTsnpDssKjsoJXquLAg7Zy06rSA7J287J2AIOyblOyalCcsICfsnbzsnoXri4jri6QuJ11cbiIsCiAgICAgICLsmIjsg4HtlZwg7Iuk7YyoOiDsm5TsmpTsnbzsnbQg7LKt7YGsIOqyveqzhOyXkOyEnCDqsIjrnbzsoYzsirXri4jri6QuXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg6rK96rOEIO2ZleyduOyaqSBEb2N1bWVudOyXkOyEnCDigJzsm5TsmpTsnbzigJ3snbQg7KCV7ZmV7Z6IIOyyre2BrCDqsr3qs4Tsl5Ag6rG466as6rKMIOunjOuTreuLiOuLpC5cbiIsCiAgICAiIyBhbnkoKeuKlCDslrTripAg7LKt7YGs65OgIHRhcmdldCDsoITssrTrpbwg7Y+s7ZWo7ZWY64qU7KeAIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiYm91bmRhcnlfdGV4dCA9IFwi6rCA64KY64uk652866eI67CU7IKs7JWE7J6Q7LCoXCIgKiAzICsgXCLsoJXquLAg7Zy06rSA7J287J2AIOyblOyalOydvOyeheuLiOuLpC5cIlxuIiwKICAgICJib3VuZGFyeV9kb2N1bWVudCA9IERvY3VtZW50KHBhZ2VfY29udGVudD1ib3VuZGFyeV90ZXh0KVxuIiwKICAgICJ0YXJnZXQgPSBcIuyblOyalOydvFwiXG4iLAogICAgIm5vX292ZXJsYXBfc3BsaXR0ZXIgPSBSZWN1cnNpdmVDaGFyYWN0ZXJUZXh0U3BsaXR0ZXIoXG4iLAogICAgIiAgICBjaHVua19zaXplPTQwLCBjaHVua19vdmVybGFwPTAsIHNlcGFyYXRvcnM9W1wiXCJdXG4iLAogICAgIilcbiIsCiAgICAiYmVmb3JlX2NodW5rcyA9IG5vX292ZXJsYXBfc3BsaXR0ZXIuc3BsaXRfZG9jdW1lbnRzKFtib3VuZGFyeV9kb2N1bWVudF0pXG4iLAogICAgImJlZm9yZV90ZXh0cyA9IFtjaHVuay5wYWdlX2NvbnRlbnQgZm9yIGNodW5rIGluIGJlZm9yZV9jaHVua3NdXG4iLAogICAgInByaW50KFwiQmVmb3JlIOyyre2BrDpcIiwgYmVmb3JlX3RleHRzKVxuIiwKICAgICJ0cnk6XG4iLAogICAgIiAgICBhc3NlcnQgYW55KHRhcmdldCBpbiB0ZXh0IGZvciB0ZXh0IGluIGJlZm9yZV90ZXh0cylcbiIsCiAgICAiZXhjZXB0IEFzc2VydGlvbkVycm9yOlxuIiwKICAgICIgICAgcHJpbnQoXCLsmIjsg4HtlZwg7Iuk7YyoOiDsm5TsmpTsnbzsnbQg7LKt7YGsIOqyveqzhOyXkOyEnCDqsIjrnbzsoYzsirXri4jri6QuXCIpXG4iLAogICAgImVsc2U6XG4iLAogICAgIiAgICByYWlzZSBBc3NlcnRpb25FcnJvcihcIuyyre2BrCDqsr3qs4Qg7Iuk7Yyo6rCAIOyerO2YhOuQmOyWtOyVvCDtlanri4jri6QuXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiZTE5N2U1NGEiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiPHA+PHN0cm9uZz7siJjsoJU8L3N0cm9uZz4g4oCUIOuLpOuluCDqsJLsnYAg7Jyg7KeA7ZWY6rOgIDxjb2RlPmNodW5rX292ZXJsYXA8L2NvZGU+66eMIDDsl5DshJwgNeuhnCDripjroKQg6rK96rOEIOyWkeyqvSDrrLjsnpDrpbwg7ZWo6ruYIOuztOyhtO2VqeuLiOuLpC48L3A+IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA4LAogICAiaWQiOiAiYjgwNmUwMWYiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6MjA6MDYuODQ0MzA4WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6MjA6MDYuODQ0MjcxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6MjA6MDYuODQ1OTkyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzoyMDowNi44NDU3MDVaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIkFmdGVyIOyyre2BrDogWyfqsIDrgpjri6Trnbzrp4jrsJTsgqzslYTsnpDssKjqsIDrgpjri6Trnbzrp4jrsJTsgqzslYTsnpDssKjqsIDrgpjri6Trnbzrp4jrsJTsgqzslYTsnpDssKjsoJXquLAg7Zy06rSA7J287J2AIOyblOyalCcsICfsnbzsnYAg7JuU7JqU7J287J6F64uI64ukLiddXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgb3ZlcmxhcF9zcGxpdHRlcuuKlCDslZ7snZgg7ISk7KCV7JeQ7IScIGNodW5rX292ZXJsYXDrp4wgNeuhnCDrsJTqv4nri4jri6QuXG4iLAogICAgIiMg6rK57LmcIOyyre2BrCDspJEg7ZWY64KY7JeQIOKAnOyblOyalOydvOKAnSDsoITssrTqsIAg65Ok7Ja07JmU64qU7KeAIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAib3ZlcmxhcF9zcGxpdHRlciA9IFJlY3Vyc2l2ZUNoYXJhY3RlclRleHRTcGxpdHRlcihcbiIsCiAgICAiICAgIGNodW5rX3NpemU9NDAsIGNodW5rX292ZXJsYXA9NSwgc2VwYXJhdG9ycz1bXCJcIl1cbiIsCiAgICAiKVxuIiwKICAgICJhZnRlcl9jaHVua3MgPSBvdmVybGFwX3NwbGl0dGVyLnNwbGl0X2RvY3VtZW50cyhbYm91bmRhcnlfZG9jdW1lbnRdKVxuIiwKICAgICJhZnRlcl90ZXh0cyA9IFtjaHVuay5wYWdlX2NvbnRlbnQgZm9yIGNodW5rIGluIGFmdGVyX2NodW5rc11cbiIsCiAgICAicHJpbnQoXCJBZnRlciDssq3tgaw6XCIsIGFmdGVyX3RleHRzKVxuIiwKICAgICJhc3NlcnQgYW55KHRhcmdldCBpbiB0ZXh0IGZvciB0ZXh0IGluIGFmdGVyX3RleHRzKSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDgsCiAgICJjb2RlX3NoYTI1NiI6ICJlYWYyYmYwZDRkM2E5YTdjMTFkYTM2N2QwNDMwNjZlYjc3MWYwYWM4M2NlZGZiODA0ZTcwNmI3MGU2ZTZkMWE3IiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMDlUMTc6MjA6MDYuOTYyMzc2KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICIyYjk4MTgwOTEwN2M0YmRhYzMwZTk0MGZlYjEzNGIwNDkwYmQxZGUxMWExYjVmM2Y1NDAxMjIxOGFkNDNlODFjIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h3>실습 안내</h3><p>수업을 위해 만든 PDF <code>E01.pdf</code>를 직접 읽습니다. PDF 한 쪽이 본문과 출처 정보를 담은 Document가 되고, 다시 작은 검색 조각인 청크로 나뉘는 과정을 확인합니다.</p>
+<h3>호출 표기와 반환값 읽기</h3><p><code>reader.pages[1]</code>은 0부터 세는 목록의 두 번째 쪽을 고르고, <code>extract_text()</code>는 그 쪽을 문자열로 반환합니다. <code>split_documents([document])</code>는 Document 목록을 받아 더 짧은 Document 목록을 반환하며 이때 임베딩이나 검색은 실행되지 않습니다.</p><p>문자열만 반환하는 <code>split_text()</code>와 달리 <code>split_documents()</code>는 기존 메타데이터를 청크에 복사합니다. 조항을 추적해야 하는 문서는 분할 전에 조항 ID도 메타데이터에 넣습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># PDF 텍스트 추출과 Document 분할에 필요한 패키지를 설치합니다.
+# 이 절은 외부 API를 호출하지 않으므로 .env를 읽지 않습니다.
+%pip install -q &quot;pypdf==6.17.0&quot; &quot;langchain==1.4.0&quot; &quot;langchain-text-splitters==1.1.2&quot; &quot;tiktoken==0.14.0&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">
+</pre></div>
+<div class="nb-markdown"><h3>1. PDF 경로 찾기</h3><p>현재 폴더와 부모 폴더를 차례로 확인해 실습 PDF가 모여 있는 폴더를 찾습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># project_root는 labs/data/rag-corpus가 존재하는 첫 상위 폴더입니다.
+# break는 파일을 찾은 즉시 for 반복을 종료합니다.
+from pathlib import Path
+
+start = Path.cwd().resolve()
+project_root = None
+folders = [start]
+folders.extend(start.parents)
+for folder in folders:
+    if (folder / &quot;labs/data/rag-corpus&quot;).exists():
+        project_root = folder
+        break
+assert project_root is not None, &quot;실습 말뭉치를 찾지 못했습니다.&quot;
+pdf_path = project_root / &quot;labs/data/rag-corpus/pdf/easy/E01.pdf&quot;
+assert pdf_path.exists(), f&quot;PDF가 없습니다: {pdf_path}&quot;
+print(&quot;실습 파일:&quot;, pdf_path.relative_to(project_root))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">실습 파일: labs/data/rag-corpus/pdf/easy/E01.pdf
+</pre></div>
+<div class="nb-markdown"><h3>2. PDF 한 쪽을 Document로 바꾸기</h3><p>정기 휴관일이 있는 2쪽을 고르고 본문·문서 ID·쪽·파일명을 함께 저장합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># reader.pages[1]의 인덱스 1은 PDF의 두 번째 쪽을 선택합니다.
+# Document는 page_content에 본문, metadata에 출처 정보를 보관합니다.
+from pypdf import PdfReader
+from langchain_core.documents import Document
+
+reader = PdfReader(pdf_path)
+page_text = reader.pages[1].extract_text()
+document = Document(
+    page_content=page_text,
+    metadata={&quot;doc_id&quot;: &quot;E01&quot;, &quot;page&quot;: 2, &quot;source&quot;: pdf_path.name},
+)
+print(&quot;Document 타입:&quot;, type(document).__name__)
+print(&quot;metadata:&quot;, document.metadata)
+print(&quot;content:&quot;, document.page_content[:240])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Document 타입: Document
+metadata: {&#x27;doc_id&#x27;: &#x27;E01&#x27;, &#x27;page&#x27;: 2, &#x27;source&#x27;: &#x27;E01.pdf&#x27;}
+content: 1. 도서관 소개
+미르시립도서관은 1998년 10월 미르시 중앙동에 문을 연 공공도서관입니다. 지상 4층, 지하 1층 규모
+이며 장서 42만 권과 전자책 6만 종을 보유하고 있습니다. 2024년 리모델링을 마치고 3층에 &#x27;메이커 스
+페이스&#x27;와 &#x27;조용한 열람실&#x27;을 새로 열었습니다.
+도서관의 사명은 &quot;누구나, 언제나, 무료로&quot;입니다. 시민 모두가 자료를 자유롭게 이용하고 배울 수 있도
+록 돕는 것을 최우선으로 합니다.
+2. 이용 
+</pre></div>
+<div class="nb-markdown"><h3>3. 기본 분할 실행</h3><p>청크 한 개의 최대 글자 수를 500으로, 이웃 청크가 함께 가지는 글자 수를 50으로 정합니다. 나눈 뒤 청크 개수·길이·출처 정보(metadata)를 출력합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># split_documents()는 Document 리스트를 받으므로 [document]로 감쌍니다.
+# 반환된 chunks도 Document 리스트이며 원본 metadata가 복사됩니다.
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+chunks = splitter.split_documents([document])
+print(&quot;청크 수:&quot;, len(chunks))
+for number, chunk in enumerate(chunks, start=1):
+    print(number, &quot;길이:&quot;, len(chunk.page_content), &quot;metadata:&quot;, chunk.metadata)
+    print(chunk.page_content[:100])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">청크 수: 2
+1 길이: 498 metadata: {&#x27;doc_id&#x27;: &#x27;E01&#x27;, &#x27;page&#x27;: 2, &#x27;source&#x27;: &#x27;E01.pdf&#x27;}
+1. 도서관 소개
+미르시립도서관은 1998년 10월 미르시 중앙동에 문을 연 공공도서관입니다. 지상 4층, 지하 1층 규모
+이며 장서 42만 권과 전자책 6만 종을 보유하고 있습니
+2 길이: 452 metadata: {&#x27;doc_id&#x27;: &#x27;E01&#x27;, &#x27;page&#x27;: 2, &#x27;source&#x27;: &#x27;E01.pdf&#x27;}
+구역 평일 주말 비고
+종합자료실(2층) 09:00~22:00 09:00~18:00
+어린이자료실(1층) 09:00~18:00 09:00~18:00 보호자 동반 권장
+디지털자료실(2층
+</pre></div>
+<div class="nb-markdown"><h3>4. 값 하나만 바꾸어 비교</h3><p><code>chunk_overlap=50</code>은 그대로 두고 <code>chunk_size</code>만 500에서 300으로 줄입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># smaller와 splitter의 차이는 chunk_size 하나뿐입니다.
+# 기본·변경 결과의 개수와 첫 청크 길이를 같은 형식으로 비교합니다.
+smaller = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=50)
+small_chunks = smaller.split_documents([document])
+print(&quot;기본 500:&quot;, len(chunks), &quot;개, 첫 길이&quot;, len(chunks[0].page_content))
+print(&quot;변경 300:&quot;, len(small_chunks), &quot;개, 첫 길이&quot;, len(small_chunks[0].page_content))
+assert len(small_chunks) &gt;= len(chunks)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">기본 500: 2 개, 첫 길이 498
+변경 300: 4 개, 첫 길이 242
+</pre></div>
+<div class="nb-markdown"><h3>5. 실제 청크의 토큰 수 확인</h3><p><code>text-embedding-3-small</code>이 사용하는 <code>cl100k_base</code> 토크나이저로 첫 청크를 인코딩합니다. Ch 5의 GPT-2·KLUE 토크나이저와 계산 단위가 다르므로 그때의 수치와 직접 비교하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># encoding_for_model()로 임베딩 모델에 맞는 토크나이저를 명시합니다.
+# 같은 문자열도 토크나이저가 다르면 토큰 수가 달라질 수 있습니다.
+import tiktoken
+
+embedding_tokenizer = tiktoken.encoding_for_model(&quot;text-embedding-3-small&quot;)
+first_chunk_text = chunks[0].page_content
+first_chunk_tokens = embedding_tokenizer.encode(first_chunk_text)
+print(&quot;토크나이저:&quot;, embedding_tokenizer.name)
+print(&quot;첫 청크 글자 수:&quot;, len(first_chunk_text))
+print(&quot;첫 청크 토큰 수:&quot;, len(first_chunk_tokens))
+assert len(first_chunk_tokens) &gt; 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">토크나이저: cl100k_base
+첫 청크 글자 수: 498
+첫 청크 토큰 수: 491
+</pre></div>
+<div class="nb-markdown"><h3>정리</h3><p>Document의 문서 ID와 쪽 번호(metadata)는 나눈 뒤에도 남았습니다. 이웃 청크가 함께 가지는 글자 수는 그대로 두고, 청크 최대 길이만 줄이자 청크 개수와 길이가 바뀌었습니다. 첫 청크의 글자 수와 임베딩 모델 토크나이저의 토큰 수는 서로 다른 값으로 확인했습니다.</p></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<p class="look"><b>확인할 점</b> — 분할 결과도 Document 리스트이며 모든 청크에 <code>doc_id=E01</code>과 <code>page=2</code>가 남습니다. 청크 크기를 줄이면 반환 개수와 각 청크의 길이가 바뀌어야 합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before에서 겹침을 0으로 두어 “월요일”이 청크 경계에서 두 조각으로 갈라지는 결과를 확인합니다. After에서 다른 값은 유지하고 <code>chunk_overlap</code>만 5로 늘려, 겹친 청크 안에 “월요일” 전체가 남는지 검사합니다.</p>
+<section class="notebook" data-notebook="02-로더와-스플리터" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><p><strong>원인</strong> — 겹침이 없으면 청크 경계에 놓인 “월요일”이 두 조각으로 갈라져 어느 청크에도 온전히 남지 않을 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 경계 확인용 Document에서 “월요일”이 정확히 청크 경계에 걸리게 만듭니다.
+# any()는 어느 청크든 target 전체를 포함하는지 확인합니다.
+boundary_text = &quot;가나다라마바사아자차&quot; * 3 + &quot;정기 휴관일은 월요일입니다.&quot;
+boundary_document = Document(page_content=boundary_text)
+target = &quot;월요일&quot;
+no_overlap_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=40, chunk_overlap=0, separators=[&quot;&quot;]
+)
+before_chunks = no_overlap_splitter.split_documents([boundary_document])
+before_texts = [chunk.page_content for chunk in before_chunks]
+print(&quot;Before 청크:&quot;, before_texts)
+try:
+    assert any(target in text for text in before_texts)
+except AssertionError:
+    print(&quot;예상한 실패: 월요일이 청크 경계에서 갈라졌습니다.&quot;)
+else:
+    raise AssertionError(&quot;청크 경계 실패가 재현되어야 합니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Before 청크: [&#x27;가나다라마바사아자차가나다라마바사아자차가나다라마바사아자차정기 휴관일은 월요&#x27;, &#x27;일입니다.&#x27;]
+예상한 실패: 월요일이 청크 경계에서 갈라졌습니다.
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><p><strong>수정</strong> — 다른 값은 유지하고 <code>chunk_overlap</code>만 0에서 5로 늘려 경계 양쪽 문자를 함께 보존합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [8]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># overlap_splitter는 앞의 설정에서 chunk_overlap만 5로 바꿉니다.
+# 겹친 청크 중 하나에 “월요일” 전체가 들어왔는지 확인합니다.
+overlap_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=40, chunk_overlap=5, separators=[&quot;&quot;]
+)
+after_chunks = overlap_splitter.split_documents([boundary_document])
+after_texts = [chunk.page_content for chunk in after_chunks]
+print(&quot;After 청크:&quot;, after_texts)
+assert any(target in text for text in after_texts)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">After 청크: [&#x27;가나다라마바사아자차가나다라마바사아자차가나다라마바사아자차정기 휴관일은 월요&#x27;, &#x27;일은 월요일입니다.&#x27;]
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>글자 수 vs 토큰 수.</strong> <code>RecursiveCharacterTextSplitter</code>는 글자를 셉니다. 노트북은 <code>tiktoken.encoding_for_model("text-embedding-3-small")</code>로 첫 청크의 토큰 수를 별도로 확인합니다. Ch 5에서 관찰한 GPT-2·KLUE 토크나이저와 이번 <code>cl100k_base</code> 토크나이저는 계산 단위가 다르므로 두 결과를 직접 비교하지 않습니다. 토큰 수를 분할 기준으로 쓰려면 <code>RecursiveCharacterTextSplitter.from_tiktoken_encoder(...)</code>나 <code>TokenTextSplitter</code>를 사용합니다(Ch 10).</li>
+<li><strong>전체 PDF 확장의 로더 선택.</strong> 기본 노트북은 <code>pypdf</code>를 직접 사용해 제공된 PDF 한 쪽을 읽습니다. 공식 문서 예제의 <code>langchain-community</code> <code>PyPDFLoader</code>는 유지보수 종료가 예고되어 2026-09-07 기준으로 <code>import</code> 경고가 발생했습니다. Ch 10에서는 Docling·Upstage 같은 독립 파서를 비교합니다.</li>
+<li><strong>표의 행과 열 관계가 사라질 수 있습니다.</strong> <code>extract_text()</code>는 PDF의 글자를 추출하지만, 어떤 값이 같은 행이나 열에 있었는지 항상 보존하지는 않습니다. 이 절은 E01의 일반 문단만 관찰합니다. 표가 든 문서는 Ch 10에서 여러 PDF 읽기 도구로 비교합니다.</li>
+<li><strong>HWP·HWPX.</strong> 한국 실무에는 HWP·HWPX 문서도 있으며 <code>pypdf</code>로는 열 수 없습니다. Ch 10의 별도 절입니다.</li>
+<li><strong>표지·머리글.</strong> 표지 한 쪽이 45자짜리 <code>Document</code>가 됩니다. 검색에서 제목 단어와 겹치면 높은 점수를 받아 자리를 차지합니다(03절). 실무에서는 표지·목차 쪽을 로더 단계에서 거르거나, 청크 최소 길이를 두는 처리를 흔히 합니다. 이 챕터에서는 일부러 두어 그 현상을 보게 합니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul>
+<li><code>PdfReader</code>로 E01 PDF 2쪽의 문자열을 읽고 문서 ID와 쪽 번호를 담은 metadata와 함께 Document로 만들었습니다.</li>
+<li><code>split_documents()</code>는 문서 ID와 쪽 번호를 복사한 청크 Document 리스트를 반환했습니다.</li>
+<li>겹침은 50으로 유지하고 청크 크기만 500에서 300으로 줄여 결과를 비교했습니다.</li>
+</ul><p><strong>다음 학습과 이어지는 지점</strong> — 03절에서 Document 리스트를 임베딩해 검색 가능한 벡터스토어로 바꿉니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. Document의 <code>page_content</code>와 <code>metadata</code>에는 각각 무엇을 저장했습니까?</p><p class="quiz-a"><code>page_content</code>에는 PDF 2쪽에서 추출한 본문을, <code>metadata</code>에는 문서 ID·쪽 번호·파일명을 저장했습니다.</p>
+<p class="quiz-q">2. <code>split_documents()</code>의 입력과 반환값은 무엇입니까?</p><p class="quiz-a">Document 리스트를 입력받아 더 작은 청크 Document 리스트를 반환합니다.</p>
+<p class="quiz-q">3. 500/50과 300/50 비교에서 변경한 값은 무엇입니까?</p><p class="quiz-a"><code>chunk_size</code>만 500에서 300으로 변경했고 <code>chunk_overlap=50</code>은 유지했습니다.</p>
+<p class="quiz-q">4. Before와 After에서 바꾼 값과 확인한 결과는 무엇입니까?</p><p class="quiz-a"><code>chunk_overlap</code>만 0에서 5로 바꾸었습니다. Before에서는 “월요일”이 경계에서 갈라졌고, After에서는 겹친 청크 하나에 전체 단어가 남았습니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul>
+<li>LangChain 「Build a RAG agent」 — Split 단계 <code>RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)</code> 예제 — <a href="https://docs.langchain.com/oss/python/langchain/rag">docs.langchain.com/oss/python/langchain/rag</a> · 확인 2026-09-07 · 이 절은 500/50으로 바꿔 씀.</li>
+<li>LangChain Text Splitters API — <a href="https://reference.langchain.com/python/langchain-text-splitters">reference.langchain.com/python/langchain-text-splitters</a> · 확인 2026-09-07 · langchain-text-splitters 1.1.2.</li>
+<li>pypdf 6.17.0 — <code>PdfReader</code>, <code>page.extract_text()</code>. 기본 노트북에서 제공된 PDF 2쪽을 읽을 때 사용합니다.</li>
+<li>langchain-community sunset 안내 — <code>import</code> 시 출력되는 DeprecationWarning의 링크(github.com/langchain-ai/langchain-community/issues/674) · 확인 2026-09-07.</li>
+</ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script>
+<div class="nav-foot"><span><a href="01-RAG-지도.html">← 01 · RAG 지도 — 검색으로 Select를 자동화한다</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="03-임베딩과-벡터스토어.html">03 · 임베딩·벡터스토어·top-k 검색 →</a></span></div>
+</div></body></html>

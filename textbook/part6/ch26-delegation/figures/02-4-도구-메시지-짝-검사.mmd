@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  h["손으로 만든 응답<br>도구 요청 하나<br>도구 메시지 없음"]:::tool
+  subgraph A[지금 그래프로 가는 Command]
+    direction TB
+    a1["hand_off_plain<br>담당 칸만 갱신"]:::flow
+    a2["받은 오류 ValueError<br>짝이 되는 도구 메시지가 없음"]:::measure
+    a1 --> a2
+  end
+  subgraph B[graph=Command.PARENT]
+    direction TB
+    b1["hand_off_parent<br>바깥 그래프의<br>상호대차 담당으로"]:::flow
+    b2["오류 없음<br>담당 칸 interlibrary_desk<br>HumanMessage<br>AIMessage 도구 요청<br>AIMessage 받은 쪽이<br>손으로 적은 답"]:::measure
+    b1 --> b2
+  end
+  n["짝 검사는<br>지금 그래프로 갈 때만<br>소스 확인 tool_node.py"]
+  h --> A
+  h --> B
+  A ~~~ n
+  B ~~~ n

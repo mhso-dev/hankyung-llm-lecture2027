@@ -1,0 +1,13 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant nb as 노트북
+  participant sp as 시맨틱 스플리터
+  participant em as 임베딩 모델
+  nb->>sp: 2쪽 글 905자와 기준값 95
+  Note over sp: 문장으로 나누고 앞뒤 문장을 붙임
+  Note over sp,em: 보낼 조각 수는 2607개 어림
+  sp->>em: 문장 목록 임베딩 요청 1번
+  em-->>sp: 문장마다 벡터 하나
+  Note over sp: 이웃한 두 벡터의 거리를 구함
+  Note over sp: 거리가 기준값보다 크면 끊음
+  sp-->>nb: 문서 청크 2개 · 233자와 671자

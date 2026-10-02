@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph one["구체 질문으로 한 번 검색"]
+    direction TB
+    o1["검색에 쓴 구체 질문"]:::tool
+    o2["첫 자리 문서 LIB-003"]:::measure
+    o3["정답 문서 FAC-004는<br>자리 여덟"]:::measure
+    o1 ~~~ o2
+    o2 ~~~ o3
+  end
+  subgraph two["넓힌 질문으로 검색"]
+    direction TB
+    t1["검색에 쓴 넓힌 질문"]:::measure
+    t2["첫 자리 문서 FAC-004"]:::measure
+    t3["정답 문서는 자리 하나"]:::measure
+    t1 ~~~ t2
+    t2 ~~~ t3
+  end
+  same["두 검색 모두<br>같은 문서<br>열두 건에서 고름"]
+  one ~~~ two
+  two ~~~ same

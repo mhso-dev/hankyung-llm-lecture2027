@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph ONE["한 메시지 목록 · 메시지 1개"]
+    direction LR
+    a1["입력 104토큰<br>출력 69토큰"]:::measure
+    a2["확인 단어<br>교환 · A-1042 · 사진"]:::measure
+    a1 ~~~ a2
+  end
+  subgraph ROLE["역할별 목록 · 메시지 3개"]
+    direction LR
+    b1["입력 112토큰<br>출력 69토큰"]:::measure
+    b2["확인 단어<br>교환 · 사진<br>A-1042 없음"]:::measure
+    b1 ~~~ b2
+  end
+  subgraph NOTE["두 줄을 비교하면"]
+    direction LR
+    d1["입력 차이 8토큰"]:::measure
+    d2["한 번 실행<br>순위는 정하지 않음"]
+    d1 ~~~ d2
+  end
+  ONE ~~~ ROLE ~~~ NOTE

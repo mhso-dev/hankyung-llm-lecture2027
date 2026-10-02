@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph c20["Ch 20 01절 · 손으로 이은 그래프"]
+    direction LR
+    m1["모델 노드<br>함수 call_model"]:::flow
+    t1["도구 실행 노드<br>ToolNode"]
+    e1(["END"])
+    m1 -.->|tools_condition| t1
+    m1 -.->|tools_condition| e1
+    t1 -->|고정 엣지 · 실선| m1
+  end
+  subgraph c21["이 절 · create_agent가 만든 그래프"]
+    direction LR
+    m2["모델 노드<br>create_agent가 만듦"]
+    t2["도구 실행 노드<br>ToolNode"]
+    e2(["END"])
+    m2 -.->|model_to_tools| t2
+    m2 -.->|model_to_tools| e2
+    t2 -.->|tools_to_model · 점선| m2
+  end
+  c20 ~~~ c21

@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  cm["고른 체크포인트 단계 1<br>기본 가격 10000<br>quote 실행은 첫 실행의 한 번"]
+  subgraph D["다 끝난 가지 셋 · 다음 노드가 없는 줄"]
+    direction TB
+    d1["할인 10 · 최종 가격 9000"]:::measure
+    d2["할인 20 · 최종 가격 8000"]:::measure
+    d3["할인 33 · 최종 가격 6700"]:::measure
+    d1 ~~~ d2
+    d2 ~~~ d3
+  end
+  p["멈춘 채 둔 가지 하나<br>만든 자리 fork<br>질문 값 최종 가격 9000"]:::measure
+  n["discount 실행 넷<br>ask_price 실행 일곱<br>체크포인트 열셋"]:::measure
+  cm --> D
+  cm --> p
+  D ~~~ n

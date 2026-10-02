@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  f1["PDF 한 쪽<br>E01.pdf 또는 같은 문서의 스캔본"]:::tool
+  r1["기본 읽기로<br>본문 글자 수 세기"]:::flow
+  d1["글자 수가<br>기준값 20자보다 많은가"]:::flow
+  o1["많음 · 본문 글을 씀<br>E01 2쪽은 905자"]:::measure
+  o2["표가 있으면 표 읽기<br>표 7행 · 행마다 칸 4개"]:::measure
+  o3["적음 · OCR 후보 쪽<br>스캔본은 다섯 쪽 모두 0자"]:::measure
+  ocrstep["글자 인식(OCR)<br>이 절에서 실행하지 않음"]
+  f1 --> r1
+  r1 --> d1
+  d1 --> o1
+  o1 --> o2
+  d1 --> o3
+  o3 --> ocrstep

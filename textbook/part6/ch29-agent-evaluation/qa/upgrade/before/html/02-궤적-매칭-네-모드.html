@@ -1,0 +1,258 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>궤적 매칭 네 모드 — Ch 29 · Agent 평가 — 답과 실행 경로를 함께 보기</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 6 · Agent 개발 · Ch 29 · Agent 평가 — 답과 실행 경로를 함께 보기</p>
+<h1>궤적 매칭 네 모드</h1><div class="meta"><span>강의 0.75h</span><span>실습 1.25h</span><span>새 용어 5</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 0.75h | 실습 1.25h | 코드 Jupyter Notebook | 새 용어 5 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>strict·unordered·subset·superset의 허용 범위를 비교할 수 있습니다.</li><li>도구 호출 순서와 인자를 어떤 수준으로 비교할지 정할 수 있습니다.</li><li>짧은 궤적의 subset 통과를 효율 점수로 오해하지 않을 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>정답 경로가 여러 개일 때 strict·unordered·subset·superset 중 무엇을 선택해야 하는가?</p><p>올바른 경로가 여러 개인 문제에 strict를 적용하면 순서만 다른 정상 실행을 탈락시킵니다. 반대로 필수 순서가 있는 승인 절차에 unordered를 쓰면 위험한 순서도 통과합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>앞 절의 메시지 궤적을 사용합니다. 필요한 자료와 객체는 노트북에서 다시 선언하므로 앞 노트북의 메모리 상태는 필요하지 않습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>정의와 구체 예</h3><p>strict는 메시지 구조와 도구 호출 순서가 기준과 같아야 합니다. unordered는 같은 호출을 순서와 무관하게 요구합니다. subset은 실제 호출이 기준 호출 범위 안에 있는지 보고 누락을 허용합니다. superset은 기준의 필수 호출을 실제 호출이 모두 포함하는지 보고 추가 호출을 허용합니다.</p><h3>코드 읽기와 비교 경계</h3><p><code>create_trajectory_match_evaluator(trajectory_match_mode=...)</code>는 실제 궤적과 기준 궤적을 비교하는 함수를 만듭니다. 이 함수에 <code>outputs</code>와 <code>reference_outputs</code>를 넘기는 순간 평가가 실행되고 <code>score</code>를 포함한 사전이 반환됩니다. <code>strict</code>와 <code>unordered</code>는 두 궤적의 동등성을 서로 다른 순서 규칙으로 보고, <code>subset</code>과 <code>superset</code>은 실제 호출 집합을 기준 호출 집합과 어느 방향으로 포함하는지 봅니다.</p><p>포함 방향은 문장으로 확인하면 혼동이 줄어듭니다. <code>subset</code>은 실제 호출이 기준에 나온 도구 안에서만 이루어졌는지 묻기 때문에 필수 도구가 빠진 짧은 경로도 통과할 수 있습니다. <code>superset</code>은 실제 호출이 기준의 필수 도구를 모두 포함했는지 묻기 때문에 관련 없는 추가 호출도 통과할 수 있습니다. 승인 뒤 결제처럼 순서가 안전 조건이면 <code>strict</code>, 순서와 무관한 두 조회라면 <code>unordered</code>, 금지 도구 제한과 필수 도구 확인은 별도 규칙을 조합합니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 530" style="width:380px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="strict는 순서까지 같아야 하고 unordered는 순서를 무시합니다. subset과 superset은 실제 호출과 기준 호출의 포함 관계를 검사합니다."><title>strict는 순서까지 같아야 하고 unordered는 순서를 무시합니다. subset과 superset은 실제 호출과 기준 호출의 포함 관계를 검사합니다.</title><defs><marker id="02-흐름-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190,85 L190,116" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#02-흐름-arrow)"/><path d="M190,185 L190,216" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#02-흐름-arrow)"/><path d="M190,285 L190,316" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#02-흐름-arrow)"/><path d="M190,385 L190,416" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#02-흐름-arrow)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="59.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">기준 궤적</text><rect x="30" y="120" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="159.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">strict</text><rect x="30" y="220" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="259.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">unordered</text><rect x="30" y="320" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="359.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">subset</text><rect x="30" y="420" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="459.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">superset</text></svg></div><p>기준 궤적이 네 검사 상자로 들어갑니다. strict와 unordered는 동등성의 두 방식이고 subset과 superset은 포함 방향이 서로 반대입니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>네 모드의 차이를 재현할 수 있도록 코드로 만든 고정 메시지 궤적을 평가합니다. 이 셀은 실제 에이전트 호출의 기록을 채점하는 예제가 아닙니다.</p><section class="notebook" data-notebook="02-궤적-매칭-네-모드" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-10</span><button type="button" class="copy-all">전체 코드 복사</button><a download="02-궤적-매칭-네-모드.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDqtqTsoIEg66ek7LmtIOuEpCDrqqjrk5xcbiIsCiAgICAiXG4iLAogICAgIuydtCDrhbjtirjrtoHsnYAgUHl0aG9uIDMuMTIg7IOIIOy7pOuEkOyXkOyEnCDrj4Xrpr0g7Iuk7ZaJ7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDtjKjtgqTsp4Ag7ISk7LmYIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMFQxNjoxMToyOS41OTUwMTlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMFQxNjoxMToyOS41OTQ5NTRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMFQxNjoxMTozMC4wMDI0OTlaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTEwVDE2OjExOjMwLjAwMjAxM1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJOb3RlOiB5b3UgbWF5IG5lZWQgdG8gcmVzdGFydCB0aGUga2VybmVsIHRvIHVzZSB1cGRhdGVkIHBhY2thZ2VzLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOuFuO2KuOu2geydtCDsgqzsmqntlZjripQg7Yyo7YKk7KeAIOuyhOyghOydhCDsg4gg7Luk64SQIO2ZmOqyveyXkCDshKTsuZjtlanri4jri6QuXG4iLAogICAgIiVwaXAgaW5zdGFsbCAtcSBhZ2VudGV2YWxzPT0wLjAuOSBsYW5nY2hhaW49PTEuNC4wIGxhbmdjaGFpbi1vcGVuYWk9PTEuNi4wIGxhbmdncmFwaD09MS4yLjExIHB5dGhvbi1kb3RlbnY9PTEuMi4zIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogIiMjIO2ZmOqyvSDspIDruYRcbiIKICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTEwVDE2OjExOjMwLjAwMzM3OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTEwVDE2OjExOjMwLjAwMzMxOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTEwVDE2OjExOjMwLjAwODUzOVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTBUMTY6MTE6MzAuMDA4MjM4WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgImFnZW50ZXZhbHMgMC4wLjlcbiIsCiAgICAgICJsYW5nY2hhaW4gMS40LjBcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDqs7XqsJztlZjsp4Ag7JWK7J2AIEFQSSDtgqTripQg7KG07J6sIOyXrOu2gOunjCDtmZXsnbjtlZjqs6Ag6rOg7KCV7ZWcIO2MqO2CpOyngCDrsoTsoITsnYQg7Lac66Cl7ZWp64uI64ukLlxuIiwKICAgICJpbXBvcnQgb3NcbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgImZyb20gaW1wb3J0bGliLm1ldGFkYXRhIGltcG9ydCB2ZXJzaW9uXG4iLAogICAgImZyb20gZG90ZW52IGltcG9ydCBsb2FkX2RvdGVudlxuIiwKICAgICJmb3IgZm9sZGVyIGluIFtQYXRoLmN3ZCgpLCAqUGF0aC5jd2QoKS5wYXJlbnRzXTpcbiIsCiAgICAiICAgIGlmIChmb2xkZXIgLyBcIi5lbnZcIikuaXNfZmlsZSgpOlxuIiwKICAgICIgICAgICAgIGxvYWRfZG90ZW52KGZvbGRlciAvIFwiLmVudlwiKVxuIiwKICAgICIgICAgICAgIGJyZWFrXG4iLAogICAgInByaW50KFwiYWdlbnRldmFsc1wiLCB2ZXJzaW9uKFwiYWdlbnRldmFsc1wiKSlcbiIsCiAgICAicHJpbnQoXCJsYW5nY2hhaW5cIiwgdmVyc2lvbihcImxhbmdjaGFpblwiKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiAiIyMg6riw7KSAIOq2pOyggSDspIDruYRcblxuIyMjIOy9lOuTnCDsnb3quLDsmYAg67mE6rWQIOqyveqzhFxuXG5gY3JlYXRlX3RyYWplY3RvcnlfbWF0Y2hfZXZhbHVhdG9yKHRyYWplY3RvcnlfbWF0Y2hfbW9kZT0uLi4pYOuKlCDsi6TsoJwg6rak7KCB6rO8IOq4sOykgCDqtqTsoIHsnYQg67mE6rWQ7ZWY64qUIO2VqOyImOulvCDrp4zrk63ri4jri6QuIOydtCDtlajsiJjsl5AgYG91dHB1dHNg7JmAIGByZWZlcmVuY2Vfb3V0cHV0c2Drpbwg64SY6riw64qUIOyInOqwhCDtj4nqsIDqsIAg7Iuk7ZaJ65CY6rOgIGBzY29yZWDrpbwg7Y+s7ZWo7ZWcIOyCrOyghOydtCDrsJjtmZjrkKnri4jri6QuIGBzdHJpY3Rg7JmAIGB1bm9yZGVyZWRg64qUIOuRkCDqtqTsoIHsnZgg64+Z65Ox7ISx7J2EIOyEnOuhnCDri6Trpbgg7Iic7IScIOq3nOy5meycvOuhnCDrs7Tqs6AsIGBzdWJzZXRg6rO8IGBzdXBlcnNldGDsnYAg7Iuk7KCcIO2YuOy2nCDsp5HtlansnYQg6riw7KSAIO2YuOy2nCDsp5Htlanqs7wg7Ja064qQIOuwqe2WpeycvOuhnCDtj6ztlajtlZjripTsp4Ag67SF64uI64ukLlxuXG7tj6ztlagg67Cp7Zal7J2AIOusuOyepeycvOuhnCDtmZXsnbjtlZjrqbQg7Zi864+Z7J20IOykhOyWtOuTreuLiOuLpC4gYHN1YnNldGDsnYAg7Iuk7KCcIO2YuOy2nOydtCDquLDspIDsl5Ag64KY7JioIOuPhOq1rCDslYjsl5DshJzrp4wg7J2066Oo7Ja07KGM64qU7KeAIOusu+q4sCDrlYzrrLjsl5Ag7ZWE7IiYIOuPhOq1rOqwgCDruaDsp4Qg7Ken7J2AIOqyveuhnOuPhCDthrXqs7ztlaAg7IiYIOyeiOyKteuLiOuLpC4gYHN1cGVyc2V0YOydgCDsi6TsoJwg7Zi47Lac7J20IOq4sOykgOydmCDtlYTsiJgg64+E6rWs66W8IOuqqOuRkCDtj6ztlajtlojripTsp4Ag66y76riwIOuVjOusuOyXkCDqtIDroKgg7JeG64qUIOy2lOqwgCDtmLjstpzrj4Qg7Ya16rO87ZWgIOyImCDsnojsirXri4jri6QuIOyKueyduCDrkqQg6rKw7KCc7LKY65+8IOyInOyEnOqwgCDslYjsoIQg7KGw6rG07J2066m0IGBzdHJpY3RgLCDsiJzshJzsmYAg66y06rSA7ZWcIOuRkCDsobDtmozrnbzrqbQgYHVub3JkZXJlZGAsIOq4iOyngCDrj4Tqtawg7KCc7ZWc6rO8IO2VhOyImCDrj4Tqtawg7ZmV7J247J2AIOuzhOuPhCDqt5zsuZnsnYQg7KGw7ZWp7ZWp64uI64ukLlxuIgogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTBUMTY6MTE6MzAuMDA5MzE5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTBUMTY6MTE6MzAuMDA5MjYxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTBUMTY6MTE6MzAuMDc5MDk1WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMFQxNjoxMTozMC4wNzg3MTRaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiWydzZWFyY2hfcnVsZXMnLCAnY2hlY2tfc291cmNlJ11cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBzZWFyY2hfcnVsZXMg64uk7J2MIGNoZWNrX3NvdXJjZeqwgCDsnbTslrTsp4DripQg6riw7KSAIOuplOyLnOyngCDqtqTsoIHsnYQg66eM65Ot64uI64ukLlxuIiwKICAgICJmcm9tIGxhbmdjaGFpbi5tZXNzYWdlcyBpbXBvcnQgSHVtYW5NZXNzYWdlLCBBSU1lc3NhZ2UsIFRvb2xNZXNzYWdlXG4iLAogICAgImRlZiB0cmFjZSgqdG9vbHM6IHN0cikgLT4gbGlzdDpcbiIsCiAgICAiICAgIG1lc3NhZ2VzPVtIdW1hbk1lc3NhZ2UoXCLqt5zsoJXsnYQg7ZmV7J247ZW0IOyjvOyEuOyalC5cIildXG4iLAogICAgIiAgICBmb3IgaSxuYW1lIGluIGVudW1lcmF0ZSh0b29scywxKTpcbiIsCiAgICAiICAgICAgICBtZXNzYWdlcyArPSBbQUlNZXNzYWdlKFwiXCIsIHRvb2xfY2FsbHM9W3tcIm5hbWVcIjpuYW1lLFwiYXJnc1wiOntcInRvcGljXCI6XCLrjIDstpxcIn0sXCJpZFwiOmZcImN7aX1cIixcInR5cGVcIjpcInRvb2xfY2FsbFwifV0pLCBUb29sTWVzc2FnZShcIu2ZleyduFwiLCB0b29sX2NhbGxfaWQ9ZlwiY3tpfVwiKV1cbiIsCiAgICAiICAgIG1lc3NhZ2VzLmFwcGVuZChBSU1lc3NhZ2UoXCLsnbzrsJgg64+E7ISc64qUIDE07J287J6F64uI64ukLlwiKSlcbiIsCiAgICAiICAgIHJldHVybiBtZXNzYWdlc1xuIiwKICAgICJyZWZlcmVuY2U9dHJhY2UoXCJzZWFyY2hfcnVsZXNcIiwgXCJjaGVja19zb3VyY2VcIilcbiIsCiAgICAicHJpbnQoW2NbXCJuYW1lXCJdIGZvciBtIGluIHJlZmVyZW5jZSBmb3IgYyBpbiBnZXRhdHRyKG0sXCJ0b29sX2NhbGxzXCIsW10pXSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiAiIyMgc3RyaWN07JmAIHVub3JkZXJlZCDsi6TtlolcblxuYHN0cmljdGDripQg7Iic7ISc6rmM7KeAIOqwmeyVhOyVvCDtlZjqs6AgYHVub3JkZXJlZGDripQg6rCZ7J2AIO2YuOy2nOydtCDsnojsnLzrqbQg7Iic7ISc66W8IOustOyLnO2VqeuLiOuLpC4g65GQIOqysOqzvOulvCDqsJnsnbQg67O066m0IOyalOq1rCDsgqztla3snbQg7Iic7ISc7JeQIOydmOyhtO2VmOuKlOyngCDtjJDri6jtlaAg7IiYIOyeiOyKteuLiOuLpC5cbiIKICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTEwVDE2OjExOjMwLjA3OTg5NVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTEwVDE2OjExOjMwLjA3OTg0MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTEwVDE2OjExOjMwLjIzMDc3NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTBUMTY6MTE6MzAuMjMwMzQyWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInN0cmljdCB7J2tleSc6ICd0cmFqZWN0b3J5X3N0cmljdF9tYXRjaCcsICdzY29yZSc6IEZhbHNlLCAnY29tbWVudCc6IE5vbmUsICdtZXRhZGF0YSc6IE5vbmV9XG4iLAogICAgICAidW5vcmRlcmVkIHsna2V5JzogJ3RyYWplY3RvcnlfdW5vcmRlcmVkX21hdGNoJywgJ3Njb3JlJzogVHJ1ZSwgJ2NvbW1lbnQnOiBOb25lLCAnbWV0YWRhdGEnOiBOb25lfVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOuRkCDrj4Tqtawg7Iic7ISc66W8IOuSpOynkeyWtCBzdHJpY3TsmYAgdW5vcmRlcmVk7J2YIOyInOyEnCDsspjrpqwg7LCo7J2066W8IO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiZnJvbSBhZ2VudGV2YWxzLnRyYWplY3RvcnkubWF0Y2ggaW1wb3J0IGNyZWF0ZV90cmFqZWN0b3J5X21hdGNoX2V2YWx1YXRvclxuIiwKICAgICJyZXZlcnNlZF90cmFjZT10cmFjZShcImNoZWNrX3NvdXJjZVwiLFwic2VhcmNoX3J1bGVzXCIpXG4iLAogICAgInN0cmljdF9zY29yZT1jcmVhdGVfdHJhamVjdG9yeV9tYXRjaF9ldmFsdWF0b3IodHJhamVjdG9yeV9tYXRjaF9tb2RlPVwic3RyaWN0XCIpKG91dHB1dHM9cmV2ZXJzZWRfdHJhY2UscmVmZXJlbmNlX291dHB1dHM9cmVmZXJlbmNlKVxuIiwKICAgICJ1bm9yZGVyZWRfc2NvcmU9Y3JlYXRlX3RyYWplY3RvcnlfbWF0Y2hfZXZhbHVhdG9yKHRyYWplY3RvcnlfbWF0Y2hfbW9kZT1cInVub3JkZXJlZFwiKShvdXRwdXRzPXJldmVyc2VkX3RyYWNlLHJlZmVyZW5jZV9vdXRwdXRzPXJlZmVyZW5jZSlcbiIsCiAgICAicHJpbnQoXCJzdHJpY3RcIiwgc3RyaWN0X3Njb3JlKVxuIiwKICAgICJwcmludChcInVub3JkZXJlZFwiLCB1bm9yZGVyZWRfc2NvcmUpXG4iLAogICAgImFzc2VydCBzdHJpY3Rfc2NvcmVbXCJzY29yZVwiXSBpcyBGYWxzZSBhbmQgdW5vcmRlcmVkX3Njb3JlW1wic2NvcmVcIl0gaXMgVHJ1ZSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6ICIjIyBzdWJzZXTqs7wgc3VwZXJzZXQg7Iuk7ZaJXG5cbmBzdWJzZXRg7J2AIOyLpOygnCDtmLjstpzsnbQg6riw7KSAIOuylOychCDslYjsnbjsp4AsIGBzdXBlcnNldGDsnYAg7Iuk7KCcIO2YuOy2nOydtCDquLDspIDsnZgg7ZWE7IiYIO2YuOy2nOydhCDrqqjrkZAg7Y+s7ZWo7ZWY64qU7KeAIOusu+yKteuLiOuLpC4g7ZeI7JqpIOuIhOudveqzvCDtl4jsmqkg7LaU6rCA7J2YIOuwqe2WpeydtCDrsJjrjIDsnoXri4jri6QuXG4iCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiY2VsbC0xMSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMFQxNjoxMTozMC4yMzE0OTRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMFQxNjoxMTozMC4yMzE0NDFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMFQxNjoxMTozMC4yMzQxNDBaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTEwVDE2OjExOjMwLjIzMzc4NFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJzaG9ydFxuIiwKICAgICAgInN1YnNldCBUcnVlXG4iLAogICAgICAic3VwZXJzZXQgRmFsc2VcbiIsCiAgICAgICJleHRyYVxuIiwKICAgICAgInN1YnNldCBGYWxzZVxuIiwKICAgICAgInN1cGVyc2V0IFRydWVcbiIsCiAgICAgICJzdWJzZXTsnYAg7Iuk7KCcIO2YuOy2nOydtCDquLDspIAg7Zi47LacIOuylOychCDslYjsl5Ag7J6I64qU7KeALCBzdXBlcnNldOydgCDsi6TsoJwg7Zi47Lac7J20IOq4sOykgOydmCDtlYTsiJgg7Zi47Lac7J2EIOuqqOuRkCDtj6ztlajtlZjripTsp4Ag67SF64uI64ukLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOq4sOykgOuztOuLpCDsp6fsnYAg6rak7KCB6rO8IOy2lOqwgCDtmLjstpwg6rak7KCB7Jy866GcIO2PrO2VqCDqtIDqs4TsnZgg67Cp7Zal7J2EIOqygOymne2VqeuLiOuLpC5cbiIsCiAgICAic2hvcnQ9dHJhY2UoXCJzZWFyY2hfcnVsZXNcIilcbiIsCiAgICAiZXh0cmE9dHJhY2UoXCJzZWFyY2hfcnVsZXNcIixcImNoZWNrX3NvdXJjZVwiLFwiYXVkaXRfbG9nXCIpXG4iLAogICAgImZvciBsYWJlbCxhY3R1YWwgaW4gWyhcInNob3J0XCIsc2hvcnQpLChcImV4dHJhXCIsZXh0cmEpXTpcbiIsCiAgICAiICAgIHByaW50KGxhYmVsKVxuIiwKICAgICIgICAgZm9yIG1vZGUgaW4gW1wic3Vic2V0XCIsXCJzdXBlcnNldFwiXTpcbiIsCiAgICAiICAgICAgICBwcmludChtb2RlLCBjcmVhdGVfdHJhamVjdG9yeV9tYXRjaF9ldmFsdWF0b3IodHJhamVjdG9yeV9tYXRjaF9tb2RlPW1vZGUpKG91dHB1dHM9YWN0dWFsLHJlZmVyZW5jZV9vdXRwdXRzPXJlZmVyZW5jZSlbXCJzY29yZVwiXSlcbiIsCiAgICAic2hvcnRfc3Vic2V0PWNyZWF0ZV90cmFqZWN0b3J5X21hdGNoX2V2YWx1YXRvcih0cmFqZWN0b3J5X21hdGNoX21vZGU9XCJzdWJzZXRcIikob3V0cHV0cz1zaG9ydCxyZWZlcmVuY2Vfb3V0cHV0cz1yZWZlcmVuY2UpXG4iLAogICAgImV4dHJhX3N1cGVyc2V0PWNyZWF0ZV90cmFqZWN0b3J5X21hdGNoX2V2YWx1YXRvcih0cmFqZWN0b3J5X21hdGNoX21vZGU9XCJzdXBlcnNldFwiKShvdXRwdXRzPWV4dHJhLHJlZmVyZW5jZV9vdXRwdXRzPXJlZmVyZW5jZSlcbiIsCiAgICAicHJpbnQoXCJzdWJzZXTsnYAg7Iuk7KCcIO2YuOy2nOydtCDquLDspIAg7Zi47LacIOuylOychCDslYjsl5Ag7J6I64qU7KeALCBzdXBlcnNldOydgCDsi6TsoJwg7Zi47Lac7J20IOq4sOykgOydmCDtlYTsiJgg7Zi47Lac7J2EIOuqqOuRkCDtj6ztlajtlZjripTsp4Ag67SF64uI64ukLlwiKVxuIiwKICAgICJhc3NlcnQgc2hvcnRfc3Vic2V0W1wic2NvcmVcIl0gaXMgVHJ1ZSBhbmQgZXh0cmFfc3VwZXJzZXRbXCJzY29yZVwiXSBpcyBUcnVlIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJleHBlcmltZW50IiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNSwKICAgImNvZGVfc2hhMjU2IjogImMyODA3NjY3ZTJiNzc5ODc5N2FlNjAzMGM0YmU4Nzc2ZjlmMmViYzg3ZTQ0NDgxYzY1ODU5Y2I4OGQ0M2RiNGEiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMFQxNjoxMTozMC4zNDk3MzIrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogImJjYjI2M2Y3MjgyMmUwYWU3NWQwMTY0ZWU1YmU3NTI4OWJiYzZjYzliN2Y1MWE2OTcyMzhlODRjNTU3OWE1N2IiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>궤적 매칭 네 모드</h2>
+<p>이 노트북은 Python 3.12 새 커널에서 독립 실행합니다.</p></div>
+<div class="nb-markdown"><h3>패키지 설치</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 노트북이 사용하는 패키지 버전을 새 커널 환경에 설치합니다.
+%pip install -q agentevals==0.0.9 langchain==1.4.0 langchain-openai==1.6.0 langgraph==1.2.11 python-dotenv==1.2.3</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-markdown"><h3>환경 준비</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 공개하지 않은 API 키는 존재 여부만 확인하고 고정한 패키지 버전을 출력합니다.
+import os
+from pathlib import Path
+from importlib.metadata import version
+from dotenv import load_dotenv
+for folder in [Path.cwd(), *Path.cwd().parents]:
+    if (folder / &quot;.env&quot;).is_file():
+        load_dotenv(folder / &quot;.env&quot;)
+        break
+print(&quot;agentevals&quot;, version(&quot;agentevals&quot;))
+print(&quot;langchain&quot;, version(&quot;langchain&quot;))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">agentevals 0.0.9
+langchain 1.4.0
+</pre></div>
+<div class="nb-markdown"><h3>기준 궤적 준비</h3>
+<h4>코드 읽기와 비교 경계</h4>
+<p><code>create_trajectory_match_evaluator(trajectory_match_mode=...)</code>는 실제 궤적과 기준 궤적을 비교하는 함수를 만듭니다. 이 함수에 <code>outputs</code>와 <code>reference_outputs</code>를 넘기는 순간 평가가 실행되고 <code>score</code>를 포함한 사전이 반환됩니다. <code>strict</code>와 <code>unordered</code>는 두 궤적의 동등성을 서로 다른 순서 규칙으로 보고, <code>subset</code>과 <code>superset</code>은 실제 호출 집합을 기준 호출 집합과 어느 방향으로 포함하는지 봅니다.</p>
+<p>포함 방향은 문장으로 확인하면 혼동이 줄어듭니다. <code>subset</code>은 실제 호출이 기준에 나온 도구 안에서만 이루어졌는지 묻기 때문에 필수 도구가 빠진 짧은 경로도 통과할 수 있습니다. <code>superset</code>은 실제 호출이 기준의 필수 도구를 모두 포함했는지 묻기 때문에 관련 없는 추가 호출도 통과할 수 있습니다. 승인 뒤 결제처럼 순서가 안전 조건이면 <code>strict</code>, 순서와 무관한 두 조회라면 <code>unordered</code>, 금지 도구 제한과 필수 도구 확인은 별도 규칙을 조합합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># search_rules 다음 check_source가 이어지는 기준 메시지 궤적을 만듭니다.
+from langchain.messages import HumanMessage, AIMessage, ToolMessage
+def trace(*tools: str) -&gt; list:
+    messages=[HumanMessage(&quot;규정을 확인해 주세요.&quot;)]
+    for i,name in enumerate(tools,1):
+        messages += [AIMessage(&quot;&quot;, tool_calls=[{&quot;name&quot;:name,&quot;args&quot;:{&quot;topic&quot;:&quot;대출&quot;},&quot;id&quot;:f&quot;c{i}&quot;,&quot;type&quot;:&quot;tool_call&quot;}]), ToolMessage(&quot;확인&quot;, tool_call_id=f&quot;c{i}&quot;)]
+    messages.append(AIMessage(&quot;일반 도서는 14일입니다.&quot;))
+    return messages
+reference=trace(&quot;search_rules&quot;, &quot;check_source&quot;)
+print([c[&quot;name&quot;] for m in reference for c in getattr(m,&quot;tool_calls&quot;,[])])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[&#x27;search_rules&#x27;, &#x27;check_source&#x27;]
+</pre></div>
+<div class="nb-markdown"><h3>strict와 unordered 실행</h3>
+<p><code>strict</code>는 순서까지 같아야 하고 <code>unordered</code>는 같은 호출이 있으면 순서를 무시합니다. 두 결과를 같이 보면 요구 사항이 순서에 의존하는지 판단할 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 두 도구 순서를 뒤집어 strict와 unordered의 순서 처리 차이를 확인합니다.
+from agentevals.trajectory.match import create_trajectory_match_evaluator
+reversed_trace=trace(&quot;check_source&quot;,&quot;search_rules&quot;)
+strict_score=create_trajectory_match_evaluator(trajectory_match_mode=&quot;strict&quot;)(outputs=reversed_trace,reference_outputs=reference)
+unordered_score=create_trajectory_match_evaluator(trajectory_match_mode=&quot;unordered&quot;)(outputs=reversed_trace,reference_outputs=reference)
+print(&quot;strict&quot;, strict_score)
+print(&quot;unordered&quot;, unordered_score)
+assert strict_score[&quot;score&quot;] is False and unordered_score[&quot;score&quot;] is True</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">strict {&#x27;key&#x27;: &#x27;trajectory_strict_match&#x27;, &#x27;score&#x27;: False, &#x27;comment&#x27;: None, &#x27;metadata&#x27;: None}
+unordered {&#x27;key&#x27;: &#x27;trajectory_unordered_match&#x27;, &#x27;score&#x27;: True, &#x27;comment&#x27;: None, &#x27;metadata&#x27;: None}
+</pre></div>
+<div class="nb-markdown"><h3>subset과 superset 실행</h3>
+<p><code>subset</code>은 실제 호출이 기준 범위 안인지, <code>superset</code>은 실제 호출이 기준의 필수 호출을 모두 포함하는지 묻습니다. 허용 누락과 허용 추가의 방향이 반대입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 기준보다 짧은 궤적과 추가 호출 궤적으로 포함 관계의 방향을 검증합니다.
+short=trace(&quot;search_rules&quot;)
+extra=trace(&quot;search_rules&quot;,&quot;check_source&quot;,&quot;audit_log&quot;)
+for label,actual in [(&quot;short&quot;,short),(&quot;extra&quot;,extra)]:
+    print(label)
+    for mode in [&quot;subset&quot;,&quot;superset&quot;]:
+        print(mode, create_trajectory_match_evaluator(trajectory_match_mode=mode)(outputs=actual,reference_outputs=reference)[&quot;score&quot;])
+short_subset=create_trajectory_match_evaluator(trajectory_match_mode=&quot;subset&quot;)(outputs=short,reference_outputs=reference)
+extra_superset=create_trajectory_match_evaluator(trajectory_match_mode=&quot;superset&quot;)(outputs=extra,reference_outputs=reference)
+print(&quot;subset은 실제 호출이 기준 호출 범위 안에 있는지, superset은 실제 호출이 기준의 필수 호출을 모두 포함하는지 봅니다.&quot;)
+assert short_subset[&quot;score&quot;] is True and extra_superset[&quot;score&quot;] is True</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">short
+subset True
+superset False
+extra
+subset False
+superset True
+subset은 실제 호출이 기준 호출 범위 안에 있는지, superset은 실제 호출이 기준의 필수 호출을 모두 포함하는지 봅니다.
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — search_rules와 check_source의 순서를 뒤집자 strict=False, unordered=True였습니다. search_rules만 호출한 짧은 궤적은 subset=True·superset=False였고 audit_log를 추가한 궤적은 subset=False·superset=True였습니다. 따라서 subset 점수를 효율 자체로 부르지 않습니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>search_rules와 check_source의 순서를 뒤집자 strict=False, unordered=True였습니다. search_rules만 호출한 짧은 궤적은 subset=True·superset=False였고 audit_log를 추가한 궤적은 subset=False·superset=True였습니다. 따라서 subset 점수를 효율 자체로 부르지 않습니다.</p><p>기본 매칭은 도구 이름과 인자까지 비교합니다. 특정 인자를 무시하면 검사 범위가 좁아지므로 이유를 평가 정의에 기록해야 합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>이 절은 로컬 평가 함수와 고정 메시지 목록만 사용합니다. 모델 API 호출은 없습니다.</li><li>인자 무시 옵션을 쓰면 검사 범위가 좁아지므로 무시하는 필드와 이유를 평가 정의에 기록합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>strict는 메시지 구조와 도구 호출 순서가 기준과 같아야 합니다. unordered는 같은 호출을 순서와 무관하게 요구합니다. subset은 실제 호출이 기준 호출 범위 안에 있는지 보고 누락을 허용합니다. superset은 기준의 필수 호출을 실제 호출이 모두 포함하는지 보고 추가 호출을 허용합니다.</li><li>search_rules와 check_source의 순서를 뒤집자 strict=False, unordered=True였습니다. search_rules만 호출한 짧은 궤적은 subset=True·superset=False였고 audit_log를 추가한 궤적은 subset=False·superset=True였습니다. 따라서 subset 점수를 효율 자체로 부르지 않습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 03-LLM-judge로-궤적-평가에서 이 결과를 다시 사용합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. 순서만 다른 궤적을 허용하는 모드는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — unordered입니다.</p></details><details class="quiz"><summary>2. 필수 호출을 모두 포함했는지 보는 모드는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — superset입니다.</p></details><details class="quiz"><summary>3. subset만으로 효율을 보장할 수 없는 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 필요한 호출을 빠뜨린 짧은 궤적도 통과할 수 있기 때문입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.langchain.com/oss/python/langchain/test/evals">LangChain 공식 문서</a> · 확인 2026-09-11 · langchain 1.4.0</li><li><a href="https://docs.langchain.com/langsmith/trajectory-evals">LangChain 공식 세부 문서</a> · 확인 2026-09-11</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="01-에이전트-평가-세-전략.html">← 에이전트 평가 세 전략</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="03-LLM-judge로-궤적-평가.html">LLM judge로 궤적 평가 →</a></span></div></div></body></html>

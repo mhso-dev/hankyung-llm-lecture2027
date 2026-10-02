@@ -1,0 +1,17 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  w["손 요청 write_file<br>/notes/question.md"]:::tool
+  f["상태 칸 files<br>/notes/question.md"]:::measure
+  t["손 요청 task<br>rule-checker 복사본에게<br>넘긴 글 한 줄"]:::tool
+  subgraph sub[서브에이전트 rule-checker 복사본]
+    direction TB
+    s1["시작 기록 훅<br>메시지 수 1 HumanMessage<br>파일 위치 /notes/question.md"]:::measure
+    s2["호출 한도 0<br>모델 요청 0"]:::measure
+    s1 --> s2
+  end
+  back["바깥 목록의 도구 메시지 task<br>Model call limits exceeded<br>run limit 0/0"]:::measure
+  w --> f
+  f --> t
+  t --> sub
+  sub --> back

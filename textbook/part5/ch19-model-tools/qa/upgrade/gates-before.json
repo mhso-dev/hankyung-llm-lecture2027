@@ -1,0 +1,379 @@
+{
+  "chapter": "ch19-model-tools",
+  "label": "before",
+  "totals": {
+    "G1": 30,
+    "G2": 17,
+    "G3": 0,
+    "G4": 0,
+    "G5": 40,
+    "G6": 85,
+    "G7": 18
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-tool과-Ch4-함수-재사용",
+      "code_cells": 6,
+      "sentences": 92,
+      "counts": {
+        "G1": 1,
+        "G2": 1,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 20,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell13:set_comprehension"
+        ],
+        "G2": [
+          "cell13:one_letter_name:r"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:직접 호출과 invoke 호출에 cancelled를 넣었을 때 모두 O104를 반환하므로 필터 조건과 행의 네 필드가 보존됐음을 읽을 수 있습니다",
+          "long:반면 StructuredTool을 위치 인자로 호출한 TypeError는 주문 데이터의 실패가 아니라 인터페이스 사용 오류입니다",
+          "long:도구 호출(tool call) 은 구조화된 실행 요청이며 도구 메시지(ToolMessage) 는 실행 결과와 호출 ID를 돌려주는 메시지입니다",
+          "long:함수 이름과 문서 문자열, 타입 힌트에서 모델이 볼 이름·설명·입력 스키마를 만들지만 함수 본문을 모델에게 보여 주지는 않습니다",
+          "long:재고 조회 함수를 도구로 만들 때 창고 ID는 모델이 골라야 할 업무 인자일 수 있지만, 데이터베이스 연결 문자열은 프로그램 설정으로 남겨야 합니다",
+          "long:기존 함수를 재사용한다는 말은 기존 검증과 테스트를 그대로 활용한다는 뜻이며, 도구 장식만으로 원래 함수의 데이터 품질이 좋아지지는 않습니다",
+          "long:함수 이름과 문서 문자열, 타입 힌트에서 모델이 볼 이름·설명·입력 스키마를 만들지만 함수 본문을 모델에게 보여 주지는 않습니다",
+          "long:CSV 경로와 선택 상태를 받아 각 행을 사전으로 담은 목록을 반환하며, 아직 LangChain 도구를 만들거나 모델을 호출하지 않습니다",
+          "long:재고 조회 함수를 도구로 만들 때 창고 ID는 모델이 골라야 할 업무 인자일 수 있지만, 데이터베이스 연결 문자열은 프로그램 설정으로 남겨야 합니다",
+          "long:기존 함수를 재사용한다는 말은 기존 검증과 테스트를 그대로 활용한다는 뜻이며, 도구 장식만으로 원래 함수의 데이터 품질이 좋아지지는 않습니다",
+          "english_start:`@tool`은 바로 아래 파이썬 함수를 LangChain의 도구 객체로",
+          "english_start:Before의 `TypeError`는 주문 자료의 문제가 아니라 도구 객",
+          "english_start:`cancelled`를 입력했을 때 직접 호출과 도구의 `invoke()",
+          "english_start:`same=True`와 실제 주문 행을 함께 비교해야 빈 목록끼리 우연히",
+          "english_start:`@tool`은 기존 조회 로직을 바꾸지 않고 이름·설명·인자 스키마를 ",
+          "english_start:`@tool`은 바로 아래 파이썬 함수를 LangChain의 도구 객체로",
+          "english_start:Before의 `TypeError`는 주문 자료의 문제가 아니라 도구 객",
+          "dense_paragraph:도구로 감싼 뒤에도 CSV 경로는 프로그램이 넘깁니다. 모델에게 파일 경로까지 선택하게 하면 학습 목표와 관",
+          "dense_paragraph:출력을 읽을 때 먼저 `same`이 `True`인지 확인하고, 이어서 `rows` 안의 `order_id`가",
+          "dense_paragraph:직접 함수는 Python 코드가 이름을 정해 호출합니다. 도구 객체는 같은 함수를 모델 선택 후보로 표현합니"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-Pydantic-인자와-반환-스키마",
+      "code_cells": 6,
+      "sentences": 88,
+      "counts": {
+        "G1": 1,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 7,
+        "G6": 16,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell9:list_comprehension"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:이번 절은 Pydantic의 Literal과 Field 범위를 도구 경계에 추가해 실제 공개 데이터의 paid, pending, cancelled만 허용합니다",
+          "long:도구 호출(tool call) 은 구조화된 실행 요청이며 도구 메시지(ToolMessage) 는 실행 결과와 호출 ID를 돌려주는 메시지입니다",
+          "english_start:Pydantic으로 도구 인자의 범위와 의미를 검증할 수 있습니다",
+          "english_start:`Literal`과 `Field`가 만든 JSON Schema를 읽을 수",
+          "english_start:`Field`의 설명과 최솟값·최댓값은 JSON Schema로 변환되어 ",
+          "english_start:`Literal`은 선택 가능한 문자열을 JSON Schema의 `enu",
+          "english_start:`limit`의 `ge`와 `le`는 각각 최솟값과 최댓값입니다",
+          "english_start:`Literal`은 허용 문자열을 제한하고, `Field(ge=1, le",
+          "english_start:`args_schema=OrderQuery`를 `@tool`에 넘기면 이",
+          "english_start:`shipped`와 `limit=0`을 각각 전달해 `literal_er",
+          "english_start:`shipped`는 허용 상태 목록에 없고 `limit=0`은 최솟값보다",
+          "english_start:`type`은 각각 허용 목록 위반과 최솟값 위반을 구분합니다",
+          "english_start:`shipped`와 `limit=0`은 함수 본문이 실행되기 전에 거부됩",
+          "english_start:`Literal`은 허용 문자열을 제한하고, `Field(ge=1, le",
+          "english_start:`args_schema=OrderQuery`를 `@tool`에 넘기면 이",
+          "dense_paragraph:오류 출력의 `loc`는 문제가 생긴 필드를 가리킵니다. `shipped` 입력에서는 `status`가, `"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-좋은-도구-이름과-설명",
+      "code_cells": 6,
+      "sentences": 101,
+      "counts": {
+        "G1": 4,
+        "G2": 3,
+        "G3": 0,
+        "G4": 0,
+        "G5": 5,
+        "G6": 14,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell9:generator_expression",
+          "cell9:generator_expression",
+          "cell9:multiple_defs_in_cell",
+          "cell11:set_comprehension"
+        ],
+        "G2": [
+          "cell9:one_letter_name:r",
+          "cell9:one_letter_name:r",
+          "cell13:nested_call_2plus"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:도구 호출(tool call) 은 구조화된 실행 요청이며 도구 메시지(ToolMessage) 는 실행 결과와 호출 ID를 돌려주는 메시지입니다",
+          "long:CSV 경로와 선택 상태를 입력받아 사전 목록을 반환하므로, 뒤의 도구들은 파일 읽기 코드를 반복하지 않고 선택 목적만 다르게 정의할 수 있습니다",
+          "long:`list_orders_by_status()`는 상태 문자열을 입력받아 여러 주문 사전을 반환하고, 이 셀에서는 도구 정의만 하므로 모델이나 CSV 조회는 아직 실행되지 않습니다",
+          "english_start:`name`은 모델이 호출 요청에 쓸 식별자이고, 함수의 문서 문자열은 ",
+          "english_start:`search_articles_by_keyword`는 여러 기사 요약을,",
+          "english_start:`list_orders_by_status`는 상태로 여러 주문을 찾는 질",
+          "english_start:`get_order_by_id`는 O103처럼 식별자가 들어간 질문에 대",
+          "english_start:`summarize_order_amounts`는 개별 행 대신 건수와 합",
+          "english_start:`name`은 모델이 호출 요청에 쓸 식별자이고, 함수의 문서 문자열은 ",
+          "english_start:`@tool`은 바로 아래 함수를 `StructuredTool`로 감싸며",
+          "english_start:`list_orders_by_status()`는 상태 문자열을 입력받아 ",
+          "english_start:`search_articles_by_keyword`는 여러 기사 요약을,",
+          "dense_paragraph:목록 조회는 여러 행을 반환하고, ID 조회는 한 행을 반환하며, 집계는 count와 total을 새로 계산",
+          "dense_paragraph:세 설명서를 표처럼 읽어 봅니다. `list_orders_by_status`는 상태로 여러 주문을 찾는 질문"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-설명만으로-도구-선택하기",
+      "code_cells": 10,
+      "sentences": 98,
+      "counts": {
+        "G1": 11,
+        "G2": 7,
+        "G3": 0,
+        "G4": 0,
+        "G5": 8,
+        "G6": 11,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell9:generator_expression",
+          "cell9:generator_expression",
+          "cell9:multiple_defs_in_cell",
+          "cell13:generator_expression",
+          "cell13:generator_expression",
+          "cell13:multiple_defs_in_cell",
+          "cell21:list_comprehension",
+          "cell21:generator_expression",
+          "cell21:generator_expression",
+          "cell21:conditional_expression",
+          "cell21:generator_expression"
+        ],
+        "G2": [
+          "cell9:one_letter_name:r",
+          "cell9:one_letter_name:r",
+          "cell13:one_letter_name:r",
+          "cell13:one_letter_name:r",
+          "cell21:one_letter_name:r",
+          "cell21:one_letter_name:n",
+          "cell21:one_letter_name:r"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell15:result_reading_quotes_no_output",
+          "cell17:result_reading_quotes_no_output",
+          "cell19:result_reading_quotes_no_output",
+          "cell21:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:채점은 목록 질문에는 list_orders_by_status, 정확한 주문 번호 질문에는 get_order_by_id, 건수와 총액 질문에는 summarize_order_amounts를 기대합니다",
+          "long:두 조건이 모두 맞았다면 이 표본에서는 차이를 관찰하지 못했다고 기록해야 하며, 모호 조건이 틀렸을 때만 관찰된 차이를 설명합니다",
+          "long:도구 호출(tool call) 은 구조화된 실행 요청이며 도구 메시지(ToolMessage) 는 실행 결과와 호출 ID를 돌려주는 메시지입니다",
+          "long:설명 품질을 평가할 때는 비슷한 도구가 경쟁하는 질문, 정보가 부족해 도구를 부르지 않아야 하는 질문, 여러 도구가 필요한 질문을 나눠야 합니다",
+          "long:전체 로그에는 질문, 기대 이름, 반복 번호, 원시 호출, 토큰 사용량이 있으므로 다른 검토자가 같은 규칙으로 다시 채점할 수 있습니다",
+          "long:이번 실제 실행에서 두 조건이 모두 9/9이면 ‘혼동을 재현했다’고 쓰지 않고 차이를 관찰하지 못했다고 본문과 검증 기록에 남깁니다",
+          "long:설명 품질을 평가할 때는 비슷한 도구가 경쟁하는 질문, 정보가 부족해 도구를 부르지 않아야 하는 질문, 여러 도구가 필요한 질문을 나눠야 합니다",
+          "english_start:`bind_tools()`는 도구 설명을 모델 요청에 포함한 새 모델 객",
+          "english_start:`bind_tools()`는 도구 설명을 모델 요청에 포함한 새 모델 객",
+          "dense_paragraph:모호 조건과 구체 조건의 Python 함수 이름은 다르지만 모델에게 공개되는 tool name은 동일합니다.",
+          "dense_paragraph:두 조건이 모두 9/9이므로 이 실행에서는 선택 차이를 관찰하지 못했습니다. 이것은 설명이 필요 없다는 결론"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-bind_tools와-병렬-호출",
+      "code_cells": 9,
+      "sentences": 100,
+      "counts": {
+        "G1": 8,
+        "G2": 3,
+        "G3": 0,
+        "G4": 0,
+        "G5": 8,
+        "G6": 16,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell11:generator_expression",
+          "cell11:generator_expression",
+          "cell11:multiple_defs_in_cell",
+          "cell13:set_comprehension",
+          "cell15:list_comprehension",
+          "cell17:list_comprehension",
+          "cell17:list_comprehension",
+          "cell19:generator_expression"
+        ],
+        "G2": [
+          "cell11:one_letter_name:r",
+          "cell11:one_letter_name:r",
+          "cell19:one_letter_name:u"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_quotes_no_output",
+          "cell17:result_reading_quotes_no_output",
+          "cell19:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:StructuredTool.invoke에 호출 사전 전체를 넘기면 LangChain은 실행 결과를 ToolMessage로 만들고 원래 id를 넣습니다",
+          "long:도구 호출(tool call) 은 구조화된 실행 요청이며 도구 메시지(ToolMessage) 는 실행 결과와 호출 ID를 돌려주는 메시지입니다",
+          "long:실제 응답에는 O101과 O103을 조회하는 호출 두 개가 들어 있으며, 프로그램은 각 호출을 실행해 성공한 `ToolMessage` 두 개를 만듭니다",
+          "english_start:`bind_tools()`는 모델에게 도구 설명서를 제공합니다",
+          "english_start:AIMessage의 content가 비어 있어도 tool_calls가 있",
+          "english_start:StructuredTool.invoke에 호출 사전 전체를 넘기면 Lan",
+          "english_start:`bind_tools()`는 모델이 사용할 수 있는 도구 설명을 붙일 뿐",
+          "english_start:parallel_tool_calls는 한 응답에 여러 호출을 허용하는 설",
+          "english_start:O101과 O103의 두 요청과 성공한 `ToolMessage` 두 개를",
+          "english_start:`bind_tools`는 호출 요청을 만들며 실제 실행은 애플리케이션이 ",
+          "english_start:`bind_tools()`는 모델이 사용할 수 있는 도구 설명을 붙일 뿐",
+          "english_start:`list_orders_by_status(status)`는 상태 문자열을",
+          "english_start:`@tool`이 설명서를 만들고 실제 CSV 조회는 도구의 `invoke",
+          "english_start:`get_order_by_id(order_id)`는 ID 문자열을 받아 ",
+          "english_start:`@tool`은 이 입력과 반환 목적을 모델이 읽는 설명서로 만들며, 정",
+          "dense_paragraph:첫 출력에서 `content`가 빈 문자열이고 `tool_calls`가 두 개인지 확인합니다. 이것은 모델이"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "06-오류와-읽기-쓰기-분리",
+      "code_cells": 6,
+      "sentences": 90,
+      "counts": {
+        "G1": 5,
+        "G2": 3,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 8,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell7:conditional_expression",
+          "cell7:generator_expression",
+          "cell11:list_comprehension",
+          "cell13:conditional_expression",
+          "cell13:list_comprehension"
+        ],
+        "G2": [
+          "cell7:one_letter_name:r",
+          "cell11:one_letter_name:t",
+          "cell13:one_letter_name:t"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:도구 호출(tool call) 은 구조화된 실행 요청이며 도구 메시지(ToolMessage) 는 실행 결과와 호출 ID를 돌려주는 메시지입니다",
+          "long:모델이 도구를 호출하지 않는 별도 경로에서도 같은 쓰기 API가 사용될 수 있으므로 권한 검사를 도구 설명에만 의존하면 안 됩니다",
+          "english_start:O999가 없다는 사실은 예상 가능한 업무 결과입니다",
+          "english_start:read_order는 예외 대신 ok=False, error=NOT_FO",
+          "english_start:`read_order()`는 예상 가능한 ‘주문 없음’을 예외 대신 `o",
+          "english_start:`NOT_FOUND`는 재시도하면 항상 해결되는 시스템 장애가 아닙니다",
+          "english_start:`read_order()`는 예상 가능한 ‘주문 없음’을 예외 대신 `o",
+          "dense_paragraph:O999가 없다는 사실은 예상 가능한 업무 결과입니다. read_order는 예외 대신 ok=False, e"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

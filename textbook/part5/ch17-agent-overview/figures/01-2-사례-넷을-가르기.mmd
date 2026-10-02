@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  cases["이 절에서 만든 사례 넷<br>기록 줄 넷 · 셋 · 다섯 · 넷"]:::tool
+  count["count_steps<br>고른 쪽이 모델인 줄 세기"]:::flow
+  cls["classify<br>센 수로 구조 이름을 냄"]:::flow
+  wf["워크플로우 둘<br>환불 절차 · 요약 뒤 형식 검사<br>모델이 고른 단계 없음"]:::measure
+  ag["에이전트 후보 둘<br>결함 고치기 · 장애 원인 조사<br>모델이 고른 단계 다섯 · 셋"]:::measure
+  cases --> count
+  count --> cls
+  cls -.->|없으면| wf
+  cls -.->|있으면| ag

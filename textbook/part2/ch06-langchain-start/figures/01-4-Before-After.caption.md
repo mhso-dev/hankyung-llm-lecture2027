@@ -1,0 +1,4 @@
+- 설명 대상 문장: 질문이 `None`이면 요청 전에 `ValidationError`가 났습니다. 기본값을 준 After는 `AIMessage`를 받았습니다.
+- 캡션: get에 기본값이 없던 Before는 요청 전에 ValidationError로 거부되고, 기본값을 준 After는 AIMessage를 받았습니다.
+- 읽는 법: 위 칸 Before(8절 `꺼낸 질문: None` → `오류 종류: ValidationError`·`2 validation errors for HumanMessage`), 아래 칸 After(9절 `꺼낸 질문: AIMessage라고만 답하세요.` → `응답 객체 종류: AIMessage`, assert 통과). 칸마다 왼쪽에서 오른쪽. 빨간 상자는 try/except로 받아 출력했지만 받지 않으면 프로그램이 멈추는 Before 결함 결과(Ch 4 05-3 선례, 규격 §5-3).
+- alt: 위 칸 Before는 초록 상자 꺼낸 질문 None이 파란 상자 invoke가 튜플을 메시지 객체로 바꿈을 거쳐 빨간 상자 ValidationError 요청 전에 거부로 이어지고, 아래 칸 After는 초록 상자 꺼낸 질문 AIMessage라고만 답하세요가 보라 상자 gpt-5.4-mini를 거쳐 노란 상자 응답 객체 종류 AIMessage assert 통과로 이어지는 비교 그림

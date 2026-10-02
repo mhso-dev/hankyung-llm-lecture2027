@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  rec["문의와 지금까지의 기록<br>부른 도구와 결과"]:::tool
+  ask["ask_next<br>요청 글을 만들어 모델에 보냄"]:::flow
+  llm["gpt-5.4-mini<br>다음 행동을 JSON 글로 고름"]:::model
+  stop["stop_reason<br>멈출 까닭이 있는가"]:::flow
+  tool["run_tool<br>이 절의 도구 흉내"]:::flow
+  halt["멈춤<br>모델이 끝을 고름<br>사람 확인<br>같은 도구를 다시 고름"]:::measure
+  limit["멈춤<br>바퀴 한도"]:::measure
+  rec --> ask
+  ask --> llm
+  llm --> stop
+  stop -.->|까닭 없음| tool
+  stop -.->|까닭 있음| halt
+  tool -->|결과를 기록에 더함| rec
+  rec -.->|바퀴를 다 쓰면| limit

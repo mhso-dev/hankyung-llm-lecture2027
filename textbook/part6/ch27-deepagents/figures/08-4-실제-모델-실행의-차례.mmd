@@ -1,0 +1,21 @@
+%%{init: {"sequence": {"messageAlign": "left", "actorMargin": 30, "width": 120}}}%%
+sequenceDiagram
+  participant U as 우리 코드
+  participant A as 보고 에이전트
+  box Lavender
+  participant M as 모델<br>gpt-5.4-mini
+  end
+  U->>A: 질문 한 줄과 files 셋으로 invoke
+  A->>M: 요청 1
+  M-->>A: grep 요청 하나
+  A->>M: 요청 2
+  M-->>A: read_file 요청 하나
+  A->>M: 요청 3
+  M-->>A: write_file 요청 하나
+  Note over A: 승인 노드에서 멈춤
+  A-->>U: 멈춘 도구 요청 write_file · /reports/answer.md
+  U->>A: 코드가 넣은 결정 목록 approve 하나로 이어 감
+  Note over A: 도구 실행 노드가<br>보고 파일을 적음
+  A->>M: 이어 간 뒤 요청
+  M-->>A: 도구 요청 없는 답
+  A-->>U: 결과 메시지와 보고 파일이 든 files

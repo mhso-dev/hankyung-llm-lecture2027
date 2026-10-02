@@ -1,0 +1,50 @@
+--- textbook/part3/qa/language/snapshots/ch12-labs01-06-before-2026-09-09.txt	2026-09-09 23:44:22
++++ textbook/part3/qa/language/snapshots/ch12-labs01-06-final-2026-09-09.txt	2026-09-09 23:53:11
+@@ -23,7 +23,7 @@
+ [markdown cell 9]
+ ## 값 하나를 바꿔 비교
+ 
+-질문과 문서는 유지하고 거리 함수만 코사인에서 L2로 바꿉니다.
++질문과 문서는 유지하고 계산 방식만 코사인 유사도에서 L2 거리로 바꿉니다.
+ 
+ [markdown cell 11]
+ ## 반복 실험과 결과 해석
+@@ -92,7 +92,7 @@
+ [markdown cell 11]
+ ## 실패 원인과 해결 범위
+ 
+-HNSW가 처음 찾은 후보에 필터를 적용하므로 부족할 수 있습니다. 반복 탐색은 더 찾지만 지연 시간과 함께 측정해야 합니다.
++HNSW가 처음 찾은 후보에 필터를 적용하므로 rare 결과가 부족할 수 있습니다. 반복 탐색은 후보를 더 찾지만 지연 시간과 함께 측정해야 합니다.
+ 
+ 
+ ===== labs/part3/ch12-retrieval-tuning/notebooks/04-한국어-Kiwi와-BM25.ipynb =====
+@@ -156,7 +156,7 @@
+ [markdown cell 13]
+ ## 반복 실험과 결과 해석
+ 
+-검색기별 Recall@3과 서로 다르게 성공한 질문을 저장합니다.
++검색기별 Recall@3과 성공 여부가 달랐던 질문을 저장합니다.
+ 
+ 
+ ===== labs/part3/ch12-retrieval-tuning/notebooks/06-RRF-하이브리드-검색.ipynb =====
+@@ -168,17 +168,17 @@
+ [markdown cell 2]
+ ## 실행 환경 준비
+ 
+-05절과 같은 두 검색기의 순위를 reciprocal rank fusion(RRF)으로 합칩니다. API 예상 비용은 미화 0.01달러 미만입니다.
++05절과 같은 두 검색기의 순위를 상호 순위 융합(reciprocal rank fusion, RRF)으로 합칩니다. API 예상 비용은 미화 0.01달러 미만입니다.
+ 
+ [markdown cell 7]
+ ## 기본 실행
+ 
+-RRF는 서로 다른 점수값을 더하지 않고 각 검색기의 순위만 사용합니다.
++RRF는 서로 다른 원점수를 더하지 않고 각 검색기의 순위만 사용합니다.
+ 
+ [markdown cell 9]
+ ## 중간 결과 관찰
+ 
+-한쪽에만 있는 문서도 점수를 받고, 두 순위의 앞쪽에 함께 있는 문서는 두 항을 더합니다.
++한쪽에만 있는 문서도 점수를 받고, 두 순위 모두에서 상위에 있는 문서는 두 항을 더합니다.
+ 
+ [markdown cell 11]
+ ## 값 하나를 바꿔 비교

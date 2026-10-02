@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  cm["두 앱 같음<br>요청 주소 POST /v1/chat<br>같은 몸통<br>보낸 question 빈 글"]
+  subgraph bf["Before · 형식 없는 앱"]
+    direction TB
+    b1["async def chat_before<br>body: dict<br>응답 형식 없음"]:::flow
+    b2["몸통까지 들어감<br>몸통에 들어온 값 빈 글 하나<br>상태 코드 200"]:::fail
+    b3["응답 본문 키 셋<br>messages answer thread_id"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph af["After · 형식 있는 앱"]
+    direction TB
+    a1["async def chat_after<br>body: ChatRequest<br>response_model=<br>ChatResponse"]:::flow
+    a2["몸통 전에 멈춤<br>몸통에 들어온 값 없음<br>상태 코드 422"]:::measure
+    a3["detail 첫 항목<br>string_too_short<br>걸린 자리 body question"]:::measure
+    a1 --> a2 --> a3
+  end
+  cm --> bf
+  cm --> af

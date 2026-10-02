@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  RECORDS["측정 기록 · 메모리는 어림<br>Qwen 한국어 3 · 1.84GB<br>SmolLM2 한국어 1 · 0.5GB"]:::measure
+  LIMIT_TWO["선택 기준<br>정답 3개 이상<br>2.0GB 이하"]:::flow
+  LIMIT_ONE["메모리 기준만 바꿈<br>정답 3개 이상<br>1.0GB 이하"]:::flow
+  CHOSEN_TWO["고름 Qwen<br>SmolLM2는 정답 부족"]:::measure
+  CHOSEN_ONE["고른 후보 없음<br>Qwen은 어림 1.84GB라 초과<br>SmolLM2는 정답 부족"]:::measure
+  NEXT["다음 할 일<br>후보 더 찾기<br>조건 다시 의논"]
+  RECORDS --> LIMIT_TWO
+  RECORDS --> LIMIT_ONE
+  LIMIT_TWO --> CHOSEN_TWO
+  LIMIT_ONE --> CHOSEN_ONE
+  CHOSEN_ONE --> NEXT

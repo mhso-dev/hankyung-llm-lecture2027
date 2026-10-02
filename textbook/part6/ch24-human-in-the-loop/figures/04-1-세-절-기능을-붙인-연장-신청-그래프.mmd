@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  l["노드 look_up_loan<br>남은 날 3을 냄"]:::flow
+  f["03절 값 고쳐 넣기<br>update_state로<br>연장 일수 14를 7로"]:::tool
+  p["노드 plan_extension<br>남은 날 더하기 연장 일수"]:::flow
+  h["사람의 답<br>Command resume으로<br>change · approve"]:::tool
+  a["노드 ask_extension<br>02절 interrupt 한 번<br>허용 답 목록 검사<br>01절 멈춤 표시 뒤<br>approve일 때만 기록"]:::flow
+  c{"조건 함수<br>after_answer"}
+  e(["가상 끝점 END"])
+  l --> p
+  f --> p
+  p --> a
+  h --> a
+  a --> c
+  c -.->|오류 칸에 글 있음<br>이름표 ask_again| a
+  c -.->|오류 칸 빈 글<br>이름표 END| e

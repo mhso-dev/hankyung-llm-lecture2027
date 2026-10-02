@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 320}}}%%
+flowchart LR
+  %% classes
+  subgraph R1 [실행 1]
+    direction TB
+    A1["build_card_path(30)<br>기본 경로 30초까지 기다림"]:::tool
+    C1["응답한 모델 gpt-5.4-mini 두 번<br>출력 64 · 57토큰<br>걸린 초 1.41 · 1.15<br>비용 합 0.000828달러"]:::measure
+    A1 --> C1
+  end
+  subgraph R2 [실행 2]
+    direction TB
+    A2["build_card_path(0.001)<br>기본 경로 0.001초까지 기다림"]:::tool
+    X2["기본 경로 시간 초과<br>출력에 나오지 않음"]
+    C2["응답한 모델 gpt-5.4-nano 두 번<br>출력 70 · 59토큰<br>걸린 초 0.9 · 1.1<br>비용 합 0.000237달러"]:::measure
+    W2["같은 토큰 수를 mini 요금표로<br>합 0.000864달러"]:::measure
+    A2 --> X2 --> C2 --> W2
+  end
+  R1 ~~~ R2

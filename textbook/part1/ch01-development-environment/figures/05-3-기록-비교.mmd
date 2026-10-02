@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  REC["커밋한 기록<br>count = 2"]:::tool
+  subgraph EXP["실험 · 수량을 3으로 저장"]
+    direction LR
+    e1["지금 파일<br>count = 3"]:::tool --> e2["상태 M hello.py<br>바뀐 줄 -count = 2<br>바뀐 줄 +count = 3"]:::measure
+  end
+  subgraph BACK["값 바꿔 보기 · 수량을 2로 되돌림"]
+    direction LR
+    b1["지금 파일<br>count = 2"]:::tool --> b2["상태 출력 0줄"]:::measure
+  end
+  REC -- "git diff<br>기록할 목록과 비교<br>(지금은 기록과 같음)" --> EXP
+  EXP -- "다시 저장" --> BACK

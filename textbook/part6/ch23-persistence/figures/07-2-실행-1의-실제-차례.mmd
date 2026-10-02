@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  s1["invoke 대출 신청<br>스레드 M-0317<br>receive_request 마침"]:::flow
+  s2["record_loan<br>대출 키를 적은 뒤<br>실패 흉내로 멈춤"]:::flow
+  s3["받은 오류 TimeoutError<br>부른 횟수 두 노드 한 번씩"]:::measure
+  s4["파일에 남은 것<br>다음 노드 record_loan<br>체크포인트 셋<br>기록 파일 키 한 줄"]:::measure
+  s5["연결을 닫고<br>새 연결 · 새 그래프<br>실패 흉내를 끄고<br>invoke None"]:::flow
+  s6["record_loan을<br>처음부터 다시 실행<br>키를 찾아 건너뜀"]:::flow
+  s7["이어 간 뒤<br>receive_request 한 번<br>record_loan 두 번<br>칸 notes 신청 받음 · 건너뜀<br>체크포인트 넷<br>기록 파일 키 한 줄"]:::measure
+  s1 --> s2
+  s2 --> s3
+  s3 --> s4
+  s4 --> s5
+  s5 --> s6
+  s6 --> s7

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  s0["가상 시작점 START"]
+  n1["search_distance<br>거리 순위 칸"]:::flow
+  n2["search_words<br>낱말 순위 칸"]:::flow
+  n3["fuse<br>후보 칸"]:::flow
+  n4["pick_report<br>보고 자리 칸"]:::flow
+  n5["make_reply<br>답 칸"]:::flow
+  e0["가상 끝점 END"]
+  s0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> e0

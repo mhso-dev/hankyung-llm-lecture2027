@@ -1,0 +1,19 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant P as 조립 함수 run_pipeline()
+  participant S as 연습용 주문 서비스
+  participant D as 데이터베이스 shop-1.db
+  P->>P: read_csv customers.csv
+  Note over P: 고객 번호가 모두 다른가 True
+  P->>D: INSERT 고객 C001, C002
+  Note over P: 넣지 못한 고객 []
+  P->>S: GET /orders?page=1
+  S-->>P: 주문 O101, O102 · 다음 페이지 2
+  P->>S: GET /orders?page=2
+  S-->>P: 주문 O103 · 다음 페이지 None
+  Note over P: 받은 주문 수 3
+  P->>D: INSERT 주문 O101~O103 · SELECT *
+  D-->>P: 결과 3행
+  P->>D: SELECT … JOIN customers
+  D-->>P: 연결한 행 3개
+  Note over P: 고객별 합계<br>김하나 59000, 이두리 18000

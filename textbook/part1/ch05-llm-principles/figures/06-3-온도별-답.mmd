@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  INPUT["같은 입력 56조각<br>출력 몫 32"]:::tool
+  GREEDY["뽑기를 끈 답 1개<br>끝 표시 있음"]:::measure
+  LOW["temperature 0.3 답 5개<br>서로 다른 답 5<br>끝 표시 4 · 가을 5"]:::measure
+  HIGH["temperature 1.0 답 5개<br>서로 다른 답 5<br>끝 표시 1 · 가을 1"]:::measure
+  INPUT -- "뽑기 끄기" --> GREEDY
+  INPUT -- "시드 5개 · top_p 0.9" --> LOW
+  INPUT -- "시드 5개 · top_p 0.9" --> HIGH

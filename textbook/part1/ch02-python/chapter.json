@@ -1,0 +1,81 @@
+{
+  "part": 1,
+  "part_title": "Part 1 · 개발 기반",
+  "chapter": "ch02-python",
+  "title": "파이썬 프로그래밍",
+  "hours": "총 40h · 강의 12h · 실습 28h",
+  "objectives": [
+    "변수·제어문·자료구조·함수로 작은 프로그램을 작성하고 결과를 설명합니다.",
+    "파일·예외·클래스·모듈·타입힌트를 사용하고 pytest로 결함을 확인합니다.",
+    "확장 경로에서 데이터 검증·패키징·테스트 격리를 적용합니다.",
+    "async/await의 실행 순서를 관찰하고 이벤트 루프를 막는 동기 호출을 수정합니다."
+  ],
+  "lab_path": "labs/part1/ch02-python",
+  "sections": [
+    {
+      "slug": "01-변수와-자료형",
+      "title": "변수와 자료형",
+      "format": "paired"
+    },
+    {
+      "slug": "02-조건문과-반복문",
+      "title": "조건문과 반복문",
+      "format": "paired"
+    },
+    {
+      "slug": "03-자료구조",
+      "title": "자료구조",
+      "format": "paired"
+    },
+    {
+      "slug": "04-함수",
+      "title": "함수",
+      "format": "paired"
+    },
+    {
+      "slug": "05-파일과-예외",
+      "title": "파일과 예외",
+      "format": "paired"
+    },
+    {
+      "slug": "06-클래스",
+      "title": "클래스",
+      "format": "paired"
+    },
+    {
+      "slug": "07-모듈과-타입힌트",
+      "title": "모듈과 타입힌트",
+      "format": "paired"
+    },
+    {
+      "slug": "08-pytest",
+      "title": "pytest",
+      "format": "paired"
+    },
+    {
+      "slug": "09-데코레이터와-컨텍스트-매니저",
+      "title": "데코레이터와 컨텍스트 매니저",
+      "format": "paired"
+    },
+    {
+      "slug": "10-Pydantic",
+      "title": "Pydantic",
+      "format": "paired"
+    },
+    {
+      "slug": "11-패키징과-테스트-격리",
+      "title": "패키징과 테스트 격리",
+      "format": "paired"
+    },
+    {
+      "slug": "12-async와-await",
+      "title": "async와 await",
+      "format": "paired"
+    },
+    {
+      "slug": "13-파이썬-실습",
+      "title": "파이썬 실습: 주문 파일로 합계 내기",
+      "format": "experiment"
+    }
+  ]
+}

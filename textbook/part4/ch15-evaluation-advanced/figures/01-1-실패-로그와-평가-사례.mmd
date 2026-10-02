@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  dev["Ch 12 개발 기록<br>서른여섯 줄"]:::tool
+  test["Ch 12 시험 기록<br>열다섯 문항"]:::tool
+  cut["정답 자리를 세고<br>자르는 자리 1로 가르기"]:::flow
+  log["실패 로그 스물일곱 줄<br>답 칸은 없음"]:::measure
+  cases["이 챕터 자료 파일<br>평가 사례 세 건"]:::tool
+  target["답 칸이 있는 세 건<br>답 쪽 평가 대상"]:::measure
+  both["Q090은 실패 로그와<br>평가 사례에 모두 있음"]:::measure
+  dev --> cut
+  test --> cut
+  cut --> log
+  cases --> target
+  log --> both
+  target --> both

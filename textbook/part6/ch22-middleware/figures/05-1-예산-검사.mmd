@@ -1,0 +1,7 @@
+flowchart TD
+  %% classes
+  s1["모델을 부르기 직전"]:::flow --> q1{"쓴 토큰 ≥ 한도?"}
+  q1 -- "예" --> b1["안내 AIMessage 반환<br>모델 호출 없음"]:::fail
+  q1 -- "아니요" --> m1["모델 호출"]:::model
+  m1 --> u1["after_model 훅<br>쓴 토큰 더하기"]:::measure
+  u1 -. "다음 호출" .-> s1

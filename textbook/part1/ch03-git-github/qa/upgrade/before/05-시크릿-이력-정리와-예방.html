@@ -1,0 +1,342 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시크릿 이력 정리와 예방 — Ch 3 · Git &amp; GitHub 협업</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 3 · Git &amp; GitHub 협업</p>
+<h1>시크릿 이력 정리와 예방</h1><div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>파일 삭제와 Git 이력에서 경로를 제거하는 작업의 차이를 설명할 수 있습니다.</li><li>격리된 더미 저장소에서 <code>git-filter-repo</code>로 특정 경로의 이력을 재작성할 수 있습니다.</li><li>실제 자격 증명 노출 시 폐기·교체, 협업 조율, 예방 검사가 모두 필요한 이유를 설명할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>API 키나 접근 토큰을 커밋한 뒤 현재 파일에서 삭제하면 작업 폴더에는 보이지 않습니다. 그러나 이전 커밋을 읽을 수 있는 사람은 여전히 값을 찾을 수 있습니다. 공개 저장소의 복제본, 포크, 캐시, 빌드 로그로 값이 복사됐을 가능성도 있습니다. 따라서 실제 자격 증명 사고의 첫 조치는 Git 명령이 아니라 발급 서비스에서 값을 폐기하거나 교체하는 일입니다. 이력 정리는 노출 범위를 줄이고 저장소를 정돈하는 후속 조치입니다. 이 절은 실제로 사용할 수 없는 더미 문자열과 임시 원격만 사용해 파일 삭제가 부족한 이유를 관찰하고, 예방과 대응의 순서를 구분합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>01절에서 <code>.gitignore</code>가 아직 추적하지 않는 파일을 제외하며 과거 이력에는 소급 적용되지 않음을 확인했습니다. 02절에서는 원격에 push한 커밋이 다른 저장소로 복제될 수 있음을 확인했습니다. 04절에서는 공개 이력을 보존하는 revert를 배웠습니다. 자격 증명은 이전 커밋에서도 읽을 수 없어야 하므로 일반 revert만으로 해결되지 않습니다. 이번 실습의 문자열 <code>DEMO-ONLY-NOT-A-REAL-SECRET</code>은 어떤 서비스에서도 인증에 사용할 수 없는 교육용 표시입니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>복사된 열쇠는 문에서 무효화합니다</h3><p>
+출입 열쇠 사진이 공개됐다면 게시물을 지우기 전에 기존 열쇠가 문을 열지 못하게 해야 합니다. <strong>시크릿(secret)</strong>은 API 키, 접근 토큰, 비밀번호처럼 권한을 부여하는 값입니다. 실제 값이 공개되면 먼저 발급 서비스에서 폐기하거나 교체합니다. <code>.env</code>를 작업 폴더에서 삭제하고 다음 커밋에 기록해도 이전 커밋 객체에는 과거 내용이 남습니다. <code>git show &lt;커밋&gt;:.env</code>에서 콜론 앞은 읽을 커밋, 뒤는 그 커밋 안의 파일 경로입니다.</p><p><code>.gitignore</code>는 아직 추적하지 않는 파일이 기본 add 대상에 포함되지 않게 합니다. <code>git check-ignore -v .env</code>의 <code>-v</code>는 적용된 규칙과 규칙 파일을 표시합니다. <code>git ls-files .env</code>가 비어 있으면 색인에 등록되지 않았다는 뜻입니다. 이미 커밋한 파일, 로그에 출력한 값, 채팅이나 빌드 시스템으로 복사된 값에는 이 규칙이 소급 적용되지 않습니다.</p><p>실제 값이 공개됐다면 먼저 발급 서비스에서 <strong>폐기(revoke)</strong>하거나 <strong>교체(rotate)</strong>합니다. 저장소 이력을 정리하는 동안 누군가 이미 값을 복사했을 수 있기 때문입니다. 값의 권한을 없앤 뒤 저장소 관리자와 이력 재작성 범위를 정하고, 호스팅 서비스의 캐시·포크·열린 PR에 대한 제거 절차를 확인합니다.</p><h3>이력 재작성 명령의 대상을 읽습니다</h3><p><strong>이력 재작성(history rewriting)</strong>은 조건에 맞는 새 커밋 이력을 만드는 작업입니다. <code>git-filter-repo</code>는 이를 수행하는 도구입니다. <code>git filter-repo --path .env --invert-paths</code>에서 <code>--path .env</code>는 선택할 경로를 지정하고, <code>--invert-paths</code>는 선택을 반대로 바꾸어 그 경로를 제외합니다. 파일이 포함됐던 커밋과 그 뒤 자손의 해시가 달라집니다.</p><p><code>git clone --mirror</code>는 일반 작업 폴더 없이 브랜치와 태그 등 참조를 넓게 복제합니다. 정리 뒤 <code>git push --force --mirror</code>는 원격 참조를 새 이력에 맞춰 강제로 갱신합니다. <code>--force</code>는 협업자의 기존 이력과 충돌할 수 있으므로 실제 저장소에서는 관리자 조율과 백업·검증 없이 실행하지 않습니다. 실습 출력의 경로 없음과 값 커밋 0건은 임시 mirror에서 검사한 참조 범위만 증명합니다.</p><p>예방은 여러 층으로 구성합니다. <code>.gitignore</code>로 흔한 환경 파일을 제외하고, 값이 비어 있는 <code>settings.example</code>을 공유하며, 커밋 전에 스테이징한 변경을 직접 읽습니다. 저장소의 시크릿 검사 도구와 호스팅 서비스의 차단 기능도 사용합니다. 한 층이 누락을 발견하면 실제 원격에 게시되기 전에 멈출 수 있습니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 695" width="720" height="695" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-05-secret-response desc-05-secret-response">
+<title id="title-05-secret-response">실제 시크릿 유출 시 대응 순서</title>
+<desc id="desc-05-secret-response">실제 유출 시 자격 증명을 폐기·교체한 뒤 협업자와 이력 재작성을 조율합니다. 실습은 가상 문자열의 이력 정리·원격 갱신·재검사만 실행합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="720" height="695" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">실제 시크릿 유출 시 대응 순서</tspan></text>
+<rect x="80" y="75" width="560" height="76" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="360.0" y="101.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">노출 발견</tspan><tspan x="360.0" dy="23.0">권한과 공개 범위 확인</tspan></text>
+<polyline points="360,151 360,185" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="185" width="560" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="211.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">실제 유출 시 폐기·교체</tspan><tspan x="360.0" dy="23.0">외부 서비스에서 수행</tspan></text>
+<polyline points="360,261 360,295" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="295" width="560" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="321.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">관리자·협업자 조율</tspan><tspan x="360.0" dy="23.0">재작성 범위 결정</tspan></text>
+<polyline points="360,371 360,405" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="405" width="560" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="431.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">이력 정리와 원격 갱신</tspan><tspan x="360.0" dy="23.0">경로·값 재검사</tspan></text>
+<polyline points="360,481 360,515" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="515" width="560" height="76" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="360.0" y="541.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">새 이력 재복제</tspan><tspan x="360.0" dy="23.0">경로·값 부재 확인</tspan></text>
+<text x="360.0" y="669.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg></div><p>실제 유출에서는 제공자에서 자격 증명을 먼저 폐기·교체합니다. 그 뒤 저장소 관리자와 협업자가 재작성 범위를 정하고 이력을 정리·원격 갱신한 뒤 새 이력을 다시 받습니다. 이 노트북은 외부 서비스의 폐기·교체를 실행하지 않으며, 더미 문자열의 경로·값이 격리된 원격의 검사 범위에서 사라졌는지만 확인합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>준비 셀은 임시 bare 원격과 작업 저장소를 만들고 안전한 앱을 <code>main</code>에 게시합니다. 자격 증명 역할을 하는 변수 이름을 사용하지만 값은 명백한 더미입니다. 다음 셀은 <code>.env</code>를 무시하도록 설정하고 <code>git check-ignore -v</code>로 실제 적용 규칙을 확인합니다. <code>git ls-files .env</code>가 빈 문자열이므로 색인에 포함되지 않았습니다.</p><p>공유 가능한 <code>settings.example</code>에는 실제 값 대신 <code>replace-me</code>를 적습니다. 커밋 전에 <code>git diff --cached</code>를 읽고 더미 자격 증명 문자열조차 포함되지 않았는지 검사합니다. 실제 조직에서는 알려진 접두사, 문자열의 무작위성 정도, 제공자 규칙을 검사하는 전용 도구를 함께 사용합니다. 문자열 한 개를 검사한 이번 셀이 모든 종류의 시크릿을 찾는다고 해석해서는 안 됩니다.</p><section class="notebook" data-notebook="05-시크릿-이력-정리와-예방" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="05-시크릿-이력-정리와-예방.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsi5ztgazrpr8g7J2066ClIOygleumrOyZgCDsmIjrsKlcbiIsCiAgICAiXG4iLAogICAgIuuqqOuToCDsoIDsnqXshozripQg7J6E7IucIO2PtOuNlOyXkCDrp4zrk6TrqbAg7Iuk7KCcIEdpdEh1YiDqs4TsoJXsnbTrgpgg7JuQ6rKpIOyggOyepeyGjOulvCDrs4Dqsr3tlZjsp4Ag7JWK7Iq164uI64ukLlxuIiwKICAgICJcbiIsCiAgICAiIyMg66qF66C57J2EIOyLpO2Wie2VmOq4sCDsoITsl5Ag7JWM7JWE65GYIEdpdCDsg4Htg5xcbiIsCiAgICAiXG4iLAogICAgIkdpdOydgCDtjIzsnbzsnYQg7IS4IOyekOumrOyXkOyEnCDrtIXri4jri6QuICoq7J6R7JeFIO2PtOuNlCh3b3JraW5nIHRyZWUpKiog64qUIOyngOq4iCDtjrjsp5HtlZjripQg7YyM7J287J20IOyeiOuKlCDsnpDrpqzsnoXri4jri6QuICoq7IOJ7J24KGluZGV4KSoqIOydgCDri6TsnYwg7Luk67CL7JeQIOuEo+ydhCDtjIzsnbwg7IOB7YOc66W8IOqzqOudvCDrkZDripQg7J6Q66as7J2066mwLCDsiqTthYzsnbTsp5Ug7JiB7JetKHN0YWdpbmcgYXJlYSnsnbTrnbzqs6Drj4Qg7ZWp64uI64ukLiAqKuy7pOuwiyhjb21taXQpKiog7J2AIOyDieyduOyXkCDqs6Drpbgg7IOB7YOc66W8IOyggOyepeyGjCDsnbTroKXsl5Ag6riw66Gd7ZWcIOqysOqzvOyeheuLiOuLpC4g65Sw65287IScIGBnaXQgYWRkIGFwcC5weWDripQg7YyM7J287J2EIOyYgeq1rCDsoIDsnqXtlZjripQg66qF66C57J20IOyVhOuLiOudvCDtmITsnqwgYGFwcC5weWDrpbwg7IOJ7J247JeQIOyYrOumrOuKlCDrqoXroLnsnoXri4jri6QuIOydtOyWtOyEnCBgZ2l0IGNvbW1pdCAtbSBcIuuplOyLnOyngFwiYOulvCDsi6TtlontlbTslbwg6re4IOyDge2DnOqwgCDsu6TrsIvsnLzroZwg6riw66Gd65Cp64uI64ukLlxuIiwKICAgICJcbiIsCiAgICAiKipIRUFEKiog64qUIO2YhOyerCDssrTtgazslYTsm4PtlZwg7Luk67CL7J2EIOqwgOumrO2CteuLiOuLpC4g67O07Ya1IEhFQUTripQgYG1haW5gIOqwmeydgCAqKuu4jOuenOy5mChicmFuY2gpKiog7J2066aE7J2EIOqwgOumrO2CpOqzoCwg67iM656c7LmYIOydtOumhOydgCDri6Tsi5wg7LWc7IugIOy7pOuwi+ydhCDqsIDrpqztgrXri4jri6QuIOyDiCDsu6TrsIvsnYQg66eM65Ok66m0IO2YhOyerCDruIzrnpzsuZjqsIAg7IOIIOy7pOuwi+ycvOuhnCDsnbTrj5ntlanri4jri6QuIOydtCDsoIjsl5DshJzripQg67iM656c7LmY7JmAIO2DnOq3uOyymOufvCDsu6TrsIvsnYQg6rCA66as7YKk64qUIOydtOumhOydhCDrrLbslrQg7LC47KGwKHJlZmVyZW5jZSnrnbzqs6Ag67aA66aF64uI64ukLlxuIiwKICAgICJcbiIsCiAgICAi66qF66C57J2AIOyZvOyqveu2gO2EsCBgZ2l0YCDihpIg7ZWY7JyEIOuqheuguSDihpIg7Ji17IWYIOKGkiDrjIDsg4HsnLzroZwg7J297Iq164uI64ukLiDsmIjrpbwg65Ok7Ja0IGBnaXQgc3RhdHVzIC0tc2hvcnRg7JeQ7IScIGBzdGF0dXNg64qUIOyDge2DnOulvCDrs7Tqs6AsIGAtLXNob3J0YOuKlCDsp6fsnYAg7ZiV7Iud7Jy866GcIO2RnOyLnO2VmOudvOuKlCDsmLXshZjsnoXri4jri6QuIOy9lOuTnOydmCBgZ2l0KFwic3RhdHVzXCIsIFwiLS1zaG9ydFwiLCBjd2Q9cmVwbylg64qUIO2EsOuvuOuEkOyXkOyEnCDqsJnsnYAg66qF66C57J2EIOyLpO2Wie2VmOuPhOuhnSDsnbjsnpDrpbwg64KY64iIIFB5dGhvbiDtkZztmITsnoXri4jri6QuXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLsmIjsoJwg66y47J6Q7Je07J2AIOyLpOygnCDshJzruYTsiqTsl5DshJwg7IKs7Jqp7ZWgIOyImCDsl4bripQg642U66+4IOyekOqyqSDspp3rqoXsnoXri4jri6QuICoq7Iuc7YGs66a/KHNlY3JldCkqKiDsnYAgQVBJIO2CpCwg7KCR6re8IO2GoO2BsCwg67mE67CA67KI7Zi47LKY65+8IOq2jO2VnOydhCDrtoDsl6ztlZjripQg6rCS7J6F64uI64ukLiDsi6TsoJwg6rCS7J20IOuFuOy2nOuQmOuptCBHaXQg7J2066ClIOygleumrOulvCDquLDri6Trpqzsp4Ag66eQ6rOgIOuwnOq4iSDshJzruYTsiqTsl5DshJwg66i87KCAIO2PkOq4sO2VmOqxsOuCmCDqtZDssrTtlbTslbwg7ZWp64uI64ukLiDsnbTrr7gg67O17KCc65CY6rGw64KYIOuhnOq3uOyXkCDrgqjsnYAg6rCS7J2AIOyggOyepeyGjCDtjIzsnbzsnYQg7KeA7JuM64+EIOuLpOyLnCDthrXsoJztlaAg7IiYIOyXhuq4sCDrlYzrrLjsnoXri4jri6QuXG4iLAogICAgIlxuIiwKICAgICLsnbQg7Iuk7Iq17J2AIGBERU1PLU9OTFktTk9ULUEtUkVBTC1TRUNSRVRg66eMIOyCrOyaqe2VqeuLiOuLpC4g7JuQ6rKp64+EIOyehOyLnCDtj7TrjZTsnZggYmFyZSDsoIDsnqXshozsnbTrr4DroZwg7Jm467aA7JeQIOqyjOyLnOuQmOyngCDslYrsirXri4jri6QuIOydtO2bhCDstpzroKXsnZgg4oCcMOqxtOKAneydgCDsnbQg7J6E7IucIOyggOyepeyGjOyXkOyEnCDqsoDsgqztlZwg7LC47KGw7JeQIOuNlOuvuCDqsJLsnbQg7JeG64uk64qUIOucu+ydtOupsCDsmbjrtoAg7LqQ7Iuc64KYIOuLpOuluCDrs7XsoJzrs7jquYzsp4Ag7IKt7KCc7ZaI64uk64qUIOucu+ydgCDslYTri5nri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyNDozNS44Njg5NThaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyNDozNS44Njg3MjRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyNDozNS44NzY2NjJaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjI0OjM1Ljg3NTkxNVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogW10sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDshYDsnbQg66eM65OgIOyggOyepeyGjOunjCDsgqzsmqntlZjripQg7J6E7IucIOyekeyXhSDtj7TrjZTrpbwg7KSA67mE7ZWp64uI64ukLlxuIiwKICAgICJpbXBvcnQgc3VicHJvY2Vzc1xuIiwKICAgICJpbXBvcnQgc3lzXG4iLAogICAgImltcG9ydCB0ZW1wZmlsZVxuIiwKICAgICJmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGhcbiIsCiAgICAid29ya3NwYWNlID0gdGVtcGZpbGUuVGVtcG9yYXJ5RGlyZWN0b3J5KHByZWZpeD1cImdpdC1sZXNzb24tXCIpXG4iLAogICAgInJvb3QgPSBQYXRoKHdvcmtzcGFjZS5uYW1lKVxuIiwKICAgICIjIGN3ZOuKlCDrqoXroLnsnYQg7Iuk7ZaJ7ZWgIO2PtOuNlOydtOupsCBjaGVjaz1UcnVl64qUIOuqheuguSDsi6TtjKjrpbwg7JiI7Jm466GcIOyVjOumveuLiOuLpC5cbiIsCiAgICAiZGVmIGdpdCgqYXJnczogc3RyLCBjd2Q6IFBhdGggfCBOb25lID0gTm9uZSwgY2hlY2s6IGJvb2wgPSBUcnVlKSAtPiBzdHI6XG4iLAogICAgIiAgICBcIlwiXCLsp4DsoJXtlZwg7J6E7IucIOyggOyepeyGjOyXkOyEnCBHaXQg66qF66C57J2EIOyLpO2Wie2VqeuLiOuLpC5cIlwiXCJcbiIsCiAgICAiICAgIHJlc3VsdCA9IHN1YnByb2Nlc3MucnVuKFtcImdpdFwiLCAqYXJnc10sIGN3ZD1jd2Qgb3Igcm9vdCxcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICAgICAgICAgIHRleHQ9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgY2hlY2s9Y2hlY2spXG4iLAogICAgIiAgICByZXR1cm4gcmVzdWx0LnN0ZG91dC5zdHJpcCgpIG9yIHJlc3VsdC5zdGRlcnIuc3RyaXAoKVxuIiwKICAgICJkZWYgY29uZmlndXJlKHJlcG86IFBhdGgpIC0+IE5vbmU6XG4iLAogICAgIiAgICBcIlwiXCLsi6TsirUg7KCA7J6l7IaM7JeQ66eMIOyekeyEseyekCDsoJXrs7Trpbwg7ISk7KCV7ZWp64uI64ukLlwiXCJcIlxuIiwKICAgICIgICAgZ2l0KFwiY29uZmlnXCIsIFwidXNlci5uYW1lXCIsIFwiR2l0IExlYXJuZXJcIiwgY3dkPXJlcG8pXG4iLAogICAgIiAgICBnaXQoXCJjb25maWdcIiwgXCJ1c2VyLmVtYWlsXCIsIFwibGVhcm5lckBleGFtcGxlLmludmFsaWRcIiwgY3dkPXJlcG8pIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyNDozNS44Nzg1OTNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyNDozNS44Nzg0MzFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyNDozNi4wMDk3ODhaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjI0OjM2LjAwOTM0MVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLrjZTrr7jrp4wg7IKs7JqpOiBERU1PLU9OTFktTk9ULUEtUkVBTC1TRUNSRVRcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsi6TsoJwg7J247Kad7JeQIOyCrOyaqe2VoCDsiJgg7JeG64qUIOuNlOuvuCDrrLjsnpDsl7Trp4wg7IKs7Jqp7ZWp64uI64ukLlxuIiwKICAgICJEVU1NWSA9IFwiREVNTy1PTkxZLU5PVC1BLVJFQUwtU0VDUkVUXCJcbiIsCiAgICAicmVtb3RlID0gcm9vdCAvIFwic2VjcmV0LXJlbW90ZS5naXRcIlxuIiwKICAgICJnaXQoXCJpbml0XCIsIFwiLS1iYXJlXCIsIFwiLS1pbml0aWFsLWJyYW5jaD1tYWluXCIsIHJlbW90ZS5hc19wb3NpeCgpKVxuIiwKICAgICJyZXBvID0gcm9vdCAvIFwic2VjcmV0LWRlbW9cIlxuIiwKICAgICJnaXQoXCJjbG9uZVwiLCByZW1vdGUuYXNfcG9zaXgoKSwgcmVwby5hc19wb3NpeCgpKVxuIiwKICAgICJjb25maWd1cmUocmVwbylcbiIsCiAgICAiKHJlcG8gLyBcImFwcC5weVwiKS53cml0ZV90ZXh0KCdwcmludChcInNhZmUgYXBwXCIpXFxuJywgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJnaXQoXCJhZGRcIiwgXCJhcHAucHlcIiwgY3dkPXJlcG8pXG4iLAogICAgImdpdChcImNvbW1pdFwiLCBcIi1tXCIsIFwiZmVhdDog7JWI7KCE7ZWcIOyVsSDsi5zsnpFcIiwgY3dkPXJlcG8pXG4iLAogICAgImdpdChcInB1c2hcIiwgXCItdVwiLCBcIm9yaWdpblwiLCBcIm1haW5cIiwgY3dkPXJlcG8pXG4iLAogICAgInByaW50KFwi642U66+466eMIOyCrOyaqTpcIiwgRFVNTVkpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOq4sOuzuCDsi6TtlolcbiIsCiAgICAiXG4iLAogICAgIuy2lOyggSDsoITsl5DripQgYC5naXRpZ25vcmVg7JmAIOyKpO2FjOydtOynle2VnCDrs4Dqsr0g6rKA7IKs66W8IO2VqOq7mCDsoIHsmqntlanri4jri6QuIGBnaXQgY2hlY2staWdub3JlIC12IC5lbnZg7JeQ7IScIGAtdmDripQg7Ja065akIOq3nOy5meydtCDslrTripAg7YyM7J287JeQIOyggeyaqeuQkOuKlOyngCDrs7Tsl6wg7KSN64uI64ukLiBgZ2l0IGxzLWZpbGVzIC5lbnZg64qUIOyDieyduOyXkCDrk7HroZ3rkJwg6rK966Gc66W8IOywvuycvOupsCwg67mIIOy2nOugpeydtOuptCBgLmVudmDqsIAg7ZiE7J6sIOy7pOuwiyDtm4Trs7Tsl5Ag7Y+s7ZWo65CY7KeAIOyViuyVmOuLpOuKlCDrnLvsnoXri4jri6QuXG4iLAogICAgIlxuIiwKICAgICJgLmdpdGlnbm9yZWDripQg7JWE7KeBIOy2lOygge2VmOyngCDslYrripQg6rK966Gc66W8IOq4sOuzuCBgZ2l0IGFkZGAg64yA7IOB7JeQ7IScIOygnOyZuO2VoCDrv5Ag7YyM7J287J2EIOyVlO2YuO2ZlO2VmOqxsOuCmCDqs7zqsbAg7Luk67CL7J2EIOyngOyasOyngCDslYrsirXri4jri6QuIGBnaXQgZGlmZiAtLWNhY2hlZCAtLSBzZXR0aW5ncy5leGFtcGxlYOydgCDri6TsnYwg7Luk67CL7JeQIOuTpOyWtOqwiCDsi6TsoJwg64K07Jqp7J2EIOuztOyXrCDso7zrr4DroZwg7Luk67CLIOyngeyghCDsi5ztgazrpr8g6rKA7IKsIOyngOygkOycvOuhnCDsgqzsmqntlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyNDozNi4wMTA2MjhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyNDozNi4wMTA1NTZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyNDozNi4wNTE0NTNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjI0OjM2LjA1MTEyOFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICIuZ2l0aWdub3JlOjE6LmVudlx0LmVudlxuIiwKICAgICAgIuyDieyduOyXkCDsl4bsnYw6IFRydWVcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyAuZW5266W8IOy2lOygge2VmOq4sCDsoITsl5Ag66y07IucIOq3nOy5meydtCDsoIHsmqnrkJjripTsp4Ag7ZmV7J247ZWp64uI64ukLlxuIiwKICAgICIocmVwbyAvIFwiLmdpdGlnbm9yZVwiKS53cml0ZV90ZXh0KFwiLmVudlxcblwiLCBlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgIihyZXBvIC8gXCIuZW52XCIpLndyaXRlX3RleHQoZlwiREVNT19BUElfS0VZPXtEVU1NWX1cXG5cIiwgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJnaXQoXCJhZGRcIiwgXCIuZ2l0aWdub3JlXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJnaXQoXCJjb21taXRcIiwgXCItbVwiLCBcImNob3JlOiDtmZjqsr0g7YyM7J28IOygnOyZuFwiLCBjd2Q9cmVwbylcbiIsCiAgICAicHJpbnQoZ2l0KFwiY2hlY2staWdub3JlXCIsIFwiLXZcIiwgXCIuZW52XCIsIGN3ZD1yZXBvKSlcbiIsCiAgICAicHJpbnQoXCLsg4nsnbjsl5Ag7JeG7J2MOlwiLCBnaXQoXCJscy1maWxlc1wiLCBcIi5lbnZcIiwgY3dkPXJlcG8pID09IFwiXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOqwkiDtlZjrgpjrpbwg67CU6r+UIOqygOyCrFxuIiwKICAgICJcbiIsCiAgICAi7JWI7KCE7ZWcIOyEpOyglSDsmIjsi5zripQg7Luk67CL7ZWgIOyImCDsnojsp4Drp4wg642U66+4IO2CpCDtjKjthLTsnbQg7J6I7Jy866m0IOqygOyCrOulvCDsi6TtjKjroZwg7YyQ7KCV7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImNlbGwtMDgiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MjQ6MzYuMDUyMzcwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MjQ6MzYuMDUyMzA0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MjQ6MzYuMDgzODc4WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoyNDozNi4wODM0MDFaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi642U66+4IOyekOqyqSDspp3rqoUg67Cc6rKsOiBGYWxzZVxuIiwKICAgICAgImRpZmYgLS1naXQgYS9zZXR0aW5ncy5leGFtcGxlIGIvc2V0dGluZ3MuZXhhbXBsZVxuIiwKICAgICAgIm5ldyBmaWxlIG1vZGUgMTAwNjQ0XG4iLAogICAgICAiaW5kZXggMDAwMDAwMC4uMDJlM2Q3M1xuIiwKICAgICAgIi0tLSAvZGV2L251bGxcbiIsCiAgICAgICIrKysgYi9zZXR0aW5ncy5leGFtcGxlXG4iLAogICAgICAiQEAgLTAsMCArMSBAQFxuIiwKICAgICAgIitERU1PX0FQSV9LRVk9cmVwbGFjZS1tZVxuIiwKICAgICAgIuyViOyghO2VnCDshKTsoJUg7JiI7IucIOy7pOuwiyDsmYTro4xcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsiqTthYzsnbTsp5XtlZwg67OA6rK97J2AIOydtOuyiCDsu6TrsIvsl5Ag7Iuk7KCc66GcIO2PrO2VqOuQoCDrgrTsmqnrp4wg67O07JesIOykjeuLiOuLpC5cbiIsCiAgICAiKHJlcG8gLyBcInNldHRpbmdzLmV4YW1wbGVcIikud3JpdGVfdGV4dChcIkRFTU9fQVBJX0tFWT1yZXBsYWNlLW1lXFxuXCIsIGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAiZ2l0KFwiYWRkXCIsIFwic2V0dGluZ3MuZXhhbXBsZVwiLCBjd2Q9cmVwbylcbiIsCiAgICAic3RhZ2VkID0gZ2l0KFwiZGlmZlwiLCBcIi0tY2FjaGVkXCIsIFwiLS1cIiwgXCJzZXR0aW5ncy5leGFtcGxlXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJjb250YWluc19kdW1teSA9IERVTU1ZIGluIHN0YWdlZFxuIiwKICAgICJwcmludChcIuuNlOuvuCDsnpDqsqkg7Kad66qFIOuwnOqyrDpcIiwgY29udGFpbnNfZHVtbXkpXG4iLAogICAgInByaW50KHN0YWdlZClcbiIsCiAgICAiYXNzZXJ0IG5vdCBjb250YWluc19kdW1teVxuIiwKICAgICJnaXQoXCJjb21taXRcIiwgXCItbVwiLCBcImRvY3M6IOyEpOyglSDsmIjsi5wg7LaU6rCAXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJwcmludChcIuyViOyghO2VnCDshKTsoJUg7JiI7IucIOy7pOuwiyDsmYTro4xcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TtjKgg7J6s7ZiEXG4iLAogICAgIlxuIiwKICAgICLtjIzsnbzsnYQg64uk7J2MIOy7pOuwi+yXkOyEnCDsgq3soJztlbTrj4Qg7J207KCEIOy7pOuwiyDqsJ3ssrTsl5DripQg64K07Jqp7J20IOuCqOyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjZWxsLTEwIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjI0OjM2LjA4NDc5NloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjI0OjM2LjA4NDcyM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjI0OjM2LjE5NTMwOFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjQ6MzYuMTk0ODkzWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7ZiE7J6sIO2MjOydvCDsobTsnqw6IEZhbHNlXG4iLAogICAgICAi7J207KCEIOy7pOuwiyDrgrTsmqk6IERFTU9fQVBJX0tFWT1ERU1PLU9OTFktTk9ULUEtUkVBTC1TRUNSRVRcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDqsIDsg4Eg7YKkIO2MjOydvOydhCDri6TsnYwg7Luk67CL7JeQ7IScIOyCreygnO2VtOuPhCDqs7zqsbAg7Luk67CL7JeQ64qUIOqwkuydtCDrgqjsirXri4jri6QuXG4iLAogICAgImdpdChcImNoZWNrLWlnbm9yZVwiLCBcIi1xXCIsIFwiLmVudlwiLCBjd2Q9cmVwbylcbiIsCiAgICAiZ2l0KFwiYWRkXCIsIFwiLWZcIiwgXCIuZW52XCIsIGN3ZD1yZXBvKVxuIiwKICAgICJnaXQoXCJjb21taXRcIiwgXCItbVwiLCBcInRlc3Q6IOuNlOuvuCDtgqTrpbwg7J6Y66q7IOq4sOuhnVwiLCBjd2Q9cmVwbylcbiIsCiAgICAibGVha19jb21taXQgPSBnaXQoXCJyZXYtcGFyc2VcIiwgXCJIRUFEXCIsIGN3ZD1yZXBvKVxuIiwKICAgICJnaXQoXCJybVwiLCBcIi5lbnZcIiwgY3dkPXJlcG8pXG4iLAogICAgImdpdChcImNvbW1pdFwiLCBcIi1tXCIsIFwiZml4OiDtmZjqsr0g7YyM7J28IOyCreygnFwiLCBjd2Q9cmVwbylcbiIsCiAgICAiZ2l0KFwicHVzaFwiLCBjd2Q9cmVwbylcbiIsCiAgICAiaGlzdG9yaWMgPSBnaXQoXCJzaG93XCIsIGZcIntsZWFrX2NvbW1pdH06LmVudlwiLCBjd2Q9cmVwbylcbiIsCiAgICAicHJpbnQoXCLtmITsnqwg7YyM7J28IOyhtOyerDpcIiwgKHJlcG8gLyBcIi5lbnZcIikuZXhpc3RzKCkpXG4iLAogICAgInByaW50KFwi7J207KCEIOy7pOuwiyDrgrTsmqk6XCIsIGhpc3RvcmljLnN0cmlwKCkpXG4iLAogICAgImFzc2VydCBEVU1NWSBpbiBoaXN0b3JpYyIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7IiY7KCVXG4iLAogICAgIlxuIiwKICAgICLqsqnrpqzrkJwg7JiI7KCcIOyggOyepeyGjOydmCDrqqjrk6Ag7LC47KGw7JeQ7IScIGAuZW52YCDqsr3roZzrpbwg7KCc6rGw7ZWcIOuSpCDsm5DqsqnsnYQg6rCV7KCc66GcIOqwseyLoO2VqeuLiOuLpC4gYGdpdCBmaWx0ZXItcmVwbyAtLWZvcmNlYOydmCBgLS1mb3JjZWDripQg7IOI66GcIOuzteygnO2VnCDsoIDsnqXshozsnbjsp4Ag7ZmV7J247ZWY64qUIOyViOyghCDqsoDsgqzrpbwg7JmE7ZmU7ZWp64uI64ukLiDsnbQg7Iuk7Iq17J2AIOuwqeq4iCDrp4zrk6Ag7J6E7IucIG1pcnJvcuyXkOunjCDsgqzsmqntlZjrqbAg7Iuk7KCcIOyekeyXhSDsoIDsnqXshozsl5DshJwg7Iuk7ZaJ7ZWgIOydtOycoOqwgCDrkJjsp4Ag7JWK7Iq164uI64ukLlxuIiwKICAgICJcbiIsCiAgICAiYGdpdCByZXYtbGlzdCAtLW9iamVjdHMgLS1hbGxg7J2YIOqwgSDtlonsnYAg6rCd7LK0IO2VtOyLnOyZgCDqsr3roZzrpbwg64u07Iq164uI64ukLiBgb2JqZWN0cy5zcGxpdGxpbmVzKClg6rCAIO2WiSDrqqnroZ3snYQg66eM65Ok6rOgLCBgbGluZS5lbmRzd2l0aChcIiAuZW52XCIpYOuKlCDqs7XrsLEg65KkIOqyveuhnOqwgCDsoJXtmZXtnoggYC5lbnZg66GcIOuBneuCmOuKlCDtlonsnbjsp4Ag6rKA7IKs7ZWp64uI64ukLiBgYW55KC4uLilg64qUIOq3uOufsCDtlonsnbQg7ZWY64KY652864+EIOyeiOycvOuptCBgVHJ1ZWAsIO2VmOuCmOuPhCDsl4bsnLzrqbQgYEZhbHNlYOulvCDrsJjtmZjtlanri4jri6QuIOuUsOudvOyEnCDstpzroKUgYEZhbHNlYOuKlCDqsoDsgqztlZwg66qo65OgIOywuOyhsOyXkOyEnCBgLmVudmAg6rK966Gc66W8IOywvuyngCDrqrvtlojri6TripQg65y77J6F64uI64ukLiDrs4Trj4TsnZggYGdpdCBsb2cgLVNgIOqysOqzvCAw6rG07J2AIOuNlOuvuCDrrLjsnpDsl7TsnYQg7LaU6rCA7ZWY6rGw64KYIOygnOqxsO2VnCDsu6TrsIvrj4Qg7LC+7KeAIOuqu+2WiOuLpOuKlCDrnLvsnoXri4jri6QuXG4iLAogICAgIlxuIiwKICAgICJgbGVuKHZhbHVlX2hpdHMuc3BsaXRsaW5lcygpKSBpZiB2YWx1ZV9oaXRzIGVsc2UgMGDsnYAg6rKw6rO8IOusuOyekOyXtOydtCDsnojsnLzrqbQg7ZaJIOyImOulvCDshLjqs6AsIOu5iCDrrLjsnpDsl7TsnbTrqbQgMOydhCDsgqzsmqntlanri4jri6QuIOuUsOudvOyEnCDqsoDsg4kg6rKw6rO86rCAIOyXhuydhCDrlYwg7Lac66Cl65CY64qUIDDsnYAg67mIIOqysOqzvOulvCDsiKvsnpDroZwg7ZGc7Iuc7ZWcIOqwkuyeheuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDYsCiAgICJpZCI6ICJjZWxsLTEyIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjI0OjM2LjE5NjIyNVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjI0OjM2LjE5NjE0OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjI0OjM2Ljg5MTgyM1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjQ6MzYuODkxNDU0WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsoJXrpqwg7ZuEIC5lbnYg6rK966GcIOyeiOydjDogRmFsc2VcbiIsCiAgICAgICLsoJXrpqwg7ZuEIOuNlOuvuCDqsJIg7Luk67CLIOyImDogMFxuIiwKICAgICAgIuybkOqyqSDsnqzqsoDsgqwg6rCSIOy7pOuwiyDsiJg6IDBcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDqsqnrpqzrkJwg7JuQ6rKp7J2YIOuqqOuToCDssLjsobDrpbwg6rCx7Iug7ZWY6rOgIOyDiCDrs7XsoJzrs7jsl5DshJwg6rK966Gc7JmAIOqwkuydhCDqsoDsgqztlanri4jri6QuXG4iLAogICAgImNsZWFuID0gcm9vdCAvIFwiY2xlYW4taGlzdG9yeVwiXG4iLAogICAgImdpdChcImNsb25lXCIsIFwiLS1taXJyb3JcIiwgcmVtb3RlLmFzX3Bvc2l4KCksIGNsZWFuLmFzX3Bvc2l4KCkpXG4iLAogICAgInJlc3VsdCA9IHN1YnByb2Nlc3MucnVuKFxuIiwKICAgICIgICAgW1wiZ2l0XCIsIFwiZmlsdGVyLXJlcG9cIiwgXCItLWZvcmNlXCIsIFwiLS1wYXRoXCIsIFwiLmVudlwiLCBcIi0taW52ZXJ0LXBhdGhzXCJdLFxuIiwKICAgICIgICAgY3dkPWNsZWFuLCB0ZXh0PVRydWUsIGNhcHR1cmVfb3V0cHV0PVRydWUsIGNoZWNrPVRydWUsXG4iLAogICAgIilcbiIsCiAgICAiZ2l0KFwicmVtb3RlXCIsIFwiYWRkXCIsIFwib3JpZ2luXCIsIHJlbW90ZS5hc19wb3NpeCgpLCBjd2Q9Y2xlYW4pXG4iLAogICAgImdpdChcInB1c2hcIiwgXCItLWZvcmNlXCIsIFwiLS1taXJyb3JcIiwgY3dkPWNsZWFuKVxuIiwKICAgICJvYmplY3RzID0gZ2l0KFwicmV2LWxpc3RcIiwgXCItLW9iamVjdHNcIiwgXCItLWFsbFwiLCBjd2Q9Y2xlYW4pXG4iLAogICAgInZhbHVlX2hpdHMgPSBnaXQoXCJsb2dcIiwgXCItU1wiLCBEVU1NWSwgXCItLWFsbFwiLCBcIi0tZm9ybWF0PSVIXCIsIGN3ZD1jbGVhbilcbiIsCiAgICAicHJpbnQoXCLsoJXrpqwg7ZuEIC5lbnYg6rK966GcIOyeiOydjDpcIiwgYW55KGxpbmUuZW5kc3dpdGgoXCIgLmVudlwiKSBmb3IgbGluZSBpbiBvYmplY3RzLnNwbGl0bGluZXMoKSkpXG4iLAogICAgInByaW50KFwi7KCV66asIO2bhCDrjZTrr7gg6rCSIOy7pOuwiyDsiJg6XCIsIGxlbih2YWx1ZV9oaXRzLnNwbGl0bGluZXMoKSkgaWYgdmFsdWVfaGl0cyBlbHNlIDApXG4iLAogICAgInZlcmlmeSA9IHJvb3QgLyBcInZlcmlmeS1yZW1vdGVcIlxuIiwKICAgICJnaXQoXCJjbG9uZVwiLCBcIi0tbWlycm9yXCIsIHJlbW90ZS5hc19wb3NpeCgpLCB2ZXJpZnkuYXNfcG9zaXgoKSlcbiIsCiAgICAicmVtb3RlX29iamVjdHMgPSBnaXQoXCJyZXYtbGlzdFwiLCBcIi0tb2JqZWN0c1wiLCBcIi0tYWxsXCIsIGN3ZD12ZXJpZnkpXG4iLAogICAgInJlbW90ZV9oaXRzID0gZ2l0KFwibG9nXCIsIFwiLVNcIiwgRFVNTVksIFwiLS1hbGxcIiwgXCItLWZvcm1hdD0lSFwiLCBjd2Q9dmVyaWZ5KVxuIiwKICAgICJwcmludChcIuybkOqyqSDsnqzqsoDsgqwg6rCSIOy7pOuwiyDsiJg6XCIsIGxlbihyZW1vdGVfaGl0cy5zcGxpdGxpbmVzKCkpIGlmIHJlbW90ZV9oaXRzIGVsc2UgMClcbiIsCiAgICAiYXNzZXJ0IG5vdCBhbnkobGluZS5lbmRzd2l0aChcIiAuZW52XCIpIGZvciBsaW5lIGluIG9iamVjdHMuc3BsaXRsaW5lcygpKVxuIiwKICAgICJhc3NlcnQgbm90IGFueShsaW5lLmVuZHN3aXRoKFwiIC5lbnZcIikgZm9yIGxpbmUgaW4gcmVtb3RlX29iamVjdHMuc3BsaXRsaW5lcygpKVxuIiwKICAgICJhc3NlcnQgbm90IHZhbHVlX2hpdHMgYW5kIG5vdCByZW1vdGVfaGl0cyIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAicGFpcmVkIiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNiwKICAgImNvZGVfc2hhMjU2IjogIjZkNzZhYTg1ZGEzMTI4YmRmMDFiYjYzY2U5Y2IxOTNhOTUwNzczNGJmNDFjYjFlMDRjMDkyMjYyNjdmYjMxMjEiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwNjoyNDozNy4wMDY3MTkrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjc4N2ZhMDQ2OWI3ODcyZTUzNzgxMDk3NWY1OWJkNjAzMDczOWUxMzAzNGJmM2QxMWU5NzcyYTk2NGE0NDU1NDgiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>시크릿 이력 정리와 예방</h2>
+<p>모든 저장소는 임시 폴더에 만들며 실제 GitHub 계정이나 원격 저장소를 변경하지 않습니다.</p>
+<h3>명령을 실행하기 전에 알아둘 Git 상태</h3>
+<p>Git은 파일을 세 자리에서 봅니다. <strong>작업 폴더(working tree)</strong> 는 지금 편집하는 파일이 있는 자리입니다. <strong>색인(index)</strong> 은 다음 커밋에 넣을 파일 상태를 골라 두는 자리이며, 스테이징 영역(staging area)이라고도 합니다. <strong>커밋(commit)</strong> 은 색인에 고른 상태를 저장소 이력에 기록한 결과입니다. 따라서 <code>git add app.py</code>는 파일을 영구 저장하는 명령이 아니라 현재 <code>app.py</code>를 색인에 올리는 명령입니다. 이어서 <code>git commit -m &quot;메시지&quot;</code>를 실행해야 그 상태가 커밋으로 기록됩니다.</p>
+<p><strong>HEAD</strong> 는 현재 체크아웃한 커밋을 가리킵니다. 보통 HEAD는 <code>main</code> 같은 <strong>브랜치(branch)</strong> 이름을 가리키고, 브랜치 이름은 다시 최신 커밋을 가리킵니다. 새 커밋을 만들면 현재 브랜치가 새 커밋으로 이동합니다. 이 절에서는 브랜치와 태그처럼 커밋을 가리키는 이름을 묶어 참조(reference)라고 부릅니다.</p>
+<p>명령은 왼쪽부터 <code>git</code> → 하위 명령 → 옵션 → 대상으로 읽습니다. 예를 들어 <code>git status --short</code>에서 <code>status</code>는 상태를 보고, <code>--short</code>는 짧은 형식으로 표시하라는 옵션입니다. 코드의 <code>git(&quot;status&quot;, &quot;--short&quot;, cwd=repo)</code>는 터미널에서 같은 명령을 실행하도록 인자를 나눈 Python 표현입니다.</p></div>
+<div class="nb-markdown"><h3>준비</h3>
+<p>예제 문자열은 실제 서비스에서 사용할 수 없는 더미 자격 증명입니다. <strong>시크릿(secret)</strong> 은 API 키, 접근 토큰, 비밀번호처럼 권한을 부여하는 값입니다. 실제 값이 노출되면 Git 이력 정리를 기다리지 말고 발급 서비스에서 먼저 폐기하거나 교체해야 합니다. 이미 복제되거나 로그에 남은 값은 저장소 파일을 지워도 다시 통제할 수 없기 때문입니다.</p>
+<p>이 실습은 <code>DEMO-ONLY-NOT-A-REAL-SECRET</code>만 사용합니다. 원격도 임시 폴더의 bare 저장소이므로 외부에 게시되지 않습니다. 이후 출력의 “0건”은 이 임시 저장소에서 검사한 참조에 더미 값이 없다는 뜻이며 외부 캐시나 다른 복제본까지 삭제했다는 뜻은 아닙니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 셀이 만든 저장소만 사용하는 임시 작업 폴더를 준비합니다.
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+workspace = tempfile.TemporaryDirectory(prefix=&quot;git-lesson-&quot;)
+root = Path(workspace.name)
+# cwd는 명령을 실행할 폴더이며 check=True는 명령 실패를 예외로 알립니다.
+def git(*args: str, cwd: Path | None = None, check: bool = True) -&gt; str:
+    &quot;&quot;&quot;지정한 임시 저장소에서 Git 명령을 실행합니다.&quot;&quot;&quot;
+    result = subprocess.run([&quot;git&quot;, *args], cwd=cwd or root,
+                            text=True, capture_output=True, check=check)
+    return result.stdout.strip() or result.stderr.strip()
+def configure(repo: Path) -&gt; None:
+    &quot;&quot;&quot;실습 저장소에만 작성자 정보를 설정합니다.&quot;&quot;&quot;
+    git(&quot;config&quot;, &quot;user.name&quot;, &quot;Git Learner&quot;, cwd=repo)
+    git(&quot;config&quot;, &quot;user.email&quot;, &quot;learner@example.invalid&quot;, cwd=repo)</code></pre></div></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 실제 인증에 사용할 수 없는 더미 문자열만 사용합니다.
+DUMMY = &quot;DEMO-ONLY-NOT-A-REAL-SECRET&quot;
+remote = root / &quot;secret-remote.git&quot;
+git(&quot;init&quot;, &quot;--bare&quot;, &quot;--initial-branch=main&quot;, remote.as_posix())
+repo = root / &quot;secret-demo&quot;
+git(&quot;clone&quot;, remote.as_posix(), repo.as_posix())
+configure(repo)
+(repo / &quot;app.py&quot;).write_text(&#x27;print(&quot;safe app&quot;)\n&#x27;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;app.py&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;feat: 안전한 앱 시작&quot;, cwd=repo)
+git(&quot;push&quot;, &quot;-u&quot;, &quot;origin&quot;, &quot;main&quot;, cwd=repo)
+print(&quot;더미만 사용:&quot;, DUMMY)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">더미만 사용: DEMO-ONLY-NOT-A-REAL-SECRET
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p>추적 전에는 <code>.gitignore</code>와 스테이징한 변경 검사를 함께 적용합니다. <code>git check-ignore -v .env</code>에서 <code>-v</code>는 어떤 규칙이 어느 파일에 적용됐는지 보여 줍니다. <code>git ls-files .env</code>는 색인에 등록된 경로를 찾으며, 빈 출력이면 <code>.env</code>가 현재 커밋 후보에 포함되지 않았다는 뜻입니다.</p>
+<p><code>.gitignore</code>는 아직 추적하지 않는 경로를 기본 <code>git add</code> 대상에서 제외할 뿐 파일을 암호화하거나 과거 커밋을 지우지 않습니다. <code>git diff --cached -- settings.example</code>은 다음 커밋에 들어갈 실제 내용을 보여 주므로 커밋 직전 시크릿 검사 지점으로 사용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># .env를 추적하기 전에 무시 규칙이 적용되는지 확인합니다.
+(repo / &quot;.gitignore&quot;).write_text(&quot;.env\n&quot;, encoding=&quot;utf-8&quot;)
+(repo / &quot;.env&quot;).write_text(f&quot;DEMO_API_KEY={DUMMY}\n&quot;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;.gitignore&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;chore: 환경 파일 제외&quot;, cwd=repo)
+print(git(&quot;check-ignore&quot;, &quot;-v&quot;, &quot;.env&quot;, cwd=repo))
+print(&quot;색인에 없음:&quot;, git(&quot;ls-files&quot;, &quot;.env&quot;, cwd=repo) == &quot;&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">.gitignore:1:.env	.env
+색인에 없음: True
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 검사</h3>
+<p>안전한 설정 예시는 커밋할 수 있지만 더미 키 패턴이 있으면 검사를 실패로 판정합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 스테이징한 변경은 이번 커밋에 실제로 포함될 내용만 보여 줍니다.
+(repo / &quot;settings.example&quot;).write_text(&quot;DEMO_API_KEY=replace-me\n&quot;, encoding=&quot;utf-8&quot;)
+git(&quot;add&quot;, &quot;settings.example&quot;, cwd=repo)
+staged = git(&quot;diff&quot;, &quot;--cached&quot;, &quot;--&quot;, &quot;settings.example&quot;, cwd=repo)
+contains_dummy = DUMMY in staged
+print(&quot;더미 자격 증명 발견:&quot;, contains_dummy)
+print(staged)
+assert not contains_dummy
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;docs: 설정 예시 추가&quot;, cwd=repo)
+print(&quot;안전한 설정 예시 커밋 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">더미 자격 증명 발견: False
+diff --git a/settings.example b/settings.example
+new file mode 100644
+index 0000000..02e3d73
+--- /dev/null
++++ b/settings.example
+@@ -0,0 +1 @@
++DEMO_API_KEY=replace-me
+안전한 설정 예시 커밋 완료
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — <code>.env</code>는 무시되고 설정 예시만 커밋됩니다. 예시 파일은 필요한 변수 이름을 알려 주되 권한을 가진 값을 포함하지 않습니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>실패 셀은 교육 목적을 분명히 하기 위해 <code>git add -f</code>로 무시 규칙을 우회하고 더미 <code>.env</code>를 커밋합니다. 다음 커밋에서 파일을 삭제하고 원격에 push합니다. 현재 작업 폴더에는 파일이 없지만 <code>git show 커밋:.env</code>는 이전 내용을 반환합니다. 이것이 “현재 파일 삭제”와 “이력에서 제거”가 다른 실제 증거입니다. 실제 시크릿으로 이 과정을 따라 하면 노출이 더 확대되므로 절대 사용하지 않습니다.</p><p>수정 셀의 <code>git filter-repo --force</code>에서 <code>--force</code>는 새 복제본인지 확인하는 안전 검사를 완화합니다. 이 실습은 방금 만든 임시 mirror에만 사용합니다. <code>git rev-list --objects --all</code>의 각 행은 객체 해시와 경로를 담습니다. <code>objects.splitlines()</code>가 행 목록을 만들고 <code>line.endswith(" .env")</code>가 경로가 정확히 <code>.env</code>로 끝나는지 검사하며, <code>any(...)</code>는 일치 행이 하나라도 있을 때만 <code>True</code>를 반환합니다. 출력 <code>False</code>와 더미 값 커밋 0건은 검사한 참조 범위에서 경로와 값에 도달하지 못한다는 뜻이며 외부 포크·캐시·로그 삭제를 증명하지 않습니다.</p><section class="notebook" data-notebook="05-시크릿-이력-정리와-예방" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>파일을 다음 커밋에서 삭제해도 이전 커밋 객체에는 내용이 남습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 가상 키 파일을 다음 커밋에서 삭제해도 과거 커밋에는 값이 남습니다.
+git(&quot;check-ignore&quot;, &quot;-q&quot;, &quot;.env&quot;, cwd=repo)
+git(&quot;add&quot;, &quot;-f&quot;, &quot;.env&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;test: 더미 키를 잘못 기록&quot;, cwd=repo)
+leak_commit = git(&quot;rev-parse&quot;, &quot;HEAD&quot;, cwd=repo)
+git(&quot;rm&quot;, &quot;.env&quot;, cwd=repo)
+git(&quot;commit&quot;, &quot;-m&quot;, &quot;fix: 환경 파일 삭제&quot;, cwd=repo)
+git(&quot;push&quot;, cwd=repo)
+historic = git(&quot;show&quot;, f&quot;{leak_commit}:.env&quot;, cwd=repo)
+print(&quot;현재 파일 존재:&quot;, (repo / &quot;.env&quot;).exists())
+print(&quot;이전 커밋 내용:&quot;, historic.strip())
+assert DUMMY in historic</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">현재 파일 존재: False
+이전 커밋 내용: DEMO_API_KEY=DEMO-ONLY-NOT-A-REAL-SECRET
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>격리된 예제 저장소의 모든 참조에서 <code>.env</code> 경로를 제거한 뒤 원격을 강제로 갱신합니다. <code>git filter-repo --force</code>의 <code>--force</code>는 새로 복제한 저장소인지 확인하는 안전 검사를 완화합니다. 이 실습은 방금 만든 임시 mirror에만 사용하며 실제 작업 저장소에서 실행할 이유가 되지 않습니다.</p>
+<p><code>git rev-list --objects --all</code>의 각 행은 객체 해시와 경로를 담습니다. <code>objects.splitlines()</code>가 행 목록을 만들고, <code>line.endswith(&quot; .env&quot;)</code>는 공백 뒤 경로가 정확히 <code>.env</code>로 끝나는 행인지 검사합니다. <code>any(...)</code>는 그런 행이 하나라도 있으면 <code>True</code>, 하나도 없으면 <code>False</code>를 반환합니다. 따라서 출력 <code>False</code>는 검사한 모든 참조에서 <code>.env</code> 경로를 찾지 못했다는 뜻입니다. 별도의 <code>git log -S</code> 결과 0건은 더미 문자열을 추가하거나 제거한 커밋도 찾지 못했다는 뜻입니다.</p>
+<p><code>len(value_hits.splitlines()) if value_hits else 0</code>은 결과 문자열이 있으면 행 수를 세고, 빈 문자열이면 0을 사용합니다. 따라서 검색 결과가 없을 때 출력되는 0은 빈 결과를 숫자로 표시한 값입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 격리된 원격의 모든 참조를 갱신하고 새 복제본에서 경로와 값을 검사합니다.
+clean = root / &quot;clean-history&quot;
+git(&quot;clone&quot;, &quot;--mirror&quot;, remote.as_posix(), clean.as_posix())
+result = subprocess.run(
+    [&quot;git&quot;, &quot;filter-repo&quot;, &quot;--force&quot;, &quot;--path&quot;, &quot;.env&quot;, &quot;--invert-paths&quot;],
+    cwd=clean, text=True, capture_output=True, check=True,
+)
+git(&quot;remote&quot;, &quot;add&quot;, &quot;origin&quot;, remote.as_posix(), cwd=clean)
+git(&quot;push&quot;, &quot;--force&quot;, &quot;--mirror&quot;, cwd=clean)
+objects = git(&quot;rev-list&quot;, &quot;--objects&quot;, &quot;--all&quot;, cwd=clean)
+value_hits = git(&quot;log&quot;, &quot;-S&quot;, DUMMY, &quot;--all&quot;, &quot;--format=%H&quot;, cwd=clean)
+print(&quot;정리 후 .env 경로 있음:&quot;, any(line.endswith(&quot; .env&quot;) for line in objects.splitlines()))
+print(&quot;정리 후 더미 값 커밋 수:&quot;, len(value_hits.splitlines()) if value_hits else 0)
+verify = root / &quot;verify-remote&quot;
+git(&quot;clone&quot;, &quot;--mirror&quot;, remote.as_posix(), verify.as_posix())
+remote_objects = git(&quot;rev-list&quot;, &quot;--objects&quot;, &quot;--all&quot;, cwd=verify)
+remote_hits = git(&quot;log&quot;, &quot;-S&quot;, DUMMY, &quot;--all&quot;, &quot;--format=%H&quot;, cwd=verify)
+print(&quot;원격 재검사 값 커밋 수:&quot;, len(remote_hits.splitlines()) if remote_hits else 0)
+assert not any(line.endswith(&quot; .env&quot;) for line in objects.splitlines())
+assert not any(line.endswith(&quot; .env&quot;) for line in remote_objects.splitlines())
+assert not value_hits and not remote_hits</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">정리 후 .env 경로 있음: False
+정리 후 더미 값 커밋 수: 0
+원격 재검사 값 커밋 수: 0
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>실제 시크릿을 실습 파일, 터미널 명령 인자, 채팅, 이슈에 붙여 넣지 않습니다. 노출된 값은 먼저 제공자에서 폐기하거나 교체합니다.</li><li>이력 재작성은 커밋 해시를 바꿉니다. 저장소 관리자와 시점, 대상 브랜치와 태그, 강제 push 권한, 협업자의 재복제 절차를 합의합니다.</li><li>이력에서 경로가 사라졌다는 검사만으로 다른 경로에 복사된 동일 값이 없다고 결론 내릴 수 없습니다. 경로 검사와 값 검사를 함께 수행합니다.</li><li>로컬 reflog와 호스팅 서비스의 캐시·포크·PR 참조는 별도 범위입니다. 서비스 제공자의 공식 지원 절차와 보존 정책을 확인합니다.</li><li><code>.gitignore</code>는 예방의 한 층입니다. 이미 추적한 파일과 명령 출력, 로그, 노트북 출력에는 적용되지 않습니다.</li><li>이 챕터는 <code>git-filter-repo</code> 2.47.0을 고정합니다. 다른 버전이나 대규모 저장소에서는 공식 문서와 백업·검증 절차를 먼저 확인합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>현재 파일을 삭제해도 과거 커밋에는 내용이 남을 수 있습니다.</li><li>실제 시크릿 사고에서는 권한을 먼저 폐기·교체하고 이력 정리와 협업자 조치를 이어서 수행합니다.</li><li><code>.gitignore</code>, 안전한 예시 파일, 스테이징한 변경 확인, 시크릿 검사를 겹쳐 적용합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — Ch 4는 별도의 실습 프로젝트와 제공 데이터로 시작하며, CSV·JSON·API 데이터를 처리하는 함수를 만듭니다. Ch 3의 임시 저장소를 입력으로 사용하지는 않지만, 시크릿을 제외하고 diff를 확인하는 습관은 Ch 4 프로젝트의 변경을 검토할 때도 적용합니다. 후반 AI 페어 개발에서는 Git 커밋이 자동 생성 변경을 되돌릴 수 있는 지점이 되고, Ch 38에서는 커밋 전 시크릿 검사를 게이트로 자동화합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 실수로 커밋한 실제 API 키를 발견했을 때 가장 먼저 할 일은 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> 키 발급 서비스에서 노출된 키를 폐기하거나 교체해 더 이상 권한을 사용할 수 없게 합니다.</p><p class="quiz-q">2. 현재 <code>.env</code>를 삭제한 뒤에도 이전 내용을 읽을 수 있었던 명령은 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> <code>git show &lt;이전-커밋&gt;:.env</code>입니다. 특정 커밋에 저장된 파일 내용을 읽습니다.</p><p class="quiz-q">3. 이력 재작성 뒤 협업자 조율이 필요한 이유는 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> 커밋 해시가 달라지고 원격을 강제로 갱신하므로 협업자가 이전 이력을 다시 push하거나 새 이력과 섞지 않도록 작업을 옮기는 절차가 필요합니다.</p><p class="quiz-q">4. <code>.gitignore</code>만으로 시크릿 사고를 완전히 막을 수 없는 이유를 두 가지 쓰십시오.</p><p class="quiz-a"><strong>정답:</strong> 이미 추적한 파일과 과거 이력에는 소급 적용되지 않으며, 다른 파일·로그·노트북 출력에 적힌 값도 검사하지 못하기 때문입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository">GitHub Docs: 저장소에서 민감 정보 제거</a> · 확인 2026-09-09 · 웹 문서</li><li><a href="https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning">GitHub Docs: secret scanning</a> · 확인 2026-09-09 · 웹 문서</li><li><a href="https://github.com/newren/git-filter-repo/blob/main/INSTALL.md">git-filter-repo 공식 설치 문서</a> · 확인 2026-09-09 · 기준 2.47.0</li><li><a href="https://www.git-scm.com/docs/git-filter-branch">Git 공식 문서: 이력 재작성 관련 경고</a> · 확인 2026-09-09 · 기준 Git 2.50.1</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="04-revert-reflog-worktree.html">← revert reflog worktree</a></span><span><a href="index.html">챕터 목차</a></span><span>챕터 끝</span></div></div></body></html>

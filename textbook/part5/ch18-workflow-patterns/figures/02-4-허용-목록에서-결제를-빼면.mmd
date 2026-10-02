@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  dec["gpt-5.4-mini<br>결제 문의 분류 · 종류 결제"]:::model
+  old["검사 원래 허용 목록<br>결제 · 계정 · 기술"]:::flow
+  done["상태 완료<br>요청 둘 분류와 답"]:::measure
+  val["바꾼 값<br>허용 목록 계정 · 기술"]:::tool
+  new["검사 바꾼 허용 목록<br>같은 분류를 다시 검사"]:::flow
+  res["문제 허용 목록에 없는 종류<br>모델 요청 없음"]:::measure
+  dec --> old
+  old -.->|문제 없음| done
+  dec --> new
+  val --> new
+  new --> res

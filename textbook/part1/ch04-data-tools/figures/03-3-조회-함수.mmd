@@ -1,0 +1,11 @@
+flowchart LR
+  %% classes
+  IN1["입력<br>shop.db · C001"]:::tool
+  IN2["값 바꿔 보기<br>shop.db · C002"]:::tool
+  FN["find_customer_orders()<br>? 자리에 고객 번호<br>→ fetchall → for<br>→ 딕셔너리 목록"]:::flow
+  OUT1["딕셔너리 2개<br>O101 · O103 김하나<br>합계 59000"]:::measure
+  OUT2["딕셔너리 1개<br>O102 이두리 18000"]:::measure
+  IN1 --> FN
+  IN2 -.-> FN
+  FN --> OUT1
+  FN -.-> OUT2

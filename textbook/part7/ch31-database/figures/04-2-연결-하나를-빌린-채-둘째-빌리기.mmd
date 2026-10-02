@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  first["async with<br>engine.connect()<br>첫째 연결을 빌림"]:::flow
+  held["첫째를 빌린 동안<br>빌려 간 연결 하나"]:::measure
+  second["블록 안에서<br>둘째 연결을 빌리려 함"]:::flow
+  wait["풀 크기 하나<br>더 만들 연결 없음<br>대기 제한 0.2초 동안<br>반납을 기다림"]
+  err["받은 오류 TimeoutError<br>QueuePool limit of size 1<br>overflow 0 reached<br>timeout 0.20"]:::measure
+  name["오류가 든 모듈<br>sqlalchemy.exc<br>파이썬의 TimeoutError를<br>이어받는가 False"]:::measure
+  first --> held --> second --> wait --> err --> name

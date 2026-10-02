@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · k=1"]
+    direction LR
+    s1["similarity_search<br>_with_score k=1"]:::flow
+    b2["근거 글에서<br>빠진 지킬 말 7권<br>대출 근거 없음"]:::fail
+    s1 --> b2
+  end
+  subgraph AFTER["After · k=3"]
+    direction LR
+    s3["similarity_search<br>_with_score k=3"]:::flow
+    a2["더 들어온 문서 청크<br>2위 E01 p.1 표지 0.5981<br>3위 E01 p.3 0.3842"]:::measure
+    a3["빠진 지킬 말 []"]:::measure
+    s3 --> a2
+    a2 --> a3
+  end
+  note["두 결과 모두<br>질문 휴관일 · 대출 권수<br>1위 E01 p.2 0.6251"]
+  BEFORE ~~~ AFTER
+  AFTER ~~~ note

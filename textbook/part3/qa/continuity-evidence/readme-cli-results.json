@@ -1,0 +1,19 @@
+{
+  "archive_sha256": "2d9b2de9a8afb8682f73b83f6d5a59682e118b0a34756f4730f05e6481ed22aa",
+  "readme_commands": [
+    {
+      "command": "uv run python evaluate.py --top-k 5 --output runs/baseline.json",
+      "cwd": "extracted labs/part3/ch11-evaluation",
+      "returncode": 0,
+      "stdout": "{\n  \"metrics\": {\n    \"recall_at_5\": 1.0,\n    \"recall_at_50\": 1.0,\n    \"precision_at_5\": 0.2,\n    \"ndcg_at_5\": 0.8928526173809582\n  },\n  \"query_count\": 15,\n  \"output\": \"runs/baseline.json\"\n}\n"
+    },
+    {
+      "command": "uv run python evaluate.py \\\n  --retrieval-log labs/part3/ch09-rag-first-run/runs/continuity-ch09-search.jsonl \\\n  --retrieval-log labs/part3/ch10-document-processing/runs/continuity-ch10-indexing.jsonl \\\n  --output runs/continuity-upstream-20260910.json",
+      "cwd": "extracted labs/part3/ch11-evaluation",
+      "returncode": 0,
+      "stdout": "{\n  \"run_count\": 7,\n  \"query_counts\": [\n    1,\n    1,\n    1,\n    1,\n    1,\n    1,\n    1\n  ],\n  \"output\": \"runs/continuity-upstream-20260910.json\"\n}\n"
+    }
+  ],
+  "actual_api_calls": 0,
+  "source": "final extracted ZIP"
+}

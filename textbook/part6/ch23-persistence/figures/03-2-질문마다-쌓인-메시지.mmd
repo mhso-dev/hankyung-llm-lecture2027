@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  t1["첫 질문 뒤 메시지 둘<br>HumanMessage<br>대출 기간은 며칠인가요?<br>AIMessage<br>1번째 질문을 받았습니다"]:::measure
+  t2["둘째 질문 뒤 메시지 넷<br>앞 두 메시지 그대로<br>AIMessage<br>2번째 질문을 받았습니다"]:::measure
+  cl["first_conn.close<br>첫 연결을 닫음<br>새 연결과 새 그래프를 만듦"]:::flow
+  rd["새 그래프가 읽은<br>마지막 체크포인트<br>단계 번호 4 · 메시지 넷"]:::measure
+  t3["셋째 질문 뒤 메시지 여섯<br>AIMessage<br>3번째 질문을 받았습니다"]:::measure
+  t1 --> t2
+  t2 --> cl
+  cl --> rd
+  rd --> t3

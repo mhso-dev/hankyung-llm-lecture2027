@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph ONE["글 하나를 보낼 때"]
+    direction LR
+    a1["첫 문서 청크<br>185자"]:::tool
+    a2["text-embedding-3-small<br>임베딩 요청 1번"]:::model
+    a3["받은 벡터 1개<br>숫자 1536개"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  subgraph MANY["글 목록을 보낼 때"]
+    direction LR
+    b1["문서 청크 6개<br>첫 문서 청크 포함"]:::tool
+    b2["text-embedding-3-small<br>임베딩 요청 1번"]:::model
+    b3["받은 벡터 6개<br>숫자 1536개씩"]:::measure
+    b1 --> b2
+    b2 --> b3
+  end
+  note1["보낸 글 수와 받은 벡터 수가 같습니다"]
+  ONE ~~~ MANY
+  MANY ~~~ note1

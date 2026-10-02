@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  docs["문서 칸에 든<br>문서 셋"]:::tool
+  fn["조건 함수<br>to_each_document"]:::flow
+  send["Send 셋"]
+  runs["노드 inspect_document<br>실행 셋"]:::flow
+  slot["결과 칸에 모인<br>결과 셋"]:::tool
+  docs --> fn
+  fn --> send
+  send --> runs
+  runs --> slot

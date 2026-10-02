@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  n1["노드 normalize"]:::flow
+  n2["노드 write_question"]:::flow
+  n3["노드 write_answer"]:::flow
+  u2["낸 갱신<br>사람 역할 메시지 하나"]:::flow
+  u3["낸 갱신<br>모델 역할 메시지 하나"]:::flow
+  slot["메시지 칸에 모인 메시지 둘"]:::tool
+  n1 --> n2
+  n2 --> n3
+  n2 --> u2
+  n3 --> u3
+  u2 --> slot
+  u3 --> slot

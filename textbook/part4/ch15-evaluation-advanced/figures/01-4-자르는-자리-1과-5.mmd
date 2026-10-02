@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph one["자르는 자리 1"]
+    direction TB
+    o1["첫 자리만<br>앞자리 안"]:::flow
+    o2["실패 로그<br>스물일곱 줄"]:::measure
+    o3["Q005 스물여섯 줄<br>Q090 한 줄"]:::measure
+    o1 ~~~ o2
+    o2 ~~~ o3
+  end
+  subgraph five["자르는 자리 5"]
+    direction TB
+    f1["다섯 자리까지<br>앞자리 안"]:::flow
+    f2["실패 로그 없음"]:::measure
+    f3["Q090도 앞자리 안"]:::measure
+    f1 ~~~ f2
+    f2 ~~~ f3
+  end
+  same["같은 개발 기록과<br>시험 기록"]
+  one ~~~ five
+  five ~~~ same

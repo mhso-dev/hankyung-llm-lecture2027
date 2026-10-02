@@ -1,0 +1,320 @@
+{
+  "reviewed_at": "2026-09-09",
+  "scope": {
+    "chapters": 2,
+    "pairs": 13,
+    "svg_boxes": 58,
+    "excalidraw_boxes": 58,
+    "svg_arrows": 43,
+    "excalidraw_arrows": 43,
+    "svg_box_labels_inside_box": 58,
+    "svg_box_labels_total": 58,
+    "svg_text_outside_viewbox": 0
+  },
+  "criteria": {
+    "element_match": "svg_boxes == excalidraw_boxes && svg_arrows == excalidraw_arrows",
+    "text_bounds": "Chromium SVGTextElement.getBBox() contained by matching SVGRectElement.getBBox() and SVG viewBox",
+    "color_map": {
+      "blue": "student_control_flow",
+      "green": "tool_or_data",
+      "purple": "model_judgment",
+      "yellow": "measurement_or_evaluation",
+      "red": "failure_or_attack"
+    }
+  },
+  "summary": {
+    "pass": 13,
+    "fail": 0,
+    "ch03_pass": 5,
+    "ch03_fail": 0,
+    "ch05_pass": 8,
+    "ch05_fail": 0,
+    "blocking_reasons": {
+      "svg_excalidraw_arrow_count_mismatch_pairs": 0,
+      "excalidraw_missing_text_element_pairs": 0,
+      "color_semantic_mismatch_pairs": 0
+    }
+  },
+  "figures": [
+    {
+      "chapter": "ch03-git-github",
+      "name": "01-commit-ignore",
+      "svg": {
+        "boxes": 5,
+        "arrows": 4,
+        "box_labels_inside": 5,
+        "box_labels_total": 5,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 5,
+        "arrows": 4,
+        "text_elements": 8,
+        "box_text_inside": 5,
+        "box_text_total": 5
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch03-git-github",
+      "name": "02-flow-review",
+      "svg": {
+        "boxes": 5,
+        "arrows": 4,
+        "box_labels_inside": 5,
+        "box_labels_total": 5,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 5,
+        "arrows": 4,
+        "text_elements": 7,
+        "box_text_inside": 5,
+        "box_text_total": 5
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch03-git-github",
+      "name": "03-merge-conflict",
+      "svg": {
+        "boxes": 5,
+        "arrows": 4,
+        "box_labels_inside": 5,
+        "box_labels_total": 5,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 5,
+        "arrows": 4,
+        "text_elements": 7,
+        "box_text_inside": 5,
+        "box_text_total": 5
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch03-git-github",
+      "name": "04-recovery-tools",
+      "svg": {
+        "boxes": 6,
+        "arrows": 3,
+        "box_labels_inside": 6,
+        "box_labels_total": 6,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 6,
+        "arrows": 3,
+        "text_elements": 8,
+        "box_text_inside": 6,
+        "box_text_total": 6
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch03-git-github",
+      "name": "05-secret-response",
+      "svg": {
+        "boxes": 5,
+        "arrows": 4,
+        "box_labels_inside": 5,
+        "box_labels_total": 5,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 5,
+        "arrows": 4,
+        "text_elements": 7,
+        "box_text_inside": 5,
+        "box_text_total": 5
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "name": "01-concept",
+      "svg": {
+        "boxes": 4,
+        "arrows": 3,
+        "box_labels_inside": 4,
+        "box_labels_total": 4,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 4,
+        "arrows": 3,
+        "text_elements": 4,
+        "box_text_inside": 4,
+        "box_text_total": 4
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "name": "02-concept",
+      "svg": {
+        "boxes": 4,
+        "arrows": 3,
+        "box_labels_inside": 4,
+        "box_labels_total": 4,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 4,
+        "arrows": 3,
+        "text_elements": 4,
+        "box_text_inside": 4,
+        "box_text_total": 4
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "name": "03-concept",
+      "svg": {
+        "boxes": 4,
+        "arrows": 3,
+        "box_labels_inside": 4,
+        "box_labels_total": 4,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 4,
+        "arrows": 3,
+        "text_elements": 4,
+        "box_text_inside": 4,
+        "box_text_total": 4
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "name": "04-concept",
+      "svg": {
+        "boxes": 4,
+        "arrows": 3,
+        "box_labels_inside": 4,
+        "box_labels_total": 4,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 4,
+        "arrows": 3,
+        "text_elements": 4,
+        "box_text_inside": 4,
+        "box_text_total": 4
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "name": "05-concept",
+      "svg": {
+        "boxes": 4,
+        "arrows": 3,
+        "box_labels_inside": 4,
+        "box_labels_total": 4,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 4,
+        "arrows": 3,
+        "text_elements": 4,
+        "box_text_inside": 4,
+        "box_text_total": 4
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "name": "06-temperature-sampling",
+      "svg": {
+        "boxes": 4,
+        "arrows": 3,
+        "box_labels_inside": 4,
+        "box_labels_total": 4,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 4,
+        "arrows": 3,
+        "text_elements": 4,
+        "box_text_inside": 4,
+        "box_text_total": 4
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "name": "07-hallucination-conditions",
+      "svg": {
+        "boxes": 4,
+        "arrows": 3,
+        "box_labels_inside": 4,
+        "box_labels_total": 4,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 4,
+        "arrows": 3,
+        "text_elements": 4,
+        "box_text_inside": 4,
+        "box_text_total": 4
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "name": "08-model-selection",
+      "svg": {
+        "boxes": 4,
+        "arrows": 3,
+        "box_labels_inside": 4,
+        "box_labels_total": 4,
+        "outside_viewbox": 0
+      },
+      "excalidraw": {
+        "boxes": 4,
+        "arrows": 3,
+        "text_elements": 4,
+        "box_text_inside": 4,
+        "box_text_total": 4
+      },
+      "color_mismatches": 0,
+      "verdict": "PASS"
+    }
+  ],
+  "final_color_check": {
+    "reviewer": "root",
+    "expected_box_colors": {
+      "03-concept": [
+        "#dcfce7",
+        "#dbeafe",
+        "#dcfce7",
+        "#fee2e2"
+      ],
+      "08-model-selection": [
+        "#dcfce7",
+        "#dbeafe",
+        "#dcfce7",
+        "#fef3c7"
+      ]
+    },
+    "svg_excalidraw_match": true,
+    "reason": "Ch5-03 weights are assigned by the lesson author, not inferred by a model. Ch5-08 candidates and requirements are data, and the filter is programmed control flow.",
+    "geometry_changed": false
+  }
+}

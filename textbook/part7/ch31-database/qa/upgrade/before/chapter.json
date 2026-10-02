@@ -1,0 +1,40 @@
+{
+  "part": 7,
+  "part_title": "Part 7 · Agent 서비스 개발",
+  "chapter": "ch31-database",
+  "title": "DB & 상태 영속화",
+  "hours": "총 16h · 강의 5h · 실습 11h",
+  "objectives": [
+    "비동기 SQLAlchemy와 트랜잭션으로 PostgreSQL 작업 경계를 설계합니다.",
+    "Alembic 적용·롤백과 커넥션 풀 고갈을 실제 환경에서 재현하고 대응합니다.",
+    "pgvector와 체크포인터 표의 공존 및 논리 백업 범위를 확인합니다."
+  ],
+  "lab_path": "labs/part7/ch31-database",
+  "sections": [
+    {
+      "slug": "01-SQLAlchemy-비동기-PostgreSQL",
+      "title": "SQLAlchemy 비동기 PostgreSQL",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-트랜잭션과-원자성",
+      "title": "트랜잭션과 원자성",
+      "format": "paired"
+    },
+    {
+      "slug": "03-Alembic-적용과-롤백",
+      "title": "Alembic 적용과 롤백",
+      "format": "paired"
+    },
+    {
+      "slug": "04-커넥션-풀-고갈과-대응",
+      "title": "커넥션 풀 고갈과 대응",
+      "format": "paired"
+    },
+    {
+      "slug": "05-pgvector-체크포인터-공존과-백업",
+      "title": "pgvector 체크포인터 공존과 백업",
+      "format": "experiment"
+    }
+  ]
+}

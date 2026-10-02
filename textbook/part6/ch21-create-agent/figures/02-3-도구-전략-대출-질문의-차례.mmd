@@ -1,0 +1,16 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant P as 노트북 코드<br>tool_agent.invoke
+  box Lavender
+  participant M as 모델 노드 model<br>gpt-5.4-mini
+  end
+  participant T as 도구 실행 노드<br>tools
+  P->>M: 대출 질문 하나
+  Note over M: 요청 1 · 도구 호출 요청<br>lookup_policy · 주제어 대출
+  M->>T: model_to_tools · 요청 하나
+  Note over T: 도구 메시지 · success<br>1인 5권까지 14일
+  T->>M: tools_to_model · 모델 노드로
+  Note over M: 요청 2 · 도구 호출 요청<br>PolicyAnswer · 내용 글 길이 0
+  Note over M: 소스 확인 · 모델 노드가 검사해<br>structured_response에 담고<br>도구 메시지를 붙임
+  M-->>P: 소스 확인 · model_to_tools · END
+  Note over P: 메시지 다섯 · 키 둘<br>structured_response<br>종류 PolicyAnswer

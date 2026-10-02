@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 쪽 수가 맞으면 다 읽었다고 봄"]
+    direction LR
+    b1["스캔본 다섯 쪽"]:::tool
+    b2["쪽마다 Document 만들기"]:::flow
+    b3["Document 5개인데<br>2쪽 본문 글자 수 0<br>출처 표시는 만들어짐"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 쪽마다 글자 수를 세어 가름"]
+    direction LR
+    a1["스캔본 다섯 쪽"]:::tool
+    a2["기준값 20자와 견주기"]:::flow
+    a3["OCR 후보 쪽 다섯<br>원본 E01은 후보 없음"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  ocrnote["글자 인식(OCR)은<br>이 절에서 실행하지 않음"]
+  BEFORE ~~~ AFTER
+  AFTER ~~~ ocrnote

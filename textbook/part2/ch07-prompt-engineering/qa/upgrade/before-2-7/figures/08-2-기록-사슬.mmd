@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 360}}}%%
+flowchart TB
+  %% classes
+  A["Ch 6 기록 파일<br>ch06-provider-20260917T020433"]:::tool
+  H["hashlib.sha256<br>바이트로 지문 계산"]:::flow
+  F["지문 글자 수 64"]:::measure
+  B["Ch 7 기록 파일<br>prompt-ab-continuity.json<br>source_record에 경로 · 지문 · 실행 이름"]:::tool
+  C["사본<br>continuity / 실행 시각 폴더"]:::tool
+  K["기록 파일과 사본의<br>지문이 같은가 True"]:::measure
+  D["Ch 8 06절 노트북이 읽음<br>이번에 실행 안 함"]
+  A --> H
+  H --> F
+  F --> B
+  B --> C
+  C --> K
+  B -.-> D

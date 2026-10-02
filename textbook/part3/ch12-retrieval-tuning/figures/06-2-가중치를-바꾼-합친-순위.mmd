@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  quest["질문 C01 · 정답 LIB-001"]:::tool
+  subgraph equal_case["같은 가중치"]
+    direction TB
+    efused["합친 순위<br>LIB-004 · LIB-001 · LIB-003"]:::measure
+    eplace["정답 문서 자리 2"]:::measure
+  end
+  subgraph up_case["낱말 겹침 가중치 1.5"]
+    direction TB
+    ufused["합친 순위<br>LIB-004 · LIB-003 · LIB-001"]:::measure
+    uplace["정답 문서 자리 3"]:::measure
+  end
+  note["두 칸은 같은 두 순위 목록을 씁니다"]
+  quest --> efused
+  quest --> ufused
+  efused --> eplace
+  ufused --> uplace
+  eplace --> note
+  uplace --> note

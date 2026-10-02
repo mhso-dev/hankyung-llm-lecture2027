@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  val["바꾼 값 question<br>공백 한 칸"]:::flow
+  subgraph two["두 앱에 같은 요청"]
+    direction TB
+    bb["Before 형식 없는 앱<br>상태 코드 200"]:::measure
+    aa["After 형식 있는 앱<br>한 글자 이상 규칙을 지남<br>상태 코드 200"]:::measure
+    bb ~~~ aa
+  end
+  res["몸통에 들어온 값<br>공백 한 칸 두 번"]:::measure
+  fact["입력 형식은<br>적어 둔 규칙만 검사<br>글의 뜻은 보지 않음"]
+  val --> two --> res
+  res -.-> fact

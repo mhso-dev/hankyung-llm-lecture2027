@@ -1,0 +1,27 @@
+{
+  "run_id": "advanced-test-01",
+  "selected_run_id": "advanced-dev-01",
+  "settings": {
+    "analyzer": "char",
+    "ngram": [
+      2,
+      3
+    ],
+    "candidate_k": 50,
+    "report_k": 3,
+    "lambda": 0.4
+  },
+  "metrics": {
+    "recall_at_5": 1.0,
+    "recall_at_50": 1.0,
+    "precision_at_5": 0.20000000000000004,
+    "ndcg_at_5": 0.9507906338095277
+  },
+  "duration_ms": 42.15,
+  "split": "test",
+  "query_count": 15,
+  "excluded_query_count": 0,
+  "corpus_sha256": "832d89c28a25a426fa8d06c8be37c9ca768d3171e50cc4a3eaf74a88cd3ff064",
+  "query_sha256": "dcf7f2883ad7ef666487714c3df6ffe4e173fbec88a604ac07dcee51f3107800",
+  "metrics_policy": "unique-doc-macro-v1"
+}

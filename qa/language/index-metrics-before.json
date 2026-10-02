@@ -1,0 +1,30 @@
+{
+  "version": "v1.6",
+  "genre": "리포트",
+  "char_count": 1127,
+  "metrics": {
+    "comma_inclusion_rate": 0.2857142857142857,
+    "comma_usage_rate": 0.42857142857142855,
+    "ending_comma_rate": 0.5,
+    "comma_segment_length": 6.933333333333334,
+    "conclusion_pivot_count": 0,
+    "safe_balance_count": 0,
+    "hanja_nominalizer_density": 0.004807692307692308,
+    "lexical_diversity": 0.9038461538461539
+  },
+  "z_scores": {
+    "comma_inclusion_rate": 0.13026662277814346,
+    "comma_usage_rate": -0.9810189810189807,
+    "ending_comma_rate": 5.835982199618564,
+    "comma_segment_length": 1.227236737925574,
+    "hanja_nominalizer_density": -1.8397435897435896,
+    "lexical_diversity": 5.0769230769230775
+  },
+  "risk_band": "medium",
+  "risk_score": 4,
+  "evidence": {
+    "conclusion_pivots": [],
+    "safe_balances": []
+  },
+  "warning": "baseline_genre_null:리포트->essay"
+}

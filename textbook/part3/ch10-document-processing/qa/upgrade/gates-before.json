@@ -1,0 +1,608 @@
+{
+  "chapter": "ch10-document-processing",
+  "label": "before",
+  "totals": {
+    "G1": 22,
+    "G2": 9,
+    "G3": 16,
+    "G4": 0,
+    "G5": 86,
+    "G6": 206,
+    "G7": 24
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-문서와-메타데이터",
+      "code_cells": 7,
+      "sentences": 126,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 9,
+        "G6": 25,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell1:result_reading_quotes_no_output",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:수강생이 실제 업무에서 다룰 문서 100건은 아직 제공되지 않았으며, 자료가 준비되면 각 파일에 같은 메타데이터 항목을 붙여 확장합니다",
+          "long:파일명이 바뀔 수 있는 환경에서는 업무 시스템의 문서 번호를 사용하고, 그런 번호가 없으면 대소문자와 슬래시 표기를 한 방식으로 맞춘 상대 경로나, 파일 내용으로 계산한 해시를 조합합니다",
+          "long:같은 내용의 개정판이 들어올 수 있는 규정 문서라면 파일명뿐 아니라 문서 ID와 시행일을 별도 키로 저장해야 어느 판본에서 나온 청크인지 구분할 수 있습니다",
+          "long:이번 절은 `metadata` 딕셔너리까지만 만들며, 본문인 `page_content`와 실제 `Document` 객체는 02~04절의 파일 로딩 결과를 바탕으로 후속 단계에서 구성합니다",
+          "long:다음 학습과 이어지는 지점 — 이 절의 입력 목록과 공통 메타데이터는 02~04절의 로더 결과에 같은 이름으로 저장할 항목입니다",
+          "long:`file_type`과 `parser`는 문서 처리 조건을 구분하는 기록으로 남지만, Ch 12의 기본 실습이 이 필드를 실패 유형별로 집계하지는 않습니다",
+          "long:최소한 원본을 가리키는 `doc_id`와 `source`, 쪽 번호, 파일 형식, 파서 이름과 버전, 처리 시각 또는 사용한 설정을 구별하는 이름이 필요합니다",
+          "long:LangChain 공식 API 「Document」 — reference.langchain.com/python/langchain-core/documents · 확인 2026-09-08 · `page_content`와 `metadata` 구조 참고.",
+          "long:Python 공식 문서 「pathlib — Object-oriented filesystem paths」 — docs.python.org/3/library/pathlib.html · 확인 2026-09-08 · 상대 경로와 확장자 처리 참고.",
+          "english_start:`doc_id`는 같은 문서를 다시 처리해도 바뀌지 않는 값을 사용합니다",
+          "english_start:LangChain의 `Document`는 `page_content`와 `",
+          "english_start:`doc_id`가 같은 문서를 다시 처리할 때마다 바뀌면 이전 색인과 새",
+          "english_start:`source.name`은 확장자를 포함한 이름, `stem`은 확장자를",
+          "english_start:Python은 목록 위치를 0부터 세지만, 사람이 보는 PDF 쪽 번호는",
+          "english_start:`doc_id`는 제목이나 파일명이 바뀌어도 같은 문서라면 같은 값을 유",
+          "english_start:`Path`의 `name`·`stem`·`suffix` 속성으로 실제 파",
+          "english_start:`file_type`과 `parser`는 문서 처리 조건을 구분하는 기록",
+          "english_start:`name`은 `E02.pdf`, `stem`은 `E02`, `suffi",
+          "english_start:`Path`는 파일 위치를 표현합니다",
+          "english_start:`Path.cwd()`는 현재 실행 폴더를 나타내며, 아래 셀은 상위 폴",
+          "english_start:`name`은 파일명 전체, `stem`은 확장자를 뺀 이름, `suff",
+          "english_start:`{**metadata, \"page\": 3}`은 원본 딕셔너리를 수정하지",
+          "dense_paragraph:한 기관의 접수대에 종이 신청서, 이메일 인쇄물, 엑셀 목록이 함께 들어온다고 생각해 보세요. 담당자는 원본",
+          "dense_paragraph:문서 객체 (Document) 추출한 본문과 부가 정보를 한 단위로 묶은 객체입니다. LangChain의 `",
+          "dense_paragraph:메타데이터는 세 부류로 나누어 생각할 수 있습니다. 첫째, 원본에서 직접 읽은 값입니다. 제목, 작성자, 수"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-PDF와-표-OCR",
+      "code_cells": 8,
+      "sentences": 116,
+      "counts": {
+        "G1": 1,
+        "G2": 1,
+        "G3": 0,
+        "G4": 0,
+        "G5": 10,
+        "G6": 34,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell13:generator_expression"
+        ],
+        "G2": [
+          "cell3:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell1:result_reading_quotes_no_output",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:일부 PDF는 태그나 구조 정보를 가질 수 있지만, 일반적인 텍스트 추출이 문단·표·머리말이라는 의미 구조를 항상 복원할 수 있는 것은 아닙니다",
+          "long:광학 문자 인식 (optical character recognition, OCR) 페이지 이미지의 글자 모양을 문자로 인식하는 처리입니다",
+          "long:PyMuPDF의 `Page.find_tables()`처럼 선이나 텍스트 위치로 표 후보를 찾는 기능은 다음 비교 단계의 후보이며, 검출 전략과 허용오차에 따라 결과가 달라집니다",
+          "long:디지털 PDF 전체를 이미지로 바꿔 OCR하면 원래 PDF에 있던 글꼴·인코딩 정보가 사라지고, 비슷한 문자를 잘못 인식할 수 있습니다",
+          "long:제공된 디지털 PDF와 스캔 PDF의 위치·크기를 먼저 확인한 뒤, PDF 객체, 선택한 쪽, 본문 길이와 앞부분을 차례대로 관찰합니다",
+          "long:같은 쪽을 `pdfplumber`로 읽어 레이아웃 문자열과 표 목록을 비교하고, 마지막으로 선택값을 2쪽에서 1쪽으로 바꾸어 글자 수 차이를 확인합니다",
+          "long:다음 학습과 이어지는 지점 — 이 실습에서 확인한 쪽 번호·본문 길이·표 개수·OCR 후보는 문서 처리 결과를 설명하는 메타데이터가 됩니다",
+          "long:파서가 서로 다른 단의 문장을 이미 섞었다면 청크 크기를 바꾸어도 잘못 연결된 문장 관계가 남으므로 파서나 레이아웃 처리 단계에서 고쳐야 합니다",
+          "long:pypdf 공식 문서 「Extract Text from a PDF」 — pypdf.readthedocs.io/en/stable/user/extract-text.html · 확인 2026-09-08 · pypdf 6.18.0.",
+          "long:PyMuPDF 공식 문서 「Page.find_tables」·「OCR」·「License and Copyright」 — 표 검출 · OCR · 라이선스 · 확인 2026-09-08.",
+          "long:pdfplumber 공식 저장소 문서·라이선스 — README · MIT License · 확인 2026-09-08 · 기계 생성 PDF의 표 추출 기준선.",
+          "long:Upstage API Pricing — upstage.ai/pricing/api · 확인 2026-09-08 · 가격은 변경 가능.",
+          "long:LlamaIndex API 「Parse File」 — developers.api.llamaindex.ai · 확인 2026-09-08 · 티어와 날짜 버전 기록 기준.",
+          "english_start:PDF는 화면이나 인쇄 결과를 정확히 배치하기 위한 형식입니다",
+          "english_start:OCR은 사진 속 이름표를 문자로 바꾸는 일입니다",
+          "english_start:OCR은 오탈자를 만들 수 있으며 표 구조를 자동으로 보장하지 않습니다",
+          "english_start:PyMuPDF의 `Page.find_tables()`처럼 선이나 텍스트 ",
+          "english_start:OCR을 적용한 쪽에는 `ocr_used=true`와 사용한 엔진·언어 ",
+          "english_start:`PdfReader(path)`는 PDF 구조를 읽는 객체를 만들고, 실",
+          "english_start:`pdfplumber.open(path)`는 글자 위치와 표 후보를 함께",
+          "english_start:OCR은 페이지 이미지를 글자로 인식하는 별도 처리이며 이 노트북은 수행",
+          "english_start:PDF는 의미 구조를 항상 보장하지 않습니다",
+          "english_start:PyMuPDF의 통합 OCR도 Tesseract 설치가 필요합니다",
+          "english_start:Upstage의 Parse only 가격은 2026-09-08 기준 페이",
+          "english_start:LlamaParse는 티어와 파서 버전을 실행 기록에 고정합니다",
+          "english_start:OCR은 페이지 이미지의 글자 모양을 새 문자로 인식합니다",
+          "english_start:`PdfReader(path)`가 PDF 객체를 만들고 `pages[n]",
+          "english_start:`pdfplumber.open()`은 글자 위치와 표 후보를 다루며 `s",
+          "english_start:OCR은 페이지 이미지를 글자로 인식하는 별도 처리이며 이 노트북은 수행",
+          "english_start:`PdfReader`는 PDF 전체를 나타내는 객체를 반환합니다",
+          "english_start:`extract_text()`가 값을 반환하지 않으면 `or \"\"`로 빈",
+          "english_start:`pdfplumber`로 같은 쪽을 읽습니다",
+          "dense_paragraph:회의장 좌석 배치도에는 사람 이름이 공간에 놓여 있습니다. 글자를 위에서 아래로만 읽으면 왼쪽 열과 오른쪽 ",
+          "dense_paragraph:텍스트 레이어 (text layer) PDF 안에서 선택·검색할 수 있는 문자 정보입니다. 스캔 PDF는 페"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-DOCX-HTML-CSV",
+      "code_cells": 8,
+      "sentences": 107,
+      "counts": {
+        "G1": 1,
+        "G2": 1,
+        "G3": 0,
+        "G4": 0,
+        "G5": 10,
+        "G6": 22,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell13:list_comprehension"
+        ],
+        "G2": [
+          "cell3:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell1:result_reading_quotes_no_output",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 절을 마치면 같은 CSV 행에서 선택하는 열을 바꾸어 결과를 비교하고, 필요한 열을 읽기 전에 CSV 첫 줄에 그 열 이름이 있는지 확인할 수 있습니다",
+          "long:문서 객체 모델 (Document Object Model, DOM) HTML 요소를 부모와 자식 관계의 트리로 표현한 구조입니다",
+          "long:After 셀은 `DictReader`가 만든 딕셔너리를 유지해 첫 행의 상품과 보관 방법을 이름으로 읽고, `쿠키의 보관 방법: 실온`처럼 관계가 드러나는 문장으로 출력합니다",
+          "long:CSV 열을 읽기 전에 실제 열 이름 집합을 검증하면 열 이름 오타와 CSV 첫 줄의 변경을 구체적인 오류로 확인할 수 있습니다",
+          "long:메뉴·광고·바닥글 같은 반복 텍스트가 본문과 함께 들어와 질문 단어와 잘못 일치하고, 실제 본문 청크의 순위를 밀어낼 수 있기 때문입니다",
+          "long:python-docx 공식 문서 「Quickstart」 — python-docx.readthedocs.io · 확인 2026-09-08 · 문단·표 API.",
+          "long:Beautiful Soup 공식 문서 「Installing a parser」 — crummy.com/software/BeautifulSoup · 확인 2026-09-08 · 잘못된 HTML의 파서별 차이.",
+          "long:Python 공식 문서 「csv — CSV File Reading and Writing」 — docs.python.org/3/library/csv.html · 확인 2026-09-08 · `newline=''`, 방언, `Sniffer` 한계.",
+          "english_start:DOCX의 문단과 표, HTML의 제목 계층, CSV의 행도 같은 역할을",
+          "english_start:DOCX는 `python-docx`로 문단과 표를 별도 객체로 읽을 수 ",
+          "english_start:HTML은 `script`와 `style`을 제거한 뒤 선택한 태그를 읽",
+          "english_start:CSV는 열 이름과 값을 결합해야 각 값의 의미를 보존할 수 있습니다",
+          "english_start:`docx.Document(path)`는 Word 문서를 열어 문단 객체",
+          "english_start:`BeautifulSoup(html, \"html.parser\")`는 태그",
+          "english_start:`csv.DictReader`는 첫 행을 열 이름으로 사용해 이후 행을 ",
+          "english_start:DOCX는 문단 순서, HTML은 태그 계층, CSV는 열 이름이 의미의",
+          "english_start:CSV의 주민번호·연락처처럼 검색에 불필요한 열은 로더에서 제외하거나 권",
+          "english_start:`docx.paragraphs`는 `Document()`가 반환한 `do",
+          "english_start:`csv.DictReader`는 첫 줄을 열 이름으로 사용하고 각 데이터",
+          "english_start:`docx.Document()`는 문단 객체 목록, `BeautifulS",
+          "english_start:`DictReader`는 첫 줄을 열 이름으로 사용하고 이후 각 행을 딕",
+          "dense_paragraph:문단 (paragraph) DOCX에서 문장과 서식을 담는 기본 블록입니다. 빈 문단과 제목 문단도 있으므로"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-HWP와-HWPX",
+      "code_cells": 8,
+      "sentences": 107,
+      "counts": {
+        "G1": 0,
+        "G2": 2,
+        "G3": 0,
+        "G4": 0,
+        "G5": 10,
+        "G6": 31,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [
+          "cell3:over_15_lines",
+          "cell15:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell1:result_reading_quotes_no_output",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:HWP는 전용 구조를 해석해야 하는 네이티브 형식이고, HWPX는 본문과 설정을 담은 여러 XML 파일을 ZIP 방식으로 한 파일에 묶은 개방형 형식입니다",
+          "long:이번 절은 모든 HWP·HWPX 문서를 완벽하게 파싱한다고 약속하는 대신, 파일 내부가 ZIP인지 먼저 확인하고, HWP와 HWPX를 서로 다른 읽기 방법으로 보내는 과정을 다룹니다",
+          "long:기본 문서 묶음은 PDF이므로 Ch10 실습 폴더에 HWPX 구조 관찰용 최소 표식과 레거시 HWP 형식 분기용 표식을 별도로 제공합니다",
+          "long:이 파일로 ZIP/XML 읽기와 미지원 분기를 검증할 수 있지만 실제 업무 문서의 표·각주·이미지나 한컴오피스 호환성을 주장하지 않습니다",
+          "long:개방형 워드프로세서 마크업 언어 (Open Word-Processor Markup Language, OWPML) HWPX 문서의 구조와 내용을 XML로 표현하는 규격입니다",
+          "long:ZIP 컨테이너 (ZIP container) 여러 XML·이미지·설정 파일을 ZIP 압축 폴더처럼 하나의 문서 파일 안에 묶는 저장 방식입니다",
+          "long:계약서·인사 문서·개인정보가 든 HWP를 상용 API에 보내기 전에 회사 승인을 받고, 외부 서비스가 파일을 얼마나 오래 보관하는지 확인합니다",
+          "long:이 출력은 본문 XML을 골라 문자열을 얻었는지 확인하는 파싱 점검 결과 이며, 검색 결과를 정답 문서 ID와 비교하는 Ch 11 평가보다 앞선 준비 단계입니다",
+          "long:HWP는 전용 구조를 해석해야 하는 네이티브 형식이고, HWPX는 OWPML 기반 XML과 자원을 ZIP 컨테이너에 담은 개방형 형식입니다",
+          "long:한컴 공식 FAQ 「HWPX 형식」 — hancom.co.kr/support/faqCenter/faq/detail/2784 · 확인 2026-09-08 · OWPML·KS X 6101 설명.",
+          "long:한컴 개발자 문서 「HwpCtrl.Open」 — developer.hancom.com · 확인 2026-09-08 · HWP 네이티브 형식과 HWPX 표준 형식 구분.",
+          "long:한컴 기술 블로그 「HWP·HWPX data extraction」 — blog.hancom.com · 확인 2026-09-08 · 공급자 기술 설명이며 제품 API 계약은 아닙니다",
+          "long:레거시 HWP는 ZIP/XML이 아니므로 같은 코드로 읽을 수 없고, 최소 표식 파일의 성공은 실제 문서 전체 호환성을 보장하지 않습니다",
+          "english_start:HWP는 전용 구조를 해석해야 하는 네이티브 형식이고, HWPX는 본문과",
+          "english_start:HWP를 규격에 맞는 열쇠와 해석표가 필요한 서류함이라고 생각해 보세요",
+          "english_start:HWPX는 여러 XML 문서를 라벨이 붙은 상자에 나누어 담고, 그 상자",
+          "english_start:HWPX는 상자를 열어 항목을 확인하기가 더 수월하지만, 라벨을 읽었다고",
+          "english_start:HWP는 전용 바이너리 해석기나 변환 도구를 거치고, HWPX는 ZIP ",
+          "english_start:`zipfile.is_zipfile(path)`는 파일이 ZIP 컨테이너",
+          "english_start:ZIP을 열 수 있다는 사실과 HWPX 본문을 올바르게 복원했다는 사실은",
+          "english_start:Ch10의 `fixtures` 폴더에서 두 표식 파일을 확인하고, HWP",
+          "english_start:HWP와 HWPX를 같은 형식으로 취급하지 않습니다",
+          "english_start:HWP는 전용 구조를 해석해야 하는 네이티브 형식이고, HWPX는 OWP",
+          "english_start:`is_zipfile()`은 ZIP 컨테이너인지 확인하고, `ZipFil",
+          "english_start:ZIP을 열었다고 본문 순서·표·각주까지 복원된 것은 아닙니다",
+          "english_start:Ch10의 `fixtures` 폴더에서 HWPX 표식 파일과 레거시 HW",
+          "english_start:`is_zipfile()`은 파일이 ZIP 구조인지 확인합니다",
+          "english_start:`namelist()`는 압축 안에 들어 있는 파일 이름 목록을 반환합니",
+          "english_start:`ET.fromstring()`은 XML 바이트를 요소 객체로 바꿉니다",
+          "dense_paragraph:HWP 네이티브 형식 (HWP native format) 한컴 한글의 전용 문서 형식입니다. 내부 레코드와 ",
+          "dense_paragraph:HWP에는 세 가지 현실적인 경로가 있습니다. 첫째, 신뢰할 수 있는 환경에서 HWPX나 PDF로 변환한 뒤"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-문자-재귀-토큰-청킹",
+      "code_cells": 8,
+      "sentences": 109,
+      "counts": {
+        "G1": 2,
+        "G2": 0,
+        "G3": 1,
+        "G4": 0,
+        "G5": 11,
+        "G6": 22,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell12:generator_expression",
+          "cell14:generator_expression"
+        ],
+        "G2": [],
+        "G3": [
+          "cell2:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell1:result_reading_after_missing",
+          "cell2:explanation_before_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:문자 청킹 (character chunking) 하나의 구분자로 텍스트를 나누고, 문자 길이를 계산하며 조각을 합치는 방식입니다",
+          "long:재귀 청킹 (recursive chunking) 문단 구분, 줄바꿈, 문장 부호, 띄어쓰기처럼 큰 경계부터 차례로 시도하고, 조각이 너무 길 때만 더 작은 경계로 내려가는 방식입니다",
+          "long:스플리터가 문단이나 문장 같은 큰 단위를 결합해 청크를 만들 때, 이전 조각 가운데 설정 한도 안에 들어오는 부분만 다음 청크에 남깁니다",
+          "long:앞선 분할 조각의 크기가 이미 오버랩 한도를 넘거나 결합 조건과 맞지 않으면 실제 중복은 50자보다 작거나 0자가 될 수 있습니다",
+          "long:재귀 스플리터는 단락·줄·공백·문자처럼 큰 경계부터 차례로 시도하고, 토큰 스플리터는 모델 토크나이저가 센 단위를 기준으로 나눕니다",
+          "long:배송 안내처럼 문단 구조가 분명하면 재귀 방식이 읽기 좋은 경계를 보존할 수 있고, 입력 한도를 엄격히 관리해야 하면 토큰 수를 별도로 확인해야 합니다",
+          "long:After 셀은 같은 재귀 방식과 5자 오버랩을 유지하면서 목표 크기를 50자로 늘려 두 배송 문장이 한 청크에 들어오는지 검증합니다",
+          "long:동시에 관련 없는 내용이 함께 검색되거나 입력 토큰이 늘어날 수 있으므로, 큰 청크가 모든 종류의 문서와 질문에서 더 정확하다고 가정하지 않습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 Markdown 제목을 메타데이터로 보존하고, 문장 사이의 의미 변화로 경계를 정하는 방법을 실행합니다",
+          "long:4. 긴 컨텍스트 모델을 사용하므로 청크 크기를 두 배로 늘리자는 제안을 검토할 때 함께 기록해야 할 항목을 세 가지 이상 쓰세요",
+          "long:청크 수와 길이별 개수(예: 100자 이하가 몇 개인지), 질문당 검색되는 총 토큰, 임베딩 시간과 비용, 정답 근거가 검색 범위에 포함되는지, 중복 청크 비율을 기록합니다",
+          "long:LangChain 「Recursive text splitter」 — docs.langchain.com/oss/python/integrations/splitters/recursive_text_splitter · 확인 2026-09-09 · 일반 텍스트의 권장 시작점, 기본 구분자와 크기·오버랩 정의.",
+          "long:OpenAI 「Embeddings guide」 — developers.openai.com/api/docs/guides/embeddings · 확인 2026-09-08 · `text-embedding-3` 입력 토큰 한도.",
+          "long:같은 재귀 방식과 5자 오버랩을 유지한 결과에서 두 배송 문장이 한 청크에 들어와 질문에 필요한 근거를 함께 읽을 수 있는지 확인합니다",
+          "english_start:`chunk_size`는 목표 크기이며 구분자보다 긴 조각이 있으면 결과",
+          "english_start:`chunk_overlap=50`을 지정하면 인접한 모든 청크가 정확히 ",
+          "english_start:`split_text(text)`를 호출할 때 문자열을 입력받아 청크 문",
+          "english_start:`chunk_size`는 목표 길이이고, 선택한 구분자로 더 나눌 수 없",
+          "english_start:`chunk_size`는 목표 길이이며 경계가 없으면 실제 청크가 이를 ",
+          "english_start:`CharacterTextSplitter`는 지정한 구분자를 기준으로 조",
+          "dense_paragraph:긴 컨텍스트 모델을 보고 청크도 크게 만들면 된다고 생각하기 쉽습니다. 그러나 큰 청크는 주변 문맥을 더 보",
+          "dense_paragraph:문자 청킹 (character chunking) 하나의 구분자로 텍스트를 나누고, 문자 길이를 계산하며 조각"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "06-구조와-시맨틱-청킹",
+      "code_cells": 8,
+      "sentences": 125,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 2,
+        "G4": 0,
+        "G5": 11,
+        "G6": 26,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell1:result_reading_after_missing",
+          "cell2:explanation_before_missing",
+          "cell4:result_reading_after_missing",
+          "cell5:explanation_before_missing",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_quotes_no_output",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:HWPX에 구조 기반 청킹을 적용하려면 문단·표 요소를 별도 메타데이터나 Markdown 표시로 변환하는 파서 구현이 더 필요합니다",
+          "long:구조 기반 청킹 (structure-aware chunking) 제목·문단·목록·표·쪽을 보고 문서를 나누고, 각 조각이 어디에 속하는지 함께 남기는 방식입니다",
+          "long:시맨틱 청킹 (semantic chunking) 문장이나 문장 묶음의 임베딩을 비교해 의미 변화가 큰 지점에서 청크를 나누는 방식입니다",
+          "long:백분위수 기준을 높이면 관찰된 변화 중 더 큰 값만 경계가 되는 경향이 있지만, 결과 청크 수는 원문의 문장 분포에 달려 있습니다",
+          "long:제목이 신뢰할 만한 매뉴얼은 구조 청킹이 설명 가능하고, 제목 없이 화제가 바뀌는 인터뷰 기록은 의미 경계가 후보가 될 수 있습니다",
+          "long:구조 방식은 제목 표시가 있는 입력이 필요하고, 시맨틱 방식은 임베딩 모델과 거리 기준이 필요하므로, 청크 수만으로 우열을 판단할 수 없습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 문장 하나의 임베딩 벡터부터 관찰하고, 여러 문장의 벡터를 만든 뒤 LangChain의 캐시를 적용합니다",
+          "long:먼저 레이아웃이나 제목을 보존하는 파서를 선택하고, 제목을 Markdown 표시나 별도 필드로 변환한 뒤 제목 표시를 읽을 수 있는 청킹 방식을 사용해야 합니다",
+          "long:제목·표 구조 보존 여부, 정답 근거의 포함 여부, 임베딩 호출 시간과 비용을 함께 기록하고 Ch 11의 검색 지표로 비교해야 합니다",
+          "long:LangChain 「OpenAIEmbeddings」 — docs.langchain.com · 확인 2026-09-08 · `SemanticChunker`에 전달하는 임베딩 객체 구성.",
+          "long:PyPI 「langchain-experimental」 — pypi.org/project/langchain-experimental · 확인 2026-09-09 · `0.4.2` 배포 버전과 프로젝트 보관 상태.",
+          "long:LangChain 「Recursive text splitter」 — docs.langchain.com/oss/python/integrations/splitters/recursive_text_splitter · 확인 2026-09-08 · 긴 구조 블록을 다시 나누는 기준.",
+          "long:그다음 LangChain의 시맨틱 스플리터를 기본 설정으로 실행하고, 문장 사이 거리 중 어느 정도로 큰 값을 경계로 삼을지 정하는 백분위수 하나만 바꿉니다",
+          "long:이 절은 유지보수가 종료된 langchain-experimental 0.4.2의 SemanticChunker로 원리를 학습합니다",
+          "long:95번째 백분위수는 거리값을 작은 순서로 놓았을 때 약 상위 5%의 큰 거리만 후보로 삼고, 50번째 백분위수는 중앙값보다 큰 거리도 후보로 삼는 설정입니다",
+          "english_start:HWPX에 구조 기반 청킹을 적용하려면 문단·표 요소를 별도 메타데이터나",
+          "english_start:`split_text()`가 반환한 각 `Document`에서 `meta",
+          "english_start:PDF의 글꼴 크기나 화면 배치를 분석해 제목을 찾는 기능은 포함하지 않",
+          "english_start:`SemanticChunker`는 문장 묶음의 임베딩 거리를 계산하고 큰",
+          "english_start:`MarkdownHeaderTextSplitter`는 Markdown 제",
+          "english_start:`SemanticChunker`는 문장 묶음의 임베딩 거리와 백분위수 임",
+          "english_start:`#`과 `##` 같은 제목 표시와 각 제목에 대응하는 본문이 필요합니다",
+          "english_start:`MarkdownHeaderTextSplitter`는 제목 규칙을 만들고",
+          "english_start:`SemanticChunker`는 같은 호출에서 문장 임베딩을 실행해 의",
+          "dense_paragraph:구조 기반 청킹 (structure-aware chunking) 제목·문단·목록·표·쪽을 보고 문서를 나누고",
+          "dense_paragraph:시맨틱 스플리터는 인접한 문장 묶음 사이의 거리를 계산합니다. 95번째 백분위수 기준값은 거리값의 95%가 "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "07-한국어-임베딩과-캐시",
+      "code_cells": 9,
+      "sentences": 153,
+      "counts": {
+        "G1": 3,
+        "G2": 0,
+        "G3": 4,
+        "G4": 0,
+        "G5": 12,
+        "G6": 29,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell6:list_comprehension",
+          "cell11:list_comprehension",
+          "cell11:list_comprehension"
+        ],
+        "G2": [],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell10:first_line_comment_missing",
+          "cell11:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell1:result_reading_after_missing",
+          "cell2:explanation_before_missing",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing",
+          "cell11:explanation_before_missing",
+          "cell11:result_reading_quotes_no_output",
+          "cell13:result_reading_quotes_no_output",
+          "cell15:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 절을 마치면 영어 종합 벤치마크 순위를 실제로 사용할 한국어 문서의 검색 품질로 해석하면 안 되는 이유를 설명할 수 있습니다",
+          "long:이 절을 마치면 LangChain의 캐시를 설정하고, 같은 문서를 두 번 요청한 뒤 저장 파일 수와 반환 벡터를 비교할 수 있습니다",
+          "long:이번 절에서는 모델 이름을 설정 한 줄로 취급하지 않고, 한국어 질문과 문서를 같은 검색 공간에 놓기 위해 문서와 질문에 같은 모델·차원을 사용했는지 어떻게 기록할지 확인합니다",
+          "long:이 과정의 최종 모델은 [[미정: 임베딩 모델]] 이며, Ch 11에서 한국어 질의셋의 검색 지표를 계산하기 전에는 확정하지 않습니다",
+          "long:다국어 임베딩 (multilingual embedding) 여러 언어의 텍스트를 검색·분류 같은 작업에 사용할 수 있도록 벡터로 표현하는 모델입니다",
+          "long:인덱스 구성 기록표 (index manifest) 원문, 파서, 청킹 설정, 청크 ID와 벡터 캐시 키의 대응을 기록한 목록입니다",
+          "long:앞의 네 조건은 실행 가능한 후보를 고르는 기준이고, 마지막 측정은 실제로 사용할 한국어 문서와 질문에 맞는 후보를 판단하는 기준입니다",
+          "long:리더보드를 사용할 때는 Korean retrieval 과제를 별도로 보고, 최종 결정은 이 과정의 한국어 질문과 정답 문서로 측정합니다",
+          "long:인덱스 구성 기록표에는 원문 해시, 사용한 파서와 공백·줄바꿈·문자 표기를 정리한 방법의 버전, 청킹 방식과 크기·오버랩, 청크 ID, 각 청크가 참조하는 벡터 캐시 키를 적습니다",
+          "long:Before 셀은 128차원 모델에 256차원 캐시와 같은 `namespace`를 잘못 연결해 오래된 256차원 벡터가 반환되는 문제를 확인합니다",
+          "long:임베딩 후보는 언어·입력 길이·차원·접두사·정확한 모델 버전·비용을 확인한 뒤 정답 문서가 표시된 한국어 질문 모음으로 측정합니다",
+          "long:LangChain CacheBackedEmbeddings · LocalFileStore · 확인 2026-09-09 · langchain-classic 1.0.8 · 문서 임베딩 캐시.",
+          "long:LangChain 「OpenAIEmbeddings」 — docs.langchain.com · 확인 2026-09-08 · `embed_documents()` 직접 사용.",
+          "long:OpenAI 「Embeddings guide」 — developers.openai.com/api/docs/guides/embeddings · 확인 2026-09-08 · 기본 차원, 차원 축소, 최대 입력.",
+          "long:OpenAI 모델 페이지 — text-embedding-3-small , text-embedding-3-large · 확인 2026-09-08 · 100만 토큰당 단가.",
+          "long:Sentence Transformers 「Semantic Search」 — sbert.net · 확인 2026-09-08 · 문서와 질의의 비대칭 인코딩.",
+          "long:마지막에는 LangChain의 캐시 기능으로 첫 요청의 벡터를 파일에 저장하고, 같은 문서를 다시 요청할 때 그 벡터를 읽습니다",
+          "long:Before 원인 128차원 모델에 256차원 캐시에 사용한 것과 같은 `namespace`를 지정하면, 같은 문장의 오래된 256차원 벡터를 잘못 읽을 수 있습니다",
+          "english_start:OpenAI의 `text-embedding-3-small`과 `text-",
+          "english_start:E5는 검색 입력에 `passage: `와 `query: ` 접두사를 요",
+          "english_start:BGE-M3는 한 텍스트를 표현하는 방법을 여러 가지 제공합니다",
+          "english_start:MTEB는 모델·과제·언어별 평가를 모으는 평가 모음입니다",
+          "english_start:`namespace`는 저장 항목을 구분하는 이름이며, 이 예제에서는 모",
+          "english_start:`embed_documents([문장, ...])`는 문자열 목록을 입력",
+          "english_start:`embed_documents()`는 문자열 목록을 받아 같은 순서의 벡",
+          "english_start:`CacheBackedEmbeddings.from_bytes_store(",
+          "dense_paragraph:다국어 임베딩 (multilingual embedding) 여러 언어의 텍스트를 검색·분류 같은 작업에 사용",
+          "dense_paragraph:첫째, 문서와 질문의 언어가 지원 범위에 있는지 봅니다. 둘째, 최대 입력 길이가 현재 청크의 토큰 길이를 ",
+          "dense_paragraph:로컬 오픈 모델 후보로는 `intfloat/multilingual-e5-large`와 `BAAI/bge-m3"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "08-인덱싱-비교-실험",
+      "code_cells": 10,
+      "sentences": 133,
+      "counts": {
+        "G1": 15,
+        "G2": 5,
+        "G3": 9,
+        "G4": 0,
+        "G5": 13,
+        "G6": 17,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell6:list_comprehension",
+          "cell8:list_comprehension",
+          "cell14:list_comprehension",
+          "cell14:list_comprehension",
+          "cell14:list_comprehension",
+          "cell14:generator_expression",
+          "cell16:list_comprehension",
+          "cell16:generator_expression",
+          "cell16:generator_expression",
+          "cell16:conditional_expression",
+          "cell16:list_comprehension",
+          "cell18:list_comprehension",
+          "cell18:list_comprehension",
+          "cell18:generator_expression",
+          "cell18:list_comprehension"
+        ],
+        "G2": [
+          "cell6:over_15_lines",
+          "cell8:over_15_lines",
+          "cell14:over_15_lines",
+          "cell16:over_15_lines",
+          "cell18:over_15_lines"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing",
+          "cell8:first_line_comment_missing",
+          "cell10:first_line_comment_missing",
+          "cell12:first_line_comment_missing",
+          "cell14:first_line_comment_missing",
+          "cell16:first_line_comment_missing",
+          "cell18:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell1:result_reading_after_missing",
+          "cell2:explanation_before_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_quotes_no_output",
+          "cell16:result_reading_quotes_no_output",
+          "cell18:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:수강생의 실제 업무 문서 100건, 정답 질문, 상용 파서 자격증명이 준비되어야 해당 업무 분야의 검색 품질과 파서 차이를 비교할 수 있습니다",
+          "long:이어지는 연결 실습은 Ch 11과 같은 18개 디지털 PDF와 Q001을 사용해 6개 설정의 검색 결과를 같은 JSONL 필드로 기록합니다",
+          "long:다음에는 제공된 18개 디지털 PDF를 재귀·토큰·쪽 구조의 세 단위로 나누고 두 모델을 적용해 Ch 11의 Q001을 검색합니다",
+          "long:재귀 청킹은 7개, 토큰 청킹은 10개, 구조 기반 청킹은 3개가 되었고, 토큰 청킹의 1위 청크에는 질문과 답의 단어가 함께 들어 있지 않았습니다",
+          "long:교육용 제공 자료와 업무 문서 100건·상용 파서 선택 실습을 구분하고, 작은 표본의 단어 검사를 전체 품질 평가로 표현하지 않았습니다",
+          "long:LangChain 「OpenAIEmbeddings」 — docs.langchain.com · 확인 2026-09-08 · `embed_documents()`와 `embed_query()` 직접 사용.",
+          "long:LangChain 「Recursive text splitter」 — docs.langchain.com/oss/python/integrations/splitters/recursive_text_splitter · 확인 2026-09-08 · 재귀 청킹 기준.",
+          "long:LangChain 「Markdown header metadata splitter」 — docs.langchain.com/oss/python/integrations/splitters/markdown_header_metadata_splitter · 확인 2026-09-09 · 제목 구조 기반 청킹 기준.",
+          "long:Upstage 또는 LlamaParse 비교는 각 서비스의 자격증명, 비용 확인, 문서 반출 승인이 모두 갖춰졌을 때 별도로 실행합니다",
+          "long:이 기본 노트북은 상용 파서를 호출하지 않으며, 제공 PDF 21건이나 질문 149개를 업무 문서 100건으로 대체하지 않습니다",
+          "english_start:`InMemoryVectorStore`에 문서를 추가하면 임베딩 모델이 ",
+          "english_start:`similarity_search_with_score()`는 질문으로 검",
+          "english_start:`recursive:02`와 `token:02`의 끝 번호가 같아도 같은",
+          "english_start:API는 실제로 호출됩니다",
+          "english_start:PDF와 질문 수를 합치거나 파일을 복제해 100건으로 세지 않습니다",
+          "english_start:`continuity-ch10-indexing.jsonl`은 Ch 11이",
+          "dense_paragraph:실험 격자 (experiment grid) 여러 조건의 모든 조합을 빠짐없이 실행하는 표입니다. 이 절은 청"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

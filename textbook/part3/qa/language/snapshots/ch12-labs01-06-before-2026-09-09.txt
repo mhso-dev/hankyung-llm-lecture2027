@@ -1,0 +1,191 @@
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/01-벡터-거리와-정확-검색.ipynb =====
+[markdown cell 1]
+# 벡터 거리와 정확 검색
+
+이 노트북은 빈 Python 3.12 커널에서 순서대로 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+OpenAI 임베딩으로 12개 문서와 8개 질문을 같은 256차원 공간에 놓습니다. API 예상 비용은 미화 0.01달러 미만입니다.
+
+[markdown cell 5]
+## 기본 실행
+
+문서와 첫 질문을 임베딩하고 벡터 길이와 노름을 확인합니다.
+
+[markdown cell 7]
+## 중간 결과 관찰
+
+전체 문서와 거리를 계산합니다. 작은 데이터의 정확 검색은 모든 행을 비교하므로 이후 근사 검색의 기준선이 됩니다.
+
+[markdown cell 9]
+## 값 하나를 바꿔 비교
+
+질문과 문서는 유지하고 거리 함수만 코사인에서 L2로 바꿉니다.
+
+[markdown cell 11]
+## 반복 실험과 결과 해석
+
+8개 질문에서 정답 문서가 상위 3개 안에 든 비율을 계산하고 원자료를 저장합니다.
+
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/02-pgvector와-HNSW.ipynb =====
+[markdown cell 1]
+# pgvector와 HNSW
+
+이 노트북은 빈 Python 3.12 커널에서 순서대로 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+전용 Docker 데이터베이스에 연결해 확장 버전을 확인합니다. API 예상 비용은 미화 0.01달러 미만입니다.
+
+[markdown cell 6]
+## 기본 실행
+
+12개 문서를 256차원 vector 열에 넣고 코사인 HNSW 인덱스를 만듭니다.
+
+[markdown cell 8]
+## 중간 결과 관찰
+
+같은 질문으로 순차 스캔과 HNSW 결과를 비교합니다. 작은 표이므로 속도 결론은 내리지 않습니다.
+
+[markdown cell 10]
+## 값 하나를 바꿔 비교
+
+HNSW의 검색 후보 폭인 ef_search만 4에서 40으로 바꿉니다.
+
+[markdown cell 12]
+## 반복 실험과 결과 해석
+
+vector HNSW는 2,000차원, halfvec HNSW는 4,000차원까지 색인할 수 있는지 현재 확장에서 확인합니다.
+
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/03-메타데이터-필터와-iterative-scan.ipynb =====
+[markdown cell 1]
+# 메타데이터 필터와 iterative scan
+
+이 노트북은 빈 Python 3.12 커널에서 순서대로 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+8차원 합성 벡터를 전용 표에 넣어 post-filtering 현상을 재현합니다. 외부 API는 호출하지 않습니다.
+
+[markdown cell 5]
+## 기본 실행
+
+범주 없이 검색하면 질문과 가까운 common 행이 먼저 나옵니다.
+
+[markdown cell 7]
+## Before — 초기 후보 뒤에 필터 적용
+
+iterative scan을 끄고 작은 ef_search를 사용하면 rare 결과가 LIMIT 5보다 적을 수 있습니다.
+
+[markdown cell 9]
+## After — strict_order iterative scan
+
+같은 데이터와 필터를 유지하고 반복 탐색만 켭니다.
+
+[markdown cell 11]
+## 실패 원인과 해결 범위
+
+HNSW가 처음 찾은 후보에 필터를 적용하므로 부족할 수 있습니다. 반복 탐색은 더 찾지만 지연 시간과 함께 측정해야 합니다.
+
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/04-한국어-Kiwi와-BM25.ipynb =====
+[markdown cell 1]
+# 한국어 Kiwi와 BM25
+
+이 노트북은 빈 Python 3.12 커널에서 순서대로 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+Kiwi 0.23.2와 BM25 구현을 사용합니다. 외부 API는 호출하지 않습니다.
+
+[markdown cell 5]
+## 기본 실행
+
+같은 한국어 문장을 공백과 형태소로 나눈 결과를 비교합니다.
+
+[markdown cell 7]
+## 중간 결과 관찰
+
+문서와 질문에 같은 토큰 정책을 적용해 BM25 순위를 만듭니다.
+
+[markdown cell 9]
+## 값 하나를 바꿔 비교
+
+토큰 정책만 공백 분리로 바꾸고 같은 질문의 점수를 비교합니다.
+
+[markdown cell 11]
+## 반복 실험과 결과 해석
+
+8개 질문의 Recall@3를 계산합니다. 작은 자료에서 나온 값은 토큰 정책의 예시입니다.
+
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/05-dense와-sparse-비교.ipynb =====
+[markdown cell 1]
+# dense와 sparse 비교
+
+이 노트북은 빈 Python 3.12 커널에서 순서대로 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+같은 12개 문서에 OpenAI dense 검색과 Kiwi+BM25 sparse 검색을 적용합니다. API 예상 비용은 미화 0.01달러 미만입니다.
+
+[markdown cell 7]
+## 기본 실행
+
+의미를 바꾸어 표현한 질문에서 두 검색기의 상위 결과를 확인합니다.
+
+[markdown cell 9]
+## 중간 결과 관찰
+
+ISBN처럼 정확한 표기가 있는 질문도 같은 방법으로 비교합니다.
+
+[markdown cell 11]
+## 값 하나를 바꿔 비교
+
+검색기만 바꾸고 질문·문서·k=3을 유지합니다.
+
+[markdown cell 13]
+## 반복 실험과 결과 해석
+
+검색기별 Recall@3과 서로 다르게 성공한 질문을 저장합니다.
+
+
+===== labs/part3/ch12-retrieval-tuning/notebooks/06-RRF-하이브리드-검색.ipynb =====
+[markdown cell 1]
+# RRF 하이브리드 검색
+
+이 노트북은 빈 Python 3.12 커널에서 순서대로 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+05절과 같은 두 검색기의 순위를 reciprocal rank fusion(RRF)으로 합칩니다. API 예상 비용은 미화 0.01달러 미만입니다.
+
+[markdown cell 7]
+## 기본 실행
+
+RRF는 서로 다른 점수값을 더하지 않고 각 검색기의 순위만 사용합니다.
+
+[markdown cell 9]
+## 중간 결과 관찰
+
+한쪽에만 있는 문서도 점수를 받고, 두 순위의 앞쪽에 함께 있는 문서는 두 항을 더합니다.
+
+[markdown cell 11]
+## 값 하나를 바꿔 비교
+
+나머지 설정은 유지하고 sparse 가중치만 1.0에서 1.5로 바꿉니다.
+
+[markdown cell 13]
+## 반복 실험과 결과 해석
+
+8개 질문에서 dense, sparse, 동일 가중치 RRF의 Recall@3를 비교합니다.

@@ -1,0 +1,19 @@
+flowchart LR
+  %% classes
+  subgraph method[나누기 방식으로 나눈 칸]
+    direction TB
+    m1["char 기록 2줄"]:::tool
+    m2["recursive 기록 2줄"]:::tool
+    m3["token 기록 2줄"]:::tool
+    m1 ~~~ m2
+    m2 ~~~ m3
+  end
+  subgraph overlap[겹침으로 나눈 칸]
+    direction TB
+    o1["겹침 0 기록 3줄"]:::tool
+    o2["겹침 100 기록 3줄"]:::tool
+    o1 ~~~ o2
+  end
+  common["두 칸 모두에 해당<br>재현율 1.0 정밀도 0.2 nDCG 1.0"]
+  method --> common
+  overlap --> common

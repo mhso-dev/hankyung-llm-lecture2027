@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  ask["개발 질문 하나"]:::tool
+  lists["순위 목록 둘<br>문서 청크 175개씩"]:::flow
+  cand["가중치로 합쳐 후보 여덟 개"]:::flow
+  picked["관련성 비중으로 보고 자리 다섯 개"]:::flow
+  parents["부모 문서 차례"]:::flow
+  values["기록 칸 여섯 개"]:::measure
+  ask --> lists
+  lists --> cand
+  cand --> picked
+  picked --> parents
+  parents --> values
+  picked --> values

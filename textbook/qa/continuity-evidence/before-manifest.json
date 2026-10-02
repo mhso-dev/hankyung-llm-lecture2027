@@ -1,0 +1,3866 @@
+[
+  {
+    "path": ".moai/context.md",
+    "sha256": "c8009d2ce9ba2718e5b52ea8d07c4fb48e2cb400bcabeff9cd77a84d35b22476"
+  },
+  {
+    "path": "AGENTS.md",
+    "sha256": "b2e36e81a06a9e96f4d867a84c69fd4acc70e9801927ea752856ea950f6dc58d"
+  },
+  {
+    "path": "labs/data/rag-corpus/README.md",
+    "sha256": "6103c223a91adf4fb4ac01e0af1257895112f3cdac5a6dc37e207710d2d30ffe"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/answer_keys/H05-text.pdf",
+    "sha256": "e84507e4b05e271789f4265b853c238dc606b47030baa6b9d71d7a7d16753e19"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/common.py",
+    "sha256": "52d59017e3cfbbb0d847056cb0aa32b59c2c1ee2ee6ffb2cf15ac836780ac142"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/easy.py",
+    "sha256": "5b34c244b70c2a47c3b8e055b4fba6728bde15b95cf80936c3e876affcd510f3"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/finalize.py",
+    "sha256": "ecfa643e4198ec21cccfd3972293822899bd1e0074b7ac22791fee4d3951e391"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/hard.py",
+    "sha256": "b95df0e089d25c436d391b20afc7329eb3f67d640f7b94f6da336a9cb8d31403"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/E01.html",
+    "sha256": "e7bb7aa628c54d1e31ba1b27cbecb206e932bec1c5a7eb7c6634c2eedb4999da"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/E02.html",
+    "sha256": "76f300c135f4182ec4f7799a34857cef29b5167caee09fcecd665cc5c34c93c8"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/E03.html",
+    "sha256": "0b5134f6c8d69a4e7f812bf75ec798628f331c1fd7e4e9a74c25d5678080e217"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/E04.html",
+    "sha256": "b0521a920e32ccb2925b4f5001df088b699f8bd6202204be7fa71d1fc0d4df2f"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/E05.html",
+    "sha256": "5c480d4c6f1ffe57d605f4d256f5a0faf8189596fad14d9eb6457aff7a2f6ad0"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/E06.html",
+    "sha256": "1db07375e64f6d992370ab1d40d1a1b50b859d1b99d3e61eacba9b6280c7a6f2"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/H01.html",
+    "sha256": "3acaca50fb19719f646b5ff55cd78883316a4d292ffaa67cc61d5f323da78cd7"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/H02.html",
+    "sha256": "91d526f77ec3eb6dafcbfbc0f03f405c8a05c8fecd8f417f255ff84113edb978"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/H03.html",
+    "sha256": "335117ed1e18acf380b3303bffa8f20ca0c5804168eee8a3d808be6616204818"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/H04.html",
+    "sha256": "320b2cd15feb372c8f601541b6779c2ab5cdcba4bfa8d6a1aa8117482a5b4472"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/H05.html",
+    "sha256": "2be47f9745f21105b1383c68e21f5c22be042da61468f4b1b63550d6d8d74a1b"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/H06.html",
+    "sha256": "e7660e20f9ab9dfa36b18a2e7a0c1dc19e293375a998ad56978ec141598bd8aa"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/M01.html",
+    "sha256": "51c776e98e599faaef32dbc3c60b471c601e142aaa81474938432d751382edb4"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/M02.html",
+    "sha256": "85edb640f00dcf2a24225249375568c0a720f698543a86b5ca32119a86091a90"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/M03.html",
+    "sha256": "292e581c600b3b9dc6d19d8e12ad57aa63e7070624220937b606fb8e709f65e4"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/M04.html",
+    "sha256": "a7b7770500e058833f29548f75d27be2d5243701dbcc198cb03ed0763963c8ae"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/M05.html",
+    "sha256": "02af312409e57977e35abe86b9fd7f7fefbabc0ecf55bc4afcc6cc7430869910"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/html/M06.html",
+    "sha256": "08a8a8e2986877a7848df4f317649f56fc26d0392e5038efb74970fdc3dbceae"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/E01.json",
+    "sha256": "b10409f9ee7d2075a694fb54ad0b1921381103d19f700bc9004c34f51d56cfd8"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/E02.json",
+    "sha256": "8db890f7161f75927e2c8dd24ae0e7403ad4ce159aa04a2a02c3d042c3b5be8d"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/E03.json",
+    "sha256": "0d3a592740248da2f9ebae2cc73876e35c733cbb71935104eaebeae3416982f8"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/E04.json",
+    "sha256": "8f87782d9c2831a55c74c59070cb0e3bc6a2683eafbc8a555bd15268aef9c8b7"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/E05.json",
+    "sha256": "a77426017e8decdea78753309d5f4acd9a8dbc6aca9285f477dfb85e2d184e73"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/E06.json",
+    "sha256": "b0e0c3096d1806007fa3f49c6d97ceaf3404dc4393a736217f24475caec28c22"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/H01.json",
+    "sha256": "5b8e1a004956c1d2920af2de43ff393e768370ff2643abde0c7662189739d77c"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/H02.json",
+    "sha256": "549a82c96e9bf86378e666b1fa8951f6a7411ac89e99bc0eaab002f67b835e89"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/H03.json",
+    "sha256": "d2f7ffc3be3e42c50d78e27570ce33ececebb11845fb08816974632002f4719a"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/H04.json",
+    "sha256": "ba0ac1c0085d0e7ee5ec1ba1f4c796e9f28a2bf91aac6870a289b7a36b3a8406"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/H05.json",
+    "sha256": "30c6e24d132b8532b5caa79d4aed428b6558230523c10dc3a80102bc4fae4fc9"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/H06.json",
+    "sha256": "c991a5f2ca5dda1c501b2c9f3254454759ac2f5311b404683aab32026d9d8c73"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/M01.json",
+    "sha256": "a5c588570638570f0f274812e3771443ce571e0b8ef4900a3aaca52f218dd082"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/M02.json",
+    "sha256": "51a4a91d11993b02478622e54de70e9ad379c35b7f243c806b7a5ab473cb22b1"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/M03.json",
+    "sha256": "349a2335bb3626d346b7217716ce25b55d43f6cd8580fc91d418ef32137105ff"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/M04.json",
+    "sha256": "387236a50c1ddd9a5adcd7e0f66a61e09c52d9da4b893578747753206ab8b371"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/M05.json",
+    "sha256": "6bcc6dcc74c5c1eb5b336a68dbdef8309fbd06337bb6a1d70e05fdc4c7e3ed83"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/manifest_parts/M06.json",
+    "sha256": "c35d23171913cbe1498bb9d671edad00b6d942e827c1b0e72807a711dc5cf5a3"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/medium.py",
+    "sha256": "13756fe6de92668bc1462eaf9becd941838f8041ae11189b1bc7429a568c98c6"
+  },
+  {
+    "path": "labs/data/rag-corpus/build/scan.py",
+    "sha256": "43698a5d277a3abeba4daadfce3335b73d6609c0e30963f6608098463ebc428b"
+  },
+  {
+    "path": "labs/data/rag-corpus/manifest.json",
+    "sha256": "27541f4121edb594a598432d8a3ac3539436aadbcce3ca38faa14f74ed7749df"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/.DS_Store",
+    "sha256": "8d3b068fd9842445c3711b713e2722849f2e630ab861ff8e91f54941a4565d24"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/easy/E01.pdf",
+    "sha256": "cd0ff7d7ec6f7a3b3a11a55d1b089ac20bca4b78c3dbd1159fe5f1aa775faf28"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/easy/E02.pdf",
+    "sha256": "871fda029b2228472c218367731430e997d4f64e457654c02c2e6c3097a2ea08"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/easy/E03.pdf",
+    "sha256": "f3552adb87f01f2d9f8f3db7f71cd09ee86a63f97fd3e6943ecdeb3511b42b02"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/easy/E04.pdf",
+    "sha256": "f577cfddcc0da5b050a97f5d58d4f3739936e0426d9f6d68fe5b243010410839"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/easy/E05.pdf",
+    "sha256": "a4ec983e67adac8390db21f779aea2e5686720cb1ca96a749dd7b94439ae1305"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/easy/E06.pdf",
+    "sha256": "838c6b924a36a8eee9d3dd8ca7560310519e4c6fff4e9e77d3dcba09d81ff200"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/hard/H01.pdf",
+    "sha256": "f728a2c3881528dc531cbf410cf85466de1b9348c2d5489524684fb517071415"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/hard/H02.pdf",
+    "sha256": "6093ecdff23660047f80ceddbd31f2f33500eeb94cd06f7f97cc1fad6550a7a3"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/hard/H03.pdf",
+    "sha256": "0bf70b5283e82756c7fd5c2b1616097227a9d6ec8fa0cdf5fedfe05f00d388a2"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/hard/H04.pdf",
+    "sha256": "ba4ecccaafa34078206c2f644cdb70ac8c7df558e9d302b5f9376944aa0c86f8"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/hard/H05.pdf",
+    "sha256": "8582441d73428fbbf8d95aabfa672016c9364ef5782cbcd2aabf5378f27e0fba"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/hard/H06.pdf",
+    "sha256": "a1244c8499432dc99a0f8d43b546062c3a93a4b094f47381f4b177caf0e6dd61"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/medium/M01.pdf",
+    "sha256": "f8bbca115e83e2c0866a9ea8363b3bde96315c99ee5b239e3dad560c4e2e3925"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/medium/M02.pdf",
+    "sha256": "9f8a18201675cdf000f8e94ea43ca1f280fd7b356610c2b547ca4994f325dd18"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/medium/M03.pdf",
+    "sha256": "e2aeda4c4829ba08eeddb46f623bcbea592eb9f9814049340fabff7ec1f79ce1"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/medium/M04.pdf",
+    "sha256": "4ca01ab99d052512185ec4f56b3de7fcd0783a2e8fc69ed85a1bb5782572d582"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/medium/M05.pdf",
+    "sha256": "f114b58626cbdefc6e8435d21d625d1474378f5185cadbfc1630b75b1b2abfae"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/medium/M06.pdf",
+    "sha256": "f2e25eeefc88f6896ec853a920b04034531d1bb6581a4da6a5ad3a9cad081554"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/scanned/S01-E01-scan.pdf",
+    "sha256": "588a1e44ba9bed79d79a332dc65cf62918822336289a11bee83c67f5d674a4d3"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/scanned/S02-M03-scan.pdf",
+    "sha256": "c61bff94dc1466e8adc26fbc3981783352c8ef340074354f16a9e3d52e3f1e89"
+  },
+  {
+    "path": "labs/data/rag-corpus/pdf/scanned/S03-H01-scan.pdf",
+    "sha256": "e590cf9d8580f73831d4b4aa78933d2f0e48b02b5d28fc525bcdf6e08ea9f36b"
+  },
+  {
+    "path": "labs/data/rag-corpus/public_pdfs.md",
+    "sha256": "7784744c614d14b3da7498bfbfb2c8c9eac28862b43780f3350606980ce32419"
+  },
+  {
+    "path": "labs/data/rag-corpus/queries.csv",
+    "sha256": "0c1f6d84d112f1b9a8b4454bd935e912da9541fc06580b75113497cebc36f29a"
+  },
+  {
+    "path": "labs/data/rag-corpus/queries.jsonl",
+    "sha256": "7981f2b803d11eb79d9194ffe784592310671852200b3faa6cd634d41c7f0573"
+  },
+  {
+    "path": "labs/part1/ch01-development-environment/README.md",
+    "sha256": "795b887de57f042aa094b3755ff94057e3e2043d65505ffcc36212245cd6e2f9"
+  },
+  {
+    "path": "labs/part1/ch01-development-environment/hello.py",
+    "sha256": "290bd2edcb4c6a10122a526d02aeacd3de7b892ade26252784bd5967a4e48b25"
+  },
+  {
+    "path": "labs/part1/ch01-development-environment/notebooks/01-과정-지도와-학습-규칙.ipynb",
+    "sha256": "bbce1ab0f6bc8278101259ec420ef0eef0e1ecd44436547989da0d5566b43839"
+  },
+  {
+    "path": "labs/part1/ch01-development-environment/notebooks/02-도구-설치와-터미널.ipynb",
+    "sha256": "d50e8a71ff3462cd2169e7649da9ace13d0fd8f045e26eedeca13c81bcc40ac0"
+  },
+  {
+    "path": "labs/part1/ch01-development-environment/notebooks/03-Python과-가상환경.ipynb",
+    "sha256": "70580e9a29f5d1687a11f4786dd783577424f9d25a0648a472db5720c3adf9b6"
+  },
+  {
+    "path": "labs/part1/ch01-development-environment/notebooks/04-첫-스크립트와-디버거.ipynb",
+    "sha256": "274f8bef3a2ae9ef0cb1fc70b602c43a652917154d898081eaeb4dad4e133740"
+  },
+  {
+    "path": "labs/part1/ch01-development-environment/notebooks/05-Git과-Docker-준비.ipynb",
+    "sha256": "2a93389e6ccc175dc714212863aa8ae34fc3199979b119af1ddcd0743930ae0d"
+  },
+  {
+    "path": "labs/part1/ch01-development-environment/pyproject.toml",
+    "sha256": "0bd582e6a050c4ae5f01fecc9b2d227e0a5fabd16c660c59af9ce9cf3cd58687"
+  },
+  {
+    "path": "labs/part1/ch01-development-environment/uv.lock",
+    "sha256": "4b7734a969f8501817f7a35a4d1b8fcb4170d31691604428c08e02b147c76d00"
+  },
+  {
+    "path": "labs/part1/ch02-python/README.md",
+    "sha256": "0efab7b33bc9173e1ec5e00c59debc0941fd3ac3ff9c715cd385a9a7e9d13d80"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/01-변수와-자료형.ipynb",
+    "sha256": "e198ce24020c6b40705753c391ae9e29d50d532c43a1f89a618a89c4ff90a509"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/02-조건문과-반복문.ipynb",
+    "sha256": "e6254809c4a902d70f98b4371c3ce8a505a75792700d6b319eb39fdee2d52fd4"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/03-자료구조.ipynb",
+    "sha256": "0d75a03cf37b193f50ed7caf08ce3eeab1a3f0b0cf5980a734413598e3da30a2"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/04-함수.ipynb",
+    "sha256": "83f1245feb8e2c317de810594b5a288804f246c057ef87e01ded0feaddffbf01"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/05-파일과-예외.ipynb",
+    "sha256": "f7514bb6924e5e128b14649c5218e19ba27be7a8d7cd6912a7aab59dccaa9f29"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/06-클래스.ipynb",
+    "sha256": "61806f8ed476cdd6e87b95074091b447d9600bbbc674773fc79b5311f4668b30"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/07-모듈과-타입힌트.ipynb",
+    "sha256": "28a5790fb4902ec770735e29f0b3d0d547d6316078da0ee7ccbc5592631a1bb9"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/08-pytest.ipynb",
+    "sha256": "993f95a7499378f71e5b45f467de9a2150b71011597492cd54d3ed11dc06982f"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/09-데코레이터와-컨텍스트-매니저.ipynb",
+    "sha256": "0fe79f3d20045ab1aa3d9b63a158ab1b8abc32d55f623f58dc038a0e9831aa9a"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/10-Pydantic.ipynb",
+    "sha256": "705ab9ffdb0c57f57ba9f82feccc990e514ead882fe89c53de51851d56614bcf"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/11-패키징과-테스트-격리.ipynb",
+    "sha256": "cad687f5e9d723521982dc445fdb2d6ba1e190c8c6c04000f758cf02ef83d6e8"
+  },
+  {
+    "path": "labs/part1/ch02-python/notebooks/12-async와-await.ipynb",
+    "sha256": "8a5eab31b0b32f186101b19bebe53f0d1a864b78f35498095e4cdde010787a95"
+  },
+  {
+    "path": "labs/part1/ch02-python/pyproject.toml",
+    "sha256": "cd63919c3e23c4a5dfcf423f276300e4ca333551c707e5342974ec2584ec9256"
+  },
+  {
+    "path": "labs/part1/ch02-python/uv.lock",
+    "sha256": "be1a756cb4936a444cba5dbe544939aed7e8625e867251f9f5b6e8e0e810b5a6"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/.ruff_cache/.gitignore",
+    "sha256": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/.ruff_cache/0.16.6/1141757709814735000",
+    "sha256": "e16921bd625f999e8ab9d8e19a8b2240332f7b34ac90e2d03a9c003a0007dbc0"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/.ruff_cache/0.16.6/1287172655304854190",
+    "sha256": "30cac6bfb57613c583db3c56cf0312879f97a69d8aa5a325261dc845a45728bf"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/.ruff_cache/CACHEDIR.TAG",
+    "sha256": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/README.md",
+    "sha256": "078e1800d9de20b61307b681ddb5eb082cf21b749ad91c7e7242796e6db455e3"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/_make_notebooks.py",
+    "sha256": "dab5ff9ecbc6118206664f27270f59382194d01b5e41a94d2df31d957fa6b991"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/notebooks/01-커밋과-gitignore.ipynb",
+    "sha256": "cca9df4aed0ca5bbce950d74f30a8d2b6fd85f78a083b94f95b7bb6054904321"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/notebooks/02-GitHub-Flow와-PR-리뷰.ipynb",
+    "sha256": "4db86b659e0be647df6620e39f2505ccdd469d9df3a729cae889beba9a062734"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/notebooks/03-병합-충돌-해결.ipynb",
+    "sha256": "410d34e8e5819b2565183db9b1c35e9c859bd76b6cc9c83b00aac047ef9166b6"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/notebooks/04-revert-reflog-worktree.ipynb",
+    "sha256": "3bc515946753f500aad81ef7c836cce481f9d0db45faf851d0cd1458c18c9872"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/notebooks/05-시크릿-이력-정리와-예방.ipynb",
+    "sha256": "709e48c622f6ed6093fc7d6b6bb469f101b1629af46a3e5aa35ec03c877046e7"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/pyproject.toml",
+    "sha256": "60364bd2ea617ab1b25f90418518c9a49af1f5321da285bbc9c42b931c243270"
+  },
+  {
+    "path": "labs/part1/ch03-git-github/uv.lock",
+    "sha256": "59070c940fdfda168c87c162c8d0655570e0a9ccd68a37d02e76b77362fc3db8"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.pytest_cache/.gitignore",
+    "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.pytest_cache/CACHEDIR.TAG",
+    "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.pytest_cache/README.md",
+    "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.pytest_cache/v/cache/lastfailed",
+    "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.pytest_cache/v/cache/nodeids",
+    "sha256": "52814c2b311061fd47a5db11884e7f4dc438ec6d6b9e62e9804339f97e3e67ea"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.ruff_cache/.gitignore",
+    "sha256": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.ruff_cache/0.16.6/13398544483595246220",
+    "sha256": "17c81daf244581eede9d993f8c94cc6e79c1dc0bcd947292f18738ae9a2028d5"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.ruff_cache/0.16.6/14581856463459411045",
+    "sha256": "df28522d86796275b0fe91cfaacbe317493d602c106ec9b2a90d4338ab18f4f5"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.ruff_cache/0.16.6/15959362776068726827",
+    "sha256": "8532d4b858ff162b71abe8c4d97b7a3cdc550a7f473741a1e570038b8b33a779"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.ruff_cache/0.16.6/17327221585024398077",
+    "sha256": "cce6545a719f9cff21ab5770f32fd947b0392ffb903ade3403b389daea6675c2"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.ruff_cache/0.16.6/17604556562113515442",
+    "sha256": "499c821e1d1b592d36d46d8ea8f9017a38e75d6a54e596afc3fb4f2be57efccf"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.ruff_cache/0.16.6/2299413647230149841",
+    "sha256": "db60fe8ebb0bf7fd1abc7d341f0b119ff9f7c3a8ccd9e9777ee6df10b850da8e"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.ruff_cache/0.16.6/7611110258242416590",
+    "sha256": "5079f4212b726d78601e3dd853e062a78b73dace33832822954781570eebc146"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.ruff_cache/0.16.6/7948848252174520195",
+    "sha256": "8cdb5c89e8e2596c7dfd6c4ad3537ba762cc73c08a1a0b10dbc623040daf5470"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/.ruff_cache/CACHEDIR.TAG",
+    "sha256": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/README.md",
+    "sha256": "aaceb52a87339bf91fffa9d596a7e8751c10147f65809bebedc63606c3352de5"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/data/README.md",
+    "sha256": "1978bb12d38c178b16dedd3e332716394c725e915fb95a6160b35d934aefb60c"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/data/article.html",
+    "sha256": "b554f51d18e0495562a31548557083b26f0bda3b09d73fb9b6673565283f521a"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/data/articles.json",
+    "sha256": "bfbb5298d137cdb44e0f44696333b529ca666e9f355e22f7762f39ab4f76b7fd"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/data/customers.csv",
+    "sha256": "055f3b884f5883b3af6da0bc38ebd4ab4ea7eef207010c96e523bc016a59eab6"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/data/orders.csv",
+    "sha256": "f2d1e3ee1e4f6d22fd1cf84b0c77242a66a344ae7925be74c5d471569366ef64"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/data/robots.txt",
+    "sha256": "8f2f5670c9e169ddfd003592becb62db4777306706f36c98d44b5449d7cba81b"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/data_tools.py",
+    "sha256": "4f142fd7bf8b4bcb6976880db748fd96235abfa7f67d380e3de21f4a322405d9"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/notebooks/01-Pandas로-표-다루기.ipynb",
+    "sha256": "9754538419643dc68da2e9e466763a9a304db04cb8ded3668289d88c16f53e71"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/notebooks/02-관계형-테이블과-키.ipynb",
+    "sha256": "d7552a0084dcddec56b11aadf1d5dce9e4016589c51e62e9127b24ad6506b366"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/notebooks/03-SQL로-조회-함수-만들기.ipynb",
+    "sha256": "ef75b671311d0d8ee6536a65a653acadfba462cf5478e9d5959a3e49001a6e10"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/notebooks/04-REST와-페이지네이션.ipynb",
+    "sha256": "b6b33d2b8f470af2eb2a07713b0679ede905a66b7d295cd4943d241bf3797940"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/notebooks/05-문서-파싱과-스크래핑.ipynb",
+    "sha256": "a0434f9a1ba32d3ca44ce720242ef24f4e8037fac5c8cef91c4acd8f2dc48ca2"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/pyproject.toml",
+    "sha256": "ff2282f527b74ff952992a6d66fe304375968c61519389012ae5e1dcb7461892"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/tests/test_data_tools.py",
+    "sha256": "9f1bc438cf8b6753bf280f44090ec0ef87bbb8bebf67276134e17d0c55f8450a"
+  },
+  {
+    "path": "labs/part1/ch04-data-tools/uv.lock",
+    "sha256": "ab3602b22fe4ba6e4ed4b3afd82281852a64445fd37d4cbde8e3545cd71fa257"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/README.md",
+    "sha256": "0907d704c7a568a0a14040eaa373f8233f000de944e8869cfc593421cc4ef36f"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/make_notebooks.py",
+    "sha256": "63b6fa70f6ac58512ea16ab065ecd575e85fd6b34ddea04e9f23b6d7f5e20e07"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/notebooks/01-토큰화와-한국어-효율.ipynb",
+    "sha256": "3e67f7304c0274dfb32d417157e3dfbb4b9ce781800282b42e7a04276b26d93d"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/notebooks/02-임베딩과-의미-유사도.ipynb",
+    "sha256": "62a0e4524a0a5ad0ef2ac420a8fedaef0f0c6d27cea8a6b47ff7401e71e5bdb0"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/notebooks/03-어텐션-직관.ipynb",
+    "sha256": "7b036ee3779a7cde5f6900f910ce2ac867a7aefb1c7f966d2ff77534c048c183"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/notebooks/04-컨텍스트-윈도.ipynb",
+    "sha256": "8391327ac32ded00af5491d8ce7a969b4d13f3333f56411700a92aa381845ead"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/notebooks/05-컨텍스트-로트.ipynb",
+    "sha256": "b519ae271d3fbd44c3b023cbc1d8dc6994cfd2ca405e66ee9851f410c9b6c13a"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/notebooks/06-temperature와-샘플링.ipynb",
+    "sha256": "550bf5311a89b79b62d3a0999e60de18f374716af1086b636e9adf3a9d74be32"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/notebooks/07-환각의-구조적-원인.ipynb",
+    "sha256": "d76275b0336f661facbb9a70a0841367722ff17f034a79ba5c2d8f69520b4784"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/notebooks/08-모델-선택-기준.ipynb",
+    "sha256": "2569cca134ffcdd968af96629518ae72abfeedd186b43d15d15d3236331711ed"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/pyproject.toml",
+    "sha256": "a462cb12a84bff3b892432e56df627237fd67509625cece890432a56dc3073ed"
+  },
+  {
+    "path": "labs/part1/ch05-llm-principles/uv.lock",
+    "sha256": "66286cb0be6c2dbe3f7903442fff685ee82e3c147972d9b0d592cf5719aa49c1"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/.ruff_cache/.gitignore",
+    "sha256": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/.ruff_cache/0.16.6/7297459682540398057",
+    "sha256": "671c7040d6fc2f8ccdbf66fbf031edaf364b2487dcce9180df41dab9ded7765c"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/.ruff_cache/CACHEDIR.TAG",
+    "sha256": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/README.md",
+    "sha256": "056d3cdf8be6b344ae31ef86346485524a27b51bcb00c93bbd6c4ea45649be57"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/_make_notebooks.py",
+    "sha256": "d6b0412aac08be474fbc50cbaeedc90dc44090e59bab03658c42ba0187e5977a"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/notebooks/01-계층-지도와-첫-호출.ipynb",
+    "sha256": "ce1b7d4d026211f5f3f89804c87cfc71308a47e02e25c905c5eaf25f1a0753ee"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/notebooks/02-메시지와-제공자-전환.ipynb",
+    "sha256": "c49251a3dbd5ecda9eb19fd8ff0b56276f986c490a275f59469286d3305b4e9a"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/notebooks/03-구조화-출력과-검증.ipynb",
+    "sha256": "dc786d4eae03e89935cc66957f8e8204fef87c8cdae155332db3faf0a63924a5"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/notebooks/04-스트리밍과-content-blocks.ipynb",
+    "sha256": "be366756491c59fbccbe71726475cbb12a4857644807509afc242a4caece65de"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/notebooks/05-타임아웃-재시도-폴백.ipynb",
+    "sha256": "7e6c878eaee44a6f9ee6db185d6249e26eb00e28d78a6be3d827c21719e12816"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/notebooks/06-토큰-비용-지연-비교.ipynb",
+    "sha256": "4cb994b074d869e80a950f99cd7251b81c935485d3c189e1a5e42d849d5157be"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/pyproject.toml",
+    "sha256": "c01dae923a6b18c73e91bb63aa329dc5d94a6551e224fcda1b22eec3aa1598f8"
+  },
+  {
+    "path": "labs/part2/ch06-langchain-start/uv.lock",
+    "sha256": "7e17a99eb24499640f95732a9d62ae8369221ffd293a01b1a956ac7142762626"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/.ruff_cache/.gitignore",
+    "sha256": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/.ruff_cache/0.16.6/938799646690429669",
+    "sha256": "c752bc7bf13d20449d33c8345847cf5b03efd585f0d26f9e581d0cdd8fc4f5ac"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/.ruff_cache/CACHEDIR.TAG",
+    "sha256": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/README.md",
+    "sha256": "887eb5413441a50454841f0a0bdc5ce9b565ac7542736fc211cd957cce263165"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/_make_notebooks.py",
+    "sha256": "8fd6f3e6e12c79aaf5e58a8d65ba2e928b8b0d86c830a6717233f809f49c2cca"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/notebooks/01-역할별-메시지와-제약.ipynb",
+    "sha256": "b6982f2662a2f9f7a7c0a7db8b702e0911bbe1755aab9192748c74b3661c0660"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/notebooks/02-페르소나와-과업-제약.ipynb",
+    "sha256": "9b8226dbe7a15262d1d04d602af909008f177780dd202df72d693f6ea2745473"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/notebooks/03-Few-shot-예시-선택.ipynb",
+    "sha256": "b3a250fe71dca517a24542ae41f8487322c2c8ec0d3515a0453e99a1ec0e79c7"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/notebooks/04-ChatPromptTemplate과-MessagesPlaceholder.ipynb",
+    "sha256": "e6620dc0a7f8b050647a0cd39b9093d99ce8c86d117317c535ac8d61dedad75e"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/notebooks/05-CoT와-ReAct의-경계.ipynb",
+    "sha256": "df7cb9ca914be840ba45cb6ab5c414b6c27fae3e02def83e59dbdb6d337c597a"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/notebooks/06-Self-Consistency와-표본-합의.ipynb",
+    "sha256": "cd4ac1afdd2a6ca6d6c2b5e9605fa759cc4f39b31871c55e131f91e1c0685d21"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/notebooks/07-구조화-출력-프롬프트-진단.ipynb",
+    "sha256": "6d774883685e512b793a4a2c4360092603c5ef6b6fcaf347b3f35267c5ddbca5"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/notebooks/08-프롬프트-버전과-AB-비교.ipynb",
+    "sha256": "2ec3a8af3786bb5c6032e05de603f8a43d5b530ebc91130d32447511bc4f7147"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/pyproject.toml",
+    "sha256": "0ed70a96f653f30ffda7aeeb4b457c50796093966945c291df156e85dc06aaa1"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/runs/prompt-ab-v1.json",
+    "sha256": "16a4b67210853c925e75ced02cc88fa704957aa196a2572a05f8fce49fbf4341"
+  },
+  {
+    "path": "labs/part2/ch07-prompt-engineering/uv.lock",
+    "sha256": "3831ab5ecd18c6af1e01fc99bc8469b399edcc7de4a12d0b5da8becaa3019970"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/.pytest_cache/.gitignore",
+    "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/.pytest_cache/CACHEDIR.TAG",
+    "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/.pytest_cache/README.md",
+    "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/.pytest_cache/v/cache/lastfailed",
+    "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/.pytest_cache/v/cache/nodeids",
+    "sha256": "2b87c339de8d906ad93fabfe303f18c4d388e73882c64b933d400ddc6202517e"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/.ruff_cache/.gitignore",
+    "sha256": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/.ruff_cache/0.16.6/10679642679943727078",
+    "sha256": "4f4e79f481e66f1002c5196577b4f76f3a1ced91419d15f7a50c39866d1ea878"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/.ruff_cache/0.16.6/13757614431537826519",
+    "sha256": "b5fa345a595dd5c31b78306deb96e6ec844b3680857e5a595c332b1aad419e50"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/.ruff_cache/0.16.6/15960790501801824686",
+    "sha256": "f2ad9f9f64573ff2ad2f14635d04c1c48fff438a04f2fb726be4c3a757a993ff"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/.ruff_cache/0.16.6/9880377189869333254",
+    "sha256": "e4ea77c71724af4f1828c8ea795cfdccf844bd60cb01d7b0536c7f9b1d1b2804"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/.ruff_cache/CACHEDIR.TAG",
+    "sha256": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/DEVELOPMENT.md",
+    "sha256": "ee0e988a366c8616e3bd022d7b8e27f40007f5d29a98fb030a3b4533581b7b87"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/README.md",
+    "sha256": "4fc88114807be2ac422389ff0eec3f6d4688f8d535c8c5e6c75a516ae2788be1"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/_make_notebooks.py",
+    "sha256": "7045d8154797c5654974c25ab26b575acfb602689bb3b9453030aabbea888a54"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/context_lab.py",
+    "sha256": "d5877db6bbaf18d7c354426e865376fd6c7e056ee5c75bb3c34116805fbd430d"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/data/memory.json",
+    "sha256": "0aa9fae5d8240aa6d9f01fb373871ead4b4b6b35e6c057eab2aaf6a6899fabd2"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex01_budget.py",
+    "sha256": "4b100fb9ed94d0c8d13ff5479447636eaefb11dc76d877a97f366a45553923dd"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex01_budget.stdout.txt",
+    "sha256": "5e02825a9db27a38e9fbc8843dfba5e992982edebd4fe763abc3fb530be870c4"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex02_write_select.py",
+    "sha256": "cb306a29658946abba5ceaafe0773800e0c754b698a3169e4d332fd16225c157"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex02_write_select.stdout.txt",
+    "sha256": "a6ce682a78716755c24a25396eb053d282571a2f19bb5ab1677bb2169d8029ab"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex03_compress_isolate.py",
+    "sha256": "a977d24ca814b0340c15263b240a21f616e65be9e356bbc0b4f1b50a46ce877a"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex03_compress_isolate.stdout.txt",
+    "sha256": "e8dba0645d8c2bf42ea699a97d930f8954c3ca990dbf8c5a74198e76158b3df6"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex04_failures.py",
+    "sha256": "95cf19778dbb8adf14adbc7e297f20dc36cd239e7de3f36701e23589fcf4a853"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex04_failures.stdout.txt",
+    "sha256": "8e7fe3c6ab082f744deab54cabb3d6ce1573bba09830ee40d1bba6b218e5721e"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex05_rot.py",
+    "sha256": "5f408960e3ea7ae9f8ed88567b4ac24c677e63af74f8cb67325251654f3bc064"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex05_rot.stdout.txt",
+    "sha256": "76f0784770247a1d69e90807e417819e209caa1194f34b1ee182787b3e6e9e90"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex06_compare.py",
+    "sha256": "4e6f054b94de44733d237d332863007c9ceadf5f8b4216aa4d0b5664424414cc"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/examples/ex06_compare.stdout.txt",
+    "sha256": "a5f23fa7c711ed860731bad212f80fb20a05adf71b5cff1d2edaffe8d2a20a04"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/notebooks/01-컨텍스트와-토큰-예산.ipynb",
+    "sha256": "270dacc6f4076b9d2154e86f3cda34df2df8c8ceeb9b0fd9f17b5a4d9beb79ba"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/notebooks/02-Write와-Select.ipynb",
+    "sha256": "b05777fe7a6db2a25854848581b01cc5fcd589e84b79b4ec3fe1bab936fa469e"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/notebooks/03-Compress와-Isolate.ipynb",
+    "sha256": "d6472a2ba38a2b9abfd70cabdd938dafd760a731f2f33afdb8e4ddebe56f2bdc"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/notebooks/04-네-가지-실패-모드.ipynb",
+    "sha256": "2595961a32d63d2bbf11c38ccc5c8a46dcd489376cecc4613786abb643b4ec46"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/notebooks/05-Context-rot-측정.ipynb",
+    "sha256": "4d9024e58c6b4fb88c0e6e2d90e52ec79226021897d04250cd66c01cd63e6a67"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/notebooks/06-단계적-공개와-설계-비교.ipynb",
+    "sha256": "36ad039b29e1ac9fc3d57b414d43c4ded09a0d69c68ca6aa118d5fa16e8e3705"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/pyproject.toml",
+    "sha256": "0b0f9a0a0ada26e426100e7ac56cadcf58eddc95d0e6032df0f2b26d2068d75e"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/runs/ex01_budget.jsonl",
+    "sha256": "e3b6a71d178c73157c9a142ef2bda0bdb45d37a63d3b7899a2659e2c9892f70f"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/runs/ex04_failures.jsonl",
+    "sha256": "d23dbb45347449ffa19b5d1f90fb116e2c413bbb25286132dda7bd012eef3394"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/runs/ex05_rot.jsonl",
+    "sha256": "6a9db92797954f446e2663f9c73a3dbe62aef4d97ae545857ce7dc27acd9db00"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/runs/ex06_compare.jsonl",
+    "sha256": "5cb060d68bafe10ada1dd5378b1355996b66361b7d67e7e864c75a38bbdc5c0c"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/tests/conftest.py",
+    "sha256": "8659c4f6af34a32f61ecc29774fd873cf628e7e0828ce9ff04773418357a6cc6"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/tests/test_ex01_budget.py",
+    "sha256": "76471f5c0cccd6c980b7147a98164c43a7b40df591c371c130011a8293cfe7da"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/tests/test_ex02_write_select.py",
+    "sha256": "ccb98877712014cfb7000c1b799e9240d3e5194cec1e99dd57f1053d788bfd62"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/tests/test_ex03_compress_isolate.py",
+    "sha256": "63281c73ae3ff672f86a560cc6bc72ddd41b016006ba69d6f33122e9be1f75ff"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/tests/test_ex04_failures.py",
+    "sha256": "50cb9c260388adeec33b85e876b308b611666109d022d89d2436cee7534b8ede"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/tests/test_ex05_rot.py",
+    "sha256": "84c846519e90ac748b61433299998805c0f6bce0611aa5430ab7b858225604b7"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/tests/test_ex06_compare.py",
+    "sha256": "ff5651f351d56f7f0e635cf940acc5ff8ca67ebd7d9827536fd81b939e6b93dd"
+  },
+  {
+    "path": "labs/part2/ch08-context-engineering/uv.lock",
+    "sha256": "86bd512c07fa1f7114d064e0c172f046bda19ea91bc8d72b334e1186565d3f6b"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.pytest_cache/.gitignore",
+    "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.pytest_cache/CACHEDIR.TAG",
+    "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.pytest_cache/README.md",
+    "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.pytest_cache/v/cache/lastfailed",
+    "sha256": "968bad7eb2ad6c55c2d48938be9aa544cdd4c39f16287e6e50aed61295c62c68"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.pytest_cache/v/cache/nodeids",
+    "sha256": "da7874a4f4a096cc91ec37ce1f3ac842d0e4c5d626f8c6fb8c7acabd61194741"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.ruff_cache/.gitignore",
+    "sha256": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.ruff_cache/0.16.6/12671847456470550633",
+    "sha256": "8094385dbeb31a8e3ebb77ddd6a41805aec267b24614f590f6a0ec3c909cf935"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.ruff_cache/0.16.6/13882975680184938208",
+    "sha256": "037cb3f8df612d645faa04d2168c48e6a3bbabc473054daa642030fa014d8d04"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.ruff_cache/0.16.6/13890581049949215866",
+    "sha256": "577caea2f264a762222c57ba7969478e313cca3b834012a6ff2561a6794e6ac9"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.ruff_cache/0.16.6/17997768779349281962",
+    "sha256": "2bcc0b160d1361a5a7af78d554357f2dc32d1c040d4b1b219e4831ab63b2e130"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.ruff_cache/0.16.6/2691022131583896291",
+    "sha256": "f7328815916ca333c09dc10c45d2738571ab02f88f7351bb8315d63749af148e"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.ruff_cache/0.16.6/7611961375520724064",
+    "sha256": "8786f6d28325f7b29441771e0c57cc81434dee4604867f34813085973a618ad7"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.ruff_cache/0.16.6/7837057982962403176",
+    "sha256": "8e97cd031bf9c0b56ff17b3e57ebcfc3edac5f3bdbec0a7deb26626cb9c4a167"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/.ruff_cache/CACHEDIR.TAG",
+    "sha256": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/README.md",
+    "sha256": "cae88684dec477d7db78e52743e705653d68e5b30f27ddf37b732334701b8b45"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/config.yaml",
+    "sha256": "6da4af2188526fa764018839184417df340f281866bed38e1b8edbbf400b4cda"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/examples/_index.py",
+    "sha256": "f661ba28b93daee6736b64e21214d4aa20780b09b9df9f4e51fb2b809af5054a"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/examples/ex01_setup.sh",
+    "sha256": "332f4ccfcb895571c93d6c8243e14f9198f74176f2d2d8864ec49a3de9283785"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/examples/ex01_without_context.py",
+    "sha256": "964a87f7c9757cd090922fd17c2289f1e799fe160d0344d86d7225f1b01f4788"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/examples/ex02_load_split.py",
+    "sha256": "b8fd99695e6d191776a6e82769989b4ffbd29921a002df8da64d7f50c321d208"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/examples/ex02_scan.py",
+    "sha256": "5b00395c5e563f258116e93496505909e436f48d0b3b86eb58486d85a3a5b966"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/examples/ex03_index_search.py",
+    "sha256": "195676ab03a7c0092a3ebc7c7ad71cce3069bf6cbbe93540feac08432f4efa35"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/examples/ex04_generate.py",
+    "sha256": "409101080396a6e0ca70284f88d14f1b62e4be862b2dcce6971bced1bcbf479d"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/examples/ex05_failure.py",
+    "sha256": "4d660f788f20890ed30b96884ee6be8c673992b4c6e81467b1fb9aa19350e9c0"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/examples/ex05_injection.py",
+    "sha256": "528657e46a1b894f609ad4729e1e9068f1008b479b10b144da882f767e9ec20f"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/examples/ex06_commands.sh",
+    "sha256": "b6d0bd4b992251e6174010e437d04f46b85eb863cc7a1d64fb0f9be06e0c77bc"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/harness.py",
+    "sha256": "fc4269d07cc2c33c3267c433210ebb5d97ea7392362e22ef75c035aabc56785e"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/notebook-verification.md",
+    "sha256": "7f89f3918ee93108810eea5b09fe37d6487e55cc525fca9c99bd07fcfff7642d"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/notebooks/01-RAG-지도.ipynb",
+    "sha256": "c3590691e025b187e2180ed763d8aea23970e678589946856035bb018794eed4"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/notebooks/02-로더와-스플리터.ipynb",
+    "sha256": "0939d0feefc5dd11347a7aa750749aa2b6622550f0646dca46757636561a3ffa"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/notebooks/03-임베딩과-벡터스토어.ipynb",
+    "sha256": "2a71ff92389702b29eaba26d07a4640116d5b0eb87bd2a91188c802c0022cc26"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/notebooks/04-생성과-출처-인용.ipynb",
+    "sha256": "be1bac0978c7e04c9ab82cbe6b5be1e2366ee0c8bd12b7b12a0c83ef8e014a51"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/notebooks/05-첫-실패-보기.ipynb",
+    "sha256": "fa503ee47ad8ed73b582a80b3ffc942c630986d90819e5a2f6b7cf3ac87ef519"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/notebooks/06-실험-하네스.ipynb",
+    "sha256": "2b316d1be6962562fc19cc45da046d88aa5245f526771c1cf1f64a1153acc343"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/prompts.py",
+    "sha256": "4613ba0286a4938ce81fbfea0431b8b664958a6a27ececfed0cfd534734bf9cf"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/pyproject.toml",
+    "sha256": "98ecba18c3cf22737982457c38723b026942e536e353153bb7a97d5b884d66bb"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/rag.py",
+    "sha256": "16caec34debc1fc6d523b14fe91855234c12901d2d0729778bc4efaf3698c243"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/20260907T235802-baseline.jsonl",
+    "sha256": "597958a0ff5a18fc0bfc6ea38c1686c45b4f7198c72cff8fdafb8c57265d9054"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/20260907T235817-chunk1000.jsonl",
+    "sha256": "a1ef77068d2587f90f28d072f24d4bce7fa73bec7751b6ab6f5d3aa208d5bf18"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/20260907T235827-k8.jsonl",
+    "sha256": "703bbd693348d3ed06384bc36c6869eb890923cd287e3d2c3ad6d67d077a1de7"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/20260907T235837-helpful.jsonl",
+    "sha256": "e8cf24db160180a86c192bc8a2c184736c79e7b3b139f35faffa38287b1e22e8"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/continuity/20260909T155936960402-ch09.jsonl",
+    "sha256": "9f123ab999a30c0ed2ad83b1a9f8b44c9e0d6148f87697cf35b70fee635a83fe"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/continuity/20260909T160019105786-ch09.jsonl",
+    "sha256": "d0975c4d1df9d44007cc61887ec88f3d0e5a27f049cd817d9de03b172605466b"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/continuity/20260909T160211102973-ch09.jsonl",
+    "sha256": "851e80cafe6b0cc1c5ac37ee825bb727ca7d981ab9286380ae5aa79af9c21414"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/continuity/20260909T160340639912-ch09.jsonl",
+    "sha256": "b6589225137f3381bac2f9a623238f47f647b2d87791d334a11a054c3589f059"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/continuity/20260909T160552044087-ch09.jsonl",
+    "sha256": "31a93397839a6b6ae55d889829bf1ea602ee67ee6457e324da6294899fc61fab"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/continuity/20260909T161047595029-ch09.jsonl",
+    "sha256": "3003338746b228756b33e0955c33a85ead4bc34f14be62af0f6fb430ea34f15b"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/continuity/20260909T161218875711-ch09.jsonl",
+    "sha256": "4f9fce621e29c4e267d466a38629d6ee78da876593f882397e0ed5e25f5bae61"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/continuity-ch09-search.jsonl",
+    "sha256": "4f9fce621e29c4e267d466a38629d6ee78da876593f882397e0ed5e25f5bae61"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/MANIFEST.md",
+    "sha256": "5f1f31540e3f92e2ede940561b184175b0691da4616f6912e025bf788b9c6a2b"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex01_rag_preserved.txt",
+    "sha256": "28e1c9133354e785bbb6d658c7fada2057a4f45a35dd9ec4e86ec2f9c6edb100"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex01_without_context_preserved.txt",
+    "sha256": "01960a4e741d895633da5a02ed38b6375870f68ae0242787a08e1e60a8a82638"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex02.txt",
+    "sha256": "84175e3eb96b40e1961bad5a3410918e6613b9a89ce8f32692b15724c4d28691"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex02_overlap_preserved.txt",
+    "sha256": "00a78dc430582a579dcb225400d6013ed989b2fa130b61b72bf88b858a63769d"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex03_failure_preserved.txt",
+    "sha256": "421ec221d4fb8e4001a0a89f2548f198f5a5728c4385bbcf9abae8deb047e1c6"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex03_preserved.txt",
+    "sha256": "9634d5233b9f9b6f67cce9eb4e29f04b43f69b6a23cd897491cfa93a8a0973d2"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex04_empty_hits_preserved.txt",
+    "sha256": "7da92881a3f35584c8dcd2d416767ace8a7496770e0a3cf9936c1a3dc4d95d7f"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex04_missing_tag_preserved.txt",
+    "sha256": "b736fcd23623a6948d1756d6079c96ed8945190c9493f97d036d470f0bd00e10"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex04_preserved.txt",
+    "sha256": "43a03be584844603f183a495af603aa7d36ab23d644bc08314e1f750f9193562"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex04_search_miss_preserved.txt",
+    "sha256": "8ba223838334a1f0607f666ec3b7d7816ce72adedae2910ae9b4e8e183b771c3"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex05_preserved.txt",
+    "sha256": "e78d11c3f2e20734bd112b733711a8bac869c52e6442a6fea1b96baa85c12f60"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/ex06_preserved.txt",
+    "sha256": "5a9915c5094e079a6507abf4d0f5417a86faa56fab23eb94a656ff770ef12b53"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/examples/manifest.json",
+    "sha256": "03da86114decd8589b0cd212609347af030c531b7ea23f39406aa15b1fdf241f"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/runs/runs.jsonl",
+    "sha256": "20528ad475c4895e4d765f32e62344ac41987a76142c6cdf78d4929c2ac0ecdc"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/tests/test_harness.py",
+    "sha256": "d7fef7f035d41a2277b9a8aad221b60b59f61743f596fc6c1eb1c55ec1fd3c58"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/tests/test_rag.py",
+    "sha256": "4a69bd14bbf3c36bfe6ffea292477ef891cdc918835ed6d3043b2f968ddab58d"
+  },
+  {
+    "path": "labs/part3/ch09-rag-first-run/uv.lock",
+    "sha256": "0925d26e07d232b53ec86cc820a669c43f2d4e5505f46b954b6e8e58a68d2205"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.pytest_cache/.gitignore",
+    "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.pytest_cache/CACHEDIR.TAG",
+    "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.pytest_cache/README.md",
+    "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.pytest_cache/v/cache/lastfailed",
+    "sha256": "9670e18fcc56dc2a52f8d0388db34abc10e65bf7abd23fd1de84bcfa42e2ede6"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.pytest_cache/v/cache/nodeids",
+    "sha256": "8924fcf10810a5a74c71e48c1a6711dfd3cce44c47313b846bffe0338a4a2e4d"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.ruff_cache/.gitignore",
+    "sha256": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.ruff_cache/0.16.6/10481131966278757508",
+    "sha256": "471e29a6e07446dad99782691b618ddac071ea982514ac1026aa4f9f353c10c1"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.ruff_cache/0.16.6/11043158917839441059",
+    "sha256": "4b9358921b09264fa9a8fe37deacdd8937f6e7e71b692148b399e10a8cdb2580"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.ruff_cache/0.16.6/1254283651120842914",
+    "sha256": "de2f4e2d324becd041df30aa39396d6d7d9849472ea1fcd65fd22f7d866d29af"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.ruff_cache/0.16.6/12653927718873223017",
+    "sha256": "73b22e376f54eb54f078be5656be801dacb77ecce2b32c5b29f47b4fcd7852ad"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.ruff_cache/0.16.6/3312713850715244080",
+    "sha256": "44f8c11913b1f506fc70a28b14c1edb7ac6510e34439d9675b131e6d3d0bec68"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.ruff_cache/0.16.6/4147947947024191247",
+    "sha256": "18b51e801509b013790dfe9498b05296a66d6838fe26b851379eb4137db38300"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.ruff_cache/0.16.6/6873980658158016660",
+    "sha256": "e23443f6fc9d761f7eb5a03d8adea476dc9607af34f8ccb2e2b04a8dd0a2cd2d"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.ruff_cache/0.16.6/8499407948029003542",
+    "sha256": "b62c090926a33bd43dfe8890a72013285d60a8f451a4a9052fe820ab0d60b096"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/.ruff_cache/CACHEDIR.TAG",
+    "sha256": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/README.md",
+    "sha256": "34666eed76efefb760d593bab964034a98bbb489106fa5f43a58f8adcab79993"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/document_processing.py",
+    "sha256": "37ca2cc9cf1871812b6e185b866078a8bbdbe6d38e9946179395a2a1ed40e654"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/examples/_paths.py",
+    "sha256": "8b0efaaabe7df061283466f4e2f58821e22e2170d26b44864140a5c66517e867"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/examples/ex01_metadata.py",
+    "sha256": "d65a4d37a0f84d5a9ce7e0825e38be494e7fc1cdf6885fb2b6c961802a4cbf89"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/examples/ex02_pdf_tables.py",
+    "sha256": "14e8f10f3c0c990540c2579185b2cd450336798304a439ee8d8858033b62749b"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/examples/ex03_other_loaders.py",
+    "sha256": "d25e3a5534d8684b3ec0be07cbb1bd51adb8a0e13856df9d506e18a0872c2107"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/examples/ex04_hwpx.py",
+    "sha256": "870a61b2cf00568bd8ad989b14d53b9c180f885c7810745c796af5ba2ad4ca58"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/examples/ex05_chunking.py",
+    "sha256": "6762df7dc5c254f6fa81ad58ec9c59f0720bcec68f46aa3c7313170b28a09877"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/examples/ex06_semantic.py",
+    "sha256": "cd96301e31e3212451b07a0379b5a020618171308fb2c0f08348332659ae5d11"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/examples/ex07_embedding_cache.py",
+    "sha256": "0b2c83e4f36e8929a95fd6cbdc8dd395b0aec15c9eaa0167e86fde8c0c577cdf"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/examples/ex08_experiment.py",
+    "sha256": "060ff6e007fd92a7994bb28a82a5075e7fe3d95686e6c84f445f4b527349aca1"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/experiment.py",
+    "sha256": "342e85b0486129359be3ddf71645c8b2e153672b32f8881a398cd3fcd7d10412"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/fixtures/legacy-signature.hwp",
+    "sha256": "20a0410aa1277a649986ba6ab64507d50c7d62326aa410676f6757d07f859147"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/fixtures/minimal-marker.hwpx",
+    "sha256": "da0fad42a3cf7c708a82099af0b7b73e9295a6eca5ed8c99b2453b5019659770"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/fixtures/sample.csv",
+    "sha256": "fa64f6754cedf388bf569ccf5b010b5f50f0ddd269c68f77d96bb294646253aa"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/fixtures/sample.docx",
+    "sha256": "caf03ac57a3736e6c1a40e9f55980cf33a84bb0287d23982c606c490f2758cdf"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/fixtures/sample.html",
+    "sha256": "5a180eda1fa6eea0a949a464c56e44ae0e6f401ae6423bf1fe6233cb4b333090"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/notebooks/01-문서와-메타데이터.ipynb",
+    "sha256": "b22d3ee211654c6212245f8db0b784cdaaa5bb0af98e36a410cc2feabd830904"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/notebooks/02-PDF와-표-OCR.ipynb",
+    "sha256": "097ee2acbb33d8211f039e319da81abbd548e86966f2c77b20e891a9ab470c20"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/notebooks/03-DOCX-HTML-CSV.ipynb",
+    "sha256": "de69dda92a3d529d4c4610c9f08097e9e61d988df622f9247db138b4b7aa925a"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/notebooks/04-HWP와-HWPX.ipynb",
+    "sha256": "57a6fe6476b7f3541d37fdbd243692e9088647419cfa5e2b740c33b78c142c97"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/notebooks/05-문자-재귀-토큰-청킹.ipynb",
+    "sha256": "be9ea70eb348f1cfaee1e40207d1ababf41154999fa42b40da6dac0eb0290ade"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/notebooks/06-구조와-시맨틱-청킹.ipynb",
+    "sha256": "3e22ec02c8e921555f2ccd97629e13c4c227a2a3c3223324495217fcc5e59b7e"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/notebooks/07-한국어-임베딩과-캐시.ipynb",
+    "sha256": "af036eebee64d61ff4b436370c650262f5cbfe449e09124f94e5475949ffb0c7"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/notebooks/08-인덱싱-비교-실험.ipynb",
+    "sha256": "89cfc4b8d70735e87d1afb436b9b7037936c3b1170572fb4298c5a2b4fbe0ef1"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/pyproject.toml",
+    "sha256": "ef62b71aa964fa29e250e90b146a93be764bcfea148bfe080150dfc785e161b0"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160059012237-ch10-01.jsonl",
+    "sha256": "810dad5b604e649e801b153dfd474a82287efb0b4daf34e0cf8e61704938df46"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160059012237-ch10-02.jsonl",
+    "sha256": "5c9b67a9ef742b40f54e241cfd1ba51413ea6740e08d9a596628d5bae8155ed2"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160059012237-ch10-03.jsonl",
+    "sha256": "d1d6ecd647354eb28116914af2fc13a804c6f7c7258d9630a4cc9980c213abdf"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160059012237-ch10-04.jsonl",
+    "sha256": "f907141ba69c87df2d29173975adf74c0404fd2237ac8a2e334867a86b7a6e1d"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160059012237-ch10-05.jsonl",
+    "sha256": "5f9eb412fc63aab0dcce3dae0e189dae077034ee19f68906151af0585c90c4a7"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160059012237-ch10-06.jsonl",
+    "sha256": "72582da0f3a4bae6fd4454cdecc8a44d873b042d1c4b2c2742eec39ee2963d22"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160221429554-ch10-01.jsonl",
+    "sha256": "f336a2398b5ac3331a0f905de2e7873cec5fb2fe0405735e2baa59cdbd443099"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160221429554-ch10-02.jsonl",
+    "sha256": "3e8a99f248407cce29e702eda97661afaf1fdab1a366ef11f4c937886492cec0"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160221429554-ch10-03.jsonl",
+    "sha256": "39d049ba5f81a17ca200954accea1fc5519bfca38585dcd5b7a92917a2f32707"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160221429554-ch10-04.jsonl",
+    "sha256": "8c11e7608882b5e1dc6fc7ae4abe19210efe18492dd4bacf2d912e74f34e6d09"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160221429554-ch10-05.jsonl",
+    "sha256": "8ca957d4085695ba6292e1c5a32768075506cd2140235d06bbd1f507faea71e3"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160221429554-ch10-06.jsonl",
+    "sha256": "2017fda409a00de2f0e124975d97980de957c98547a1a6254e828c328b7e9799"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160602375493-ch10-01.jsonl",
+    "sha256": "3cd8429203d0926992f943a2a0a3fb488e574d35ff0b5fcf4ad6d7dae08dff38"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160602375493-ch10-02.jsonl",
+    "sha256": "4dab7490375757a8dc5543d53bfe46b919998c25c43d9efab92335ab804a4ab7"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160602375493-ch10-03.jsonl",
+    "sha256": "783b3a5a8500438be0250bb83bf8af855064698fa38f41703d855aaf63e868a7"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160602375493-ch10-04.jsonl",
+    "sha256": "908bbc24c976575ee4ba905970efaa6752a53b02e1240ec222dd6b4881fc6204"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160602375493-ch10-05.jsonl",
+    "sha256": "8ef8136b9cf5224c9521318cd409a4f80bd682da45159f6e592a30165e903fc1"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity/20260909T160602375493-ch10-06.jsonl",
+    "sha256": "42a4f7644855c9c47242090624e3d9cb2a83394b500b65b0e6acc47609d466a9"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/continuity-ch10-indexing.jsonl",
+    "sha256": "37949f0c677e91de29602f853f968b335dd8ea8aace55e50953e3ef51343b192"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/20260908T021713232741-recursive-text-embedding-3-small.jsonl",
+    "sha256": "86ced5b60b90a4a5573432f8f4ffa7c5ebb3c8a0ccdb9b40ce4983aaf5dede55"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/20260908T021713341092-recursive-text-embedding-3-large.jsonl",
+    "sha256": "86ced5b60b90a4a5573432f8f4ffa7c5ebb3c8a0ccdb9b40ce4983aaf5dede55"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/20260908T021713481694-token-text-embedding-3-small.jsonl",
+    "sha256": "95fbdce5de8a1ffffdd09f328f8bb545fc464d0f7a0e3f19ea05c40ff6b7dac1"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/20260908T021713586839-token-text-embedding-3-large.jsonl",
+    "sha256": "95fbdce5de8a1ffffdd09f328f8bb545fc464d0f7a0e3f19ea05c40ff6b7dac1"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/20260908T021713619280-structural-text-embedding-3-small.jsonl",
+    "sha256": "2860486eb82e73412d17e8db00bcbb511ce2c4295b45368cb615f352954fb4b9"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/20260908T021713648859-structural-text-embedding-3-large.jsonl",
+    "sha256": "2860486eb82e73412d17e8db00bcbb511ce2c4295b45368cb615f352954fb4b9"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/ex01_metadata.txt",
+    "sha256": "7db5780c3f86f109cdc51958097642dc0df3cfa9fbcbe736110b8fdf011194f7"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/ex02_pdf_tables.txt",
+    "sha256": "20d31438ff8804d2d4f7e082afdbc90ea2eb29714f5f5d3d4543e42f04532fd9"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/ex03_other_loaders.txt",
+    "sha256": "28af506dd23beaa4600f55ff42d69d458807f97d5ee62f978c06e4a8ec1cf9ab"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/ex04_hwpx.txt",
+    "sha256": "698a4072746bb871d01d321375a28b51ffe8978aea61b7f603deb9290492f708"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/ex05_chunking.txt",
+    "sha256": "662baba1af2de5c414c7c4a9e34490956a1a76b5121579b39564f7bc1578d3bd"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/ex06_semantic.txt",
+    "sha256": "99d2299dc55a533af7fafd17041519dc9f609b62d53be1fd298601f3bab3cb57"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/ex07_embedding_cache.txt",
+    "sha256": "b8f55419711e9877214bfa79ff54b2e07a9d6444a29555fee0b6c9704f7915c9"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/ex08_experiment.txt",
+    "sha256": "da64fb4622b992575e49966d5563ee6518cb6a951f7947f62ec122d7157dbd9d"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/runs/examples/runs.jsonl",
+    "sha256": "f00cec21c681438084c2fa73266cc08195a52a3de9040a0acc53e89922882459"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/tests/VERIFICATION.md",
+    "sha256": "e733cb7498d3a54438fef582efdaf70c2c6cb9f143ec8d21f9228dac9196452e"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/tests/test_cache_experiment.py",
+    "sha256": "98e3d38335932b2dc6d206566ec3bdf4adce7150888ae6d90cfa7442aa69347b"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/tests/test_chunking.py",
+    "sha256": "237976cd1c9fb7f3461f3b7a52508e12e5ed3184234bd49bae0f1e8f1ad5736a"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/tests/test_loaders.py",
+    "sha256": "c5703eb7b1d99b250d8f6ea4b8c85705ff3d7c587bd92f223e9d9beec76e124e"
+  },
+  {
+    "path": "labs/part3/ch10-document-processing/uv.lock",
+    "sha256": "a1488612f3e1013e4f9c1fa12f4547c6fb8fcbb65460fb6bd1448d0cf2f06e0d"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/.pytest_cache/.gitignore",
+    "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/.pytest_cache/CACHEDIR.TAG",
+    "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/.pytest_cache/README.md",
+    "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/.pytest_cache/v/cache/lastfailed",
+    "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/.pytest_cache/v/cache/nodeids",
+    "sha256": "9b4fb59d63a1dafa7260c2544ae9165484b447429ec9be10ee0612aa7bd5c004"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/.ruff_cache/.gitignore",
+    "sha256": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/.ruff_cache/0.13.2/15777017437337384221",
+    "sha256": "eb8ffc038a441c83ad7fb8acad65a6da70d5e594daccdf9c923770c400608219"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/.ruff_cache/0.13.2/15995874620068339626",
+    "sha256": "679adddcab3243cd685296b2388b17cd09e35b0336e48dc1dc4930f39d61db69"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/.ruff_cache/CACHEDIR.TAG",
+    "sha256": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/README.md",
+    "sha256": "40f6c5b384a144a131e4aaf1826cb06485f6ddf4ba228f529729c1729bc55d7a"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/_make_notebooks.py",
+    "sha256": "d6d9c0a4387d9c609ad94c5d0aa08a9723894a2872153bc9c4d32937d057900f"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/data/evaluation-queries.jsonl",
+    "sha256": "9544b332d5ac120e2af8beeffb148d6fd29387b4dd7f6ca16a927f971e7fe1bd"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/evaluate.py",
+    "sha256": "41c9408fb7de1434e9557ca4075bacf0117c66f1adc9954d439138a910fb0d49"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/notebooks/01-질의셋과-정답-문서-ID.ipynb",
+    "sha256": "a9a125133fe8e29e4d002850a815380b6026915c23560bb3510c7f4ed374227f"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/notebooks/02-Recall-at-50.ipynb",
+    "sha256": "46b887c704936916c5024cc7785fe2ec7bae687f728f92bf72db8edc2c96edc0"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/notebooks/03-Precision-at-5.ipynb",
+    "sha256": "680bbb12ffb17c8b737dfce12704269dfb3db21ea19aa09e4565872c5e92ea7c"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/notebooks/04-nDCG-at-5.ipynb",
+    "sha256": "b3d3289aa7cdc1c7af582a3359db73b6a27985a7e693c3f96deaf8cdac0c60e7"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/notebooks/05-조건별-평가와-오류-분류.ipynb",
+    "sha256": "1fe989cf0c30a52b85292309ffa2a198af36e90631d017fc23aa76fb5b9e4c12"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/notebooks/06-실험-로그와-자동-실행.ipynb",
+    "sha256": "4e89b9a2c0d7296d2c78b2bdc30d16c8d1a0b12106457cc2ee5a8db02709d983"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/pyproject.toml",
+    "sha256": "8a2afe9091d6de6ef6d416ba1d08c27ab01fa061c00cf17121d481099715da70"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/runs/baseline.json",
+    "sha256": "4ec8435c7c26a7b1514e1ae4123dfa61edf7af66186d4c285c567d94f1f85e0a"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/runs/continuity-baseline-20260910.json",
+    "sha256": "bb66d824f01851fee23b26a7b78bba15cbcccdd71d4961aa919064bb08946c71"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/runs/continuity-baseline-dev-20260910.json",
+    "sha256": "de421859fa2c79e34295b3315f06e9167aaa98b872ee1c127ed265d6ea522a97"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/runs/continuity-baseline-test-20260910.json",
+    "sha256": "32796e86e8dc409dcc18236284433771ff3720e10a27855dda78fa8339d62da1"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/runs/continuity-upstream-20260909T160703376125Z.json",
+    "sha256": "fc3d35a67a8be4c3f69c88d46fe090b23ca0052ec74304b39dfe0985fefa49a1"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/runs/continuity-upstream-20260909T162235171919Z.json",
+    "sha256": "6eb6d8b1658322021f508ab76841322d4c29ef723ec01e91eb14bccc2fc6842b"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/runs/continuity-upstream-20260909T163519420551Z.json",
+    "sha256": "6eb6d8b1658322021f508ab76841322d4c29ef723ec01e91eb14bccc2fc6842b"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/runs/continuity-upstream-20260909T164029097591Z.json",
+    "sha256": "fd74213a159bf795b4ca22e3a8c291539589ec4c01c0f71936c37430c41b1a69"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/runs/continuity-upstream-20260910.json",
+    "sha256": "fd74213a159bf795b4ca22e3a8c291539589ec4c01c0f71936c37430c41b1a69"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/runs/notebook-log.json",
+    "sha256": "6ef314fec3e9a3ecb9f82f6740d4b43a2879e5e30ce05ad7df608f7b37ffb860"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/tests/test_evaluate.py",
+    "sha256": "d738970fdf1b7c50b31cc61e0ebb095a6865126edb12217fc6bf74b904285e15"
+  },
+  {
+    "path": "labs/part3/ch11-evaluation/uv.lock",
+    "sha256": "7410f95401cedeec3395dd4c961120a499f6bf24a7c72d81e475d64270c299bf"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/.pytest_cache/.gitignore",
+    "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/.pytest_cache/CACHEDIR.TAG",
+    "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/.pytest_cache/README.md",
+    "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/.pytest_cache/v/cache/lastfailed",
+    "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/.pytest_cache/v/cache/nodeids",
+    "sha256": "e93366d3dcbc6530dd2c8ca1de8fc7aa50dde4f6c8f2d132442edc00fca9df0d"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/README.md",
+    "sha256": "75e9dbad6ee6efc0a1625eecf941385dd42b678dfc4a2b9f54bb045e3ba3e395"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/data/advanced-documents.json",
+    "sha256": "832d89c28a25a426fa8d06c8be37c9ca768d3171e50cc4a3eaf74a88cd3ff064"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/data/advanced-queries.json",
+    "sha256": "dcf7f2883ad7ef666487714c3df6ffe4e173fbec88a604ac07dcee51f3107800"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/data/core-documents.json",
+    "sha256": "d54899d90030b2e5f15465826100e67c318f62bd3a3d6dbc16c2ee4fecc58668"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/data/core-queries.json",
+    "sha256": "abdbb041279f0ae5228f622d2e19fda20af79aa0f0bf63a980fd5de96f385f8e"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/01-벡터-거리와-정확-검색.ipynb",
+    "sha256": "e932f7e15d75c9de11f5a1f127a6028b2b95e6b2d009ee2cf7ec40157807935a"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/02-pgvector와-HNSW.ipynb",
+    "sha256": "be5e34a010125d2181e2df11760223986141c3036038f00c8dfcf21163b48580"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/03-메타데이터-필터와-iterative-scan.ipynb",
+    "sha256": "0cfc0f728b2708aa5bf222a53cc1688db61d09e680cc6feef00e9a39f9801c33"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/04-한국어-Kiwi와-BM25.ipynb",
+    "sha256": "755657d21ec8f169410cfce2537f86a793e989b7ab78d95a5ee34da8df5db6bf"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/05-dense와-sparse-비교.ipynb",
+    "sha256": "4d17df5ce71ca3251323e4dd0904967b2421efe715c4cf9be9199faa7dc29f25"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/06-RRF-하이브리드-검색.ipynb",
+    "sha256": "ee9de47e30018b2826fbe0917bec1dd345f26b9e64985f1d488a671dfcc9d703"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/07-cross-encoder-리랭킹.ipynb",
+    "sha256": "22262df05158a34b4fd628f42f0b9df7c26caec376d25792371fe9643562d4b7"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/08-후보-수와-리랭커-비교.ipynb",
+    "sha256": "7274e283dca3a4e783bec42a16f6dcdd64bbc400e702438cdc322dde4345fa8d"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/09-Parent-document-검색.ipynb",
+    "sha256": "3695ad554a5b8c52a3d4e55cc463ae512cb46113015cf7945b5e19c8257815dc"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/10-MMR-다양성-선택.ipynb",
+    "sha256": "daf0a35f1f57bf3cd4538a0cc38d335adaccfac913df8b7e45af0575272955b6"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/11-질문-재작성과-검색.ipynb",
+    "sha256": "6212003ac6fd8e20ddbdf474139b0d8134da0b808234fd5cd733d24b2f20d725"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/notebooks/12-종합-튜닝과-실험-로그.ipynb",
+    "sha256": "ca0f77a33bbf386c5311b74a26e223a13009bf934d3ad5f8fe39d83d7048936f"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/pyproject.toml",
+    "sha256": "7720710da7e64718c4876621fc50303f966ad4087b876388cc0ab3e250215763"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/advanced-continuity-experiment-log.jsonl",
+    "sha256": "bdba516515cbc51a7b9031218e4f7d78c3c7efb3186dc61b60149ba8b7cf8459"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/advanced-continuity-integrated-result.json",
+    "sha256": "50db5a41581e72a34f167ce078f9da98bfa9c525fbe2c1056d4c3a7120991dfc"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/advanced-continuity-test-result.json",
+    "sha256": "e971be9d43d2cfe7443d25efbedc2663e863905eb1fc32d41a1573fa217d139d"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/advanced-experiment-log.jsonl",
+    "sha256": "072e0a263d12a3071adf953ed006046bde7fdd4ac5e5b0a06802e2cadfd32d80"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/advanced-integrated-result.json",
+    "sha256": "6c57b502e0dde95a122a8df44faf9a281f394323b4d983c931c1444f9aca321e"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/advanced-test-result.json",
+    "sha256": "b9f995e89f210f2fc8d8626b26393ce1ce5bbcad58fba495d073c17e8c65f99a"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/continuity/20260910T012326/advanced-continuity-experiment-log.jsonl",
+    "sha256": "5ada09dec485862f35d4479b6ee41087a7a181ab816a243112fa31bf7073c55a"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/continuity/20260910T012326/advanced-continuity-integrated-result.json",
+    "sha256": "f8ffaffe24f92fe38dedd2e131f8b346d6eb4054e6fe3e6d9c170d671adad130"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/continuity/20260910T012326/advanced-continuity-test-result.json",
+    "sha256": "480035ebd5d945d97c2987fa7cf46cc46f176f0f9839a6a21815a5e3c42f69ef"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/continuity/20260910T013850/advanced-continuity-experiment-log.jsonl",
+    "sha256": "5f9dd0bcbcec906d32c0718cbca2c8b102728ca69f5bc9953863ac3d308cc6a0"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/continuity/20260910T013850/advanced-continuity-integrated-result.json",
+    "sha256": "1843297b02d6948563f5b7549351bc80409132eb83103673a12093aa23b7fce0"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/continuity/20260910T013850/advanced-continuity-test-result.json",
+    "sha256": "4beb5512b8694d2323cc854986ea3004b17895d9c3015c8840bea95ec193afba"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/continuity/20260910T014213/advanced-continuity-experiment-log.jsonl",
+    "sha256": "bdba516515cbc51a7b9031218e4f7d78c3c7efb3186dc61b60149ba8b7cf8459"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/continuity/20260910T014213/advanced-continuity-integrated-result.json",
+    "sha256": "50db5a41581e72a34f167ce078f9da98bfa9c525fbe2c1056d4c3a7120991dfc"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/continuity/20260910T014213/advanced-continuity-test-result.json",
+    "sha256": "e971be9d43d2cfe7443d25efbedc2663e863905eb1fc32d41a1573fa217d139d"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/core-01-exact.json",
+    "sha256": "f8e81361e9c79fa5aa4203cb933cd0a084efe63fd804eae570dbc6896b64c758"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/core-02-hnsw.json",
+    "sha256": "e007a959899ec0ea866ca7d03597fec13bbd3c84bf677c9048251658f1519175"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/core-03-iterative-scan.json",
+    "sha256": "4d9be88254b631d348b3572c8216ad57b6c2bd8166f7f58a46ac596f83e9e1d1"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/core-04-bm25.json",
+    "sha256": "e5405673f7efcd5188ad1586ac18fdcb68fcc10fb6e6999097692a4b62d97f00"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/core-05-dense-sparse.json",
+    "sha256": "ee06e48ac32d706c9078b4dd2d4ef4937e8198f7a132cca3a523ce490f3e4669"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/runs/core-06-rrf.json",
+    "sha256": "4e3fa11084a4a09e5839c43c82786269f5a0a4e0b0aab0df490f0b044c511369"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/tests/test_continuity.py",
+    "sha256": "2f758f9f841767b644b38c341039a5e50b45dc2baabbd99681a4feb6926ace9a"
+  },
+  {
+    "path": "labs/part3/ch12-retrieval-tuning/uv.lock",
+    "sha256": "53bd556069f0886f125c7275587a8f363584a406ac828210efc7249fa50bf71c"
+  },
+  {
+    "path": "labs/part3/continuity-guide.md",
+    "sha256": "ed58e1d2e0bb821505ca447aaf2d847328668f922a3744146e568be0ff2bfa5c"
+  },
+  {
+    "path": "textbook/AUTHORING.md",
+    "sha256": "21ce10e1b8ed9fae8d28238b12e8af9324450e0185e288734fe3827e1874b8d4"
+  },
+  {
+    "path": "textbook/_notebook/BEFORE-AFTER-PLAN.md",
+    "sha256": "351253b5794d519db4f0d8d485874bdd79b533ed2b472f98a98121d739bf8fa8"
+  },
+  {
+    "path": "textbook/_notebook/BEFORE-AFTER-VERIFICATION.md",
+    "sha256": "086d8a97993cc0dfa57a05db337a498d1165023d021c3ee2d40b185ec16406e6"
+  },
+  {
+    "path": "textbook/_notebook/COMMENTS-PLAN.md",
+    "sha256": "b5fb5601655ac767408214e01301c233007ef3a6dd2737eb4106d82ae934c429"
+  },
+  {
+    "path": "textbook/_notebook/COMMENTS-VERIFICATION.md",
+    "sha256": "9d5c8fea9cdb3d0c8cb03069b10e1b34c3c600279685f026723a391fa9c8465e"
+  },
+  {
+    "path": "textbook/_notebook/CONTEXT-ROT-COHERENCE.md",
+    "sha256": "b25daa05ef9ab3b6a22b97d7a6a002b3357231eed775c8e1d05b1dc979f521e3"
+  },
+  {
+    "path": "textbook/_notebook/GUIDED-PRACTICE-PLAN.md",
+    "sha256": "482e1b76abfbe8fd276db18b3bf5608434822a1535958b2034d0754c353d8132"
+  },
+  {
+    "path": "textbook/_notebook/GUIDED-PRACTICE-VERIFICATION.md",
+    "sha256": "9fd05e5588a5e6076dce35f83e685c4b8a036f24081b0a848186a0f3df04dd32"
+  },
+  {
+    "path": "textbook/_notebook/LANGCHAIN-PLAN.md",
+    "sha256": "327eb7e6bdd9caab98c2065ba35e4166ccf91fe303b25573c72f41a66603fc09"
+  },
+  {
+    "path": "textbook/_notebook/LANGCHAIN-VERIFICATION.md",
+    "sha256": "b03960823f82b4c529c0274fbb443288861607463e7b05c87d09521b61b96166"
+  },
+  {
+    "path": "textbook/_notebook/MULTILINE-VERIFICATION.md",
+    "sha256": "5327369e8b0664606c18767a881bf16ccbc8394084b20b77872dab6cef76cc40"
+  },
+  {
+    "path": "textbook/_notebook/PLAIN-LANGUAGE-REVIEW.md",
+    "sha256": "07745b97f4dff45b3bab4330dd14adfbbe48b7d3ef6e31a6551f0ac5e4857332"
+  },
+  {
+    "path": "textbook/_notebook/PLAN.md",
+    "sha256": "a8b5769bbdff49c6d5d1a159daca3f5fa64771f835baedaf54de124be9052c50"
+  },
+  {
+    "path": "textbook/_notebook/README.md",
+    "sha256": "d83b51524df1bbc7fe85f64939c2fea9a6dc70ae208f73403f01a28f8238cc62"
+  },
+  {
+    "path": "textbook/_notebook/REVIEW.md",
+    "sha256": "db80655b8ed3240eac620a51139eacddc940a5aa41ecf1edcf1523648ded9330"
+  },
+  {
+    "path": "textbook/_notebook/STUDENT-ONLY.md",
+    "sha256": "f7075be8836f25ae58bd314756a3af47085f9e9b3e8b9930a6e919ac6b38da62"
+  },
+  {
+    "path": "textbook/_notebook/TOPIC-ALIGNMENT-REVIEW.md",
+    "sha256": "a69c33d73bc8500918266727c354b1d463891accf5509c987fca0f8f2a440fad"
+  },
+  {
+    "path": "textbook/_notebook/before/ch08-context-engineering/_build.py",
+    "sha256": "b49e084b6ff6890fe423c68b736fbd4903a16307497b941febbea77a983d8bbb"
+  },
+  {
+    "path": "textbook/_notebook/before/ch09-rag-first-run/_build.py",
+    "sha256": "ad088c7bb0636abba8c925ab90843c781b58a7ebea82ca3073227afd670f4671"
+  },
+  {
+    "path": "textbook/_notebook/before/ch10-document-processing/_build.py",
+    "sha256": "5c07bd60774398155a162cb73eb2d282f08b0c30a3c2feeb937b6eeef8cf2dcb"
+  },
+  {
+    "path": "textbook/_notebook/build_bundle.py",
+    "sha256": "89fb82f0855222f52ce2d0debc3e8b35c78395c2a3308d0604bca45952063e94"
+  },
+  {
+    "path": "textbook/_notebook/build_index.py",
+    "sha256": "9d33f7669c2c34c1c2403b254bb94350d07b067c8cd5c66b451b6a9dc2e08140"
+  },
+  {
+    "path": "textbook/_notebook/copy.js",
+    "sha256": "06047702c4964a8489b8e2ed50163785c1854191d2dba71c492c5a4a75e65824"
+  },
+  {
+    "path": "textbook/_notebook/execute.py",
+    "sha256": "3304d851311203ff1830ed0352ca4eeaa6e0c9f812adbf755f810c3490151173"
+  },
+  {
+    "path": "textbook/_notebook/practice-start.md",
+    "sha256": "4672ac25d3006a670d868a6a718e9d43414f1180d6bacd125807045c80d7337f"
+  },
+  {
+    "path": "textbook/_notebook/references.md",
+    "sha256": "795db0e5e6ad28fa18c3a7da940de85db6a0665630bc382661517fed2874f7f5"
+  },
+  {
+    "path": "textbook/_notebook/render.py",
+    "sha256": "d1075b8aace61a86b4a9276e5e98c8196ee69980f41f88b7f89f8ae16bc9c9f7"
+  },
+  {
+    "path": "textbook/_notebook/tests/test_execution.py",
+    "sha256": "41e9ba8244c5f3316975634883f1e7aa236d8736cae8558f60bb49cc7f292b9a"
+  },
+  {
+    "path": "textbook/_notebook/tests/test_render.py",
+    "sha256": "1ab4ac566e018aa986d121b9f502a3e10cfb82ffd0003b6f99c1d2be49716a3e"
+  },
+  {
+    "path": "textbook/_notebook/tests/test_secrets.py",
+    "sha256": "e1e16d8ca7d99a43cceba429a866c373aa709acd7190ea3f6dc04a1855b37a75"
+  },
+  {
+    "path": "textbook/_notebook/tests/test_split_render.py",
+    "sha256": "ee1d83dd55fa6d30f19b4a156ef8ce517635db31849269b39bc4bd1fd2ae0005"
+  },
+  {
+    "path": "textbook/_notebook/tests/test_template.py",
+    "sha256": "20ece19cf2921758208be34ab9db66dfdc9501972f8aa6afc6e19a5f47558579"
+  },
+  {
+    "path": "textbook/_notebook/tests/test_verify.py",
+    "sha256": "0f4e67a16406889edbb11d3e2b7ff5568ede2ba24a6bfb6f9ede18aa8059dac6"
+  },
+  {
+    "path": "textbook/_notebook/tests/test_verify_discovery.py",
+    "sha256": "32eec289127cf4c000fd988afd623a8b3abd350f61a146144a884b6e622b77d1"
+  },
+  {
+    "path": "textbook/_notebook/theme.css",
+    "sha256": "7bb78def42d54994f2b65d4913a5a326ef9210b3ee818b52f306a78d9d807983"
+  },
+  {
+    "path": "textbook/_notebook/verify.py",
+    "sha256": "1c99fbcfc158e7fea2ec5cd5063d3ef651908c7dc64745e9e9d11875423db240"
+  },
+  {
+    "path": "textbook/_notebook/visual.cjs",
+    "sha256": "f41e1db97741d6ef7de1efd83125531dd791e8ed9095d0c5ed7c4f77b540cdd7"
+  },
+  {
+    "path": "textbook/_template/README.md",
+    "sha256": "928d7705841c27a0fefa82347af880b76001d5a5ce499417a943df38ab1ff416"
+  },
+  {
+    "path": "textbook/_template/builder.py",
+    "sha256": "2a16c02f8658a674650e51c7bb64edb990df8d17bf068fb8ab6bf8c434639c86"
+  },
+  {
+    "path": "textbook/_template/chapter.css",
+    "sha256": "c3575018afbf93ab3d94ef33c0d46f77cbf04fdf4eea26779a25bbb29ef8059f"
+  },
+  {
+    "path": "textbook/_template/scaffold.py",
+    "sha256": "ebb83761220f4046305ef46c04d33b02a1195742c1689d6ad1d3f6e11de052b2"
+  },
+  {
+    "path": "textbook/downloads/ch01-practice.zip",
+    "sha256": "b5c64db49b0fedf903b520beaabfcd1b6df15a819b851afccd62a890e226ca47"
+  },
+  {
+    "path": "textbook/downloads/ch02-practice.zip",
+    "sha256": "bc121be31e33a469807e65938ff5bda744a1e692b58496c9d22a3f60b674adf8"
+  },
+  {
+    "path": "textbook/downloads/llm-practice.zip",
+    "sha256": "0cced8a487915db018d959ccc915cd366d180f11c906d250eb78b16df5906b05"
+  },
+  {
+    "path": "textbook/downloads/part1-practice.zip",
+    "sha256": "2acd47549b74633b5050c6dbbfd3bfa7ac60ab48b8e2c1c19ed3dd7571cc247d"
+  },
+  {
+    "path": "textbook/downloads/part2-practice.zip",
+    "sha256": "261b1cb9eb89594f2901c1fc672fad01479ca04ac42f1e9fd1fb7ae050bed529"
+  },
+  {
+    "path": "textbook/downloads/part3-practice.zip",
+    "sha256": "2d9b2de9a8afb8682f73b83f6d5a59682e118b0a34756f4730f05e6481ed22aa"
+  },
+  {
+    "path": "textbook/index.html",
+    "sha256": "1f338c9f6e67fd3913cd11d13621257f7836d4606759d5df63b443c38c712cf7"
+  },
+  {
+    "path": "textbook/part1/_build_index.py",
+    "sha256": "728e207c33eed7923ba85d9f11aa30bd77dc072c509fc5c6afdccf5aeb917990"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/01-과정-지도와-학습-규칙.html",
+    "sha256": "5ba2acfdd8397f7c51436e4455d75c8f63bf87cd324b184afe1a2ddbf39d8692"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/02-도구-설치와-터미널.html",
+    "sha256": "887fd4e19d72eb0bf4b4fc465f6306ff4a4ae6913a30982745fc619866ade18b"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/03-Python과-가상환경.html",
+    "sha256": "17c44bc59cc4d2951ff52e70019d994413b881e043fa91bd197415fb8e9b343f"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/04-첫-스크립트와-디버거.html",
+    "sha256": "4bb7b0b7ab7c0613904fc4886fc7a0fb92a78643500c817cae669eaf672d1695"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/05-Git과-Docker-준비.html",
+    "sha256": "24b4a32ea7208cf85b1cefcc47a66e4e6beb867ffa5eb52c99b0cb16fda363da"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/_build.py",
+    "sha256": "63e0a4e41475d64ea98a678ad96948f2d60fccfffacf21f3a7769470ecd3fa65"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/_build_delivery.py",
+    "sha256": "c096675f620834e42b3fc46dbda2a8728516abc613b7daf11f79f31af6d69804"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/_src/01-과정-지도와-학습-규칙.html",
+    "sha256": "6b76e298957b2f6e998def44612b9a0e54ff0ad5c7f8c7d6c583a40761fd60db"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/_src/02-도구-설치와-터미널.html",
+    "sha256": "ad7f1a4e7613247778268da1f98a79bfcb0ef779f605f6b854d026fedda9702c"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/_src/03-Python과-가상환경.html",
+    "sha256": "520b64149db7b8a34a4922880f510301bda4421c8fefbbe49ef97af0bd0fef36"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/_src/04-첫-스크립트와-디버거.html",
+    "sha256": "b7413bd39fbcfc509e7d2d39ce04b0e6c4543c19574d393a5589f1e4e0bd3798"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/_src/05-Git과-Docker-준비.html",
+    "sha256": "b83a55a4602a97047b4bb2cf39e4dbf8e29772e9b04344197f5e2dbb8c5d65ee"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/chapter.json",
+    "sha256": "eed0b44c5e44fa39bfb7277c5a782d2af6036d311338066ca5161d0f0779a91b"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/figures/01-learning-cycle.excalidraw",
+    "sha256": "7b08ad4910382c7810456febb25ac27dd761194cd0b2ebed26fd7d96c3025ae0"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/figures/01-learning-cycle.svg",
+    "sha256": "caa1e331bd6bd0476fb88496e429e3cfa0261c82e10da4e7a29839bf5cb99b03"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/figures/02-paths.excalidraw",
+    "sha256": "0f2b089cc6d100cf9f753cc608bfc025e75d3c29d8e760d1fc65faf8f4d168f8"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/figures/02-paths.svg",
+    "sha256": "b0d060462bb8b7d29765a03ccbf9eb0a034f7ad0073b57923970aa0e58c5693c"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/figures/03-environments.excalidraw",
+    "sha256": "8bcaf6e62e4ab14a6a3c9c3f4ce2ab6f39c786f622d3c028b4fd421d3c8498fe"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/figures/03-environments.svg",
+    "sha256": "0a94d70d0e835baa4584d095fa1f42a1932d93171450120f338116057637f7ed"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/figures/04-debugging.excalidraw",
+    "sha256": "e49d25a782fc9c9f0f1b2f1046e468496c9ac1e955ecfbc416aaded8fd347cda"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/figures/04-debugging.svg",
+    "sha256": "5580d4302f846dfe870769d14759b9d2897a254f90926f5b0de88085c3feb637"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/figures/05-tool-readiness.excalidraw",
+    "sha256": "b947d715cfd6cccc4cccc09ae3648a3544cb83137e1d87d37192ff86e24be524"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/figures/05-tool-readiness.svg",
+    "sha256": "6e3e4f614b79ea115c706f37e7080bb3b48dc7fa28e44b963828f1f7c181652f"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/figures/_gen_figures.py",
+    "sha256": "56a8cf5604034e1b4bbf9ef51403632df909176d68939dab0bf1e31771fffefe"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/index.html",
+    "sha256": "2e6d090a628bd3178195c64c89aa77835c2f93781b1bdea5eea6fc4562f7d304"
+  },
+  {
+    "path": "textbook/part1/ch01-development-environment/집필점검표.md",
+    "sha256": "315e943287716e4cecc4d63526703f98d3c52052ba431c5b35eb3074e198079b"
+  },
+  {
+    "path": "textbook/part1/ch02-python/01-변수와-자료형.html",
+    "sha256": "504b7afb591f20c902ea785d82c24fe71ba0bf63a8d8577c9211a882d74d6c89"
+  },
+  {
+    "path": "textbook/part1/ch02-python/02-조건문과-반복문.html",
+    "sha256": "f1318f608ed865de251a3a183c7a0de7342137f0e42f856e3bdde28828252c10"
+  },
+  {
+    "path": "textbook/part1/ch02-python/03-자료구조.html",
+    "sha256": "7b756dd75ba89c944b7d5791ab0b9d0b1379e188fc9f81795d3d4c99ecc8a4f6"
+  },
+  {
+    "path": "textbook/part1/ch02-python/04-함수.html",
+    "sha256": "49178cf4c1426a71460cd75bec20b3f2879c66f62eda7c73fd5cebe87f5c2ee5"
+  },
+  {
+    "path": "textbook/part1/ch02-python/05-파일과-예외.html",
+    "sha256": "53ee95a143cf0c1f18c06e384dbdadf9b165b2b334c710ea296c64a0ce08c6c9"
+  },
+  {
+    "path": "textbook/part1/ch02-python/06-클래스.html",
+    "sha256": "cbb22b049415debc8678547159ec3efbfaa627aed1dda26777b11c844baf0d43"
+  },
+  {
+    "path": "textbook/part1/ch02-python/07-모듈과-타입힌트.html",
+    "sha256": "674405f2d4dda2d886b09c94f3c3ae666ee3a48878be4c3403c0ab654624313d"
+  },
+  {
+    "path": "textbook/part1/ch02-python/08-pytest.html",
+    "sha256": "089f4a6cdc75de234337c85026a16641674b155ec583e9baa6cfa3187610a065"
+  },
+  {
+    "path": "textbook/part1/ch02-python/09-데코레이터와-컨텍스트-매니저.html",
+    "sha256": "b8f846925dbeb6aa81d40534df63a6f87c2ca394959223b202b79cbf948ce2aa"
+  },
+  {
+    "path": "textbook/part1/ch02-python/10-Pydantic.html",
+    "sha256": "9380301feb40e06284d74fa51849d661e609250834faff097ae88924d328231a"
+  },
+  {
+    "path": "textbook/part1/ch02-python/11-패키징과-테스트-격리.html",
+    "sha256": "1ff6f37f30bfb29ef348e6b12a6ce3711733533907133757c8092e84025ccd6d"
+  },
+  {
+    "path": "textbook/part1/ch02-python/12-async와-await.html",
+    "sha256": "d2adf852d6972f02a8c2bd551ef7792f95e2e659834ac4ea9cb3ed0195bcef20"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_build.py",
+    "sha256": "941f23cac978db50a79afe103838664dbb0f411593681c15f2133a2b8d79f0d1"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/01-변수와-자료형.html",
+    "sha256": "4722a1dfdd94827b0ec4eb95259665489eb44f4be9acb0662c2de54fc172dc25"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/02-조건문과-반복문.html",
+    "sha256": "fbb4584956a7dc115efc66b51c3ba87e68da05d94882b2c1ac6a7a2d6ed388be"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/03-자료구조.html",
+    "sha256": "230563c5fa17399cc701ad9311ade10bf2019c566011f247ad469fd3b1b4ca38"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/04-함수.html",
+    "sha256": "cd242274ef73c43d20b0679a6f2033fc0f0c49a6aca06d3b43c2aa36413f08cc"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/05-파일과-예외.html",
+    "sha256": "4fd8ae798cf87c37be71887c86cc7dd0ec4532fd58684766f7f6f35517463026"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/06-클래스.html",
+    "sha256": "4d4c4e879284c015662d037420ec41222ddbc6647f51bffa4b73305a94b2d19b"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/07-모듈과-타입힌트.html",
+    "sha256": "d115bbc21b81fda7c0ad94ac3cc48bc6b860d4bd59313e6f129179ed2228c102"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/08-pytest.html",
+    "sha256": "4f1aee7a3eb31619fb99c75542cbfc37c7dab43aa0e6f14b963771e66d9e5463"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/09-데코레이터와-컨텍스트-매니저.html",
+    "sha256": "41aa7d96fbd798a0dd284815cb2856b357051c4e4bdf328e0661526ac328ada9"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/10-Pydantic.html",
+    "sha256": "d26eb9372c37396a4a1c5f352d069389e7743fa3c6fe8d0f6fb5ceed25f082a2"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/11-패키징과-테스트-격리.html",
+    "sha256": "152be8fef029893cc84ce47478adb82afa45b4d83581c0501b8962c1572ca079"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/12-async와-await.html",
+    "sha256": "fab8bdca79c04824be5705bda94ffe48bec5d1518c0ffa4b2ff1e3a254b199ca"
+  },
+  {
+    "path": "textbook/part1/ch02-python/_src/index.html",
+    "sha256": "f5b18e118419ecb7df1c1c21d536df858b4f45b9df5fc5b5093e2cd108da645b"
+  },
+  {
+    "path": "textbook/part1/ch02-python/chapter.json",
+    "sha256": "0c545f077ad6d65b4a9bc8624916d0c6bb11281a2a42cfdbdb03eb85f4da85c6"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/01-concept.excalidraw",
+    "sha256": "28e4de3b86688df38d8f0c3064663f0503bac63bb716c54110b238b7becd9ec8"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/01-concept.svg",
+    "sha256": "0da578bb73a325ce99aca2447bfae89f2fe9d56b26b93b443e2b0a6894c288b1"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/02-concept.excalidraw",
+    "sha256": "42ca84c963836fd101d636d36383221fc244b7288fce424613b504d21137de34"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/02-concept.svg",
+    "sha256": "6632d44c171574a21b332c299e397ded1be573e39af50923524dcad6e1a9dce6"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/03-concept.excalidraw",
+    "sha256": "519c014ade565e1f875abe71d8c45ea4c911e8e05cefe9f08f7794d216c8d88d"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/03-concept.svg",
+    "sha256": "0af68873105aacd908ef0410e3c705f17d0f51ad37c468734f6bb1e9e3724a64"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/04-concept.excalidraw",
+    "sha256": "2a1b0dc8f4488efdf5552597aa3906734064badad35b170906ae9d7584f18420"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/04-concept.svg",
+    "sha256": "549a2c6a9e368fa7ffab92e53ecb528ebb79e98dc053264fe2a1e9ba820ea8d6"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/05-concept.excalidraw",
+    "sha256": "f5f398eb78a1c0f9e8f607d27631a37c3f0fb3b1258695cbe235c3acbf298a4d"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/05-concept.svg",
+    "sha256": "75af168f8a6d70f60f1c1209e08bdbb565618c7341e0c5f5c7d2b56e201f4968"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/06-concept.excalidraw",
+    "sha256": "e98d413ae6a32d11b13a825e6d3184af86bea5771f71dfb19df13696f170153a"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/06-concept.svg",
+    "sha256": "2e22e01ad8da56711e283239d5c10d0ba258203d1f16420fc821abd7aacadebc"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/07-concept.excalidraw",
+    "sha256": "02ea6504d00882e53c67dc95e4530b04fb672087cb7944a971d4ad16133a0c5a"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/07-concept.svg",
+    "sha256": "e5e6c27bc5918fc6e12285c53630058d1bbcbb6b08df4c78189835366e549a71"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/08-concept.excalidraw",
+    "sha256": "e4840bff1d360c91e300cd433f67c385fe1fe75ceedf10aeffbc31aee6f19d28"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/08-concept.svg",
+    "sha256": "5f15416192fc4da4081bee3729868b7a118bb016c7bd3ad12491a1840766bdbe"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/09-concept.excalidraw",
+    "sha256": "f5821aefa3b6b87b9bd5e11655c262acea849e82f3a4a7d2c878f08189b7c6b4"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/09-concept.svg",
+    "sha256": "65fa103c0b3db2c51f50b28c69de56316754a9a8189d5277fd62d97f1608da99"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/10-concept.excalidraw",
+    "sha256": "0e633ab0d9c9ce5000392a6914b75ad2eb68d646858062f72519ee23c8376a55"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/10-concept.svg",
+    "sha256": "6af8fa03511434523a5a09a41d45a6d1b785c54db07f2f462152236cf42f23d2"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/11-concept.excalidraw",
+    "sha256": "143f2cba588d788130c702b5bc914d22f617b9eb7fc562b1e6de336ebb8deddd"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/11-concept.svg",
+    "sha256": "118dac10a86e90b83f45a8c425996d97952b9e639e7777bdba0f07e830a26816"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/12-concept.excalidraw",
+    "sha256": "4503df92a5da68d6f29610900b611d4e56ce64b4c22ec9320708ae7126f178a2"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/12-concept.svg",
+    "sha256": "caacdf78c4189d901c2578988058cdafcf8e3f2da841d3e4b5487b24e10326e4"
+  },
+  {
+    "path": "textbook/part1/ch02-python/figures/_gen_figures.py",
+    "sha256": "0dd47afe41f5f24de45c0963a287245d650953aa8f28f444f2a32c947150f04e"
+  },
+  {
+    "path": "textbook/part1/ch02-python/index.html",
+    "sha256": "d088e0991470713b489ca551b97ca389398b6dcf8b9ceb42fa4966f3e01af947"
+  },
+  {
+    "path": "textbook/part1/ch02-python/집필점검표.md",
+    "sha256": "ef5e58d32b126c8853cf45e431b4ed4ba2045b1e9bb1fad61b946419cb47c0b3"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/01-커밋과-gitignore.html",
+    "sha256": "df4d91c8d4bda14383fc5bbbcdf6b315475a91bc7ca99009d7a7079513c46c55"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/02-GitHub-Flow와-PR-리뷰.html",
+    "sha256": "e53a6d60fe4b91d89a4a467c561f0675fc22ab108ad7e69102b54886f6a8750c"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/03-병합-충돌-해결.html",
+    "sha256": "171e9973025586e5a607361f5e6718631204c6c793f3b483012530c78b0e79e4"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/04-revert-reflog-worktree.html",
+    "sha256": "64a5794ab0d18c34799f85cffc8951e8c5a970a8e70e7b6590a4917a7988f63a"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/05-시크릿-이력-정리와-예방.html",
+    "sha256": "0fdf235e996fb51778b91d616bec52c66682ac846a9fb83abfcd31e21852eeb7"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/_build.py",
+    "sha256": "63e0a4e41475d64ea98a678ad96948f2d60fccfffacf21f3a7769470ecd3fa65"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/_src/01-커밋과-gitignore.html",
+    "sha256": "fb83a48a570781432c20090003eaac3377ede5c48fe6f4e487c2baec0fe00afa"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/_src/02-GitHub-Flow와-PR-리뷰.html",
+    "sha256": "6fa23ad9e4d072bf86ee5f83fb7f829cd45fbcfb8372da1b7cf4f539aae1485a"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/_src/03-병합-충돌-해결.html",
+    "sha256": "722d9d2e1af722c9b0e05041f9066232d83cf2ff73d43304b9a7abc933de9d8b"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/_src/04-revert-reflog-worktree.html",
+    "sha256": "04c2ffec89ccf78e5a455d9f98b8edc18df171c94d34bb7c393a8c71e0a617a2"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/_src/05-시크릿-이력-정리와-예방.html",
+    "sha256": "13697b3de7a3e80327fe8ad5070a8ec8f590d84915817d5bf588b1df6932203f"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/chapter.json",
+    "sha256": "a9bb520a123a5bacb0f363521199b09dcec3228083243f42b8f18266f733d476"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/figures/01-commit-ignore.excalidraw",
+    "sha256": "8fc9e142238fa90279ab4bc58e42555b21fdfa4c367c0389f6bd0e9078ad18f4"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/figures/01-commit-ignore.svg",
+    "sha256": "3339897ce1e4ff777c88a306bad11dee8b0bb4b762ef25707b9194aa601ec381"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/figures/02-flow-review.excalidraw",
+    "sha256": "9dbb37bb94f876a12b3f4a2151a2ade6f7c46f684262cfae7ddf0a5448d50497"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/figures/02-flow-review.svg",
+    "sha256": "31a5ba32a4349d7bf7c3c124e312210bd721defe81f3cfa951593f811ecde4dc"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/figures/03-merge-conflict.excalidraw",
+    "sha256": "ffb1138b0853aa9e6314671c4f6727972a541b5720d870db42ff4856dd1f36dc"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/figures/03-merge-conflict.svg",
+    "sha256": "c87e1c27c6a9f7da359ed14480d51127db8211231b3fd437e2374fb3f77906e0"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/figures/04-recovery-tools.excalidraw",
+    "sha256": "13c3e0998562ab24a5f73e1f15481476c95f8ebd1e4bb39d6cfca65e32545173"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/figures/04-recovery-tools.svg",
+    "sha256": "d87e6d190da791ccb4ef4827637ea0eee7e46e31cd91a93cb7143b8a3b973bdd"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/figures/05-secret-response.excalidraw",
+    "sha256": "398324f513ebeb79e1117b2dbb78d2451636fa83e43eb076efecb294d865f675"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/figures/05-secret-response.svg",
+    "sha256": "9b68f1ba9e0459d6eb9cd8245b6e2b837e453b39918f1491c37d91cc1f43ee7d"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/figures/_gen_figures.py",
+    "sha256": "9a60c53ed06c3a4bb9dfdd11ae96d00e260e624588682be22825d3dbd7d4807a"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/index.html",
+    "sha256": "a981b61dcd0da90b95f500a7aa541c2556b42aa5d1204a8e47024b7da1049815"
+  },
+  {
+    "path": "textbook/part1/ch03-git-github/집필점검표.md",
+    "sha256": "560e876ca340278e65245736017fddfdf2299beea85e2fe815894178a7453199"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/01-Pandas로-표-다루기.html",
+    "sha256": "cf3ab823011a30c278f330cdd4bf69ec9128a26d40663df86f99fe4f347aa341"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/02-관계형-테이블과-키.html",
+    "sha256": "ac9bab3f002993adac7c9dc79298e55e1f5368f8f0ce5ae17201c40d8ba2c080"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/03-SQL로-조회-함수-만들기.html",
+    "sha256": "8fc164a5a9812215117507f748c009fc86bd1e5d20cdc94a298b447695a86d79"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/04-REST와-페이지네이션.html",
+    "sha256": "a645c589b86ae4e52f1ffac5b7f751ff80022d32aa1c8e5b3f2178a5ebafd5ec"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/05-문서-파싱과-스크래핑.html",
+    "sha256": "a0c63cd9e90c355cea8afdbb6c7d9621606947f6103d6bdf1650cc130d20bd3f"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/_build.py",
+    "sha256": "63e0a4e41475d64ea98a678ad96948f2d60fccfffacf21f3a7769470ecd3fa65"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/_src/01-Pandas로-표-다루기.html",
+    "sha256": "bffd9376f38ecc9b0a813ba36afc1f23ae75f9902738bda07b4cefd645c405ab"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/_src/02-관계형-테이블과-키.html",
+    "sha256": "58301ffa849584b35f728bbb726b390c3f6061372794cd9fe33f1751662b6af3"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/_src/03-SQL로-조회-함수-만들기.html",
+    "sha256": "e5eeb547aba1b15d9539f65eb1265e00e7e63cf2392c05c4caee0d4269272374"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/_src/04-REST와-페이지네이션.html",
+    "sha256": "22c55dc3a2010354d56b2dcdeaab68270fdfc6188fc846718283dc4a13126d71"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/_src/05-문서-파싱과-스크래핑.html",
+    "sha256": "c7b9a176ea1b92a2a86fcc52c60fb209ae35131d4bb417bd142264a863b0477e"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/chapter.json",
+    "sha256": "55e54d2671a05518fdffade236181bed087c6ea00343b2d59e158eaa109ab53c"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/figures/01-dataframe-flow.excalidraw",
+    "sha256": "af1fc23b5542e1df3a6cdcb2449f011cc1ef15279c4e2c3c4a893f8daddba02b"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/figures/01-dataframe-flow.svg",
+    "sha256": "0e1a025b52baf782f4acc33ffa740fc1075f6a5b4e36337d752f694760e3653b"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/figures/02-relational-keys.excalidraw",
+    "sha256": "1a94dd536723388808b2ec0cb1d8c4bc313e5fb5282a579e7959a021a42c3a30"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/figures/02-relational-keys.svg",
+    "sha256": "5e59f1f367f8258a5f68f60d70a837c63d9865ead3ff34728de7e1c0f0381e0e"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/figures/03-sql-query.excalidraw",
+    "sha256": "10b9b20bd37a51b6a61be2fb04d527f765d49ec7aea4234ada85817d4e0cb6ac"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/figures/03-sql-query.svg",
+    "sha256": "c81dcb23d8cee05ff5353d07d45e5428740769fa3dc6d44a1efa1c65c42e1653"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/figures/04-rest-pagination.excalidraw",
+    "sha256": "bb08787e840657fcad663e5c6e254461601f45b40aaa1c0e3904aea0fbe8bfa1"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/figures/04-rest-pagination.svg",
+    "sha256": "7b1bdf014d8de8a1f3ddbdc43be190449c41fc686251c7ec36c91d1300fd4153"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/figures/05-document-parsing.excalidraw",
+    "sha256": "9b1800e6470396c95baea19236d0aef2b8bb4fc994ae5e4ff86de67d4c0a6674"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/figures/05-document-parsing.svg",
+    "sha256": "7329a288b8d2df68078c22ef3706225ba695eef05de80aef84cca6b0177551f9"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/figures/_gen_figures.py",
+    "sha256": "d4a8b9658043ce46484f05e495b737ca8ff555cdd59db58f03470cdf573c1186"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/index.html",
+    "sha256": "93e04c7d76968e0320d28fcc3df2c05c61afa18e00965d67082a69b61c4e9167"
+  },
+  {
+    "path": "textbook/part1/ch04-data-tools/집필점검표.md",
+    "sha256": "4db72a1dc52bbdcc80b0f7df48a56ba6ddeed9f2750521555a83384994159dd1"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/01-토큰화와-한국어-효율.html",
+    "sha256": "1178e983add62e7324ab10e59a41901e59a132cf64c648e8e0fba1d12be307b4"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/02-임베딩과-의미-유사도.html",
+    "sha256": "d358ff6d14b7fa7503f892bc51a5afc8bed28d8b7450b38ab614d5f0d524dffb"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/03-어텐션-직관.html",
+    "sha256": "868c48b1987576143328b15d0ffe974ee8c198624c54983202db2d992832b3ff"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/04-컨텍스트-윈도.html",
+    "sha256": "d6f92cf35d528613d5f69eda641069bff1b19a5f1666d1537d134ef37edc5173"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/05-컨텍스트-로트.html",
+    "sha256": "58aab0c7e92d172c9660221d0d9dca39e8bc6190de9815cd496faa7d7278f54e"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/06-temperature와-샘플링.html",
+    "sha256": "f5f8185c84b3aa2a940bba81fca617fc0d590b6c88acff37a41f74c152a8f59c"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/07-환각의-구조적-원인.html",
+    "sha256": "cd710e0510f37eed791f76decdd9460391f7c63315df89e327fc25228a993902"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/08-모델-선택-기준.html",
+    "sha256": "e1d83c4ae1bf6e199e9a791f4956322ed43659d839e656faa0e5a6e0e794cd07"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/_build.py",
+    "sha256": "63e0a4e41475d64ea98a678ad96948f2d60fccfffacf21f3a7769470ecd3fa65"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/_src/01-토큰화와-한국어-효율.html",
+    "sha256": "f1690ced2889a8744d91a992e05ec4429a948ca9b02fc43a7e50abdc90edadb7"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/_src/02-임베딩과-의미-유사도.html",
+    "sha256": "cb545e4ec55a61ff19ed47cb4fb006628afff69629ecb337528acadce7f908cd"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/_src/03-어텐션-직관.html",
+    "sha256": "630becf8f8078b8b17d7fd7256ba85cc31435d38d776dc61ecffc10fc2882506"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/_src/04-컨텍스트-윈도.html",
+    "sha256": "caac4ce8ddaed94ef4fb0bc701ff312cb2ea192c2a201fb22e11b6511672d456"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/_src/05-컨텍스트-로트.html",
+    "sha256": "f2448defc803d00ceb0eb00aeb13fc50bed0470e035717ab50578132b1268e09"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/_src/06-temperature와-샘플링.html",
+    "sha256": "2ddc651ed61d24138317063071127a64625b1e0c1fc46ebde35a077afa22255d"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/_src/07-환각의-구조적-원인.html",
+    "sha256": "f466bf5bc4d62519bb6c16c82e3b8a8802976090302e31ccc6d63b6de52821c5"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/_src/08-모델-선택-기준.html",
+    "sha256": "36984e61ae6d4c957a9972df62ee22589095957e3254e73aeb6352e73f91504c"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/chapter.json",
+    "sha256": "4fad2c8812adb51b04b3ea971b7ad48e3f9fabe3c3dfa91d72fa5acd9b2ec104"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/01-concept.excalidraw",
+    "sha256": "0a6fe44adf0ba6d405436dc61a7690be0b8252f678bef37c183a78db4130fa87"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/01-concept.svg",
+    "sha256": "8913c1efc7ede0394c0bcbefe4e98b43366bee8b9b2bc40fd4d67544fe255133"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/02-concept.excalidraw",
+    "sha256": "07a04ce9c0f6cd392cb3b3320f6fde6c7c7687f24d37c619d3529a46a90a97d0"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/02-concept.svg",
+    "sha256": "048c347029f71320d8009c4e0c3049367899ddba6e61cf2e5f21de71c1883f73"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/03-concept.excalidraw",
+    "sha256": "914a784f12966bffd4fd860b2335d048363910e13441738ab2679583fcaf8531"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/03-concept.svg",
+    "sha256": "f49a49ce97d67df6cecebc8e7b5c69560c4cb9ee84acbc1d9851ac84f7ff907a"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/04-concept.excalidraw",
+    "sha256": "9d05d9d225b3276d47469c3567292776b4eebec3fdb0fa8d46ff6eae5a7b7952"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/04-concept.svg",
+    "sha256": "bf8af7c49af5167c3ae6387c3e6691335cb04644d3ad574c139d03eabf8c402a"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/05-concept.excalidraw",
+    "sha256": "bad774a5a412c80e28e80bccc55a12f5dfef0383ad988e83fda4dc9bd11235e7"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/05-concept.svg",
+    "sha256": "075418fc0a5a842eb08835b5d7e4f4d0f5e899be5d0a8bbb11db074adcc1d833"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/06-temperature-sampling.excalidraw",
+    "sha256": "aa4f21aceed37fdd864ebdfc9494ee29f063d4226814149baffb0af662860c81"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/06-temperature-sampling.svg",
+    "sha256": "0d8cf446e62b893d6f12595eef5c2d0d64e8f2395b1aaa19456773062f7590f3"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/07-hallucination-conditions.excalidraw",
+    "sha256": "7ff538a20ceba5348cb5504f4b332081d2d543ee802067fb80aeb06b6bbbb453"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/07-hallucination-conditions.svg",
+    "sha256": "d47af172ea054c5ca45e4297ab3b81a3bcbb7453c624ece9b42b33d3bfb4c23b"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/08-model-selection.excalidraw",
+    "sha256": "47ffe613332f50769644e302fb1116cc3d6a37123f0d70c515d1a1aa29b82bd5"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/08-model-selection.svg",
+    "sha256": "3735e01f1070fb80c3cf3d8945c6901a8010b55471f185cc28bab1eec4fd7d32"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/figures/_gen_figures.py",
+    "sha256": "3341d7ed26e5a564c428a17399135d81ec47cd9fce3182eafc23e7a2ca99730d"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/index.html",
+    "sha256": "51a75ebd935e41dec7493f6ba463407658b5d2816ec50e55ef1103edf937e475"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/make_sources.py",
+    "sha256": "a6883f4340eda465a1f3a38217f8377033299a6ccdc37fa913bd058ae066c291"
+  },
+  {
+    "path": "textbook/part1/ch05-llm-principles/집필점검표.md",
+    "sha256": "6820f8bffc826a43efa787249d4c81a9d7cca8cfc1ff78a78ddf0d5dfc4596a2"
+  },
+  {
+    "path": "textbook/part1/index.html",
+    "sha256": "1e453abe9db59653dd8be47f51efd1c130cda50e43ac394d899f4570aaa17c3f"
+  },
+  {
+    "path": "textbook/part1/집필계획.md",
+    "sha256": "eac4abb53e3428c7b4718f5500dc383c62a6382558648ac31de9211ad0fd3e45"
+  },
+  {
+    "path": "textbook/part2/_build_index.py",
+    "sha256": "aaf88364ec68ae64e409371ee9b6aee5a1245ece3c73975d4c5ddec2ef4acfa8"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/01-계층-지도와-첫-호출.html",
+    "sha256": "f8c7dce15d55e576f12b0222be85780507b08d8ca9fb93d9f68ed16f7f296f96"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/02-메시지와-제공자-전환.html",
+    "sha256": "12c4b5cfc22c0ed069c25ee66e73da1e0218be6af0ed2dc01571dd684af335ec"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/03-구조화-출력과-검증.html",
+    "sha256": "d180cf01749ee9668b33b3e5a8fe9d1b8b05bf4bafb53e9635e305ca55cd568d"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/04-스트리밍과-content-blocks.html",
+    "sha256": "75756d7d43b7d1296cc53e4c0bfbcc09ac118208a09dc9cb274bcf8fc0f51fc9"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/05-타임아웃-재시도-폴백.html",
+    "sha256": "1e9e07dc973359f8f127922326aa1c81a3f1d5ea1bc7288ed68c20135d0d0957"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/06-토큰-비용-지연-비교.html",
+    "sha256": "05c787379243ed8998338fcaa22366176b6218a5479413db83960f2b89c36507"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/_build.py",
+    "sha256": "2c0b0272da0bc7ba2aa8a06b84023f8477e785eebbba207426e9e10052f65019"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/_src/01-계층-지도와-첫-호출.html",
+    "sha256": "9e82b940dd414a7fc106a67410894e3e6d3438743510740460a7ae8431ca38c7"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/_src/02-메시지와-제공자-전환.html",
+    "sha256": "09fa78cea6d89e41b672d57ad46bd7b02c9d7b5aa993adf41efdacd277a1edab"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/_src/03-구조화-출력과-검증.html",
+    "sha256": "62a36abf6533c31b327c5b01e66bf695360f9105fb5e723d6de338375229c7e1"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/_src/04-스트리밍과-content-blocks.html",
+    "sha256": "365893ba95c09780c2a0f5465f6de5c3eef38b52d17636ee4aa6ecc7c09f8c7b"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/_src/05-타임아웃-재시도-폴백.html",
+    "sha256": "58360505ff11f6a7373248f076067a11469839ce34bc5eb532ec10372e3a5ec3"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/_src/06-토큰-비용-지연-비교.html",
+    "sha256": "c35d1af21d1d0afbb0cd4bc1c022b6512e9f2251b78470615c2697535faabfbf"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/chapter.json",
+    "sha256": "379e58c77e5af0143b0be1645d8eee3f9aa3666c028c4406e5308e7cc49c454e"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/01-layer-map.excalidraw",
+    "sha256": "9a44687b3356bb56e7b551bd7256e7dfd15c491c95a4bd03dcfb23b98604afb8"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/01-layer-map.svg",
+    "sha256": "ba024238d2fd3e1a1d5a4811967ccb29165195e4a60f280367a3cd8668a8e2a6"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/02-provider-switch.excalidraw",
+    "sha256": "892d3261dd7be22d79c67502b40a86aff8f62676904bed5cdb4711f6007165df"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/02-provider-switch.svg",
+    "sha256": "f70b5d5ef1775efe4d5562465f70af6a5e05cb555f343b988c606872b89371ab"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/03-structured-output.excalidraw",
+    "sha256": "ebc959957266a2c24034d6e62ba03935f370a61dd1b786d4c01b863e3493feb4"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/03-structured-output.svg",
+    "sha256": "e47a7f70e5805c4619b74d9fb82b67bc27ae1332044dc2b5cbe72f05b8a27ca8"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/04-streaming.excalidraw",
+    "sha256": "7533248243b85b83ba8982ff309c096e10d24faac10157d6a482335ed4997a9b"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/04-streaming.svg",
+    "sha256": "b4dd1a25eee5c4cb9fa457540bcf638ea892f089228ca903e6eb9a52ca23e274"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/05-resilience.excalidraw",
+    "sha256": "bdacbcb24dab16418cb3e58e8c35913df83e121fe070572e2066a192e78839ea"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/05-resilience.svg",
+    "sha256": "078addd6578e5f554bdfd39487b34a0a6bf8648646be0fd71d512c7499f0ae66"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/06-observation.excalidraw",
+    "sha256": "0e50e2ef402c23701546f713b0aea4b9f0de735bcfbcd4d40ddef4a908c1c087"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/06-observation.svg",
+    "sha256": "70c1d8c95274e16234677147e8e8826d2f5eb8bdb0d2c523acf540a056fae617"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/figures/_gen_figures.py",
+    "sha256": "93edf23105f217980d5aabd1ac27154ff9541bf327bb41d1d78df4036cc8c1ae"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/index.html",
+    "sha256": "b2ae66691b6ad055e2205400b51e6a51a5bd062c5f283883484c583797cd2327"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/notebook-verification.md",
+    "sha256": "bf111fd8e73d639aeb3d9bcd2671682a6f0b213c3a1d5cacb593593e6fd478ab"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/topic-checklist.md",
+    "sha256": "97d56d8c359c29966f5872099f272410cbcb20efef6ffe6e7675296f36d5718b"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/verification.md",
+    "sha256": "51f909f2c6a6f65ccad7fdbbfe4398ddbdf15166e999c6d08795129ed19aa98d"
+  },
+  {
+    "path": "textbook/part2/ch06-langchain-start/집필점검표.md",
+    "sha256": "d04c8a9046f287635d019fcb8e31a657149eb0aeb82bfcdacab9347324342ba0"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/01-역할별-메시지와-제약.html",
+    "sha256": "5148226a127a7a2fb491a85a3ed826d719de0735e3bd9e15ba8c20ea98d9514e"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/02-페르소나와-과업-제약.html",
+    "sha256": "c99f15e66bd6ebf5e65b826b354ec809c9e8365c40bfd3c3c67c433efcc52827"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/03-Few-shot-예시-선택.html",
+    "sha256": "6e373e8d5bd6f7f502c3203e34f28ed6fc03fe021b7296f95568996fc4ac04ce"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/04-ChatPromptTemplate과-MessagesPlaceholder.html",
+    "sha256": "ce99876fbe1b86136900e3c6bc9a1edd5a7f12ba8367986fb9ba73a6ead59ec9"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/05-CoT와-ReAct의-경계.html",
+    "sha256": "a83b79cb93c1fa44fcdc5ae67f17d3db7a91f916a25a9f21b87d1f0884537e4c"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/06-Self-Consistency와-표본-합의.html",
+    "sha256": "248f19fa515c7cdbfa4269d5d19f614867acb49abe29f4aa85881939732fb60a"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/07-구조화-출력-프롬프트-진단.html",
+    "sha256": "cdc5f15cdc76dc52cc1102e4592647374694ed2053ce598feb7ff4616b064100"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/08-프롬프트-버전과-AB-비교.html",
+    "sha256": "be4f8e71e57eb6b233141c3b2bce6b80b0da99b8f90ccd3d5b6beae0ce4387b1"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/_build.py",
+    "sha256": "63e0a4e41475d64ea98a678ad96948f2d60fccfffacf21f3a7769470ecd3fa65"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/_src/01-역할별-메시지와-제약.html",
+    "sha256": "5f772de9fbd79435b06ac07d22af1d6fb914c965138ffbbfab3ea28729cdb619"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/_src/02-페르소나와-과업-제약.html",
+    "sha256": "a297c9d71b32cff8449e60544dabb522d3138274d6f287c8671f7f9eb54538f5"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/_src/03-Few-shot-예시-선택.html",
+    "sha256": "6a2832fe0118e6464288ba0bb6534aa2fd9196b8617e240bc2219c412554898e"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/_src/04-ChatPromptTemplate과-MessagesPlaceholder.html",
+    "sha256": "6e1be10cdd5f933147412f462dc21f93e87d0f6fd1ff8a2c654ca8f11b056bbd"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/_src/05-CoT와-ReAct의-경계.html",
+    "sha256": "7013d431eee9dcbf7d155914dc577af0d02f83531d4234eeaea2c627fb8d3ee2"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/_src/06-Self-Consistency와-표본-합의.html",
+    "sha256": "27058831cc7b3a57f1e56b0e34f246a55b0b0fb9e68a7157076f1ece371f1ed0"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/_src/07-구조화-출력-프롬프트-진단.html",
+    "sha256": "4fc1c313c5cb0da7b7ad1f075a07e6515826eb1c451cc9bd2c043aedcf54aaa9"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/_src/08-프롬프트-버전과-AB-비교.html",
+    "sha256": "e05de83a427257ad3f796741d6b964afba447e35daa36e6cc19f8d90c8e63fcf"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/_src/index-body.html",
+    "sha256": "dc1b57a92f9ee1d45b7d4d45c5b15dbbf24905654a2f20b15ac7740ef81b442c"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/chapter.json",
+    "sha256": "ea1deac3ffb716f96b3f94dd74295b542629e77884af57862f2f4afd729be79b"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/01-역할별-메시지.excalidraw",
+    "sha256": "04e87333a76def3acd1540fd283fd6bbc36cd8c0e327d50892aa62960ec7a730"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/01-역할별-메시지.svg",
+    "sha256": "caab3b84abf1c9a1407329114832beb6cfa3959ba171fbe8c59e82e2b543a3cd"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/02-페르소나-과업-제약.excalidraw",
+    "sha256": "ad1c4730c0b0ca55c0bef6b8588da580c4b34eaf8c4ae28b7577c294f831d4ea"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/02-페르소나-과업-제약.svg",
+    "sha256": "fa8973d246f32872d0273446ea5c85389a0be44088dc4252170c9f3cb76f6968"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/03-Few-shot-선택.excalidraw",
+    "sha256": "b6d194476e662b70eb4b72c4cffc510007d56dd0b298cbcc05c6118e95ad82f0"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/03-Few-shot-선택.svg",
+    "sha256": "009782a03dade2f73f2a9231a5f70c65b6756bfc22628b87d2b5ae675de6bfed"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/04-메시지-템플릿.excalidraw",
+    "sha256": "03b36c34caccbe4be72e85118890c2dbf26db5e11998f58a095219923468bcbe"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/04-메시지-템플릿.svg",
+    "sha256": "e3d91331e1313f1ba220e723e6a5a91cc233e3230f7129823190b63b5db55495"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/05-reasoning-boundary.excalidraw",
+    "sha256": "954ff7b32c82b328768af037c84e7e7d8b262dfc15d8ebdcd52bb8a4a719454d"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/05-reasoning-boundary.svg",
+    "sha256": "b4d2abd0f0654ce4f21b1942e6aed45bb15e83c79294c9083afdfaf3702115c1"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/06-sample-consensus.excalidraw",
+    "sha256": "822a39305fcbe68fe8933ec2494ba38f6188cc31216876bdb7f9a9d63855ae83"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/06-sample-consensus.svg",
+    "sha256": "03d0e6ffa723007ea402704b1f0f685843f13ebdaa60d70081fdddc1e17bf708"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/07-structured-diagnosis.excalidraw",
+    "sha256": "4fbfac22f6695706d9c0ef650007d34ba0acea4bb9635963235f8283402a6a16"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/07-structured-diagnosis.svg",
+    "sha256": "a89d7a6da0a14a96a6ad4bee7c7a7bcafb34011b2e495266b6b00db81d20c473"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/08-prompt-version-log.excalidraw",
+    "sha256": "115e57aa5a2deab0f5999b00263bef289021a4b5bcfc9ad11b1e14d56b148366"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/08-prompt-version-log.svg",
+    "sha256": "9a89473acc30b77bfecc87caecfd6ce0bc793f151aac8f3b22b907f543d1139e"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/figures/_gen_figures.py",
+    "sha256": "8fce72bd9ff2d14d779028e5349bcfd9ae5729db8e73f803fb5a92da6e17b809"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/index.html",
+    "sha256": "235c5449463cf022580ebb24bf1dd476fd527f4199fb6b5541acd3fc05b3c5b5"
+  },
+  {
+    "path": "textbook/part2/ch07-prompt-engineering/집필점검표.md",
+    "sha256": "03f194301185620a65573a3c222d1b9c31d011efad329c713929eae2c4d09f11"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/01-컨텍스트와-토큰-예산.html",
+    "sha256": "1d924f3445b6317251c81bb97e770e950de7e365917f9936b18759b5c436b615"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/02-Write와-Select.html",
+    "sha256": "332959f568ad2e7f9a5a56e3a1b03913b09293daa51cb44c4ff458f9deb6ef82"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/03-Compress와-Isolate.html",
+    "sha256": "b69ed23f9a8aec4f7d060d641949c2b205134c3ead5ec7521476fbc0c133aeac"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/04-네-가지-실패-모드.html",
+    "sha256": "18ca1801d25f61c9e0b508e496a58f68790b7268e59d1f45b434e0c8270f6e07"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/05-Context-rot-측정.html",
+    "sha256": "48ad25d54aa63b0479f8c30a608a20206bf6b7b0fc15791b062a910b45c44091"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/06-단계적-공개와-설계-비교.html",
+    "sha256": "477674ff8144640c899b81b394e0500287071f63506430806a8b4246cd31c563"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/_build.py",
+    "sha256": "b8b572b2636ffcbf8ab435cd97071ee4436f65a95e91bb23bc8b9cf5cbf5d7dd"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/_src/01-컨텍스트와-토큰-예산.html",
+    "sha256": "9855743a3ff8ba815f12e5c5f856f0e7e3fb80ca0e2626758539a1b790bf3c54"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/_src/02-Write와-Select.html",
+    "sha256": "e27658f5a1c2ef27f04cb43b251426a729065670447100f0fb1b29dfb735e9e7"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/_src/03-Compress와-Isolate.html",
+    "sha256": "e191d043afd0e26bfaec242fa3eb102bbff9dba19c55715e0cbb930db3cce75d"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/_src/04-네-가지-실패-모드.html",
+    "sha256": "af89d6a8ad4fd828f0cd37d7bb9ce7f240972b955bfb426f282e09b39316b1e5"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/_src/05-Context-rot-측정.html",
+    "sha256": "2b26d67a54c5cbad1dc618629a058695a8de5ba7c27c6113df57bd0bb7b27e3e"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/_src/06-단계적-공개와-설계-비교.html",
+    "sha256": "b57e12deb84b8947757f84e7dfa6fc2ddaa06859dd9d1c06138b6d16307bad1a"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/_src/index-body.html",
+    "sha256": "da16c1e3de57c8ddf15b054dc792a75942eefa95ea79c7123c12fcaac6a61031"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/01-책상-예산.caption.md",
+    "sha256": "75f507e12dfb3fa4d1109e4ee92c5472b25161f42c4ba0f6b9c1aafe9fe342ad"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/01-책상-예산.png",
+    "sha256": "3fb375091dfb70deabc10878356e2b3b7326026d2ba4eb6ac654d768f06a759f"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/01-컨텍스트-예산.excalidraw",
+    "sha256": "7b21a71b892141d89214c74f23ec019f8a4aa237c7393d2611c2f6218d931a56"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/01-컨텍스트-예산.svg",
+    "sha256": "57999d8a27e450aee85fd3f4b375889b8f870f973abf5b75f9e5612c3de37acf"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/02-저장과-선택.excalidraw",
+    "sha256": "020bd95026b188c0fe7173393144642ed4cb1e5f5656fb7f7121a0eaa753fe1f"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/02-저장과-선택.svg",
+    "sha256": "1dbecda2a2baa69d91330de57cd239033ac47c324664905204a1cca02a874c17"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/03-압축과-분리.excalidraw",
+    "sha256": "ecb813e589e8de9282132905f877fab8ee9baa8196a57c3679d1b141fb0a8fa9"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/03-압축과-분리.svg",
+    "sha256": "4dd933c8cb85451774f3a6c6db3998404dd69df7338a26b4c2e39a9adc549c9c"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/04-실패-진단.excalidraw",
+    "sha256": "2293994837208b4d1fe269d059b38d6b21a8a4b79dbac21f85b4d3d922d8ebcd"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/04-실패-진단.svg",
+    "sha256": "7bd7ea3026b5195aaf08800b684fb1b11ab8323d28a107e19cda2118b60ae774"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/05-길이와-위치.excalidraw",
+    "sha256": "57a4daa218e0da013db256d9fc6d8afaa257ccb5e9233b2a27d7913168218a5c"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/05-길이와-위치.svg",
+    "sha256": "c9ab043e8637f544354d5bf700ed307ca04a5dd79e20c7b6c84d6e7d30c2cf72"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/06-단계적-공개.excalidraw",
+    "sha256": "28572a2a94ccfa6399e75664e45f87fa51f61583506a7b1a46a37f4d16c80b32"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/06-단계적-공개.svg",
+    "sha256": "062f4ac7778eeab48a1b567ea7fa75276d9174579aa48a11a68c3a0099063757"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/figures/_gen_figures.py",
+    "sha256": "1a36dfad5a16652f49cc37a202f61c860e2f3202be421c4c6a73d4809e0f220d"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/index.html",
+    "sha256": "ea87325b5e6e269b26494b1f69a7d25bca7341f7acf546d704d4297711886245"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/notebook-verification.md",
+    "sha256": "1e53315dbad1213b53242ea69eab0ba68f5c9f5ab7c46b2348353b70a0584653"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/research.md",
+    "sha256": "b05b0cdd491f6ccf8e526edfac921d84991439b2e32d14e3858f52bf2724e0a4"
+  },
+  {
+    "path": "textbook/part2/ch08-context-engineering/verification.md",
+    "sha256": "a8496b1557d9640e7ba12b7b41127c7661b83082c8655784bbf1aac64c308172"
+  },
+  {
+    "path": "textbook/part2/index.html",
+    "sha256": "eb655269b4dd23749bcb3cc4eed4e5610c384561804ad5464648e0f59e941728"
+  },
+  {
+    "path": "textbook/part2/research-2026-09-09.md",
+    "sha256": "e6e05dddef53c981ba055631b546b7b8807e79c587bd8d3ace5e3f4c0e06d55b"
+  },
+  {
+    "path": "textbook/part2/집필계획.md",
+    "sha256": "046a0ec3069272ac7afb8a99b3690154af1114e25f3fe47962198170dfaa3c64"
+  },
+  {
+    "path": "textbook/part3/.DS_Store",
+    "sha256": "4c8e2960632abeebd52e6a1c7881c8d1b1c04d4d1fa3184eb0fe1b4e2a5b6370"
+  },
+  {
+    "path": "textbook/part3/_build_index.py",
+    "sha256": "8b55bb3a7d3ccc1713a65e0d1c949487461ec09b3ea52e4d136295e920bd9985"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/01-RAG-지도.html",
+    "sha256": "7fa4aaba675798cf308508dabe480e4d8e64ea85a2b9c8e5608575ba60511d51"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/02-로더와-스플리터.html",
+    "sha256": "d5a1b0b013c6e70304f2246859d1164aa9bb225b39cda804b63f30fe0a8eae69"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/03-임베딩과-벡터스토어.html",
+    "sha256": "b8c2268eb4b7258a9bec0878e2b1d2b9999931a82ba9fb3ec4b93df604300bf3"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/04-생성과-출처-인용.html",
+    "sha256": "a182f4d2294cf6c830832ceb79a4cfb5e5d1839028c74d1662040c388c6772da"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/05-첫-실패-보기.html",
+    "sha256": "e73b95323f2a61cfd32a7160f67504cfaf6116989846d0c9cd95c260c4dc2fe5"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/06-실험-하네스.html",
+    "sha256": "7545e0d0fd520c663dedec00ee039fe2bb3bb12c920f094c11306a8fb3945f91"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/_build.py",
+    "sha256": "a8499f7fbc342f664e1e8712b9b11ea713a736b13df4e291bd8703cdee58e517"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/_src/01-RAG-지도.html",
+    "sha256": "02263fab841b72b31e7f1baca03ad697f3682467864489a269ffcf89cd7795cb"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/_src/02-로더와-스플리터.html",
+    "sha256": "f62ff5ab964d54c060fc0a4df10770dfa959d9ffc6d8cdc1af18f2335c402630"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/_src/03-임베딩과-벡터스토어.html",
+    "sha256": "4b5a6c0ed82bd4d6d2d8b1050f9b8cfa928be0b59d5c46ff0bdd218157814f3d"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/_src/04-생성과-출처-인용.html",
+    "sha256": "d1767e252cdd72f7a2a2c9a6d8c4a20ffba612c0fb449f5f0d80d781f2f54d56"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/_src/05-첫-실패-보기.html",
+    "sha256": "23c5e3449c10d8d367d5fa4e4eebab270b74893a1ad2e88268e0f71957993607"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/_src/06-실험-하네스.html",
+    "sha256": "336cea686c90dcee8df5b8748e23efa0d3fd3ed9e2a1c068d595cfe3c9632d72"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/_src/index.html",
+    "sha256": "96e9c583a3b007d5016920daf524d81ec872236696611555e22e176b90ce6937"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/01-오픈북-비유.caption.md",
+    "sha256": "e8d29eeca0b3066bf499fe57ff4e4b123443c3f51a084914f6b5efdc54c4f7e8"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/01-오픈북-비유.png",
+    "sha256": "5062d1d5c0d074393f7e55639c69ae1f6e1cfa5cb05fc2deeb6b5acf3600a7ee"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/01-파이프라인.excalidraw",
+    "sha256": "bfaaa1488c04a92d16574b98bd235e5dfaf37b71bf7b9a02485a11be6cce497a"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/01-파이프라인.svg",
+    "sha256": "7437955ba023d506acd91bc607d1c2ec562d0383acdae28461c237933afd31f9"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/02-청크-경계.excalidraw",
+    "sha256": "9a836f06014408dfa7068f24bc7a8397c05e5b74733356844e32f91b78ac161a"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/02-청크-경계.svg",
+    "sha256": "2a3fe5fa0589bb01be5cb429d7eed49a1a91770054f8881924c76b903a56261e"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/03-벡터-검색.excalidraw",
+    "sha256": "60289d6706a68a5fd2b6c02987c603874828ea66d4202ad873709369a5134390"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/03-벡터-검색.svg",
+    "sha256": "7a4a5ef0003d23653a3bb8e6d62773d4138dc85486afc2f33558241b4e77e677"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/05-실패-경로.excalidraw",
+    "sha256": "bf6e72c345967e1f4fe58b39530068feac33f487cc0f3d190113e0a111e3dcbc"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/05-실패-경로.svg",
+    "sha256": "00835f5bfc3073f6c569e34b0c9386514678c6f8754a650f8810689693c60edb"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/05-지어낸-숫자.caption.md",
+    "sha256": "e248c26ee4df721dedae9b2647d53be2674943eb1328d4b85868e2d57b0779b5"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/05-지어낸-숫자.png",
+    "sha256": "d820f3bb8ff2e28bf3f293ae513aa81ed5cdcedcc4b338c45aedd35ba641800d"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/06-실험-노트.caption.md",
+    "sha256": "c27322c04beee1cf4dd44589a39cecb5e9fb151f4048272d398c2cdaf0d72432"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/06-실험-노트.png",
+    "sha256": "54758a2a8b662b1fcf2f8a7aa9546536a015a242c4844aa5818403b6f6fb1c1b"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/06-하네스-루프.excalidraw",
+    "sha256": "231f34869c77ca93b1c39c9b66d0b4142b5e7fde232d9a3911850d2680d813a2"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/06-하네스-루프.svg",
+    "sha256": "dc7372ced0d0e69e507a2c55594918c2118a2b2f1e20aacef65687b7068db679"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/_gen_figures.py",
+    "sha256": "65bc10b57d93a96c24c3ecdf25ef17baa1908ce291bf959ff080e015cecb3fd6"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/figures/verification.md",
+    "sha256": "8a9f009b937321f9337cea7f25e11fa79fc4d8020593bb04b6410598ecaa5f07"
+  },
+  {
+    "path": "textbook/part3/ch09-rag-first-run/index.html",
+    "sha256": "f2317cd2017a74a789310962385170b94a49fe754194c2faa0fc3ddbe8bacfe2"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/01-문서와-메타데이터.html",
+    "sha256": "f3bcf449167ecc098a00eedf5038440179895304305e9302039ee48fa4b8eafe"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/02-PDF와-표-OCR.html",
+    "sha256": "b080b9c2d5d4666ef0ceeb04add4b8d4b3d0bfdab3f1a66d79ae9229064cef45"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/03-DOCX-HTML-CSV.html",
+    "sha256": "168439505c0c71f7e92e6ff958c7131be221f2856f8ca6cf10548d0891371245"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/04-HWP와-HWPX.html",
+    "sha256": "1ef376a255e1fbd6336074b72079060113dcd071b64ca9913f687665c0571308"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/05-문자-재귀-토큰-청킹.html",
+    "sha256": "a59bfb928b2ba0fda60b1c2d5134c5b56bb4fb874727dab6a82d7055c916735e"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/06-구조와-시맨틱-청킹.html",
+    "sha256": "dab323849b6782beff5ea7b6ca85c3c587b461636e4d5e86b33c27f506a332c2"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/07-한국어-임베딩과-캐시.html",
+    "sha256": "1d86627b0ae0322e324b494b58eaaee9899ce9866552593fb8723fa61ae4e4cf"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/08-인덱싱-비교-실험.html",
+    "sha256": "6a3e58f6ce3c9223b1f3b6a4c4e584d25618642bb6242b09e90f1b61e17b01b1"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/_build.py",
+    "sha256": "e5bb63a53ad4584782347f638010982269eb9bb40c5e54090f66618df5c32527"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/_src/01-문서와-메타데이터.html",
+    "sha256": "8da20f467c3fea14ece5edae96f183f32a977a0e75d228569d5a8d5f83315c18"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/_src/02-PDF와-표-OCR.html",
+    "sha256": "f6335c97c380d25d3806d0203c7100a69abc91435d2e30316e89d78d9eabdc25"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/_src/03-DOCX-HTML-CSV.html",
+    "sha256": "5ff7e5a2224818c7fabebe743413969d66bbf7dbc8bd8fc253cb6051d85e356f"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/_src/04-HWP와-HWPX.html",
+    "sha256": "20f4d00dfac0c44593890ced60609edc40dd2f2a0141a30d80173eef1946d0dd"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/_src/05-문자-재귀-토큰-청킹.html",
+    "sha256": "68870f29220aab54d3cde5e3d94b4770669af90d76a4bc47679547383856df93"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/_src/06-구조와-시맨틱-청킹.html",
+    "sha256": "bd887cfed5bf367265be2170672d6e58dcc825b411ec9bf7f48c06648cd2a4e1"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/_src/07-한국어-임베딩과-캐시.html",
+    "sha256": "88ee85268e7b5141e0bffa83716dc1eb9d17f076e35fe1e0ed856270ffd09be1"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/_src/08-인덱싱-비교-실험.html",
+    "sha256": "313ecb24a20d6c7634c413dcd564c53e5e650ddf2136a4cfe9d1170c7b39c6a7"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/_src/index.html",
+    "sha256": "cf8128bf67576d918e7b5f1a3c1c56be9905b5bc367559237706beeb9175b835"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/01-문서-계약.caption.md",
+    "sha256": "736056b51f5cc7e5d84b7650f126a768597f9f6ade6667317d388b8a0905a3d3"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/01-문서-계약.excalidraw",
+    "sha256": "a5fa8aba295249cd12b2569804b46f30f7ef3db2f764b10ce0c84f4755fb01f0"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/01-문서-계약.svg",
+    "sha256": "3fa9ff40b3f59250dbb3f17d683bb9c830182c3a46ee8e4ae8b390a365a6ee2d"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/02-표-구조.caption.md",
+    "sha256": "15efb9dc10d6fb048cf03da65d8c467857b35ade8d8db901cca2d547b48ac70e"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/02-표-구조.excalidraw",
+    "sha256": "35d1bdfaba9adb46ed54953809684fc3ecf693a71fb09a349164e28b9aff3219"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/02-표-구조.svg",
+    "sha256": "8d24d27197c22d84fe0a7c7d1143da30f3d1013c9d5653d4d9c7b7aa1583551a"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/03-형식별-단위.caption.md",
+    "sha256": "e2c7f5f3d15f73d62421f3b6fc1f9481d7188b6a2fc5975a73c42f12b2255972"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/03-형식별-단위.excalidraw",
+    "sha256": "fae072da77b6c333d0e818b0df09a6a16b37c00f39205ed24b94cd06411a3160"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/03-형식별-단위.svg",
+    "sha256": "a0defdc779dc5cc291ae82d3eb6ade3591a252e37fbd71f9240d6b0f1c09aa6e"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/04-hwp-hwpx.caption.md",
+    "sha256": "7dac81834e2c716a90e92e51b8d61975c8be764e6fe5fe76c3f4d6da430fed9a"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/04-hwp-hwpx.excalidraw",
+    "sha256": "86449e3dccf99726832845635180a25f78ee80428093253092b45c6cb10f204e"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/04-hwp-hwpx.svg",
+    "sha256": "0705d5dd0d04486d15bb2f97e9e42772a913f1909de05719433975a558854aab"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/05-청크-경계.caption.md",
+    "sha256": "fe24e789b361fb6a8335c0718f43a5f237102a0b7a414b11017c597fb3b2a801"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/05-청크-경계.excalidraw",
+    "sha256": "0e0bb022bfb804a189fa5c2018f8fbb58d94642c265d5fab99cf097828ea6191"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/05-청크-경계.svg",
+    "sha256": "73c05869d372f9d1c4c5d4d6ccceec3349185a9121683e9072d4bf163f72c93c"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/06-구조-의미-청킹.caption.md",
+    "sha256": "a62d4e0e107606d89fac99096f5efaa7fbd61010488c226e9595588e058d029c"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/06-구조-의미-청킹.excalidraw",
+    "sha256": "f3863a3d33096ea567a12ee54147a06366ce048426d741e700a21ff41c2b584b"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/06-구조-의미-청킹.svg",
+    "sha256": "db830281d40819382fd48f5ba994504ffc44558c5111806a7155a745370feea6"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/07-임베딩-캐시.caption.md",
+    "sha256": "9ae22ae0344015cd002e672a0e926f61922c314f1ef9043c6aca677fe437bdd8"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/07-임베딩-캐시.excalidraw",
+    "sha256": "0330b5236ca88311a7a8e5242970a2fc205ed552c99ccf4387e7f328eb343956"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/07-임베딩-캐시.svg",
+    "sha256": "7848ed74f2a9c1b41d9bbca1cd023cb67e78ed9cef6cf7e3c61c38fe3f319206"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/08-실험-격자.caption.md",
+    "sha256": "af9976c3e9e5edc9076516ac098c196965fee57dfc8cd902ce0a09ec19126b5f"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/08-실험-격자.excalidraw",
+    "sha256": "bf28a1c0e1fc8a13c3cdd9418b9fb80786b9fd5ceb48631bd813d90d9f193485"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/08-실험-격자.svg",
+    "sha256": "5b9661fc73d281657f9a6143e2f4e72f379b4573638ab2606b934c8b0b21e716"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/_gen_figures.py",
+    "sha256": "6359c96ea3c83ffa9a2026ad02711db9609bdeaae928a4b8044fa744633214e9"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/figures/verification.md",
+    "sha256": "57e24d3138417b61a8401ba47d1c75e2ae69885ee869ff49d1bffa633b203ffc"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/index.html",
+    "sha256": "b11d4a2035da7f4997b33ec9b2b53e7b7eb76106c4c3ba0a83ffae83faa45682"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/notebook-verification.md",
+    "sha256": "412b3350e41751f69e955a887c4f44dd02427c5fe0062ec66709664eadbb2475"
+  },
+  {
+    "path": "textbook/part3/ch10-document-processing/research.md",
+    "sha256": "15c9eea76916fca162690d131e98ea1577b3900e9664e7f84acf90d16bcd07ea"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/01-질의셋과-정답-문서-ID.html",
+    "sha256": "0e31751c83c03560085dd5d5947328326e77321ff7314cf3f5e2eb95b76d1652"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/02-Recall-at-50.html",
+    "sha256": "d37d0411168e26f1dc9a22aa114192cb789c639172ff8cd5127ee0dd2e717907"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/03-Precision-at-5.html",
+    "sha256": "547007b81811b82497bc58dbee55da454c7f85fc916f846a3c09722ac2e7f47f"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/04-nDCG-at-5.html",
+    "sha256": "b5cb05fddd92f2240b7754462653e4ac4177eaee03dadace62db3c6dc2259607"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/05-조건별-평가와-오류-분류.html",
+    "sha256": "7cd698df00eaa3f6fa253961e81883d20405dd20eeb514efd36e722005b58e79"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/06-실험-로그와-자동-실행.html",
+    "sha256": "ff67b136ef0d2e680e11015de47318cc0b864a9daaece4f57c11c435a041df68"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/_build.py",
+    "sha256": "63e0a4e41475d64ea98a678ad96948f2d60fccfffacf21f3a7769470ecd3fa65"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/_src/01-질의셋과-정답-문서-ID.html",
+    "sha256": "3d3bc7c143057e1624ce61b099018de89858f99fe46e6f2d0690a71c568598d4"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/_src/02-Recall-at-50.html",
+    "sha256": "df4a805d8b50afc9c14f033ed98fddadaf306292360126b2efa146473051b293"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/_src/03-Precision-at-5.html",
+    "sha256": "04b7c0ee46f6083ece596081385e8b6a79aa4d9f9802da2e658ea6f23a4380bc"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/_src/04-nDCG-at-5.html",
+    "sha256": "cd143716b807fa2eb6ce22a34c01b990c5fc44212db6cb7a52f73d87252baf87"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/_src/05-조건별-평가와-오류-분류.html",
+    "sha256": "519c4ca1a1d616024af0b44ed93637d78882275354e8980d10436eae591b77bf"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/_src/06-실험-로그와-자동-실행.html",
+    "sha256": "82a3e48d54c80ccf1a9aa28126f334d02cf289c7e8736da245546cca0eab7514"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/_src/index.html",
+    "sha256": "b1ffbe71ca89e3f1fc3c9f50777e389e1a48ce47cc3cb0bd28c657c5d511ea57"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/chapter.json",
+    "sha256": "4c300e6299d92c8bf8c9f81d1f74dfb0a9b7055f185679b8146fcac70f26d989"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/01-평가셋-구조.excalidraw",
+    "sha256": "eb026de5650e5670d5d0d078cf76db3cb1570483e1e9d29624e9f38f64d55b33"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/01-평가셋-구조.svg",
+    "sha256": "a8ebd5b752cfd9690e391414a8a9dedaf41f97e231b9d52c7395b1ce594a74b4"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/02-recall-후보.excalidraw",
+    "sha256": "dc7553948a2111d71ddd972dca48219edc3a029273a51158040c1ee1c015211b"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/02-recall-후보.svg",
+    "sha256": "5958c1ce1099a66a2acede0d75acc1fde2cc7fae11ec5ff876cea49b2b1e9871"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/03-precision-상위.excalidraw",
+    "sha256": "841b564467361e3d2454d57f7be8a642d9ea8a1ccb1ac3c9e82856cfd8d077ec"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/03-precision-상위.svg",
+    "sha256": "2ccc92c8b380d44e39472978a1649592aabdbf0effa9870fafefa7ed0c68ef88"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/04-ndcg-순위.excalidraw",
+    "sha256": "c3dd86a341299fc7e84b3bc7493c77f1d133c3ad3da175cc2092dabbeff08898"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/04-ndcg-순위.svg",
+    "sha256": "46c8786c9149009ad03ae3d714317e51e1abe4d0330d60ca23a78db62bd717c5"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/05-오류-분기.excalidraw",
+    "sha256": "bb501b3dc702e3c2865ac9d0e2834c2be7060ab98a043cd288c6b74d9911cc9f"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/05-오류-분기.svg",
+    "sha256": "80c25a9274eb3a753ee6ba886fa0b70f07b8d6115a9bbf5592a5f41502ae8c71"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/06-실험-루프.excalidraw",
+    "sha256": "c3285c18e6dd899cd5dd5ded7fa68f2ab9e90f787b1ceca2213e81e5d11da3ad"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/06-실험-루프.svg",
+    "sha256": "8c631aeb73afe3bb5731e1064efe3c75c8f047095854ae6e660f484556f5171c"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/figures/_gen_figures.py",
+    "sha256": "1b5d6d6161ab9ffe8ba2e1c0d8a515ecb4f07034424524538278cf3b9b246dd1"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/index.html",
+    "sha256": "99068a9b8e3532356eeacf4e0b770ab40be24f0c11a8363d54e666db766de2f7"
+  },
+  {
+    "path": "textbook/part3/ch11-evaluation/집필점검표.md",
+    "sha256": "d3c0b5b3cba2ab7b57b40e78ab0cd4dbabffa1ec6672d0e80eb1a40a78b776bf"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/01-벡터-거리와-정확-검색.html",
+    "sha256": "2f8a7c6d702090abc3975451ae4a2f1104fa6cd49561ebe6521739b1e7df25e6"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/02-pgvector와-HNSW.html",
+    "sha256": "237c1d0e3c9c3a49992fd454820d17db17ccd5abc33788ea87fc330c9fd4a488"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/03-메타데이터-필터와-iterative-scan.html",
+    "sha256": "2ddd262505f52d9518ce5736d3efe31516fda7540493131db48bf394e43354ac"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/04-한국어-Kiwi와-BM25.html",
+    "sha256": "515ea9f704d5db1f10323219dde00029e3d3b514c47113c95953bff9896cf3d8"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/05-dense와-sparse-비교.html",
+    "sha256": "cb55f7b25fcd0be633defcb8c65d2c92483d23caf4fdb0aa3e6921d574d10750"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/06-RRF-하이브리드-검색.html",
+    "sha256": "0eeec795d8e3e60baa21a2424baf8a14496db48e489ee5d1be85306be5449170"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/07-cross-encoder-리랭킹.html",
+    "sha256": "34b101c0fdc77a9281cf8ede4f36ffeb1fe16d38ddb330c89e06d4277a9c2c32"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/08-후보-수와-리랭커-비교.html",
+    "sha256": "af3587626d76ff073b1368f65fe26c39b28809f4ace9552c1e9fac0d4e62af47"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/09-Parent-document-검색.html",
+    "sha256": "9cab2fa3618c2416a31fd6de03399d532d77f53de5a16b3ac2ee8adb430c958a"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/10-MMR-다양성-선택.html",
+    "sha256": "6bd751a7eafa279dedea0e1d3df65c0423bd593d9071f4ea1aca7e2cd248e125"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/11-질문-재작성과-검색.html",
+    "sha256": "c7734fcfd728e0e0ae1276b0f6e2251bd685ea8026487a5e21a908af4919e3ac"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/12-종합-튜닝과-실험-로그.html",
+    "sha256": "2c7b7d38478525bb5ac6b9a25e8e7cb394789fff3d28105889845a3f895760a8"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_build.py",
+    "sha256": "63e0a4e41475d64ea98a678ad96948f2d60fccfffacf21f3a7769470ecd3fa65"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/01-벡터-거리와-정확-검색.html",
+    "sha256": "c008dc5fed690e7f56ab30221d601e8c2138596164daec2112c39aaeb7d17146"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/02-pgvector와-HNSW.html",
+    "sha256": "aed82f5ac05524982c4379f8e8150100b34c87cff08cc5460ea48910e248ff5e"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/03-메타데이터-필터와-iterative-scan.html",
+    "sha256": "ec62d59124d583017254a6c1f7bb3c7a4a1536a74f818d9ea34c4f60daa03087"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/04-한국어-Kiwi와-BM25.html",
+    "sha256": "559828f56f8a9223686d69d1b4d009966c885fa90309de75224fc1a54825a155"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/05-dense와-sparse-비교.html",
+    "sha256": "f361b92c1145b4c8dd04a7840846e81580ff96beeba33e4d3d5256d18e374270"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/06-RRF-하이브리드-검색.html",
+    "sha256": "874f43b89ab8055e54fd1539465d6f59be037aac665ee950bbebdf1b99a30449"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/07-cross-encoder-리랭킹.html",
+    "sha256": "cde49816c4f07f9283d6c377d02e2156a6667c70122c9917ca035b5db50077a2"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/08-후보-수와-리랭커-비교.html",
+    "sha256": "84fe30c36a8a33cf7964dd011ed20e32e05560fd55134da4d111b945e604eb04"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/09-Parent-document-검색.html",
+    "sha256": "5ee134b692d8fc225be3912960d4ff776ea5d9e74467576e8dee82df08b49203"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/10-MMR-다양성-선택.html",
+    "sha256": "20eef7aa67f17a9ddf4b404272e480e84931b678e76849232f15e350dd216cc8"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/11-질문-재작성과-검색.html",
+    "sha256": "222db015de04e2d7a0cc8118b8cdd09dcbfc809bb4b64a33ca808d88c27e0650"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/_src/12-종합-튜닝과-실험-로그.html",
+    "sha256": "11be59a58a0832255880968697f61f5f6deed49dc6f556f6729e5ee0b73f23ad"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/chapter.json",
+    "sha256": "ca3d8100a98a36530f4d27d01cc032bd444ed8064ad22411cb4715e37e66daa1"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/01-정확-검색.caption.md",
+    "sha256": "5a68203d09f59e360205718b28be85bc5338b0d0fb78b65949ddc272e5c3c2a6"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/01-정확-검색.excalidraw",
+    "sha256": "f5f0540ff031edca67c11ff77cdb35a43cd4dada015bd8d2ded1ac992f73e130"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/01-정확-검색.svg",
+    "sha256": "eadf08678165b96156781d2ecfdefb3e7cad6e39af451a6b88537f120ee2c455"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/02-HNSW.caption.md",
+    "sha256": "8051e7adceb2806fab17988798d4f16530621ad993e2e3075009f9e179c39ff6"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/02-HNSW.excalidraw",
+    "sha256": "c0d7df4b41548b5260cfd58beefdeacf1d912087beee08d9c3deac1caca2f410"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/02-HNSW.svg",
+    "sha256": "be418cba0bf96b47cf1100e0ef9006b09cde0b46a22d6eea33488af01994388b"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/03-필터-반복탐색.caption.md",
+    "sha256": "c6e9af1422a9c35aa61db875f783b76bbb1df3844dd63d4b5bb91ebb6a730ef9"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/03-필터-반복탐색.excalidraw",
+    "sha256": "380b97618c14f95fcacf856cdddfd829c1a2f83c4ddf6c116dbfdaa85447fcd6"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/03-필터-반복탐색.svg",
+    "sha256": "ddc6b4728dacb542125709a0d762b729dccb32e045dc28bf423164fa4355ea8c"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/04-Kiwi-BM25.caption.md",
+    "sha256": "09e2a3ca990c9ebd301faa3127e8c8bcb1ff9ffd3da24c922ec076bf7256a1ee"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/04-Kiwi-BM25.excalidraw",
+    "sha256": "0b6800866619ae2342ab89633a520963b1c2dfd1b1c8d15ffb98c5559441d70d"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/04-Kiwi-BM25.svg",
+    "sha256": "71292b2d6af204fcf250b870f0e168c5ddb1b7ef420f1d4af113415dd4ebc59e"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/05-dense-sparse.caption.md",
+    "sha256": "c74e6a4a4435b90b43319d0b1cfce8ba2d4098b58105c1ebf52e79fe573be0e5"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/05-dense-sparse.excalidraw",
+    "sha256": "bbcfa160ee4b8e95e0728f97345a033ff07629f1640355d3e000ca52c3f8ef63"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/05-dense-sparse.svg",
+    "sha256": "e15287cbba5ca14e099989df6ecc209e6fec4118e0e1e7917106a5aadbcfdd23"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/06-RRF.caption.md",
+    "sha256": "f93186f302e22a50c0e66a724f5f45f3df31e0836bc02b8932ba38a6f84e4240"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/06-RRF.excalidraw",
+    "sha256": "d73738199f320cadb179a5e38947dfd421e3b8e6b8d9ac0dcb824ebfaa575391"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/06-RRF.svg",
+    "sha256": "55cd00ebe62f5f0e063802474fc0fc4a4848432c873054b93331d461934a1793"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/07-리랭킹-흐름.caption.md",
+    "sha256": "6a9c01b18290fbf7beea391c607fb57b80b7de4cb3114bff0012f8182f10668f"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/07-리랭킹-흐름.excalidraw",
+    "sha256": "259b45250c98a1ac910090aae883251c35257abd89eb51afee5854e4b21eb744"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/07-리랭킹-흐름.svg",
+    "sha256": "4ec56be35da06300cf0600de1b018e8a6591e72b5644ea7cc863b3c5f968980c"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/08-후보-모델-격자.caption.md",
+    "sha256": "b4e432317e7157a0d27186716480e3d700c111526c20276c848f70a24376fa5f"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/08-후보-모델-격자.excalidraw",
+    "sha256": "aee64d2d3cb2aaaca66212837f4ffe43b8f49ab8e6b9420040d768a4036985b4"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/08-후보-모델-격자.svg",
+    "sha256": "c23efab500188877d22ebd249f55e1a2468d9c3211c052fed75f745866ea785d"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/09-부모-자식-검색.caption.md",
+    "sha256": "77b603c3ba3fff169fd8ab50595574872b1ea733f097859bde2031d5a258b9f7"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/09-부모-자식-검색.excalidraw",
+    "sha256": "91d48b2dc8c270477f2581401cf00b02f0a33f916d120378c8e60e55df67508a"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/09-부모-자식-검색.svg",
+    "sha256": "3483bdb944dc4f58fc6a273e0bbb53417f27725ba2f4ce4cfbb5af462a1b3134"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/10-mmr-선택.caption.md",
+    "sha256": "436adba6cbb405ef8cc0beb076c722ddfa8f73212ac74fe2a48a0fc090bc29f2"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/10-mmr-선택.excalidraw",
+    "sha256": "3aebe888ec879db6f43026702999cc9ec5bfe36e0829395b9dd6a99433693b1a"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/10-mmr-선택.svg",
+    "sha256": "fa877351dff91283a3ab34c8b94162e58a3844f7b3baa9d9aa5cd62c822cb462"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/11-질문-재작성.caption.md",
+    "sha256": "89b735dd8c44cad5f1c5903503f72c79950482801cb4814dd8a653c944a62f2b"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/11-질문-재작성.excalidraw",
+    "sha256": "3e0bcb8c0c1e861e452757add794ac77a6f08e14ae0d792370feef5a116dcfc7"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/11-질문-재작성.svg",
+    "sha256": "d5fdcbd596e9e7c2c660d861339970062f64759acfcdad3aa1711e03974dfd1e"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/12-실험-로그.caption.md",
+    "sha256": "65cad142330383cfaeb93ad01bbd3f200d8457c8bf2978e60c2cdec49cf113ea"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/12-실험-로그.excalidraw",
+    "sha256": "7f50ef3827014db92ad27afd47cf51375a2422e529f12b11c069ed880805c834"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/12-실험-로그.svg",
+    "sha256": "59533ed3895c2292bce10edd11ca858cb18f9ce219154458b9440295cd2ac0e3"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/12-통합-RAG.caption.md",
+    "sha256": "6380b86ce7dbbd402b30bdc44a29722d8fa4a188e308af3d9225e8dc67c622fc"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/12-통합-RAG.excalidraw",
+    "sha256": "c685f1085283b85eaa953cae74ecbafca209a9eacd4f562d110d6cc5a1c0adab"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/12-통합-RAG.svg",
+    "sha256": "81551b6040f95a9858da737bffc345c346bfcf0fb568fc36c7404ca4bc0e8191"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/figures/_gen_figures.py",
+    "sha256": "5713833e77da1a97b0d1f4c9d29545194c59930b81d164d632c841d572b4e862"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/index.html",
+    "sha256": "020e20250aa5b9a9c6a999d2cd81271040e3926b2f46ed642a55638cb73ed66f"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/집필점검표-advanced.md",
+    "sha256": "17f02cd7cdf4bbf23f9117596023635cf91175b8a56d4bf3cc515b7705f9bf92"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/집필점검표-core.md",
+    "sha256": "078343986f504a630ed29a32d5186f813e2663573ba866db08370af653881b58"
+  },
+  {
+    "path": "textbook/part3/ch12-retrieval-tuning/집필점검표.md",
+    "sha256": "97c598415a44682d95f22916bc2ffbf2929b8dc393cc0ffc9be4f937ff2a78da"
+  },
+  {
+    "path": "textbook/part3/index.html",
+    "sha256": "4bc0e2a1e75e4622a0e1a9f8ba5a33c9d766326934c8fdacfe98867cd3a2a0fb"
+  },
+  {
+    "path": "textbook/part3/public-files.json",
+    "sha256": "be63a127bc56a69b117eb7661f5499b82f50b3ce9b5b08d03e07ee04beef2644"
+  },
+  {
+    "path": "textbook/노트북-전환-검증.md",
+    "sha256": "aabfc1d7f072eb33b2cef576c6e5c5b1c37cd322a1b91b9dbb380faebc9983ec"
+  },
+  {
+    "path": "커리큘럼_v6.html",
+    "sha256": "24d0fb9bd4bf6d173024ade74230c4e555bf54adf4e6473464a8cc2e83209388"
+  }
+]

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  QUESTION["같은 질문<br>노을 워커 3의 배터리 용량"]:::tool
+  PLAIN["6절 입력<br>템플릿 끝 그대로"]:::tool
+  START["7절 입력<br>끝에 첫머리 붙임<br>노을 워커 3의 배터리 용량은"]:::tool
+  MODEL_A["언어 모델"]:::model
+  MODEL_B["언어 모델"]:::model
+  ANSWER_A["애플이 개발한 모바일 기기<br>10000mAh<br>새 숫자 10000"]:::measure
+  ANSWER_B["1600mAh입니다.<br>새 숫자 1600"]:::measure
+  QUESTION --> PLAIN
+  QUESTION --> START
+  PLAIN --> MODEL_A
+  START --> MODEL_B
+  MODEL_A -- "이어 쓰기" --> ANSWER_A
+  MODEL_B -- "이어 쓰기" --> ANSWER_B

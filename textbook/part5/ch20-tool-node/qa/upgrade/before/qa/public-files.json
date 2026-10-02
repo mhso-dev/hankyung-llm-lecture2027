@@ -1,0 +1,18 @@
+{
+  "chapter": "textbook/part5/ch20-tool-node",
+  "lab": "labs/part5/ch20-tool-node",
+  "include": [
+    "*.html",
+    "figures/*.svg",
+    "notebooks/*.ipynb",
+    "README.md",
+    "pyproject.toml",
+    "uv.lock"
+  ],
+  "exclude": [
+    ".env",
+    ".venv",
+    "*.failure.json",
+    "qa/author_ch20.py"
+  ]
+}

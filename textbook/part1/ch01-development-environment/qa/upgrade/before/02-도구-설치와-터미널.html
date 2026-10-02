@@ -1,0 +1,322 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>도구 설치와 터미널 — Ch 1 · 오리엔테이션 · 개발환경</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 1 · 오리엔테이션 · 개발환경</p>
+<h1>도구 설치와 터미널</h1><div class="meta"><span>강의 1h</span><span>실습 0.5h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 0.5h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul><li>이 절을 마치면 자신의 운영체제에 맞는 개발 도구 설치 경로를 찾을 수 있습니다.</li><li>VS Code에서 실습 폴더와 터미널을 열고 현재 위치를 확인할 수 있습니다.</li><li>같은 파일 이름이 현재 위치에 따라 다른 대상을 가리키는 이유를 설명하고 경로 오류를 수정할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>파일을 만들었는데 프로그램이 찾지 못하는 경우가 있습니다. 파일 이름이 맞아도 명령을 실행한 위치가 다르면 다른 폴더에서 파일을 찾을 수 있습니다. 개발 도구 설치를 마쳤다는 것은 앱 아이콘이 생겼다는 사실만으로 판단하기 어렵습니다. 편집기에 연 폴더, 명령을 입력하는 창, 실제로 읽는 파일이 서로 어떻게 연결되는지 확인해야 첫 스크립트를 실행할 수 있습니다.</p>
+<p>이 절은 도구의 역할을 나눠 이해하고, 파일을 찾는 기준을 확인하는 데 집중합니다. 설치할 앱은 공식 안내에서 내려받고, 설치 뒤 새 터미널을 열어 명령이 인식되는지 확인합니다. 운영체제마다 설치 화면과 기본 명령이 다르므로 자신의 환경에 해당하는 안내만 따라갑니다. Windows 안내를 macOS 창에 그대로 입력하는 방식으로 섞지 않습니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>1절에서는 예상 결과와 실제 출력을 비교하는 학습 규칙을 정했습니다. 이번에는 ‘내가 어느 폴더에서 어떤 파일을 열려 하는가’를 예상한 뒤 실제 결과를 확인합니다. 기존 코드 파일은 필요하지 않습니다. 실습 노트북은 임시 폴더에 예제 파일을 직접 만들며, 개인 문서나 기존 프로젝트를 변경하지 않습니다.</p>
+<p>아직 노트북을 실행할 수 없다면 아래 설치와 터미널 설명을 먼저 읽고 3절의 준비 순서를 마칩니다. 이후 이 절의 실행 예제로 돌아옵니다. 설치 안내는 도구를 준비하는 절차이며, 노트북 출력은 준비된 환경에서 실제로 실행한 경로 실습의 기록입니다. 다른 운영체제의 설치 화면까지 실행 검증한 기록으로 읽지 않습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>주소의 출발점을 먼저 확인합니다</h3>
+<p>‘옆방의 책’이라는 설명은 지금 있는 방에 따라 다른 책을 가리킵니다. 파일에도 이름을 찾는 출발점이 필요합니다. 이 비유에서 현재 있는 방은 현재 작업 폴더이며, ‘옆방의 책’은 상대적인 위치를 적은 경로입니다. 프로그램은 화면에 보이는 폴더를 사람처럼 추측하지 않고, 정해진 기준 위치에서 파일을 찾습니다.</p>
+<p><b>편집기(editor)</b>는 파일 내용을 읽고 수정하는 앱이며, 이 과정은 VS Code를 사용합니다. <b>터미널(terminal)</b>은 글자로 명령을 입력하고 결과를 읽는 창입니다. <b>셸(shell)</b>은 그 명령을 해석해 실행하는 프로그램입니다. Windows에서는 PowerShell, macOS에서는 zsh를 기준으로 설명합니다. <b>현재 작업 폴더(current working directory)</b>는 명령이 파일을 찾기 시작하는 위치입니다.</p>
+<p><b>경로(path)</b>는 폴더와 파일의 위치를 글자로 적은 값입니다. <b>절대 경로(absolute path)</b>는 파일 시스템의 기준 위치부터 적고, <b>상대 경로(relative path)</b>는 현재 위치 같은 지정된 기준에서 적습니다. <code>hello.py</code>라고만 쓰면 이름은 짧지만 기준 위치를 알아야 실제 파일을 찾을 수 있습니다. 다른 컴퓨터에서는 사용자 이름과 폴더 위치가 달라질 수 있으므로 수업 파일은 제공된 폴더 구조와 상대 경로로 사용합니다.</p>
+<h3>도구를 설치하고 역할을 확인합니다</h3>
+<div class="tw"><table><thead><tr><th>도구</th><th>이번 장에서 할 일</th><th>공식 설치 안내</th></tr></thead><tbody><tr><td>VS Code</td><td>폴더·코드·노트북을 열고 실행합니다.</td><td><a href="https://code.visualstudio.com/docs/getstarted/overview">운영체제별 VS Code 설치</a></td></tr><tr><td>uv</td><td>Python과 프로젝트별 실행 환경을 준비합니다.</td><td><a href="https://docs.astral.sh/uv/getting-started/installation/">uv 설치</a></td></tr><tr><td>Git</td><td>프로젝트 파일의 상태를 확인합니다.</td><td><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">Git 설치</a></td></tr><tr><td>Docker Desktop</td><td>앱과 실행 서버의 준비 상태를 확인합니다.</td><td><a href="https://docs.docker.com/desktop/setup/install/windows-install/">Windows</a> · <a href="https://docs.docker.com/desktop/setup/install/mac-install/">macOS</a> · <a href="https://docs.docker.com/desktop/setup/install/linux/">Linux</a></td></tr></tbody></table></div>
+<p>VS Code 설치 페이지에서 자신의 운영체제와 CPU에 맞는 설치본을 고릅니다. macOS는 Apple silicon과 Intel 구분을 확인하고, Windows는 내려받은 설치 파일의 안내를 따릅니다. 설치 후 VS Code를 열어 왼쪽 Extensions 화면에서 Microsoft가 제공하는 Python과 Jupyter 확장을 설치합니다. Python Debugger도 설치되어 있는지 확인합니다. 확장은 편집기에 기능을 추가하는 구성 요소이며, Python을 실행하는 프로그램 자체는 다음 절에서 준비합니다.</p>
+<p>uv는 공식 설치 페이지의 Standalone installer에서 자신의 운영체제 탭을 선택합니다. 해당 페이지의 명령을 Windows에서는 PowerShell, macOS와 Linux에서는 터미널에 입력해 설치합니다. 설치가 끝나면 열려 있던 터미널을 닫고 새 창을 엽니다. 새로 설치한 명령의 위치가 기존 창에는 반영되지 않을 수 있기 때문입니다. <code>uv --version</code>으로 버전 문자열이 출력되는지 확인합니다. 명령을 찾지 못한다는 메시지가 나오면 Python 코드 오류로 해석하지 말고 uv 설치 경로와 새 터미널 여부를 확인합니다.</p>
+<p>Git과 Docker Desktop의 설치 파일도 표의 공식 페이지에서 받습니다. Docker Desktop은 운영체제 버전과 가상화 지원 등 추가 조건이 있으므로 5절의 운영체제별 설명을 함께 읽습니다. Docker 준비가 지연되더라도 이 절의 파일 경로 실습에는 Docker를 사용하지 않으므로 진행할 수 있습니다. 설치를 마친 도구와 아직 준비 중인 도구를 따로 기록합니다.</p>
+<h3>폴더를 열고 명령을 입력합니다</h3>
+<ol><li>파일 탐색기 또는 Finder에서 연습용 폴더 <code>course-ch01</code>을 만듭니다. 이미 같은 폴더가 있다면 내용을 먼저 확인하고 새 빈 폴더를 사용합니다.</li><li>VS Code에서 File → Open Folder로 이 폴더를 엽니다. 왼쪽 파일 목록의 맨 위에 폴더 이름이 표시되는지 확인합니다.</li><li>Terminal → New Terminal을 선택합니다. Windows에서는 PowerShell인지, macOS에서는 zsh인지 터미널의 프로필 이름을 확인합니다.</li><li>PowerShell에서는 <code>Get-Location</code>, macOS·Linux에서는 <code>pwd</code>로 현재 위치를 확인합니다. 마지막 폴더 이름이 <code>course-ch01</code>인지 읽습니다.</li><li>PowerShell에서는 <code>Get-ChildItem</code>, macOS·Linux에서는 <code>ls</code>로 폴더 안의 파일을 확인합니다. 빈 폴더라면 사용자 파일 목록이 없는 것이 정상입니다.</li></ol>
+<p>다른 위치라면 <code>cd</code> 뒤에 이동할 폴더 경로를 적습니다. 공백이 포함된 경로는 따옴표로 감쌉니다. 경로를 추측해서 입력하기보다 파일 탐색기에서 정확한 위치를 확인합니다. 터미널 맨 앞의 사용자 이름이나 <code>$</code>, <code>&gt;</code> 같은 안내 표시는 입력하는 명령에 포함하지 않습니다. VS Code에서 폴더를 바꾼 뒤 기존 터미널을 계속 사용하는 경우에는 현재 위치도 다시 확인합니다.</p>
+<div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:800px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 470" width="800" height="470" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-02-paths desc-02-paths">
+<title id="title-02-paths">상대 경로는 선택한 기준 폴더에서 시작한다</title>
+<desc id="desc-02-paths">data/message.txt를 workspace에 연결하면 실패하고 practice에 연결하면 저장한 파일을 읽습니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="800" height="470" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">상대 경로는 선택한 기준 폴더에서 시작한다</tspan></text>
+<rect x="45" y="105" width="210" height="190" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="150.0" y="169.6" font-size="15" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="150.0" dy="0.0">workspace/</tspan><tspan x="150.0" dy="20.2">└─ practice/</tspan><tspan x="150.0" dy="20.2">   └─ data/</tspan><tspan x="150.0" dy="20.2">      └─ message.txt</tspan></text>
+<text x="390" y="82.0" font-size="16" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="bold"><tspan x="390" dy="0.0">상대 경로: data/message.txt</tspan></text>
+<rect x="300" y="115" width="190" height="70" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="395.0" y="139.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="395.0" dy="0.0">잘못 선택한 기준</tspan><tspan x="395.0" dy="21.6">workspace</tspan></text>
+<polyline points="490,150 555,150" fill="none" stroke="#dc2626" stroke-width="2" marker-end="url(#m-red)"/>
+<rect x="487.5" y="123.0" width="70.0" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="522.5" y="135.0" font-size="14" fill="#991b1b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="522.5" dy="0.0">연결</tspan></text>
+<rect x="555" y="115" width="195" height="70" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="652.5" y="140.6" font-size="14" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="652.5" dy="0.0">workspace/data/message.txt</tspan><tspan x="652.5" dy="18.9">FileNotFoundError</tspan></text>
+<rect x="300" y="250" width="190" height="70" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="395.0" y="274.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="395.0" dy="0.0">올바른 기준</tspan><tspan x="395.0" dy="21.6">project = practice</tspan></text>
+<polyline points="490,285 555,285" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#m-green)"/>
+<rect x="487.5" y="258.0" width="70.0" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="522.5" y="270.0" font-size="14" fill="#166534" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="522.5" dy="0.0">연결</tspan></text>
+<rect x="555" y="250" width="195" height="70" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="652.5" y="275.6" font-size="14" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="652.5" dy="0.0">practice/data/message.txt</tspan><tspan x="652.5" dy="18.9">안녕, 터미널!</tspan></text>
+<text x="300" y="380.0" font-size="15" fill="#92400e" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="300" dy="0.0">기준 폴더 이름과 연결한 전체 경로 확인</tspan></text>
+<text x="300" y="415.0" font-size="15" fill="#4b5563" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="300" dy="0.0">같은 상대 경로를 유지하고 기준 폴더만 바꾸어 결과를 비교합니다.</tspan></text>
+</svg></div>
+<p class="look"><b>확인할 점</b> — 초록색은 폴더와 파일을, 파란색은 파일을 찾는 동작을 나타냅니다. 파일 이름이 같아도 기준 폴더가 달라지면 빨간 실패 경로에 도달할 수 있습니다. 그림의 폴더 이름과 실제 실습에서 만든 파일의 위치를 비교합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>노트북에서 사용하는 <code>Path</code>는 경로를 다루는 Python의 기본 기능입니다. <code>TemporaryDirectory</code>는 연습용 임시 폴더를 만드는 기능입니다. 지금은 내부 구현을 암기하지 않고, 셀 앞 설명을 따라 어느 폴더와 파일을 만드는지 확인합니다. 임시 폴더의 실제 이름은 컴퓨터마다 달라질 수 있으므로 출력에서는 학습에 필요한 파일 이름과 결과를 중심으로 확인합니다.</p>
+<p><code>from pathlib import Path</code>는 Python 기본 기능인 <code>pathlib</code>에서 <code>Path</code>라는 도구만 가져옵니다. <code>Path(temporary_folder.name)</code>처럼 이름 뒤에 괄호를 붙이면 도구를 호출합니다. 괄호 안의 값은 호출에 전달하는 <b>인자(argument)</b>이며, 호출이 반환하는 결과를 <code>workspace</code>라는 이름에 저장합니다. 여기서 반환된 결과는 경로 문자열을 다루기 편하게 감싼 <code>Path</code> 객체입니다.</p>
+<p><code>workspace / "practice"</code>의 <code>/</code>는 이 코드에서 나눗셈이 아닙니다. <code>Path</code> 객체 뒤에 폴더나 파일 이름을 연결해 새 경로를 만듭니다. 이 줄만으로 실제 폴더가 생기지는 않습니다. 다음 줄의 <code>project.mkdir()</code>가 경로에 해당하는 폴더를 만들고, <code>project.is_dir()</code>는 그 위치가 폴더인지 확인해 <code>True</code> 또는 <code>False</code>를 반환합니다. 경로를 표현하는 일, 폴더를 만드는 일, 존재를 확인하는 일을 서로 구분합니다.</p>
+<p><code>write_text</code>는 첫 번째 인자의 글을 파일에 저장하며 <code>encoding="utf-8"</code>은 글자를 바이트로 바꾸는 규칙을 지정합니다. <code>read_text</code>는 같은 규칙으로 파일을 읽어 문자열을 반환합니다. 메서드(method)는 <code>message_file.write_text(...)</code>처럼 어떤 값 뒤에 점을 붙여 호출하는 기능입니다. 점 앞의 경로가 작업 대상이고 괄호 안의 값이 작업에 필요한 인자입니다.</p>
+<p>객체는 관련된 값과 기능을 함께 담은 결과입니다. 점 뒤에 괄호 없이 적은 <code>temporary_folder.name</code>은 그 객체가 가진 폴더 이름이라는 값을 읽습니다. 이런 값을 속성(attribute)이라고 합니다. <code>project.mkdir()</code>는 경로 객체의 폴더 생성 기능을 실행합니다. 객체에 속한 호출 가능한 기능을 메서드(method)라고 하며, 여기서는 이름 뒤 괄호가 실행을 나타냅니다.</p>
+<section class="notebook" data-notebook="02-도구-설치와-터미널" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-09</span><button type="button" class="copy-all">전체 코드 복사</button><a download="02-도구-설치와-터미널.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJiYjgwMWI1NyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMg64+E6rWsIOyEpOy5mOyZgCDthLDrr7jrhJBcbiIsCiAgICAiXG4iLAogICAgIu2YhOyerCDsnpHsl4Ug7Y+0642U7JmAIOyDgeuMgCDqsr3roZzsnZgg6rSA6rOE66W8IOyehOyLnCDtj7TrjZTsl5DshJwg7ZmV7J247ZWp64uI64ukLiDtj7TrjZTripQg7YyM7J286rO8IOuLpOuluCDtj7TrjZTrpbwg64u064qUIOqzteqwhOydtOqzoCwg6rK966Gc64qUIOq3uCDsnITsuZjrpbwg6riA7J6Q66GcIOuCmO2DgOuCuCDqsJLsnoXri4jri6QuIOyDgeuMgCDqsr3roZzripQg6riw7KSAIO2PtOuNlOqwgCDsnojslrTslbwg7ZWY64KY7J2YIOyLpOygnCDsnITsuZjrpbwg6rCA66as7YK164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjY3ZTExYzUxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYRcblxu6rCc7J24IO2MjOydvOydhCDrsJTqvrjsp4Ag7JWK64+E66GdIFB5dGhvbuydtCDsoJzqs7XtlZjripQg7J6E7IucIO2PtOuNlOunjCDsgqzsmqntlanri4jri6QuIGBmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGhg64qUIOqyveuhnOulvCDri6Tro6jripQgYFBhdGhg66W8LCBgZnJvbSB0ZW1wZmlsZSBpbXBvcnQgVGVtcG9yYXJ5RGlyZWN0b3J5YOuKlCDsnoTsi5wg7Y+0642U66W8IOunjOuTnOuKlCDquLDriqXsnYQg6rCA7KC47Ji164uI64ukLiBgVGVtcG9yYXJ5RGlyZWN0b3J5KClg6rCAIOuwmO2ZmO2VnCDqsrDqs7zsl5DripQg7J6E7IucIO2PtOuNlCDsnbTrpoTqs7wg7KCV66asIOq4sOuKpeydtCDrk6TslrQg7J6I7Iq164uI64ukLiBgUGF0aCh0ZW1wb3JhcnlfZm9sZGVyLm5hbWUpYOydgCDqt7gg7J2066aE7J2EIOqyveuhnCDqsJ3ssrTroZwg67CU6r+J64uI64ukLiBgL2DripQgYFBhdGhgIOuSpOyXkCDtj7TrjZQg7J2066aE7J2EIOyXsOqysO2VmOqzoCwgYG1rZGlyKClg6rCAIOyLpOygnCDtj7TrjZTrpbwg66eM65Ot64uI64ukLlxuXG7soJAg65Kk7JeQIOq0hO2YuCDsl4bsnbQg7JOw64qUIGB0ZW1wb3JhcnlfZm9sZGVyLm5hbWVg7J2AIOqwneyytOqwgCDqsIDsp4Qg7Y+0642UIOydtOumhOydtOudvOuKlCDqsJIo7IaN7ISxKeydhCDsnb3sirXri4jri6QuIGBwcm9qZWN0Lm1rZGlyKClg64qUIOqwneyytOyXkCDsho3tlZwg6riw64qlKOuplOyEnOuTnCnsnYQg7Zi47Lac7ZW0IO2PtOuNlOulvCDrp4zrk63ri4jri6QuIOqwneyytOuKlCDsnbTroIfqsowg6rSA66Co65CcIOqwkuqzvCDquLDriqXsnYQg7ZWo6ruYIOuLtOydgCDqsrDqs7zsnoXri4jri6QuIgogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImRkYjU0MDUxIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDEyOjE1OjAwLjk0ODQ0N1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAwLjk0ODI4NloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAwLjk1Mzk4N1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTI6MTU6MDAuOTUzNDU5WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyehOyLnCDsi6TsirUg7Y+0642UIOykgOu5hDogVHJ1ZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGhcbiIsCiAgICAiZnJvbSB0ZW1wZmlsZSBpbXBvcnQgVGVtcG9yYXJ5RGlyZWN0b3J5XG4iLAogICAgIlxuIiwKICAgICIjIFRlbXBvcmFyeURpcmVjdG9yeeuKlCDsi6TsirXsnbQg64Gd64KY66m0IOyngOybjOyngOuKlCDsnoTsi5wg7Y+0642U66W8IOunjOuTreuLiOuLpC5cbiIsCiAgICAidGVtcG9yYXJ5X2ZvbGRlciA9IFRlbXBvcmFyeURpcmVjdG9yeSgpXG4iLAogICAgIndvcmtzcGFjZSA9IFBhdGgodGVtcG9yYXJ5X2ZvbGRlci5uYW1lKVxuIiwKICAgICJwcm9qZWN0ID0gd29ya3NwYWNlIC8gXCJwcmFjdGljZVwiXG4iLAogICAgInByb2plY3QubWtkaXIoKVxuIiwKICAgICJwcmludChmXCLsnoTsi5wg7Iuk7Iq1IO2PtOuNlCDspIDruYQ6IHtwcm9qZWN0LmlzX2RpcigpfVwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjNmNWRhZGIxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6riw67O4IOyLpO2WiTog7IOB64yAIOqyveuhnOuhnCDtjIzsnbwg7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLsg4HrjIAg6rK966GcIGBkYXRhL21lc3NhZ2UudHh0YOuKlCDslrTripAg7Y+0642U66W8IOq4sOykgOycvOuhnCDtlZjripTsp4Dsl5Ag65Sw6528IOuLpOuluCDtjIzsnbzsnYQg6rCA66as7YK164uI64ukLiDrqLzsoIAgYHByb2plY3QgLyBcImRhdGFcImDroZwg6rK966Gc66W8IOunjOuTpOqzoCBgbWtkaXIoKWDroZwgYGRhdGFgIO2PtOuNlOulvCDrp4zrk63ri4jri6QuIOuLpOyLnCBgbWVzc2FnZS50eHRg66W8IOyXsOqysO2VnCDrkqQgYHdyaXRlX3RleHRg66GcIOq4gOydhCDsoIDsnqXtlanri4jri6QuIGBlbmNvZGluZz1cInV0Zi04XCJg7J2AIO2VnOq4gOydhCDtjIzsnbzsnZgg67CU7J207Yq466GcIOuwlOq+uOqzoCDri6Tsi5wg7J297J2EIOuVjCDsgqzsmqntlaAg66y47J6QIOq3nOy5meyeheuLiOuLpC4gYGlzX2ZpbGUoKWDsnYAg7ZW064u5IOychOy5mOqwgCDtjIzsnbzsnbTrqbQgYFRydWVg66W8IOuwmO2ZmO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICIxZjA4OGQwNiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxMjoxNTowMC45NTUyOTlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxMjoxNTowMC45NTUxNjRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxMjoxNTowMC45NTgzOTNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAwLjk1Nzc5OFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsg4HrjIAg6rK966GcOiBkYXRhL21lc3NhZ2UudHh0XG4iLAogICAgICAi7YyM7J28IOykgOu5hDogVHJ1ZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIHNsYXNoKC8p64qUIOq4sOykgCDtj7TrjZQg65Kk7JeQIO2PtOuNlOyZgCDtjIzsnbwg7J2066aE7J2EIOyXsOqysO2VqeuLiOuLpC5cbiIsCiAgICAiZGF0YV9mb2xkZXIgPSBwcm9qZWN0IC8gXCJkYXRhXCJcbiIsCiAgICAiZGF0YV9mb2xkZXIubWtkaXIoKVxuIiwKICAgICJtZXNzYWdlX2ZpbGUgPSBkYXRhX2ZvbGRlciAvIFwibWVzc2FnZS50eHRcIlxuIiwKICAgICJtZXNzYWdlX2ZpbGUud3JpdGVfdGV4dChcIuyViOuFlSwg7YSw66+464SQIVwiLCBlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgInJlbGF0aXZlX3BhdGggPSBQYXRoKFwiZGF0YS9tZXNzYWdlLnR4dFwiKVxuIiwKICAgICJwcmludChmXCLsg4HrjIAg6rK966GcOiB7cmVsYXRpdmVfcGF0aH1cIilcbiIsCiAgICAicHJpbnQoZlwi7YyM7J28IOykgOu5hDoge21lc3NhZ2VfZmlsZS5pc19maWxlKCl9XCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiOTM5ZWE5YzgiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsoJXsg4Eg6rK966GcIOydveq4sFxuIiwKICAgICJcbiIsCiAgICAi7J2Y64+E7ZWcIGBwcm9qZWN0YOulvCDquLDspIDsnLzroZwg7ISg7YOd7ZWY66m0IO2MjOydvOydhCDsnb3snYQg7IiYIOyeiOyKteuLiOuLpC4gYHByb2plY3QgLyByZWxhdGl2ZV9wYXRoYOuKlCDquLDspIAg7Y+0642U7JmAIGBkYXRhL21lc3NhZ2UudHh0YOulvCDsl7DqsrDtlbQg7Iuk7KCcIO2MjOydvCDqsr3roZzrpbwg66eM65Ot64uI64ukLiBgcmVhZF90ZXh0YOuKlCDtjIzsnbwg64K07Jqp7J2EIOusuOyekOyXtOuhnCDrsJjtmZjtlZjqs6AsIGBiYXNpY19tZXNzYWdlYOqwgCDqt7gg67CY7ZmY6rCS7J2EIOyggOyepe2VqeuLiOuLpC4g7Lac66Cl7JeQ7IScIOyggOyepe2VnCDrrLjsnqXqs7wg7J297J2AIOusuOyepeydtCDqsJnsnYDsp4Ag7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImZiYjU3OTdmIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDEyOjE1OjAwLjk1OTU1MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAwLjk1OTQ0MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAwLjk2MTk1MloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTI6MTU6MDAuOTYxNTA4WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuq4sOuzuCDsnb3quLA6IOyViOuFlSwg7YSw66+464SQIVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIHByb2plY3TsmYAg7IOB64yAIOqyveuhnOulvCDsl7DqsrDtlbQg7KCA7J6l7ZWcIOuCtOyaqeydhCDsnb3sirXri4jri6QuXG4iLAogICAgImJhc2ljX3BhdGggPSBwcm9qZWN0IC8gcmVsYXRpdmVfcGF0aFxuIiwKICAgICJiYXNpY19tZXNzYWdlID0gYmFzaWNfcGF0aC5yZWFkX3RleHQoZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJwcmludChmXCLquLDrs7gg7J296riwOiB7YmFzaWNfbWVzc2FnZX1cIilcbiIsCiAgICAiYXNzZXJ0IGJhc2ljX21lc3NhZ2UgPT0gXCLslYjrhZUsIO2EsOuvuOuEkCFcIiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjdhODQ5ZTA4IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyBCZWZvcmU6IOq4sOykgCDtj7TrjZTqsIAg64uk66W4IOqyveyasFxuIiwKICAgICJcbiIsCiAgICAi7J6R7JeFIOq4sOykgOydhCBgd29ya3NwYWNlYOuhnCDsnpjrqrsg7ISg7YOd7ZWY66m0IOqwmeydgCDsg4HrjIAg6rK966Gc7JeQ7IScIO2MjOydvOydhCDssL7sp4Ag66q77ZWp64uI64ukLiBgdHJ5YCDslYTrnpjsl5DripQg7Iuk7Yyo7ZWgIOyImCDsnojripQg7J296riw66W8IOuRoeuLiOuLpC4gYEZpbGVOb3RGb3VuZEVycm9yYOqwgCDrsJzsg53tlZjrqbQgYGV4Y2VwdGAg7JWE656Y6rCAIOyLpO2WieuQmOqzoCDsmKTrpZjsnZgg7KKF66WY66W8IOy2nOugpe2VqeuLiOuLpC4gYGVsc2Vg64qUIOyYiOyDge2VnCDsmKTrpZjqsIAg67Cc7IOd7ZWY7KeAIOyViuyVmOydhCDrlYwg7Iuk7ZaJ65Cp64uI64ukLiDsnbQg6rWs7KGw64qUIENoIDLsl5DshJwg7J6Q7IS47Z6IIOuwsOyasOupsCwg7Jes6riw7ISc64qUIOqyveuhnCDsmKTrpZjrp4wg6rWs67aE7ZW0IOq0gOywsO2VmOq4sCDsnITtlbQg7IKs7Jqp7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImY3NTRkN2RiIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDEyOjE1OjAwLjk2Mjk2MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAwLjk2Mjg3OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAwLjk2NTM1M1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTI6MTU6MDAuOTY0ODQyWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7Iuk7YyoIOycoO2YlTogRmlsZU5vdEZvdW5kRXJyb3JcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyB3b3Jrc3BhY2Ug7JWE656Y7JeQ64qUIGRhdGEg7Y+0642U6rCAIOyXhuycvOuvgOuhnCDsmIjsg4HrkJwg7Jik66WY6rCAIOuwnOyDne2VqeuLiOuLpC5cbiIsCiAgICAid3JvbmdfcGF0aCA9IHdvcmtzcGFjZSAvIHJlbGF0aXZlX3BhdGhcbiIsCiAgICAidHJ5OlxuIiwKICAgICIgICAgd3JvbmdfcGF0aC5yZWFkX3RleHQoZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJleGNlcHQgRmlsZU5vdEZvdW5kRXJyb3IgYXMgZXJyb3I6XG4iLAogICAgIiAgICBwcmludChmXCLsi6TtjKgg7Jyg7ZiVOiB7dHlwZShlcnJvcikuX19uYW1lX199XCIpXG4iLAogICAgImVsc2U6XG4iLAogICAgIiAgICByYWlzZSBBc3NlcnRpb25FcnJvcihcIuyemOuqu+uQnCDquLDspIDsl5DshJzripQg7YyM7J287J20IOyXhuyWtOyVvCDtlanri4jri6QuXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiNDJkZDBlOTMiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgQWZ0ZXI6IO2UhOuhnOygne2KuCDtj7TrjZTrpbwg6riw7KSA7Jy866GcIOyEoO2DnVxuIiwKICAgICJcbiIsCiAgICAi6rCZ7J2AIOyDgeuMgCDqsr3roZzrpbwgYHByb2plY3Rg7JeQIOyXsOqysO2VmOuptCDsoIDsnqXtlZwg7YyM7J287J2EIOydveydhCDsiJgg7J6I7Iq164uI64ukLiDtjIzsnbwg7J2066aE6rO8IOuCtOyaqeydgCDrsJTqvrjsp4Ag7JWK6rOgIOq4sOykgCDtj7TrjZTrp4wgYHdvcmtzcGFjZWDsl5DshJwgYHByb2plY3Rg66GcIOyImOygle2VqeuLiOuLpC4gYGNsZWFudXAoKWDsnYAg7Iuk7Iq17JqpIOyehOyLnCDtj7TrjZTrpbwg7KCV66as7ZWp64uI64ukLiDstpzroKXsnbQgYOyViOuFlSwg7YSw66+464SQIWDsnbjsp4Ag7ZmV7J247ZWcIOuSpCDsoJXrpqztlZjrr4DroZwsIOydveq4sCDshLHqs7Xqs7wg7KCV66as66W8IO2VnCDri6jqs4TslKkg6rWs67aE7ZWgIOyImCDsnojsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiYTdkNzEzMmIiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTI6MTU6MDAuOTY2MjkxWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTI6MTU6MDAuOTY2MjExWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTI6MTU6MDAuOTY4OTM5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxMjoxNTowMC45Njg0NzdaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuydveydgCDrgrTsmqk6IOyViOuFlSwg7YSw66+464SQIVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIHByb2plY3Trpbwg6riw7KSA7Jy866GcIOqwmeydgCDsg4HrjIAg6rK966Gc66W8IOyXsOqysO2VqeuLiOuLpC5cbiIsCiAgICAicmlnaHRfcGF0aCA9IHByb2plY3QgLyByZWxhdGl2ZV9wYXRoXG4iLAogICAgIm1lc3NhZ2UgPSByaWdodF9wYXRoLnJlYWRfdGV4dChlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgInByaW50KGZcIuydveydgCDrgrTsmqk6IHttZXNzYWdlfVwiKVxuIiwKICAgICJhc3NlcnQgbWVzc2FnZSA9PSBcIuyViOuFlSwg7YSw66+464SQIVwiXG4iLAogICAgInRlbXBvcmFyeV9mb2xkZXIuY2xlYW51cCgpIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMy4xMiIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJwYWlyZWQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA1LAogICAiY29kZV9zaGEyNTYiOiAiOGExM2FiOWZlNWJmMjZlN2UwMDFlMGQwMmI0MDFlMzZjNDM0MmNjMTRiY2VkOWU2MmZmNzFhYTU2YTkwMWZkMiIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTA5VDEyOjE1OjAxLjA4NDg0NiswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiZjI4MjA5ZGJjNjdlNzI5ODhiZDgyOTVkZTkyNWY0YWI0ZmI4NTQwOGUwODdiMzc3NmI1NjgyZjU4MDJmODk0MiIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>도구 설치와 터미널</h2>
+<p>현재 작업 폴더와 상대 경로의 관계를 임시 폴더에서 확인합니다. 폴더는 파일과 다른 폴더를 담는 공간이고, 경로는 그 위치를 글자로 나타낸 값입니다. 상대 경로는 기준 폴더가 있어야 하나의 실제 위치를 가리킵니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>개인 파일을 바꾸지 않도록 Python이 제공하는 임시 폴더만 사용합니다. <code>from pathlib import Path</code>는 경로를 다루는 <code>Path</code>를, <code>from tempfile import TemporaryDirectory</code>는 임시 폴더를 만드는 기능을 가져옵니다. <code>TemporaryDirectory()</code>가 반환한 결과에는 임시 폴더 이름과 정리 기능이 들어 있습니다. <code>Path(temporary_folder.name)</code>은 그 이름을 경로 객체로 바꿉니다. <code>/</code>는 <code>Path</code> 뒤에 폴더 이름을 연결하고, <code>mkdir()</code>가 실제 폴더를 만듭니다.</p>
+<p>점 뒤에 괄호 없이 쓰는 <code>temporary_folder.name</code>은 객체가 가진 폴더 이름이라는 값(속성)을 읽습니다. <code>project.mkdir()</code>는 객체에 속한 기능(메서드)을 호출해 폴더를 만듭니다. 객체는 이렇게 관련된 값과 기능을 함께 담은 결과입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">from pathlib import Path
+from tempfile import TemporaryDirectory
+
+# TemporaryDirectory는 실습이 끝나면 지워지는 임시 폴더를 만듭니다.
+temporary_folder = TemporaryDirectory()
+workspace = Path(temporary_folder.name)
+project = workspace / &quot;practice&quot;
+project.mkdir()
+print(f&quot;임시 실습 폴더 준비: {project.is_dir()}&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">임시 실습 폴더 준비: True
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행: 상대 경로로 파일 준비</h3>
+<p>상대 경로 <code>data/message.txt</code>는 어느 폴더를 기준으로 하는지에 따라 다른 파일을 가리킵니다. 먼저 <code>project / &quot;data&quot;</code>로 경로를 만들고 <code>mkdir()</code>로 <code>data</code> 폴더를 만듭니다. 다시 <code>message.txt</code>를 연결한 뒤 <code>write_text</code>로 글을 저장합니다. <code>encoding=&quot;utf-8&quot;</code>은 한글을 파일의 바이트로 바꾸고 다시 읽을 때 사용할 문자 규칙입니다. <code>is_file()</code>은 해당 위치가 파일이면 <code>True</code>를 반환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># slash(/)는 기준 폴더 뒤에 폴더와 파일 이름을 연결합니다.
+data_folder = project / &quot;data&quot;
+data_folder.mkdir()
+message_file = data_folder / &quot;message.txt&quot;
+message_file.write_text(&quot;안녕, 터미널!&quot;, encoding=&quot;utf-8&quot;)
+relative_path = Path(&quot;data/message.txt&quot;)
+print(f&quot;상대 경로: {relative_path}&quot;)
+print(f&quot;파일 준비: {message_file.is_file()}&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">상대 경로: data/message.txt
+파일 준비: True
+</pre></div>
+<div class="nb-markdown"><h3>정상 경로 읽기</h3>
+<p>의도한 <code>project</code>를 기준으로 선택하면 파일을 읽을 수 있습니다. <code>project / relative_path</code>는 기준 폴더와 <code>data/message.txt</code>를 연결해 실제 파일 경로를 만듭니다. <code>read_text</code>는 파일 내용을 문자열로 반환하고, <code>basic_message</code>가 그 반환값을 저장합니다. 출력에서 저장한 문장과 읽은 문장이 같은지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># project와 상대 경로를 연결해 저장한 내용을 읽습니다.
+basic_path = project / relative_path
+basic_message = basic_path.read_text(encoding=&quot;utf-8&quot;)
+print(f&quot;기본 읽기: {basic_message}&quot;)
+assert basic_message == &quot;안녕, 터미널!&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">기본 읽기: 안녕, 터미널!
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<p class="look"><b>확인할 점</b> — 예제 파일을 만든 위치와 읽기에 사용한 경로를 비교합니다. 텍스트를 읽는 <code>read_text</code>와 파일이 존재하는지 확인하는 <code>is_file</code>는 서로 다른 작업입니다. 파일이 있다는 사실을 확인한 뒤 본문도 읽어 어떤 파일인지 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>같은 파일 이름을 유지한 채 기준 폴더를 잘못 지정하면 파일을 찾지 못합니다. 실습에서는 실제 읽기 동작에서 발생한 <code>FileNotFoundError</code>만 포착해 기록합니다. 뒤의 수정 셀에서는 파일을 새로 만드는 대신 파일이 있는 기준 폴더로 경로를 고쳐 읽습니다. 오류 메시지는 ‘파일이 컴퓨터 어디에도 없다’는 뜻이 아니라 ‘요청한 위치에서 찾지 못했다’는 뜻으로 해석해야 합니다.</p>
+<p><code>try</code> 아래에는 실패할 수 있는 읽기 동작을 둡니다. 그 읽기에서 <code>FileNotFoundError</code>가 발생하면 <code>except FileNotFoundError as error</code> 아래로 이동하며, 발생한 오류를 <code>error</code>라는 이름으로 확인할 수 있습니다. <code>else</code>는 예상한 오류가 발생하지 않았을 때 실행됩니다. 이 구조는 Ch 2에서 자세히 배우며, 여기서는 잘못된 경로의 실제 오류만 구분해 기록하기 위한 준비 코드입니다.</p>
+<section class="notebook" data-notebook="02-도구-설치와-터미널" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>Before: 기준 폴더가 다른 경우</h3>
+<p>작업 기준을 <code>workspace</code>로 잘못 선택하면 같은 상대 경로에서 파일을 찾지 못합니다. <code>try</code> 아래에는 실패할 수 있는 읽기를 둡니다. <code>FileNotFoundError</code>가 발생하면 <code>except</code> 아래가 실행되고 오류의 종류를 출력합니다. <code>else</code>는 예상한 오류가 발생하지 않았을 때 실행됩니다. 이 구조는 Ch 2에서 자세히 배우며, 여기서는 경로 오류만 구분해 관찰하기 위해 사용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># workspace 아래에는 data 폴더가 없으므로 예상된 오류가 발생합니다.
+wrong_path = workspace / relative_path
+try:
+    wrong_path.read_text(encoding=&quot;utf-8&quot;)
+except FileNotFoundError as error:
+    print(f&quot;실패 유형: {type(error).__name__}&quot;)
+else:
+    raise AssertionError(&quot;잘못된 기준에서는 파일이 없어야 합니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">실패 유형: FileNotFoundError
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>After: 프로젝트 폴더를 기준으로 선택</h3>
+<p>같은 상대 경로를 <code>project</code>에 연결하면 저장한 파일을 읽을 수 있습니다. 파일 이름과 내용은 바꾸지 않고 기준 폴더만 <code>workspace</code>에서 <code>project</code>로 수정합니다. <code>cleanup()</code>은 실습용 임시 폴더를 정리합니다. 출력이 <code>안녕, 터미널!</code>인지 확인한 뒤 정리하므로, 읽기 성공과 정리를 한 단계씩 구분할 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># project를 기준으로 같은 상대 경로를 연결합니다.
+right_path = project / relative_path
+message = right_path.read_text(encoding=&quot;utf-8&quot;)
+print(f&quot;읽은 내용: {message}&quot;)
+assert message == &quot;안녕, 터미널!&quot;
+temporary_folder.cleanup()</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">읽은 내용: 안녕, 터미널!
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<p>파일 이름의 대소문자와 확장자도 확인합니다. 운영체제와 파일 시스템 설정에 따라 대소문자 처리 방식이 다를 수 있습니다. 자신의 컴퓨터에서 우연히 열렸다는 이유로 대문자와 소문자를 섞지 않습니다. Windows에서 확장자를 숨긴 상태라면 <code>hello.py.txt</code>를 <code>hello.py</code>로 착각할 수 있으므로 파일 탐색기의 확장자 표시를 확인합니다.</p>
+<p>노트북은 작업 위치가 편집기에 연 폴더와 같다고 가정하지 않습니다. 이번 예제는 임시 폴더 변수를 명시적으로 사용해 경로 관계를 확인합니다. 실제 프로젝트에서는 터미널의 현재 위치와 파일 목록을 함께 확인합니다. 삭제 명령으로 문제를 해결하려 하기 전에 요청한 경로를 읽고, 맞는 폴더로 이동하는 것만으로 해결되는지 확인합니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<p>편집기는 파일을 수정하고 터미널은 명령을 입력하는 창입니다.<br>상대 경로를 읽으려면 기준 폴더를 알아야 합니다.<br>파일 읽기 오류는 이름과 위치를 함께 확인해 수정합니다.</p>
+<p><strong>다음 학습과 이어지는 지점</strong> — 다음 절은 지금 연 프로젝트 폴더에 Python 3.12 실행 환경을 준비합니다. 폴더 안의 <code>.venv</code>를 찾는 데도 이번에 배운 경로 확인 방법을 사용합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz"><summary>1. 터미널과 셸은 어떻게 연결되나요? · 기초</summary><p>터미널은 명령과 결과를 보여 주는 창이고, 셸은 입력한 명령을 해석합니다. Windows PowerShell과 macOS zsh의 명령을 구분하는 이유입니다.</p></details>
+<details class="quiz"><summary>2. 파일이 있는데 읽기 오류가 나면 무엇부터 확인하나요? · 적용</summary><p>현재 위치 또는 코드에서 지정한 기준 폴더와 파일 이름을 확인합니다. 다른 폴더를 기준으로 같은 이름을 요청했을 수 있습니다.</p></details>
+<details class="quiz"><summary>3. 수정 예제에서 파일을 다시 만들 필요가 있었나요? · 적용</summary><p>없었습니다. 파일은 이미 올바른 위치에 있었고, 읽을 때 사용한 경로를 수정했습니다. 실패 셀과 수정 셀의 기준 폴더를 비교합니다.</p></details>
+<details class="quiz"><summary>4. 파일 존재 확인만으로 원하는 내용인지도 알 수 있나요? · 분석</summary><p>알 수 없습니다. 같은 이름의 다른 파일일 수 있으므로 올바른 경로에서 실제 내용을 읽어 확인합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul><li><a href="https://code.visualstudio.com/docs/getstarted/overview">VS Code 설치 안내</a> · <a href="https://code.visualstudio.com/docs/terminal/basics">통합 터미널</a> — 확인 2026-09-09, 메뉴는 설치 버전에 따라 달라질 수 있습니다.</li><li><a href="https://docs.astral.sh/uv/getting-started/installation/">uv 공식 설치 안내</a> — 확인 2026-09-09.</li><li><a href="https://docs.python.org/3.12/library/pathlib.html">Python pathlib</a> — Python 3.12 기준, 확인 2026-09-09. 예제는 교재에서 작성했습니다.</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="01-과정-지도와-학습-규칙.html">← 과정 지도와 학습 규칙</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="03-Python과-가상환경.html">Python과 가상환경 →</a></span></div></div></body></html>

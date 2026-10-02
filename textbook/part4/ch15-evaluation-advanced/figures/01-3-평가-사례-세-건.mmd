@@ -1,0 +1,24 @@
+flowchart TB
+  %% classes
+  subgraph c1["Q002 개발 질문"]
+    direction TB
+    a1["검색 정답 자리 하나"]:::measure
+    a2["답 칸 있음<br>받은 문서 E01"]:::measure
+    a1 ~~~ a2
+  end
+  subgraph c2["Q006 시험 질문"]
+    direction TB
+    b1["검색 정답 자리 하나"]:::measure
+    b2["답 칸 있음<br>받은 문서 E01"]:::measure
+    b1 ~~~ b2
+  end
+  subgraph c3["Q090 시험 질문"]
+    direction TB
+    d1["검색 정답 자리 둘<br>첫 자리 H02"]:::measure
+    d2["답 칸 있음<br>받은 문서 H01"]:::measure
+    d1 ~~~ d2
+  end
+  same["세 건 모두 정답 문서를 받아 쓴 답"]
+  c1 ~~~ same
+  c2 ~~~ same
+  c3 ~~~ same

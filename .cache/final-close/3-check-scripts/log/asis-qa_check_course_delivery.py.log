@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/qa/check_course_delivery.py", line 112, in <module>
+    assert len(notebooks) == 87, f'Expected 87 student notebooks; found {len(notebooks)}'
+AssertionError: Expected 87 student notebooks; found 246

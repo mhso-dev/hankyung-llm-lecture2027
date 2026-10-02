@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  g["멈춘 뒤 get_state<br>스레드 ask-only"]:::flow
+  subgraph s["체크포인터에 남은 것"]
+    direction TB
+    nx["다음에 실행할 노드<br>ask_only"]:::measure
+    v["칸 값 order-2401<br>answer 대기"]:::measure
+    q["작업 ask_only에 딸린<br>질문 값 결제할까요?"]:::measure
+    k["체크포인트 둘"]:::measure
+    nx ~~~ v
+    v ~~~ q
+    q ~~~ k
+  end
+  r["Command<br>resume=approve 뒤<br>다음 노드 없음<br>체크포인트 셋"]:::measure
+  g --> s
+  s --> r

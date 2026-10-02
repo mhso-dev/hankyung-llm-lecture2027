@@ -1,0 +1,298 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모듈과 타입힌트 — Ch 2 · 파이썬 프로그래밍</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 2 · 파이썬 프로그래밍</p>
+<h1>모듈과 타입힌트</h1><div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>함수를 별도 <code>.py</code> 모듈에 정의하고 필요한 이름을 가져올 수 있습니다.</li><li>함수의 매개변수와 반환값에 타입힌트를 작성하고 저장된 정보를 확인할 수 있습니다.</li><li>타입힌트가 실행 시 입력을 검증하지 않는다는 사실을 실제 출력으로 설명할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>프로그램이 길어지면 모든 함수와 클래스를 한 파일에서 찾기 어렵습니다. 가격 계산은 가격 모듈에 두고, 주문 출력은 실행 파일에 두면 각 파일의 역할이 분명해집니다. 다른 파일의 기능을 다시 작성하지 않고 가져와 사용할 수도 있습니다. 모듈은 코드의 위치를 나누고 이름의 출처를 표시하는 기본 단위입니다.</p><p>함수가 어떤 값을 받고 무엇을 반환하는지도 여러 파일 사이에서 알아볼 수 있어야 합니다. 타입힌트는 <code>price: int</code>와 <code>-&gt; str</code>처럼 예상 타입을 코드에 적는 표기입니다. 편집기와 정적 타입 검사기는 이 정보를 읽어 잘못된 사용을 찾도록 돕습니다. 그러나 Python 실행기는 타입힌트를 보고 호출을 차단하지 않습니다. 외부 입력 검증은 별도의 처리이며, 이 차이를 모르면 표시만 믿고 잘못된 결과를 정상으로 사용할 수 있습니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>04절에서 함수 이름 뒤의 괄호에 입력을 적고 <code>return</code>으로 결과를 반환하는 방법을 배웠습니다. 05절에서는 <code>Path.write_text()</code>로 문자열을 파일에 저장했습니다. 이번 절은 이 두 내용을 결합해 함수를 <code>pricing.py</code>에 저장하고 다른 파일에서 호출합니다. 06절의 클래스는 이 절의 필수 선행 지식이 아닙니다. 노트북은 임시 폴더에 <code>pricing.py</code>와 <code>run_price.py</code>를 새로 만들며 이전 커널의 값이나 개인 작업 파일을 사용하지 않습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>쉬운 예</h3><p>서랍마다 문구류의 종류를 적어 두면 필요한 물건을 찾을 때 모든 서랍을 열지 않아도 됩니다. <strong>모듈(module)</strong>은 관련된 Python 정의와 문장을 담는 <code>.py</code> 파일입니다. <code>pricing.py</code>라는 파일은 <code>pricing</code>이라는 모듈 이름으로 읽습니다. <code>from pricing import add_tax</code>는 “<code>pricing</code> 모듈에서 <code>add_tax</code>라는 이름을 현재 파일로 가져온다”라고 읽습니다. 가져온 뒤에는 <code>add_tax(10000, 0.1)</code>처럼 일반 함수와 같은 방식으로 호출합니다.</p><h3>정의와 표기 읽기</h3><p><strong>import</strong>는 다른 모듈의 코드를 불러와 사용할 수 있게 하는 문장입니다. Python은 실행 파일이 있는 폴더 등 정해진 위치에서 모듈을 찾고, 처음 가져올 때 그 파일의 최상위 문장을 실행한 뒤 정의된 이름을 사용할 수 있게 합니다. <strong>네임스페이스(namespace)</strong>는 이름과 값의 대응을 관리하는 범위입니다. <code>import pricing</code>은 모듈 이름을 유지하여 <code>pricing.add_tax()</code>로 호출합니다. <code>from pricing import add_tax</code>는 선택한 이름을 현재 범위에 두어 <code>add_tax()</code>로 호출합니다.</p><p><strong>타입힌트(type hint)</strong>는 변수, 매개변수, 반환값의 예상 타입을 표시한 정보입니다. <code>def add_tax(price: int, rate: float) -&gt; int:</code>에서 <code>price: int</code>는 <code>price</code>에 정수를 예상하고, <code>rate: float</code>는 <code>rate</code>에 실수를 예상한다는 뜻입니다. 화살표 뒤의 <code>int</code>는 함수가 정수를 반환할 것이라는 표시입니다. 이 표기는 호출할 때 값을 전달하거나 반환하는 동작을 만들지 않습니다. 실제 입력은 괄호 안의 <code>10000</code>과 <code>0.1</code>이고, 본문의 <code>return</code>이 계산한 정수가 호출 위치로 반환됩니다.</p><p><strong>정적 타입 검사(static type checking)</strong>는 프로그램을 실행하기 전에 타입힌트와 코드 사용이 맞는지 분석하는 과정입니다. 타입힌트는 문서와 도구를 위한 정보이며 런타임 검증(runtime validation)을 자동으로 수행하지 않습니다. 런타임 검증은 실행 중 실제 값이 조건에 맞는지 확인하고, 맞지 않으면 변환하거나 오류를 알리는 별도 동작입니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:900px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 570" width="900" height="570" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-07-concept desc-07-concept">
+<title id="title-07-concept">모듈 가져오기와 타입힌트의 범위</title>
+<desc id="desc-07-concept">학생이 pricing 모듈을 작성해 실행하고, 타입힌트 정보와 실제 값 검증을 구분합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="900" height="570" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">모듈 가져오기와 타입힌트의 범위</tspan></text>
+<text x="20" y="72.0" font-size="16" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">모듈 작성과 실행</tspan></text>
+<rect x="25" y="100" width="245" height="88" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="147.5" y="132.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="147.5" dy="0.0">pricing.py</tspan><tspan x="147.5" dy="23.0">add_tax 정의</tspan></text>
+<polyline points="270,144 330,144" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="330" y="100" width="240" height="88" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="450.0" y="133.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">from pricing import add_tax</tspan><tspan x="450.0" dy="21.6">10000, 0.1 전달</tspan></text>
+<polyline points="570,144 635,144" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="635" y="100" width="240" height="88" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="755.0" y="132.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="755.0" dy="0.0">반환값</tspan><tspan x="755.0" dy="23.0">11000</tspan></text>
+<text x="20" y="250.0" font-size="16" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">타입힌트 정보와 실행 시 검증은 서로 다릅니다</tspan></text>
+<rect x="25" y="285" width="250" height="105" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="150.0" y="326.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="150.0" dy="0.0">타입힌트 정보</tspan><tspan x="150.0" dy="21.6">int 입력 → int 반환</tspan></text>
+<rect x="325" y="285" width="250" height="105" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="450.0" y="315.9" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">double_total('1200')</tspan><tspan x="450.0" dy="21.6">'12001200'</tspan><tspan x="450.0" dy="21.6">자동 검증 없음</tspan></text>
+<polyline points="575,338 635,338" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="570.0" y="311.0" width="70.0" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="605.0" y="323.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="605.0" dy="0.0">int 변환</tspan></text>
+<rect x="635" y="285" width="240" height="105" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="755.0" y="326.0" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="755.0" dy="0.0">double_total(1200)</tspan><tspan x="755.0" dy="23.0">2400</tspan></text>
+<text x="25" y="440.0" font-size="14" fill="#4b5563" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="25" dy="0.0">타입힌트 표시는 실행 전에 입력값을 자동 변환하거나 거부하지 않습니다.</tspan></text>
+<text x="450.0" y="544.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg></div><p>위쪽 줄은 <code>pricing.py</code> 작성, <code>run_price.py</code>에서 함수 가져오기, 정수 가격과 실수 세율 전달, 정수 11000 반환의 순서입니다. 아래쪽은 타입힌트가 실행 중 입력을 자동으로 검사하지 않는다는 별도의 비교입니다. <code>double_total</code>에 문자열 <code>"1200"</code>을 넣으면 함수 본문은 문자열 곱셈을 실행해 <code>"12001200"</code>을 반환합니다. 호출 전에 정수로 변환하면 같은 본문이 숫자 곱셈을 실행해 2400을 반환합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>첫 셀은 파일을 저장할 임시 폴더를 만듭니다. 다음 셀에서 <code>module_source</code> 문자열을 <code>pricing.py</code>로, <code>runner_source</code> 문자열을 <code>run_price.py</code>로 저장합니다. 실행 시점에는 <code>run_price.py</code>의 import 문이 먼저 <code>pricing.py</code>를 찾고, 이어서 <code>add_tax(10000, 0.1)</code>가 가격 10,000과 세율 0.1을 함수에 전달합니다. 함수는 <code>price * (1 + rate)</code>를 계산하고 반올림한 정수 11000을 반환하며, <code>print()</code>가 그 값을 화면에 표시합니다.</p><p>다음 셀의 <code>label_price(price: int) -&gt; str</code>는 정수 가격을 입력받아 <code>"12,000원"</code> 같은 문자열을 반환한다고 읽습니다. <code>__annotations__</code> 출력은 개발자가 적은 표시가 함수 객체에 저장되었음을 보여 줄 뿐, 호출값을 검사했다는 뜻은 아닙니다. 값 하나 비교에서는 함수와 표시 형식을 그대로 두고 호출 인자만 12000에서 25000으로 바꿉니다. 반환 문자열이 각각 <code>12,000원</code>과 <code>25,000원</code>으로 달라지는지 확인합니다.</p><section class="notebook" data-notebook="07-모듈과-타입힌트" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="07-모듈과-타입힌트.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDrqqjrk4jqs7wg7YOA7J6F7Z6M7Yq4XG4iLAogICAgIlxuIiwKICAgICLtlajsiJjrpbwg67OE64+EIOuqqOuTiOuhnCDrgpjriITqs6AsIO2DgOyehe2ejO2KuOydmCDsl63tlaDqs7wg7ZWc6rOE66W8IOyWtOuWu+qyjCDtmZXsnbjtlaDquYzsmpQ/IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEXG4iLAogICAgIlxuIiwKICAgICJQeXRob24gMy4xMiDtkZzspIAg65287J2067iM65+s66as66eMIOyCrOyaqe2VqeuLiOuLpC4gMDTsoIjsl5DshJwg67Cw7Jq0IO2VqOyImCDtmLjstpzqs7wgMDXsoIjsl5DshJwg67Cw7Jq0IO2MjOydvCDsoIDsnqXsnYQg6rKw7ZWp7ZWp64uI64ukLiAwNuygiOydmCDtgbTrnpjsiqTripQg7ZWE7JqU7ZWY7KeAIOyViuyKteuLiOuLpC4g66qo65OIIO2MjOydvOydgCDsnoTsi5wg7Y+0642U7JeQIOunjOuTpOqzoCDtlZjsnIQg7ZSE66Gc7IS47Iqk7JeQ7IScIOu2iOufrOyYteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICJjZWxsLTAzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjAyOjE3LjM1NDkwOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjAyOjE3LjM1NDY2NloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjAyOjE3LjM2MTI1N1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MDI6MTcuMzYwNDg3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuuqqOuTiCDsi6TsirUg7Y+0642UIOykgOu5hCDsmYTro4xcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDrqqjrk4jqs7wg7Iuk7ZaJIO2MjOydvOydhCDsoIDsnqXtlaAg7Iuk7Iq1IOyghOyaqSDsnoTsi5wg7Y+0642U66W8IOykgOu5hO2VqeuLiOuLpC5cbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgImZyb20gc3VicHJvY2VzcyBpbXBvcnQgcnVuXG4iLAogICAgImZyb20gc3lzIGltcG9ydCBleGVjdXRhYmxlXG4iLAogICAgImZyb20gdGVtcGZpbGUgaW1wb3J0IFRlbXBvcmFyeURpcmVjdG9yeVxuIiwKICAgICJcbiIsCiAgICAid29ya3NwYWNlID0gVGVtcG9yYXJ5RGlyZWN0b3J5KHByZWZpeD1cImNoMDJfMDdfXCIpXG4iLAogICAgIm1vZHVsZV9kaXIgPSBQYXRoKHdvcmtzcGFjZS5uYW1lKVxuIiwKICAgICJwcmludChcIuuqqOuTiCDsi6TsirUg7Y+0642UIOykgOu5hCDsmYTro4xcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6riw67O4IOyLpO2WiVxuIiwKICAgICJcbiIsCiAgICAiYHByaWNpbmcucHlg64qUIO2VqOyImOulvCDri7TsnYAg66qo65OI7J6F64uI64ukLiBgZnJvbSBwcmljaW5nIGltcG9ydCBhZGRfdGF4YOuKlCDigJhwcmljaW5nIOuqqOuTiOyXkOyEnCBhZGRfdGF4652864qUIOydtOumhOydhCDqsIDsoLjsmKjri6TigJnrnbzqs6Ag7J297Iq164uI64ukLiDsi6Ttlokg7YyM7J287J20IGBhZGRfdGF4KDEwMDAwLCAwLjEpYOydhCDtmLjstpztlZjrqbQg7KCV7IiYIOqwgOqyqeqzvCDsi6TsiJgg7IS47Jyo7J20IOunpOqwnOuzgOyImOyXkCDsoITri6zrkJjqs6AsIO2VqOyImOqwgCDqs4TsgrDtlZwg7KCV7IiYIDExMDAw7J20IO2YuOy2nCDsnITsuZjroZwg67CY7ZmY65Cp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MDI6MTcuMzYzMDk1WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MDI6MTcuMzYyOTA3WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MDI6MTcuMzkzNjIxWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjowMjoxNy4zOTMyMTRaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7IS46riIIO2PrO2VqCDqsIDqsqk6IDExMDAwXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg6rOE7IKwIO2VqOyImOulvCDrqqjrk4jsl5Ag7KCA7J6l7ZWY6rOgIOuzhOuPhCDtjIzsnbzsl5DshJwgaW1wb3J07ZWY7JesIO2YuOy2nO2VqeuLiOuLpC5cbiIsCiAgICAibW9kdWxlX3NvdXJjZSA9ICcnJ2RlZiBhZGRfdGF4KHByaWNlOiBpbnQsIHJhdGU6IGZsb2F0KSAtPiBpbnQ6XG4iLAogICAgIiAgICByZXR1cm4gcm91bmQocHJpY2UgKiAoMSArIHJhdGUpKVxuIiwKICAgICInJydcbiIsCiAgICAicnVubmVyX3NvdXJjZSA9ICcnJ2Zyb20gcHJpY2luZyBpbXBvcnQgYWRkX3RheFxuIiwKICAgICJcbiIsCiAgICAicHJpbnQoYWRkX3RheCgxMDAwMCwgMC4xKSlcbiIsCiAgICAiJycnXG4iLAogICAgIihtb2R1bGVfZGlyIC8gXCJwcmljaW5nLnB5XCIpLndyaXRlX3RleHQobW9kdWxlX3NvdXJjZSwgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICIobW9kdWxlX2RpciAvIFwicnVuX3ByaWNlLnB5XCIpLndyaXRlX3RleHQocnVubmVyX3NvdXJjZSwgZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJjb21wbGV0ZWQgPSBydW4oW2V4ZWN1dGFibGUsIFwicnVuX3ByaWNlLnB5XCJdLCBjd2Q9bW9kdWxlX2RpciwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgdGV4dD1UcnVlLCBjaGVjaz1UcnVlKVxuIiwKICAgICJwcmludChcIuyEuOq4iCDtj6ztlagg6rCA6rKpOlwiLCBjb21wbGV0ZWQuc3Rkb3V0LnN0cmlwKCkpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOykkeqwhCDqsrDqs7wg6rSA7LCwXG4iLAogICAgIlxuIiwKICAgICJgZGVmIGxhYmVsX3ByaWNlKHByaWNlOiBpbnQpIC0+IHN0cmDsl5DshJwgYHByaWNlOiBpbnRg64qUIOygleyImCDsnoXroKXsnYQg7JiI7IOB7ZWc64uk64qUIO2RnOyLnOydtOqzoCwg7ZmU7IK07ZGcIOuSpOydmCBgc3RyYOuKlCDrrLjsnpDsl7Qg67CY7ZmY7J2EIOyYiOyDge2VnOuLpOuKlCDtkZzsi5zsnoXri4jri6QuIO2VqOyImOydmCBgX19hbm5vdGF0aW9uc19fYOyXkOuKlCDsnbQg7KCV67O06rCAIOyggOyepeuQqeuLiOuLpC4g7ZGc7Iuc64qUIO2YuOy2nCDsi5zsoJDsnZgg6rCS7J2EIOyekOuPmSDqsoDsgqztlZjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MDI6MTcuMzk0OTAzWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MDI6MTcuMzk0NzkyWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MDI6MTcuMzk2ODYxWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjowMjoxNy4zOTY1ODlaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAieydwcmljZSc6IDxjbGFzcyAnaW50Jz4sICdyZXR1cm4nOiA8Y2xhc3MgJ3N0cic+fVxuIiwKICAgICAgIjEyLDAwMOybkFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIO2DgOyehe2ejO2KuCDsoJXrs7TsmYAg7Iuk7KCcIO2VqOyImCDrsJjtmZjqsJLsnYQg7ZWo6ruYIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiZGVmIGxhYmVsX3ByaWNlKHByaWNlOiBpbnQpIC0+IHN0cjpcbiIsCiAgICAiICAgIHJldHVybiBmXCJ7cHJpY2U6LH3sm5BcIlxuIiwKICAgICJcbiIsCiAgICAicHJpbnQobGFiZWxfcHJpY2UuX19hbm5vdGF0aW9uc19fKVxuIiwKICAgICJwcmludChsYWJlbF9wcmljZSgxMjAwMCkpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wOCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOqwkiDtlZjrgpjrpbwg67CU6r+UIOu5hOq1kFxuIiwKICAgICJcbiIsCiAgICAi6rCZ7J2AIO2VqOyImOyXkOyEnCDqsIDqsqkg6rCS66eMIOuwlOq+uOuptCDrsJjtmZgg66y47J6Q7Je07J20IOyWtOuWu+qyjCDri6zrnbzsp4DripTsp4Ag7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImNlbGwtMDkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MDI6MTcuMzk3NzY4WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MDI6MTcuMzk3Njg3WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MDI6MTcuMzk5NzAwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjowMjoxNy4zOTkyODFaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiMTIsMDAwIOyeheugpTogMTIsMDAw7JuQXG4iLAogICAgICAiMjUsMDAwIOyeheugpTogMjUsMDAw7JuQXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7ZWo7IiY7JeQIOyghOuLrO2VmOuKlCDqsIDqsqnrp4wg67CU6r647Ja0IO2RnOyLnCDqsrDqs7zrpbwg67mE6rWQ7ZWp64uI64ukLlxuIiwKICAgICJwcmludChcIjEyLDAwMCDsnoXroKU6XCIsIGxhYmVsX3ByaWNlKDEyMDAwKSlcbiIsCiAgICAicHJpbnQoXCIyNSwwMDAg7J6F66ClOlwiLCBsYWJlbF9wcmljZSgyNTAwMCkpXG4iLAogICAgImFzc2VydCBsYWJlbF9wcmljZSgyNTAwMCkgPT0gXCIyNSwwMDDsm5BcIiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2MqCDsnqztmIRcbiIsCiAgICAiXG4iLAogICAgIu2DgOyehe2ejO2KuOulvCDsoIHslrTrj4QgUHl0aG9u7J2AIO2YuOy2nCDsi5wg6rCS7J2EIOyekOuPmSDqsoDsgqztlZjsp4Ag7JWK7Iq164uI64ukLiDsnoXroKXsnYAg66y47J6Q7Je0IGBcIjEyMDBcImAsIOyymOumrOuKlCDtlajsiJgg67O466y47J2YIGB0b3RhbCAqIDJgLCDrsJjtmZjsnYAg66y47J6Q7Je0IGBcIjEyMDAxMjAwXCJg7J6F64uI64ukLiDsi6Ttlokg7Jik66WY6rCAIOyXhuuNlOudvOuPhCDquIjslaEg6rOE7IKw7Jy866Gc64qUIOyemOuqu+uQnCDqsrDqs7zsnoXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiY2VsbC0xMSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjowMjoxNy40MDA2NzdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjowMjoxNy40MDA1OTNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjowMjoxNy40MDI2MTFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjAyOjE3LjQwMjI2NFoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyemOuqu+uQnCDqsrDqs7w6IDEyMDAxMjAwXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7YOA7J6F7Z6M7Yq46rCAIOusuOyekOyXtCDsnoXroKXsnYQg7J6Q64+Z7Jy866GcIOqxsOu2gO2VmOyngCDslYrripTsp4Ag7ZmV7J247ZWp64uI64ukLlxuIiwKICAgICJkZWYgZG91YmxlX3RvdGFsKHRvdGFsOiBpbnQpIC0+IGludDpcbiIsCiAgICAiICAgIHJldHVybiB0b3RhbCAqIDJcbiIsCiAgICAiXG4iLAogICAgIndyb25nID0gZG91YmxlX3RvdGFsKFwiMTIwMFwiKSAgIyDtg4DsnoXtnoztirjsmYAg64uk66W4IOyeheugpVxuIiwKICAgICJwcmludChcIuyemOuqu+uQnCDqsrDqs7w6XCIsIHdyb25nKVxuIiwKICAgICJhc3NlcnQgd3JvbmcgPT0gXCIxMjAwMTIwMFwiIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xMiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsiJjsoJVcbiIsCiAgICAiXG4iLAogICAgIuyZuOu2gOyXkOyEnCDrsJvsnYAg66y47J6Q7Je07J2EIGBpbnQoKWDsl5Ag66i87KCAIOyghOuLrO2VtCDsoJXsiJggMTIwMOydhCDrsJjtmZjrsJvqs6AsIOq3uCDqsJLsnYQgYGRvdWJsZV90b3RhbCgpYOyXkCDsnoXroKXtlanri4jri6QuIOqwmeydgCDtlajsiJgg67O466y47J20IOyIq+yekCDqs7HshYjsnYQg7Iuk7ZaJ7ZWY7JesIOygleyImCAyNDAw7J2EIOuwmO2ZmO2VqeuLiOuLpC4g7YOA7J6F7Z6M7Yq47JmAIOyLpOygnCDrs4DtmZgg7L2U65Oc7J2YIOyXre2VoOydhCDqtazrtoTtlbQg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImNlbGwtMTMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MDI6MTcuNDAzMzkyWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MDI6MTcuNDAzMzI4WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MDI6MTcuNDA1MDMyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjowMjoxNy40MDQ2OTlaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyImOygleuQnCDqsrDqs7w6IDI0MDBcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnoXroKUg66y47J6Q7Je07J2EIOygleyImOuhnCDrsJTqvrjslrQg7Iir7J6QIOqzseyFiCDqsrDqs7zrpbwg7Ja77Iq164uI64ukLlxuIiwKICAgICJyYXdfdG90YWwgPSBcIjEyMDBcIlxuIiwKICAgICJ2YWxpZGF0ZWRfdG90YWwgPSBpbnQocmF3X3RvdGFsKVxuIiwKICAgICJjb3JyZWN0ID0gZG91YmxlX3RvdGFsKHZhbGlkYXRlZF90b3RhbClcbiIsCiAgICAicHJpbnQoXCLsiJjsoJXrkJwg6rKw6rO8OlwiLCBjb3JyZWN0KVxuIiwKICAgICJhc3NlcnQgY29ycmVjdCA9PSAyNDAwIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJwYWlyZWQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA2LAogICAiY29kZV9zaGEyNTYiOiAiYmEwNDFjNGY0MWIzZGFmYjA3MzI0MGU3ZDNlNWUyNDdhOWE5Nzg0OWFhNWJlNDIwZjE4NTg1MjQ0YmI3YWY3NiIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTExVDA2OjAyOjE3LjUyMDQ1NiswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiOTY1ZDQzNzkwNzJkN2M2YTBhODEwMjVjODY1MjQ0NTY3OWEzZTE2MGJjMWJlYTYwNWI1M2ZkZTNhZWM2MDI1YyIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>모듈과 타입힌트</h2>
+<p>함수를 별도 모듈로 나누고, 타입힌트의 역할과 한계를 어떻게 확인할까요?</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>Python 3.12 표준 라이브러리만 사용합니다. 04절에서 배운 함수 호출과 05절에서 배운 파일 저장을 결합합니다. 06절의 클래스는 필요하지 않습니다. 모듈 파일은 임시 폴더에 만들고 하위 프로세스에서 불러옵니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 모듈과 실행 파일을 저장할 실습 전용 임시 폴더를 준비합니다.
+from pathlib import Path
+from subprocess import run
+from sys import executable
+from tempfile import TemporaryDirectory
+
+workspace = TemporaryDirectory(prefix=&quot;ch02_07_&quot;)
+module_dir = Path(workspace.name)
+print(&quot;모듈 실습 폴더 준비 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">모듈 실습 폴더 준비 완료
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p><code>pricing.py</code>는 함수를 담은 모듈입니다. <code>from pricing import add_tax</code>는 ‘pricing 모듈에서 add_tax라는 이름을 가져온다’라고 읽습니다. 실행 파일이 <code>add_tax(10000, 0.1)</code>을 호출하면 정수 가격과 실수 세율이 매개변수에 전달되고, 함수가 계산한 정수 11000이 호출 위치로 반환됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 계산 함수를 모듈에 저장하고 별도 파일에서 import하여 호출합니다.
+module_source = &#x27;&#x27;&#x27;def add_tax(price: int, rate: float) -&gt; int:
+    return round(price * (1 + rate))
+&#x27;&#x27;&#x27;
+runner_source = &#x27;&#x27;&#x27;from pricing import add_tax
+
+print(add_tax(10000, 0.1))
+&#x27;&#x27;&#x27;
+(module_dir / &quot;pricing.py&quot;).write_text(module_source, encoding=&quot;utf-8&quot;)
+(module_dir / &quot;run_price.py&quot;).write_text(runner_source, encoding=&quot;utf-8&quot;)
+completed = run([executable, &quot;run_price.py&quot;], cwd=module_dir, capture_output=True, text=True, check=True)
+print(&quot;세금 포함 가격:&quot;, completed.stdout.strip())</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">세금 포함 가격: 11000
+</pre></div>
+<div class="nb-markdown"><h3>중간 결과 관찰</h3>
+<p><code>def label_price(price: int) -&gt; str</code>에서 <code>price: int</code>는 정수 입력을 예상한다는 표시이고, 화살표 뒤의 <code>str</code>는 문자열 반환을 예상한다는 표시입니다. 함수의 <code>__annotations__</code>에는 이 정보가 저장됩니다. 표시는 호출 시점의 값을 자동 검사하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 타입힌트 정보와 실제 함수 반환값을 함께 확인합니다.
+def label_price(price: int) -&gt; str:
+    return f&quot;{price:,}원&quot;
+
+print(label_price.__annotations__)
+print(label_price(12000))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;price&#x27;: &lt;class &#x27;int&#x27;&gt;, &#x27;return&#x27;: &lt;class &#x27;str&#x27;&gt;}
+12,000원
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 비교</h3>
+<p>같은 함수에서 가격 값만 바꾸면 반환 문자열이 어떻게 달라지는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 함수에 전달하는 가격만 바꾸어 표시 결과를 비교합니다.
+print(&quot;12,000 입력:&quot;, label_price(12000))
+print(&quot;25,000 입력:&quot;, label_price(25000))
+assert label_price(25000) == &quot;25,000원&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">12,000 입력: 12,000원
+25,000 입력: 25,000원
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — <code>pricing.py</code>의 입력은 두 숫자이고 반환은 정수 11000입니다. <code>run_price.py</code>의 <code>print()</code>가 반환값을 출력합니다. <code>label_price()</code>는 정수 하나를 받아 문자열을 반환하므로 타입힌트 정보와 실제 반환값을 나누어 읽어야 합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before의 <code>double_total()</code>은 정수를 받아 정수를 반환한다고 표시합니다. 하지만 호출할 때 문자열 <code>"1200"</code>을 전달해도 Python은 타입힌트를 근거로 예외를 발생시키지 않습니다. 문자열에 2를 곱하는 연산이 적용되어 <code>"12001200"</code>이 반환됩니다. 오류 메시지가 없다는 사실이 올바른 계산을 뜻하지는 않습니다.</p><p>After는 같은 입력 문자열 <code>"1200"</code>을 <code>int()</code>로 변환한 뒤 같은 함수에 전달합니다. 출력은 숫자 2400입니다. 바꾼 조건은 함수 호출 전에 외부 입력을 정수로 바꾼 한 단계입니다. 실제 서비스에서는 변환할 수 없는 문자열도 들어올 수 있으므로 예외 처리나 검증 규칙을 추가해야 합니다. 10절에서는 Pydantic으로 여러 입력 필드의 런타임 검증을 구조화하는 방법을 학습합니다.</p><section class="notebook" data-notebook="07-모듈과-타입힌트" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>타입힌트를 적어도 Python은 호출 시 값을 자동 검사하지 않습니다. 입력은 문자열 <code>&quot;1200&quot;</code>, 처리는 함수 본문의 <code>total * 2</code>, 반환은 문자열 <code>&quot;12001200&quot;</code>입니다. 실행 오류가 없더라도 금액 계산으로는 잘못된 결과입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 타입힌트가 문자열 입력을 자동으로 거부하지 않는지 확인합니다.
+def double_total(total: int) -&gt; int:
+    return total * 2
+
+wrong = double_total(&quot;1200&quot;)  # 타입힌트와 다른 입력
+print(&quot;잘못된 결과:&quot;, wrong)
+assert wrong == &quot;12001200&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">잘못된 결과: 12001200
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>외부에서 받은 문자열을 <code>int()</code>에 먼저 전달해 정수 1200을 반환받고, 그 값을 <code>double_total()</code>에 입력합니다. 같은 함수 본문이 숫자 곱셈을 실행하여 정수 2400을 반환합니다. 타입힌트와 실제 변환 코드의 역할을 구분해 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 입력 문자열을 정수로 바꾸어 숫자 곱셈 결과를 얻습니다.
+raw_total = &quot;1200&quot;
+validated_total = int(raw_total)
+correct = double_total(validated_total)
+print(&quot;수정된 결과:&quot;, correct)
+assert correct == 2400</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">수정된 결과: 2400
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li><code>from module import *</code>는 어느 이름이 들어왔는지 파악하기 어렵고 이름 충돌을 만들 수 있습니다. 사용할 이름을 명시합니다.</li><li>모듈을 가져올 때 모듈 최상위 문장이 실행됩니다. 재사용 모듈에는 함수와 클래스 정의를 중심으로 두고, 실행 전용 코드는 역할을 분리합니다.</li><li>타입힌트는 값 변환이나 유효성 검사를 자동 수행하지 않습니다. 파일, 사용자 입력, 네트워크 응답처럼 외부에서 받은 값은 프로그램 경계에서 별도로 확인합니다.</li><li><code>int("1200")</code>은 성공하지만 <code>int("천이백")</code>은 실패합니다. 변환 가능한 형식과 실패 시 행동을 요구사항으로 정해야 합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>모듈은 관련 Python 정의를 담은 <code>.py</code> 파일이며 import로 재사용합니다.</li><li>타입힌트는 코드의 예상 입력과 반환값을 설명하고 검사 도구에 정보를 제공합니다.</li><li>타입힌트는 실행 중 값을 자동 검증하지 않으므로 외부 입력을 별도로 확인해야 합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 모듈의 함수가 기대한 결과를 반환하는지 pytest로 반복 확인합니다. 10절에서는 타입힌트로 적은 필드 정보를 실제 입력 검증에 사용하는 방법을 이어서 학습합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. <code>pricing.py</code>에서 <code>add_tax</code>만 가져오는 문장을 작성해 보세요.</p><p class="quiz-a"><strong>정답</strong> <code>from pricing import add_tax</code>입니다. 파일명의 <code>.py</code>는 import 문에 적지 않습니다.</p><p class="quiz-q">2. <code>label_price.__annotations__</code> 출력은 무엇을 보여 주나요?</p><p class="quiz-a"><strong>정답</strong> 함수에 저장된 매개변수와 반환값의 타입힌트 정보를 보여 줍니다. 호출 시 실제 값이 검증되었다는 증거는 아닙니다.</p><p class="quiz-q">3. <code>double_total("1200")</code>이 예외 없이 잘못된 문자열을 반환한 이유는 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> Python 실행기가 타입힌트를 강제하지 않고, 문자열에 정수 2를 곱하는 연산은 문자열 반복으로 정의되어 있기 때문입니다.</p><p class="quiz-q">4. 타입힌트와 런타임 검증의 역할을 한 문장씩 구분해 보세요.</p><p class="quiz-a"><strong>정답</strong> 타입힌트는 예상 타입을 설명하고 정적 분석 도구에 제공합니다. 런타임 검증은 실행 중 들어온 실제 값이 조건에 맞는지 확인합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.python.org/3.12/tutorial/modules.html">Python 3.12 자습서 · 모듈</a> · 2026-09-09 확인 · Python 3.12.14 문서</li><li><a href="https://docs.python.org/3.12/library/typing.html">Python 3.12 표준 라이브러리 · typing</a> · 2026-09-09 확인 · Python 3.12.14 문서</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="06-클래스.html">← 클래스</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="08-pytest.html">pytest →</a></span></div></div></body></html>

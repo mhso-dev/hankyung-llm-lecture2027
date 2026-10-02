@@ -1,0 +1,23 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  files["상태 칸 files<br>자료 파일 셋"]:::measure
+  subgraph unread[읽지 않은 파일]
+    direction TB
+    u1["무인 반납함 안내"]:::measure
+    u2["새 책 소식"]:::measure
+    u1 ~~~ u2
+  end
+  subgraph read[이번 실행에서 읽은 파일]
+    direction TB
+    r1["휴관 안내"]:::measure
+  end
+  fn["check_citations<br>표시마다 파일 위치 in files"]:::flow
+  sees["판정이 보는 것<br>표시한 파일이 상태 칸에 있는가"]
+  skip["판정이 보지 않는 것<br>글 내용과 읽지 않은 자료"]
+  files --> read
+  files --> unread
+  read ~~~ fn
+  files -.-> fn
+  fn --> sees
+  fn --> skip

@@ -1,0 +1,484 @@
+{
+  "chapter": "ch15-evaluation-advanced",
+  "label": "before",
+  "totals": {
+    "G1": 29,
+    "G2": 24,
+    "G3": 1,
+    "G4": 0,
+    "G5": 47,
+    "G6": 111,
+    "G7": 24
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-실패-로그와-평가-대상",
+      "code_cells": 4,
+      "sentences": 76,
+      "counts": {
+        "G1": 5,
+        "G2": 3,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 21,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:list_comprehension",
+          "cell5:generator_expression",
+          "cell5:generator_expression",
+          "cell7:list_comprehension",
+          "cell9:generator_expression"
+        ],
+        "G2": [
+          "cell5:one_letter_name:x",
+          "cell5:one_letter_name:p",
+          "cell7:one_letter_name:r"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 절에서는 검색 결과의 순위가 낮아진 실제 사례를 먼저 찾고, 그 질문에 관련 문서 본문을 전달해 실제 답변을 생성한 뒤에만 생성 평가 대상으로 등록합니다",
+          "long:검색 실패는 정답 문서가 검색 후보나 평가할 상위 k개 순위에 들어오지 않은 상태이고, 생성 실패는 근거가 전달되었는데도 답이 틀리거나 근거 밖 내용을 추가한 상태입니다",
+          "long:실패 로그에서 정답 문서가 낮은 순위였던 질문을 찾고, 그 질문에 실제 생성한 답을 연결해야 검색 실패와 생성 실패를 나눠 볼 수 있습니다",
+          "long:준비 스크립트는 두 질문과 Q002에 대해 `gpt-5.4-mini`로 실제 답변을 생성했고, 응답 모델·프롬프트 버전·평가 모델 원문을 `evaluation-cases.json`에 저장했습니다",
+          "long:선택 설정의 시험 결과에서 Q006과 Q090은 Recall@5가 1이지만 정답 문서가 2위여서 nDCG@5가 각각 0.6309였습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 세 생성 응답에 네 평가자를 적용하고 어떤 평가자에 정답 답변이 필요한지 구분합니다",
+          "long:**호출 표기와 실행 시점.** 평가 사례는 입력 질문, 시스템 출력, 기대 근거 또는 기대 답, 실행 설정을 한 행에 묶습니다",
+          "long:실패 로그에서 정답 문서가 낮은 순위였던 질문을 찾고, 그 질문에 실제 생성한 답을 연결해야 검색 실패와 생성 실패를 나눠 볼 수 있습니다",
+          "long:**다른 상황에 적용.** 고객지원 봇에서는 ‘환불 규정을 못 찾음’과 ‘규정은 찾았지만 답에 잘못 옮김’을 별도 사례로 저장할 수 있습니다",
+          "english_start:Ch12는 36개의 TF-IDF와 MMR 검색 설정을 비교했습니다",
+          "english_start:Ch11의 `evaluation-queries.jsonl`은 질문과 정답",
+          "english_start:Ch12의 `advanced-continuity-experiment-lo",
+          "english_start:Q006과 Q090은 정답 문서가 2위에 있어 nDCG가 0.6309로 ",
+          "english_start:Q006과 Q090에서 정답 문서의 낮은 순위를 실제 검색 문제로 분류했",
+          "english_start:Q006의 nDCG@5가 낮고 Recall@5가 1이면 무엇을 알 수 있",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-4대-RAG-평가자",
+      "code_cells": 4,
+      "sentences": 77,
+      "counts": {
+        "G1": 3,
+        "G2": 2,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 22,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell7:generator_expression",
+          "cell7:generator_expression",
+          "cell7:generator_expression"
+        ],
+        "G2": [
+          "cell7:one_letter_name:p",
+          "cell7:one_letter_name:x"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:정답 일치도(Correctness)·답변 관련성(Relevance)·근거 충실도(Groundedness)·검색 관련성(Retrieval relevance)의 비교 대상을 설명할 수 있습니다",
+          "long:답이 정답과 맞는지, 사용자의 질문에 직접 답하는지, 검색 문서가 답을 뒷받침하는지, 검색 문서 자체가 질문과 관련 있는지를 각각 확인해야 원인을 찾을 수 있습니다",
+          "long:정답과 같은지, 질문을 직접 다루는지, 문서가 주장을 뒷받침하는지, 가져온 문서가 질문에 필요한지를 각각 비추면 어두운 지점이 달라집니다",
+          "long:코드 평가자는 출처 표기·JSON 형식처럼 명확한 조건에 적합하고, 평가 모델(LLM judge)은 의미가 같은 표현이나 응답의 일부 주장만 문서로 확인되는 경우를 판정할 때 사용합니다",
+          "long:Correctness는 생성 답과 기준 답을, Relevance는 답과 질문을, Groundedness는 답과 검색 문서를, Retrieval relevance는 검색 문서와 질문을 비교합니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 같은 응답도 평가 모델 프롬프트와 후보 순서에 따라 판정이 달라질 수 있는지 확인합니다",
+          "long:**호출 표기와 실행 시점.** Correctness는 생성 답과 기준 답을, Relevance는 답과 질문을, Groundedness는 답과 검색 문서를, Retrieval relevance는 검색 문서와 질문을 비교합니다",
+          "long:**다른 상황에 적용.** 정답은 맞지만 불필요한 내용이 긴 답은 Correctness는 높고 Relevance는 낮을 수 있습니다",
+          "english_start:Ch11의 `gold_doc_ids`는 검색 정답 문서 ID입니다",
+          "english_start:Correctness는 생성 답과 기준 답을, Relevance는 답과 ",
+          "english_start:Correctness의 reference answer와 검색용 gold ",
+          "english_start:Groundedness는 무엇과 무엇을 비교하나요",
+          "english_start:gold_doc_ids를 정답 답변으로 쓸 수 없는 이유는 무엇인가요",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`json.loads(text)`는 JSON 문자열을 파이썬 딕셔너리나 ",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`re.findall(pattern, text)`는 패턴과 일치한 항목 ",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "dense_paragraph:정답 일치도(Correctness)는 응답과 정답 답변을 비교하므로 정답 답변이 필요합니다. 답변 관련성(R",
+          "dense_paragraph:**이 셀의 코드 읽기.** `words(text: str)`는 함수를 정의하는 표기입니다. 이 셀에서는 함"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-judge-프롬프트와-편향",
+      "code_cells": 4,
+      "sentences": 73,
+      "counts": {
+        "G1": 2,
+        "G2": 2,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 10,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell9:generator_expression",
+          "cell9:generator_expression"
+        ],
+        "G2": [
+          "cell9:one_letter_name:p",
+          "cell9:one_letter_name:x"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:평가 모델(LLM judge) 사양에는 모델 이름, 제공자(provider), 온도, 프롬프트 전문 또는 해시, 프롬프트 버전, 출력 스키마, 평가 데이터 지문을 포함합니다",
+          "long:확인할 점 — 후보 순서를 바꿨을 때 승자 ID가 short에서 long으로 바뀌는지와 고정한 평가 모델·프롬프트 버전을 확인합니다",
+          "long:첫 후보 ID만 반환하는 잘못된 평가자는 short→long 순서에서 short를, long→short 순서에서 long을 골랐습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 작성자가 제공한 교육용 라벨과 평가 모델 결과의 일치율을 계산하고 인간 평가와 구분합니다",
+          "long:**다른 상황에 적용.** 두 요약문을 비교할 때 A/B 순서를 바꿔 두 번 평가하고 선택이 뒤집히면 사람 검토 대상으로 보낼 수 있습니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-제시-라벨과-일치율",
+      "code_cells": 4,
+      "sentences": 66,
+      "counts": {
+        "G1": 6,
+        "G2": 8,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 7,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell7:generator_expression",
+          "cell7:generator_expression",
+          "cell7:generator_expression",
+          "cell7:generator_expression",
+          "cell7:generator_expression",
+          "cell9:conditional_expression"
+        ],
+        "G2": [
+          "cell7:one_letter_name:g",
+          "cell7:one_letter_name:j",
+          "cell7:one_letter_name:g",
+          "cell7:one_letter_name:j",
+          "cell7:one_letter_name:g",
+          "cell7:one_letter_name:j",
+          "cell7:one_letter_name:g",
+          "cell7:one_letter_name:j"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:LangSmith Annotation Queue는 이 과정을 지원하지만 이 실습에는 클라우드 키가 없어 로컬 JSON으로만 구조를 확인합니다",
+          "long:승인·보류·거절 세 등급을 평가할 때 전체 일치율이 같아도 거절을 승인으로 바꾼 오류와 승인을 보류로 바꾼 오류의 위험은 다릅니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 품질 점수와 함께 원인을 찾을 수 있도록 로컬 실행 추적에 단계별 시간과 사용량을 남깁니다",
+          "long:**다른 상황에 적용.** 승인·보류·거절 세 등급을 평가할 때 전체 일치율이 같아도 거절을 승인으로 바꾼 오류와 승인을 보류로 바꾼 오류의 위험은 다릅니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-로컬-트레이싱과-지연",
+      "code_cells": 4,
+      "sentences": 74,
+      "counts": {
+        "G1": 1,
+        "G2": 1,
+        "G3": 0,
+        "G4": 0,
+        "G5": 5,
+        "G6": 10,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell7:generator_expression"
+        ],
+        "G2": [
+          "cell7:one_letter_name:x"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:LangSmith 클라우드 키가 없으므로 기본 실습은 표준 JSON 로컬 실행 추적이며, 클라우드 업로드는 선택 확장으로만 안내합니다",
+          "long:각 span에 시작·종료 시각, 입력·출력 요약, 토큰 사용량을 남기면 전체 지연에서 어느 단계가 차지한 시간을 계산할 수 있습니다",
+          "long:검색은 40ms인데 생성이 2초인 요청과 검색이 1.5초인데 생성이 600ms인 요청은 총시간이 비슷해도 수정할 부분이 다릅니다",
+          "long:각 span에 시작·종료 시각, 입력·출력 요약, 토큰 사용량을 남기면 전체 지연에서 어느 단계가 차지한 시간을 계산할 수 있습니다",
+          "long:**다른 상황에 적용.** 검색은 40ms인데 생성이 2초인 요청과 검색이 1.5초인데 생성이 600ms인 요청은 총시간이 비슷해도 수정할 부분이 다릅니다",
+          "long:**이 셀의 코드 읽기.** 이 셀은 한 요청의 시작·종료 시각과 children에 담을 단계별 시각을 고정된 합성값으로 새로 만듭니다",
+          "english_start:trace는 한 요청의 전체 실행이고 span은 검색·프롬프트·생성처럼 ",
+          "english_start:TTFT는 스트리밍의 첫 토큰 이벤트가 있을 때만 계산합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "06-대화당-비용-백분위수",
+      "code_cells": 4,
+      "sentences": 76,
+      "counts": {
+        "G1": 1,
+        "G2": 3,
+        "G3": 1,
+        "G4": 0,
+        "G5": 6,
+        "G6": 16,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:list_comprehension"
+        ],
+        "G2": [
+          "cell5:over_15_lines",
+          "cell5:nested_call_2plus",
+          "cell7:one_letter_name:p"
+        ],
+        "G3": [
+          "cell5:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:한 번의 호출 비용은 낮아도 한 대화에서 재작성·검색 보조·답변 생성·평가 모델이 여러 번 실행되면 한 대화에 드는 총비용은 커집니다",
+          "long:p50은 정렬한 값의 가운데 수준, p95는 약 95%의 대화가 그 값 이하에 놓이는 경계, p99는 약 99%가 그 값 이하인 경계입니다",
+          "long:값을 오름차순으로 정렬한 뒤 p50은 중앙 수준, p95는 95%의 대화가 그 이하인 경계, p99는 극단부에 가까운 경계를 나타냅니다",
+          "long:값을 오름차순으로 정렬한 뒤 p50은 중앙 수준, p95는 95%의 대화가 그 이하인 경계, p99는 극단부에 가까운 경계를 나타냅니다",
+          "long:**다른 상황에 적용.** 대부분 한 번만 답하지만 일부 요청은 재작성과 재시도를 거치는 서비스에서는 상위 백분위수에서 긴 꼬리가 나타날 수 있습니다",
+          "english_start:p50은 정렬한 값의 가운데 수준, p95는 약 95%의 대화가 그 값 ",
+          "english_start:p99가 높다면 trace에서 호출 수, 입력 길이, 재시도 여부를 다시",
+          "english_start:p50과 p99의 비율이 10배를 넘어 일부 높은 비용이 평균에서 충분히",
+          "english_start:p99는 표본 수가 적을수록 불안정하므로 표본 수와 계산법을 함께 기록합",
+          "english_start:p99가 높다면 trace에서 호출 수, 입력 길이, 재시도 여부를 다시",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "english_start:`nearest_rank(values, percentile)`은 값을 정",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "07-회귀-스위트",
+      "code_cells": 4,
+      "sentences": 71,
+      "counts": {
+        "G1": 2,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 6,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:list_comprehension",
+          "cell7:generator_expression"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:사례별 점수, p95 전체 지연 1,500ms 이하, p99 비용 0.08달러 이하를 함께 검사한 After 기준은 같은 입력을 실패로 판정했습니다",
+          "long:다음 학습과 이어지는 지점 — 마지막 절에서는 같은 회귀 평가 요청을 Batch API용 JSONL로 만들고 제출 전 검증합니다",
+          "long:**다른 상황에 적용.** 프롬프트를 바꾼 뒤 전체 평균 점수는 올랐지만 개인정보 질문 한 건의 안전 조건이 실패할 수 있습니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "08-Batch-평가-입력",
+      "code_cells": 4,
+      "sentences": 78,
+      "counts": {
+        "G1": 9,
+        "G2": 5,
+        "G3": 0,
+        "G4": 0,
+        "G5": 6,
+        "G6": 19,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell5:generator_expression",
+          "cell5:generator_expression",
+          "cell7:list_comprehension",
+          "cell7:list_comprehension",
+          "cell7:generator_expression",
+          "cell7:generator_expression",
+          "cell7:generator_expression",
+          "cell9:list_comprehension",
+          "cell9:set_comprehension"
+        ],
+        "G2": [
+          "cell5:one_letter_name:p",
+          "cell5:one_letter_name:x",
+          "cell7:one_letter_name:x",
+          "cell7:one_letter_name:x",
+          "cell7:one_letter_name:x"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Batch 한 행은 요청 식별자(`custom_id`), HTTP 메서드(method), 엔드포인트(endpoint), 요청 본문(body)을 포함합니다",
+          "long:각 요청은 custom_id, HTTP method, url, body를 가지며 custom_id가 제출 결과를 원래 평가 사례와 다시 연결합니다",
+          "long:천 개의 답변을 평가할 때 사례 ID를 judge-Q002처럼 안정적으로 만들면 결과 도착 순서가 달라도 원본 질문과 결합할 수 있습니다",
+          "long:세 사례를 `/v1/responses`용 JSONL 3행으로 만들고 JSON 구문, 요청 식별자 유일성, POST 메서드, 엔드포인트, 요청 본문 필드를 모두 통과했습니다",
+          "long:다음 학습과 이어지는 지점 — Ch16에서는 이 회귀 결과와 실행 추적을 사용해 입력 검증, 비용 상한, 재시도와 감사 로그를 직접 구현합니다",
+          "long:각 요청은 custom_id, HTTP method, url, body를 가지며 custom_id가 제출 결과를 원래 평가 사례와 다시 연결합니다",
+          "long:**다른 상황에 적용.** 천 개의 답변을 평가할 때 사례 ID를 judge-Q002처럼 안정적으로 만들면 결과 도착 순서가 달라도 원본 질문과 결합할 수 있습니다",
+          "english_start:JSONL은 한 줄에 하나의 JSON 객체를 저장하는 형식입니다",
+          "english_start:JSONL은 한 줄에 독립된 JSON 객체 하나를 저장하는 형식입니다",
+          "english_start:Batch는 실시간 사용자 응답 경로에 사용하지 않고 오프라인 평가에 사",
+          "english_start:Batch를 실시간 응답에 쓰기 어려운 이유는 무엇인가요",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`write_text(text)`가 실행되는 줄에서 문자열이 실제 파일에",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`read_text()`는 파일 내용을 문자열로 반환합니다",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단",
+          "english_start:`print()`는 확인용 문자열을 화면에 표시할 뿐 함수의 반환값을 바",
+          "english_start:`assert`는 조건이 참이면 출력 없이 통과하고 거짓이면 실행을 중단"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

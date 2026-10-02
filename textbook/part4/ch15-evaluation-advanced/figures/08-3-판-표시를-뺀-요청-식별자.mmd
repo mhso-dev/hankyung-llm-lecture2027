@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph tagged["판 표시 old · new"]
+    direction TB
+    t1["make_batch_lines<br>old-Q002부터<br>new-Q090까지"]:::flow
+    t2["요청 식별자 여섯 개<br>겹친 요청 식별자 없음<br>네 칸 · POST · 주소 · 모델<br>어긋난 것 없음 · 파일에 씀"]:::measure
+    t1 --> t2
+  end
+  subgraph plain["값 바꿔 보기 · 두 판 모두 judge"]
+    direction TB
+    p1["make_batch_lines<br>judge-Q002부터<br>judge-Q090까지"]:::flow
+    p2["겹친 요청 식별자 세 개<br>judge-Q002 · judge-Q006<br>judge-Q090<br>파일에 쓰지 않음"]:::measure
+    p1 --> p2
+  end
+  same["두 칸에서 같음<br>판정 요청 글 여섯 개<br>본문 설정 세 칸"]
+  tagged ~~~ same
+  plain ~~~ same

@@ -1,0 +1,295 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미들웨어와 6개 훅 — Ch 22 · Middleware</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 6 · Agent 개발 · Ch 22 · Middleware</p>
+<h1>미들웨어와 6개 훅</h1><div class="meta"><span>강의 1h · 실습 2h</span><span>새 용어 6개</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h · 실습 2h | 코드 Jupyter Notebook | 새 용어 6개 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>여섯 훅을 에이전트 전체·모델·도구 범위로 구분할 수 있습니다.</li><li>노드형 훅과 감싸기형 훅의 반환 방식 차이를 설명할 수 있습니다.</li><li>실제 도구 호출 trace에서 각 훅의 실행 위치를 확인할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>Ch20에서는 모델 노드와 ToolNode를 직접 연결했고 Ch21에서는 create_agent가 같은 반복을 컴파일된 그래프로 만든다는 사실을 확인했습니다. 운영 요구가 추가될 때마다 모델 노드와 도구 함수 본문을 수정하면 핵심 업무 코드와 횡단 기능이 섞입니다. 미들웨어는 반복 구조의 정해진 지점에 검증, 기록, 재시도를 연결합니다. 이 절에서는 먼저 훅의 정확한 이름과 실행 범위를 확인합니다.</p><p><strong>이 절의 질문</strong> — 미들웨어의 여섯 훅은 에이전트 실행의 어느 지점에서 어떤 순서로 호출될까요?</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch16의 guardrails.py는 모델 호출 전후에 validate_query, mask_pii, CallBudget, retry_with_fallback을 직접 호출했습니다. Ch20에서는 도구 요청과 ToolMessage 사이를 ToolNode가 맡았습니다. 이번 절은 그 사이 지점을 create_agent의 middleware 인자로 노출합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>비유로 시작하기</h3><p>공항 보안 절차를 떠올려 봅니다. 탑승 수속 전체의 시작과 끝, 탑승구 진입 전후, 수하물 검사 전후는 서로 다른 검사 지점입니다. 미들웨어도 에이전트 전체에는 before_agent와 after_agent, 각 모델 호출에는 before_model·wrap_model_call·after_model, 각 도구 호출에는 wrap_tool_call을 제공합니다. 노드형 훅은 정해진 지점에서 한 번 실행되고 상태 갱신 딕셔너리를 반환할 수 있습니다. 감싸기형 훅은 handler를 호출하기 전후를 모두 제어하며 재시도하거나 요청을 바꾸거나 호출을 생략할 수도 있습니다.</p><h3>코드를 읽는 순서</h3><p>미들웨어는 <code>create_agent</code>가 만든 루프의 약속된 시점에 실행되는 로직입니다. 개발자가 훅 함수를 직접 호출하지 않아도 런타임이 <code>before_agent</code>, <code>before_model</code>, <code>after_model</code>, <code>after_agent</code>를 노드처럼 실행합니다. <code>wrap_model_call</code>과 <code>wrap_tool_call</code>은 대상 호출과 <code>handler</code>를 함께 받아 호출 전후를 감쌉니다. 랩 훅에서 <code>handler</code>를 호출하지 않으면 실제 모델 또는 도구도 실행되지 않으므로 단순한 전후 알림과 제어 로직을 구분해야 합니다.</p><p><code>SixHookTrace</code>는 상태를 바꾸지 않고 <code>TRACE</code>에 이름만 남기는 관찰용 클래스입니다. 첫 모델 응답이 도구 호출을 만들기 때문에 <code>before_model</code>과 모델 랩은 두 번 실행되고, 도구 랩은 한 번 실행됩니다. 반면 <code>before_agent</code>와 <code>after_agent</code>는 한 번의 <code>invoke</code> 경계에서 각각 한 번 나타납니다. 훅의 횟수는 등록 개수가 아니라 실제 루프 반복과 도구 선택에 따라 달라집니다.</p><h3>도식 읽기</h3><p>왼쪽의 파란 입력 상태에서 실행을 시작해 파란 before_agent를 한 번 통과합니다. 보라색 모델 호출 상자의 앞뒤에는 before_model·wrap_model_call·after_model이 놓입니다. 모델이 도구를 요청하면 초록색 lookup_hours 앞뒤를 wrap_tool_call이 감싸고 다시 모델 상자로 돌아갑니다. 마지막 파란 after_agent 뒤에서 실행이 끝납니다.</p><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 530" style="width:360px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="여섯 훅은 에이전트·모델·도구 범위에 놓입니다"><title>여섯 훅은 에이전트·모델·도구 범위에 놓입니다</title><defs><marker id="01-미들웨어와-6개-훅-흐름-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190,85 L190,116" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#01-미들웨어와-6개-훅-흐름-arrow)"/><path d="M190,185 L190,216" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#01-미들웨어와-6개-훅-흐름-arrow)"/><path d="M190,285 L190,316" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#01-미들웨어와-6개-훅-흐름-arrow)"/><path d="M190,385 L190,416" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#01-미들웨어와-6개-훅-흐름-arrow)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="59.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">입력 상태</text><rect x="30" y="120" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="159.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">before_agent</text><rect x="30" y="220" width="320" height="65" rx="10" fill="#E9E0F3" stroke="#334155" stroke-width="2"/><text x="190.0" y="259.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">모델 전·감싸기·후</text><rect x="30" y="320" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="359.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">wrap_tool_call</text><rect x="30" y="420" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="459.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">after_agent</text></svg></div>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>첫 셀은 LangChain·LangGraph 버전을 확인하고 실제 모델에 한 번 요청해 사용량을 출력합니다. 뒤의 훅 순서 실험은 응답을 정해 둔 모델로 도구 호출을 한 번 재현합니다. 이 분리는 훅의 호출 경계와 실제 모델 품질·지연을 구분하기 위한 것입니다.</p><section class="notebook" data-notebook="01-미들웨어와-6개-훅" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-14</span><button type="button" class="copy-all">전체 코드 복사</button><a download="01-미들웨어와-6개-훅.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDrr7jrk6Tsm6jslrTsmYAgNuqwnCDtm4VcbiIsCiAgICAiXG4iLAogICAgIuuvuOuTpOybqOyWtOydmCDsl6zshK8g7ZuF7J2AIOyXkOydtOyghO2KuCDsi6TtlonsnZgg7Ja064qQIOyngOygkOyXkOyEnCDslrTrlqQg7Iic7ISc66GcIO2YuOy2nOuQoOq5jOyalD9cbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6Ttlokg7ZmY6rK9IOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAi7Iuk7Iq1IO2MjOydvOydgCBgbGFicy9wYXJ0Ni9jaDIyLW1pZGRsZXdhcmUvbm90ZWJvb2tzLzAxLeuvuOuTpOybqOyWtOyZgC026rCcLe2bhS5pcHluYmDsnoXri4jri6QuIFB5dGhvbiAzLjEyIOyDiCDsu6TrhJDsl5DshJwg7JyE7JeQ7ISc67aA7YSwIOyLpO2Wie2VqeuLiOuLpC5cbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDtjKjtgqTsp4Ag67KE7KCEIO2ZleyduFxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xNFQwMzo1Njo0OS42Nzc5MjZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xNFQwMzo1Njo0OS42Nzc4NzVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xNFQwMzo1Njo1MC4xODg1NDJaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTE0VDAzOjU2OjUwLjE4ODE3OVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJOb3RlOiB5b3UgbWF5IG5lZWQgdG8gcmVzdGFydCB0aGUga2VybmVsIHRvIHVzZSB1cGRhdGVkIHBhY2thZ2VzLlxuIiwKICAgICAgImxhbmdjaGFpbiAxLjQuMFxuIiwKICAgICAgImxhbmdjaGFpbi1vcGVuYWkgMS42LjBcbiIsCiAgICAgICJsYW5nZ3JhcGggMS4yLjExXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7J20IOyFgOydgCDtjKjtgqTsp4Ag67KE7KCEIO2ZleyduCDsnpHsl4XsnYQg7IiY7ZaJ7ZWY6rOgIO2ZleyduO2VoCDqsJLsnYQg7Lac66Cl7ZWp64uI64ukLlxuIiwKICAgICIlcGlwIGluc3RhbGwgLXEgXCJsYW5nY2hhaW49PTEuNC4wXCIgXCJsYW5nY2hhaW4tb3BlbmFpPT0xLjYuMFwiIFwibGFuZ2dyYXBoPT0xLjIuMTFcIiBcInB5dGhvbi1kb3RlbnY9PTEuMi4zXCJcbiIsCiAgICAiZnJvbSBpbXBvcnRsaWIubWV0YWRhdGEgaW1wb3J0IHZlcnNpb25cbiIsCiAgICAicHJpbnQoXCJsYW5nY2hhaW5cIiwgdmVyc2lvbihcImxhbmdjaGFpblwiKSlcbiIsCiAgICAicHJpbnQoXCJsYW5nY2hhaW4tb3BlbmFpXCIsIHZlcnNpb24oXCJsYW5nY2hhaW4tb3BlbmFpXCIpKVxuIiwKICAgICJwcmludChcImxhbmdncmFwaFwiLCB2ZXJzaW9uKFwibGFuZ2dyYXBoXCIpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TsoJwgQVBJIOyXsOqysOqzvCDruYTsmqkg7ZmV7J24XG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTE0VDAzOjU2OjUwLjE4OTQ2MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTE0VDAzOjU2OjUwLjE4OTM5NloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTE0VDAzOjU2OjUyLjI4OTEyOFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTRUMDM6NTY6NTIuMjg4NTg2WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgImFuc3dlcjogTGFuZ0NoYWluIOyXkOydtOyghO2KuCDrr7jrk6Tsm6jslrTripQg7JeQ7J207KCE7Yq47J2YIOuPmeyekSDqs7zsoJXsl5DshJwg7JqU7LKtwrfsnZHri7XCt+uPhOq1rCDtmLjstpwg65Ox7J2EIOqwgOuhnOyxhOyWtCDqsoDspp0sIOuzgO2ZmCwg66Gc6rmFLCDsoJzslrTrpbwg7IiY7ZaJ7ZWY64qUIOykkeqwhCDsspjrpqwg6rOE7Li17J6F64uI64ukLlxuIiwKICAgICAgInVzYWdlOiB7J2lucHV0X3Rva2Vucyc6IDI1LCAnb3V0cHV0X3Rva2Vucyc6IDU3LCAndG90YWxfdG9rZW5zJzogODIsICdpbnB1dF90b2tlbl9kZXRhaWxzJzogeydhdWRpbyc6IDAsICdjYWNoZV9yZWFkJzogMH0sICdvdXRwdXRfdG9rZW5fZGV0YWlscyc6IHsnYXVkaW8nOiAwLCAncmVhc29uaW5nJzogMH19XG4iLAogICAgICAiZXN0aW1hdGVkX2Nvc3RfdXNkOiAwLjAwMDI3NVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOydtCDshYDsnYAg7Iuk7KCcIEFQSSDsl7DqsrDqs7wg67mE7JqpIO2ZleyduCDsnpHsl4XsnYQg7IiY7ZaJ7ZWY6rOgIO2ZleyduO2VoCDqsJLsnYQg7Lac66Cl7ZWp64uI64ukLlxuIiwKICAgICJpbXBvcnQgb3NcbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgImZyb20gZG90ZW52IGltcG9ydCBsb2FkX2RvdGVudlxuIiwKICAgICJmcm9tIGxhbmdjaGFpbi5jaGF0X21vZGVscyBpbXBvcnQgaW5pdF9jaGF0X21vZGVsXG4iLAogICAgImZvciBmb2xkZXIgaW4gW1BhdGguY3dkKCksICpQYXRoLmN3ZCgpLnBhcmVudHNdOlxuIiwKICAgICIgICAgaWYgKGZvbGRlciAvIFwiLmVudlwiKS5pc19maWxlKCk6IGxvYWRfZG90ZW52KGZvbGRlciAvIFwiLmVudlwiKTsgYnJlYWtcbiIsCiAgICAiYXNzZXJ0IG9zLmdldGVudihcIk9QRU5BSV9BUElfS0VZXCIpLCBcIk9QRU5BSV9BUElfS0VZ6rCAIO2VhOyalO2VqeuLiOuLpC5cIlxuIiwKICAgICJsaXZlID0gaW5pdF9jaGF0X21vZGVsKFwib3BlbmFpOmdwdC01LjQtbWluaVwiLCByZWFzb25pbmdfZWZmb3J0PVwibm9uZVwiKVxuIiwKICAgICJyZXBseSA9IGxpdmUuaW52b2tlKFwiTGFuZ0NoYWluIOyXkOydtOyghO2KuCDrr7jrk6Tsm6jslrTrpbwg7ZWc6rWt7Ja0IO2VnCDrrLjsnqXsnLzroZwg7KCV7J2Y7ZWY7IS47JqULlwiKVxuIiwKICAgICJ1c2FnZSA9IHJlcGx5LnVzYWdlX21ldGFkYXRhIG9yIHt9XG4iLAogICAgImNvc3QgPSB1c2FnZS5nZXQoXCJpbnB1dF90b2tlbnNcIiwwKS8xXzAwMF8wMDAqMC43NSArIHVzYWdlLmdldChcIm91dHB1dF90b2tlbnNcIiwwKS8xXzAwMF8wMDAqNC41MFxuIiwKICAgICJwcmludChcImFuc3dlcjpcIiwgcmVwbHkudGV4dClcbiIsCiAgICAicHJpbnQoXCJ1c2FnZTpcIiwgdXNhZ2UpXG4iLAogICAgInByaW50KFwiZXN0aW1hdGVkX2Nvc3RfdXNkOlwiLCByb3VuZChjb3N0LDYpKVxuIiwKICAgICJhc3NlcnQgY29zdCA8IDEuMCIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDtm4Ug7ZmV7J247JqpIOqysOygleyggSDrqqjrjbgg7KSA67mEXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTE0VDAzOjU2OjUyLjI5MDMyNFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTE0VDAzOjU2OjUyLjI5MDIzOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTE0VDAzOjU2OjUyLjQyMDY5MFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTRUMDM6NTY6NTIuNDIwMzM3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOydtCDshYDsnYAg7ZuFIO2ZleyduOyaqSDqsrDsoJXsoIEg66qo6424IOykgOu5hCDsnpHsl4XsnYQg7IiY7ZaJ7ZWY6rOgIO2ZleyduO2VoCDqsJLsnYQg7Lac66Cl7ZWp64uI64ukLlxuIiwKICAgICIjIOygle2VtCDrkZQg7J2R64u17Jy866GcIOuvuOuTpOybqOyWtCDsi6Ttlokg7Iic7ISc66W8IOyerO2YhO2VqeuLiOuLpC5cbiIsCiAgICAiZnJvbSB0eXBpbmcgaW1wb3J0IEFueVxuIiwKICAgICJmcm9tIGxhbmdjaGFpbi5hZ2VudHMgaW1wb3J0IGNyZWF0ZV9hZ2VudFxuIiwKICAgICJmcm9tIGxhbmdjaGFpbi5hZ2VudHMubWlkZGxld2FyZSBpbXBvcnQgQWdlbnRNaWRkbGV3YXJlXG4iLAogICAgImZyb20gbGFuZ2NoYWluLnRvb2xzIGltcG9ydCB0b29sXG4iLAogICAgImZyb20gbGFuZ2NoYWluX2NvcmUubGFuZ3VhZ2VfbW9kZWxzLmNoYXRfbW9kZWxzIGltcG9ydCBCYXNlQ2hhdE1vZGVsXG4iLAogICAgImZyb20gbGFuZ2NoYWluX2NvcmUubWVzc2FnZXMgaW1wb3J0IEFJTWVzc2FnZVxuIiwKICAgICJmcm9tIGxhbmdjaGFpbl9jb3JlLm91dHB1dHMgaW1wb3J0IENoYXRHZW5lcmF0aW9uLCBDaGF0UmVzdWx0XG4iLAogICAgImNsYXNzIFNjcmlwdGVkTW9kZWwoQmFzZUNoYXRNb2RlbCk6XG4iLAogICAgIiAgICByZXBsaWVzOiBsaXN0W0FJTWVzc2FnZV1cbiIsCiAgICAiICAgIGluZGV4OiBpbnQgPSAwXG4iLAogICAgIiAgICBAcHJvcGVydHlcbiIsCiAgICAiICAgIGRlZiBfbGxtX3R5cGUoc2VsZikgLT4gc3RyOiByZXR1cm4gXCJzY3JpcHRlZC1tb2RlbFwiXG4iLAogICAgIiAgICBkZWYgX2dlbmVyYXRlKHNlbGYsIG1lc3NhZ2VzOiBBbnksIHN0b3A6IEFueSA9IE5vbmUsIHJ1bl9tYW5hZ2VyOiBBbnkgPSBOb25lLCAqKmt3YXJnczogQW55KSAtPiBDaGF0UmVzdWx0OlxuIiwKICAgICIgICAgICAgIHJlcGx5ID0gc2VsZi5yZXBsaWVzW21pbihzZWxmLmluZGV4LCBsZW4oc2VsZi5yZXBsaWVzKSAtIDEpXVxuIiwKICAgICIgICAgICAgIHNlbGYuaW5kZXggKz0gMVxuIiwKICAgICIgICAgICAgIHJldHVybiBDaGF0UmVzdWx0KGdlbmVyYXRpb25zPVtDaGF0R2VuZXJhdGlvbihtZXNzYWdlPXJlcGx5KV0pXG4iLAogICAgIiAgICBkZWYgYmluZF90b29scyhzZWxmLCB0b29sczogQW55LCAqLCB0b29sX2Nob2ljZTogQW55ID0gTm9uZSwgKiprd2FyZ3M6IEFueSkgLT4gXCJTY3JpcHRlZE1vZGVsXCI6XG4iLAogICAgIiAgICAgICAgcmV0dXJuIHNlbGZcbiIsCiAgICAiQHRvb2xcbiIsCiAgICAiZGVmIGxvb2t1cF9ob3VycyhkYXk6IHN0cikgLT4gc3RyOlxuIiwKICAgICIgICAgXCJcIlwi7J6Q66OM7IukIOyatOyYgSDsi5zqsITsnYQg7JqU7J2866GcIOyhsO2ajO2VqeuLiOuLpC5cIlwiXCJcbiIsCiAgICAiICAgIHJldHVybiBcIu2PieydvCAwOTowMH4yMDowMFwiIGlmIGRheSA9PSBcIu2PieydvFwiIGVsc2UgXCLthqDsmpTsnbwgMTA6MDB+MTc6MDBcIiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDkiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDrj4TqtazsmYAg7Jes7ISvIO2bhSB0cmFjZSDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIuuvuOuTpOybqOyWtOuKlCBgY3JlYXRlX2FnZW50YOqwgCDrp4zrk6Ag66Oo7ZSE7J2YIOyVveyGjeuQnCDsi5zsoJDsl5Ag7Iuk7ZaJ65CY64qUIOuhnOyngeyeheuLiOuLpC4g6rCc67Cc7J6Q6rCAIO2bhSDtlajsiJjrpbwg7KeB7KCRIO2YuOy2nO2VmOyngCDslYrslYTrj4Qg65+w7YOA7J6E7J20IGBiZWZvcmVfYWdlbnRgLCBgYmVmb3JlX21vZGVsYCwgYGFmdGVyX21vZGVsYCwgYGFmdGVyX2FnZW50YOulvCDrhbjrk5zsspjrn7wg7Iuk7ZaJ7ZWp64uI64ukLiBgd3JhcF9tb2RlbF9jYWxsYOqzvCBgd3JhcF90b29sX2NhbGxg7J2AIOuMgOyDgSDtmLjstpzqs7wgYGhhbmRsZXJg66W8IO2VqOq7mCDrsJvslYQg7Zi47LacIOyghO2bhOulvCDqsJDsjInri4jri6QuIOueqSDtm4Xsl5DshJwgYGhhbmRsZXJg66W8IO2YuOy2nO2VmOyngCDslYrsnLzrqbQg7Iuk7KCcIOuqqOuNuCDrmJDripQg64+E6rWs64+EIOyLpO2WieuQmOyngCDslYrsnLzrr4DroZwg64uo7Iic7ZWcIOyghO2bhCDslYzrprzqs7wg7KCc7Ja0IOuhnOyngeydhCDqtazrtoTtlbTslbwg7ZWp64uI64ukLlxuIiwKICAgICJcbiIsCiAgICAiYFNpeEhvb2tUcmFjZWDripQg7IOB7YOc66W8IOuwlOq+uOyngCDslYrqs6AgYFRSQUNFYOyXkCDsnbTrpoTrp4wg64Ko6riw64qUIOq0gOywsOyaqSDtgbTrnpjsiqTsnoXri4jri6QuIOyyqyDrqqjrjbgg7J2R64u17J20IOuPhOq1rCDtmLjstpzsnYQg66eM65Ok6riwIOuVjOusuOyXkCBgYmVmb3JlX21vZGVsYOqzvCDrqqjrjbgg656p7J2AIOuRkCDrsogg7Iuk7ZaJ65CY6rOgLCDrj4Tqtawg656p7J2AIO2VnCDrsogg7Iuk7ZaJ65Cp64uI64ukLiDrsJjrqbQgYGJlZm9yZV9hZ2VudGDsmYAgYGFmdGVyX2FnZW50YOuKlCDtlZwg67KI7J2YIGBpbnZva2VgIOqyveqzhOyXkOyEnCDqsIHqsIEg7ZWcIOuyiCDrgpjtg4Drgqnri4jri6QuIO2bheydmCDtmp/siJjripQg65Ox66GdIOqwnOyImOqwgCDslYTri4jrnbwg7Iuk7KCcIOujqO2UhCDrsJjrs7Xqs7wg64+E6rWsIOyEoO2DneyXkCDrlLDrnbwg64us65287KeR64uI64ukLlxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiY2VsbC0xMCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xNFQwMzo1Njo1Mi40MjE1NzNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xNFQwMzo1Njo1Mi40MjE1MjFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xNFQwMzo1Njo1Mi40MjQyMThaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTE0VDAzOjU2OjUyLjQyMzkyOFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogW10sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnbQg7IWA7J2AIOuPhOq1rOyZgCDsl6zshK8g7ZuFIHRyYWNlIOykgOu5hCDsnpHsl4XsnYQg7IiY7ZaJ7ZWY6rOgIO2ZleyduO2VoCDqsJLsnYQg7Lac66Cl7ZWp64uI64ukLlxuIiwKICAgICJmcm9tIGxhbmdjaGFpbi5hZ2VudHMgaW1wb3J0IGNyZWF0ZV9hZ2VudFxuIiwKICAgICJmcm9tIGxhbmdjaGFpbi5hZ2VudHMubWlkZGxld2FyZSBpbXBvcnQgQWdlbnRNaWRkbGV3YXJlXG4iLAogICAgImZyb20gbGFuZ2NoYWluLnRvb2xzIGltcG9ydCB0b29sXG4iLAogICAgIlxuIiwKICAgICJUUkFDRSA9IFtdXG4iLAogICAgIkB0b29sXG4iLAogICAgImRlZiBsb29rdXBfaG91cnMoZGF5OiBzdHIpIC0+IHN0cjpcbiIsCiAgICAiICAgIFwiXCJcIuyekOujjOyLpCDsmrTsmIEg7Iuc6rCE7J2EIOyalOydvOuhnCDsobDtmoztlanri4jri6QuXCJcIlwiXG4iLAogICAgIiAgICByZXR1cm4gXCLtj4nsnbwgMDk6MDB+MjA6MDBcIiBpZiBkYXkgPT0gXCLtj4nsnbxcIiBlbHNlIFwi7Yag7JqU7J28IDEwOjAwfjE3OjAwXCJcbiIsCiAgICAiXG4iLAogICAgImNsYXNzIFNpeEhvb2tUcmFjZShBZ2VudE1pZGRsZXdhcmUpOlxuIiwKICAgICIgICAgZGVmIGJlZm9yZV9hZ2VudChzZWxmLCBzdGF0ZTogQW55LCBydW50aW1lOiBBbnkpIC0+IE5vbmU6IFRSQUNFLmFwcGVuZChcImJlZm9yZV9hZ2VudFwiKVxuIiwKICAgICIgICAgZGVmIGJlZm9yZV9tb2RlbChzZWxmLCBzdGF0ZTogQW55LCBydW50aW1lOiBBbnkpIC0+IE5vbmU6IFRSQUNFLmFwcGVuZChcImJlZm9yZV9tb2RlbFwiKVxuIiwKICAgICIgICAgZGVmIHdyYXBfbW9kZWxfY2FsbChzZWxmLCByZXF1ZXN0OiBBbnksIGhhbmRsZXI6IEFueSkgLT4gQW55OlxuIiwKICAgICIgICAgICAgIFRSQUNFLmFwcGVuZChcIndyYXBfbW9kZWw6YmVmb3JlXCIpOyByZXN1bHQgPSBoYW5kbGVyKHJlcXVlc3QpOyBUUkFDRS5hcHBlbmQoXCJ3cmFwX21vZGVsOmFmdGVyXCIpOyByZXR1cm4gcmVzdWx0XG4iLAogICAgIiAgICBkZWYgd3JhcF90b29sX2NhbGwoc2VsZiwgcmVxdWVzdDogQW55LCBoYW5kbGVyOiBBbnkpIC0+IEFueTpcbiIsCiAgICAiICAgICAgICBUUkFDRS5hcHBlbmQoXCJ3cmFwX3Rvb2w6YmVmb3JlXCIpOyByZXN1bHQgPSBoYW5kbGVyKHJlcXVlc3QpOyBUUkFDRS5hcHBlbmQoXCJ3cmFwX3Rvb2w6YWZ0ZXJcIik7IHJldHVybiByZXN1bHRcbiIsCiAgICAiICAgIGRlZiBhZnRlcl9tb2RlbChzZWxmLCBzdGF0ZTogQW55LCBydW50aW1lOiBBbnkpIC0+IE5vbmU6IFRSQUNFLmFwcGVuZChcImFmdGVyX21vZGVsXCIpXG4iLAogICAgIiAgICBkZWYgYWZ0ZXJfYWdlbnQoc2VsZiwgc3RhdGU6IEFueSwgcnVudGltZTogQW55KSAtPiBOb25lOiBUUkFDRS5hcHBlbmQoXCJhZnRlcl9hZ2VudFwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDrj4TqtawgMe2ajOyduCDsl5DsnbTsoITtirgg7Iuk7ZaJXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjZWxsLTEyIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTE0VDAzOjU2OjUyLjQyNDg3NVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTE0VDAzOjU2OjUyLjQyNDgyOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTE0VDAzOjU2OjUyLjQzMjc4MVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTRUMDM6NTY6NTIuNDMyNDI5WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInRyYWNlOiBbJ2JlZm9yZV9hZ2VudCcsICdiZWZvcmVfbW9kZWwnLCAnd3JhcF9tb2RlbDpiZWZvcmUnLCAnd3JhcF9tb2RlbDphZnRlcicsICdhZnRlcl9tb2RlbCcsICd3cmFwX3Rvb2w6YmVmb3JlJywgJ3dyYXBfdG9vbDphZnRlcicsICdiZWZvcmVfbW9kZWwnLCAnd3JhcF9tb2RlbDpiZWZvcmUnLCAnd3JhcF9tb2RlbDphZnRlcicsICdhZnRlcl9tb2RlbCcsICdhZnRlcl9hZ2VudCddXG4iLAogICAgICAiYW5zd2VyOiDtj4nsnbwg7Jq07JiBIOyLnOqwhOydgCAwOTowMH4yMDowMOyeheuLiOuLpC5cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnbQg7IWA7J2AIOuPhOq1rCAx7ZqM7J24IOyXkOydtOyghO2KuCDsi6Ttlokg7J6R7JeF7J2EIOyImO2Wie2VmOqzoCDtmZXsnbjtlaAg6rCS7J2EIOy2nOugpe2VqeuLiOuLpC5cbiIsCiAgICAic2NyaXB0ZWQgPSBTY3JpcHRlZE1vZGVsKHJlcGxpZXM9W1xuIiwKICAgICIgICAgQUlNZXNzYWdlKGNvbnRlbnQ9XCJcIiwgdG9vbF9jYWxscz1be1wibmFtZVwiOlwibG9va3VwX2hvdXJzXCIsXCJhcmdzXCI6e1wiZGF5XCI6XCLtj4nsnbxcIn0sXCJpZFwiOlwiY2FsbF8xXCIsXCJ0eXBlXCI6XCJ0b29sX2NhbGxcIn1dKSxcbiIsCiAgICAiICAgIEFJTWVzc2FnZShjb250ZW50PVwi7Y+J7J28IOyatOyYgSDsi5zqsITsnYAgMDk6MDB+MjA6MDDsnoXri4jri6QuXCIpLFxuIiwKICAgICJdKVxuIiwKICAgICJhZ2VudCA9IGNyZWF0ZV9hZ2VudChzY3JpcHRlZCwgdG9vbHM9W2xvb2t1cF9ob3Vyc10sIG1pZGRsZXdhcmU9W1NpeEhvb2tUcmFjZSgpXSlcbiIsCiAgICAicmVzdWx0ID0gYWdlbnQuaW52b2tlKHtcIm1lc3NhZ2VzXCI6W3tcInJvbGVcIjpcInVzZXJcIixcImNvbnRlbnRcIjpcIu2PieydvCDsmrTsmIEg7Iuc6rCE7J2AP1wifV19KVxuIiwKICAgICJwcmludChcInRyYWNlOlwiLCBUUkFDRSlcbiIsCiAgICAicHJpbnQoXCJhbnN3ZXI6XCIsIHJlc3VsdFtcIm1lc3NhZ2VzXCJdWy0xXS50ZXh0KVxuIiwKICAgICJhc3NlcnQgVFJBQ0UuY291bnQoXCJiZWZvcmVfbW9kZWxcIikgPT0gMiBhbmQgVFJBQ0UuY291bnQoXCJ3cmFwX3Rvb2w6YmVmb3JlXCIpID09IDEiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEzIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7ZuFIO2YuOy2nCDtmp/siJgg7KeR6rOEXG4iLAogICAgIlxuIiwKICAgICLrqqjrjbgg7J6F66Cl7JeQIOyCrOyaqeyekCDrk7HquInsnYQg7LaU6rCA7ZWY64qUIOydvOydgCBgYmVmb3JlX21vZGVsYCwg7J287IucIOyYpOulmOulvCDsnqzsi5zrj4TtlZjripQg7J287J2AIGB3cmFwX21vZGVsX2NhbGxgLCDrj4Tqtawg7J247J6Q66W8IOqygOyCrO2VmOuKlCDsnbzsnYAgYHdyYXBfdG9vbF9jYWxsYOydtCDsnpDsl7DsiqTrn73sirXri4jri6QuIOqwmeydgCDqsoDsgqzrpbwg66qo65OgIOuFuOuTnOyXkCDrs7XsgqztlZjrqbQg67OA6rK9IOychOy5mOqwgCDripjslrTrgpjrr4DroZwg67CY67O165CY64qUIO2aoeuLqCDqtIDsi6zsgqzrpbwg66+465Ok7Juo7Ja066GcIOuqqOydjeuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgIuuqqOuToCDroZzsp4HsnYQg66+465Ok7Juo7Ja066GcIOyYruq4uCDtlYTsmpTripQg7JeG7Iq164uI64ukLiDso7zrrLgg6riI7JWhIOqzhOyCsOyymOufvCDsl4XrrLQg7J6Q7LK066W8IOuCmO2DgOuCtOuKlCDri6jqs4TripQg6re4656Y7ZSEIOuFuOuTnOuCmCDrj4Tqtazsl5Ag65GQ64qUIO2OuOydtCDtnZDrpoTsnYQg7J296riwIOyJveyKteuLiOuLpC4g7J20IOyLpOyKteydmCBUUkFDRSDsiJzshJzripQg7ZWcIOuyiOydmCDrj4Tqtawg7Zi47LacIOqyveuhnOyXkOyEnCDqtIDssLDtlZwg6rCS7J2066mwLCDrj4TqtazqsIAg7JeG6rGw64KYIOuzkeugrCDtmLjstpzsnbQg7J6I7Jy866m0IO2an+yImOyZgCDsiJzshJzqsIAg64us65287KeIIOyImCDsnojsirXri4jri6QuXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDYsCiAgICJpZCI6ICJjZWxsLTE0IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTE0VDAzOjU2OjUyLjQzMzUwMVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTE0VDAzOjU2OjUyLjQzMzQ1NloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTE0VDAzOjU2OjUyLjQzNDk1OVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTRUMDM6NTY6NTIuNDM0NzAwWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInsnYmVmb3JlX2FnZW50JzogMSwgJ2JlZm9yZV9tb2RlbCc6IDIsICd3cmFwX21vZGVsJzogNCwgJ2FmdGVyX21vZGVsJzogMiwgJ3dyYXBfdG9vbCc6IDIsICdhZnRlcl9hZ2VudCc6IDF9XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7J20IOyFgOydgCDtm4Ug7Zi47LacIO2an+yImCDsp5Hqs4Qg7J6R7JeF7J2EIOyImO2Wie2VmOqzoCDtmZXsnbjtlaAg6rCS7J2EIOy2nOugpe2VqeuLiOuLpC5cbiIsCiAgICAiZnJvbSBjb2xsZWN0aW9ucyBpbXBvcnQgQ291bnRlclxuIiwKICAgICJjb3VudHMgPSBDb3VudGVyKGl0ZW0uc3BsaXQoXCI6XCIpWzBdIGZvciBpdGVtIGluIFRSQUNFKVxuIiwKICAgICJwcmludChkaWN0KGNvdW50cykpXG4iLAogICAgImFzc2VydCBUUkFDRVswXSA9PSBcImJlZm9yZV9hZ2VudFwiIGFuZCBUUkFDRVstMV0gPT0gXCJhZnRlcl9hZ2VudFwiIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJleHBlcmltZW50IiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNiwKICAgImNvZGVfc2hhMjU2IjogIjUyMzI1MGRkMmNkMzQ1ZGJjNWZmMGZiZWIxOTNjNDMxZGFmMjNkMGVjMzM4MTg5MTQwNjMwOTg5M2UxMzhmYzIiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xNFQwMzo1Njo1Mi41NDk2NzUrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjI2NDk1MDc3MTc4MWVmNTI2Nzk0NzhmNTFhNTRmZGRlMGM1NzQ2NTJmMDM2N2RkN2E3N2FiN2Q0ZjJjOTYwZDciLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>미들웨어와 6개 훅</h2>
+<p>미들웨어의 여섯 훅은 에이전트 실행의 어느 지점에서 어떤 순서로 호출될까요?</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>실습 파일은 <code>labs/part6/ch22-middleware/notebooks/01-미들웨어와-6개-훅.ipynb</code>입니다. Python 3.12 새 커널에서 위에서부터 실행합니다.</p></div>
+<div class="nb-markdown"><h3>패키지 버전 확인</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 패키지 버전 확인 작업을 수행하고 확인할 값을 출력합니다.
+%pip install -q &quot;langchain==1.4.0&quot; &quot;langchain-openai==1.6.0&quot; &quot;langgraph==1.2.11&quot; &quot;python-dotenv==1.2.3&quot;
+from importlib.metadata import version
+print(&quot;langchain&quot;, version(&quot;langchain&quot;))
+print(&quot;langchain-openai&quot;, version(&quot;langchain-openai&quot;))
+print(&quot;langgraph&quot;, version(&quot;langgraph&quot;))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+langchain 1.4.0
+langchain-openai 1.6.0
+langgraph 1.2.11
+</pre></div>
+<div class="nb-markdown"><h3>실제 API 연결과 비용 확인</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 실제 API 연결과 비용 확인 작업을 수행하고 확인할 값을 출력합니다.
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
+for folder in [Path.cwd(), *Path.cwd().parents]:
+    if (folder / &quot;.env&quot;).is_file(): load_dotenv(folder / &quot;.env&quot;); break
+assert os.getenv(&quot;OPENAI_API_KEY&quot;), &quot;OPENAI_API_KEY가 필요합니다.&quot;
+live = init_chat_model(&quot;openai:gpt-5.4-mini&quot;, reasoning_effort=&quot;none&quot;)
+reply = live.invoke(&quot;LangChain 에이전트 미들웨어를 한국어 한 문장으로 정의하세요.&quot;)
+usage = reply.usage_metadata or {}
+cost = usage.get(&quot;input_tokens&quot;,0)/1_000_000*0.75 + usage.get(&quot;output_tokens&quot;,0)/1_000_000*4.50
+print(&quot;answer:&quot;, reply.text)
+print(&quot;usage:&quot;, usage)
+print(&quot;estimated_cost_usd:&quot;, round(cost,6))
+assert cost &lt; 1.0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">answer: LangChain 에이전트 미들웨어는 에이전트의 동작 과정에서 요청·응답·도구 호출 등을 가로채어 검증, 변환, 로깅, 제어를 수행하는 중간 처리 계층입니다.
+usage: {&#x27;input_tokens&#x27;: 25, &#x27;output_tokens&#x27;: 57, &#x27;total_tokens&#x27;: 82, &#x27;input_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;cache_read&#x27;: 0}, &#x27;output_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;reasoning&#x27;: 0}}
+estimated_cost_usd: 0.000275
+</pre></div>
+<div class="nb-markdown"><h3>훅 확인용 결정적 모델 준비</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 훅 확인용 결정적 모델 준비 작업을 수행하고 확인할 값을 출력합니다.
+# 정해 둔 응답으로 미들웨어 실행 순서를 재현합니다.
+from typing import Any
+from langchain.agents import create_agent
+from langchain.agents.middleware import AgentMiddleware
+from langchain.tools import tool
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import AIMessage
+from langchain_core.outputs import ChatGeneration, ChatResult
+class ScriptedModel(BaseChatModel):
+    replies: list[AIMessage]
+    index: int = 0
+    @property
+    def _llm_type(self) -&gt; str: return &quot;scripted-model&quot;
+    def _generate(self, messages: Any, stop: Any = None, run_manager: Any = None, **kwargs: Any) -&gt; ChatResult:
+        reply = self.replies[min(self.index, len(self.replies) - 1)]
+        self.index += 1
+        return ChatResult(generations=[ChatGeneration(message=reply)])
+    def bind_tools(self, tools: Any, *, tool_choice: Any = None, **kwargs: Any) -&gt; &quot;ScriptedModel&quot;:
+        return self
+@tool
+def lookup_hours(day: str) -&gt; str:
+    &quot;&quot;&quot;자료실 운영 시간을 요일로 조회합니다.&quot;&quot;&quot;
+    return &quot;평일 09:00~20:00&quot; if day == &quot;평일&quot; else &quot;토요일 10:00~17:00&quot;</code></pre></div></div>
+<div class="nb-markdown"><h3>도구와 여섯 훅 trace 준비</h3>
+<p>미들웨어는 <code>create_agent</code>가 만든 루프의 약속된 시점에 실행되는 로직입니다. 개발자가 훅 함수를 직접 호출하지 않아도 런타임이 <code>before_agent</code>, <code>before_model</code>, <code>after_model</code>, <code>after_agent</code>를 노드처럼 실행합니다. <code>wrap_model_call</code>과 <code>wrap_tool_call</code>은 대상 호출과 <code>handler</code>를 함께 받아 호출 전후를 감쌉니다. 랩 훅에서 <code>handler</code>를 호출하지 않으면 실제 모델 또는 도구도 실행되지 않으므로 단순한 전후 알림과 제어 로직을 구분해야 합니다.</p>
+<p><code>SixHookTrace</code>는 상태를 바꾸지 않고 <code>TRACE</code>에 이름만 남기는 관찰용 클래스입니다. 첫 모델 응답이 도구 호출을 만들기 때문에 <code>before_model</code>과 모델 랩은 두 번 실행되고, 도구 랩은 한 번 실행됩니다. 반면 <code>before_agent</code>와 <code>after_agent</code>는 한 번의 <code>invoke</code> 경계에서 각각 한 번 나타납니다. 훅의 횟수는 등록 개수가 아니라 실제 루프 반복과 도구 선택에 따라 달라집니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 도구와 여섯 훅 trace 준비 작업을 수행하고 확인할 값을 출력합니다.
+from langchain.agents import create_agent
+from langchain.agents.middleware import AgentMiddleware
+from langchain.tools import tool
+
+TRACE = []
+@tool
+def lookup_hours(day: str) -&gt; str:
+    &quot;&quot;&quot;자료실 운영 시간을 요일로 조회합니다.&quot;&quot;&quot;
+    return &quot;평일 09:00~20:00&quot; if day == &quot;평일&quot; else &quot;토요일 10:00~17:00&quot;
+
+class SixHookTrace(AgentMiddleware):
+    def before_agent(self, state: Any, runtime: Any) -&gt; None: TRACE.append(&quot;before_agent&quot;)
+    def before_model(self, state: Any, runtime: Any) -&gt; None: TRACE.append(&quot;before_model&quot;)
+    def wrap_model_call(self, request: Any, handler: Any) -&gt; Any:
+        TRACE.append(&quot;wrap_model:before&quot;); result = handler(request); TRACE.append(&quot;wrap_model:after&quot;); return result
+    def wrap_tool_call(self, request: Any, handler: Any) -&gt; Any:
+        TRACE.append(&quot;wrap_tool:before&quot;); result = handler(request); TRACE.append(&quot;wrap_tool:after&quot;); return result
+    def after_model(self, state: Any, runtime: Any) -&gt; None: TRACE.append(&quot;after_model&quot;)
+    def after_agent(self, state: Any, runtime: Any) -&gt; None: TRACE.append(&quot;after_agent&quot;)</code></pre></div></div>
+<div class="nb-markdown"><h3>도구 1회인 에이전트 실행</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 도구 1회인 에이전트 실행 작업을 수행하고 확인할 값을 출력합니다.
+scripted = ScriptedModel(replies=[
+    AIMessage(content=&quot;&quot;, tool_calls=[{&quot;name&quot;:&quot;lookup_hours&quot;,&quot;args&quot;:{&quot;day&quot;:&quot;평일&quot;},&quot;id&quot;:&quot;call_1&quot;,&quot;type&quot;:&quot;tool_call&quot;}]),
+    AIMessage(content=&quot;평일 운영 시간은 09:00~20:00입니다.&quot;),
+])
+agent = create_agent(scripted, tools=[lookup_hours], middleware=[SixHookTrace()])
+result = agent.invoke({&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;평일 운영 시간은?&quot;}]})
+print(&quot;trace:&quot;, TRACE)
+print(&quot;answer:&quot;, result[&quot;messages&quot;][-1].text)
+assert TRACE.count(&quot;before_model&quot;) == 2 and TRACE.count(&quot;wrap_tool:before&quot;) == 1</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">trace: [&#x27;before_agent&#x27;, &#x27;before_model&#x27;, &#x27;wrap_model:before&#x27;, &#x27;wrap_model:after&#x27;, &#x27;after_model&#x27;, &#x27;wrap_tool:before&#x27;, &#x27;wrap_tool:after&#x27;, &#x27;before_model&#x27;, &#x27;wrap_model:before&#x27;, &#x27;wrap_model:after&#x27;, &#x27;after_model&#x27;, &#x27;after_agent&#x27;]
+answer: 평일 운영 시간은 09:00~20:00입니다.
+</pre></div>
+<div class="nb-markdown"><h3>훅 호출 횟수 집계</h3>
+<p>모델 입력에 사용자 등급을 추가하는 일은 <code>before_model</code>, 일시 오류를 재시도하는 일은 <code>wrap_model_call</code>, 도구 인자를 검사하는 일은 <code>wrap_tool_call</code>이 자연스럽습니다. 같은 검사를 모든 노드에 복사하면 변경 위치가 늘어나므로 반복되는 횡단 관심사를 미들웨어로 모읍니다.</p>
+<p>모든 로직을 미들웨어로 옮길 필요는 없습니다. 주문 금액 계산처럼 업무 자체를 나타내는 단계는 그래프 노드나 도구에 두는 편이 흐름을 읽기 쉽습니다. 이 실습의 TRACE 순서는 한 번의 도구 호출 경로에서 관찰한 값이며, 도구가 없거나 병렬 호출이 있으면 횟수와 순서가 달라질 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 훅 호출 횟수 집계 작업을 수행하고 확인할 값을 출력합니다.
+from collections import Counter
+counts = Counter(item.split(&quot;:&quot;)[0] for item in TRACE)
+print(dict(counts))
+assert TRACE[0] == &quot;before_agent&quot; and TRACE[-1] == &quot;after_agent&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;before_agent&#x27;: 1, &#x27;before_model&#x27;: 2, &#x27;wrap_model&#x27;: 4, &#x27;after_model&#x27;: 2, &#x27;wrap_tool&#x27;: 2, &#x27;after_agent&#x27;: 1}
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — before_agent와 after_agent는 한 번씩, 모델 관련 훅은 두 번씩, wrap_tool_call은 한 번 기록됐는지 확인합니다.</p>
+<h3>다른 상황과 적용 경계</h3><p>모델 입력에 사용자 등급을 추가하는 일은 <code>before_model</code>, 일시 오류를 재시도하는 일은 <code>wrap_model_call</code>, 도구 인자를 검사하는 일은 <code>wrap_tool_call</code>이 자연스럽습니다. 같은 검사를 모든 노드에 복사하면 변경 위치가 늘어나므로 반복되는 횡단 관심사를 미들웨어로 모읍니다.</p><p>모든 로직을 미들웨어로 옮길 필요는 없습니다. 주문 금액 계산처럼 업무 자체를 나타내는 단계는 그래프 노드나 도구에 두는 편이 흐름을 읽기 쉽습니다. 이 실습의 TRACE 순서는 한 번의 도구 호출 경로에서 관찰한 값이며, 도구가 없거나 병렬 호출이 있으면 횟수와 순서가 달라질 수 있습니다.</p><h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>학습용 모델은 첫 응답에서 lookup_hours 도구를 한 번 요청하고 두 번째 응답에서 종료합니다. 출력 trace에는 before_agent가 한 번, 모델 관련 세 훅이 두 번, wrap_tool_call이 한 번, after_agent가 한 번 나타납니다. 여섯 훅이라는 말은 여섯 개의 독립 오류 이벤트를 뜻하지 않습니다. 오류는 wrap_model_call 또는 wrap_tool_call에서 예외로 관찰하고 종료는 after_agent에서 관찰합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>공식 LangChain 1.4.0의 여섯 훅은 before_agent, before_model, wrap_model_call, wrap_tool_call, after_model, after_agent입니다.</li><li>노드형 훅에서 상태를 바꾸려면 딕셔너리를 반환합니다. 감싸기형 훅은 handler의 반환값을 보존하거나 문서가 허용한 형식으로 바꿉니다.</li><li>첫 기능 셀에서 실제 OpenAI API 연결을 확인한 뒤, 훅의 정확한 순서는 정해 둔 응답을 쓰는 검사 모델로 재현합니다. 키 값은 출력하지 않습니다.</li></ul><p>실습의 결정적 모델은 미들웨어 실행 경계를 재현하기 위한 검사 도구입니다. 실제 모델 품질, 공급자 장애율, 운영 비용을 대신 측정하지 않습니다. 적용 전에는 사용 중인 모델과 계정의 실제 사용량을 다시 확인합니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>훅은 에이전트 전체·모델·도구의 실행 경계에 미들웨어 로직을 연결합니다.</li><li>도구를 한 번 쓴 실행에서 모델 훅은 두 번, 도구 훅은 한 번 실행되는 trace를 확인했습니다.</li><li>결정적 검사 모델은 훅 경계를 확인하며 실제 모델 품질을 측정하지 않습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 Ch16의 정규식 기반 mask_pii를 LangChain의 PIIMiddleware로 옮기고 입력과 출력 적용 범위를 비교합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 에이전트 실행당 한 번 호출되는 훅 두 개는 무엇인가요?</p><p class="quiz-a"><b>해설</b> — before_agent와 after_agent입니다.</p><p class="quiz-q">2. handler를 여러 번 호출해 재시도를 구현할 수 있는 모델 훅은 무엇인가요?</p><p class="quiz-a"><b>해설</b> — wrap_model_call입니다.</p><p class="quiz-q">3. 도구 오류를 관찰하기에 알맞은 훅은 무엇인가요?</p><p class="quiz-a"><b>해설</b> — wrap_tool_call에서 handler 호출 예외를 처리합니다.</p><p class="quiz-q">4. after_model은 왜 한 실행에서 여러 번 호출될 수 있나요?</p><p class="quiz-a"><b>해설</b> — 도구를 사용한 에이전트는 모델을 여러 차례 호출하기 때문입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.langchain.com/oss/python/langchain/middleware/custom">LangChain Custom middleware</a> · 확인 2026-09-14 · LangChain 1.4.0</li><li><a href="https://docs.langchain.com/oss/python/langchain/middleware/built-in">LangChain Prebuilt middleware</a> · 확인 2026-09-14 · LangChain 1.4.0</li><li><a href="https://reference.langchain.com/python/langchain/agents/middleware">LangChain middleware API reference</a> · 확인 2026-09-14 · LangChain 1.4.0</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span>&nbsp;</span><span><a href="index.html">챕터 목차</a></span><span><a href="02-PII-마스킹-이식.html">PII 마스킹 이식 →</a></span></div></div></body></html>

@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  same["두 실행 공통<br>문의 셋 · 정책 글 6000자<br>예약 금액 nano 0.000665<br>예약 금액 mini 0.00249<br>비용 상한 0.006"]
+  subgraph run1["실행 1 · 기준 길이 30"]
+    direction TB
+    a1["기준 길이 30"]:::tool
+    b1["모델 배정<br>nano · nano · mini<br>예약됨 셋 · 예약 합 0.00382"]:::measure
+    c1["받은 대화 셋 · 막힌 대화 없음<br>보낸 요청 세 번"]:::measure
+    a1 --> b1
+    b1 --> c1
+  end
+  subgraph run2["실행 2 · 값 하나만 바꿈"]
+    direction TB
+    a2["기준 길이 0"]:::flow
+    b2["모델 배정<br>mini · mini · mini<br>예약됨 둘 · 예약 합 0.00498"]:::measure
+    c2["대화 3 막힘 · 받은 대화 둘<br>보낸 요청 두 번"]:::measure
+    a2 --> b2
+    b2 --> c2
+  end
+  same --> run1
+  same --> run2

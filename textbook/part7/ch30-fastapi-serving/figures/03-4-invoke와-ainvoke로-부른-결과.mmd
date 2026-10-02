@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  inp["같은 입력<br>messages에 질문 하나"]:::tool
+  subgraph bf["Before · 동기 메서드"]
+    direction TB
+    b1["agent.invoke<br>agent.stream"]:::flow
+    b2["받은 오류 TypeError<br>동기로 부를 함수 없음<br>두 메서드의 오류 글 같음"]:::fail
+    b1 --> b2
+  end
+  subgraph af["After · 비동기 판과 await"]
+    direction TB
+    a1["await agent.ainvoke"]:::flow
+    a2["결과 칸 messages와 answer<br>HTTP 응답의 답과 같음 True"]:::measure
+    a1 --> a2
+  end
+  inp --> bf
+  inp --> af

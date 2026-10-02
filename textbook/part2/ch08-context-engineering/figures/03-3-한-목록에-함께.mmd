@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph SEP["4절 · 업무마다 나눈 두 목록"]
+    direction LR
+    s1["대출 목록<br>E01 p.3 기록 + 질문"]:::tool
+    s2["휴관 목록<br>E01 p.2 기록 + 질문"]:::tool
+    s3["추정 128 · 136<br>합 264<br>다른 업무 출처 False"]:::measure
+    s1 --> s3
+    s2 --> s3
+  end
+  subgraph MIX["5절 · 한 목록에 함께 넣음"]
+    direction LR
+    m1["user 글 하나<br>두 기록 + 질문 2개"]:::tool
+    m2["추정 213<br>두 출처 모두 True"]:::measure
+    m3["요청은 보내지 않음"]
+    m1 --> m2
+    m2 -.-> m3
+  end
+  SEP ~~~ MIX

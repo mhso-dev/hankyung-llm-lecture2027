@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  cm["두 설정 같음<br>서버 파일 env_server.py<br>도구 env_names<br>env_value<br>넣은 가짜 이름 CH28_DEMO_TOKEN"]
+  subgraph bf["Before · 환경을 통째로"]
+    direction TB
+    b1["칸 env<br>노트북 환경 전체 + 세 이름"]:::flow
+    b2["가짜 이름 있음 True<br>받지 못한 노트북 이름 수 0<br>서버가 읽은 값<br>교재용-가짜-값"]:::fail
+    b1 --> b2
+  end
+  subgraph af["After · 세 이름만"]
+    direction TB
+    a1["칸 env<br>FASTMCP 세 이름"]:::flow
+    a2["가짜 이름 있음 False<br>적은 세 이름과 기본 이름<br>서버가 읽은 값 없음"]:::measure
+    a1 --> a2
+  end
+  cm --> bf
+  cm --> af

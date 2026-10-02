@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph one["실행 1 · 첫 질문"]
+    direction TB
+    a1["질문 칸<br>대출 기간은<br>며칠인가요"]:::tool
+    a2["검색어 칸<br>대출 기간은 며칠"]:::measure
+    a1 ~~~ a2
+  end
+  subgraph two["실행 2 · 질문만 바꿈"]
+    direction TB
+    b1["질문 칸<br>주말 운영 시간은<br>언제인가요"]:::tool
+    b2["검색어 칸<br>주말 운영 시간은 언제"]:::measure
+    b1 ~~~ b2
+  end
+  common["세 번 실행 모두<br>실행 흔적이 같았음<br>normalize 다음 make_query"]
+  one ~~~ two
+  two ~~~ common

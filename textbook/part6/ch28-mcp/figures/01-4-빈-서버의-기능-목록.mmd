@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  empty["FastMCP 빈 자료실<br>붙인 도구 · 자료 ·<br>메시지 틀 없음"]:::tool
+  conn["Client empty_server<br>기본 모드로 연결"]:::flow
+  caps["기능 목록의 키<br>prompts · resources<br>tools 있음"]:::measure
+  lists["세 목록의 이름<br>빈 목록 셋"]:::measure
+  rule["소스 확인<br>목록 요청을 처리하는 곳이<br>있으면 그 칸을 채움"]
+  empty --> conn
+  conn --> caps
+  conn --> lists
+  caps ~~~ rule

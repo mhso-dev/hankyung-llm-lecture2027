@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  q["같은 질문 둘<br>O101 주문을 취소해 줘.<br>O999 주문의 금액을 알려 줘."]:::tool
+  subgraph before["Before · 한 목록 · 오류 담기 False"]
+    direction TB
+    b1["명세 둘<br>get_order_by_id<br>cancel_order<br>확인 없이 쓰기 도구를<br>고를 수 있음"]:::fail
+    b2["O999 요청에서<br>ToolException<br>흐름이 멈춤 · 메시지 수 2"]:::fail
+    b1 ~~~ b2
+  end
+  subgraph after["After · 나눈 목록 · 오류 담기 True"]
+    direction TB
+    a1["명세 하나<br>get_order_by_id<br>흐름에 cancel_order<br>요청 없음"]:::measure
+    a2["O999 요청이 도구 메시지로<br>결과 상태 error<br>최종 답 요청 0건"]:::measure
+    a1 ~~~ a2
+  end
+  q --> before
+  q --> after

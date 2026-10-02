@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  data["문서 청크 175개<br>개발 앞 두 문항"]:::tool
+  lists["순위 목록 둘<br>거리 · 낱말"]:::flow
+  knob["바꿀 값<br>가중치 한 자리"]:::flow
+  fuse["가중치로 합쳐<br>후보 8개"]:::flow
+  top["보고 자리 5개"]:::flow
+  score["지표 두 칸<br>재현율 자리 3<br>문서 청크 정밀도 자리 5"]:::measure
+  answer["답 쓰기 한 번<br>앞 세 자리 본문"]:::model
+  data --> lists
+  lists --> fuse
+  knob --> fuse
+  fuse --> top
+  top --> score
+  top --> answer

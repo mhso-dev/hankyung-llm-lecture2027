@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph cmdplan["Command로 길을 고른 판"]
+    direction TB
+    c1["넣은 점수<br>0.41"]:::tool
+    c2["판단 이유 칸<br>자료가 모자람"]:::measure
+    c3["지난 노드 수<br>셋"]:::measure
+    c1 ~~~ c2
+    c2 ~~~ c3
+  end
+  subgraph edgeplan["조건부 엣지로 길을 고른 판"]
+    direction TB
+    d1["넣은 점수<br>0.41"]:::tool
+    d2["판단 이유 칸<br>빈 글"]:::measure
+    d3["지난 노드 수<br>둘"]:::measure
+    d1 ~~~ d2
+    d2 ~~~ d3
+  end
+  same["두 판 모두 답 칸은<br>자료를 더 찾아야 합니다"]
+  cmdplan ~~~ edgeplan
+  edgeplan ~~~ same

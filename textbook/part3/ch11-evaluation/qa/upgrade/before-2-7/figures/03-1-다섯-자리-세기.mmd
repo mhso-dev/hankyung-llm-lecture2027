@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q["질문 Q001<br>정답 문서 ID E01"]:::tool
+  uniq["고유 문서 14개<br>중복을 먼저 뺀 목록"]:::measure
+  cut["앞 5자리만 남기기"]:::flow
+  top["남은 자리 E01 M04<br>H03 M05 E04"]:::measure
+  rule["정답 문서가 든 자리 수<br>나누기 자르는 자리 5"]:::flow
+  score["정밀도 0.2"]:::measure
+  q --> uniq
+  uniq --> cut
+  cut --> top
+  top --> rule
+  rule --> score

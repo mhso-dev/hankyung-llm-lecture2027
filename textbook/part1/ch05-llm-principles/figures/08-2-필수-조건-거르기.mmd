@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  FIVE["후보 다섯 개"]:::tool
+  TASK["작업 종류가<br>text-generation인가"]:::flow
+  OUT_TASK["빠짐<br>MiniLM · KLUE BERT"]
+  THREE["생성 모델 세 개"]:::tool
+  LICENSE["라이선스가<br>apache-2.0인가"]:::flow
+  OUT_LICENSE["빠짐 · 라이선스 exaone<br>EXAONE 3.5 2.4B"]
+  TWO["남은 후보 두 개<br>Qwen · SmolLM2"]:::tool
+  FIVE --> TASK
+  TASK -->|아니오| OUT_TASK
+  TASK -->|예| THREE
+  THREE --> LICENSE
+  LICENSE -->|아니오| OUT_LICENSE
+  LICENSE -->|예| TWO

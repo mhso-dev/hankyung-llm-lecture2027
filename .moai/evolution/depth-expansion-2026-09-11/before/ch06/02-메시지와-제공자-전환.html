@@ -1,0 +1,41 @@
+<!--meta: 강의 1h · 제공자 비교 기초 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><p>이 절을 마치면 다음을 할 수 있습니다.</p><ul><li>메시지의 역할과 내용을 구분하고 튜플과 메시지 객체를 읽을 수 있습니다.</li><li>같은 질문을 유지하면서 제공자별 모델을 초기화할 수 있습니다.</li><li>실행 성공·키 미준비·요청 오류를 서로 다른 상태로 설명할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>첫 호출이 성공한 뒤 다른 모델도 시험하고 싶어질 수 있습니다. 이때 질문까지 바꾸면 결과가 달라진 이유를 구분하기 어렵습니다. 이번에는 메시지 목록을 그대로 두고 제공자와 모델 설정을 바꿉니다. 응답을 같은 항목에 기록하는 연습을 한 뒤 06절에서 토큰·비용·지연을 함께 측정합니다.</p>
+<p>LangChain은 여러 제공자의 모델을 비슷한 방법으로 호출하게 해 줍니다. 다만 같은 메서드 이름을 사용한다고 인증 키나 모델 옵션까지 같아지는 것은 아닙니다. 어떤 부분을 재사용하고 어떤 부분을 제공자별로 확인해야 하는지 실제 코드에서 살펴봅니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>앞 절에서 만든 <code>model</code> 객체와 <code>invoke</code>, 응답의 <code>.text</code>를 다시 사용합니다. 딕셔너리는 제공자 이름과 설정을 연결하고, 반복문은 설정 하나씩 읽습니다. <code>continue</code>는 현재 제공자의 처리를 마치고 다음 제공자로 이동하는 Python 문법입니다.</p>
+<p>이 절도 새 커널에서 시작합니다. 설치 셀은 세 제공자의 통합 패키지를 준비합니다. 기본 OpenAI 실습에는 <code>OPENAI_API_KEY</code>가 필요하고, 다른 두 제공자를 호출하려면 <code>ANTHROPIC_API_KEY</code>와 <code>GOOGLE_API_KEY</code>를 <code>.env</code>에 추가합니다. 키가 없는 상태에서도 해당 행을 미실행으로 기록하는 방법을 확인할 수 있습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>같은 문장도 메시지의 역할과 함께 전달합니다</h3>
+<p>상담원에게 전달하는 업무 지침과 고객이 적은 문의를 서로 다른 칸에 보관한다고 생각해 봅니다. 두 칸을 구분하면 문의가 바뀌어도 공통 지침을 유지할 수 있습니다. 채팅 요청에서도 <strong>메시지(message)</strong>는 역할과 내용을 함께 담습니다. 역할은 문장이 요청에서 어떤 위치에 있는지 표시하고, 내용은 실제 지시나 질문입니다.</p>
+<p><strong>시스템 메시지(system message)</strong>에는 응답에 적용할 공통 규칙을 둡니다. 이 실습의 “한 문장의 한국어로 답하세요”가 해당합니다. <strong>사용자 메시지(user message)</strong>에는 이번 질문을 둡니다. 모델이 답할 때는 메시지 목록을 함께 참고합니다. 역할 표시는 유용한 구분이지만, 모든 입력에서 규칙을 반드시 지킨다는 보장은 아닙니다. 실제 답을 읽어 조건 준수 여부를 확인해야 합니다.</p>
+<p><code>("system", "...")</code>처럼 역할 이름과 문자열을 묶은 튜플은 짧은 표현입니다. <code>SystemMessage</code>와 <code>HumanMessage</code> 객체로 같은 역할을 명시할 수도 있습니다. LangChain의 <code>HumanMessage.type</code>은 <code>human</code>입니다. 튜플에서 <code>user</code>를 썼다고 해서 반드시 <code>.type</code>도 같은 문자열일 것으로 예상하지 말고 출력으로 확인합니다.</p>
+<h3>제공자를 바꾸는 설정</h3>
+<p><strong>제공자(provider)</strong>는 모델 API를 운영하는 서비스입니다. <code>openai:gpt-5.4-mini</code>, <code>anthropic:claude-haiku-4-5</code>, <code>google_genai:gemini-2.5-flash-lite</code>에서 콜론 앞은 LangChain이 사용할 제공자 통합을, 뒤는 모델 식별자를 나타냅니다. <strong>통합 패키지(integration package)</strong>는 공통 호출을 해당 서비스의 요청 형식으로 바꾸는 코드를 제공합니다.</p>
+<figure>{{svg:02-provider-switch}}<figcaption>같은 메시지를 제공자별 통합으로 전달하고 응답을 공통 메시지 객체에서 읽습니다. 세 갈래는 비교할 후보이며, 키가 준비되지 않은 갈래에서는 실제 요청이 발생하지 않습니다.</figcaption></figure>
+<p>도식에서 초록색 입력 자료인 메시지 목록을 먼저 읽습니다. 제공자 선택과 호출 순서는 학생이 작성한 파란색 코드가 정합니다. 모델이 답을 생성하는 단계는 보라색입니다. 세 모델이 서로 대화하거나 다음 모델을 선택하는 에이전트 흐름은 없습니다. Python 반복문이 등록된 설정을 하나씩 처리합니다.</p>
+<p>응답의 텍스트는 공통으로 <code>.text</code>에서 읽습니다. <code>content_blocks</code>는 응답 내용을 종류가 있는 표준 블록으로 볼 때 사용합니다. 이 절에서는 텍스트 블록을 관찰하고 04절에서 조각 응답과 함께 자세히 읽습니다. 한 제공자의 전용 블록이나 옵션을 다른 제공자도 지원한다고 가정하지 않습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>코드는 제공자별로 키 이름과 모델 식별자를 보관합니다. 키가 있으면 모델 객체를 만들고 <code>invoke(messages)</code>를 실행합니다. 키가 없으면 요청을 보내지 않고 이유를 기록합니다. 실제 요청에서 발생한 인증·네트워크 오류를 이 준비 상태와 같은 것으로 처리하지 않습니다.</p>
+{{notebook:02-메시지와-제공자-전환}}
+<p class="look"><b>확인할 점</b> <code>records</code>의 각 행에서 먼저 <code>status</code>를 읽습니다. <code>executed</code> 행에는 실제 응답과 사용량이 있습니다. <code>skipped</code> 행에는 실행하지 않은 이유가 있습니다. 사용량이 없는 항목을 0으로 추정해서 비교하지 않습니다.</p>
+<p>저장된 실행에서는 OpenAI 키만 준비되어 OpenAI 응답을 받았습니다. Anthropic과 Google 행은 각각 필요한 키 이름을 표시합니다. 이어지는 메시지 객체 셀의 <code>['system', 'human']</code> 출력은 LangChain 객체의 역할을 확인한 결과입니다. 이 객체 생성 자체는 새 API 호출이 아닙니다.</p>
+<p>직접 비교할 때는 질문과 공통 응답 길이 지시를 유지합니다. 키를 추가한 뒤 제공자별 호출 셀과 기록 확인 셀을 다시 실행하면 됩니다. 같은 출력 상한을 설정해도 실제 길이나 지연이 같아지는 것은 아닙니다. 제공자마다 토큰을 나누는 방식과 모델의 동작이 다를 수 있습니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2>
+<p>이번 저장 결과로 확인할 수 있는 것은 OpenAI의 실제 응답과 두 제공자의 미준비 상태입니다. 세 서비스의 답변 품질이나 속도 순위는 정할 수 없습니다. 미실행 행은 답이 없다는 측정 결과도, 모델 성능이 나쁘다는 결과도 아닙니다.</p>
+<p>키가 모두 있는 환경에서는 각 응답을 읽고 한 문장의 한국어라는 조건과 질문에 맞는 설명인지를 먼저 확인합니다. 이 절은 한 질문으로 공통 호출을 익히는 예제입니다. 한 번 빠른 응답을 받았다는 이유만으로 그 모델이 항상 빠르다고 결론 내리지 않습니다. 06절에서 시간과 사용량을 같은 행에 기록하고 비교 범위를 더 명확히 정합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<p><code>.env</code> 파일의 변수 이름은 정확히 일치해야 합니다. 제공자 계정이 서로 다르므로 한 서비스의 키를 다른 서비스의 변수에 복사하지 않습니다. 셀에는 키 문자열 대신 변수 이름만 적습니다. 키가 준비됐다는 출력은 인증 성공을 의미하지 않으며, 실제 요청이 성공해야 해당 키와 모델의 접근 권한을 확인한 것입니다.</p>
+<p>검증 환경에서는 세 통합 패키지를 설치했지만 Anthropic·Google의 실제 API 호출은 키가 없어 확인하지 못했습니다. 두 모델의 계정별 접근 권한·옵션 지원·응답 사용량은 각 키를 준비한 환경에서 확인해야 합니다. 온라인 문서가 바뀌면 잠금 파일의 버전과 설치 셀의 버전을 함께 점검합니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>메시지는 역할과 내용을 묶으며, 튜플과 메시지 객체로 표현할 수 있습니다.</li><li>제공자 전환에서는 질문을 고정하고 모델 식별자·통합 패키지·키를 확인합니다.</li><li>실제 응답과 미실행 이유를 서로 다른 상태로 기록합니다.</li></ul>
+<p>다음 절에서는 응답을 자유로운 문장 대신 이름 있는 필드로 받습니다. 이 절의 <code>AIMessage</code>를 읽는 경험을 바탕으로 구조화된 객체와 원본 응답의 차이를 확인합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz"><summary>문제 1 · 공통 지침의 위치</summary><p>질문이 바뀌어도 “한 문장의 한국어”라는 규칙을 유지하려면 어느 메시지에 두는 것이 적절한가요?</p><p><b>해설</b> 이 실습에서는 시스템 메시지에 둡니다. 이번 질문은 사용자 메시지에 두어 공통 규칙과 입력을 구분합니다. 실제 응답이 규칙을 따랐는지도 읽어 확인합니다.</p></details>
+<details class="quiz"><summary>문제 2 · 객체의 역할 이름</summary><p>튜플의 <code>user</code>와 <code>HumanMessage</code>의 <code>human</code>은 서로 다른 제공자를 뜻하나요?</p><p><b>해설</b> 아닙니다. 둘 다 사용자 쪽 메시지를 표현하는 LangChain의 표기입니다. 제공자는 모델 식별자의 접두어에서 정합니다.</p></details>
+<details class="quiz"><summary>문제 3 · 미실행 기록</summary><p>키가 없는 Google 행의 비용과 시간을 0으로 적으면 어떤 오해가 생기나요?</p><p><b>해설</b> 무료이며 즉시 응답한 측정값처럼 보일 수 있습니다. 실제 요청이 없었으므로 준비되지 않은 키 이름과 미실행 상태를 기록합니다.</p></details>
+<details class="quiz"><summary>문제 4 · 비교 조건</summary><p>OpenAI에는 한 문장 답을, 다른 모델에는 긴 보고서를 요청했습니다. 지연 차이를 모델 차이로만 설명할 수 있나요?</p><p><b>해설</b> 어렵습니다. 과제와 요구 길이가 함께 달라졌습니다. 먼저 같은 메시지와 출력 조건으로 비교해야 하며 그 뒤에도 한 번의 지연에는 네트워크 등의 영향이 포함됩니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<p>확인 날짜: 2026-09-09. Python 3.12, LangChain 1.4.0, langchain-openai 1.6.0, langchain-anthropic 1.7.1, langchain-google-genai 4.4.0을 설치했습니다. 실제 생성 응답 검증은 OpenAI에 한정됩니다.</p><ul><li><a href="https://docs.langchain.com/oss/python/langchain/models">LangChain 모델과 제공자 설정</a></li><li><a href="https://docs.langchain.com/oss/python/langchain/messages">메시지 역할과 표준 콘텐츠</a></li><li><a href="https://docs.langchain.com/oss/python/integrations/chat/anthropic">Anthropic 통합</a></li><li><a href="https://docs.langchain.com/oss/python/integrations/chat/google_generative_ai">Google Gemini 통합</a></li><li><a href="https://github.com/langchain-ai/langchain/blob/master/LICENSE">LangChain MIT 라이선스</a> — 공통 호출 방식을 참고하고 학습용 질문을 새로 작성했습니다.</li></ul>

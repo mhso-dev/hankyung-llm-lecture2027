@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · yield 아래에 닫는 줄"]
+    direction LR
+    b1["관리자<br>yield order_file<br>order_file.close()"]:::flow --> b2["블록의 int('많이')<br>ValueError가<br>yield 자리에서 다시 남"]:::flow --> b3["닫는 줄 건너뜀<br>파일이 닫혔나요? False"]:::fail
+  end
+  subgraph AFTER["After · 닫는 줄을 finally 블록으로"]
+    direction LR
+    a1["관리자<br>try: yield order_file<br>finally: close()"]:::flow --> a2["블록의 int('많이')<br>같은 ValueError"]:::flow --> a3["finally 먼저 실행<br>파일을 닫았습니다<br>파일이 닫혔나요? True"]:::measure
+  end
+  BEFORE ~~~ AFTER

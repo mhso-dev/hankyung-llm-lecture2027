@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph before["Before · 도구를 괄호로 부름"]
+    direction TB
+    b1["list_orders_by_status<br>괄호 안에 paid"]:::flow
+    b2["받은 오류 TypeError<br>StructuredTool object<br>is not callable"]:::fail
+    b1 --> b2
+  end
+  subgraph after["After · 인자 딕셔너리로 invoke"]
+    direction TB
+    a1[".invoke<br>status paid 딕셔너리"]:::flow
+    a2["받은 주문 두 건<br>O101 · O103<br>직접 부른 결과와 같음 True"]:::measure
+    a1 --> a2
+  end
+  same["두 칸 모두 같은 도구 객체<br>괄호로 부를 수 있는가<br>도구 False<br>fetch_orders True"]
+  before ~~~ same
+  after ~~~ same

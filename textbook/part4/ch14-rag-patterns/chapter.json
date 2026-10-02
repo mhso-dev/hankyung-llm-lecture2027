@@ -1,0 +1,68 @@
+{
+  "part": 4,
+  "part_title": "Part 4 · 그래프 · 평가 · 안정화",
+  "chapter": "ch14-rag-patterns",
+  "title": "RAG 패턴 확장",
+  "hours": "총 24h · 강의 8h · 실습 16h",
+  "objectives": [
+    "대화 기록을 함께 넣어 혼자서도 뜻이 통하는 검색 질문으로 바꿀 수 있습니다.",
+    "Multi Query·질의 분해·Step back·HyDE를 미리 만들어 둔 도구 없이 직접 코드로 적을 수 있습니다.",
+    "CRAG식 보정 검색과 Self-RAG에서 따온 근거 검사를 if 문과 기준값과 반복 상한으로 코드에 적을 수 있습니다.",
+    "갈래마다 요약을 한 단계만 만드는 RAPTOR 축소 구현의 범위와 논문 전체 방법의 차이를 설명할 수 있습니다.",
+    "같은 질문 벌과 같은 문서로 세 패턴의 정답 문서 자리와 서비스 요청 수를 견줄 수 있습니다.",
+    "질문 재작성과 보정 검색과 답 만들기를 한 흐름으로 이어 두 실행을 견줄 수 있습니다."
+  ],
+  "lab_path": "labs/part4/ch14-rag-patterns",
+  "sections": [
+    {
+      "slug": "01-대화-히스토리와-질문-재작성",
+      "title": "대화 히스토리와 질문 재작성",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-Multi-Query",
+      "title": "Multi Query",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-질의-분해",
+      "title": "질의 분해",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-Step-back",
+      "title": "Step back",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-HyDE",
+      "title": "HyDE",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-CRAG",
+      "title": "CRAG",
+      "format": "experiment"
+    },
+    {
+      "slug": "07-Self-RAG",
+      "title": "Self RAG",
+      "format": "experiment"
+    },
+    {
+      "slug": "08-RAPTOR-계층-요약",
+      "title": "RAPTOR 계층 요약",
+      "format": "experiment"
+    },
+    {
+      "slug": "09-패턴-비교와-선택",
+      "title": "패턴 비교와 선택",
+      "format": "experiment"
+    },
+    {
+      "slug": "10-RAG-패턴-실습",
+      "title": "RAG 패턴 실습: 후속 질문 하나를 상담 흐름으로 잇기",
+      "format": "experiment"
+    }
+  ]
+}

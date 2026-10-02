@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  CFG["설정 파일의 k 4<br>실행 설정의 k 2"]:::tool
+  KEY["색인 이름표 만들기<br>6f9f83db90"]:::flow
+  IDX["색인<br>문서 18건 · 문서 청크 176"]:::tool
+  HIT["검색 결과 2개<br>E01 p.1 · E01 p.2"]:::measure
+  GEN["gpt-5.4-mini"]:::model
+  REC["기록 한 줄<br>설정 · 검색 · 답 문장마다 E01 p.2"]:::measure
+  FILE["기록 파일 두 곳<br>사본 · 최신 기록"]:::tool
+  CFG --> KEY
+  KEY --> IDX
+  IDX --> HIT
+  HIT --> GEN
+  GEN --> REC
+  REC --> FILE
+  FILE -.-> CFG

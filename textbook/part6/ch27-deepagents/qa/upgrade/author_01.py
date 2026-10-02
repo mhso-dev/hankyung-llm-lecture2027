@@ -1,0 +1,690 @@
+"""Ch 27 01절 품질 개선본 생성기 (QUALITY-UPGRADE.md §2·§2-7·§3·§4·§6).
+
+사용:
+  python3 -B author_01.py            → 노트북 + _src 본문을 다시 쓴다(노트북 출력이 지워지므로 새 커널로 다시 실행)
+  python3 -B author_01.py --src-only → _src 본문만 다시 쓴다(노트북은 그대로)
+이후 run_section.sh 가 새 커널 실행 → Mermaid 렌더 → 그림 첨부 → 빌드 → verify → 게이트를 잇는다.
+수정 전 노트북·본문은 qa/upgrade/before/ 에 있다(준비 담당이 복사). **experiment 형식 유지**.
+슬러그 `01-하네스와-일곱-기능` 고정(Ch 26 05 b8이 링크 — 「긴 작업에 자주 쓰는 기능을 미리 묶어 둔 DeepAgents」).
+
+## 결정 1 — 모델 요청 0 (챕터 리드 결정 1, M2의 01 몫)
+
+nbkit.key_and_model_cells("openai:gpt-5.4-mini") — temperature=0·reasoning_effort="none", 키는 루트 .env에서만(값 출력 없음).
+모델 객체는 에이전트를 조립하는 데만 쓰고 한 번도 부르지 않는다. 가짜 채팅 모델 없음(규격 §3).
+6절 도구 task 실행은 서브에이전트 명세의 호출 한도 0(ModelCallLimitMiddleware.before_model이 모델 앞에서 끝냄)이라 요청 0.
+
+## 결정 2 — 소스 문자열 검색을 빼고 조립 결과를 출력으로 견준다 (챕터 리드 결정 4)
+
+create_agent(도구 없음) ↔ create_deep_agent(인자 없음) ↔ create_agent + FilesystemMiddleware 하나의 노드·도구 이름,
+인자 하나씩(skills·memory·interrupt_on·permissions·비동기 서브에이전트 명세)과 값 바꿔 보기(TodoListMiddleware)의 더해진 노드·도구.
+「일곱 기능」은 실제 조립과 맞게 다시 센다: 기본 셋(파일·서브에이전트·요약) + 선택 넷, 일곱 밖 기본 하나(짝 맞추기).
+
+## 결정 3 — 요금 사고 방지 규칙 (챕터 리드 결정 2)
+
+바깥 호출 한도(middleware=)는 general-purpose로 옮겨 가지 않음(graph.py 777) · 서브에이전트 그래프는 create_agent 9999(subagents.py 559~565)
+→ 같은 이름 general-purpose 명세에 자기 호출 한도를 넣어 기본 자리를 바꾸고, 도구 실행 노드만 든 작은 그래프로 task를 모델 없이 실행해
+`Model call limits exceeded: run limit (0/0)`을 출력으로 보인다(노트북 밖 확인 /tmp/ch27-01/x3_safety.py 와 같은 모양).
+
+## 결정 4 — 도구 파일 없음 (챕터 리드 결정 6)
+
+이 절은 앞 챕터 함수(tool_call_names·show_messages·sum_usage·estimate_cost)를 쓰지 않는다 → harness_tools.py는 처음 쓰는 절(02)이 만든다.
+이 절이 처음 가르친 함수 tool_names·names_only_in·show_added는 노트북에 둔다(뒤 절이 다시 쓰면 그 절이 도구 파일로 옮김).
+
+## 쓰지 않은 것
+
+f-string·내포식·제너레이터 식·`lambda`·조건 표현식·`elif`·`next`·`all`·`any`·`sum`·`max`·`min`·`enumerate`·`zip`·`getattr`·
+`key=`·`reverse=`·`set`·`setdefault`·노트북 `.get`·`+=`·기본값 매개변수·반환 힌트·변수 힌트·대입 풀기·별표 풀기·
+`while`·`try`·세미콜론·`isinstance`·`inspect`·`re`·클래스(상태 형식 밖). 호출 깊이 2 이하.
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+sys.dont_write_bytecode = True
+ROOT = Path(__file__).resolve().parents[5]
+sys.path.insert(0, str(ROOT / "textbook/_notebook/upgrade"))
+from nbkit import RUN_DATE, code, install_source, key_and_model_cells, md, setup, write_notebook  # noqa: E402
+
+LAB = ROOT / "labs/part6/ch27-deepagents/notebooks"
+FIGS = ROOT / "textbook/part6/ch27-deepagents/figures"
+SLUG = "01-하네스와-일곱-기능"
+TITLE_TEXT = "하네스와 일곱 기능"
+SRC = ROOT / "textbook/part6/ch27-deepagents/_src" / (SLUG + ".html")
+
+# ---------------------------------------------------------------- 노트북 코드 셀
+INSTALL = install_source(["deepagents==0.7.0", "langchain==1.4.0", "langchain-openai==1.6.0", "langgraph==1.2.11", "python-dotenv==1.2.3"])
+
+IMPORTS = r'''# Deep Agents(이 절 처음)·에이전트(Ch 21 01절)·미들웨어(Ch 22)·모델(Ch 6 01절) 이름을 가져옵니다
+from deepagents import FilesystemMiddleware, FilesystemPermission, create_deep_agent
+from langchain.agents import create_agent
+from langchain.agents.middleware import ModelCallLimitMiddleware, TodoListMiddleware
+from langchain.chat_models import init_chat_model
+# 6절의 작은 그래프에 쓸 이름입니다(상태 형식 Ch 13 01·04절, 손으로 만든 응답 Ch 20 01절)
+from typing import Annotated
+from typing_extensions import TypedDict
+from langchain.messages import AIMessage, AnyMessage
+from langgraph.graph import END, START, StateGraph
+from langgraph.graph.message import add_messages
+
+print("가져온 Deep Agents 이름:", "create_deep_agent, FilesystemMiddleware, FilesystemPermission")'''
+
+PLAIN = r'''# Ch 21 01절처럼 도구 없는 에이전트를 만들고, 종류와 노드 이름을 봅니다(요청은 보내지 않음)
+plain_agent = create_agent(model, tools=[])
+plain_graph = plain_agent.get_graph()
+plain_nodes = list(plain_graph.nodes)
+print("만든 것의 종류:", type(plain_agent).__name__)
+print("create_agent의 노드:", plain_nodes)'''
+
+DEEP = r'''# 같은 모델 객체로 Deep Agent를 만들고, 종류와 노드 이름을 봅니다(요청은 보내지 않음)
+deep_agent = create_deep_agent(model=model)
+deep_graph = deep_agent.get_graph()
+deep_nodes = list(deep_graph.nodes)
+print("만든 것의 종류:", type(deep_agent).__name__)
+print("create_deep_agent의 노드:", deep_nodes)'''
+
+LIMITS = r'''# 두 그래프에 묶여 있는 실행 한도(Ch 20 03절)를 봅니다
+plain_limit = plain_agent.config["recursion_limit"]
+deep_limit = deep_agent.config["recursion_limit"]
+print("create_agent의 실행 한도:", plain_limit)
+print("create_deep_agent의 실행 한도:", deep_limit)'''
+
+DEF_TOOL_NAMES = r'''# 에이전트 그래프의 도구 실행 노드에서 도구 이름을 모아, 알파벳 차례로 내놓습니다
+def tool_names(agent):
+    tool_node = agent.nodes["tools"].bound
+    # 도구 찾기 표 tools_by_name(Ch 20 01절)의 키가 도구 이름입니다
+    names = list(tool_node.tools_by_name)
+    names.sort()
+    return names'''
+
+DEEP_TOOLS = r'''# Deep Agent가 기본으로 가진 도구의 수와 이름을 봅니다
+deep_tools = tool_names(deep_agent)
+print("도구 수:", len(deep_tools))
+print("도구 이름:", deep_tools)'''
+
+FS_AGENT = r'''# Ch 22처럼 create_agent에 미들웨어 하나만 붙여 만들고, 도구와 노드를 봅니다(요청은 보내지 않음)
+fs_agent = create_agent(model, tools=[], middleware=[FilesystemMiddleware()])
+fs_tools = tool_names(fs_agent)
+fs_graph = fs_agent.get_graph()
+fs_nodes = list(fs_graph.nodes)
+print("도구 수:", len(fs_tools))
+print("도구 이름:", fs_tools)
+print("노드:", fs_nodes)'''
+
+DEF_ONLY_IN = r'''# 둘째 목록에만 있는 이름을 차례대로 모아 내놓습니다
+def names_only_in(base, other):
+    found = []
+    for name in other:
+        if name not in base:
+            found.append(name)
+    return found'''
+
+EXTRA = r'''# 미들웨어 하나만 붙인 에이전트와 견주어, Deep Agent에만 있는 도구와 노드를 봅니다
+extra_tools = names_only_in(fs_tools, deep_tools)
+extra_nodes = names_only_in(fs_nodes, deep_nodes)
+print("Deep Agent에만 있는 도구:", extra_tools)
+print("Deep Agent에만 있는 노드:", extra_nodes)'''
+
+TASK_TOOL = r'''# 도구 task의 인자 이름과, 모델이 받을 설명 글에 기본 서브에이전트 이름이 있는지 봅니다
+deep_tool_node = deep_agent.nodes["tools"].bound
+task_tool = deep_tool_node.tools_by_name["task"]
+print("task 도구의 인자:", list(task_tool.args))
+print("설명 글에 general-purpose가 있는가:", "general-purpose" in task_tool.description)'''
+
+DEF_SHOW_ADDED = r'''# 기본 Deep Agent에 없던 노드와 도구만 골라 출력합니다
+def show_added(base_nodes, base_tools, agent):
+    graph = agent.get_graph()
+    added_nodes = names_only_in(base_nodes, list(graph.nodes))
+    added_tools = names_only_in(base_tools, tool_names(agent))
+    print("더해진 노드:", added_nodes)
+    print("더해진 도구:", added_tools)'''
+
+SKILLS = r'''# 인자 skills에 스킬 폴더의 파일 위치를 넘겨 만듭니다(폴더는 실행할 때 읽으므로 지금은 없어도 됩니다)
+skills_agent = create_deep_agent(model=model, skills=["/skills/"])
+show_added(deep_nodes, deep_tools, skills_agent)'''
+
+MEMORY = r'''# 인자 memory에 늘 읽을 메모 파일의 위치를 넘겨 만듭니다
+memory_agent = create_deep_agent(model=model, memory=["/AGENTS.md"])
+show_added(deep_nodes, deep_tools, memory_agent)'''
+
+APPROVAL = r'''# 인자 interrupt_on에 파일 쓰기 도구를 적어, 쓰기 전에 사람 승인을 받게 만듭니다
+approval_agent = create_deep_agent(model=model, interrupt_on={"write_file": True})
+show_added(deep_nodes, deep_tools, approval_agent)'''
+
+PERMISSION = r'''# 파일 /blocked.txt에 쓰기를 막는 권한 규칙 하나를 넘겨 만듭니다
+block_rule = FilesystemPermission(operations=["write"], paths=["/blocked.txt"], mode="deny")
+permission_agent = create_deep_agent(model=model, permissions=[block_rule])
+show_added(deep_nodes, deep_tools, permission_agent)'''
+
+ASYNC = r'''# 다른 곳에 띄워 둔 에이전트의 배포 이름과 주소를 적은 명세를 넘겨 만듭니다(만들기만 하고 연결은 하지 않음)
+remote_spec = {
+    "name": "remote-helper",
+    "description": "다른 곳에 띄워 둔 교재용 도우미입니다.",
+    "graph_id": "helper",
+    "url": "http://localhost:2024",
+}
+async_agent = create_deep_agent(model=model, subagents=[remote_spec])
+show_added(deep_nodes, deep_tools, async_agent)'''
+
+TODO = r'''# 인자 middleware에 할 일 목록 미들웨어 하나를 넣어 만듭니다(바꾼 값은 이것 하나)
+todo_agent = create_deep_agent(model=model, middleware=[TodoListMiddleware()])
+show_added(deep_nodes, deep_tools, todo_agent)'''
+
+PARENT_LIMIT = r'''# 바깥 에이전트의 모델 요청을 세 번까지로 막는 호출 한도(Ch 22 04절)를 붙여 만듭니다
+parent_limit = ModelCallLimitMiddleware(run_limit=3, exit_behavior="end")
+limited_agent = create_deep_agent(model=model, middleware=[parent_limit])
+show_added(deep_nodes, deep_tools, limited_agent)'''
+
+HELPER_SPEC = r'''# 기본 서브에이전트와 같은 이름의 명세를 만들고, 그 안에 자기 호출 한도를 넣습니다
+helper_limit = ModelCallLimitMiddleware(run_limit=0, exit_behavior="end")
+helper_spec = {
+    "name": "general-purpose",
+    "description": "교재용 도우미입니다. 맡긴 일을 짧게 처리합니다.",
+    "system_prompt": "맡긴 일을 두 문장의 한국어로 처리하세요.",
+    "middleware": [helper_limit],
+}
+print("명세의 키:", list(helper_spec))'''
+
+GUARDED = r'''# 명세와 바깥 호출 한도를 함께 넘겨 만들고, task 설명 글에 바꾼 설명이 실렸는지 봅니다
+guarded_agent = create_deep_agent(model=model, middleware=[parent_limit], subagents=[helper_spec])
+guarded_tool_node = guarded_agent.nodes["tools"].bound
+guarded_task = guarded_tool_node.tools_by_name["task"]
+print("바꾼 설명이 실렸는가:", "교재용 도우미입니다" in guarded_task.description)
+print("기본 설명이 남았는가:", "General-purpose agent" in guarded_task.description)'''
+
+STATE = r'''# 도구 실행 노드만 넣을 작은 그래프의 상태 형식입니다(Ch 13 04절 메시지 칸)
+class ToolsOnlyState(TypedDict):
+    messages: Annotated[list[AnyMessage], add_messages]'''
+
+SMALL_GRAPH = r'''# Deep Agent의 도구 실행 노드를 꺼내, 그 노드 하나만 든 그래프를 만듭니다(Ch 26 02절 모양)
+tools_builder = StateGraph(ToolsOnlyState)
+tools_builder.add_node("tools", guarded_tool_node)
+tools_builder.add_edge(START, "tools")
+tools_builder.add_edge("tools", END)
+tools_graph = tools_builder.compile()
+print("등록한 노드:", list(tools_builder.nodes))'''
+
+RUN_TASK = r'''# 모델 없이, task 요청 하나를 담은 응답을 손으로 만들어 넣고 마지막 메시지를 봅니다
+task_args = {"description": "대출 연장 규정을 알려 주세요.", "subagent_type": "general-purpose"}
+task_call = {"name": "task", "args": task_args, "id": "hand_call_1", "type": "tool_call"}
+task_request = AIMessage(content="", tool_calls=[task_call])
+task_result = tools_graph.invoke({"messages": [task_request]})
+last_message = task_result["messages"][-1]
+print("마지막 메시지 종류:", type(last_message).__name__)
+print("도구 메시지 내용:", last_message.content)
+print("결과 상태:", last_message.status)'''
+
+# ---------------------------------------------------------------- 그림 (설계표 qa/upgrade/01-figures.md)
+FIG1 = "01-1-미리-골라-붙인-미들웨어"
+FIG1_ALT = "위에서 아래로 읽는 흐름도입니다. 맨 위 파란 상자 create_deep_agent 모델 객체만 넘김에서 기본 미들웨어 다섯 차례는 소스 확인이라는 칸으로 화살표가 갑니다. 칸 안에는 위에서 아래로 노란 상자 FilesystemMiddleware 도구 여덟 파일 도구 일곱과 execute, 노란 상자 SubAgentMiddleware 도구 task general-purpose, 회색 상자 SummarizationMiddleware 노드와 도구 없음 소스로만 확인, 노란 상자 PatchToolCallsMiddleware 노드 before_agent, 회색 상자 AnthropicPromptCachingMiddleware 이 과정 모델에서는 하는 일 없음 소스로만 확인이 있습니다. 칸에서 맨 아래 노란 상자 create_agent가 만든 그래프 CompiledStateGraph 실행 한도 9999로 화살표가 가는 그림"
+FIG1_CAP = "인자 없이 만든 Deep Agent에는 기본 미들웨어 다섯이 차례대로 붙고, 셋은 도구나 노드로 출력에 보였습니다."
+FIG1_READ = """위에서 아래로 읽습니다.
+파란 상자는 우리가 부른 함수이고, 칸 안 상자 다섯은 설치판이 붙이는 기본 미들웨어의 차례입니다.
+노란 상자 안의 도구와 노드는 노트북 2·3절 출력으로 확인한 값이고, 미들웨어 이름과 차례는 설치판 소스로 확인했습니다.
+회색 상자는 출력에 아무것도 남기지 않아, 설치판 소스로만 확인한 미들웨어입니다.
+맨 아래 상자는 결과가 create_agent가 만든 그래프와 같은 종류이고, 실행 한도도 같다는 뜻입니다."""
+
+FIG2 = "01-2-도구-아홉이-온-곳"
+FIG2_ALT = "위에서 아래로 읽는 흐름도입니다. 노란 상자 셋이 위에서부터 차례로 놓여 있습니다. 첫째는 create_agent 도구 없음 노드 셋 도구 실행 노드 없음, 둘째는 create_agent와 FilesystemMiddleware 노드 넷 도구 여덟입니다. 셋째 create_deep_agent 인자 없음 노드 다섯 도구 아홉은 둘째 상자 오른쪽 아래에 있습니다. 둘째와 셋째 상자에서 파란 상자 함수 names_only_in 둘째 목록에만 있는 이름으로 화살표가 가고, 거기서 노란 상자 Deep Agent에만 있는 것 도구 task 노드 PatchToolCallsMiddleware.before_agent로 화살표가 가는 그림"
+FIG2_CAP = "도구 아홉 가운데 여덟은 미들웨어 하나를 붙인 create_agent에도 있었고, Deep Agent에만 있는 도구는 task 하나였습니다."
+FIG2_READ = """위에서 아래로 읽습니다.
+위 노란 상자 셋은 노트북 2·3절에서 만든 세 그래프이고, 서로 다른 설정이라 화살표 대신 나란히 두었습니다.
+파란 상자는 3절에서 만든 함수이고, 둘째와 셋째 그래프의 목록만 받아 견줍니다.
+맨 아래 노란 상자는 3절 출력 두 줄입니다."""
+
+FIG3 = "01-3-인자-하나씩-바꾼-조립"
+FIG3_ALT = "칸 셋이 위에서 아래로 놓인 그림입니다. 첫째 칸 노드가 더해진 설정에는 노란 상자 넷 skills 노드 SkillsMiddleware.before_agent, memory 노드 MemoryMiddleware.before_agent, interrupt_on 노드 HumanInTheLoopMiddleware.after_model, middleware에 TodoListMiddleware 노드 TodoListMiddleware.after_model 도구 write_todos가 있습니다. 둘째 칸 도구만 더해진 설정에는 노란 상자 비동기 서브에이전트 명세 도구 다섯 start_async_task 등이 있습니다. 셋째 칸 아무것도 더해지지 않은 설정에는 노란 상자 쓰기를 막는 권한 규칙 더해진 노드와 도구 없음이 있는 그림"
+FIG3_CAP = "인자를 하나씩 바꾸자 노드형 훅이 있는 기능은 노드로, 도구를 가진 기능은 도구로 더해졌고, 권한 규칙은 아무것도 더하지 않았습니다."
+FIG3_READ = """칸 셋을 위에서 아래로 읽고, 칸 안 상자는 서로 다른 설정이라 나란히 두었습니다.
+상자마다 첫 줄은 바꾼 인자이고, 둘째 줄부터는 노트북 4·5절에서 기본 Deep Agent와 견줘 더해진 것입니다.
+모두 출력으로 확인한 값이라 노란색입니다.
+맨 아래 칸의 권한 규칙은 파일 도구 안에서 판정되어 새 노드도 도구도 만들지 않았습니다."""
+
+FIG4 = "01-4-호출-한도를-두-곳에"
+FIG4_ALT = "위에서 아래로 읽는 흐름도입니다. 맨 위에 초록 상자 둘이 나란히 있습니다. 왼쪽은 general-purpose 명세 자기 호출 한도 run_limit 0, 오른쪽은 바깥 호출 한도 run_limit 3입니다. 두 상자에서 노란 상자 guarded_agent 바꾼 설명이 실렸는가 True 노드 ModelCallLimitMiddleware 둘로 화살표가 갑니다. 그 상자와 오른쪽 초록 상자 손으로 만든 task 요청 하나 모델 부르지 않음에서 파란 상자 도구 실행 노드만 든 그래프 등록한 노드 tools로 화살표가 갑니다. 파란 상자에서 노란 상자 ToolMessage Model call limits exceeded run limit 0/0 결과 상태 success로 화살표가 가고, 맨 아래에 회색 상자 소스 확인 바깥 호출 한도는 서브에이전트로 옮겨 가지 않음이 있는 그림"
+FIG4_CAP = "바깥 호출 한도와 명세 안 호출 한도를 함께 준 Deep Agent에서, 모델 없이 부른 task는 서브에이전트의 한도에서 멈췄습니다."
+FIG4_READ = """위에서 아래로 읽습니다.
+초록 상자는 우리가 정한 값과 손으로 만든 요청이고, 파란 상자는 6절에서 만든 작은 그래프입니다.
+노란 상자는 노트북 6절 출력이고, 회색 상자는 설치판 소스로만 확인한 사실입니다.
+맨 아래 도구 메시지는 서브에이전트가 모델을 한 번도 부르지 않고 한도에서 멈춘 결과입니다."""
+
+ILLU = "01-5-설비를-갖춘-온실"
+ILLU_ALT = "흰 바탕 가운데에 회색 테두리의 작은 유리 온실 한 채가 있고, 문이 왼쪽으로 활짝 열려 있습니다. 온실 안 왼쪽 선반에 파란 물뿌리개, 가운데 벽 고리에 감긴 초록 호스, 지붕 밑에 환풍기, 오른쪽 나무 작업대에 새싹이 난 모종판이 있습니다. 온실 앞 오른쪽 아래 땅에는 엎어 둔 빈 주황 화분 넷이 한 줄로 놓였습니다. 사람·글자·숫자·화살표는 없는 그림"
+ILLU_CAP = "온실 안에는 설비 넷이 이미 자리 잡고 있고, 문 앞에는 아직 쓰지 않은 빈 화분 넷이 놓여 있습니다."
+ILLU_READ = "흰 바탕 가운데에 유리 온실 한 채가 서 있고, 문은 왼쪽으로 활짝 열려 있습니다. 안에는 선반 위 물뿌리개, 벽 고리의 호스, 지붕 밑 환풍기, 모종판을 올린 작업대가 이미 자리 잡고 있습니다. 온실 앞 오른쪽 땅에는 엎어 둔 빈 화분 넷이 한 줄로 놓였습니다. 안에 있는 설비 넷은 이 과정 모델에서 일하는 기본 미들웨어 넷이고, 문 앞 화분 넷이 인자를 줘야 붙는 선택 기능 넷입니다. 모종판의 칸 수와 새싹 수, 환풍기 날개 수, 양옆의 흰 여백은 어떤 값과도 짝짓지 않습니다."
+
+RUNS_SENTENCE = "새 커널로 두 번 실행해 견주자, 코드 셀 스물여섯의 출력이 셀마다 모두 같았습니다. 모델을 부르지 않아, 이 절의 출력은 코드가 조립한 구조로 정해집니다."
+
+TITLE = """# """ + TITLE_TEXT + """
+
+**이 노트북에서 할 일**
+
+1. 함수 `create_agent`와 함수 `create_deep_agent`로 에이전트 그래프를 만들어, 노드와 도구를 견줍니다.
+2. 인자를 하나씩 바꿔 만들고, 기본 Deep Agent에 더해진 노드와 도구를 봅니다.
+3. 기본으로 붙는 서브에이전트에 호출 한도를 주는 설정을 만들고, 모델 요청 없이 확인합니다.
+
+**준비물** — 프로젝트 폴더의 `.env` 파일에 `OPENAI_API_KEY`가 있어야 합니다.
+모델 객체를 만들려면 키가 필요하지만, 이 노트북은 모델에게 요청을 한 번도 보내지 않습니다.
+그래서 모델 요청 수는 0번이고, 예상 비용도 0달러입니다.
+출력은 모두 코드가 조립한 구조의 이름과 값입니다.
+
+걸린 시간은 재지 않았습니다.
+읽거나 쓰는 파일은 없습니다.
+이 절은 앞 챕터에서 배운 함수를 쓰지 않아, 가져오는 도구 파일도 없습니다.
+
+**기준 버전** — 첫 셀에서 패키지 다섯을 설치합니다.
+판은 deepagents 0.7.0과 langchain 1.4.0입니다.
+나머지 셋은 `langchain-openai` 1.6.0, `langgraph` 1.2.11, `python-dotenv` 1.2.3입니다.
+교재 출력은 Linux의 Python 3.12.13으로 만들었습니다.
+다른 판과 Windows·macOS에서는 실행하지 않았습니다.
+
+**강의와 실습 범위** — 강의 시간에는 2~3절을 읽습니다.
+두 함수가 같은 종류의 그래프를 만들고, 기본 도구가 미들웨어에서 온다는 것을 보는 자리입니다.
+4~6절은 인자를 하나씩 바꾸는 실습이고, 실습 시간에 실행합니다.
+
+실습 폴더 `labs/part6/ch27-deepagents`에서 `uv sync --locked`를 실행합니다.
+그다음 `notebooks/` 폴더의 이 노트북을 열고, 실습 폴더의 `.venv` 커널을 고릅니다.
+첫 셀부터 순서대로 실행합니다."""
+
+
+def model_cells() -> list[dict]:
+    """과정 표준 키·모델 셀(nbkit)에 이 절의 결과 읽기(실행일·요청 0)를 붙입니다."""
+    cells = key_and_model_cells("openai:gpt-5.4-mini")
+    cells[-1] = md("""**결과 읽기** — 모델 이름 `gpt-5.4-mini`, temperature `0.0`이 보이면 준비가 끝났습니다.
+이 노트북의 출력은 """ + RUN_DATE + """에 이 모델로 실행한 결과입니다.
+이 셀은 모델 객체만 만들고, 모델 요청은 보내지 않습니다.
+이 절의 다른 셀도 에이전트를 만들기만 하고 모델을 부르지 않습니다.
+
+에이전트를 만드는 두 함수에는 이 모델 객체를 그대로 넘깁니다.
+Deep Agents에 모델 이름 글자만 넘기면, temperature 설정이 없는 모델을 새로 만들기 때문입니다.
+이 사실은 설치판 소스로 확인했고, 본문 「주의할 점」에 적었습니다.
+
+## 2. 같은 틀에서 시작하기
+
+Ch 21 01절에서는 함수 `create_agent`로 에이전트 그래프를 만들었습니다.
+먼저 같은 모양으로 도구 없는 에이전트를 하나 만들고, 그래프의 노드 이름을 봅니다.""")
+    return cells
+
+
+def cells() -> list[dict]:
+    return [
+        md(TITLE, html="skip"),
+        md("## 오늘 볼 그림\n\n![" + FIG1_ALT + "](attachment:" + FIG1 + ".png)\n\n" + FIG1_READ, html="skip"),
+        md("""## 1. 준비
+
+이 절에서는 에이전트에 여러 기능을 미리 붙여 주는 함수를 처음 씁니다.
+절 제목의 하네스는 Ch 6 01절에서 정의한 말이고, 본문 「핵심 개념」에서 그 정의를 이어 씁니다.
+
+첫 셀은 패키지 다섯을 설치하고 설치된 판 번호를 출력합니다.
+설치에는 몇십 초가 걸릴 수 있습니다."""),
+        setup(INSTALL),
+        md("""**결과 읽기** — 출력 줄 `deepagents: 0.7.0`과 `langchain: 1.4.0`이 보입니다.
+다섯 판 모두 실습 폴더 잠금과 같은 판입니다.
+
+다음 셀은 이 절에서 쓸 이름을 가져옵니다.
+함수 `create_deep_agent`와 미들웨어 `FilesystemMiddleware`는 패키지 deepagents에 들어 있습니다.
+함수 `create_agent`는 Ch 21 01절, 미들웨어 `ModelCallLimitMiddleware`는 Ch 22 04절에서 썼습니다.
+상태 형식을 만드는 이름은 Ch 13 01·04절, 손으로 만드는 응답 `AIMessage`는 Ch 20 01절에서 썼습니다."""),
+        setup(IMPORTS),
+        md("""**결과 읽기** — 출력 줄 `가져온 Deep Agents 이름: create_deep_agent, FilesystemMiddleware, FilesystemPermission`이 보입니다.
+권한 규칙 `FilesystemPermission`은 4절에서, 미들웨어 `TodoListMiddleware`는 5절에서 씁니다.
+이 절은 앞 챕터에서 배운 함수를 쓰지 않아, 도구 파일에서 가져오는 줄이 없습니다."""),
+    ] + model_cells() + [
+        code(PLAIN),
+        md("""**결과 읽기** — 출력 줄 `만든 것의 종류: CompiledStateGraph`와 `create_agent의 노드: ['__start__', 'model', '__end__']`가 보입니다.
+도구가 없어서 도구 실행 노드 `tools`가 없습니다.
+Ch 26 01절의 대출 규정 담당과 같은 모양입니다.
+
+이번에는 같은 모델 객체를 함수 `create_deep_agent`에 넘깁니다.
+이 함수가 만든 에이전트 그래프를 이 챕터에서는 Deep Agent라고 부릅니다.
+인자 `model=`에만 모델 객체를 넘기고, 다른 인자는 주지 않습니다.
+실행 전에 예상해 봅니다.
+도구를 하나도 넘기지 않았으니, 노드도 앞 셀처럼 셋일까요?"""),
+        code(DEEP),
+        md("""**결과 읽기** — 출력 줄 `만든 것의 종류: CompiledStateGraph`는 앞 셀과 같습니다.
+라벨 `create_deep_agent의 노드:` 뒤에는 `'tools'`와 `'PatchToolCallsMiddleware.before_agent'`가 더 있습니다.
+도구를 넘기지 않았는데도 도구 실행 노드가 생겼습니다.
+
+노드 이름 `PatchToolCallsMiddleware.before_agent`는 미들웨어 이름과 훅 이름을 점으로 이은 것입니다.
+Ch 22 01절의 노드형 훅(`before_agent` 등)을 가진 미들웨어는 이렇게 그래프의 노드가 됩니다.
+감싸기형 훅(이름이 `wrap_`으로 시작)만 가진 미들웨어는 노드로 보이지 않습니다.
+이 미들웨어는 짝이 되는 도구 메시지가 없는 도구 요청에, 취소 알림 도구 메시지를 채웁니다.
+이 일은 설치판 소스로 확인했고, 이 절에서는 실행하지 않았습니다.
+
+다음 셀은 두 그래프에 묶인 실행 한도를 봅니다."""),
+        code(LIMITS),
+        md("""**결과 읽기** — 출력 줄 `create_agent의 실행 한도: 9999`와 `create_deep_agent의 실행 한도: 9999`가 보입니다.
+Ch 26 01절에서 본 기본 실행 한도가 Deep Agent에도 그대로 있습니다.
+설치판 deepagents 0.7.0 `graph.py` 922~944행에서 함수 `create_deep_agent`는 마지막에 `create_agent`를 부릅니다.
+그리고 만든 그래프에 실행 한도 9999를 다시 붙입니다.
+
+## 3. 기본 도구는 미들웨어가 붙입니다
+
+Deep Agent의 도구 실행 노드에 어떤 도구가 들었는지 봅니다.
+다음 셀은 에이전트 그래프에서 도구 이름을 모으는 함수를 만듭니다.
+컴파일한 그래프의 속성 `nodes`는 노드 이름으로 노드를 찾는 딕셔너리입니다.
+찾은 노드의 속성 `bound`가 그 안에 든 도구 실행 노드(Ch 20 01절)입니다."""),
+        code(DEF_TOOL_NAMES),
+        md("""**결과 읽기** — 정의 셀이라 출력이 없습니다.
+목록 메서드 `sort`는 이름을 알파벳 차례로 늘어놓아, 두 목록을 나란히 읽게 해 줍니다.
+도구 실행 노드가 없는 그래프에 이 함수를 부르면, 키 `tools`가 없어 멈춥니다.
+그래서 2절의 `plain_agent`에는 부르지 않습니다.
+
+다음 셀은 Deep Agent의 도구 수와 이름을 봅니다."""),
+        code(DEEP_TOOLS),
+        md("""**결과 읽기** — 출력 줄 `도구 수: 9`가 보입니다.
+도구 일곱(`ls`·`read_file`·`write_file`·`edit_file`·`delete`·`glob`·`grep`)은 파일을 보고 쓰는 도구입니다.
+도구 `execute`는 명령을 실행하는 도구이고, 도구 `task`는 서브에이전트에게 일을 맡기는 도구입니다.
+우리는 도구를 하나도 넘기지 않았으니, 아홉 모두 Deep Agents가 붙인 것입니다.
+
+이 도구들이 어디서 왔는지 봅니다.
+Ch 22에서는 함수 `create_agent`에 미들웨어를 붙여 훅을 끼워 넣었습니다.
+미들웨어는 훅뿐 아니라 도구도 가질 수 있습니다.
+다음 셀은 함수 `create_agent`에 Deep Agents의 미들웨어 `FilesystemMiddleware` 하나만 붙입니다."""),
+        code(FS_AGENT),
+        md("""**결과 읽기** — 출력 줄 `도구 수: 8`과 `노드: ['__start__', 'model', 'tools', '__end__']`가 보입니다.
+미들웨어 하나를 붙이자 함수 `create_agent`가 만든 그래프에도 도구 실행 노드와 도구 여덟이 생겼습니다.
+파일을 보고 쓰는 도구 일곱을 이 챕터에서는 파일 도구라고 부릅니다.
+이 미들웨어는 파일 도구 일곱과 명령 실행 도구 `execute`를 함께 붙입니다.
+
+두 목록의 차이를 볼 함수를 만듭니다.
+둘째 목록을 차례로 돌며, 첫째 목록에 없는 이름만 모읍니다."""),
+        code(DEF_ONLY_IN),
+        md("""**결과 읽기** — 정의 셀이라 출력이 없습니다.
+첫째 목록에 이미 있는 이름은 건너뛰어, 더해진 이름만 남습니다.
+
+다음 셀은 미들웨어 하나만 붙인 그래프와 견주어, Deep Agent에만 있는 도구와 노드를 봅니다."""),
+        code(EXTRA),
+        md("""**결과 읽기** — 출력 줄 `Deep Agent에만 있는 도구: ['task']`와 `Deep Agent에만 있는 노드: ['PatchToolCallsMiddleware.before_agent']`가 보입니다.
+도구 `task`는 Deep Agents의 서브에이전트 미들웨어(`SubAgentMiddleware`)가 붙입니다.
+노드는 2절에서 본 짝 맞추기 미들웨어의 훅입니다.
+함수 `create_deep_agent`는 이렇게 `create_agent`에 미들웨어를 미리 골라 붙여 그래프를 만듭니다.
+
+설치판 소스로 보면 기본 미들웨어는 다섯이고, 차례는 파일·서브에이전트·요약·짝 맞추기·Anthropic 모델용입니다.
+요약 미들웨어(`SummarizationMiddleware`)는 감싸기형 훅만 있고 도구도 없어, 이 절의 출력에 보이지 않습니다.
+맨 끝의 Anthropic 모델용 미들웨어(`AnthropicPromptCachingMiddleware`)는 Anthropic 모델에서만 일합니다.
+이 과정 모델에서는 아무 일도 하지 않고, 노드도 도구도 남기지 않습니다.
+미들웨어 이름과 차례는 설치판 `graph.py` 816~860행으로만 확인했습니다.
+
+다음 셀은 도구 `task`가 받는 인자와, 모델이 받을 설명 글을 봅니다."""),
+        code(TASK_TOOL),
+        md("""**결과 읽기** — 출력 줄 `task 도구의 인자: ['description', 'subagent_type']`와 `설명 글에 general-purpose가 있는가: True`가 보입니다.
+인자 `description`은 맡길 일의 글이고, 인자 `subagent_type`은 맡을 서브에이전트의 이름입니다.
+서브에이전트를 하나도 넘기지 않았는데, 이름이 `general-purpose`인 서브에이전트가 설명 글에 올라 있습니다.
+이 서브에이전트를 이 챕터에서는 general-purpose 서브에이전트라고 부릅니다.
+
+설치판 `graph.py` 750~814행에서 이 서브에이전트는 따로 막지 않는 한 늘 붙습니다.
+도구는 우리가 넘긴 도구와 파일 도구를 받고, 호출 한도는 없습니다.
+이 점은 6절에서 다시 다룹니다.
+
+## 4. 인자를 하나씩 바꿔 조립 결과 보기
+
+함수 `create_deep_agent`는 인자를 받으면 미들웨어를 더 붙입니다.
+절 제목의 일곱 기능은 이 교재가 Deep Agents의 기능을 나눠 부르는 이름입니다.
+파일시스템·서브에이전트·컨텍스트 요약·스킬·장기 메모리·파일 권한과 사람 승인·비동기 서브에이전트입니다.
+앞의 셋은 3절에서 본 기본 미들웨어이고, 나머지 넷은 인자를 줘야 붙습니다.
+아래 셀들은 인자 하나만 바꿔 만들고, 기본 Deep Agent에 없던 노드와 도구만 봅니다.
+
+먼저 그 차이를 출력하는 함수를 만듭니다."""),
+        code(DEF_SHOW_ADDED),
+        md("""**결과 읽기** — 정의 셀이라 출력이 없습니다.
+기준 목록 둘에는 2·3절에서 만든 `deep_nodes`와 `deep_tools`를 넘깁니다.
+
+첫째는 스킬입니다.
+스킬(skill)은 어떤 일을 하는 방법을 적어 둔 파일 묶음이고, 인자 `skills=`에 그 폴더의 파일 위치를 넘깁니다."""),
+        code(SKILLS),
+        md("""**결과 읽기** — 출력 줄 `더해진 노드: ['SkillsMiddleware.before_agent']`와 `더해진 도구: []`가 보입니다.
+스킬 미들웨어가 노드형 훅 하나로 붙었고, 도구는 늘지 않았습니다.
+스킬 파일은 실행할 때 이 훅이 읽습니다(설치판 `skills.py` 928행).
+
+둘째는 장기 메모리입니다.
+인자 `memory=`에는 에이전트가 실행할 때마다 읽을 메모 파일의 위치를 넘깁니다."""),
+        code(MEMORY),
+        md("""**결과 읽기** — 출력 줄 `더해진 노드: ['MemoryMiddleware.before_agent']`와 `더해진 도구: []`가 보입니다.
+메모리 미들웨어도 노드형 훅 하나로 붙고, 도구는 없습니다.
+
+셋째는 사람 승인입니다.
+인자 `interrupt_on=`에는 사람이 승인해야 실행할 도구 이름을 적습니다.
+Ch 24 01절에서는 노드 안의 `interrupt`로 사람의 답을 기다렸습니다.
+여기서는 미들웨어가 도구 실행 앞에서 멈춥니다."""),
+        code(APPROVAL),
+        md("""**결과 읽기** — 출력 줄 `더해진 노드: ['HumanInTheLoopMiddleware.after_model']`이 보입니다.
+모델 응답을 받은 직후 도구 요청을 보고 멈추는 자리라서, 훅이 `after_model`입니다.
+멈춘 뒤 사람이 답해 이어 가는 장면은 이 절에서 실행하지 않았습니다.
+
+넷째는 파일 권한입니다.
+인자 `permissions=`에는 권한 규칙 `FilesystemPermission`의 목록을 넘깁니다.
+규칙 하나는 어떤 파일 위치에 어떤 일(읽기·쓰기)을 허용할지, 막을지를 적습니다.
+아래 셀은 `/blocked.txt`에 쓰기를 막는 규칙 하나를 줍니다."""),
+        code(PERMISSION),
+        md("""**결과 읽기** — 출력 줄 `더해진 노드: []`와 `더해진 도구: []`가 보입니다.
+막는 규칙은 새 미들웨어를 붙이지 않았습니다.
+설치판 소스에서 이 규칙은 파일 도구가 쓰기 전에 파일 도구 안에서 판정합니다.
+그래서 「파일 권한과 사람 승인」은 한 이름이지만, 조립 모양이 다른 두 장치입니다.
+
+다섯째는 비동기 서브에이전트입니다.
+다른 곳에 띄워 둔 에이전트에게 일을 맡기고, 기다리지 않고 나중에 결과를 확인하는 방식입니다.
+서브에이전트 목록에 배포 이름(`graph_id`)과 주소(`url`)를 적은 딕셔너리를 넘기면 이 방식으로 붙습니다.
+이 셀은 만들기만 하므로 그 주소에 연결하지 않습니다."""),
+        code(ASYNC),
+        md("""**결과 읽기** — 출력 줄 `더해진 노드: []`가 보입니다.
+라벨 `더해진 도구:` 뒤에는 `start_async_task`·`check_async_task`를 비롯한 도구 다섯이 있습니다.
+맡기기·확인·고치기·취소·목록 보기 도구이고, 노드는 늘지 않았습니다.
+
+## 5. 값 바꿔 보기: 할 일 목록 더하기
+
+값 하나만 바꿔 봅니다.
+바꿀 값은 인자 `middleware=`이고, 미들웨어 `TodoListMiddleware` 하나를 넣습니다.
+할 일 목록은 모델이 긴 일을 몇 단계로 나눠 적고, 단계마다 상태를 고쳐 적는 목록입니다.
+장보기 전에 살 것을 적고, 산 것을 지워 가는 쪽지와 같습니다.
+
+공식 개요 문서에 따르면, 패키지 deepagents 0.7부터 이 기능은 기본에서 빠져 직접 더해야 합니다.
+실행 전에 예상해 봅니다.
+노드 하나와 도구 하나가 더해질 것입니다."""),
+        code(TODO),
+        md("""**결과 읽기** — 출력 줄 `더해진 노드: ['TodoListMiddleware.after_model']`과 `더해진 도구: ['write_todos']`가 보입니다.
+예상대로 노드 하나와 도구 하나가 더해졌습니다.
+도구 `write_todos`가 할 일 목록을 적는 도구이고, 모델이 이 도구를 고르는 장면은 03절에서 봅니다.
+설치판 `graph.py` 855·883행에서, 인자 `middleware=`에 넣은 새 미들웨어는 짝 맞추기 미들웨어 뒤에 붙습니다.
+Anthropic 모델용 미들웨어보다는 앞입니다.
+
+## 6. 기본 서브에이전트에 호출 한도 주기
+
+3절에서 Deep Agent의 실행 한도가 9999이고, general-purpose 서브에이전트가 늘 붙는 것을 보았습니다.
+서브에이전트는 도구 `task`의 함수 안에서 따로 실행됩니다.
+설치판 `subagents.py` 559~565행에서 서브에이전트 그래프에 묶인 실행 한도는 바깥에서 준 한도보다 앞섭니다.
+Ch 26 01절도 이런 안쪽 실행에는 바깥 실행 한도가 닿지 않는다고 적었습니다.
+Ch 22 04절의 호출 한도도 한도를 붙인 에이전트의 요청만 셉니다.
+
+그래서 모델을 부르는 뒤 절에서는 호출 한도를 두 곳에 따로 줍니다.
+먼저 바깥 에이전트에 호출 한도를 붙이고, 조립 결과를 봅니다."""),
+        code(PARENT_LIMIT),
+        md("""**결과 읽기** — 라벨 `더해진 노드:` 뒤에 `'ModelCallLimitMiddleware.before_model'`과 `'ModelCallLimitMiddleware.after_model'`이 보입니다.
+호출 한도는 바깥 그래프의 노드 둘로 붙었습니다.
+설치판 소스에서 이 미들웨어는 모델을 부르기 전에 센 수를 보고, 응답을 받은 뒤 수를 하나 더합니다.
+설치판 `graph.py` 777행에서 이 한도는 general-purpose 서브에이전트의 미들웨어로 옮겨 가지 않습니다.
+그래서 서브에이전트 쪽에도 한도를 따로 줍니다.
+
+서브에이전트 명세는 서브에이전트의 이름·설명·시스템 메시지 글·미들웨어를 적은 딕셔너리입니다.
+새로 온 직원에게 건네는 담당 소개서와 같습니다.
+공식 서브에이전트 문서에 따르면, 이름을 `general-purpose`로 적은 명세가 기본 서브에이전트 자리를 바꿉니다.
+아래 셀은 호출 한도 0을 넣은 명세를 만듭니다.
+한도 0은 모델에게 요청을 한 번도 보내지 않고 멈추는지 보려고 고른 값입니다."""),
+        code(HELPER_SPEC),
+        md("""**결과 읽기** — 출력 줄 `명세의 키: ['name', 'description', 'system_prompt', 'middleware']`가 보입니다.
+키 `description`의 글은 도구 `task`의 설명 글에 실려, 모델이 맡길 곳을 고를 때 읽습니다.
+키 `tools`를 적지 않으면, 이 서브에이전트는 바깥 에이전트에 넘긴 도구를 물려받습니다(설치판 `graph.py` 728행).
+
+다음 셀은 이 명세와 바깥 호출 한도를 함께 넘겨 Deep Agent를 만듭니다."""),
+        code(GUARDED),
+        md("""**결과 읽기** — 출력 줄 `바꾼 설명이 실렸는가: True`와 `기본 설명이 남았는가: False`가 보입니다.
+기본 서브에이전트 자리를 우리 명세가 바꾸었습니다.
+이제 general-purpose 서브에이전트에는 호출 한도 0이 들어 있습니다.
+
+이제 모델 없이 도구 `task`를 실행해 봅니다.
+Ch 26 02절처럼 도구 실행 노드 하나만 든 작은 그래프를 만들고, 도구 요청을 담은 응답을 손으로 만들어 넣습니다.
+바깥 모델은 부르지 않고, 서브에이전트는 한도 0이라 모델을 부르기 전에 멈출 것입니다.
+먼저 그래프의 상태 형식을 정합니다."""),
+        code(STATE),
+        md("""**결과 읽기** — 정의 셀이라 출력이 없습니다.
+칸은 메시지 목록 하나이고, 규칙 `add_messages`로 새 메시지를 이어 붙입니다.
+
+다음 셀은 Deep Agent의 도구 실행 노드를 꺼내, 그 노드 하나만 든 그래프를 만듭니다."""),
+        code(SMALL_GRAPH),
+        md("""**결과 읽기** — 출력 줄 `등록한 노드: ['tools']`가 보입니다.
+이 그래프에는 모델 노드가 없어서, 넣은 도구 요청만 실행하고 끝납니다.
+
+다음 셀은 도구 `task`를 부르는 요청 하나를 손으로 만들어 넣고, 마지막 메시지를 봅니다.
+요청의 칸 넷(`name`·`args`·`id`·`type`)은 Ch 19 04절에서 본 모양입니다."""),
+        code(RUN_TASK),
+        md("""**결과 읽기** — 출력 줄 `마지막 메시지 종류: ToolMessage`와 `도구 메시지 내용: Model call limits exceeded: run limit (0/0)`이 보입니다.
+괄호 안 `0/0`은 모델 요청 0번, 호출 한도 0이라는 뜻입니다.
+서브에이전트는 모델을 한 번도 부르지 않고 한도에서 멈췄고, 그 글이 도구 메시지 내용으로 돌아왔습니다.
+출력 줄 `결과 상태: success`처럼, 도구 실행 자체는 오류 없이 끝났습니다.
+
+도구 함수 안에서 서브에이전트를 실행하고 마지막 글만 도구 메시지로 옮기는 모양은 Ch 26 01절과 같습니다.
+이 설정이면 바깥 요청은 바깥 호출 한도까지이고, 서브에이전트 요청은 도구 `task`를 부른 횟수 × 명세의 호출 한도까지입니다.
+요약 미들웨어가 켜지면 그 요약 요청은 이 두 한도 밖이고, 켜지는 기준은 05절에서 봅니다.
+뒤 절은 한도 0 대신 일을 마칠 만한 작은 값을 줍니다.
+
+## 정리
+
+1. 함수 `create_deep_agent`는 `create_agent`에 미들웨어를 미리 골라 붙인 그래프를 만들고, 실행 한도 9999도 같습니다.
+2. 기본 도구 아홉 가운데 여덟은 `FilesystemMiddleware`가, `task`는 서브에이전트 미들웨어가 붙였고, 인자를 주면 노드나 도구가 더해졌습니다.
+3. general-purpose 서브에이전트는 늘 붙고, 같은 이름 명세로 바꾸면 호출 한도를 넣을 수 있습니다.
+
+02절에서는 이 Deep Agent에 우리 도구를 더하고, 실제 모델이 도구를 고르는 장면을 봅니다."""),
+    ]
+
+
+# ---------------------------------------------------------------- _src 본문
+def table_html(head: list, rows: list) -> str:
+    head_html = ""
+    for value in head:
+        head_html = head_html + "<th>" + value + "</th>"
+    body = ""
+    for row in rows:
+        cells_html = ""
+        for value in row:
+            cells_html = cells_html + "<td>" + value + "</td>"
+        body = body + "<tr>" + cells_html + "</tr>"
+    return "<table><thead><tr>" + head_html + "</tr></thead><tbody>" + body + "</tbody></table>"
+
+
+def html_text(text: str) -> str:
+    """노트북용 마크다운 한 단락(백틱·줄바꿈)을 _src 문단 글로 바꿉니다(Ch 26 01 생성기와 같은 함수)."""
+    parts = text.replace("\n", " ").split("`")
+    out = ""
+    for index in range(len(parts)):
+        if index % 2 == 1:
+            out = out + "<code>" + parts[index] + "</code>"
+        else:
+            out = out + parts[index]
+    return out
+
+
+def mermaid_block(name: str, alt: str, caption: str, reading: str) -> str:
+    return ("{{mermaid:" + name + "|" + alt + "|" + caption + "}}\n"
+            + '<p class="look"><b>도식 읽기</b> — ' + html_text(reading) + "</p>\n")
+
+
+def illustration_block() -> str:
+    """삽화 PNG와 그림 읽기가 있을 때만 본문에 넣습니다(첫 실행 때는 그림 파일이 없어 빌드가 멈추지 않게)."""
+    if not (FIGS / (ILLU + ".png")).is_file() or not ILLU_READ or not ILLU_ALT:
+        return ""
+    return ("{{img:" + ILLU + "|" + ILLU_ALT + "|" + ILLU_CAP + "}}\n"
+            + '<p class="look"><b>그림 읽기</b> — ' + ILLU_READ + "</p>\n")
+
+
+L_CH06_01 = "../../part2/ch06-langchain-start/01-계층-지도와-첫-호출.html"
+L_CH09_06 = "../../part3/ch09-rag-first-run/06-실험-하네스.html"
+L_CH13_04 = "../../part4/ch13-langgraph-basics/04-add_messages-리듀서.html"
+L_CH19_04 = "../../part5/ch19-model-tools/04-설명만으로-도구-선택하기.html"
+L_CH20_01 = "../../part5/ch20-tool-node/01-ToolNode와-tools-condition.html"
+L_CH20_03 = "../../part5/ch20-tool-node/03-recursion-limit과-명시적-종료.html"
+L_CH21_01 = "../ch21-create-agent/01-create-agent와-ReAct-루프.html"
+L_CH22_01 = "../ch22-middleware/01-미들웨어와-6개-훅.html"
+L_CH22_04 = "../ch22-middleware/04-호출-한도와-재시도-폴백.html"
+L_CH24_01 = "../ch24-human-in-the-loop/01-interrupt-승인-게이트.html"
+L_CH26_01 = "../ch26-delegation/01-Subagent-도구-위임.html"
+L_CH26_02 = "../ch26-delegation/02-Handoff-상태-전환.html"
+L_CH26_05 = "../ch26-delegation/05-위임-구조-실습.html"
+L_02 = "02-create-deep-agent와-도구.html"
+
+FEATURE_ROWS = [
+    ("파일시스템", "<code>FilesystemMiddleware</code>", "기본", "도구 여덟(파일 도구 일곱과 <code>execute</code>)"),
+    ("서브에이전트", "<code>SubAgentMiddleware</code>", "기본(general-purpose 서브에이전트가 늘 붙음)", "도구 <code>task</code>"),
+    ("컨텍스트 요약", "<code>SummarizationMiddleware</code>", "기본", "보이지 않음(설치판 소스로만 확인)"),
+    ("스킬", "<code>SkillsMiddleware</code>", "인자 <code>skills=</code>", "노드 <code>SkillsMiddleware.before_agent</code>"),
+    ("장기 메모리", "<code>MemoryMiddleware</code>", "인자 <code>memory=</code>", "노드 <code>MemoryMiddleware.before_agent</code>"),
+    ("파일 권한과 사람 승인", "권한은 파일 도구 안의 판정 · 승인은 <code>HumanInTheLoopMiddleware</code>", "인자 <code>permissions=</code> · <code>interrupt_on=</code>", "권한은 더해진 것 없음 · 승인은 노드 <code>HumanInTheLoopMiddleware.after_model</code>"),
+    ("비동기 서브에이전트", "<code>AsyncSubAgentMiddleware</code>", "배포 이름과 주소를 적은 서브에이전트 명세", "도구 다섯"),
+    ("(일곱 밖) 짝 맞추기", "<code>PatchToolCallsMiddleware</code>", "기본", "노드 <code>PatchToolCallsMiddleware.before_agent</code>"),
+    ("(일곱 밖) Anthropic 모델용 미들웨어", "<code>AnthropicPromptCachingMiddleware</code>", "기본", "보이지 않음(설치판 소스로만 확인 — 이 과정 모델에서는 하는 일 없음)"),
+    ("(일곱 밖) 할 일 목록", "<code>TodoListMiddleware</code>", "인자 <code>middleware=</code>로 직접 더함", "노드 <code>TodoListMiddleware.after_model</code> · 도구 <code>write_todos</code>"),
+]
+
+RESULT_ROWS = [
+    ("<code>create_agent</code> · 도구 없음", "<code>['__start__', 'model', '__end__']</code>", "도구 실행 노드 없음"),
+    ("<code>create_agent</code> + <code>FilesystemMiddleware</code>", "넷(<code>tools</code>가 더해짐)", "여덟"),
+    ("<code>create_deep_agent</code> · 인자 없음(기준)", "다섯", "아홉"),
+    ("인자 <code>skills=</code>", "기준 + <code>SkillsMiddleware.before_agent</code>", "기준과 같음"),
+    ("인자 <code>memory=</code>", "기준 + <code>MemoryMiddleware.before_agent</code>", "기준과 같음"),
+    ("인자 <code>interrupt_on=</code>", "기준 + <code>HumanInTheLoopMiddleware.after_model</code>", "기준과 같음"),
+    ("인자 <code>permissions=</code>(쓰기 막기)", "기준과 같음", "기준과 같음"),
+    ("비동기 서브에이전트 명세", "기준과 같음", "기준 + 도구 다섯"),
+    ("<code>middleware=[TodoListMiddleware()]</code>", "기준 + <code>TodoListMiddleware.after_model</code>", "기준 + <code>write_todos</code>"),
+    ("<code>middleware=[parent_limit]</code>(호출 한도)", "기준 + <code>ModelCallLimitMiddleware</code>의 노드 둘", "기준과 같음"),
+]
+
+LOOK_B5 = "노트북 2절에서 <code>create_agent의 노드: ['__start__', 'model', '__end__']</code>와 Deep Agent의 노드 다섯을 견줍니다. 3절에서 <code>도구 수: 9</code>와 <code>Deep Agent에만 있는 도구: ['task']</code>를 확인합니다. 4·5절에서는 인자마다 <code>더해진 노드:</code>와 <code>더해진 도구:</code> 두 줄을 봅니다. 6절 마지막 셀에서 <code>도구 메시지 내용: Model call limits exceeded: run limit (0/0)</code>을 확인합니다."
+LOOK_B6 = "노트북 4절의 권한 규칙 셀에서 두 줄이 모두 <code>[]</code>인지 봅니다. 6절에서 <code>바꾼 설명이 실렸는가: True</code>와 <code>기본 설명이 남았는가: False</code>를 확인합니다. 모델을 부르는 셀이 없으므로, 다시 실행해도 같은 이름이 나와야 합니다."
+
+
+def src_html() -> str:
+    features = table_html(["일곱 기능", "붙이는 것", "붙는 조건", "이 절 출력에서 보인 것"], FEATURE_ROWS)
+    results = table_html(["만든 설정", "노드", "도구"], RESULT_ROWS)
+    return """<!--meta: 강의 1h | 실습 2h | 코드 notebooks/""" + SLUG + """.ipynb | 새 용어 6 -->
+<style>html,body{overflow-x:hidden}.notebook,.nb-cell,.nb-main,.nb-input,.nb-result{min-width:0;max-width:100%}.nb-input pre,.nb-output{box-sizing:border-box;max-width:100%;overflow-x:auto}code.nb-source{display:block!important;width:100%!important;min-width:0!important;overflow-x:auto!important;padding:0!important}</style>
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul>
+<li>함수 <code>create_deep_agent</code>가 만든 그래프를 <code>create_agent</code> 그래프와 견주어, 미리 붙은 노드와 도구를 출력으로 설명할 수 있습니다.</li>
+<li>인자를 하나씩 바꾼 조립 결과로, 일곱 기능이 기본 미들웨어와 선택 기능으로 나뉘는 것을 말할 수 있습니다.</li>
+<li>general-purpose 서브에이전트에 호출 한도를 넣은 명세를 만들고, 모델 없이 한도를 확인할 수 있습니다.</li>
+</ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p><a href=\"""" + L_CH26_01 + """\">Ch 26</a>에서는 위임 구조를 코드로 하나씩 짰습니다. 긴 일을 맡기려면 중간 결과를 파일에 적고, 서브에이전트에게 일을 나누고, 길어진 대화를 줄이는 장치가 함께 필요합니다. 이런 장치를 절마다 새로 짜는 대신, 미리 조립해 둔 틀을 쓸 수 있습니다. 이 챕터가 쓰는 Deep Agents가 그런 틀입니다.</p><p>미리 조립한 틀은 부르기만 하면 되지만, 무엇이 붙었는지 모르면 문제가 생겼을 때 볼 곳을 찾기 어렵습니다. 이 절은 모델을 부르지 않고, 조립된 그래프의 노드와 도구 이름을 출력해 봅니다. 절 제목의 일곱 기능은 이 교재가 Deep Agents의 기능을 나눠 부르는 이름입니다. 출력으로 세면 기본으로 붙는 것과 인자를 줘야 붙는 것이 갈립니다. 챕터 제목의 Harness는 하네스라는 말의 영어이고, 뜻은 「핵심 개념」에서 Ch 6 01절 정의를 이어 풉니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p><a href=\"""" + L_CH06_01 + """\">Ch 6 01절</a>에서는 하네스를 모델 호출을 둘러싼 실행 틀로 정의했습니다. 입력을 준비하고, 호출하고, 결과를 검사하고, 기록하는 코드였습니다. 그 절의 계층 지도는 DeepAgents를 긴 작업에 필요한 기능을 갖춘 하네스 자리에 두었습니다. 이 절은 그 자리에 무엇이 들어 있는지 출력으로 채웁니다.</p><p><a href=\"""" + L_CH21_01 + """\">Ch 21 01절</a>에서는 <code>create_agent</code>로 모델 노드와 도구 실행 노드가 있는 에이전트 그래프를 만들었습니다. <a href=\"""" + L_CH22_01 + """\">Ch 22 01절</a>에서는 미들웨어의 여섯 훅을 노드형 훅과 감싸기형 훅으로 나눴습니다. <a href=\"""" + L_CH22_04 + """\">04절</a>의 호출 한도(<code>ModelCallLimitMiddleware</code>)는 한도를 붙인 에이전트의 모델 요청만 셌습니다.</p><p><a href=\"""" + L_CH20_01 + """\">Ch 20 01절</a>에서는 도구 실행 노드와 도구 찾기 표 <code>tools_by_name</code>을 보았습니다. 손으로 만든 도구 요청을 넣어, 모델 없이 도구를 실행하기도 했습니다. <a href=\"""" + L_CH20_03 + """\">03절</a>에서는 그래프 단계 수의 상한인 실행 한도를 배웠습니다.</p><p><a href=\"""" + L_CH26_01 + """\">Ch 26 01절</a>은 도구 함수 안에서 부른 전문 에이전트가 넘긴 글 한 줄로 일하는 모양을 보였습니다. 그 절은 이런 안쪽 실행에 바깥 실행 한도가 닿지 않는다고도 적었습니다. Ch 26은 위임 구조를 다뤘고, <a href=\"""" + L_CH26_05 + """\">05절</a> 끝에서 이 절을 이어서 볼 곳으로 가리켰습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>비유로 시작하기</h3><p>작은 유리 온실 하나를 떠올려 봅니다. 문을 열면 선반 위 물뿌리개, 벽에 감긴 호스, 지붕 밑 환풍기, 모종판을 올린 작업대가 이미 자리 잡고 있습니다. 문 앞에는 아직 쓰지 않은 빈 화분 넷이 엎어져 있습니다. 더 키울 것이 있는 사람만 화분을 들여 씁니다.</p><p>온실이 Deep Agents 하네스이고, 안에 이미 달린 설비가 인자 없이도 붙는 기본 미들웨어입니다. 문 앞의 화분 넷은 인자를 줘야 붙는 선택 기능입니다. 온실을 새로 짓지 않아도 모종을 바로 키우듯, Deep Agent는 만들자마자 파일 도구와 도구 <code>task</code>를 가집니다.</p><p>비유와 다른 점이 있습니다. 기본 미들웨어는 다섯인데, 이 과정 모델에서 아무 일도 하지 않는 하나는 그림에 없습니다. 또 온실의 설비는 눈으로 모두 보이지만, 미들웨어는 노드나 도구를 남기는 것만 출력으로 보입니다. 요약 미들웨어처럼 출력에 보이지 않는 것도 있어, 이 절은 그 자리를 설치판 소스로 따로 확인했습니다.</p>
+""" + illustration_block() + """<h3>하네스와 Deep Agent</h3><p>하네스(harness)는 Ch 6 01절 정의 그대로, 모델 호출을 둘러싼 실행 틀입니다. 입력을 준비하고, 호출하고, 결과를 검사하고, 기록하는 코드가 여기에 속합니다. 그 절 그림에서는 도장과 공책까지 담은 쟁반이 하네스였습니다. Deep Agents는 긴 작업에 자주 쓰는 실행 틀을 미리 조립해 둔 하네스입니다. 공식 개요 문서도 도구를 부르는 루프는 다른 에이전트와 같고, 기능을 미리 갖춘 「agent harness」라고 소개합니다.</p><p>Ch 6 01절의 쟁반이 호출 하나를 둘러싼 틀이었다면, 이 절 그림의 온실은 여러 설비를 미리 들여놓은 큰 틀입니다. 이 Deep Agent는 안에 도구 루프를 품습니다. 그래도 이 챕터는 Ch 6 01절 표처럼, 루프까지 미리 조립한 틀이라는 뜻에서 하네스 자리에 둡니다.</p><p><a href=\"""" + L_CH09_06 + """\">Ch 9 06절</a>의 실험 하네스는 뜻이 다릅니다. 그 말은 설정을 읽고 같은 차례로 실행해 결과를 적는 우리 코드를 가리켰습니다. 이 챕터의 하네스는 라이브러리가 조립해 주는 에이전트 틀입니다.</p>
+<table><thead><tr><th>말</th><th>뜻</th></tr></thead><tbody><tr><td>Deep Agent</td><td>함수 <code>create_deep_agent</code>가 만든 에이전트 그래프입니다. 가구와 설비가 갖춰진 채 들어가 사는 집과 같습니다. 이 절에서는 인자 없이 만든 <code>deep_agent</code>이고, 노드 다섯과 도구 아홉을 가졌습니다.</td></tr><tr><td>기본 미들웨어 · 선택 기능</td><td>인자를 주지 않아도 붙는 미들웨어가 기본 미들웨어이고, 인자를 줘야 붙는 기능이 선택 기능입니다. 휴대전화에 처음부터 깔린 앱과, 필요할 때 내려받는 앱과 같습니다. 이 절에서는 파일·서브에이전트·요약·짝 맞추기·Anthropic 모델용 미들웨어 다섯이 기본입니다. 짝 맞추기 미들웨어는 도구 요청과 도구 메시지의 짝을 맞추고, 다섯째는 이 과정 모델에서 아무 일도 하지 않습니다. 스킬·메모리·사람 승인·비동기 서브에이전트가 선택 기능입니다.</td></tr><tr><td>파일 도구</td><td>파일을 보고 쓰는 도구 일곱(<code>ls</code>·<code>read_file</code>·<code>write_file</code>·<code>edit_file</code>·<code>delete</code>·<code>glob</code>·<code>grep</code>)입니다. 공책을 펼쳐 읽고, 새로 적고, 고쳐 적고, 한 장 떼어 내는 일과 같습니다. 이 절에서는 <code>FilesystemMiddleware</code>가 명령 실행 도구 <code>execute</code>와 함께 붙입니다.</td></tr><tr><td>general-purpose 서브에이전트</td><td>따로 막지 않으면 Deep Agent에 늘 붙는 기본 서브에이전트입니다. 사무실에 늘 대기하며 무슨 일이든 받아 주는 도우미와 같습니다. 이 절에서는 도구 <code>task</code>의 설명 글에 이름이 올라 있고, 호출 한도가 없습니다.</td></tr><tr><td>할 일 목록</td><td>모델이 긴 일을 몇 단계로 나눠 적고, 단계마다 상태를 고쳐 적는 목록입니다. 장보기 전에 살 것을 적고, 산 것을 지워 가는 쪽지와 같습니다. 이 절에서는 <code>TodoListMiddleware</code>를 더하면 생기는 도구 <code>write_todos</code>이고, 모델이 쓰는 장면은 03절에서 봅니다.</td></tr><tr><td>서브에이전트 명세</td><td>서브에이전트의 이름·설명·시스템 메시지 글·미들웨어를 적은 딕셔너리입니다. 새로 온 직원에게 건네는 담당 소개서와 같습니다. 이 절에서는 이름을 <code>general-purpose</code>로 적어 기본 서브에이전트 자리를 바꾼 <code>helper_spec</code>입니다.</td></tr></tbody></table>
+<p>새 말을 이 절 코드에서 보면 이렇습니다. Deep Agent의 노드는 <code>create_deep_agent의 노드: ['__start__', 'model', 'tools', 'PatchToolCallsMiddleware.before_agent', '__end__']</code>로 출력됩니다. 파일 도구와 <code>execute</code>는 미들웨어 하나만 붙인 그래프의 <code>도구 수: 8</code>입니다. general-purpose 서브에이전트는 <code>설명 글에 general-purpose가 있는가: True</code>로 보입니다.</p>
+""" + mermaid_block(FIG1, FIG1_ALT, FIG1_CAP, FIG1_READ) + """<h3>일곱 기능과 실제 조립</h3><p>이 교재가 부르는 일곱 기능을 설치판의 실제 조립과 짝지으면 아래 표와 같습니다. 공식 개요 문서는 기능을 실행 환경·컨텍스트 관리·위임·사람의 개입, 네 무리로 나눕니다. 나누는 수보다, 무엇이 기본으로 붙고 무엇이 인자로 붙는지가 중요합니다.</p>
+""" + features + """
+<p>다시 세면 일곱 가운데 셋이 기본이고, 넷이 선택 기능입니다. 기본 미들웨어는 다섯이라, 일곱에 없는 짝 맞추기 미들웨어와 Anthropic 모델용 미들웨어가 더 있습니다. 뒤의 것은 Anthropic 모델에서만 일하고, 이 과정 모델에서는 아무 일도 하지 않습니다. 「파일 권한과 사람 승인」은 한 이름이지만, 실제로는 파일 도구 안의 판정과 따로 붙는 미들웨어로 갈립니다. 할 일 목록은 패키지 deepagents 0.7부터 기본에서 빠져, 일곱에 넣지 않았습니다.</p>
+<h3>기본 서브에이전트와 요금 사고</h3><p>도구 <code>task</code>는 서브에이전트를 도구 함수 안에서 실행합니다. 설치판 <code>subagents.py</code> 559~565행을 보면, 서브에이전트 그래프에 묶인 실행 한도 9999가 바깥에서 준 한도보다 앞섭니다. 설치판 <code>graph.py</code> 777행에서 바깥 에이전트에 붙인 호출 한도는 general-purpose 서브에이전트로 옮겨 가지 않습니다. 그래서 이 챕터는 모델을 부를 때 호출 한도를 두 곳에 줍니다. 바깥 에이전트의 <code>middleware=</code>와, 서브에이전트 명세마다의 <code>middleware</code>입니다.</p><p>두 곳에 한도를 주면, 한 번 실행의 모델 요청은 바깥 호출 한도와 서브에이전트 쪽 한도의 합을 넘지 않습니다. 서브에이전트 쪽 한도는 도구 <code>task</code>를 부른 횟수에 명세의 호출 한도를 곱한 값입니다. 서브에이전트의 요청은 바깥 결과 목록에 남지 않으므로, Ch 26 01절처럼 따로 세야 합니다. 요약 미들웨어가 켜지면 그 요약 요청은 이 합 밖이고, 켜지는 기준은 05절에서 봅니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>노트북 2절은 도구 없는 에이전트와 인자 없는 Deep Agent를 만들어, 노드와 실행 한도를 견줍니다. 3절은 도구 이름을 모으는 함수를 만들고, <code>FilesystemMiddleware</code> 하나만 붙인 <code>create_agent</code>와 도구 목록을 견줍니다. 4절은 인자를 하나씩 바꿔 더해진 노드와 도구를 보고, 5절은 할 일 목록 미들웨어를 더해 봅니다. 6절은 general-purpose 명세에 호출 한도를 넣고, 모델 없이 도구 <code>task</code>를 실행합니다.</p><p>모델 객체를 만들려면 키가 필요하지만, 노트북 전체에서 모델 요청은 0번이고 예상 비용도 0달러입니다. 출력은 모두 코드가 조립한 구조의 이름과 값입니다. 읽거나 쓰는 파일은 없고, 걸린 시간은 재지 않았습니다.</p>
+{{notebook:""" + SLUG + """}}
+<p class="look"><b>확인할 점</b> — """ + LOOK_B5 + """</p>
+""" + mermaid_block(FIG2, FIG2_ALT, FIG2_CAP, FIG2_READ) + """<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>인자 없이 만든 Deep Agent는 <code>create_agent</code>와 같은 종류의 그래프였고, 실행 한도도 9999로 같았습니다. 다른 점은 도구 실행 노드와 짝 맞추기 노드, 그리고 도구 아홉이었습니다. 도구 아홉 가운데 여덟은 <code>FilesystemMiddleware</code> 하나를 붙인 <code>create_agent</code>에도 있었고, <code>task</code>만 Deep Agent에 따로 있었습니다. 도구와 노드를 미들웨어가 가져온다는 것이 출력으로 보였습니다.</p>
+<p>아래 표는 설정마다 조립된 노드와 도구입니다. 위 세 줄은 2·3절에서 만든 그래프입니다. 나머지는 4~6절에서 인자 하나만 바꾼 Deep Agent이고, 셋째 줄을 기준으로 견줬습니다.</p>
+""" + results + """
+<p>노드형 훅을 가진 기능(스킬·메모리·사람 승인·할 일 목록·호출 한도)은 노드로 더해졌습니다. 도구를 가진 기능(비동기 서브에이전트·할 일 목록)은 도구로 더해졌습니다. 쓰기를 막는 권한 규칙은 아무것도 더하지 않았고, 파일 도구 안에서 판정됩니다.</p>
+""" + mermaid_block(FIG3, FIG3_ALT, FIG3_CAP, FIG3_READ) + """<p>6절에서는 바깥 호출 한도와 같은 이름 명세를 함께 넘겼습니다. 도구 <code>task</code>의 설명 글은 우리 명세의 설명으로 바뀌었고, 기본 설명은 남지 않았습니다. 모델 없이 넣은 <code>task</code> 요청은 서브에이전트 안에서 호출 한도 0에 닿아, 모델을 부르지 않고 멈춤 글을 도구 메시지로 남겼습니다.</p>
+""" + mermaid_block(FIG4, FIG4_ALT, FIG4_CAP, FIG4_READ) + """<p>""" + RUNS_SENTENCE + """</p>
+<p class="look"><b>확인할 점</b> — """ + LOOK_B6 + """</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>함수 <code>create_deep_agent</code>에 모델 이름 글자(<code>"openai:gpt-5.4-mini"</code>)를 넘기면 Deep Agents가 모델을 새로 만듭니다. 설치판 0.7.0에서 그 모델은 대화 요청과 다른 OpenAI의 요청 방식(Responses API)을 씁니다. 설정 temperature와 <code>reasoning_effort</code>도 없습니다. 노트북 밖에서 모델 없이 확인했고, 노트북에서는 실행하지 않았습니다. 설치판 <code>_models.py</code> 54~55행은 모델 객체를 받으면 그대로 쓰므로, 이 챕터는 과정 표준 모델 객체를 넘깁니다.</li><li>그래프에 등록된 도구는 아홉이지만, 모델에게 보내는 도구 목록은 다를 수 있습니다. 파일을 두는 기본 자리가 명령을 실행하지 못하면, <code>FilesystemMiddleware</code>가 요청마다 <code>execute</code>를 목록에서 뺍니다. 설치판 <code>filesystem.py</code> 2688~2707행에서 확인했습니다. 이 절은 모델을 부르지 않아 그 목록을 출력하지 않았고, 02절이 이어서 다룹니다.</li><li>인자 <code>middleware=</code>에 기본 미들웨어와 이름이 같은 미들웨어를 넣으면, 뒤에 붙지 않고 기본 자리를 바꿉니다. 설치판 <code>graph.py</code> 201~235행의 규칙입니다. 노트북 밖에서 모델 없이 확인해 보니, <code>FilesystemMiddleware</code>를 넣어 바꾸자 권한 규칙의 쓰기 막기가 사라졌습니다. 권한과 파일 미들웨어 설정을 함께 쓰는 절은 이 점을 조심합니다.</li><li>권한 규칙의 <code>mode</code>를 <code>"interrupt"</code>로 적으면, 막는 대신 사람 승인 미들웨어가 붙습니다. 설치판 소스와 노트북 밖 확인으로 본 것이고, 이 절 4절의 규칙은 <code>"deny"</code>였습니다.</li><li>이름이 다른 서브에이전트 명세만 넘기면, 기본 general-purpose 서브에이전트가 그대로 함께 붙습니다. 노트북 밖에서 모델 없이 확인했습니다. 그래서 모델을 부르는 뒤 절은 같은 이름 명세에도 호출 한도를 넣어 함께 넘깁니다.</li><li>호출 한도 <code>run_limit</code>은 한 번 실행 안의 모델 요청 수를 셉니다. 도구 <code>task</code>는 부를 때마다 서브에이전트를 새로 실행하므로, 명세의 한도는 <code>task</code> 한 번마다 걸립니다. 한 응답에서 <code>task</code>를 몇 번 부를지는 이 설정이 막지 않고, 도구 설명 글은 여럿을 함께 부르라고 권합니다.</li><li>6절의 호출 한도 0은 모델을 부르지 않고 멈추는지 보려고 고른 값입니다. 흐름을 보여 주려고 정한 예이고, 실제로 일을 맡길 때는 일을 마칠 만한 값을 줍니다.</li><li>공식 서브에이전트 문서의 명세 키 <code>mode</code>(<code>"isolated"</code>·<code>"fork"</code>)는 설치판 0.7.0의 명세에 없습니다. 문서는 이 기능이 deepagents 0.7.13 이상에서 된다고 적습니다. 이 챕터는 설치판 소스와 출력을 기준으로 씁니다.</li><li>요약 미들웨어가 켜지는 기준과 서브에이전트의 실제 동작은 모델을 부르는 뒤 절에서 봅니다. 이 절은 조립만 보았고, 모델이 도구를 고르는 장면은 없습니다.</li><li>걸린 시간은 재지 않았습니다. 교재 출력은 Linux의 Python 3.12.13으로 만들었고, 다른 판과 Windows·macOS에서는 실행하지 않았습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>함수 <code>create_deep_agent</code>는 <code>create_agent</code>에 미들웨어를 미리 골라 붙인 그래프를 만들고, 실행 한도 9999도 같습니다.</li><li>기본 도구 아홉 가운데 여덟은 <code>FilesystemMiddleware</code>가, <code>task</code>는 서브에이전트 미들웨어가 붙였고, 인자를 주면 노드나 도구가 더해졌습니다.</li><li>general-purpose 서브에이전트는 늘 붙고, 같은 이름 명세로 바꾸면 호출 한도를 넣을 수 있습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — <a href=\"""" + L_02 + """\">02절</a>에서는 우리 도구를 더하고, 실제 모델이 도구를 고르는 장면을 봅니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz" open><summary>문제 4개 · 해설 포함</summary><p class="quiz-q">1. 인자 없이 만든 Deep Agent의 도구 아홉 가운데 <code>FilesystemMiddleware</code>가 붙인 것은 몇 개이고, 나머지 하나는 무엇인가요?</p><p class="quiz-a">여덟 개입니다. 파일 도구 일곱과 명령 실행 도구 <code>execute</code>입니다. 나머지 하나는 서브에이전트 미들웨어가 붙인 도구 <code>task</code>입니다. 틀렸다면 노트북 3절을 다시 읽습니다.</p><p class="quiz-q">2. 쓰기를 막는 권한 규칙을 넘겼을 때, 노드와 도구가 하나도 늘지 않은 까닭은 무엇인가요?</p><p class="quiz-a">권한 규칙은 새 미들웨어를 붙이지 않고, 파일 도구가 쓰기 전에 파일 도구 안에서 판정되기 때문입니다. 틀렸다면 노트북 4절의 권한 규칙 셀을 다시 읽습니다.</p><p class="quiz-q">3. 기본 미들웨어인 요약 미들웨어가 이 절의 출력에 보이지 않은 까닭은 무엇인가요?</p><p class="quiz-a">감싸기형 훅만 있고 도구도 없어서, 그래프에 노드나 도구를 남기지 않기 때문입니다. 이 절은 그 자리를 설치판 소스로 확인했습니다. 틀렸다면 노트북 3절의 마지막 결과 읽기를 다시 읽습니다.</p><p class="quiz-q">4. 동료가 「바깥 에이전트에 호출 한도 3을 붙였으니, 서브에이전트 요청까지 합쳐도 세 번을 넘지 않는다」고 말합니다. 맞나요?</p><p class="quiz-a">맞지 않습니다. 바깥 호출 한도는 바깥 에이전트의 요청만 세고, general-purpose 서브에이전트로 옮겨 가지 않습니다. 서브에이전트 명세마다 호출 한도를 따로 넣어야 합니다. 틀렸다면 노트북 6절을 다시 읽습니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><div><a href="https://docs.langchain.com/oss/python/deepagents/overview">Deep Agents overview</a></div>확인 2026-09-28 · Deep Agents를 기능을 미리 갖춘 「agent harness」로 소개합니다. 기능을 네 무리로 나누고, 0.7부터 할 일 목록 계획이 직접 더해야 켜진다고 적습니다. 판 번호와 날짜 표시는 없습니다.</li><li><div><a href="https://docs.langchain.com/oss/python/deepagents/customization">Deep Agents customization</a></div>확인 2026-09-28 · 기본 미들웨어 차례가 <code>FilesystemMiddleware</code>와 <code>SubAgentMiddleware</code>로 시작한다고 적습니다. 목록 끝의 Anthropic 모델용 미들웨어는 늘 붙고, 맞지 않는 모델에서는 아무 일도 하지 않는다고 적습니다. 더한 미들웨어는 이름이 같으면 그 자리를 바꾸고, 아니면 <code>PatchToolCallsMiddleware</code> 뒤에 붙는다는 설명도 있습니다.</li><li><div><a href="https://docs.langchain.com/oss/python/deepagents/subagents">Deep Agents subagents</a></div>확인 2026-09-28 · general-purpose 서브에이전트를 자동으로 붙인다고 적습니다. 같은 이름 서브에이전트를 넘기면 그 자리를 바꾼다는 설명도 있습니다. 명세 키 <code>mode</code>는 deepagents 0.7.13 이상에서 된다고 적고, 설치판 0.7.0에는 없습니다.</li><li><div><a href="https://github.com/langchain-ai/deepagents/releases/tag/deepagents%3D%3D0.7.0">deepagents 0.7.0 release</a></div>확인 2026-09-28 · <code>TodoListMiddleware</code>와 도구 <code>write_todos</code>가 기본에서 빠졌다고 적습니다.</li><li>설치판 deepagents 0.7.0 소스 <code>graph.py</code> 201~235행은 같은 이름 미들웨어의 자리 바꾸기입니다. 750~814행은 general-purpose 서브에이전트, 816~860행은 기본 미들웨어 차례입니다. 922~944행은 <code>create_agent</code> 부르기와 실행 한도 9999이고, 777행은 바깥 미들웨어를 물려주는 조건입니다.</li><li>설치판 deepagents 0.7.0 소스 <code>middleware/subagents.py</code> 559~565행은 서브에이전트 실행 설정입니다. <code>middleware/filesystem.py</code> 2688~2707행은 모델에게 보낼 도구 목록에서 <code>execute</code>를 빼는 자리입니다.</li><li>langchain 1.4.0 소스 <code>agents/middleware/model_call_limit.py</code> 168~208행은 모델 앞에서 한도를 보는 훅입니다. 236~250행은 응답 뒤에 센 수를 더하는 훅입니다.</li></ul>
+"""
+
+
+def write_src() -> Path:
+    SRC.write_text(src_html(), encoding="utf-8")
+    return SRC
+
+
+if __name__ == "__main__":
+    print("wrote", write_src())
+    if "--src-only" not in sys.argv:
+        path = write_notebook(LAB, "01", SLUG, "experiment", cells())
+        print("wrote", path)

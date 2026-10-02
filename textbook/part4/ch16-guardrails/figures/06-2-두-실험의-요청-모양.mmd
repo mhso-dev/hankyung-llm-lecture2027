@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph one["실험 1 · 방어 없음 · 노트북 4절"]
+    direction TB
+    o1["시스템 메시지<br>01절 그대로"]:::tool
+    o2["사용자 메시지<br>질문 + 문서 줄 둘"]:::tool
+    o3["모델<br>gpt-5.4-mini"]:::model
+    o1 ~~~ o2
+    o2 --> o3
+  end
+  subgraph two["실험 2 · 구역 감싸기 · 노트북 5절"]
+    direction TB
+    t1["시스템 메시지<br>구역 안 글은 자료"]:::tool
+    t2["사용자 메시지<br>질문 + 문서 구역 둘"]:::tool
+    t3["모델<br>gpt-5.4-mini"]:::model
+    t1 ~~~ t2
+    t2 --> t3
+  end
+  same["두 칸 모두 같은 질문<br>문서 E01 · E99<br>답에서 시스템 메시지<br>글자 셋을 찾음"]
+  one ~~~ same
+  two ~~~ same

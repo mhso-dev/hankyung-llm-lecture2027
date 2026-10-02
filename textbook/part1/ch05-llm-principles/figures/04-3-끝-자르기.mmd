@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  LONG["40번 이은 문서의 입력<br>760조각"]:::measure
+  FRONT["앞 448조각을 남긴 글<br>시스템 지시 True<br>질문 False<br>답 시작 표시 False"]:::measure
+  BACK["뒤 448조각을 남긴 글<br>시스템 지시 False<br>질문 True<br>답 시작 표시 True"]:::measure
+  LOSTEND["잘려 나간 끝<br>질문 · 답 시작 표시"]
+  LOSTHEAD["잘려 나간 앞<br>시스템 지시"]
+  LONG -- "앞쪽 남기기" --> FRONT
+  LONG -- "뒤쪽 남기기" --> BACK
+  FRONT -.-> LOSTEND
+  BACK -.-> LOSTHEAD

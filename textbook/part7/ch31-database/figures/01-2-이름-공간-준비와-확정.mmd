@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  beg["async with engine.begin()<br>연결 하나를 빌림"]:::flow
+  subgraph blk["begin 블록 안 · 한 묶음"]
+    direction TB
+    s1["DROP SCHEMA IF EXISTS<br>ch31_async CASCADE"]:::flow
+    s2["CREATE SCHEMA<br>ch31_async<br>CREATE TABLE requests"]:::flow
+    s3["INSERT로<br>문의 세 줄을 넣음"]:::flow
+    s1 --> s2 --> s3
+  end
+  ok["블록이 오류 없이 끝남<br>바꾼 내용을 확정"]
+  rows["표 requests 문의 세 줄<br>환불 · 배송 · 결제"]:::tool
+  cnt["넣은 줄 셋<br>다시 읽은 줄 셋"]:::measure
+  beg --> blk --> ok --> rows --> cnt

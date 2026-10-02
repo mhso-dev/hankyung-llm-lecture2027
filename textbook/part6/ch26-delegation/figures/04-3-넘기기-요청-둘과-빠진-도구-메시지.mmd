@@ -1,0 +1,12 @@
+%%{init: {"flowchart": {"wrappingWidth": 320}}}%%
+flowchart TB
+  %% classes
+  a["안내 담당 front_desk 요청 1<br>한 응답에 넘기기 요청 둘"]:::model
+  t["넘기기 도구 둘이 저마다<br>바깥 그래프로 가는 Command를 냄<br>그 가운데 하나만 바깥 그래프에 적용"]
+  c["체크포인트에 저장된 메시지<br>AIMessage · ToolMessage<br>넘기기 요청 수 2<br>모델 요청 수 1"]:::measure
+  d["받은 담당의 모델 요청<br>짝 없는 넘기기 요청이 실림"]
+  e["받은 오류<br>OpenAIInvalidRequestError<br>상태 코드 400"]:::measure
+  a --> t
+  t --> c
+  c --> d
+  d --> e

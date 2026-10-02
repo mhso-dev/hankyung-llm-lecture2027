@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  start["처음 상담 시간 50분"]:::tool
+  open["open_day<br>이름 공간 새로 · setup"]:::flow
+  one["book_inquiry 문의 1<br>환불 10분"]:::flow
+  two["book_inquiry 문의 2<br>배송 30분"]:::flow
+  three["book_inquiry 문의 3<br>결제 10분"]:::flow
+  booked["남긴 예약 줄 수<br>1 · 1 · 1"]:::measure
+  seen["남은 상담 시간 0분<br>예약 번호 1 · 2 · 3<br>체크포인트 줄 아홉<br>빌려 간 연결 없음<br>배송 상태 booked 1"]:::measure
+  start --> open --> one --> two --> three --> booked --> seen

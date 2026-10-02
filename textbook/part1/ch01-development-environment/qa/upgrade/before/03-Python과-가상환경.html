@@ -1,0 +1,322 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python과 가상환경 — Ch 1 · 오리엔테이션 · 개발환경</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 1 · 오리엔테이션 · 개발환경</p>
+<h1>Python과 가상환경</h1><div class="meta"><span>강의 1h</span><span>실습 1h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 1h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul><li>이 절을 마치면 프로젝트에서 사용하는 Python이 3.12인지 확인할 수 있습니다.</li><li>프로젝트의 가상환경을 준비하고 VS Code의 실행 환경과 노트북 커널을 선택할 수 있습니다.</li><li>두 가상환경의 실행 위치가 서로 다르다는 실제 결과를 읽고, 가상환경이 구분하는 실행 위치와 설치 위치를 설명할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>같은 코드를 실행했는데 한 컴퓨터에서는 되고 다른 컴퓨터에서는 필요한 기능을 찾지 못할 수 있습니다. 코드 파일만 같아도 실행하는 Python 버전과 설치한 패키지가 다르면 결과가 달라질 수 있기 때문입니다. 먼저 <b>어떤 Python으로 실행하는지와 어디에 패키지를 설치하는지</b>를 정합니다. 이후 문제가 생겼을 때 코드와 환경 중 무엇이 다른지 나눠 확인할 수 있습니다.</p>
+<p>이 과정은 Python 3.12를 사용합니다. 버전 번호를 단순히 외우는 대신, 터미널과 노트북에서 실제 실행한 버전을 확인합니다. 컴퓨터에 Python이 여러 개 있어도 실습마다 필요한 환경을 선택할 수 있습니다. 프로그램 전체를 삭제하고 재설치하기 전에 현재 프로젝트가 어느 환경을 사용하고 있는지 살펴보는 것이 첫 확인 순서입니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>2절에서 VS Code와 uv를 설치하고, 실습 폴더를 열어 터미널의 현재 위치를 확인했습니다. <code>uv --version</code>이 인식되지 않으면 2절의 설치 안내를 먼저 확인합니다. 이번 절에서는 <a href="../../downloads/ch01-practice.zip" download>노트북과 실습 파일 묶음</a>의 <code>labs/part1/ch01-development-environment</code> 폴더를 사용합니다. 폴더 이름만 비슷한 빈 연습 폴더와 구분하고, 안에 <code>pyproject.toml</code>과 <code>uv.lock</code>, <code>notebooks</code>가 있는지 확인합니다.</p>
+<p>처음 실습 묶음을 받았다면 압축을 푼 뒤 위 폴더를 VS Code의 Open Folder로 엽니다. Python 확장과 Jupyter 확장은 설치되어 있어야 합니다. 이 장에는 외부 모델 서비스 계정이나 API 키가 필요하지 않습니다. 준비 단계에서는 Python과 실습 도구를 내려받으므로 인터넷 연결이 필요할 수 있습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>작업별 준비물을 따로 둡니다</h3>
+<p>서로 다른 실습의 준비물을 각각의 보관함에 넣으면 어느 실습에서 쓰는지 구분할 수 있습니다. 프로그램의 실행 환경도 프로젝트마다 분리합니다. 다만 실제 보관함처럼 컴퓨터 전체를 나누는 것은 아닙니다. 가상환경은 주로 Python 실행 위치와 패키지 설치 위치를 구분하며, 같은 컴퓨터의 파일과 운영체제를 사용합니다. 어떤 코드든 안전하게 실행해 주는 격리 장치라고 생각하지 않습니다.</p>
+<p><b>인터프리터(interpreter)</b>는 Python 코드를 읽고 실행하는 프로그램입니다. <b>프로젝트(project)</b>는 하나의 작업에 필요한 코드와 설정을 모은 단위입니다. <b>패키지(package)</b>는 설치해서 사용하는 Python 기능의 묶음입니다. <b>가상환경(virtual environment)</b>은 프로젝트별로 Python 패키지 설치 위치를 구분하는 실행 환경입니다. 이 과정은 프로젝트 폴더 안의 <code>.venv</code>를 사용합니다.</p>
+<p><b>의존성(dependency)</b>은 프로그램을 실행하는 데 필요한 다른 패키지입니다. <b>잠금 파일(lockfile)</b>은 설치할 패키지와 선택된 버전을 기록해 다시 준비할 때 참고하는 파일입니다. uv에서는 <code>uv.lock</code>을 사용합니다. <b>커널(kernel)</b>은 노트북 코드를 실행하고 변수를 기억하는 프로그램입니다. VS Code에서 파일 실행에 사용할 Python을 골랐더라도 노트북의 커널은 별도로 확인합니다.</p>
+<h3>프로젝트 안의 세 파일을 읽습니다</h3>
+<div class="tw"><table><thead><tr><th>파일 또는 폴더</th><th>담고 있는 내용</th><th>학생이 확인할 점</th></tr></thead><tbody><tr><td><code>pyproject.toml</code></td><td>프로젝트 정보와 필요한 Python·패키지 조건입니다.</td><td>Python 3.12와 노트북 실행 도구 조건을 확인합니다. 처음 실습에서는 수정하지 않습니다.</td></tr><tr><td><code>uv.lock</code></td><td>의존성을 계산한 뒤 선택한 패키지 버전입니다.</td><td>직접 편집하지 않고 제공된 파일로 환경을 준비합니다.</td></tr><tr><td><code>.venv</code></td><td>현재 컴퓨터에서 실제 사용할 실행 환경입니다.</td><td>준비 명령을 실행한 뒤 생성되는지 확인합니다. 다른 컴퓨터에 그대로 복사하지 않습니다.</td></tr></tbody></table></div>
+<p>프로젝트 설정과 잠금 파일이 같으면 설치할 버전을 맞추는 데 도움이 됩니다. 그래도 운영체제와 CPU, 외부 파일까지 모두 같아지는 것은 아닙니다. 설치 오류가 있다면 운영체제와 Python 버전, 실패한 패키지 이름을 함께 확인합니다. 설치된 가상환경 전체 대신 설정과 잠금 파일을 공유하고, 각 컴퓨터에서 환경을 다시 만드는 이유입니다.</p>
+<div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:800px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 465" width="800" height="465" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-03-environments desc-03-environments">
+<title id="title-03-environments">기본 Python에서 서로 다른 가상환경 두 개를 만든다</title>
+<desc id="desc-03-environments">uv venv가 env_a와 env_b를 만들고, 각 환경에서 prefix와 base_prefix가 다른지 확인합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="800" height="465" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">기본 Python에서 서로 다른 가상환경 두 개를 만든다</tspan></text>
+<rect x="295" y="55" width="210" height="65" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="400.0" y="87.5" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="400.0" dy="0.0">기본 Python 3.12</tspan></text>
+<polyline points="360,120 205,180" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="219.1" y="123.0" width="126.8" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="282.5" y="135.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="282.5" dy="0.0">uv venv env_a</tspan></text>
+<polyline points="440,120 595,180" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="454.1" y="123.0" width="126.8" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="517.5" y="135.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="517.5" dy="0.0">uv venv env_b</tspan></text>
+<rect x="70" y="180" width="270" height="90" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="205.0" y="214.9" font-size="15" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="205.0" dy="0.0">env_a</tspan><tspan x="205.0" dy="20.2">env_a / python_name</tspan></text>
+<rect x="460" y="180" width="270" height="90" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="595.0" y="214.9" font-size="15" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="595.0" dy="0.0">env_b</tspan><tspan x="595.0" dy="20.2">env_b / python_name</tspan></text>
+<polyline points="205,270 205,320" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#m-yellow)"/>
+<rect x="158.9" y="268.0" width="92.1" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="205.0" y="280.0" font-size="14" fill="#92400e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="205.0" dy="0.0">prefix 비교</tspan></text>
+<polyline points="595,270 595,320" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#m-yellow)"/>
+<rect x="548.9" y="268.0" width="92.1" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="595.0" y="280.0" font-size="14" fill="#92400e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="595.0" dy="0.0">prefix 비교</tspan></text>
+<rect x="95" y="320" width="220" height="70" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="205.0" y="344.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="205.0" dy="0.0">env_a 가상환경</tspan><tspan x="205.0" dy="21.6">True</tspan></text>
+<rect x="485" y="320" width="220" height="70" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="595.0" y="344.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="595.0" dy="0.0">env_b 가상환경</tspan><tspan x="595.0" dy="21.6">True</tspan></text>
+<text x="400" y="430.0" font-size="15" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="bold"><tspan x="400" dy="0.0">True는 sys.prefix와 sys.base_prefix가 다르다는 뜻입니다.</tspan></text>
+</svg></div>
+<p class="look"><b>확인할 점</b> — 초록색 환경 A와 B는 각각의 실행 위치를 갖습니다. 노란 확인 단계는 두 환경 폴더의 위치가 서로 다른지와 각 실행이 가상환경 안에서 이루어지는지를 비교합니다. 그림은 패키지 설치 위치를 나누는 원리를 설명하며 운영체제 전체가 두 개 생겼다는 뜻이 아닙니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<h3>노트북을 열기 전에 한 번 준비합니다</h3>
+<ol><li>VS Code에서 제공된 <code>labs/part1/ch01-development-environment</code> 폴더를 엽니다. Terminal → New Terminal로 새 창을 열고 현재 폴더와 파일 목록을 확인합니다.</li><li>터미널에서 <code>uv sync --locked</code>를 실행합니다. 잠금 파일의 버전을 사용해 프로젝트에 필요한 도구를 준비합니다. 설치가 끝날 때까지 기다린 뒤 오류 없이 명령 입력 상태로 돌아왔는지 확인합니다.</li><li><code>uv run python --version</code>을 실행해 <code>Python 3.12</code>로 시작하는 출력인지 확인합니다. 마지막 패치 번호는 설치된 환경에 따라 다를 수 있습니다.</li><li>VS Code 명령 팔레트를 열고 <code>Python: Select Interpreter</code>를 선택합니다. Windows·Linux는 <code>Ctrl+Shift+P</code>, macOS는 <code>Cmd+Shift+P</code>로 명령 팔레트를 엽니다. 현재 프로젝트의 <code>.venv</code>를 고릅니다.</li><li><code>notebooks</code>에서 원하는 절의 <code>.ipynb</code>를 열고, 오른쪽 위 Select Kernel → Python Environments에서 같은 프로젝트의 <code>.venv</code>를 선택합니다. 표시되지 않으면 VS Code의 환경 목록을 새로 고친 뒤 다시 선택합니다.</li><li>첫 코드 셀을 선택하고 <code>Shift+Enter</code>를 누릅니다. 실행 중 표시가 사라진 뒤 출력을 읽고 다음 셀로 이동합니다. 1절과 2절의 노트북도 같은 준비 환경에서 실행할 수 있습니다.</li></ol>
+<p><code>uv sync</code>는 프로젝트의 실행 환경을 준비하는 명령이고, <code>--locked</code>는 제공된 잠금 파일을 변경하지 않고 사용할 수 있는지 확인하는 옵션입니다. 설정과 잠금 파일이 서로 맞지 않아 실패하면 옵션을 지우기 전에 <code>pyproject.toml</code>과 <code>uv.lock</code>이 실습 폴더에 함께 있는지 확인합니다. <code>uv run</code>은 프로젝트 환경에서 뒤에 적은 명령을 실행합니다. 이 방식에서는 매번 별도의 활성화 명령을 입력할 필요가 없습니다.</p>
+<p>터미널의 <code>python</code> 명령과 <code>uv run python</code>이 같은 실행 파일을 사용한다고 가정하지 않습니다. 현재 셸 설정에 따라 앞의 명령은 다른 Python을 실행할 수 있습니다. 이 교재의 터미널 예제는 <code>uv run</code>으로 실행 환경을 명확히 지정합니다. 노트북에서는 선택한 커널이 실제로 Python 3.12인지 첫 셀의 결과로 확인합니다.</p>
+<h3>서로 다른 두 환경을 실제로 확인합니다</h3>
+<p>다음 노트북은 <code>uv venv</code>로 연습용 환경 두 개를 만듭니다. 2절에서 설치한 uv가 노트북에서도 인식되어야 합니다. 프로젝트의 <code>.venv</code>와 구분되는 임시 폴더에 환경을 준비합니다. <code>sys</code>는 실행 중인 Python 정보를 읽고, <code>subprocess</code>는 별도의 프로그램을 실행하는 기능입니다. 보조 문법은 주석을 따라 읽고, 어떤 위치를 비교하는지와 결과의 뜻에 집중합니다.</p>
+<p><code>import</code>는 이미 준비된 기능을 현재 코드에서 사용할 수 있게 가져옵니다. <code>sys</code>, <code>os</code>, <code>shutil</code>, <code>subprocess</code>, <code>pathlib</code>, <code>tempfile</code>은 Python과 함께 제공되는 표준 라이브러리이므로 이 노트북에서 별도 설치하지 않습니다. 반면 프로젝트의 <code>pyproject.toml</code>에 적힌 제삼자 패키지는 uv가 내려받아 가상환경에 설치합니다. 가져오는 동작인 <code>import</code>와 컴퓨터에 패키지를 추가하는 설치를 구분합니다.</p>
+<p><code>shutil.which("uv")</code>는 셸이 실행할 수 있는 <code>uv</code> 명령의 위치를 찾습니다. 찾으면 경로 문자열을, 찾지 못하면 값이 없음을 뜻하는 <code>None</code>을 반환합니다. <code>assert uv is not None</code>은 위치를 찾았는지 확인하고, 찾지 못했다면 안내 문장과 함께 실행을 멈춥니다. 이 확인을 먼저 하는 이유는 뒤의 가상환경 생성 실패를 코드 오류로 오해하지 않기 위해서입니다.</p>
+<p><code>subprocess.run([...], check=True)</code>에서 대괄호 안의 목록은 터미널에 입력할 명령과 옵션을 순서대로 적은 것입니다. 첫 값은 실행할 프로그램이며 뒤의 값은 그 프로그램에 전달할 인자입니다. <code>check=True</code>는 명령이 실패 상태를 반환하면 Python 실행도 오류로 멈추게 합니다. <code>capture_output=True</code>는 별도 프로그램의 출력을 화면에 바로 표시하지 않고 반환 결과의 <code>stdout</code>에 저장하며, <code>text=True</code>는 그 출력을 글자로 읽습니다.</p>
+<p>운영체제에 따라 가상환경 안의 Python 파일 위치가 다르므로 <code>os.name == "nt"</code>일 때 Windows 경로를, 그렇지 않을 때 macOS·Linux 경로를 선택합니다. <code>sys.prefix</code>는 현재 실행 환경의 위치이고 <code>sys.base_prefix</code>는 기반 Python의 위치입니다. 둘이 다르다는 비교 결과가 <code>True</code>이면 해당 실행이 가상환경 안에서 이루어졌다고 해석합니다. 이 비교는 환경의 위치를 확인할 뿐, 설치된 모든 패키지가 원하는 버전이라는 뜻은 아닙니다.</p>
+<p><code>is not None</code>은 값이 없는 상태인 <code>None</code>이 아닌지 확인합니다. <code>assert 조건, "안내 문장"</code>에서 쉼표 뒤 문자열은 조건이 거짓일 때 오류와 함께 보여 줄 설명입니다. 마지막 검사에 쓰는 <code>and</code>는 양쪽 조건이 모두 참일 때 참이 됩니다. 따라서 환경 위치가 서로 다르면서 두 실행 모두 가상환경 내부인지 함께 확인합니다.</p>
+<section class="notebook" data-notebook="03-Python과-가상환경" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-09</span><button type="button" class="copy-all">전체 코드 복사</button><a download="03-Python과-가상환경.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICIxNmY4MDg1MSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMgUHl0aG9u6rO8IOqwgOyDge2ZmOqyvVxuIiwKICAgICJcbiIsCiAgICAi7ZiE7J6sIFB5dGhvbiDrsoTsoITsnYQg7ZmV7J247ZWY6rOgLCDshJzroZwg6rWs67aE65CY64qUIOuRkCDqsJzsnZgg6rCA7IOB7ZmY6rK97J2EIOyehOyLnCDtj7TrjZTsl5Ag66eM65Ot64uI64ukLiDsnbjthLDtlITrpqzthLDripQgUHl0aG9uIOy9lOuTnOulvCDsnb3slrQg7Iuk7ZaJ7ZWY64qUIO2UhOuhnOq3uOueqOydtOqzoCwg6rCA7IOB7ZmY6rK97J2AIO2UhOuhnOygne2KuOuzhCBQeXRob24g7Iuk7ZaJIOychOy5mOyZgCDtjKjtgqTsp4Ag7ISk7LmYIOychOy5mOulvCDqtazrtoTtlanri4jri6QuIOuFuO2KuOu2geyXkOyEnOuKlCDshKDtg53tlZwg7Luk64SQ7J20IOy9lOuTnOulvCDsi6Ttlontlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiMjE5YjA0ZDYiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyBQeXRob24gMy4xMiDtmZXsnbhcbiIsCiAgICAiXG4iLAogICAgIuqwgOyDge2ZmOqyveydhCDrp4zrk6TquLAg7KCE7JeQIO2YhOyerCDsu6TrhJDsnbQg6rWQ7J6s7J2YIOq4sOykgCDrsoTsoITsnbjsp4Ag7ZmV7J247ZWp64uI64ukLiBgaW1wb3J0IHN5c2DripQg7Iuk7ZaJIOykkeyduCBQeXRob24g7KCV67O066W8IOydveuKlCDtkZzspIAg6riw64ql7J2EIOqwgOyguOyYteuLiOuLpC4gYHZlcnNpb25faW5mb1s6Ml1g64qUIOuyhOyghCDsoJXrs7TsnZgg7JWeIOuRkCDqsJLsnbgg7KO8IOuyhOyghOqzvCDrtoAg67KE7KCE7J2EIOqzoOultOqzoCwgYD09ICgzLCAxMilg64qUIOuRkCDqsJLsnbQgM+qzvCAxMuyduOyngCDruYTqtZDtlanri4jri6QuIOqysOqzvOqwgCBgRmFsc2Vg7J2066m0IOyYpOuluOyqvSDsnITsl5DshJwgUHl0aG9uIDMuMTIg7Luk64SQ7J2EIOuLpOyLnCDshKDtg53tlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiNDZmOWQ0OTciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTI6MTU6MDEuNDkxMzQ2WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTI6MTU6MDEuNDkxMTY5WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTI6MTU6MDEuNDk2MjYxWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxMjoxNTowMS40OTU1MTZaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiUHl0aG9uIDMuMTI6IFRydWVcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IHN5c1xuIiwKICAgICJcbiIsCiAgICAiIyB2ZXJzaW9uX2luZm9bOjJd64qUIOyjvCDrsoTsoITqs7wg67aAIOuyhOyghCDrkZAg6rCc66eMIOyEoO2Dne2VqeuLiOuLpC5cbiIsCiAgICAidmVyc2lvbl9tYXRjaGVzID0gc3lzLnZlcnNpb25faW5mb1s6Ml0gPT0gKDMsIDEyKVxuIiwKICAgICJwcmludChmXCJQeXRob24gMy4xMjoge3ZlcnNpb25fbWF0Y2hlc31cIilcbiIsCiAgICAiYXNzZXJ0IHZlcnNpb25fbWF0Y2hlcyIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjY0MmU5NjM1IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiAiIyMg7J6E7IucIOqwgOyDge2ZmOqyvSDrkZAg6rCcIOyDneyEsVxuXG5gdXYgdmVudmDripQg7KeA7KCV7ZWcIO2PtOuNlOyXkCBQeXRob24g6rCA7IOB7ZmY6rK97J2EIOunjOuTreuLiOuLpC4gYC0tcHl0aG9uIDMuMTJg64qUIFB5dGhvbiDrsoTsoITsnYQg6rOg7KCV7ZWY6rOgLCBgLS1uby1wcm9qZWN0YOuKlCDtmITsnqwg7ZSE66Gc7KCd7Yq4IOyEpOygleydhCDsnb3sp4Ag7JWK6rOgIOyngOygle2VnCDtj7TrjZTsl5Ag7ZmY6rK966eMIOunjOuTpOqyjCDtlanri4jri6QuIGBzaHV0aWwud2hpY2goXCJ1dlwiKWDripQg7Iuk7ZaJIOqwgOuKpe2VnCB1diDrqoXroLnsnZgg7JyE7LmY66W8IOywvuyVhCDqsr3roZzrpbwg67CY7ZmY7ZWY66mwLCDssL7sp4Ag66q77ZWY66m0IGBOb25lYOydhCDrsJjtmZjtlanri4jri6QuIGBzdWJwcm9jZXNzLnJ1bmDsnZgg64yA6rSE7Zi4IOyViOyXkOuKlCDthLDrr7jrhJDsl5DshJwg7Iuk7ZaJ7ZWgIO2UhOuhnOq3uOueqOqzvCDsnbjsnpDrpbwg7Iic7ISc64yA66GcIOyggeyKteuLiOuLpC4gYGNoZWNrPVRydWVg64qUIOuqheuguSDsi6TtjKgg7IucIOyLpO2WieydhCDrqYjstqXri4jri6QuIOydtCDsi6TsirXsl5DshJzripQg7LaU6rCAIO2MqO2CpOyngOulvCDshKTsuZjtlZjsp4Ag7JWK7Iq164uI64ukLlxuXG5gdXYgaXMgbm90IE5vbmVg7J2AIOuqheuguSDsnITsuZjqsIAg7JeG64qUIOyDge2DnOyduOyngCDtmZXsnbjtlZjripQg7Iud7J6F64uI64ukLiBgTm9uZWDsnbQg7JWE64uI66m0IOywuOyeheuLiOuLpC4gYGFzc2VydCDsobDqsbQsIFwi7JWI64K0IOusuOyepVwiYOydmCDsibztkZwg65KkIOusuOyekOyXtOydgCDsobDqsbTsnbQg6rGw7KeT7J28IOuVjCDsmKTrpZjsl5Ag7ZGc7Iuc7ZWgIOyEpOuqheyeheuLiOuLpC4iCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiMjlkMjhiNzYiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTI6MTU6MDEuNDk3Mzk4WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTI6MTU6MDEuNDk3MzExWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTI6MTU6MDEuNTY5MDUwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxMjoxNTowMS41Njg2MDlaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi6rCA7IOB7ZmY6rK9IDLqsJwg7IOd7ISxXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImltcG9ydCBzaHV0aWxcbiIsCiAgICAiaW1wb3J0IHN1YnByb2Nlc3NcbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgImZyb20gdGVtcGZpbGUgaW1wb3J0IFRlbXBvcmFyeURpcmVjdG9yeVxuIiwKICAgICJcbiIsCiAgICAiIyB1duuhnCDsnoTsi5wg7Y+0642UIOyViOyXkCBlbnZfYeyZgCBlbnZfYuulvCDrp4zrk63ri4jri6QuXG4iLAogICAgInV2ID0gc2h1dGlsLndoaWNoKFwidXZcIilcbiIsCiAgICAiYXNzZXJ0IHV2IGlzIG5vdCBOb25lLCBcInV2IOyEpOy5mOulvCDrqLzsoIAg7ZmV7J247ZWY7IS47JqULlwiXG4iLAogICAgInRlbXBvcmFyeV9mb2xkZXIgPSBUZW1wb3JhcnlEaXJlY3RvcnkoKVxuIiwKICAgICJyb290ID0gUGF0aCh0ZW1wb3JhcnlfZm9sZGVyLm5hbWUpXG4iLAogICAgImVudl9hID0gcm9vdCAvIFwiZW52X2FcIlxuIiwKICAgICJlbnZfYiA9IHJvb3QgLyBcImVudl9iXCJcbiIsCiAgICAic3VicHJvY2Vzcy5ydW4oW3V2LCBcIi1xXCIsIFwidmVudlwiLCBcIi0tcHl0aG9uXCIsIFwiMy4xMlwiLCBcIi0tbm8tcHJvamVjdFwiLCBlbnZfYV0sIGNoZWNrPVRydWUpXG4iLAogICAgInN1YnByb2Nlc3MucnVuKFt1diwgXCItcVwiLCBcInZlbnZcIiwgXCItLXB5dGhvblwiLCBcIjMuMTJcIiwgXCItLW5vLXByb2plY3RcIiwgZW52X2JdLCBjaGVjaz1UcnVlKVxuIiwKICAgICJwcmludChcIuqwgOyDge2ZmOqyvSAy6rCcIOyDneyEsVwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImIzNWIwMjQ2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rCBIO2ZmOqyveydmCBQeXRob24g7Iuk7ZaJXG4iLAogICAgIlxuIiwKICAgICLsmrTsmIHssrTsoJzsl5Ag66ee64qUIFB5dGhvbiDsi6Ttlokg7YyM7J287J2EIOqzoOuluCDrkqQsIOqwgSDtmZjqsr0g7JWI7JeQ7IScIGBwcmVmaXhg6rCAIOq4sOuzuCBQeXRob27snZggYGJhc2VfcHJlZml4YOyZgCDri6Trpbjsp4Ag7ZmV7J247ZWp64uI64ukLiDsobDqsbTrrLjsnZgg7ZWcIOykhCDtkZztmITsnYAgV2luZG93c+ydtOuptCBgU2NyaXB0cy9weXRob24uZXhlYCwg6re466CH7KeAIOyViuycvOuptCBgYmluL3B5dGhvbmDsnYQg7ISg7YOd7ZWp64uI64ukLiBgc3VicHJvY2Vzcy5ydW5g7J2YIGAtY2DripQg65Kk7J2YIFB5dGhvbiDsvZTrk5zrpbwg7YyM7J28IOyXhuydtCDsi6TtlontlZjripQg7J247J6Q7J6F64uI64ukLiBgY2FwdHVyZV9vdXRwdXQ9VHJ1ZWDripQg67OE64+EIOyLpO2WieydmCDstpzroKXsnYQg67CY7ZmYIOqysOqzvOydmCBgc3Rkb3V0YOyXkCDsoIDsnqXtlZjqs6AsIGB0ZXh0PVRydWVg64qUIOq3uCDstpzroKXsnYQg6riA7J6Q66GcIOydveyKteuLiOuLpC4gYHNwbGl0bGluZXMoKWDripQg7Jes65+sIOy2nOugpSDspITsnYQg7KSE67OEIOuqqeuhneycvOuhnCDrgpjriJXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiZmM2OGNiOGIiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTI6MTU6MDEuNTcwMDAzWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTI6MTU6MDEuNTY5OTI4WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTI6MTU6MDEuNTk4NzQyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxMjoxNTowMS41OTgzMTdaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiZW52X2Eg6rCA7IOB7ZmY6rK9OiBUcnVlXG4iLAogICAgICAiZW52X2Ig6rCA7IOB7ZmY6rK9OiBUcnVlXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImltcG9ydCBvc1xuIiwKICAgICJcbiIsCiAgICAiIyBXaW5kb3dz7JmAIG1hY09TL0xpbnV47J2YIFB5dGhvbiDsi6Ttlokg7YyM7J28IOychOy5mOqwgCDri6Trpbwg7IiYIOyeiOyWtCDrtoTquLDtlanri4jri6QuXG4iLAogICAgInB5dGhvbl9uYW1lID0gUGF0aChcIlNjcmlwdHMvcHl0aG9uLmV4ZVwiKSBpZiBvcy5uYW1lID09IFwibnRcIiBlbHNlIFBhdGgoXCJiaW4vcHl0aG9uXCIpXG4iLAogICAgImNoZWNrX2NvZGUgPSBcImltcG9ydCBzeXM7IHByaW50KHN5cy5wcmVmaXggIT0gc3lzLmJhc2VfcHJlZml4KTsgcHJpbnQoc3lzLnByZWZpeClcIlxuIiwKICAgICJyZXN1bHRfYSA9IHN1YnByb2Nlc3MucnVuKFtlbnZfYSAvIHB5dGhvbl9uYW1lLCBcIi1jXCIsIGNoZWNrX2NvZGVdLCBjYXB0dXJlX291dHB1dD1UcnVlLCB0ZXh0PVRydWUsIGNoZWNrPVRydWUpXG4iLAogICAgInJlc3VsdF9iID0gc3VicHJvY2Vzcy5ydW4oW2Vudl9iIC8gcHl0aG9uX25hbWUsIFwiLWNcIiwgY2hlY2tfY29kZV0sIGNhcHR1cmVfb3V0cHV0PVRydWUsIHRleHQ9VHJ1ZSwgY2hlY2s9VHJ1ZSlcbiIsCiAgICAibGluZXNfYSA9IHJlc3VsdF9hLnN0ZG91dC5zcGxpdGxpbmVzKClcbiIsCiAgICAibGluZXNfYiA9IHJlc3VsdF9iLnN0ZG91dC5zcGxpdGxpbmVzKClcbiIsCiAgICAicHJpbnQoZlwiZW52X2Eg6rCA7IOB7ZmY6rK9OiB7bGluZXNfYVswXX1cIilcbiIsCiAgICAicHJpbnQoZlwiZW52X2Ig6rCA7IOB7ZmY6rK9OiB7bGluZXNfYlswXX1cIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI4MzA1MDkxMSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogIiMjIOyEnOuhnCDqtazrtoTrkJjripTsp4Ag7ZmV7J24XG5cbuqwgSBQeXRob27snbQg67O06rOg7ZWY64qUIOqwgOyDge2ZmOqyvSDsnITsuZgoYHN5cy5wcmVmaXhgKeqwgCDri6TrpbTrqbQg6rCB6rCBIOq1rOu2hOuQnCDtmZjqsr3snoXri4jri6QuIGBsaW5lc19hWzBdYOydgCDssqsg67KI7Ke4IOqysOqzvOyduCDqsIDsg4HtmZjqsr0g7Jes67aA7J206rOgLCBgbGluZXNfYVsxXWDsnYAg65GQIOuyiOynuCDqsrDqs7zsnbgg7ZmY6rK9IOychOy5mOyeheuLiOuLpC4g7ZmY6rK9IEHsmYAgQuydmCDsnITsuZjqsIAg64uk66W47KeALCDrkZAg7Iuk7ZaJ7J20IOuqqOuRkCDqsIDsg4HtmZjqsr0g7JWI7J247KeAIOywqOuhgOuhnCDtmZXsnbjtlanri4jri6QuIOqwnOyduCDqsr3roZzripQg7Lac66Cl7ZWY7KeAIOyViuqzoCDruYTqtZAg6rKw6rO866eMIO2RnOyLnO2VqeuLiOuLpC5cblxu66eI7KeA66eJIGBhbmRg64qUIOyWkeyqvSDsobDqsbTsnbQg66qo65GQIOywuOydvCDrlYwg7LC47J20IOuQqeuLiOuLpC4g7ZmY6rK9IOychOy5mOqwgCDshJzroZwg64uk66W06rOgIOuRkCDsi6TtlonsnbQg66qo65GQIOqwgOyDge2ZmOqyvSDslYjsl5DshJwg7J2066Oo7Ja07KC47JW8IOqygOyCrOulvCDthrXqs7ztlanri4jri6QuIgogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogIjgwY2YxNDczIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDEyOjE1OjAxLjU5OTY2MloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAxLjU5OTU5M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAxLjYwNDE3NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTI6MTU6MDEuNjAzODMxWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyEnOuhnCDri6Trpbgg7ZmY6rK9OiBUcnVlXG4iLAogICAgICAi65GQIOyLpO2WiSDrqqjrkZAg6rCA7IOB7ZmY6rK9IOuCtOu2gDogVHJ1ZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOqwgSDsi6TtlonsnZggc3lzLnByZWZpeOqwgCDshJzroZwg64uk66W4IO2ZmOqyvSDtj7TrjZTrpbwg6rCA66as7YKk64qU7KeAIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiZGlmZmVyZW50X2Vudmlyb25tZW50cyA9IGxpbmVzX2FbMV0gIT0gbGluZXNfYlsxXVxuIiwKICAgICJib3RoX2luc2lkZSA9IGxpbmVzX2FbMF0gPT0gbGluZXNfYlswXSA9PSBcIlRydWVcIlxuIiwKICAgICJwcmludChmXCLshJzroZwg64uk66W4IO2ZmOqyvToge2RpZmZlcmVudF9lbnZpcm9ubWVudHN9XCIpXG4iLAogICAgInByaW50KGZcIuuRkCDsi6Ttlokg66qo65GQIOqwgOyDge2ZmOqyvSDrgrTrtoA6IHtib3RoX2luc2lkZX1cIilcbiIsCiAgICAiYXNzZXJ0IGRpZmZlcmVudF9lbnZpcm9ubWVudHMgYW5kIGJvdGhfaW5zaWRlXG4iLAogICAgInRlbXBvcmFyeV9mb2xkZXIuY2xlYW51cCgpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiYTlkYWJiNjAiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6Ttl5gg6rKw6rO8IO2VtOyEnVxuIiwKICAgICJcbiIsCiAgICAi65GQIO2ZmOqyveydgCDqsJnsnYAgUHl0aG9uIDMuMTLrpbwg6riw67CY7Jy866GcIOunjOuTpOyXiOyngOunjCDqsIEg7ZmY6rK97J2YIGBzeXMucHJlZml4YOuKlCDshJzroZwg64uk66aF64uI64ukLiDsnbQg6rKw6rO864qUIO2ZmOqyveydmCDsi6Ttlokg7JyE7LmY6rCAIOq1rOu2hOuQmOyXiOydjOydhCDrs7Tsl6wg7KSN64uI64ukLiDsoJzsgrzsnpAg7Yyo7YKk7KeA66W8IOyEpOy5mO2VmOyngCDslYrslZjsnLzrr4DroZwg7Yyo7YKk7KeAIOuyhOyghCDstqnrj4zsnYQg7J6s7ZiE7ZaI64uk6rOgIO2VtOyEne2VmOyngCDslYrsirXri4jri6QuIOq1kOyerCDtlITroZzsoJ3tirjrpbwg7KSA67mE7ZWgIOuVjOuKlCBgdXYgc3luYyAtLWxvY2tlZGDroZwg7J6g6riIIO2MjOydvOyXkCDrp57ripQg7ZmY6rK97J2EIOunjOuTreuLiOuLpC4iCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzLjEyIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogImV4cGVyaW1lbnQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA0LAogICAiY29kZV9zaGEyNTYiOiAiYWI0NDFhYjA4YWJlYzVhZmM4NzFiYzE0M2E1OTc5NDFlZDc1ODdmODQ4MDI4MWJkMjIyMDEwYWNhYzE0ZjRiNSIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTA5VDEyOjE1OjAxLjcyMDQ1MSswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiZTg2NWU3ZDg2MTYxMjliNWVmZmIxMzQ4NzQyZmFlZjcyNzZjYzhkN2I3MGM1YjZhYWVlM2RlOGFjYzZlMzY1OSIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>Python과 가상환경</h2>
+<p>현재 Python 버전을 확인하고, 서로 구분되는 두 개의 가상환경을 임시 폴더에 만듭니다. 인터프리터는 Python 코드를 읽어 실행하는 프로그램이고, 가상환경은 프로젝트별 Python 실행 위치와 패키지 설치 위치를 구분합니다. 노트북에서는 선택한 커널이 코드를 실행합니다.</p></div>
+<div class="nb-markdown"><h3>Python 3.12 확인</h3>
+<p>가상환경을 만들기 전에 현재 커널이 교재의 기준 버전인지 확인합니다. <code>import sys</code>는 실행 중인 Python 정보를 읽는 표준 기능을 가져옵니다. <code>version_info[:2]</code>는 버전 정보의 앞 두 값인 주 버전과 부 버전을 고르고, <code>== (3, 12)</code>는 두 값이 3과 12인지 비교합니다. 결과가 <code>False</code>이면 오른쪽 위에서 Python 3.12 커널을 다시 선택합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import sys
+
+# version_info[:2]는 주 버전과 부 버전 두 개만 선택합니다.
+version_matches = sys.version_info[:2] == (3, 12)
+print(f&quot;Python 3.12: {version_matches}&quot;)
+assert version_matches</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Python 3.12: True
+</pre></div>
+<div class="nb-markdown"><h3>임시 가상환경 두 개 생성</h3>
+<p><code>uv venv</code>는 지정한 폴더에 Python 가상환경을 만듭니다. <code>--python 3.12</code>는 Python 버전을 고정하고, <code>--no-project</code>는 현재 프로젝트 설정을 읽지 않고 지정한 폴더에 환경만 만들게 합니다. <code>shutil.which(&quot;uv&quot;)</code>는 실행 가능한 uv 명령의 위치를 찾아 경로를 반환하며, 찾지 못하면 <code>None</code>을 반환합니다. <code>subprocess.run</code>의 대괄호 안에는 터미널에서 실행할 프로그램과 인자를 순서대로 적습니다. <code>check=True</code>는 명령 실패 시 실행을 멈춥니다. 이 실습에서는 추가 패키지를 설치하지 않습니다.</p>
+<p><code>uv is not None</code>은 명령 위치가 없는 상태인지 확인하는 식입니다. <code>None</code>이 아니면 참입니다. <code>assert 조건, &quot;안내 문장&quot;</code>의 쉼표 뒤 문자열은 조건이 거짓일 때 오류에 표시할 설명입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import shutil
+import subprocess
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+# uv로 임시 폴더 안에 env_a와 env_b를 만듭니다.
+uv = shutil.which(&quot;uv&quot;)
+assert uv is not None, &quot;uv 설치를 먼저 확인하세요.&quot;
+temporary_folder = TemporaryDirectory()
+root = Path(temporary_folder.name)
+env_a = root / &quot;env_a&quot;
+env_b = root / &quot;env_b&quot;
+subprocess.run([uv, &quot;-q&quot;, &quot;venv&quot;, &quot;--python&quot;, &quot;3.12&quot;, &quot;--no-project&quot;, env_a], check=True)
+subprocess.run([uv, &quot;-q&quot;, &quot;venv&quot;, &quot;--python&quot;, &quot;3.12&quot;, &quot;--no-project&quot;, env_b], check=True)
+print(&quot;가상환경 2개 생성&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">가상환경 2개 생성
+</pre></div>
+<div class="nb-markdown"><h3>각 환경의 Python 실행</h3>
+<p>운영체제에 맞는 Python 실행 파일을 고른 뒤, 각 환경 안에서 <code>prefix</code>가 기본 Python의 <code>base_prefix</code>와 다른지 확인합니다. 조건문의 한 줄 표현은 Windows이면 <code>Scripts/python.exe</code>, 그렇지 않으면 <code>bin/python</code>을 선택합니다. <code>subprocess.run</code>의 <code>-c</code>는 뒤의 Python 코드를 파일 없이 실행하는 인자입니다. <code>capture_output=True</code>는 별도 실행의 출력을 반환 결과의 <code>stdout</code>에 저장하고, <code>text=True</code>는 그 출력을 글자로 읽습니다. <code>splitlines()</code>는 여러 출력 줄을 줄별 목록으로 나눕니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import os
+
+# Windows와 macOS/Linux의 Python 실행 파일 위치가 다를 수 있어 분기합니다.
+python_name = Path(&quot;Scripts/python.exe&quot;) if os.name == &quot;nt&quot; else Path(&quot;bin/python&quot;)
+check_code = &quot;import sys; print(sys.prefix != sys.base_prefix); print(sys.prefix)&quot;
+result_a = subprocess.run([env_a / python_name, &quot;-c&quot;, check_code], capture_output=True, text=True, check=True)
+result_b = subprocess.run([env_b / python_name, &quot;-c&quot;, check_code], capture_output=True, text=True, check=True)
+lines_a = result_a.stdout.splitlines()
+lines_b = result_b.stdout.splitlines()
+print(f&quot;env_a 가상환경: {lines_a[0]}&quot;)
+print(f&quot;env_b 가상환경: {lines_b[0]}&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">env_a 가상환경: True
+env_b 가상환경: True
+</pre></div>
+<div class="nb-markdown"><h3>서로 구분되는지 확인</h3>
+<p>각 Python이 보고하는 가상환경 위치(<code>sys.prefix</code>)가 다르면 각각 구분된 환경입니다. <code>lines_a[0]</code>은 첫 번째 결과인 가상환경 여부이고, <code>lines_a[1]</code>은 두 번째 결과인 환경 위치입니다. 환경 A와 B의 위치가 다른지, 두 실행이 모두 가상환경 안인지 차례로 확인합니다. 개인 경로는 출력하지 않고 비교 결과만 표시합니다.</p>
+<p>마지막 <code>and</code>는 양쪽 조건이 모두 참일 때 참이 됩니다. 환경 위치가 서로 다르고 두 실행이 모두 가상환경 안에서 이루어져야 검사를 통과합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 각 실행의 sys.prefix가 서로 다른 환경 폴더를 가리키는지 확인합니다.
+different_environments = lines_a[1] != lines_b[1]
+both_inside = lines_a[0] == lines_b[0] == &quot;True&quot;
+print(f&quot;서로 다른 환경: {different_environments}&quot;)
+print(f&quot;두 실행 모두 가상환경 내부: {both_inside}&quot;)
+assert different_environments and both_inside
+temporary_folder.cleanup()</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">서로 다른 환경: True
+두 실행 모두 가상환경 내부: True
+</pre></div>
+<div class="nb-markdown"><h3>실험 결과 해석</h3>
+<p>두 환경은 같은 Python 3.12를 기반으로 만들었지만 각 환경의 <code>sys.prefix</code>는 서로 다릅니다. 이 결과는 환경의 실행 위치가 구분되었음을 보여 줍니다. 제삼자 패키지를 설치하지 않았으므로 패키지 버전 충돌을 재현했다고 해석하지 않습니다. 교재 프로젝트를 준비할 때는 <code>uv sync --locked</code>로 잠금 파일에 맞는 환경을 만듭니다.</p></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<p class="look"><b>확인할 점</b> — <code>True</code>는 비교 조건이 참이라는 뜻입니다. 어떤 비교에 대한 결과인지 출력 문구를 함께 읽습니다. 실제 사용자 폴더 경로를 외우지 않고, 환경 A와 B가 서로 다른 위치인지와 각 환경이 기반 Python의 위치와 다른지를 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2>
+<p>두 환경은 같은 기반 Python을 사용할 수 있지만 환경의 위치는 서로 다릅니다. 이 실험은 환경을 새로 만들고 각각의 Python을 실행해 환경 폴더의 위치 정보를 확인합니다. 폴더 이름만 두 개 만들어 놓고 가상환경이 분리되었다고 설명하는 것과는 확인 범위가 다릅니다. 출력에서 환경 A와 B가 각각 가상환경인지 확인하고, 두 환경 폴더가 서로 다른지 비교합니다.</p>
+<p>이번 예제는 제삼자 패키지의 서로 다른 버전을 설치하지 않았습니다. 그러므로 실제 패키지 충돌을 재현하거나 해결했다고 기록하지 않습니다. 패키지 설치 위치가 분리되는 원리를 확인했으며, 특정 패키지의 호환성은 그 패키지를 설치하고 사용하는 별도 실행이 필요합니다. 연습용 임시 환경과 현재 노트북을 실행하는 프로젝트의 <code>.venv</code>도 구분합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<p>환경을 선택한 뒤에도 이미 실행 중인 커널이 이전 상태를 기억할 수 있습니다. VS Code에서 Restart Kernel을 선택하면 노트북의 기존 변수가 사라집니다. 다시 첫 셀부터 실행합니다. 저장된 코드와 출력 파일은 커널 재시작만으로 삭제되지 않습니다. 실행 중인 변수, 저장한 코드, 저장된 출력이 각각 무엇인지 구분하면 이전 실행의 숫자를 새 결과로 오해하는 일을 줄일 수 있습니다.</p>
+<p>패키지를 설치했는데 찾지 못한다면 설치한 환경과 실행 중인 커널을 확인합니다. 다른 Python에 다시 설치하는 일을 반복하기 전에 인터프리터와 커널이 같은 프로젝트를 가리키는지 살펴봅니다. <code>.venv</code>를 이동하거나 이름을 바꾼 경우에는 기존 경로를 기억한 설정이 맞지 않을 수 있으므로 제공된 설정으로 새 위치에서 환경을 준비하고 다시 선택합니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<p>프로젝트의 Python 버전과 패키지 조건을 확인합니다.<br>uv로 환경을 준비하고 VS Code의 인터프리터와 커널을 각각 선택합니다.<br>환경 위치를 비교한 결과와 패키지 호환성 검증을 구분합니다.</p>
+<p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서 이 프로젝트의 Python으로 <code>hello.py</code>를 실행하고, 계산을 한 줄씩 살펴봅니다. Ch 2에서도 같은 환경 준비와 커널 선택 방법을 사용합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz"><summary>1. 가상환경은 무엇을 구분하나요? · 기초</summary><p>프로젝트가 사용하는 Python 실행 위치와 패키지 설치 위치를 구분합니다. 운영체제 전체를 복제하거나 임의 코드 실행을 안전하게 만드는 장치로 해석하지 않습니다.</p></details>
+<details class="quiz"><summary>2. 설치 후 노트북에서 패키지를 찾지 못하면 무엇을 확인하나요? · 적용</summary><p>패키지를 설치한 환경과 선택한 노트북 커널이 같은지 확인합니다. 편집기의 인터프리터를 고른 것만으로 커널도 같아졌다고 판단하지 않습니다.</p></details>
+<details class="quiz"><summary>3. 새 컴퓨터에 .venv만 복사하면 충분한가요? · 적용</summary><p>충분하지 않습니다. 경로와 운영체제 조건이 다를 수 있으므로 프로젝트 설정과 잠금 파일을 사용해 새 컴퓨터에서 환경을 준비합니다.</p></details>
+<details class="quiz"><summary>4. 이번 결과로 패키지 버전 충돌을 해결했다고 말할 수 있나요? · 분석</summary><p>말할 수 없습니다. 두 환경의 Python을 실행해 위치 관계를 확인했지만, 제삼자 패키지의 충돌은 실행하지 않았습니다. 실험 결과 해석의 범위를 다시 확인합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul><li><a href="https://docs.astral.sh/uv/guides/projects/">uv 프로젝트 안내</a> · <a href="https://docs.astral.sh/uv/concepts/projects/layout/">프로젝트 파일 구성</a> — 확인 2026-09-09.</li><li><a href="https://docs.python.org/3.12/library/venv.html">Python venv</a> — Python 3.12 기준, 확인 2026-09-09. 환경 비교 예제는 교재에서 작성했습니다.</li><li><a href="https://code.visualstudio.com/docs/python/environments">VS Code Python 환경</a> · <a href="https://code.visualstudio.com/docs/datascience/jupyter-kernel-management">노트북 커널 선택</a> — 확인 2026-09-09, 실제 메뉴 이름은 설치 버전에 따라 달라질 수 있습니다.</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="02-도구-설치와-터미널.html">← 도구 설치와 터미널</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="04-첫-스크립트와-디버거.html">첫 스크립트와 디버거 →</a></span></div></div></body></html>

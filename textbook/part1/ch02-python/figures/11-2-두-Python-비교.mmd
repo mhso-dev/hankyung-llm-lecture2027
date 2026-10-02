@@ -1,0 +1,11 @@
+flowchart TD
+  %% classes
+  code["check_code<br>from price_tools import calculate_line_total"]:::flow
+  p1["python_path = env_python<br>install_env/bin/python<br>price-tools 0.1.0 설치됨"]:::tool
+  p2["python_path = sys.executable<br>커널의 Python<br>휠을 설치하지 않음"]:::tool
+  o1["출력: 78000<br>종료 코드: 0"]:::measure
+  o2["ModuleNotFoundError:<br>No module named 'price_tools'<br>종료 코드: 1"]:::fail
+  code --> p1
+  code --> p2
+  p1 --> o1
+  p2 --> o2

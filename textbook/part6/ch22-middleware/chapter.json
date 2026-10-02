@@ -1,0 +1,60 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 개발",
+  "chapter": "ch22-middleware",
+  "title": "Middleware",
+  "hours": "총 24h · 강의 8h · 실습 16h",
+  "objectives": [
+    "에이전트 생명주기의 여섯 훅을 설명하고 내장·커스텀 미들웨어를 적용할 수 있습니다.",
+    "Ch16의 PII·요약·호출 한도·재시도 가드레일을 미들웨어로 이식하고 코드 위치를 비교할 수 있습니다.",
+    "여러 미들웨어의 실행 순서를 검증하고 Compress·Isolate를 모델 요청 경계에 구현할 수 있습니다."
+  ],
+  "lab_path": "labs/part6/ch22-middleware",
+  "sections": [
+    {
+      "slug": "01-미들웨어와-6개-훅",
+      "title": "미들웨어와 6개 훅",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-PII-마스킹-이식",
+      "title": "PII 마스킹 이식",
+      "format": "paired"
+    },
+    {
+      "slug": "03-요약-압축과-Compress",
+      "title": "요약 압축과 Compress",
+      "format": "paired"
+    },
+    {
+      "slug": "04-호출-한도와-재시도-폴백",
+      "title": "호출 한도와 재시도 폴백",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-커스텀-예산-미들웨어",
+      "title": "커스텀 예산 미들웨어",
+      "format": "paired"
+    },
+    {
+      "slug": "06-커스텀-감사-미들웨어",
+      "title": "커스텀 감사 미들웨어",
+      "format": "experiment"
+    },
+    {
+      "slug": "07-순서와-합성",
+      "title": "순서와 합성",
+      "format": "experiment"
+    },
+    {
+      "slug": "08-컨텍스트-분리와-Isolate",
+      "title": "컨텍스트 분리와 Isolate",
+      "format": "paired"
+    },
+    {
+      "slug": "09-Middleware-실습",
+      "title": "Middleware 실습: 도서관 상담 에이전트",
+      "format": "experiment"
+    }
+  ]
+}

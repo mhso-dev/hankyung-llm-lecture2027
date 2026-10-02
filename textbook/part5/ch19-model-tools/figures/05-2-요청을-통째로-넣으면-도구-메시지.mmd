@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  req["도구 호출 요청 한 건<br>name get_order_by_id<br>args order_id O101<br>칸 id · type"]:::measure
+  whole["요청을 통째로<br>first_tool.invoke"]:::flow
+  part["칸 args만 꺼내<br>first_tool.invoke"]:::flow
+  msg["ToolMessage<br>tool_call_id<br>요청 id와 같음 True<br>내용 JSON 글 · 금액 32000"]:::measure
+  plain["dict<br>몸통 함수가 내놓은 값 그대로<br>01절과 같은 모양"]:::measure
+  req --> whole
+  req --> part
+  whole --> msg
+  part --> plain

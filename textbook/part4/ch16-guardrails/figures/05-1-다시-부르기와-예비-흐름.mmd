@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  q["가린 질문 메시지"]:::tool
+  r["재시도 함수<br>기본 흐름을 두 번까지"]:::flow
+  t["TimeoutError<br>이 절의 실패 흉내"]:::measure
+  m["기본 모델<br>gpt-5.4-mini"]:::model
+  b["예비 모델<br>gpt-5.4-nano"]:::model
+  a["감사 기록 한 줄<br>흐름 이름 · 시도 번호"]:::tool
+  q --> r
+  r --> t
+  t -->|남은 시도에서| m
+  t -->|시도 둘 모두 실패하면| b
+  m --> a
+  b --> a

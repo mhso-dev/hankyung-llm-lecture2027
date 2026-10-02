@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph first[정답 문서가 1번째]
+    direction TB
+    f1["자리 1의 무게 1.0을 더함"]:::flow
+    f2["nDCG 1.0"]:::measure
+    f1 --> f2
+  end
+  subgraph third[정답 문서가 3번째]
+    direction TB
+    t1["자리 3의 무게 0.5를 더함"]:::flow
+    t2["nDCG 0.5"]:::measure
+    t1 --> t2
+  end
+  common["두 칸 모두에 해당<br>정밀도 자리 5: 0.2"]
+  first --> common
+  third --> common

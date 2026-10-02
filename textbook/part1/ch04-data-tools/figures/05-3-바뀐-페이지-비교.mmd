@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 고른 결과를 확인하지 않는 함수"]
+    direction LR
+    b1["바뀐 페이지<br>class = lead"]:::tool
+    b2["parse_article_before()<br>.summary 결과 None에서<br>바로 get_text()"]:::flow
+    b3["AttributeError로 멈춤<br>'NoneType' object has<br>no attribute 'get_text'"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph AFTER["After · None인지 먼저 확인하는 함수"]
+    direction LR
+    a1["바뀐 페이지<br>class = lead"]:::tool
+    a2["parse_article()<br>find_text()가<br>None을 확인"]:::flow
+    a3["찾지 못한 선택자: .summary<br>'summary': None<br>빈 칸 ['summary']"]:::measure
+    a1 --> a2 --> a3
+  end
+  BEFORE --> AFTER

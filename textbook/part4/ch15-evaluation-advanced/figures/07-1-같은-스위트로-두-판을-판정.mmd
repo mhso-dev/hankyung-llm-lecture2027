@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  suite["회귀 스위트 한 벌<br>사례 세 건<br>Q002 · Q006 · Q090<br>판정 머리글<br>rag-judge-v1.0.0<br>평가 모델 gpt-5.4-mini"]:::flow
+  old["이전 판 답<br>자료 파일<br>rag-answer-v1.0.0"]:::tool
+  new["이후 판 답<br>Q002 · Q090<br>두 답을 바꿈"]:::tool
+  judge["gpt-5.4-mini<br>판마다 판정 세 번"]:::model
+  pair["질문 번호마다 점수 짝<br>이전 판 · 이후 판"]:::measure
+  check["짝지어 보는 검사<br>1에서 0이 된 사례가<br>있으면 이후 판을 막음"]:::flow
+  suite --> judge
+  old --> judge
+  new --> judge
+  judge --> pair
+  pair --> check

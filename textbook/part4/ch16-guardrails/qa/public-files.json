@@ -1,0 +1,26 @@
+{
+  "chapter": "ch16-guardrails",
+  "policy": "명시된 공개 학습 파일만 배포하며 .env, .venv, __pycache__, 실패 기록은 제외합니다.",
+  "files": [
+    "labs/part4/ch16-guardrails/README.md",
+    "labs/part4/ch16-guardrails/pyproject.toml",
+    "labs/part4/ch16-guardrails/uv.lock",
+    "labs/part4/ch16-guardrails/notebooks/guardrails.py",
+    "labs/part4/ch16-guardrails/data/retrieved-documents.json",
+    "labs/part4/ch16-guardrails/notebooks/01-입출력-출처-검증.ipynb",
+    "labs/part4/ch16-guardrails/notebooks/02-PII-마스킹.ipynb",
+    "labs/part4/ch16-guardrails/notebooks/03-히스토리-트리밍과-요약.ipynb",
+    "labs/part4/ch16-guardrails/notebooks/04-호출-한도와-비용-상한.ipynb",
+    "labs/part4/ch16-guardrails/notebooks/05-재시도-폴백과-감사-로그.ipynb",
+    "labs/part4/ch16-guardrails/notebooks/06-문서-프롬프트-인젝션과-통합.ipynb",
+    "labs/part4/ch16-guardrails/notebooks/07-가드레일-실습.ipynb",
+    "labs/part4/ch16-guardrails/tests/test_guardrails.py"
+  ],
+  "excluded": [
+    ".env와 실제 API 키",
+    ".venv와 패키지 캐시",
+    "runs의 실행별 감사 로그",
+    "author_chapter.py 집필 생성 도구",
+    "실패 진단 파일"
+  ]
+}

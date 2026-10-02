@@ -1,0 +1,278 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모델 라우팅 — Ch 34 · 비용 · Rate Limit 엔지니어링</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 서비스화와 운영 · Ch 34 · 비용 · Rate Limit 엔지니어링</p>
+<h1>모델 라우팅</h1><div class="meta"><span>강의 0.6h</span><span>실습 1h</span><span>새 용어 4</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 0.6h | 실습 1h | 코드 Jupyter Notebook | 새 용어 4 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>요청 특성에 따라 두 모델 가운데 하나를 고르는 규칙을 작성할 수 있습니다.</li><li>같은 평가 사례에서 품질과 실제 토큰 비용을 함께 비교할 수 있습니다.</li><li>작은 표본의 결과를 서비스 전체 성능으로 일반화할 수 없는 이유를 설명할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>상태 확인과 단일 의도 분류에는 긴 추론이 필요하지 않을 수 있습니다. 반면 여러 규정을 비교하고 근거를 작성하는 요청은 더 높은 성능의 모델이 필요할 수 있습니다. 모델 라우팅(model routing)은 정해 둔 조건에 따라 모델을 선택하는 방법입니다. 비용 절감은 품질 기준을 만족할 때만 의미가 있습니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch 6에서는 같은 작업을 여러 제공자에 실행해 응답·비용·지연을 비교했습니다. Ch 18에서는 코드가 분기를 고르는 라우팅 패턴을 구현했습니다. 이번 절은 서비스 운영 관점에서 짧은 분류는 <code>gpt-5.4-nano</code>, 복잡한 설명은 <code>gpt-5.4-mini</code>로 보내는 규칙을 만듭니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>업무 난이도에 맞는 담당자 배정</h3><p>모든 문의를 가장 숙련된 담당자에게 배정하면 쉬운 문의도 비싼 자원을 사용합니다. 반대로 모든 문의를 초급 담당자에게 주면 복잡한 사례의 품질이 낮아질 수 있습니다. 라우터는 요청 길이, 필요한 도구, 위험 수준, 평가 점수처럼 관찰 가능한 조건으로 모델을 고릅니다.</p><dl class="term"><dt>모델 라우팅</dt><dd>요청 조건을 확인한 뒤 사용할 모델을 선택하는 처리입니다.</dd><dt>품질 기준선</dt><dd>배포 가능한 최소 정확도나 평가 점수입니다.</dd><dt>오분류 비용</dt><dd>라우터가 요청 난이도를 잘못 판단했을 때 생기는 재처리와 품질 손실입니다.</dd><dt>폴백(fallback)</dt><dd>작은 모델 결과가 기준을 만족하지 못할 때 상위 모델로 다시 처리하는 경로입니다.</dd></dl><figure><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 250" role="img" aria-label="모델 선택과 품질·비용 확인"><rect width="800" height="250" fill="white"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#334155"/></marker></defs><text x="400" y="42" text-anchor="middle" font-size="24" fill="#0f172a">모델 선택과 품질·비용 확인</text><rect x="35" y="95" width="155" height="65" rx="10" fill="#dcfce7" stroke="#334155"/><text x="112.5" y="133" text-anchor="middle" font-size="16" fill="#0f172a">고객 요청</text><rect x="220" y="95" width="155" height="65" rx="10" fill="#dbeafe" stroke="#334155"/><text x="297.5" y="133" text-anchor="middle" font-size="16" fill="#0f172a">난이도 규칙</text><path d="M190 127.5L212 127.5" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/><rect x="405" y="95" width="155" height="65" rx="10" fill="#ede9fe" stroke="#334155"/><text x="482.5" y="133" text-anchor="middle" font-size="16" fill="#0f172a">nano · mini</text><path d="M375 127.5L397 127.5" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/><rect x="590" y="95" width="155" height="65" rx="10" fill="#fef3c7" stroke="#334155"/><text x="667.5" y="133" text-anchor="middle" font-size="16" fill="#0f172a">품질 · 비용</text><path d="M560 127.5L582 127.5" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/></svg></div><figcaption>초록 상자는 고객 요청, 파란 상자는 코드로 정한 난이도 규칙, 보라 상자는 두 모델을 나타냅니다. 노란 상자는 품질과 비용을 비교하는 항목입니다. 실습에서는 같은 세 질문을 두 모델에 각각 보내 비교하고, 뒤에서 별도 요청 두 건에 선택 규칙을 적용합니다.</figcaption></figure><p>2026년 9월 11일 공식 모델 페이지 기준으로 GPT-5.4 nano 표준 입력은 백만 토큰당 0.20달러, 출력은 1.25달러입니다. GPT-5.4 mini는 입력 0.75달러, 출력 4.50달러입니다. 단가는 변경될 수 있으므로 코드와 함께 기준일을 저장합니다.</p>
+<h3>코드 읽기와 개념 경계</h3><p>모델 라우터는 요청을 관찰해 사용할 모델을 선택하는 함수입니다. 이 예제는 먼저 같은 세 분류 사례를 두 모델에 모두 실행하여 정확도와 실제 토큰 사용량을 기록합니다. 그 뒤 <code>route</code> 함수가 문자열 길이와 <code>비교</code>, <code>근거</code> 포함 여부로 nano와 mini를 고릅니다. 라우팅 규칙의 출력은 모델 이름이며, 실제 모델 답은 선택 뒤 별도 호출에서 얻습니다.</p><p>길이가 짧다고 항상 쉬운 요청은 아니고 긴 요청이 항상 어려운 것도 아닙니다. 위험한 업무, 도구 필요 여부, 작은 모델의 확신 부족 같은 신호를 함께 평가하고 폴백 경로를 둡니다. 세 사례에서 두 모델이 모두 맞았더라도 전체 문의 분포의 품질 차이를 증명하지 않으므로 더 큰 고정 평가 세트로 라우터 자체를 검사합니다.</p><h2 id="b5"><span class="no">5</span>실행 예제</h2><p>배송·환불·상품 세 범주를 가진 문의 세 건을 두 모델에 똑같이 실행합니다. 답은 범주 하나로 제한하고 정확 일치로 채점합니다. 실제 입력·출력 토큰에 공식 단가를 적용해 표본 전체 비용을 계산하고, 응답 원문을 정답과 나란히 저장합니다.</p><section class="notebook" data-notebook="03-모델-라우팅" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="03-모델-라우팅.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjYTA5YzQ4MCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMg66qo6424IOudvOyasO2MhSDtkojsp4jCt+u5hOyaqSDruYTqtZBcbiIsCiAgICAiXG4iLAogICAgIuqwmeydgCDrtoTrpZgg66y47KCc66W8IOyekeydgCDrqqjrjbjqs7wg7IOB7JyEIOuqqOuNuOyXkCDsi6TtlontlZjqs6Ag7KCV7ZmV64+E7JmAIOy2lOyglSDruYTsmqnsnYQg7ZWo6ruYIOu5hOq1kO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJiYWUwYzYzNCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAicHJlcC0zNC0wMy0wIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDspIDruYQg7IWA7J20IO2VmOuKlCDsnbxcbiIsCiAgICAiXG4iLAogICAgIuykgOu5hCDshYDsnYAg7ZiE7J6sIO2PtOuNlOyZgCDrtoDrqqgg7Y+0642U7JeQ7IScIGBjaDM0LWNvc3QtcmF0ZS1saW1pdHNgIOyLpOyKtSDtj7TrjZTrpbwg7LC+6rOgLCDrsJzqsqztlZwgYC5lbnZg6rCAIOyeiOycvOuptCDtmITsnqwg7ZSE66Gc7IS47Iqk7JeQIOu2iOufrOyYteuLiOuLpC4g7YKkIOqwkuydgCDstpzroKXtlZjsp4Ag7JWK7Jy866mwIOykgOu5hCDqsrDqs7zroZwg7Y+0642U7JmAIO2ZmOqyvSDtjIzsnbzsnZgg7KG07J6sIOyXrOu2gOunjCDtmZXsnbjtlanri4jri6QuIOydtO2bhCDtjIzsnbwg6riw66Gd7J2AIOywvuydgCBgY2hhcHRlcl9yb290YCDslYTrnpggYHJ1bnNgIO2PtOuNlOulvCDsgqzsmqntlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiMDhkYjRiZWUiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTk6MzEuNTg3MTQ5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTk6MzEuNTg3MDQxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTk6MzEuNTk1MjQ2WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxOTozMS41OTQ3OTNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiUHl0aG9uIOykgOu5hCDsmYTro4wgQVBJIO2CpCDtjIzsnbwg7ZmV7J24XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aFxuIiwKICAgICJmcm9tIGRvdGVudiBpbXBvcnQgbG9hZF9kb3RlbnZcbiIsCiAgICAiXG4iLAogICAgImhlcmUgPSBQYXRoLmN3ZCgpLnJlc29sdmUoKVxuIiwKICAgICJjaGFwdGVyX3Jvb3QgPSBuZXh0KChwIGZvciBwIGluIChoZXJlLCAqaGVyZS5wYXJlbnRzKSBpZiBwLm5hbWUgPT0gXCJjaDM0LWNvc3QtcmF0ZS1saW1pdHNcIiBhbmQgKHAgLyBcIm5vdGVib29rc1wiKS5pc19kaXIoKSksIE5vbmUpXG4iLAogICAgImlmIGNoYXB0ZXJfcm9vdCBpcyBOb25lOlxuIiwKICAgICIgICAgcmFpc2UgRmlsZU5vdEZvdW5kRXJyb3IoXCJjaDM0LWNvc3QtcmF0ZS1saW1pdHMg7Iuk7Iq1IO2PtOuNlCDslYjsl5DshJwg7Iuk7ZaJ7ZWY7IS47JqULlwiKVxuIiwKICAgICJlbnZfcGF0aCA9IG5leHQoKHAgLyBcIi5lbnZcIiBmb3IgcCBpbiAoaGVyZSwgKmhlcmUucGFyZW50cykgaWYgKHAgLyBcIi5lbnZcIikuZXhpc3RzKCkpLCBOb25lKVxuIiwKICAgICJpZiBlbnZfcGF0aDpcbiIsCiAgICAiICAgIGxvYWRfZG90ZW52KGVudl9wYXRoKVxuIiwKICAgICJwcmludChcIlB5dGhvbiDspIDruYQg7JmE66OMXCIsIFwiQVBJIO2CpCDtjIzsnbwg7ZmV7J24XCIgaWYgZW52X3BhdGggZWxzZSBcIkFQSSDtgqQg7YyM7J28IOyXhuydjFwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjRlYjkwNWVmIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rOg7KCVIO2PieqwgCDsgqzroYBcbiIsCiAgICAiXG4iLAogICAgIuyniOusuOqzvCDsoJXri7XsnYAg66qo6424IOyCrOydtOyXkOyEnCDrsJTqvrjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogIjM0NjQxNDNlIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjE5OjMxLjU5NjMyOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjE5OjMxLjU5NjI1NVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjE5OjMxLjU5ODU3MVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MTk6MzEuNTk4MTU1WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIu2PieqwgCDsgqzroYA6IDNcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiY2FzZXMgPSBbKFwi67Cw7Iah7J20IOyCrO2dmOynuCDrqYjst4TslrTsmpRcIiwgXCLrsLDshqFcIiksIChcIuqysOygnOulvCDst6jshoztlZjqs6Ag7Iu27Ja07JqUXCIsIFwi7ZmY67aIXCIpLCAoXCLsnqzsp4jsnbQg66m07J246rCA7JqUXCIsIFwi7IOB7ZKIXCIpXVxuIiwKICAgICJwcmljZXMgPSB7XCJvcGVuYWk6Z3B0LTUuNC1uYW5vXCI6ICgwLjIwLCAxLjI1KSwgXCJvcGVuYWk6Z3B0LTUuNC1taW5pXCI6ICgwLjc1LCA0LjUwKX1cbiIsCiAgICAicHJpbnQoXCLtj4nqsIAg7IKs66GAOlwiLCBsZW4oY2FzZXMpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjc2MWJiMGQyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg65GQIOuqqOuNuCDsi6TsoJwg7Zi47LacXG4iLAogICAgIlxuIiwKICAgICLsnZHri7XsnYAg7IS4IOuylOyjvCDspJEg7ZWY64KY66eMIOuCtOuPhOuhnSDsoJztlZztlZjqs6Ag7Iuk7KCcIO2GoO2BsOydhCDquLDroZ3tlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY29uY2VwdC0zNC0wMy1hIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOuwlOuhnCDri6TsnYwg7L2U65Oc66W8IOydveuKlCDrsKnrspVcbiIsCiAgICAiXG4iLAogICAgIuuqqOuNuCDrnbzsmrDthLDripQg7JqU7LKt7J2EIOq0gOywsO2VtCDsgqzsmqntlaAg66qo64247J2EIOyEoO2Dne2VmOuKlCDtlajsiJjsnoXri4jri6QuIOydtCDsmIjsoJzripQg66i87KCAIOqwmeydgCDshLgg67aE66WYIOyCrOuhgOulvCDrkZAg66qo64247JeQIOuqqOuRkCDsi6TtlontlZjsl6wg7KCV7ZmV64+E7JmAIOyLpOygnCDthqDtgbAg7IKs7Jqp65+J7J2EIOq4sOuhne2VqeuLiOuLpC4g6re4IOuSpCBgcm91dGVgIO2VqOyImOqwgCDrrLjsnpDsl7Qg6ri47J207JmAIGDruYTqtZBgLCBg6re86rGwYCDtj6ztlagg7Jes67aA66GcIG5hbm/smYAgbWluaeulvCDqs6DrpoXri4jri6QuIOudvOyasO2MhSDqt5zsuZnsnZgg7Lac66Cl7J2AIOuqqOuNuCDsnbTrpoTsnbTrqbAsIOyLpOygnCDrqqjrjbgg64u17J2AIOyEoO2DnSDrkqQg67OE64+EIO2YuOy2nOyXkOyEnCDslrvsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiNDE5YTQzZTYiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTk6MzEuNTk5NTU2WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTk6MzEuNTk5NDg3WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTk6MzYuODcxNDUwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxOTozNi44NzA4MjJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7Iuk7KCcIO2YuOy2nCDsiJg6IDZcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IGpzb25cbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgImZyb20gbGFuZ2NoYWluLmNoYXRfbW9kZWxzIGltcG9ydCBpbml0X2NoYXRfbW9kZWxcbiIsCiAgICAicmVzdWx0cyA9IFtdXG4iLAogICAgImZvciBtb2RlbCBpbiBwcmljZXM6XG4iLAogICAgIiAgICBjdXJyZW50ID0gaW5pdF9jaGF0X21vZGVsKG1vZGVsLCByZWFzb25pbmdfZWZmb3J0PVwibm9uZVwiLCBtYXhfdG9rZW5zPTIwLCBtYXhfcmV0cmllcz0xLCBzZWVkPTM0KVxuIiwKICAgICIgICAgZm9yIHRleHQsIGV4cGVjdGVkIGluIGNhc2VzOlxuIiwKICAgICIgICAgICAgIHJlc3BvbnNlID0gY3VycmVudC5pbnZva2UoZlwi67Cw7IahLCDtmZjrtogsIOyDge2SiCDspJEg7ZWY64KY66eMIOuLte2VmOyEuOyalC4g66y47J2YOiB7dGV4dH1cIilcbiIsCiAgICAiICAgICAgICBhbnN3ZXIgPSByZXNwb25zZS50ZXh0LnN0cmlwKClcbiIsCiAgICAiICAgICAgICB1c2FnZSA9IHJlc3BvbnNlLnVzYWdlX21ldGFkYXRhIG9yIHt9XG4iLAogICAgIiAgICAgICAgcmVzdWx0cy5hcHBlbmQoe1wibW9kZWxcIjogbW9kZWwsIFwiZXhwZWN0ZWRcIjogZXhwZWN0ZWQsIFwiYW5zd2VyXCI6IGFuc3dlciwgXCJjb3JyZWN0XCI6IGFuc3dlciA9PSBleHBlY3RlZCxcbiIsCiAgICAiICAgICAgICAgICAgICAgICAgICAgICAgXCJ1c2FnZVwiOiB1c2FnZSwgXCJpbnB1dFwiOiB1c2FnZS5nZXQoXCJpbnB1dF90b2tlbnNcIiwgMCksIFwib3V0cHV0XCI6IHVzYWdlLmdldChcIm91dHB1dF90b2tlbnNcIiwgMCl9KVxuIiwKICAgICJydW5fZGlyID0gY2hhcHRlcl9yb290IC8gXCJydW5zXCI7IHJ1bl9kaXIubWtkaXIocGFyZW50cz1UcnVlLCBleGlzdF9vaz1UcnVlKVxuIiwKICAgICIocnVuX2RpciAvIFwicm91dGluZy1jb21wYXJpc29uLmpzb25cIikud3JpdGVfdGV4dChqc29uLmR1bXBzKHJlc3VsdHMsIGVuc3VyZV9hc2NpaT1GYWxzZSwgaW5kZW50PTIpKVxuIiwKICAgICJwcmludChcIuyLpOygnCDtmLjstpwg7IiYOlwiLCBsZW4ocmVzdWx0cykpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiYWY4MzBlODkiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsoJXtmZXrj4TsmYAg67mE7JqpIOqzhOyCsFxuIiwKICAgICJcbiIsCiAgICAi6rO17IudIOuLqOqwgOulvCDrsLHrp4wg7Yag7YGw64u5IOuLrOufrOuhnCDsoIHsmqntlanri4jri6QuIOydtCDsnpHsnYAg7Iuk7ZeY7J2AIOyEuCDsgqzroYDsl5DshJzsnZgg6rKw6rO866eMIOyEpOuqhe2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICI2MWFiYTQ4OCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoxOTozNi44NzMwMDVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoxOTozNi44NzI4NzhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoxOTozNi44NzY1ODFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjE5OjM2Ljg3NTk4NVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJ7XG4iLAogICAgICAiICBcIm9wZW5haTpncHQtNS40LW5hbm9cIjoge1xuIiwKICAgICAgIiAgICBcImFjY3VyYWN5XCI6IDAuNjY2NjY2NjY2NjY2NjY2NixcbiIsCiAgICAgICIgICAgXCJjb3N0X3VzZFwiOiAzLjMyNWUtMDVcbiIsCiAgICAgICIgIH0sXG4iLAogICAgICAiICBcIm9wZW5haTpncHQtNS40LW1pbmlcIjoge1xuIiwKICAgICAgIiAgICBcImFjY3VyYWN5XCI6IDEuMCxcbiIsCiAgICAgICIgICAgXCJjb3N0X3VzZFwiOiAwLjAwMDEyMjI1XG4iLAogICAgICAiICB9XG4iLAogICAgICAifVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJpbXBvcnQganNvblxuIiwKICAgICJcbiIsCiAgICAic3VtbWFyeSA9IHt9XG4iLAogICAgImZvciBtb2RlbCBpbiBwcmljZXM6XG4iLAogICAgIiAgICByb3dzID0gW3IgZm9yIHIgaW4gcmVzdWx0cyBpZiByW1wibW9kZWxcIl0gPT0gbW9kZWxdXG4iLAogICAgIiAgICBpbnAsIG91dCA9IHByaWNlc1ttb2RlbF1cbiIsCiAgICAiICAgIGNvc3QgPSBzdW0ocltcImlucHV0XCJdICogaW5wICsgcltcIm91dHB1dFwiXSAqIG91dCBmb3IgciBpbiByb3dzKSAvIDFfMDAwXzAwMFxuIiwKICAgICIgICAgc3VtbWFyeVttb2RlbF0gPSB7XCJhY2N1cmFjeVwiOiBzdW0ocltcImNvcnJlY3RcIl0gZm9yIHIgaW4gcm93cykgLyBsZW4ocm93cyksIFwiY29zdF91c2RcIjogY29zdH1cbiIsCiAgICAicHJpbnQoanNvbi5kdW1wcyhzdW1tYXJ5LCBlbnN1cmVfYXNjaWk9RmFsc2UsIGluZGVudD0yKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJiYzQ5MjVjOSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOydkeuLtSDsm5DrrLgg7ZmV7J24XG4iLAogICAgIlxuIiwKICAgICLsnpDrj5kg7KCQ7IiY66eMIOuztOyngCDslYrqs6Ag65GQIOuqqOuNuOydtCDsi6TsoJzroZwg67CY7ZmY7ZWcIOuylOyjvOulvCDsoJXri7Xqs7wg64KY656A7Z6IIO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjNTUyZGFhYyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoxOTozNi44NzgwMzlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoxOTozNi44Nzc5MThaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoxOTozNi44ODExNTFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjE5OjM2Ljg4MDUwNVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJvcGVuYWk6Z3B0LTUuNC1uYW5vIOygleuLtT0g67Cw7IahIOydkeuLtT0gJ+uwsOyGoScg7J287LmYPSBUcnVlXG4iLAogICAgICAib3BlbmFpOmdwdC01LjQtbmFubyDsoJXri7U9IO2ZmOu2iCDsnZHri7U9ICftmZjrtognIOydvOy5mD0gVHJ1ZVxuIiwKICAgICAgIm9wZW5haTpncHQtNS40LW5hbm8g7KCV64u1PSDsg4Htkogg7J2R64u1PSAn67Cw7IahJyDsnbzsuZg9IEZhbHNlXG4iLAogICAgICAib3BlbmFpOmdwdC01LjQtbWluaSDsoJXri7U9IOuwsOyGoSDsnZHri7U9ICfrsLDshqEnIOydvOy5mD0gVHJ1ZVxuIiwKICAgICAgIm9wZW5haTpncHQtNS40LW1pbmkg7KCV64u1PSDtmZjrtogg7J2R64u1PSAn7ZmY67aIJyDsnbzsuZg9IFRydWVcbiIsCiAgICAgICJvcGVuYWk6Z3B0LTUuNC1taW5pIOygleuLtT0g7IOB7ZKIIOydkeuLtT0gJ+yDge2SiCcg7J287LmYPSBUcnVlXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImZvciByb3cgaW4gcmVzdWx0czpcbiIsCiAgICAiICAgIHByaW50KHJvd1tcIm1vZGVsXCJdLCBcIuygleuLtT1cIiwgcm93W1wiZXhwZWN0ZWRcIl0sIFwi7J2R64u1PVwiLCByZXByKHJvd1tcImFuc3dlclwiXSksIFwi7J287LmYPVwiLCByb3dbXCJjb3JyZWN0XCJdKVxuIiwKICAgICJhc3NlcnQgYWxsKHJvd1tcImFuc3dlclwiXSBmb3Igcm93IGluIHJlc3VsdHMpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiYzBmZDdiMjAiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDrnbzsmrDtjIUg6rec7LmZIOyggeyaqVxuIiwKICAgICJcbiIsCiAgICAi7Ken7J2AIOuLqOydvCDsnZjrj4Qg67aE66WY64qUIG5hbm/roZwg67O064K06rOgLCDquLQg7ISk66qFIOyalOyyreydgCBtaW5p66GcIOuztOuDheuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTM0LTAzLWIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg7J20IOuLqOqzhOyXkOyEnCDqtazrtoTtlaAg67KU7JyEXG4iLAogICAgIlxuIiwKICAgICLquLjsnbTqsIAg7Ken64uk6rOgIO2VreyDgSDsiazsmrQg7JqU7LKt7J2AIOyVhOuLiOqzoCDquLQg7JqU7LKt7J20IO2VreyDgSDslrTroKTsmrQg6rKD64+EIOyVhOuLmeuLiOuLpC4g7JyE7ZeY7ZWcIOyXheustCwg64+E6rWsIO2VhOyalCDsl6zrtoAsIOyekeydgCDrqqjrjbjsnZgg7ZmV7IugIOu2gOyhsSDqsJnsnYAg7Iug7Zi466W8IO2VqOq7mCDtj4nqsIDtlZjqs6Ag7Y+067CxIOqyveuhnOulvCDrkaHri4jri6QuIOyEuCDsgqzroYDsl5DshJwg65GQIOuqqOuNuOydtCDrqqjrkZAg66ee7JWY642U652864+EIOyghOyytCDrrLjsnZgg67aE7Y+s7J2YIO2SiOyniCDssKjsnbTrpbwg7Kad66qF7ZWY7KeAIOyViuycvOuvgOuhnCDrjZQg7YGwIOqzoOyglSDtj4nqsIAg7IS47Yq466GcIOudvOyasO2EsCDsnpDssrTrpbwg6rKA7IKs7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImRhZjNiNzhiIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjE5OjM2Ljg4MjU3MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjE5OjM2Ljg4MjQzNFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjE5OjM2Ljg4NTM1MFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MTk6MzYuODg0ODY4WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIlsoJ+uwsOyGoSDsg4Htg5wg7JWM66Ck7KSYJywgJ29wZW5haTpncHQtNS40LW5hbm8nKSwgKCftmZjrtogg6rec7KCVIOuRkCDqsIDsp4Drpbwg67mE6rWQ7ZWY6rOgIOqwgSDqt7zqsbDrpbwg7ISk66qF7ZW0IOyjvOyEuOyalC4nLCAnb3BlbmFpOmdwdC01LjQtbWluaScpXVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJkZWYgcm91dGUodGV4dCk6XG4iLAogICAgIiAgICBjb21wbGV4X3JlcXVlc3QgPSBsZW4odGV4dCkgPiA2MCBvciBcIuu5hOq1kFwiIGluIHRleHQgb3IgXCLqt7zqsbBcIiBpbiB0ZXh0XG4iLAogICAgIiAgICByZXR1cm4gXCJvcGVuYWk6Z3B0LTUuNC1taW5pXCIgaWYgY29tcGxleF9yZXF1ZXN0IGVsc2UgXCJvcGVuYWk6Z3B0LTUuNC1uYW5vXCJcbiIsCiAgICAiXG4iLAogICAgInNhbXBsZXMgPSBbXCLrsLDshqEg7IOB7YOcIOyVjOugpOykmFwiLCBcIu2ZmOu2iCDqt5zsoJUg65GQIOqwgOyngOulvCDruYTqtZDtlZjqs6Ag6rCBIOq3vOqxsOulvCDshKTrqoXtlbQg7KO87IS47JqULlwiXVxuIiwKICAgICJwcmludChbKHRleHQsIHJvdXRlKHRleHQpKSBmb3IgdGV4dCBpbiBzYW1wbGVzXSkiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogImV4cGVyaW1lbnQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA2LAogICAiY29kZV9zaGEyNTYiOiAiNjFlODg4NzY5OTI3MjViZDA5Nzk1ZmMwY2E4NTVhNTdlODBiNDU0ZDZlZTY5NjE4OTdmMjlkZDE3NGMzYzA0ZiIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTExVDAyOjE5OjM3LjAwNTQ3NiswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiMjhiMGQyOTc0OGJkYzUyYjE5Yzk2M2Q3MzI5MGQ5NzNhZjEzNjlkZmExMzc4YTgzOGZiNGM0MGYxNDc3NGU1MSIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>모델 라우팅 품질·비용 비교</h2>
+<p>같은 분류 문제를 작은 모델과 상위 모델에 실행하고 정확도와 추정 비용을 함께 비교합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>준비 셀은 현재 폴더와 부모 폴더에서 <code>ch34-cost-rate-limits</code> 실습 폴더를 찾고, 발견한 <code>.env</code>가 있으면 현재 프로세스에 불러옵니다. 키 값은 출력하지 않으며 준비 결과로 폴더와 환경 파일의 존재 여부만 확인합니다. 이후 파일 기록은 찾은 <code>chapter_root</code> 아래 <code>runs</code> 폴더를 사용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">from pathlib import Path
+from dotenv import load_dotenv
+
+here = Path.cwd().resolve()
+chapter_root = next((p for p in (here, *here.parents) if p.name == &quot;ch34-cost-rate-limits&quot; and (p / &quot;notebooks&quot;).is_dir()), None)
+if chapter_root is None:
+    raise FileNotFoundError(&quot;ch34-cost-rate-limits 실습 폴더 안에서 실행하세요.&quot;)
+env_path = next((p / &quot;.env&quot; for p in (here, *here.parents) if (p / &quot;.env&quot;).exists()), None)
+if env_path:
+    load_dotenv(env_path)
+print(&quot;Python 준비 완료&quot;, &quot;API 키 파일 확인&quot; if env_path else &quot;API 키 파일 없음&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Python 준비 완료 API 키 파일 확인
+</pre></div>
+<div class="nb-markdown"><h3>고정 평가 사례</h3>
+<p>질문과 정답은 모델 사이에서 바꾸지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">cases = [(&quot;배송이 사흘째 멈췄어요&quot;, &quot;배송&quot;), (&quot;결제를 취소하고 싶어요&quot;, &quot;환불&quot;), (&quot;재질이 면인가요&quot;, &quot;상품&quot;)]
+prices = {&quot;openai:gpt-5.4-nano&quot;: (0.20, 1.25), &quot;openai:gpt-5.4-mini&quot;: (0.75, 4.50)}
+print(&quot;평가 사례:&quot;, len(cases))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">평가 사례: 3
+</pre></div>
+<div class="nb-markdown"><h3>두 모델 실제 호출</h3>
+<p>응답은 세 범주 중 하나만 내도록 제한하고 실제 토큰을 기록합니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>모델 라우터는 요청을 관찰해 사용할 모델을 선택하는 함수입니다. 이 예제는 먼저 같은 세 분류 사례를 두 모델에 모두 실행하여 정확도와 실제 토큰 사용량을 기록합니다. 그 뒤 <code>route</code> 함수가 문자열 길이와 <code>비교</code>, <code>근거</code> 포함 여부로 nano와 mini를 고릅니다. 라우팅 규칙의 출력은 모델 이름이며, 실제 모델 답은 선택 뒤 별도 호출에서 얻습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import json
+from pathlib import Path
+from langchain.chat_models import init_chat_model
+results = []
+for model in prices:
+    current = init_chat_model(model, reasoning_effort=&quot;none&quot;, max_tokens=20, max_retries=1, seed=34)
+    for text, expected in cases:
+        response = current.invoke(f&quot;배송, 환불, 상품 중 하나만 답하세요. 문의: {text}&quot;)
+        answer = response.text.strip()
+        usage = response.usage_metadata or {}
+        results.append({&quot;model&quot;: model, &quot;expected&quot;: expected, &quot;answer&quot;: answer, &quot;correct&quot;: answer == expected,
+                        &quot;usage&quot;: usage, &quot;input&quot;: usage.get(&quot;input_tokens&quot;, 0), &quot;output&quot;: usage.get(&quot;output_tokens&quot;, 0)})
+run_dir = chapter_root / &quot;runs&quot;; run_dir.mkdir(parents=True, exist_ok=True)
+(run_dir / &quot;routing-comparison.json&quot;).write_text(json.dumps(results, ensure_ascii=False, indent=2))
+print(&quot;실제 호출 수:&quot;, len(results))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">실제 호출 수: 6
+</pre></div>
+<div class="nb-markdown"><h3>정확도와 비용 계산</h3>
+<p>공식 단가를 백만 토큰당 달러로 적용합니다. 이 작은 실험은 세 사례에서의 결과만 설명합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import json
+
+summary = {}
+for model in prices:
+    rows = [r for r in results if r[&quot;model&quot;] == model]
+    inp, out = prices[model]
+    cost = sum(r[&quot;input&quot;] * inp + r[&quot;output&quot;] * out for r in rows) / 1_000_000
+    summary[model] = {&quot;accuracy&quot;: sum(r[&quot;correct&quot;] for r in rows) / len(rows), &quot;cost_usd&quot;: cost}
+print(json.dumps(summary, ensure_ascii=False, indent=2))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{
+  &quot;openai:gpt-5.4-nano&quot;: {
+    &quot;accuracy&quot;: 0.6666666666666666,
+    &quot;cost_usd&quot;: 3.325e-05
+  },
+  &quot;openai:gpt-5.4-mini&quot;: {
+    &quot;accuracy&quot;: 1.0,
+    &quot;cost_usd&quot;: 0.00012225
+  }
+}
+</pre></div>
+<div class="nb-markdown"><h3>응답 원문 확인</h3>
+<p>자동 점수만 보지 않고 두 모델이 실제로 반환한 범주를 정답과 나란히 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">for row in results:
+    print(row[&quot;model&quot;], &quot;정답=&quot;, row[&quot;expected&quot;], &quot;응답=&quot;, repr(row[&quot;answer&quot;]), &quot;일치=&quot;, row[&quot;correct&quot;])
+assert all(row[&quot;answer&quot;] for row in results)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">openai:gpt-5.4-nano 정답= 배송 응답= &#x27;배송&#x27; 일치= True
+openai:gpt-5.4-nano 정답= 환불 응답= &#x27;환불&#x27; 일치= True
+openai:gpt-5.4-nano 정답= 상품 응답= &#x27;배송&#x27; 일치= False
+openai:gpt-5.4-mini 정답= 배송 응답= &#x27;배송&#x27; 일치= True
+openai:gpt-5.4-mini 정답= 환불 응답= &#x27;환불&#x27; 일치= True
+openai:gpt-5.4-mini 정답= 상품 응답= &#x27;상품&#x27; 일치= True
+</pre></div>
+<div class="nb-markdown"><h3>라우팅 규칙 적용</h3>
+<p>짧은 단일 의도 분류는 nano로 보내고, 긴 설명 요청은 mini로 보냅니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>길이가 짧다고 항상 쉬운 요청은 아니고 긴 요청이 항상 어려운 것도 아닙니다. 위험한 업무, 도구 필요 여부, 작은 모델의 확신 부족 같은 신호를 함께 평가하고 폴백 경로를 둡니다. 세 사례에서 두 모델이 모두 맞았더라도 전체 문의 분포의 품질 차이를 증명하지 않으므로 더 큰 고정 평가 세트로 라우터 자체를 검사합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">def route(text):
+    complex_request = len(text) &gt; 60 or &quot;비교&quot; in text or &quot;근거&quot; in text
+    return &quot;openai:gpt-5.4-mini&quot; if complex_request else &quot;openai:gpt-5.4-nano&quot;
+
+samples = [&quot;배송 상태 알려줘&quot;, &quot;환불 규정 두 가지를 비교하고 각 근거를 설명해 주세요.&quot;]
+print([(text, route(text)) for text in samples])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[(&#x27;배송 상태 알려줘&#x27;, &#x27;openai:gpt-5.4-nano&#x27;), (&#x27;환불 규정 두 가지를 비교하고 각 근거를 설명해 주세요.&#x27;, &#x27;openai:gpt-5.4-mini&#x27;)]
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — nano는 3문항 중 2문항, mini는 3문항을 맞혔습니다. nano는 상품 문의를 배송으로 잘못 분류했습니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>실행된 여섯 번의 API 호출에서 <code>gpt-5.4-nano</code> 정확도는 0.6667, 추정 비용은 0.00003325달러였습니다. <code>gpt-5.4-mini</code> 정확도는 1.0, 추정 비용은 0.00012225달러였습니다. 이 세 사례에서는 nano가 더 저렴했지만 모든 사례를 맞히는 품질 기준을 충족하지 못했습니다. 따라서 “짧은 요청은 모두 nano”라는 규칙을 바로 배포할 수 없습니다. 프롬프트와 구조화 출력 조건을 개선하거나, 실패 검증 뒤 mini로 보내는 폴백을 측정해야 합니다.</p><p>비용 계산은 GPT-5.4 nano 입력 0.20달러·출력 1.25달러, GPT-5.4 mini 입력 0.75달러·출력 4.50달러라는 2026년 9월 11일 표준 처리 단가를 반영했습니다. 캐시, Batch, 장문 컨텍스트, 도구 호출 비용은 포함하지 않았습니다. 첫 호출과 재처리 비용을 모두 포함해야 실제 라우팅 비용을 알 수 있습니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>요청 길이만으로 난이도를 완전히 알 수 없습니다. 짧지만 위험이 큰 요청은 상위 경로로 보냅니다.</li><li>라우팅 임계값은 실제 서비스 평가셋으로 정하고 정기적으로 다시 측정합니다.</li><li>모델 별칭의 동작과 가격이 바뀔 수 있습니다. 재현이 필요하면 지원되는 스냅샷을 검토합니다.</li><li>작은 모델의 실패 후 재호출이 많으면 예상한 절감액이 줄어듭니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>쉬운 요청에 작은 모델을 사용하되 품질 기준선을 먼저 정합니다.</li><li>비용은 실제 토큰과 기준일이 있는 단가로 계산합니다.</li><li>라우터의 오분류와 폴백 비용도 전체 비용에 포함합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 선택한 모델이 429를 반환할 때 재시도와 동시성 제한으로 처리량을 안정화합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. mini가 세 분류 문항을 모두 맞혔다는 결과로 어떤 결론까지 낼 수 있나요?</p><p class="quiz-a">이 세 사례와 출력 조건에서는 mini가 모두 정답이었다고 말할 수 있습니다. 다른 과제의 성능까지 알 수는 없습니다.</p><p class="quiz-q">2. 작은 모델이 실패할 때 상위 모델로 다시 보내는 경로를 무엇이라고 하나요?</p><p class="quiz-a">폴백입니다.</p><p class="quiz-q">3. 라우팅 비용에 첫 호출만 기록하면 무엇이 빠지나요?</p><p class="quiz-a">검증 실패 후 재처리한 상위 모델 호출 비용이 빠집니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://developers.openai.com/api/docs/models/gpt-5.4-mini">OpenAI GPT-5.4 mini model</a> · 2026-09-11 확인</li><li><a href="https://developers.openai.com/api/docs/models/gpt-5.4-nano">OpenAI GPT-5.4 nano model</a> · 2026-09-11 확인</li><li><a href="https://openai.com/api/pricing/">OpenAI API pricing</a> · 2026-09-11 확인</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="02-Batch-API.html">← Batch API</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="04-백오프-큐-동시성.html">백오프 큐 동시성 →</a></span></div></div></body></html>

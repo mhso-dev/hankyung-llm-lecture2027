@@ -1,0 +1,13 @@
+flowchart TD
+  %% classes
+  W["코드 셀<br>글 module_text를<br>쓰기 모드로 저장<br>쓴 글자 수: 179"]:::flow
+  F["모듈 파일<br>order_tools.py<br>안에 class OrderLine 글"]:::tool
+  I["import order_tools<br>파일을 찾아 줄을 실행"]:::flow
+  M["모듈 order_tools<br>안의 이름 OrderLine"]:::tool
+  C["order_tools.OrderLine<br>('연필', 3)<br>pencil.add_count(2)"]:::flow
+  O["pencil 수량: 5<br>자료형 class<br>'order_tools.OrderLine'"]:::measure
+  W --> F
+  F --> I
+  I --> M
+  M --> C
+  C --> O

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 210" role="img" aria-labelledby="title desc">
+<title id="title">05-concept 개념 도식</title>
+<desc id="desc">네 단계를 왼쪽에서 오른쪽으로 읽는 흐름</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#475569"/></marker></defs>
+<rect x="20" y="55" width="165" height="90" rx="14" fill="#dbeafe" stroke="#334155" stroke-width="2"/>
+<text x="102.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">3개 길이</text>
+<line x1="185" y1="100" x2="210" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="215" y="55" width="165" height="90" rx="14" fill="#dbeafe" stroke="#334155" stroke-width="2"/>
+<text x="297.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">3개 위치</text>
+<line x1="380" y1="100" x2="405" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="410" y="55" width="165" height="90" rx="14" fill="#dcfce7" stroke="#334155" stroke-width="2"/>
+<text x="492.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">9개 조건 생성</text>
+<line x1="575" y1="100" x2="600" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="605" y="55" width="165" height="90" rx="14" fill="#fef3c7" stroke="#334155" stroke-width="2"/>
+<text x="687.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">위치 차이 관찰</text>
+</svg>

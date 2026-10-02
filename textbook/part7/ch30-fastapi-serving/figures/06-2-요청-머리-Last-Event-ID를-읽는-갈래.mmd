@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  head["요청 머리<br>Last-Event-ID"]:::tool
+  dep["제공 함수 get_resume_index<br>앱 파일 41~53행"]:::tool
+  bad1["앞머리가 다름<br>other:0은 400"]:::measure
+  bad2["수가 아님<br>sse-1:x는 400"]:::measure
+  run["번호가 맞으면 처리 함수가<br>그래프를 처음부터 실행<br>번호가 작은 사건은 건너뜀"]:::tool
+  good["sse-1:1을 보내면<br>sse-1:2부터"]:::measure
+  last5["sse-1:5를 보내면<br>done만"]:::measure
+  head --> dep
+  dep -.-> bad1
+  dep -.-> bad2
+  dep --> run
+  run --> good
+  run --> last5

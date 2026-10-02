@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  q["주문 문의 하나<br>O102가 결제 대기 중이면<br>취소 · 까닭은 잘못 주문함"]:::tool
+  conf["바꾸는 값 하나<br>사람 확인 값<br>person_confirmed"]:::tool
+  parts["부품 둘<br>읽기 도구 get_order_by_id<br>쓰기 도구 request_cancel<br>입력 형식 CancelForm"]
+  handle["조립 함수 handle_inquiry<br>06절 pick_tools로<br>목록 고르기<br>bind_tools · 도구 찾기 표"]:::flow
+  loop["05절 ask_until_answer<br>도구 실행과 다시 묻기"]:::flow
+  model["gpt-5.4-mini<br>도구 호출 요청 또는 최종 답"]:::model
+  out["실행 요약<br>명세 · 요청한 도구<br>결과 상태 · 요청 수"]:::measure
+  q --> handle
+  conf --> handle
+  parts --> handle
+  handle --> loop
+  loop -->|메시지 목록| model
+  model -->|응답| loop
+  loop --> out

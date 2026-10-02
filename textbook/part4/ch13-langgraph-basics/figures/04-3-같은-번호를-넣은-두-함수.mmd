@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph red["메시지 리듀서로 넣은 뒤"]
+    direction TB
+    r1["넣은 메시지<br>번호 h1에 고친 글"]:::tool
+    r2["남은 메시지 수<br>셋"]:::measure
+    r3["첫 메시지의 글<br>도서 대출 기간은 며칠"]:::measure
+    r1 ~~~ r2
+    r2 ~~~ r3
+  end
+  subgraph plain["operator.add로 붙인 뒤"]
+    direction TB
+    p1["넣은 메시지<br>번호 h1에 고친 글"]:::tool
+    p2["남은 메시지 수<br>넷"]:::measure
+    p3["첫 메시지의 글<br>대출 기간은 며칠인가요?"]:::measure
+    p1 ~~~ p2
+    p2 ~~~ p3
+  end
+  same["두 함수 모두<br>같은 목록에<br>같은 메시지를 넣음"]
+  red ~~~ plain
+  plain ~~~ same

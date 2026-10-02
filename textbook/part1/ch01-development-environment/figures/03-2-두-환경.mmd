@@ -1,0 +1,14 @@
+flowchart TD
+  %% classes
+  B["기반 Python 3.12<br>두 환경에서 같음 True"]:::tool
+  A["env_a 폴더<br>pyvenv.cfg 있음"]:::tool
+  C["env_b 폴더<br>pyvenv.cfg 있음"]:::tool
+  PA["env_a/bin/python<br>알려 준 폴더 env_a"]:::tool
+  PB["env_b/bin/python<br>알려 준 폴더 env_b"]:::tool
+  Q{"환경 폴더가<br>서로 다른가? True"}:::measure
+  B -- "uv venv" --> A
+  B -- "uv venv" --> C
+  A --> PA
+  C --> PB
+  PA --> Q
+  PB --> Q

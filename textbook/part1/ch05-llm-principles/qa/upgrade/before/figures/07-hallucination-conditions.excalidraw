@@ -1,0 +1,178 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "ch05",
+  "elements": [
+    {
+      "id": "box-0",
+      "type": "rectangle",
+      "x": 20,
+      "y": 55,
+      "width": 165,
+      "height": 90,
+      "strokeColor": "#334155",
+      "backgroundColor": "#dcfce7"
+    },
+    {
+      "id": "text-0",
+      "type": "text",
+      "x": 40,
+      "y": 88,
+      "width": 125,
+      "height": 24,
+      "fontSize": 17,
+      "text": "근거 없는 질문",
+      "originalText": "근거 없는 질문",
+      "strokeColor": "#172033",
+      "backgroundColor": "transparent",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "box-0"
+    },
+    {
+      "id": "arrow-0",
+      "type": "arrow",
+      "x": 185,
+      "y": 100,
+      "width": 25,
+      "height": 0,
+      "strokeColor": "#475569",
+      "backgroundColor": "transparent",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          25,
+          0
+        ]
+      ],
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "box-1",
+      "type": "rectangle",
+      "x": 215,
+      "y": 55,
+      "width": 165,
+      "height": 90,
+      "strokeColor": "#334155",
+      "backgroundColor": "#ede9fe"
+    },
+    {
+      "id": "text-1",
+      "type": "text",
+      "x": 235,
+      "y": 88,
+      "width": 125,
+      "height": 24,
+      "fontSize": 17,
+      "text": "다음 토큰 예측",
+      "originalText": "다음 토큰 예측",
+      "strokeColor": "#172033",
+      "backgroundColor": "transparent",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "box-1"
+    },
+    {
+      "id": "arrow-1",
+      "type": "arrow",
+      "x": 380,
+      "y": 100,
+      "width": 25,
+      "height": 0,
+      "strokeColor": "#475569",
+      "backgroundColor": "transparent",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          25,
+          0
+        ]
+      ],
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "box-2",
+      "type": "rectangle",
+      "x": 410,
+      "y": 55,
+      "width": 165,
+      "height": 90,
+      "strokeColor": "#334155",
+      "backgroundColor": "#ede9fe"
+    },
+    {
+      "id": "text-2",
+      "type": "text",
+      "x": 430,
+      "y": 88,
+      "width": 125,
+      "height": 24,
+      "fontSize": 17,
+      "text": "추측/불확실 표현",
+      "originalText": "추측/불확실 표현",
+      "strokeColor": "#172033",
+      "backgroundColor": "transparent",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "box-2"
+    },
+    {
+      "id": "arrow-2",
+      "type": "arrow",
+      "x": 575,
+      "y": 100,
+      "width": 25,
+      "height": 0,
+      "strokeColor": "#475569",
+      "backgroundColor": "transparent",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          25,
+          0
+        ]
+      ],
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "box-3",
+      "type": "rectangle",
+      "x": 605,
+      "y": 55,
+      "width": 165,
+      "height": 90,
+      "strokeColor": "#334155",
+      "backgroundColor": "#fee2e2"
+    },
+    {
+      "id": "text-3",
+      "type": "text",
+      "x": 625,
+      "y": 88,
+      "width": 125,
+      "height": 24,
+      "fontSize": 17,
+      "text": "근거 확인 필요",
+      "originalText": "근거 확인 필요",
+      "strokeColor": "#172033",
+      "backgroundColor": "transparent",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "box-3"
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}

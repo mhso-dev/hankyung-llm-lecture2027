@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  CANDIDATES["후보 다섯 개<br>모델 카드에서 읽은 값"]:::tool
+  REQUIRED["필수 조건<br>작업 종류 · 라이선스"]:::flow
+  REMAINING["남은 후보 두 개<br>Qwen · SmolLM2"]:::tool
+  MODELS["언어 모델 두 개<br>같은 평가 자료 · 생성 16번"]:::model
+  RECORDS["측정 기록<br>정답 수 · 답 시간<br>메모리 어림"]:::measure
+  CRITERIA["선택 기준<br>한국어 정답 3개 이상<br>메모리 어림 2.0GB 이하"]:::flow
+  CHOSEN["고른 후보<br>Qwen"]:::measure
+  CANDIDATES --> REQUIRED
+  REQUIRED --> REMAINING
+  REMAINING --> MODELS
+  MODELS --> RECORDS
+  RECORDS --> CRITERIA
+  CRITERIA --> CHOSEN

@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph HEADSET["new_item = '헤드셋'"]
+    direction LR
+    h1["product_names<br>키보드 · 마우스<br>키보드 · 헤드셋"]:::tool --> h2["set(product_names)<br>마우스 · 키보드 · 헤드셋"]:::tool --> h3["목록 길이 4<br>종류 수 3"]:::measure
+  end
+  subgraph KEYBOARD["new_item = '키보드'"]
+    direction LR
+    k1["product_names<br>키보드 · 마우스<br>키보드 · 키보드"]:::tool --> k2["set(product_names)<br>마우스 · 키보드"]:::tool --> k3["목록 길이 4<br>종류 수 2"]:::measure
+  end
+  HEADSET ~~~ KEYBOARD

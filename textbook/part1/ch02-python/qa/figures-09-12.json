@@ -1,0 +1,588 @@
+[
+  {
+    "name": "09-concept",
+    "w": 860,
+    "h": 535,
+    "title": "함수 호출 전후의 기록과 예외 뒤의 자원 정리",
+    "caption": "위쪽은 trace의 호출 기록, 아래쪽은 같은 RuntimeError 뒤 정리 여부를 비교합니다.",
+    "elements": [
+      {
+        "kind": "box",
+        "id": "start",
+        "x": 30,
+        "y": 90,
+        "w": 230,
+        "h": 76,
+        "label": "호출 시작 기록",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "a1",
+        "points": [
+          [
+            260,
+            128
+          ],
+          [
+            310,
+            128
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "fn",
+        "x": 310,
+        "y": 90,
+        "w": 230,
+        "h": 76,
+        "label": "normalize_title 실행\n양쪽 공백 제거",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "a2",
+        "points": [
+          [
+            540,
+            128
+          ],
+          [
+            590,
+            128
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "end",
+        "x": 590,
+        "y": 90,
+        "w": 240,
+        "h": 76,
+        "label": "호출 완료 기록\n문자열 반환",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "note",
+        "x": 430,
+        "y": 208,
+        "label": "wraps는 원래 함수의 이름·설명 등을 유지합니다.",
+        "fs": 17,
+        "color": "#111827",
+        "anchor": "middle",
+        "weight": "normal"
+      },
+      {
+        "kind": "box",
+        "id": "bad",
+        "x": 40,
+        "y": 290,
+        "w": 350,
+        "h": 130,
+        "label": "Before: RuntimeError 발생\nclose()에 도달하지 못함\nclosed: False",
+        "fill": "#fee2e2",
+        "stroke": "#dc2626",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "good",
+        "x": 470,
+        "y": 290,
+        "w": 350,
+        "h": 130,
+        "label": "After: 같은 RuntimeError\nfinally에서 close() 실행\nclosed: True",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "fix",
+        "points": [
+          [
+            390,
+            355
+          ],
+          [
+            470,
+            355
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "정리 위치",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "legend",
+        "x": 430,
+        "y": 482,
+        "label": "파랑: 작성한 실행 순서 · 초록: 처리·자원 · 빨강: 정리 누락",
+        "fs": 15,
+        "color": "#4b5563",
+        "anchor": "middle",
+        "weight": "normal"
+      }
+    ]
+  },
+  {
+    "name": "10-concept",
+    "w": 860,
+    "h": 530,
+    "title": "같은 입력에서 자동 변환 허용 여부를 비교합니다",
+    "caption": "문자열 재시도 횟수 3을 기본 모드는 정수로 변환하고 엄격한 모드는 거부합니다.",
+    "elements": [
+      {
+        "kind": "box",
+        "id": "input",
+        "x": 280,
+        "y": 75,
+        "w": 300,
+        "h": 70,
+        "label": "입력: retries = \"3\"\n문자열",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "left",
+        "points": [
+          [
+            370,
+            145
+          ],
+          [
+            215,
+            220
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "right",
+        "points": [
+          [
+            490,
+            145
+          ],
+          [
+            645,
+            220
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "loose",
+        "x": 45,
+        "y": 220,
+        "w": 340,
+        "h": 80,
+        "label": "기본 모드\n가능한 자료형 변환 허용",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "strict",
+        "x": 475,
+        "y": 220,
+        "w": 340,
+        "h": 80,
+        "label": "엄격한 모드\n정수 필드에 문자열 거부",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "lout",
+        "points": [
+          [
+            215,
+            300
+          ],
+          [
+            215,
+            360
+          ]
+        ],
+        "color": "#d97706",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "rout",
+        "points": [
+          [
+            645,
+            300
+          ],
+          [
+            645,
+            360
+          ]
+        ],
+        "color": "#dc2626",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "ok",
+        "x": 45,
+        "y": 360,
+        "w": 340,
+        "h": 80,
+        "label": "검증 결과: 3\n정수",
+        "fill": "#fef3c7",
+        "stroke": "#d97706",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "error",
+        "x": 475,
+        "y": 360,
+        "w": 340,
+        "h": 80,
+        "label": "ValidationError\n오류 종류: int_type",
+        "fill": "#fee2e2",
+        "stroke": "#dc2626",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "note",
+        "x": 430,
+        "y": 490,
+        "label": "문자열을 허용할지는 프로그램이 받아야 할 입력에 따라 정합니다.",
+        "fs": 16,
+        "color": "#4b5563",
+        "anchor": "middle",
+        "weight": "normal"
+      }
+    ]
+  },
+  {
+    "name": "11-concept",
+    "w": 900,
+    "h": 680,
+    "title": "패키지 설치를 확인하고 테스트의 준비 상태를 분리합니다",
+    "caption": "위쪽은 소스에서 휠·설치 후 실행까지, 아래쪽은 같은 테스트의 목록 상태를 비교합니다.",
+    "elements": [
+      {
+        "kind": "box",
+        "id": "source",
+        "x": 30,
+        "y": 80,
+        "w": 250,
+        "h": 105,
+        "label": "src/report_tools\npyproject.toml\n이름·버전·빌드 시스템",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "build",
+        "points": [
+          [
+            280,
+            133
+          ],
+          [
+            325,
+            133
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "wheel",
+        "x": 325,
+        "y": 80,
+        "w": 250,
+        "h": 105,
+        "label": "uv build --wheel\n버전 0.1.0 휠 생성",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "install",
+        "points": [
+          [
+            575,
+            133
+          ],
+          [
+            620,
+            133
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "run",
+        "x": 620,
+        "y": 80,
+        "w": 250,
+        "h": 105,
+        "label": "별도 가상환경에 설치\n새 프로세스 import\n반환: Agent Log",
+        "fill": "#fef3c7",
+        "stroke": "#d97706",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "shared",
+        "x": 40,
+        "y": 275,
+        "w": 360,
+        "h": 140,
+        "label": "Before: 같은 목록 공유\nalpha 추가 → beta 추가\n실제: [alpha, beta]\n1 failed, 1 passed",
+        "fill": "#fee2e2",
+        "stroke": "#dc2626",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "fresh",
+        "x": 500,
+        "y": 275,
+        "w": 360,
+        "h": 140,
+        "label": "After: fixture로 새 목록\n각 테스트는 빈 목록부터 시작\n검사: [alpha] / [beta]\n2 passed",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "fix",
+        "points": [
+          [
+            400,
+            345
+          ],
+          [
+            500,
+            345
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "준비 분리",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "patch",
+        "x": 200,
+        "y": 490,
+        "w": 500,
+        "h": 95,
+        "label": "monkeypatch: 테스트 동안 값 변경\n테스트가 끝나면 원래 설정으로 복원",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "note",
+        "x": 450,
+        "y": 635,
+        "label": "파랑: 작성한 처리 · 초록: 소스·입력 · 노랑: 확인 · 빨강: 실패",
+        "fs": 15,
+        "color": "#4b5563",
+        "anchor": "middle",
+        "weight": "normal"
+      }
+    ]
+  },
+  {
+    "name": "12-concept",
+    "w": 900,
+    "h": 830,
+    "title": "대기 방식과 작업 실행 순서를 나누어 확인합니다",
+    "caption": "위에서 아래로 읽습니다. 위쪽은 순차·동시 대기, 아래쪽은 같은 동기 대기를 호출하는 위치의 비교입니다.",
+    "elements": [
+      {
+        "kind": "box",
+        "id": "seq",
+        "x": 40,
+        "y": 80,
+        "w": 370,
+        "h": 100,
+        "label": "순차 await\nA: 0.04초 대기 후\nB: 0.04초 대기",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "concurrent",
+        "x": 490,
+        "y": 80,
+        "w": 370,
+        "h": 100,
+        "label": "gather\nA와 B의 대기를 함께 시작\n두 작업이 끝나면 결과 반환",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "order",
+        "x": 450,
+        "y": 235,
+        "label": "별도 완료 순서 실습: 느린 작업 0.03초 · 빠른 작업 0.01초",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "middle",
+        "weight": "normal"
+      },
+      {
+        "kind": "box",
+        "id": "done",
+        "x": 40,
+        "y": 280,
+        "w": 370,
+        "h": 90,
+        "label": "실제 완료 기록\n빠른 작업 → 느린 작업",
+        "fill": "#fef3c7",
+        "stroke": "#d97706",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "results",
+        "x": 490,
+        "y": 280,
+        "w": 370,
+        "h": 90,
+        "label": "gather 결과 목록\n느린 작업 → 빠른 작업",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "block",
+        "x": 40,
+        "y": 455,
+        "w": 820,
+        "h": 105,
+        "label": "Before: 이벤트 루프에서 time.sleep(0.05) 호출\n관찰: block-start → block-end → heartbeat\n동기 대기가 끝날 때까지 하트비트 실행이 지연됩니다.",
+        "fill": "#fee2e2",
+        "stroke": "#dc2626",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "thread",
+        "x": 40,
+        "y": 635,
+        "w": 820,
+        "h": 105,
+        "label": "After: to_thread로 같은 동기 대기를 별도 스레드에서 실행\n관찰: wait-start → heartbeat → wait-end\n스레드 작업을 기다리는 동안 하트비트가 실행되었습니다.",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "fix",
+        "points": [
+          [
+            450,
+            560
+          ],
+          [
+            450,
+            635
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "호출 위치 변경",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "note",
+        "x": 450,
+        "y": 790,
+        "label": "대기 시간은 실습 설정값입니다. 실행 시간과 사건 간격은 환경에 따라 달라집니다.",
+        "fs": 15,
+        "color": "#4b5563",
+        "anchor": "middle",
+        "weight": "normal"
+      }
+    ]
+  }
+]

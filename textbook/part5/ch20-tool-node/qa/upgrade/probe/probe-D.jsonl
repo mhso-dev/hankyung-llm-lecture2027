@@ -1,0 +1,2 @@
+{"mode": "D", "case": "before", "at": "06:37:23Z", "error": "ValueError: 지원하지 않는 주제: 주차"}
+{"mode": "D", "case": "key_policy", "at": "06:37:23Z", "error": "ToolInvocationError: Error invoking tool 'lookup_policy' with kwargs {'주제': '대출'} with error:\n topic: Field required\n Please fix the error and try again."}

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  q["요청 머리글과 고객 문의<br>JSON으로 답하세요"]:::tool
+  cls["gpt-5.4-mini<br>분류 요청"]:::model
+  dec["분류 딕셔너리<br>칸 둘 종류 · 신뢰도"]:::measure
+  chk["검사 check_route<br>허용 목록 · 기준값 0.75"]:::flow
+  ans["gpt-5.4-mini<br>갈래 표에서 고른<br>지시 글로 답 요청"]:::model
+  done["상태 완료<br>답"]:::measure
+  back["상태 되묻기<br>되묻기 글 · 답 요청 없음"]:::measure
+  q --> cls
+  cls --> dec
+  dec --> chk
+  chk -.->|문제 없음| ans
+  ans --> done
+  chk -.->|문제 있음| back

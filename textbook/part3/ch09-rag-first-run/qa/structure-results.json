@@ -1,0 +1,79 @@
+{
+  "pages": 7,
+  "passed": 1,
+  "results": [
+    {
+      "page": "01-RAG-지도.html",
+      "korean_chars": 3943,
+      "before_korean_chars": 4624,
+      "errors": [
+        "11 ordered lesson blocks missing",
+        "instructor notes missing"
+      ],
+      "pass": false
+    },
+    {
+      "page": "02-로더와-스플리터.html",
+      "korean_chars": 2286,
+      "before_korean_chars": 3387,
+      "errors": [
+        "11 ordered lesson blocks missing",
+        "instructor notes missing",
+        "prose substantially shortened"
+      ],
+      "pass": false
+    },
+    {
+      "page": "03-임베딩과-벡터스토어.html",
+      "korean_chars": 2487,
+      "before_korean_chars": 3789,
+      "errors": [
+        "11 ordered lesson blocks missing",
+        "instructor notes missing",
+        "prose substantially shortened"
+      ],
+      "pass": false
+    },
+    {
+      "page": "04-생성과-출처-인용.html",
+      "korean_chars": 2064,
+      "before_korean_chars": 3518,
+      "errors": [
+        "11 ordered lesson blocks missing",
+        "instructor notes missing",
+        "prose substantially shortened"
+      ],
+      "pass": false
+    },
+    {
+      "page": "05-첫-실패-보기.html",
+      "korean_chars": 3069,
+      "before_korean_chars": 4306,
+      "errors": [
+        "11 ordered lesson blocks missing",
+        "instructor notes missing",
+        "question count changed",
+        "prose substantially shortened"
+      ],
+      "pass": false
+    },
+    {
+      "page": "06-실험-하네스.html",
+      "korean_chars": 2942,
+      "before_korean_chars": 4452,
+      "errors": [
+        "11 ordered lesson blocks missing",
+        "instructor notes missing",
+        "prose substantially shortened"
+      ],
+      "pass": false
+    },
+    {
+      "page": "index.html",
+      "korean_chars": 1323,
+      "before_korean_chars": 885,
+      "errors": [],
+      "pass": true
+    }
+  ]
+}

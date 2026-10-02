@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph ta["스레드 customer-a"]
+    direction TB
+    h1["get_state_history<br>체크포인트 여섯"]:::measure
+    r1["표 checkpoints<br>여섯 줄"]:::measure
+    h1 ~~~ r1
+  end
+  subgraph tbb["스레드 customer-b"]
+    direction TB
+    h2["실행 결과<br>합계 4"]:::measure
+    r2["표 checkpoints<br>세 줄"]:::measure
+    h2 ~~~ r2
+  end
+  cm["두 스레드 모두<br>같은 표 checkpoints<br>칸 thread_id의 값으로 갈림"]
+  cl["체크포인터 연결을<br>닫은 뒤에도<br>customer-a 여섯 줄<br>작업 폴더 파일 없음"]:::measure
+  ta ~~~ cm
+  tbb ~~~ cm
+  cm ~~~ cl

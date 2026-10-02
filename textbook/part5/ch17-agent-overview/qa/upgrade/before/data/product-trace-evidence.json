@@ -1,0 +1,80 @@
+[
+  {
+    "product": "OpenAI Codex",
+    "artifact_type": "official_public_trace_signals",
+    "local_execution": false,
+    "source_url": "https://openai.com/index/introducing-codex/",
+    "checked": "2026-09-10",
+    "observable_events": [
+      {
+        "event": "repository/file citation",
+        "control": "제품 코드가 증거를 노출"
+      },
+      {
+        "event": "terminal log",
+        "control": "에이전트 행동의 증거; 세부 선택 주체는 공개 자료만으로 미확인"
+      },
+      {
+        "event": "test result",
+        "control": "도구 결과; 완료 판정의 세부 구현은 미확인"
+      }
+    ],
+    "limitation": "공식 소개가 공개한 증거 유형이며 하나의 전체 실행 원문은 공개되지 않았습니다."
+  },
+  {
+    "product": "Anthropic Claude Code",
+    "artifact_type": "official_public_trace_interface",
+    "local_execution": false,
+    "source_url": "https://code.claude.com/docs/en/cli-usage",
+    "checked": "2026-09-10",
+    "observable_events": [
+      {
+        "event": "stream-json turn output",
+        "control": "제품 코드가 턴 사건을 직렬화"
+      },
+      {
+        "event": "verbose turn-by-turn output",
+        "control": "제품 코드가 증거를 노출"
+      },
+      {
+        "event": "max-turns stop",
+        "control": "코드로 정한 실행 상한"
+      },
+      {
+        "event": "allowed/disallowed tools",
+        "control": "코드로 정한 권한 경계"
+      }
+    ],
+    "limitation": "CLI가 제공하는 추적 인터페이스이며 특정 사용자 작업의 실제 출력은 포함하지 않습니다."
+  },
+  {
+    "product": "OpenAI Deep Research",
+    "artifact_type": "official_public_behavior_trace",
+    "local_execution": false,
+    "source_url": "https://openai.com/index/introducing-deep-research/",
+    "checked": "2026-09-10",
+    "observable_events": [
+      {
+        "event": "multi-step plan",
+        "control": "모델 판단"
+      },
+      {
+        "event": "web browse/search",
+        "control": "모델이 고른 도구 행동"
+      },
+      {
+        "event": "backtrack on information",
+        "control": "관찰 뒤 모델 판단"
+      },
+      {
+        "event": "Python analysis",
+        "control": "모델이 고른 도구 행동"
+      },
+      {
+        "event": "cited report",
+        "control": "제품 출력 요건과 모델 생성"
+      }
+    ],
+    "limitation": "공식 설명의 행동 경로를 사건으로 추출했으며 원시 내부 추론이나 완전한 실행 로그가 아닙니다."
+  }
+]

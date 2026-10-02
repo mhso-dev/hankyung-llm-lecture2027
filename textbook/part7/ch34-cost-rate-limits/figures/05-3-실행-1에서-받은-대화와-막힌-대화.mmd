@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  amount["실행 1 예약 금액<br>평균 0.003366<br>비용 상한 0.04"]:::tool
+  guard["try_reserve<br>대화 차례대로 스무 번"]:::flow
+  ok["대화 1~11 예약됨<br>받은 대화 열하나"]:::measure
+  stop["대화 12~20<br>비용 상한을 넘습니다.<br>막힌 대화 아홉"]:::measure
+  over["받은 대화 가운데<br>예약보다 비싼 대화 넷"]:::measure
+  total["받은 대화의 비용 합<br>0.044481<br>비용 상한을 넘음 True"]:::measure
+  amount --> guard
+  guard -.-> ok
+  guard -.-> stop
+  ok --> over
+  over --> total

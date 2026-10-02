@@ -1,0 +1,245 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>POST SSE 이벤트 설계 — Ch 30 · FastAPI로 Agent 서빙</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 서비스화 &amp; 배포 · Ch 30 · FastAPI로 Agent 서빙</p>
+<h1>POST SSE 이벤트 설계</h1><div class="meta"><span>강의 1.25h</span><span>실습 2.75h</span><span>새 용어 4</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1.25h | 실습 2.75h | 코드 Jupyter Notebook | 새 용어 4 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>FastAPI 0.135 네이티브 SSE를 POST 라우트에 선언할 수 있습니다.</li><li>`event`, `id`, `data` 필드의 역할을 구분할 수 있습니다.</li><li>token과 done 이벤트를 클라이언트가 판별하도록 설계할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>Agent의 비동기 청크는 파이썬 프로세스 안의 값입니다. 브라우저가 받으려면 이벤트 종류와 순서를 보존하는 HTTP 전송 형식이 필요합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>04절에서 `astream` 청크를 읽었고 Ch25에서 진행 이벤트와 토큰 이벤트를 분리했습니다. 이제 같은 구분을 HTTP 필드로 옮깁니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><p>택배 상자에는 종류, 번호, 내용이 적힌 운송장이 있습니다. SSE도 `event`, `id`, `data`로 각 조각의 의미와 순서를 전달합니다.</p><p>Server-Sent Events(SSE)는 하나의 HTTP 응답 연결에서 여러 텍스트 이벤트를 순서대로 보내는 표준 형식입니다. 각 이벤트는 필드 행과 빈 줄로 구성됩니다. FastAPI 0.135의 `EventSourceResponse`와 `ServerSentEvent`를 사용하면 비동기 생성기에서 이벤트를 `yield`할 수 있습니다.</p><p>`event`는 token, done, error 같은 종류입니다. `data`는 JSON으로 직렬화되는 본문이며 문자열도 JSON 문자열로 인코딩됩니다. `id`는 클라이언트가 마지막 처리 위치를 기억하는 값입니다. 교육용 서비스는 `thread_id:index`를 사용합니다. 식별자에 사용자 입력이나 비밀값을 넣으면 로그와 브라우저 저장소에 남을 수 있습니다.</p><p>SSE는 GET에만 제한되지 않습니다. 공식 문서는 POST 본문을 받고 SSE를 반환하는 예를 제공합니다. 채팅 질문과 옵션을 JSON으로 보낼 때 POST가 자연스럽습니다. 하지만 브라우저 `EventSource`는 임의의 POST 본문과 Authorization 헤더를 설정하지 못하므로 `fetch`로 응답 본문을 직접 읽어야 합니다.</p><p>네이티브 응답은 캐시 방지, 프록시 버퍼링 방지, 연결 유지 ping을 처리합니다. 그래도 실제 로드 밸런서와 CDN이 스트림을 버퍼링하거나 유휴 연결을 끊지 않는지는 배포 환경에서 확인해야 합니다. 로컬 TestClient 성공은 운영 프록시를 검증하지 않습니다.</p><h3>코드 읽기와 개념 경계</h3><p>SSE(Server-Sent Events)는 한 HTTP 응답 안에서 <code>event</code>, <code>id</code>, <code>data</code> 줄을 묶어 사건을 순서대로 보내는 텍스트 형식입니다. 이 실습은 POST 본문으로 질문을 받은 뒤 <code>token</code> 사건을 여러 번 보내고 마지막에 <code>done</code> 사건을 한 번 보냅니다. 빈 줄은 사건과 사건의 경계입니다. 정규식으로 응답을 나눈 다음 첫 사건의 종류와 식별자, 마지막 사건의 종류를 각각 검사합니다.</p><p><code>token</code>과 <code>done</code>을 나누면 클라이언트는 문자열 조각과 실행 완료를 혼동하지 않습니다. 진행률, 출처, 도구 호출을 추가할 때도 별도 사건 이름을 사용하면 데이터 형식을 독립적으로 발전시킬 수 있습니다. 다만 SSE의 <code>id</code>는 업무 결과의 영구 식별자와 목적이 다르므로, 재연결 위치와 대화 식별자를 한 필드에 무리하게 합치지 않습니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 430" style="width:380px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="POST 요청 하나가 SSE 연결을 열고 식별자가 있는 token 이벤트 뒤에 완료 이벤트를 전송합니다."><title>POST 요청 하나가 SSE 연결을 열고 식별자가 있는 token 이벤트 뒤에 완료 이벤트를 전송합니다.</title><defs><marker id="05-흐름-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190,85 L190,116" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#05-흐름-arrow)"/><path d="M190,185 L190,216" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#05-흐름-arrow)"/><path d="M190,285 L190,316" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#05-흐름-arrow)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="59.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">POST 본문</text><rect x="30" y="120" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="159.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">SSE 연결</text><rect x="30" y="220" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="259.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">token id data</text><rect x="30" y="320" width="320" height="65" rx="10" fill="#F7EDC7" stroke="#334155" stroke-width="2"/><text x="190.0" y="359.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">done</text></svg></div><p>위쪽의 요청에서 아래쪽의 관찰 결과까지 화살표를 따라 읽습니다. 파란 상자는 데이터, 보라색 상자는 Agent 실행, 초록 상자는 확인할 결과를 나타냅니다.</p><h3>서비스 설계 판단</h3><p>이벤트 종류는 클라이언트 상태 전이와 함께 설계합니다. token은 답 본문에 추가하고 progress는 단계 표시를 갱신하며 done은 입력창을 다시 활성화합니다. error는 코드에 따라 재시도 버튼이나 입력 수정 안내를 보여 줍니다. 이벤트 이름과 data 스키마를 OpenAPI 보충 문서나 별도 JSON Schema로 기록하면 프런트 팀이 문자열 조건을 임의로 만들지 않아도 됩니다. SSE 식별자는 실행 안에서 단조롭게 증가해야 하지만 데이터베이스 기본 키와 같을 필요는 없습니다. 여러 서버 인스턴스에서 재개하려면 어느 인스턴스가 받아도 실행 기록과 다음 순번을 찾을 수 있어야 합니다. 완료 이벤트에도 최종 사용량, 모델, 처리 시간을 넣을 수 있으나 공개 범위와 비용을 검토합니다. 긴 연결을 통해 너무 많은 메타데이터를 보내면 사용자 데이터 노출 면도 넓어집니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>POST 본문과 Bearer 헤더를 보내 상태 200과 `text/event-stream`을 확인합니다. 첫 블록의 token 및 id, 마지막 블록의 done을 개별로 읽습니다.</p><section class="notebook" data-notebook="05-POST-SSE-이벤트-설계" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="05-POST-SSE-이벤트-설계.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBQT1NUIFNTRSDsnbTrsqTtirgg7ISk6rOEXG4iLAogICAgIlxuIiwKICAgICJQT1NUIOuzuOusuOycvOuhnCDsp4jrrLjsnYQg67O064K06rOgIOuEpOydtO2LsOu4jCBTU0XsnZggYGV2ZW50YCwgYGlkYCwgYGRhdGFgIO2VhOuTnOulvCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLtmITsnqwg7Y+0642U64KYIOyDgeychCDtj7TrjZTsl5DshJwgYGxhYnMvcGFydDcvY2gzMC1mYXN0YXBpLXNlcnZpbmdg7J2EIOywvuyVhCDsnpHsl4Ug7Y+0642U66GcIOyCrOyaqe2VqeuLiOuLpC4g67mE67CAIO2CpOulvCDstpzroKXtlZjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogInByZXAtMzAtMDUtMCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg7KSA67mEIOyFgOydtCDtlZjripQg7J28XG4iLAogICAgIlxuIiwKICAgICLsnbQg7KSA67mEIOyFgOydgCBgUGF0aC5jd2QoKS5yZXNvbHZlKClg66GcIO2YhOyerCDtj7TrjZTrpbwg7KCI64yAIOqyveuhnOuhnCDsnb3qs6AsIO2YhOyerCDtj7TrjZTsmYAg67aA66qoIO2PtOuNlOyXkOyEnCBgYWdlbnRfc2VydmljZWDqsIAg7J6I64qUIOyyqyDsnITsuZjrpbwgYG5leHQoLi4uLCBOb25lKWDroZwg7LC+7Iq164uI64ukLiDssL7sp4Ag66q77ZWY66m0IGBhc3NlcnRg6rCAIOyLpO2WieydhCDspJHri6jtlanri4jri6QuIOywvuydgCDrkqQgYG9zLmNoZGlyKGxhYilg7J20IOydtO2bhCBpbXBvcnTsmYAg7YyM7J28IOygkeq3vOydmCDquLDspIAg7Y+0642U66W8IOuwlOq+uOqzoCwg66eI7KeA66eJIOy2nOugpeydgCDsi6TsoJwg7ISg7YOd65CcIO2PtOuNlCDsnbTrpoTsnYQg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6Mjk6NDMuMjA0NDYzWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6Mjk6NDMuMjA0MzU4WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6Mjk6NDMuMjA5NjMxWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoyOTo0My4yMDkwMTFaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7Iuk7Iq1IO2PtOuNlDogY2gzMC1mYXN0YXBpLXNlcnZpbmdcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IG9zXG4iLAogICAgImZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aFxuIiwKICAgICJzdGFydCA9IFBhdGguY3dkKCkucmVzb2x2ZSgpXG4iLAogICAgImxhYiA9IG5leHQoKHAgZm9yIHAgaW4gKHN0YXJ0LCAqc3RhcnQucGFyZW50cylcbiIsCiAgICAiICAgIGlmIChwIC8gJ2FnZW50X3NlcnZpY2UnKS5pc19kaXIoKSksIE5vbmUpXG4iLAogICAgImFzc2VydCBsYWIgaXMgbm90IE5vbmUsICdhZ2VudF9zZXJ2aWNl6rCAIOyeiOuKlCBDaDMwIOyLpOyKtSDtj7TrjZTsl5DshJwg7Iuk7ZaJ7ZWY7IS47JqULidcbiIsCiAgICAib3MuY2hkaXIobGFiKVxuIiwKICAgICJwcmludCgn7Iuk7Iq1IO2PtOuNlDonLCBQYXRoLmN3ZCgpLm5hbWUpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOq4sOuzuCDsi6TtlolcbiIsCiAgICAiXG4iLAogICAgIlRlc3RDbGllbnTqsIAg7Iuk7KCcIEFTR0kg7Iqk7Yq466a87J2EIOuBneq5jOyngCDsnb3slrQg7KCE7IahIO2YleyLneydhCDrs7Tsl6wg7KSN64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNvbmNlcHQtMzAtMDUtYSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDrsJTroZwg64uk7J2MIOy9lOuTnOulvCDsnb3ripQg67Cp67KVXG4iLAogICAgIlxuIiwKICAgICJTU0UoU2VydmVyLVNlbnQgRXZlbnRzKeuKlCDtlZwgSFRUUCDsnZHri7Ug7JWI7JeQ7IScIGBldmVudGAsIGBpZGAsIGBkYXRhYCDspITsnYQg66y27Ja0IOyCrOqxtOydhCDsiJzshJzrjIDroZwg67O064K064qUIO2FjeyKpO2KuCDtmJXsi53snoXri4jri6QuIOydtCDsi6TsirXsnYAgUE9TVCDrs7jrrLjsnLzroZwg7KeI66y47J2EIOuwm+ydgCDrkqQgYHRva2VuYCDsgqzqsbTsnYQg7Jes65+sIOuyiCDrs7TrgrTqs6Ag66eI7KeA66eJ7JeQIGBkb25lYCDsgqzqsbTsnYQg7ZWcIOuyiCDrs7Trg4Xri4jri6QuIOu5iCDspITsnYAg7IKs6rG06rO8IOyCrOqxtOydmCDqsr3qs4TsnoXri4jri6QuIOygleq3nOyLneycvOuhnCDsnZHri7XsnYQg64KY64iIIOuLpOydjCDssqsg7IKs6rG07J2YIOyiheulmOyZgCDsi53rs4TsnpAsIOuniOyngOuniSDsgqzqsbTsnZgg7KKF66WY66W8IOqwgeqwgSDqsoDsgqztlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoyOTo0My4yMTA4NzhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoyOTo0My4yMTA3ODFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoyOTo0My41MTgyMDVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjI5OjQzLjUxNzgwMFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICIyMDAgdGV4dC9ldmVudC1zdHJlYW07IGNoYXJzZXQ9dXRmLThcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiZnJvbSBmYXN0YXBpLnRlc3RjbGllbnQgaW1wb3J0IFRlc3RDbGllbnRcbiIsCiAgICAiZnJvbSBhZ2VudF9zZXJ2aWNlLmFwcCBpbXBvcnQgYXBwXG4iLAogICAgImNsaWVudCA9IFRlc3RDbGllbnQoYXBwKVxuIiwKICAgICJoZWFkZXJzID0geydBdXRob3JpemF0aW9uJzogJ0JlYXJlciBsb2NhbC1kZW1vLXRva2VuJ31cbiIsCiAgICAicmVzcG9uc2UgPSBjbGllbnQucG9zdCgnL3YxL2NoYXQvc3RyZWFtJywgaGVhZGVycz1oZWFkZXJzLFxuIiwKICAgICIgICAganNvbj17J3F1ZXN0aW9uJzogJ1NTRSDtmZXsnbgnLCAndGhyZWFkX2lkJzogJ3NzZS0xJ30pXG4iLAogICAgInByaW50KHJlc3BvbnNlLnN0YXR1c19jb2RlLCByZXNwb25zZS5oZWFkZXJzWydjb250ZW50LXR5cGUnXSlcbiIsCiAgICAiYXNzZXJ0IHJlc3BvbnNlLnN0YXR1c19jb2RlID09IDIwMCIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDYiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsnbTrsqTtirgg7ZWE65OcIOq0gOywsFxuIiwKICAgICJcbiIsCiAgICAi7Yag7YGwIOydtOuypO2KuOuKlCDsnqzsl7DqsrAg7JyE7LmY7JeQIOyTuCBgaWRg66W8IOqwluqzoCDsmYTro4wg7J2067Kk7Yq464qUIOuzhOuPhCDtg4DsnoXsnoXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoyOTo0My41MTkwMDNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoyOTo0My41MTg5NTRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoyOTo0My41MjA4MTRaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjI5OjQzLjUyMDU5NloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJldmVudDogdG9rZW5cbiIsCiAgICAgICJkYXRhOiB7XCJ0b2tlblwiOiBcIlxcdWM5YzhcXHViYjM4XFx1Yzc0NCBcIn1cbiIsCiAgICAgICJpZDogc3NlLTE6MFxuIiwKICAgICAgImV2ZW50OiBkb25lXG4iLAogICAgICAiZGF0YToge1widGhyZWFkX2lkXCI6IFwic3NlLTFcIn1cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IHJlXG4iLAogICAgImJsb2NrcyA9IFtiIGZvciBiIGluIHJlLnNwbGl0KHInXFxyP1xcblxccj9cXG4nLCByZXNwb25zZS50ZXh0KSBpZiBiXVxuIiwKICAgICJwcmludChibG9ja3NbMF0pXG4iLAogICAgInByaW50KGJsb2Nrc1stMV0pXG4iLAogICAgImFzc2VydCBibG9ja3NbMF0uc3BsaXRsaW5lcygpWzBdID09ICdldmVudDogdG9rZW4nXG4iLAogICAgImFzc2VydCAnaWQ6IHNzZS0xOjAnIGluIGJsb2Nrc1swXVxuIiwKICAgICJhc3NlcnQgYmxvY2tzWy0xXS5zcGxpdGxpbmVzKClbMF0gPT0gJ2V2ZW50OiBkb25lJyIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDgiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDrsJjrs7Ug7Iuk7ZeY6rO8IOqysOqzvCDtlbTshJ1cbiIsCiAgICAiXG4iLAogICAgIuusuOyepSDquLjsnbTrp4wg67CU6r6466m0IO2GoO2BsCDsnbTrsqTtirgg7IiY64qUIOuLrOudvOyngOyngOunjCDsmYTro4wg7J2067Kk7Yq464qUIO2VnCDrsojsnoXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY29uY2VwdC0zMC0wNS1iIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDri6jqs4Tsl5DshJwg6rWs67aE7ZWgIOuylOychFxuIiwKICAgICJcbiIsCiAgICAiYHRva2VuYOqzvCBgZG9uZWDsnYQg64KY64iE66m0IO2BtOudvOydtOyWuO2KuOuKlCDrrLjsnpDsl7Qg7KGw6rCB6rO8IOyLpO2WiSDsmYTro4zrpbwg7Zi864+Z7ZWY7KeAIOyViuyKteuLiOuLpC4g7KeE7ZaJ66WgLCDstpzsspgsIOuPhOq1rCDtmLjstpzsnYQg7LaU6rCA7ZWgIOuVjOuPhCDrs4Trj4Qg7IKs6rG0IOydtOumhOydhCDsgqzsmqntlZjrqbQg642w7J207YSwIO2YleyLneydhCDrj4Xrpr3soIHsnLzroZwg67Cc7KCE7Iuc7YKsIOyImCDsnojsirXri4jri6QuIOuLpOunjCBTU0XsnZggYGlkYOuKlCDsl4XrrLQg6rKw6rO87J2YIOyYgeq1rCDsi53rs4TsnpDsmYAg66qp7KCB7J20IOuLpOultOuvgOuhnCwg7J6s7Jew6rKwIOychOy5mOyZgCDrjIDtmZQg7Iud67OE7J6Q66W8IO2VnCDtlYTrk5zsl5Ag66y066as7ZWY6rKMIO2Vqey5mOyngCDslYrsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiY2VsbC0wOSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoyOTo0My41MjE1NDJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoyOTo0My41MjE0OTBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoyOTo0My41MjcxMzdaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjI5OjQzLjUyNjczNloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLtlZwgMyAxXG4iLAogICAgICAi65GQIOuLqOyWtCA0IDFcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiZm9yIHRleHQgaW4gWyftlZwnLCAn65GQIOuLqOyWtCddOlxuIiwKICAgICIgICAgcmVzID0gY2xpZW50LnBvc3QoJy92MS9jaGF0L3N0cmVhbScsIGhlYWRlcnM9aGVhZGVycyxcbiIsCiAgICAiICAgICAgICBqc29uPXsncXVlc3Rpb24nOiB0ZXh0LCAndGhyZWFkX2lkJzogJ2NvdW50J30pXG4iLAogICAgIiAgICB0b2tlbl9jb3VudCA9IHJlcy50ZXh0LmNvdW50KCdldmVudDogdG9rZW4nKVxuIiwKICAgICIgICAgZG9uZV9jb3VudCA9IHJlcy50ZXh0LmNvdW50KCdldmVudDogZG9uZScpXG4iLAogICAgIiAgICBwcmludCh0ZXh0LCB0b2tlbl9jb3VudCwgZG9uZV9jb3VudClcbiIsCiAgICAiICAgIGFzc2VydCBkb25lX2NvdW50ID09IDEiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogImV4cGVyaW1lbnQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA0LAogICAiY29kZV9zaGEyNTYiOiAiYjAwOGY3YzIwYjUxMmE5MDNiZjE4NDdlMzNiNzM2ZWMxNGYzM2MxM2VkYzNhNTI0MmI4OWFkNDFhOWQ2NTcyYSIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTExVDAyOjI5OjQzLjY0MzU5NCswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiMTBiMGQ0YjQ4ZjlmNmIxMGIzOWM4Y2Q5NjQ1MzBmYmM3MDBiN2U4OGFjZDc0OTVjOWJkMDMzYTZhZjRmMjRkYiIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>POST SSE 이벤트 설계</h2>
+<p>POST 본문으로 질문을 보내고 네이티브 SSE의 <code>event</code>, <code>id</code>, <code>data</code> 필드를 확인합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>현재 폴더나 상위 폴더에서 <code>labs/part7/ch30-fastapi-serving</code>을 찾아 작업 폴더로 사용합니다. 비밀 키를 출력하지 않습니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>이 준비 셀은 <code>Path.cwd().resolve()</code>로 현재 폴더를 절대 경로로 읽고, 현재 폴더와 부모 폴더에서 <code>agent_service</code>가 있는 첫 위치를 <code>next(..., None)</code>로 찾습니다. 찾지 못하면 <code>assert</code>가 실행을 중단합니다. 찾은 뒤 <code>os.chdir(lab)</code>이 이후 import와 파일 접근의 기준 폴더를 바꾸고, 마지막 출력은 실제 선택된 폴더 이름을 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import os
+from pathlib import Path
+start = Path.cwd().resolve()
+lab = next((p for p in (start, *start.parents)
+    if (p / &#x27;agent_service&#x27;).is_dir()), None)
+assert lab is not None, &#x27;agent_service가 있는 Ch30 실습 폴더에서 실행하세요.&#x27;
+os.chdir(lab)
+print(&#x27;실습 폴더:&#x27;, Path.cwd().name)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">실습 폴더: ch30-fastapi-serving
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p>TestClient가 실제 ASGI 스트림을 끝까지 읽어 전송 형식을 보여 줍니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>SSE(Server-Sent Events)는 한 HTTP 응답 안에서 <code>event</code>, <code>id</code>, <code>data</code> 줄을 묶어 사건을 순서대로 보내는 텍스트 형식입니다. 이 실습은 POST 본문으로 질문을 받은 뒤 <code>token</code> 사건을 여러 번 보내고 마지막에 <code>done</code> 사건을 한 번 보냅니다. 빈 줄은 사건과 사건의 경계입니다. 정규식으로 응답을 나눈 다음 첫 사건의 종류와 식별자, 마지막 사건의 종류를 각각 검사합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">from fastapi.testclient import TestClient
+from agent_service.app import app
+client = TestClient(app)
+headers = {&#x27;Authorization&#x27;: &#x27;Bearer local-demo-token&#x27;}
+response = client.post(&#x27;/v1/chat/stream&#x27;, headers=headers,
+    json={&#x27;question&#x27;: &#x27;SSE 확인&#x27;, &#x27;thread_id&#x27;: &#x27;sse-1&#x27;})
+print(response.status_code, response.headers[&#x27;content-type&#x27;])
+assert response.status_code == 200</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">200 text/event-stream; charset=utf-8
+</pre></div>
+<div class="nb-markdown"><h3>이벤트 필드 관찰</h3>
+<p>토큰 이벤트는 재연결 위치에 쓸 <code>id</code>를 갖고 완료 이벤트는 별도 타입입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import re
+blocks = [b for b in re.split(r&#x27;\r?\n\r?\n&#x27;, response.text) if b]
+print(blocks[0])
+print(blocks[-1])
+assert blocks[0].splitlines()[0] == &#x27;event: token&#x27;
+assert &#x27;id: sse-1:0&#x27; in blocks[0]
+assert blocks[-1].splitlines()[0] == &#x27;event: done&#x27;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">event: token
+data: {&quot;token&quot;: &quot;\uc9c8\ubb38\uc744 &quot;}
+id: sse-1:0
+event: done
+data: {&quot;thread_id&quot;: &quot;sse-1&quot;}
+</pre></div>
+<div class="nb-markdown"><h3>반복 실험과 결과 해석</h3>
+<p>문장 길이만 바꾸면 토큰 이벤트 수는 달라지지만 완료 이벤트는 한 번입니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p><code>token</code>과 <code>done</code>을 나누면 클라이언트는 문자열 조각과 실행 완료를 혼동하지 않습니다. 진행률, 출처, 도구 호출을 추가할 때도 별도 사건 이름을 사용하면 데이터 형식을 독립적으로 발전시킬 수 있습니다. 다만 SSE의 <code>id</code>는 업무 결과의 영구 식별자와 목적이 다르므로, 재연결 위치와 대화 식별자를 한 필드에 무리하게 합치지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">for text in [&#x27;한&#x27;, &#x27;두 단어&#x27;]:
+    res = client.post(&#x27;/v1/chat/stream&#x27;, headers=headers,
+        json={&#x27;question&#x27;: text, &#x27;thread_id&#x27;: &#x27;count&#x27;})
+    token_count = res.text.count(&#x27;event: token&#x27;)
+    done_count = res.text.count(&#x27;event: done&#x27;)
+    print(text, token_count, done_count)
+    assert done_count == 1</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">한 3 1
+두 단어 4 1
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 200, `text/event-stream`, 첫 token의 `id`, 마지막 done 이벤트를 실제 출력에서 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>한 단어와 두 단어 질문에서 token 이벤트 수를 비교하고 done은 각각 한 번인지 확인합니다. 이벤트 필드 설계가 유지됨을 보여 주지만 실제 모델의 토큰 경계는 측정하지 않습니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>data를 JSON으로 파싱할 때 손상된 이벤트도 처리합니다.</li><li>식별자에는 개인정보나 토큰을 넣지 않습니다.</li><li>프록시 버퍼링과 유휴 timeout은 실제 배포 환경에서 확인합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>FastAPI 0.135 네이티브 SSE를 POST 라우트에 선언할 수 있습니다.</li><li>`event`, `id`, `data` 필드의 역할을 구분할 수 있습니다.</li><li>token과 done 이벤트를 클라이언트가 판별하도록 설계할 수 있습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 06절에서는 `fetch`가 이벤트를 읽고 마지막 ID로 POST 요청을 다시 만듭니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. SSE 블록은 무엇으로 구분하나요?</summary><p class="quiz-a"><b>해설</b> — 빈 줄로 구분합니다.</p></details><details class="quiz"><summary>2. event 필드는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 클라이언트가 처리할 이벤트 종류입니다.</p></details><details class="quiz"><summary>3. EventSource로 POST를 다루기 어려운 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 본문과 Authorization 헤더를 설정하지 못하기 때문입니다.</p></details><details class="quiz"><summary>4. 로컬 테스트가 프록시도 보장하나요?</summary><p class="quiz-a"><b>해설</b> — 아닙니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://fastapi.tiangolo.com/tutorial/server-sent-events/">FastAPI SSE</a> · 확인 2026-09-11</li><li><a href="https://fastapi.tiangolo.com/reference/sse/">FastAPI SSE Reference</a> · 확인 2026-09-11</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="04-astream과-응답-스트림.html">← astream과 응답 스트림</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="06-fetch-재연결과-오류-이벤트.html">fetch 재연결과 오류 이벤트 →</a></span></div></div></body></html>

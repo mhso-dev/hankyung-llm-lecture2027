@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  F["고객 파일 이름 customer_file<br>칸: 고객 파일"]:::tool
+  R["pd.read_csv(), is_unique<br>01·02절 표 읽기와 겹침 확인<br>칸: 고객 번호가 모두 다른가"]:::flow
+  C["insert_customers()<br>03절 기본 키와 IntegrityError<br>칸: 넣지 못한 고객"]:::flow
+  O["fetch_all_orders()<br>04절 다음 페이지까지 받기<br>칸: 받은 주문 수"]:::flow
+  I["insert_orders()<br>03절 자리표시자와 외래 키<br>칸: 주문 테이블의 행 수"]:::flow
+  T["total_by_customer()<br>03절 JOIN으로 이름 붙이기<br>칸: 고객별 합계"]:::flow
+  REP["기록장 report<br>칸 여섯 개"]:::measure
+  F --> R
+  R -->|pandas 표| C
+  C --> O
+  O -->|주문 목록| I
+  I --> T
+  T --> REP

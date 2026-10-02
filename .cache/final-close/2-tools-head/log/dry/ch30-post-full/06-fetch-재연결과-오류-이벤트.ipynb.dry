@@ -1,0 +1,453 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "s06-c00",
+   "metadata": {
+    "html": "skip"
+   },
+   "source": "# fetch 재연결과 오류 이벤트\n\n**이 노트북에서 할 일**\n\n1. 요청 머리 `Last-Event-ID`에 마지막으로 받은 사건 번호를 적어, 그다음 사건부터 이어 받습니다.\n2. 시간 제한을 0초로 바꾼 응답에서, 상태 코드만 보는 판정이 놓치는 것을 봅니다.\n3. 마지막 SSE 사건의 이름이 `done`인지 보는 판정으로 고칩니다.\n\n**준비물** — 이 노트북은 모델을 부르지 않습니다.\n모델 요청은 0번이고, API 키 없이 실행합니다.\n예상 비용도 0달러입니다.\n실습 앱의 에이전트 그래프는 모델을 쓰지 않고, 정해 둔 말로 답합니다.\n그래서 다시 실행해도 같은 값이 나와야 합니다.\n\n요청은 시험용 클라이언트로 같은 노트북 안에서 보냅니다.\n서버 프로그램을 띄우지 않고, 네트워크와 포트를 쓰지 않습니다.\n실습 폴더의 파일을 가져오고 읽기만 하며, 쓰는 파일은 없습니다.\n\n걸린 시간은 재지 않았습니다.\n앞 절에서 배운 함수 넷은 도구 파일 `serve_tools.py`에서 가져옵니다.\nTS 파일 `client/stream.ts`는 글로 읽기만 하고, 이 노트북에서 실행하지 않습니다.\n\n**기준 버전** — 첫 셀에서 패키지 여섯을 설치합니다.\n판은 fastapi 0.135.0, httpx 0.28.1, pydantic 2.12.5, starlette 1.6.0입니다.\n패키지 langgraph 1.2.11과 langchain 1.4.0은 실습 앱 파일이 가져오는 패키지입니다.\n여섯 모두 실습 폴더 잠금과 같은 판입니다.\n\n교재 출력은 Linux의 Python 3.12.13으로 만들었습니다.\n다른 판과 Windows·macOS에서는 실행하지 않았습니다.\n\n**강의와 실습 범위** — 강의 시간에는 2~4절을 읽고, 5절과 6절의 Before·After를 함께 봅니다.\n7절은 넣는 값 하나를 바꿔 보는 실습이고, 실습 시간에 실행합니다.\n\n실습 폴더 `labs/part7/ch30-fastapi-serving`에서 `uv sync --locked`를 실행합니다.\n그다음 `notebooks/` 폴더의 이 노트북을 열고, 실습 폴더의 `.venv` 커널을 고릅니다.\n첫 셀부터 순서대로 실행합니다."
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c01",
+   "metadata": {
+    "html": "skip"
+   },
+   "source": "## 오늘 볼 그림\n\n![위에서 아래로 읽는 흐름도입니다. 노란 상자 첫 응답에서 앞 사건 둘을 받음 sse-1:0과 sse-1:1에서, 파란 상자 끊겼다고 보고 마지막 사건 번호 sse-1:1을 기억으로 갑니다. 이어서 초록 상자 다시 보낸 요청 요청 머리 Last-Event-ID sse-1:1, 초록 상자 제공 함수 get_resume_index 다음 자리부터 보내게 함, 초록 상자 그래프를 처음부터 다시 실행 앞 자리 둘은 건너뜀을 지납니다. 마지막으로 노란 상자 다시 받은 사건 sse-1:2부터 sse-1:5와 done, 노란 상자 이어 붙인 글이 첫 응답의 글과 같음 True에 닿는 그림](attachment:06-1-끊긴-뒤-번호로-이어-받기.png)\n\n위에서 아래로 읽습니다.\n파란 상자는 노트북에서 우리가 쓴 줄이고, 초록 상자 셋은 보낸 요청과 실습 앱 파일의 줄입니다.\n노란 상자 셋은 노트북 2절과 3절의 출력입니다."
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c02",
+   "metadata": {},
+   "source": "## 1. 준비\n\n05절에서는 처리 함수 `chat_stream`이 보낸 응답 글을 SSE 사건 일곱으로 나눠 읽었습니다.\n이 절은 연결이 끊긴 뒤 사건 번호로 이어 받는 방법과, 오류 사건을 받는 쪽의 판정을 봅니다.\n제목의 fetch는 브라우저와 Node.js에 들어 있는 함수 이름이고, 4절에서 봅니다.\n제목의 재연결은 이 절에서 이어 받기라고 부르고, 제목의 오류 이벤트는 오류 사건이라고 부릅니다.\n\n첫 셀은 패키지 여섯을 설치하고 설치된 판 번호를 출력합니다.\n설치에는 몇십 초가 걸릴 수 있습니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c03",
+   "metadata": {
+    "lesson_role": "setup"
+   },
+   "outputs": [],
+   "source": "# 이 절에서 쓰는 패키지를 설치하고 버전을 확인합니다\n%pip install -q \"fastapi==0.135.0\" \"httpx==0.28.1\" \"pydantic==2.12.5\" \"starlette==1.6.0\" \"langgraph==1.2.11\" \"langchain==1.4.0\"\nfrom importlib.metadata import version\n\nprint(\"fastapi:\", version(\"fastapi\"))\nprint(\"httpx:\", version(\"httpx\"))\nprint(\"pydantic:\", version(\"pydantic\"))\nprint(\"starlette:\", version(\"starlette\"))\nprint(\"langgraph:\", version(\"langgraph\"))\nprint(\"langchain:\", version(\"langchain\"))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c04",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `fastapi: 0.135.0`과 `langgraph: 1.2.11`이 보입니다.\n여섯 모두 실습 폴더 잠금과 같은 판이고, 05절과 같은 목록입니다.\n이 절은 모델 객체를 만들지 않아, API 키를 확인하는 셀도 없습니다.\n\n다음 셀은 이 절에서 쓸 이름을 가져옵니다.\n모듈 `logging`은 앱이 남기는 기록을 다룰 때 씁니다.\n마지막 가져오기 줄은 앞 절에서 배운 함수 넷을 도구 파일에서 가져옵니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c05",
+   "metadata": {
+    "lesson_role": "setup"
+   },
+   "outputs": [],
+   "source": "# 이 절에서 쓸 이름을 가져옵니다(os·json·logging은 Python에 들어 있는 모듈입니다)\nimport os\nimport json\nimport logging\nfrom fastapi.testclient import TestClient\n# 02·04·05절에서 배운 함수 넷은 도구 파일에서 가져옵니다\nfrom serve_tools import join_tokens, parse_sse, split_sse, zero_timeout\n\nprint(\"가져온 이름:\", \"json, logging, TestClient\")\nprint(\"도구 파일에서 가져온 함수:\", \"join_tokens, parse_sse, split_sse, zero_timeout\")"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c06",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `도구 파일에서 가져온 함수: join_tokens, parse_sse, split_sse, zero_timeout`이 보입니다.\n함수 `zero_timeout`은 02절, `join_tokens`는 04절, `split_sse`와 `parse_sse`는 05절에서 배웠습니다.\n네 함수 모두 그 절 노트북의 셀을 주석과 본문 그대로 옮겼습니다.\n도구 파일에는 04절이 옮긴 Ch 25 함수 둘도 있지만, 이 절에서는 쓰지 않습니다.\n\n앞에서 배운 함수는 `serve_tools.py`에 모아 두었습니다.\n파일을 열면 코드를 볼 수 있습니다.\n노트북과 같은 폴더(`notebooks/`)에 있는 파일입니다.\n커널이 `notebooks/` 폴더에서 시작해야 이 파일을 가져올 수 있습니다.\n교재 출력을 만든 실행 도구는 이 폴더를 따로 알려 주어, 다른 자리에서 시작해도 가져오기가 되었습니다.\n\n다음 셀은 01절 2절과 같은 파일 위치 셀로, 후보 셋 가운데 실습 폴더를 고릅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c07",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 노트북을 연 자리에서 본 실습 폴더의 위치를 후보 셋 가운데에서 고릅니다\ncandidates = [\"..\", \".\", \"labs/part7/ch30-fastapi-serving\"]\nlab_path = None\nfor candidate in candidates:\n    if os.path.exists(candidate + \"/agent_service/schemas.py\"):\n        lab_path = candidate\n        break\nprint(\"실습 폴더를 찾았는가:\", lab_path is not None)\nassert lab_path is not None, \"notebooks 폴더나 실습 폴더 맨 위에서 노트북을 열어 주세요.\""
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c08",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `실습 폴더를 찾았는가: True`가 보입니다.\n고른 후보는 연 자리마다 달라서 출력하지 않습니다.\n실습 폴더 맨 위에서 연 커널은 이 안내를 보기 전에, 앞 셀의 도구 파일 가져오기에서 먼저 멈춥니다.\n\n다음 셀은 05절처럼 작업 폴더를 실습 폴더로 옮긴 뒤 이름을 가져옵니다.\n앱 파일에서 앱 객체 `app`과 시간 제한 제공 함수 `get_timeout`을 가져옵니다.\n그래프 파일에서는 에이전트 그래프 `agent`를 가져와, 체크포인터가 있는지 봅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c09",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 작업 폴더를 실습 폴더로 옮기고, 그래프·앱 객체·시간 제한 제공 함수를 가져옵니다\nos.chdir(lab_path)\nfrom agent_service.agent import agent\nfrom agent_service.app import app, get_timeout\nprint(\"가져온 앱 객체의 종류:\", type(app).__name__)\nprint(\"재정의 딕셔너리의 키 수:\", len(app.dependency_overrides))\nprint(\"그래프의 체크포인터:\", agent.checkpointer)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c10",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `가져온 앱 객체의 종류: FastAPI`와 `재정의 딕셔너리의 키 수: 0`이 보입니다.\n출력 줄 `그래프의 체크포인터: None`은 이 그래프에 체크포인터가 없다는 뜻입니다.\nCh 23 01절의 체크포인터는 스레드마다 상태를 저장했지만, 이 앱은 상태를 저장하지 않습니다.\n그래서 요청 본문의 `thread_id`는 사건 번호의 앞머리와 응답 본문에만 쓰입니다.\n\n5절에서는 시간 제한을 넘긴 앱이 오류를 기록합니다.\n앱 파일 18행이 만든 기록기는 그 기록을 여러 줄로 표준 오류에 남기고, 기록에는 파일 위치가 들어 있습니다.\n다음 셀은 그 기록이 셀 출력에 섞이지 않게, 기록기의 수준을 올립니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c11",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 앱의 오류 기록이 셀 출력에 섞이지 않게, 이름이 agent_service.app인 기록기의 수준을 올립니다\napp_logger = logging.getLogger(\"agent_service.app\")\napp_logger.setLevel(logging.CRITICAL)\nprint(\"앱 기록기의 수준:\", logging.getLevelName(app_logger.level))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c12",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `앱 기록기의 수준: CRITICAL`이 보입니다.\n함수 `logging.getLogger`는 Ch 28 02절에서 본 것처럼, 이름으로 기록기(logger)를 찾아 내놓습니다.\n기록기는 정한 수준보다 낮은 기록을 남기지 않고, 이제 가장 높은 수준의 기록만 남깁니다.\n앱 120행의 오류 기록은 그보다 낮은 수준이라 셀 출력에 나오지 않습니다.\n막은 것은 기록뿐이고, 앱이 보내는 응답은 바뀌지 않습니다.\n\n막지 않으면 5절의 요청 하나에 기록이 25줄 나왔고, 파일 위치가 든 줄도 있었습니다.\n줄 수는 노트북 밖의 작은 스크립트로 확인했습니다.\n\n## 2. 첫 응답의 사건 번호\n\n05절에서 본 것처럼 SSE 사건에는 칸 `id`의 사건 번호가 있습니다.\n다음 셀은 05절과 같은 질문을 보내고, 상태 코드와 SSE 사건 수를 봅니다.\n함수 `split_sse`는 도구 파일에서 가져온 05절 함수입니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c13",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 시험용 클라이언트로 05절과 같은 질문을 보내고, 상태 코드와 SSE 사건 수를 봅니다\nclient = TestClient(app)\nauth_headers = {\"Authorization\": \"Bearer local-demo-token\"}\nquestion_body = {\"question\": \"반납 기한을 알려 주세요\", \"thread_id\": \"sse-1\"}\nfirst_response = client.post(\"/v1/chat/stream\", json=question_body, headers=auth_headers)\nfirst_texts = split_sse(first_response.text)\nprint(\"상태 코드:\", first_response.status_code)\nprint(\"SSE 사건 수:\", len(first_texts))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c14",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `상태 코드: 200`과 `SSE 사건 수: 7`이 보입니다.\n05절과 같은 질문이라, 사건 수도 05절과 같은 일곱입니다.\n\n다음 셀은 응답 본문 글을 받아, SSE 사건마다 칸 딕셔너리로 바꾼 목록을 내놓는 함수를 정의합니다.\n05절에서 두 셀로 나눠 했던 일을 함수 하나로 묶습니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c15",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 응답 본문 글을 SSE 사건으로 나누고, 사건마다 칸 딕셔너리로 바꾼 목록을 내놓습니다\ndef read_events(body_text):\n    events = []\n    for sse_text in split_sse(body_text):\n        events.append(parse_sse(sse_text))\n    return events"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c16",
+   "metadata": {},
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n함수 안에서 `split_sse`로 사건 글을 나누고, `parse_sse`로 사건마다 칸 딕셔너리를 만듭니다.\n\n다음 셀은 칸 딕셔너리 목록에서 사건 이름만 모아 내놓는 함수를 정의합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c17",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 칸 딕셔너리 목록에서, 사건마다 칸 event의 사건 이름을 모은 목록을 내놓습니다\ndef event_names(events):\n    names = []\n    for fields in events:\n        names.append(fields[\"event\"])\n    return names"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c18",
+   "metadata": {},
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n받은 사건의 차례를 한 줄로 볼 때 씁니다.\n\n다음 셀은 첫 응답을 읽어, 사건 이름 목록과 첫 사건·마지막 사건의 칸을 출력합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c19",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 첫 응답을 칸 딕셔너리 목록으로 읽고, 사건 이름과 첫 사건·마지막 사건을 출력합니다\nfirst_events = read_events(first_response.text)\nprint(\"사건 이름:\", event_names(first_events))\nprint(\"첫 사건:\", first_events[0])\nprint(\"마지막 사건:\", first_events[-1])"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c20",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `사건 이름: ['token', 'token', 'token', 'token', 'token', 'token', 'done']`이 보입니다.\n첫 사건의 칸에는 `'id': 'sse-1:0'`이 있고, 마지막 사건 `done`에는 칸 `id`가 없습니다.\n사건 번호는 스레드 이름 `sse-1`과 자리 번호를 쌍점으로 이은 글입니다.\n\n받는 쪽이 이어 받으려면, 마지막으로 받은 사건 번호를 기억해야 합니다.\n다음 셀은 칸 딕셔너리 목록에서, 칸 `id`가 있는 마지막 사건의 번호를 내놓는 함수를 정의합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c21",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 칸 딕셔너리 목록에서, 칸 id가 있는 마지막 사건의 번호를 내놓습니다(하나도 없으면 None)\ndef last_event_id(events):\n    found = None\n    for fields in events:\n        # 번호가 없는 사건(done 등)은 건너뛰어, 앞에서 본 번호를 그대로 둡니다\n        if \"id\" in fields:\n            found = fields[\"id\"]\n    return found"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c22",
+   "metadata": {},
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n번호가 없는 사건을 만나면, 앞에서 본 번호를 그대로 둡니다.\n웹 표준 문서인 WHATWG의 HTML 표준도 칸 `id`가 없는 사건은 앞에서 본 번호를 이어 쓴다고 적습니다.\n\n다음 셀은 앞 사건 둘까지 받고 연결이 끊겼다고 보고, 받은 목록과 마지막 번호를 만듭니다.\n이 노트북은 연결을 실제로 끊지 않습니다.\n시험용 클라이언트는 본문을 끝까지 모아 주므로, 첫 응답 목록의 앞 둘을 받은 사건으로 씁니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c23",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 앞 사건 둘까지 받고 연결이 끊겼다고 보고, 받은 목록과 마지막 사건 번호를 만듭니다\nreceived_events = first_events[0:2]\nreceived_last = last_event_id(received_events)\nprint(\"받은 사건 이름:\", event_names(received_events))\nprint(\"받은 마지막 사건 번호:\", received_last)\nprint(\"첫 응답 전체의 마지막 사건 번호:\", last_event_id(first_events))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c24",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `받은 사건 이름: ['token', 'token']`과 `받은 마지막 사건 번호: sse-1:1`이 보입니다.\n끊기지 않고 끝까지 받았다면, 마지막 번호는 `sse-1:5`입니다.\n마지막 사건 `done`에는 번호가 없어, 그 앞 사건의 번호가 남았습니다.\n\n## 3. Last-Event-ID로 이어 받기\n\n이어 받기는 끊긴 뒤 다시 요청할 때, 마지막으로 받은 사건 번호를 함께 보내 그다음 사건부터 받는 일입니다.\n책을 덮을 때 책갈피를 꽂아 두고, 다음에 그 쪽부터 펴는 것과 같습니다.\n이 앱에서는 요청 머리 `Last-Event-ID`에 그 번호를 적습니다.\n다음 셀은 앱 파일에서 이 요청 머리를 읽는 제공 함수의 줄을 출력합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c25",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 앱 파일을 글로 읽어, 요청 머리 Last-Event-ID를 읽는 제공 함수의 41~53행을 출력합니다\nfirst_line = 41\nlast_line = 53\nwith open(\"agent_service/app.py\", encoding=\"utf-8\") as app_file:\n    app_lines = app_file.read().splitlines()\nprint(\"줄 번호 | 줄\")\nfor index in range(first_line - 1, last_line):\n    print(index + 1, \"|\", app_lines[index])"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c26",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 아래 43행의 `Header(alias=\"Last-Event-ID\")`는 요청 머리 `Last-Event-ID`의 값을 이 매개변수에 넣으라는 뜻입니다.\n45~46행은 이 요청 머리가 없으면 0을 내놓습니다.\n47~49행은 값이 스레드 이름과 쌍점으로 시작하지 않으면, 상태 코드 400으로 멈춥니다.\n50~53행은 쌍점 뒤의 글을 수로 바꿔 1을 더하고, 수가 아니면 400으로 멈춥니다.\n\n내놓은 수는 이어 받을 첫 자리이고, 05절에서 본 113행의 `start`가 이 값입니다.\n47행은 f-string으로 `sse-1:` 같은 앞머리를 만들고, 51행의 메서드 `removeprefix`는 그 앞머리를 떼어 냅니다.\n43행의 `str | None`은 글이거나 없음(`None`)일 수 있다는 힌트이고, `= None`은 요청 머리가 없을 때 쓰는 기본값입니다.\n44행 끝의 `-> int`는 내놓는 값이 수라는 힌트입니다.\n이 모양들은 이 과정의 노트북에서는 쓰지 않아, 뜻만 봅니다.\n\n다음 셀은 받은 마지막 번호를 요청 머리 `Last-Event-ID`에 적어, 같은 질문을 다시 보냅니다.\n요청 머리 딕셔너리에는 02절의 접근 토큰과 이 번호를 함께 적습니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c27",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 요청 머리 Last-Event-ID에 받은 마지막 번호를 적어, 같은 질문을 다시 보냅니다\nresume_headers = {\"Authorization\": \"Bearer local-demo-token\", \"Last-Event-ID\": received_last}\nresumed_response = client.post(\"/v1/chat/stream\", json=question_body, headers=resume_headers)\nresumed_events = read_events(resumed_response.text)\nprint(\"상태 코드:\", resumed_response.status_code)\nprint(\"다시 받은 사건 이름:\", event_names(resumed_events))\nprint(\"다시 받은 첫 사건 번호:\", resumed_events[0][\"id\"])\nprint(\"다시 받은 마지막 사건 번호:\", last_event_id(resumed_events))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c28",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `상태 코드: 200`과 `다시 받은 첫 사건 번호: sse-1:2`가 보입니다.\n사건 이름은 `token` 넷과 `done` 하나이고, 출력 줄 `다시 받은 마지막 사건 번호: sse-1:5`도 보입니다.\n이미 받은 두 사건은 다시 오지 않았습니다.\n\n다음 셀은 칸 딕셔너리 목록에서 `token` 사건의 칸 `data`를 읽어 모으는 함수를 정의합니다.\n모은 값은 04절의 함수 `join_tokens`로 이어 붙입니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c29",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 칸 딕셔너리 목록에서 token 사건만 골라, 칸 data의 JSON 글을 읽은 값의 목록을 내놓습니다\ndef token_values(events):\n    values = []\n    for fields in events:\n        if fields[\"event\"] == \"token\":\n            values.append(json.loads(fields[\"data\"]))\n    return values"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c30",
+   "metadata": {},
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n읽은 값 하나는 05절에서 본 `{'token': '질문을 '}` 같은 딕셔너리이고, 04절의 진행 값과 같은 모양입니다.\n그래서 04절의 함수 `join_tokens`에 그대로 넣을 수 있습니다.\n\n다음 셀은 끊기기 전에 받은 사건과 다시 받은 사건을 잇고, 칸 `token`의 글을 이어 붙입니다.\n끊기지 않은 첫 응답의 글과도 견줍니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c31",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 끊기기 전에 받은 사건과 다시 받은 사건을 잇고, 칸 token의 글을 이어 붙입니다\njoined_events = received_events + resumed_events\nresumed_text = join_tokens(token_values(joined_events))\nfull_text = join_tokens(token_values(first_events))\nprint(\"이은 사건 수:\", len(joined_events))\nprint(\"이어 붙인 글:\", resumed_text)\nprint(\"끊기지 않은 첫 응답의 글과 같은가:\", resumed_text == full_text)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c32",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `이은 사건 수: 7`과 `끊기지 않은 첫 응답의 글과 같은가: True`가 보입니다.\n이어 붙인 글은 `질문을 확인했습니다: 반납 기한을 알려 주세요`이고, 끝에 공백이 하나 더 있습니다.\n04절에서 본 것처럼 노드가 낱말마다 공백을 붙여 적기 때문입니다.\n\n글이 같았던 까닭은 서버 쪽 줄을 보면 드러납니다.\n다음 셀은 앱 파일에서, 이어 받을 자리 앞 사건을 건너뛰는 줄을 출력합니다.\n3절 앞 셀에서 읽어 둔 앱 파일의 줄 목록을 그대로 씁니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c33",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 앱 파일에서, 자리 번호를 0부터 세며 이어 받을 자리 앞 사건을 건너뛰는 107~117행을 출력합니다\nfirst_line = 107\nlast_line = 117\nprint(\"줄 번호 | 줄\")\nfor index in range(first_line - 1, last_line):\n    print(index + 1, \"|\", app_lines[index])"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c34",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 아래 107행 `index = 0`은 요청마다 자리 번호를 0부터 셉니다.\n110~112행은 요청마다 그래프의 `astream`을 새로 부릅니다.\n113행 `if index >= start:`는 자리 번호가 이어 받을 자리보다 작은 사건을 보내지 않고 건너뜁니다.\n117행은 보내든 건너뛰든 자리 번호를 하나 키웁니다.\n\n그래서 이어 받기 요청에도 서버는 그래프를 처음부터 다시 실행합니다.\n보낸 사건을 저장해 두었다가 보내는 것이 아니라, 다시 만든 사건 가운데 뒤쪽만 보냅니다.\n이 그래프는 모델을 쓰지 않아, 다시 만든 글이 처음 글과 같았습니다.\n모델을 부르는 그래프라면 다시 만든 글이 처음 글과 달라질 수 있습니다.\n이 노트북에서는 그런 그래프로 실행하지 않았습니다.\n\n그래프 안에 결제처럼 바깥에 쓰는 일이 있다면, 이어 받을 때마다 그 일도 다시 실행됩니다.\nCh 24 01절에서 이어 가는 노드가 첫 줄부터 다시 실행된 것과 같은 모양입니다.\n이 그래프에는 바깥 쓰기가 없어, 그 장면은 실행하지 않았습니다.\n\n다음 셀은 요청 머리 `Last-Event-ID` 없이 다시 요청하는 받는 쪽을 봅니다.\n끊기기 전에 받은 사건 둘에, 다시 받은 사건을 같은 방법으로 이어 붙입니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c35",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 요청 머리 Last-Event-ID 없이 다시 보내고, 받은 사건 둘에 같은 방법으로 이어 붙입니다\nplain_response = client.post(\"/v1/chat/stream\", json=question_body, headers=auth_headers)\nplain_events = read_events(plain_response.text)\ndoubled_text = join_tokens(token_values(received_events + plain_events))\nprint(\"다시 받은 첫 사건 번호:\", plain_events[0][\"id\"])\nprint(\"이어 붙인 글:\", doubled_text)\nprint(\"끊기지 않은 첫 응답의 글과 같은가:\", doubled_text == full_text)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c36",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `다시 받은 첫 사건 번호: sse-1:0`과 `끊기지 않은 첫 응답의 글과 같은가: False`가 보입니다.\n이어 붙인 글은 `질문을 확인했습니다: 질문을 확인했습니다: 반납 기한을 알려 주세요`로, 앞 두 낱말이 두 번 들어갔습니다.\n서버는 처음부터 다시 보냈고, 받는 쪽은 이미 받은 사건 둘에 그것을 또 붙였습니다.\n\n받는 쪽이 번호를 보내지 않으면, 서버는 어디까지 받았는지 모릅니다.\n그래서 다시 요청할 때 마지막 번호를 요청 머리에 적습니다.\n\n다음 셀은 요청 머리 `Last-Event-ID`에 값 셋을 차례로 넣어, 서버가 어떻게 답하는지 봅니다.\n끝까지 받은 번호 `sse-1:5`, 다른 스레드의 번호 `other:0`, 수가 아닌 번호 `sse-1:x`입니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c37",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 요청 머리 Last-Event-ID에 값 셋을 차례로 넣어, 상태 코드와 받은 것을 한 줄씩 봅니다\nprint(\"Last-Event-ID | 상태 코드 | 받은 것\")\nfor sent_id in [\"sse-1:5\", \"other:0\", \"sse-1:x\"]:\n    edge_headers = {\"Authorization\": \"Bearer local-demo-token\", \"Last-Event-ID\": sent_id}\n    edge_response = client.post(\"/v1/chat/stream\", json=question_body, headers=edge_headers)\n    if edge_response.status_code == 200:\n        edge_events = read_events(edge_response.text)\n        print(sent_id, \"|\", edge_response.status_code, \"|\", event_names(edge_events))\n    else:\n        print(sent_id, \"|\", edge_response.status_code, \"|\", edge_response.json()[\"detail\"])"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c38",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 아래 첫 줄은 `sse-1:5 | 200 | ['done']`으로, 사건 `done` 하나만 왔습니다.\n다른 스레드의 번호는 `other:0 | 400 | Last-Event-ID의 thread가 다릅니다`였습니다.\n수가 아닌 번호는 `sse-1:x | 400 | Last-Event-ID 형식이 올바르지 않습니다`였습니다.\n\n400은 41~53행의 제공 함수가 보낸 상태 코드입니다.\n설치판 fastapi `routing.py` 452행이 제공 함수를 먼저 부르고, 493행에서야 처리 함수를 부릅니다.\n그래서 제공 함수는 응답을 시작하기 전에 400으로 멈출 수 있습니다.\n끝까지 받은 번호에는 그래프를 다시 실행하고도 보낼 사건이 없어, `done`만 보냈습니다.\n\n## 4. fetch로 읽는 쪽\n\n지금까지는 파이썬의 시험용 클라이언트로 요청을 보냈습니다.\n웹 화면에서는 JavaScript 함수 `fetch`로 같은 요청을 보냅니다.\n함수 `fetch`는 브라우저와 Node.js에 들어 있는 함수로, 주소에 요청을 보내고 응답을 받아 줍니다.\n편지를 부치고, 답장이 오면 봉투를 열어 읽는 일과 같습니다.\n실습 폴더의 TS 파일 `client/stream.ts`가 이 함수로 SSE 사건을 읽습니다.\n\nTS 파일은 JavaScript에 자료형 표시를 더한 TypeScript로 적은 파일입니다.\n다음 셀은 그 파일을 글로 읽어, 요청을 보내고 사건을 나누는 11~30행을 출력합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c39",
+   "metadata": {},
+   "outputs": [],
+   "source": "# TS 파일 client/stream.ts를 글로 읽어, 요청을 보내고 사건을 나누는 11~30행을 출력합니다\nfirst_line = 11\nlast_line = 30\nwith open(\"client/stream.ts\", encoding=\"utf-8\") as ts_file:\n    ts_lines = ts_file.read().splitlines()\nprint(\"줄 번호 | 줄\")\nfor index in range(first_line - 1, last_line):\n    print(index + 1, \"|\", ts_lines[index])"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c40",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 아래 16행은 `if (lastEventId) headers[\"Last-Event-ID\"] = lastEventId;`입니다.\n이어 받을 번호가 있으면 요청 머리 `Last-Event-ID`에 적는 줄로, 3절에서 파이썬으로 한 일과 같습니다.\n17~21행은 함수 `fetch`로 요청 방식 POST와 요청 머리, 요청 본문을 보냅니다.\n22행은 `response.ok`가 거짓이면 멈추고, 이 값은 상태 코드가 200대인지를 뜻합니다.\n28~29행은 받은 글을 빈 줄에서 나누고, 빈 줄로 끝나지 않은 끝 글은 남겨 둡니다.\n\n네트워크로 받는 본문은 여러 번에 나뉘어 오고, 나뉜 자리가 SSE 사건의 경계와 다를 수 있습니다.\n그래서 29행이 남긴 끝 글은 다음에 받은 글 앞에 붙습니다.\n이 절의 시험용 클라이언트는 본문을 끝까지 모아 주어, 이런 나뉨이 없었습니다.\n28행은 줄 끝이 `\\r\\n`인 글도 나누지만, 05절의 함수 `split_sse`는 `\\n\\n`만 봅니다.\n30행의 함수 `decodeBlock`은 3~9행에 있고, 사건 글에서 칸 셋의 첫 줄을 읽습니다.\n\n이 파일은 README에 적힌 명령으로, 서버를 띄운 뒤 실행하는 파일입니다.\n이 노트북에서는 실행하지 않았고, 실행하는 명령은 실습 폴더 `README.md`에 있습니다."
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c41",
+   "metadata": {
+    "lesson_part": "before"
+   },
+   "source": "## 5. 상태 코드만 보는 판정 (Before)\n\nSSE 응답은 본문을 보내기 전에 상태 코드부터 보냅니다.\n설치판 starlette `responses.py` 249행이 본문의 첫 사건을 꺼내기 전에 상태 코드를 보냅니다.\n그래서 처리 함수 안에서 오류가 나도, 받는 쪽이 받은 상태 코드는 이미 200입니다.\n앱 119~124행은 그 오류를 받아, 사건 이름이 `error`인 SSE 사건을 보냅니다.\n\n오류 사건은 사건 이름이 `error`인 SSE 사건입니다.\n주문 앱이 주문 접수를 먼저 알린 뒤, 재료가 떨어지면 주문 취소를 따로 알리는 것과 같습니다.\n이 앱의 오류 사건은 칸 `data`에 `stream_failed` 같은 오류 코드를 담습니다.\n\nBefore 판에서 받는 쪽은 상태 코드만 보고 성공인지 판정합니다.\n다음 셀은 그 판정 함수를 정의합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c42",
+   "metadata": {
+    "lesson_part": "before"
+   },
+   "outputs": [],
+   "source": "# Before 판정: 응답의 상태 코드만 보고, 200이면 성공으로 셉니다\ndef status_says_ok(response):\n    return response.status_code == 200"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c43",
+   "metadata": {
+    "lesson_part": "before"
+   },
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n응답 본문의 사건은 보지 않고, 상태 코드가 200인지만 봅니다.\n\n다음 셀은 시간 제한을 0초로 재정의하고, 2절과 같은 질문을 보냅니다.\n재정의 함수 `zero_timeout`은 02절 함수이고, 도구 파일에서 가져왔습니다.\n02절에서 본 것처럼 재정의는 앱 객체에 남으므로, 같은 셀 안에서 재정의 딕셔너리를 비웁니다.\n시간 제한 0초는 정한 초가 아주 짧은 경우로, 실제로 일어날 수 있는 조건입니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c44",
+   "metadata": {
+    "lesson_part": "before"
+   },
+   "outputs": [],
+   "source": "# 시간 제한을 0초로 재정의해 같은 질문을 보내고, 같은 셀에서 재정의 딕셔너리를 비웁니다\napp.dependency_overrides[get_timeout] = zero_timeout\nzero_seconds = await zero_timeout()\nzero_response = client.post(\"/v1/chat/stream\", json=question_body, headers=auth_headers)\napp.dependency_overrides.clear()\nprint(\"재정의한 함수가 내놓는 초:\", zero_seconds)\nprint(\"상태 코드:\", zero_response.status_code)\nprint(\"본문 종류:\", zero_response.headers[\"content-type\"])\nprint(\"비운 뒤 재정의 딕셔너리의 키 수:\", len(app.dependency_overrides))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c45",
+   "metadata": {
+    "lesson_part": "before"
+   },
+   "source": "**결과 읽기** — 출력 줄 `재정의한 함수가 내놓는 초: 0.0`과 `상태 코드: 200`이 보입니다.\n본문 종류도 `text/event-stream; charset=utf-8`로 2절과 같습니다.\n출력 줄 `비운 뒤 재정의 딕셔너리의 키 수: 0`으로, 재정의가 남지 않은 것도 확인했습니다.\n\n앱 109행의 `asyncio.timeout`은 05절에서 풀이만 하고 실행하지 않은 줄입니다.\n설치판 Python 3.12.13 `asyncio/timeouts.py` 68~69행은 정한 때가 이미 지났으면 곧바로 취소를 겁니다.\n그 취소는 112~115행에서 오류 `TimeoutError`로 바뀌고, 앱 119행이 그 오류를 받습니다.\n\n다음 셀은 상태 코드만 본 판정과, 실제로 받은 SSE 사건을 함께 출력합니다.\n실행 전에 예상해 봅니다.\n상태 코드가 200이니, 답의 글도 모두 왔을까요?"
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c46",
+   "metadata": {
+    "lesson_part": "before"
+   },
+   "outputs": [],
+   "source": "# 상태 코드만 본 판정과, 실제로 받은 SSE 사건을 함께 출력합니다\nzero_events = read_events(zero_response.text)\nprint(\"상태 코드만 본 판정(성공인가):\", status_says_ok(zero_response))\nzero_tokens = token_values(zero_events)\nprint(\"받은 사건 이름:\", event_names(zero_events))\nprint(\"받은 token 사건 수:\", len(zero_tokens))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c47",
+   "metadata": {
+    "lesson_part": "before"
+   },
+   "source": "**결과 읽기** — 출력 줄 `상태 코드만 본 판정(성공인가): True`가 보입니다.\n그런데 받은 사건 이름은 `['error']` 하나뿐이고, 출력 줄 `받은 token 사건 수: 0`도 보입니다.\n답의 글은 한 낱말도 오지 않았고, 끝을 알리는 `done`도 없었습니다.\n그래도 Before 판정은 이 응답을 성공으로 셉니다.\n이것이 이 절의 Before 결함입니다.\n\n다음 셀은 받은 사건 하나의 칸을 보고, 칸 `data`의 JSON 글을 읽습니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c48",
+   "metadata": {
+    "lesson_part": "before"
+   },
+   "outputs": [],
+   "source": "# 받은 사건 하나의 칸 이름을 출력하고, 칸 data의 JSON 글을 읽습니다\nerror_fields = zero_events[0]\nprint(\"받은 사건의 칸 이름:\", list(error_fields))\nerror_value = json.loads(error_fields[\"data\"])\nprint(\"칸 data를 읽은 값:\", error_value)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c49",
+   "metadata": {
+    "lesson_part": "before"
+   },
+   "source": "**결과 읽기** — 출력 줄 `받은 사건의 칸 이름: ['event', 'data']`가 보입니다.\n오류 사건에는 칸 `id`가 없어, 이 사건으로는 이어 받을 번호가 생기지 않습니다.\n칸 `data`를 읽은 값은 `{'code': 'stream_failed', 'message': 'Agent 스트림이 중단되었습니다'}`입니다.\n앱 121~124행이 적은 오류 코드와 알림 글입니다."
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c50",
+   "metadata": {
+    "lesson_part": "after"
+   },
+   "source": "## 6. 마지막 사건을 보는 판정 (After)\n\nAfter 판에서 받는 쪽은 마지막 SSE 사건의 이름이 `done`인지 봅니다.\n앱 118행은 그래프의 사건을 끝까지 보낸 뒤에만 `done`을 보냅니다.\n오류 사건으로 끝났거나 사건이 하나도 없으면, 끝까지 받지 못한 것입니다.\n다음 셀은 그 판정 함수를 정의합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c51",
+   "metadata": {
+    "lesson_part": "after"
+   },
+   "outputs": [],
+   "source": "# After 판정: 칸 딕셔너리 목록에서 마지막 사건의 이름이 done인지 봅니다\ndef ended_with_done(events):\n    # 사건이 하나도 없으면 끝까지 받지 못한 것으로 셉니다\n    if len(events) == 0:\n        return False\n    last_fields = events[-1]\n    return last_fields[\"event\"] == \"done\""
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c52",
+   "metadata": {
+    "lesson_part": "after"
+   },
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n목록이 비었는지 먼저 보는 까닭은, 빈 목록에서 끝 사건을 꺼내면 오류가 나기 때문입니다.\n\n다음 셀은 5절의 0초 응답과 2절의 첫 응답을, 두 판정으로 함께 봅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c53",
+   "metadata": {
+    "lesson_part": "after"
+   },
+   "outputs": [],
+   "source": "# 0초 응답과 첫 응답을, Before 판정과 After 판정으로 함께 봅니다\nprint(\"응답 | 상태 코드만 본 판정 | 마지막 사건이 done인가\")\nprint(\"0초 응답 |\", status_says_ok(zero_response), \"|\", ended_with_done(zero_events))\nprint(\"첫 응답 |\", status_says_ok(first_response), \"|\", ended_with_done(first_events))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c54",
+   "metadata": {
+    "lesson_part": "after"
+   },
+   "source": "**결과 읽기** — 라벨 줄 아래 첫 줄은 `0초 응답 | True | False`입니다.\n상태 코드만 본 판정은 성공이라 했지만, After 판정은 끝까지 받지 못했다고 봅니다.\n둘째 줄 `첫 응답 | True | True`에서는 두 판정이 같습니다.\nAfter 판정은 끝까지 받은 응답을 실패로 잘못 세지 않았습니다.\n\n끝까지 받지 못했다고 보면, 받는 쪽은 칸 `code`를 보고 다음 일을 정합니다.\n연결이 끊긴 것이면 마지막 번호로 이어 받고, 오류 사건이면 사용자에게 알리는 식입니다.\n이 노트북에서는 그 다음 일을 실행하지 않았습니다.\n\n## 7. 값 바꿔 보기: 범위 밖 사건 번호\n\n값 하나만 바꿔 봅니다.\n바꿀 것은 요청 머리 `Last-Event-ID`의 값이고, 3절의 `sse-1:1` 대신 범위 밖 번호 `sse-1:99`를 넣습니다.\n이 질문의 사건 번호는 `sse-1:5`까지뿐입니다.\n실행 전에 예상해 봅니다.\nAfter 판정은 이 응답을 어떻게 볼까요?"
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s06-c55",
+   "metadata": {
+    "lesson_part": "after"
+   },
+   "outputs": [],
+   "source": "# 요청 머리 Last-Event-ID만 범위 밖 번호 sse-1:99로 바꿔 보내고, After 판정으로 봅니다\nfar_headers = {\"Authorization\": \"Bearer local-demo-token\", \"Last-Event-ID\": \"sse-1:99\"}\nfar_response = client.post(\"/v1/chat/stream\", json=question_body, headers=far_headers)\nfar_events = read_events(far_response.text)\nprint(\"상태 코드:\", far_response.status_code)\nprint(\"받은 사건 이름:\", event_names(far_events))\nfar_tokens = token_values(far_events)\nprint(\"마지막 사건이 done인가:\", ended_with_done(far_events))\nprint(\"받은 token 사건 수:\", len(far_tokens))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s06-c56",
+   "metadata": {
+    "lesson_part": "after"
+   },
+   "source": "**결과 읽기** — 출력 줄 `상태 코드: 200`과 `받은 사건 이름: ['done']`이 보입니다.\n출력 줄 `마지막 사건이 done인가: True`와 `받은 token 사건 수: 0`도 보입니다.\n서버는 범위 밖 번호를 검사하지 않고, 그래프를 끝까지 실행한 뒤 `done`만 보냈습니다.\n그래서 After 판정은 글을 한 낱말도 받지 않은 이 응답도 끝까지 받았다고 봅니다.\n\n3절에서 끝까지 받은 번호 `sse-1:5`를 보냈을 때도 `done`만 왔습니다.\n받는 쪽에서 보면 두 응답은 모양이 같습니다.\nAfter 판정은 오류 사건과 끝까지 받은 응답을 가를 뿐, 보낸 번호가 맞는지까지 보지는 못합니다.\n번호가 이 질문의 범위 안인지는 서버의 제공 함수가 검사해야 하고, 이 앱은 그 검사를 하지 않습니다.\n\n## 정리\n\n1. 요청 머리 `Last-Event-ID`에 받은 마지막 번호를 적자, 서버가 다음 번호부터 보내 이어 붙인 글이 처음 글과 같았습니다.\n2. 시간 제한 0초 응답은 상태 코드 200이었지만 사건은 `error` 하나뿐이라, 상태 코드만 본 판정은 틀렸습니다.\n3. 마지막 사건이 `done`인지 보는 판정은 이 응답을 가려냈지만, 범위 밖 번호에 온 `done`까지 가리지는 못했습니다.\n\n07절에서는 접근 토큰 검사와 다른 출처의 요청을 다루는 설정, 시간 제한을 함께 봅니다."
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "name": "python",
+   "version": "3.12"
+  },
+  "lesson_format": "paired",
+  "quality_upgrade": "2026-09-29"
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

@@ -1,0 +1,8 @@
+flowchart TB
+  %% classes
+  subgraph STORE["저장된 대화 기록 5개"]
+    direction LR
+    L["loan 메시지 3개<br>권수 질문 · 5권 답<br>연장 질문"]:::flow ~~~ H["hr 메시지 2개<br>급여 명세 질문 · 답"]
+  end
+  STORE --> iso["isolate_topic<br>current_topic = loan"]:::measure
+  iso --> model["모델 입력 3개<br>loan 메시지만"]:::model

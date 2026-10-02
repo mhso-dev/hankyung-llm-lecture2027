@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  ms["표 만들기 문장 열 개<br>속성 MIGRATIONS<br>번호 0부터 9"]
+  s1["saver.setup()<br>처음 부름"]:::flow
+  subgraph rs["setup() 뒤 이름 공간 ch23_lab"]
+    direction LR
+    tt["표 넷"]:::measure
+    mg["표 만들기 기록<br>판 번호 0부터 9 · 열 줄"]:::measure
+    tt ~~~ mg
+  end
+  s2["saver.setup()<br>한 번 더"]:::flow
+  r2["기록 열 줄 그대로<br>customer-a 여섯 줄 그대로"]:::measure
+  ms --> s1
+  s1 --> rs
+  rs --> s2
+  s2 --> r2

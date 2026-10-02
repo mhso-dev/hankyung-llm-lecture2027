@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  SAME["그대로 둔 것<br>system 페르소나<br>developer 과업 명세 세 글<br>목표·필수 정보·금지 사항<br>user 고객 문의 A-1042"]:::tool
+  FA["출력 형식 · 답만<br>세 줄"]:::tool
+  FB["출력 형식 · 짧은 근거<br>근거 줄을 더한 네 줄"]:::tool
+  MA["gpt-5.4-mini<br>요청 1번"]:::model
+  MB["gpt-5.4-mini<br>요청 1번"]:::model
+  RA["답만<br>입력 134토큰"]:::measure
+  RB["짧은 근거<br>입력 162토큰"]:::measure
+  SAME --> FA
+  SAME --> FB
+  FA --> MA
+  FB --> MB
+  MA --> RA
+  MB --> RB

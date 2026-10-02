@@ -1,0 +1,16 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant AI as 반복문의 ask_inquiry
+  participant PR as v1_prompt 틀
+  participant MI as gpt-5.4-mini
+  AI->>PR: invoke 텀블러 문의 채우기
+  PR-->>AI: to_messages 메시지 객체 3개
+  AI->>MI: timed_invoke 요청
+  MI-->>AI: 응답 객체
+  Note over AI,MI: 기록 · 입력 191 · 출력 91 · 1.18초<br>세 층 통과 · category 교환
+  AI->>PR: invoke 글꼴 문의 채우기
+  PR-->>AI: to_messages 메시지 객체 3개
+  AI->>MI: timed_invoke 요청
+  MI-->>AI: 응답 객체
+  Note over AI,MI: 기록 · 입력 169 · 출력 91 · 1.27초<br>세 층 통과 · category 배송
+  Note over AI,MI: 반복이 끝난 뒤 출력<br>답 글 두 개 · 기록표 · 검사표

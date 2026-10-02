@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  body["몸통 함수 find_order<br>csv_path · order_id"]:::flow
+  shortTool["@tool 짧은 판<br>get_order_by_id"]
+  detailTool["@tool 자세한 판<br>get_order_by_id"]
+  shortDesc["설명 한 문장<br>주문 정보를 봅니다."]:::measure
+  detailDesc["설명 네 문장<br>하는 일 · 언제 쓰는지<br>인자 order_id · 내놓는 값"]:::measure
+  same["두 판 공통<br>이름 같음 True<br>입력 형식 같음 True<br>O103 부른 결과 같음 True"]
+  body --> shortTool
+  body --> detailTool
+  shortTool --> shortDesc
+  detailTool --> detailDesc
+  shortDesc ~~~ same
+  detailDesc ~~~ same

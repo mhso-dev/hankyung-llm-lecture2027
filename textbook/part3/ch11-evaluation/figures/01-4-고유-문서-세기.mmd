@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  q["질문 Q001<br>정답 문서 ID E01"]:::tool
+  a["Ch 9 기록 항목 2개<br>E01 · E01"]:::tool
+  b["Ch 10 기록 첫 줄 항목 5개<br>E01 · E01 · M04 · M04 · M04"]:::tool
+  au["중복 제거 뒤 고유 문서 1개<br>E01"]:::measure
+  bu["중복 제거 뒤 고유 문서 2개<br>E01 · M04"]:::measure
+  same["두 기록에 모두 같았던 값<br>정답 문서 E01이 고유 목록 1번째<br>검색 항목 칸 계약은<br>Ch 9·Ch 10과 같음"]
+  q --> a
+  q --> b
+  a --> au
+  b --> bu
+  au --> same
+  bu --> same

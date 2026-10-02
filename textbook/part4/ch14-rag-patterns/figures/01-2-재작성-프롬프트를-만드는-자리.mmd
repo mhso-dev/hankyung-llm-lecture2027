@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  head["머리글 두 줄<br>새 조건을 보태지 말 것"]:::flow
+  hist["대화 기록 두 줄"]:::tool
+  last["마지막 질문 한 줄"]:::tool
+  join["build_rewrite_prompt<br>세 덩어리를 한 글로"]:::flow
+  out["모델에 넣을 글"]:::flow
+  head --> join
+  hist --> join
+  last --> join
+  join --> out

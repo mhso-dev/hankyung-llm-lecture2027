@@ -1,0 +1,22 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  same["두 실행에 같게 둔 것<br>시스템 메시지 글 · 요청 글 · 한도 10과 2<br>스레드 이름 memo-run"]
+  subgraph r2[실행 2 사람 승인 끔]
+    direction TB
+    v2["approval 빈 딕셔너리"]:::tool
+    p2["승인 노드 없음<br>멈추지 않음<br>첫 invoke 뒤 메모 파일 있음"]:::measure
+    q2["invoke 한 번<br>결과 메시지 넷 · 요청 2"]:::measure
+    v2 --> p2
+    p2 --> q2
+  end
+  subgraph r1[실행 1 사람 승인 켬]
+    direction TB
+    v1["approval write_file True"]:::tool
+    p1["승인 노드 있음<br>첫 invoke에서 멈춤<br>메모 파일 없음"]:::measure
+    q1["결정 목록으로 이어 감<br>메모 파일 생김<br>결과 메시지 넷 · 요청 2"]:::measure
+    v1 --> p1
+    p1 --> q1
+  end
+  same -.-> r1
+  same -.-> r2

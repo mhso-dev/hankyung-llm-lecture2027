@@ -1,0 +1,525 @@
+{
+  "chapter": "ch07-prompt-engineering",
+  "label": "before",
+  "totals": {
+    "G1": 34,
+    "G2": 7,
+    "G3": 0,
+    "G4": 8,
+    "G5": 48,
+    "G6": 151,
+    "G7": 24
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-역할별-메시지와-제약",
+      "code_cells": 7,
+      "sentences": 120,
+      "counts": {
+        "G1": 2,
+        "G2": 0,
+        "G3": 0,
+        "G4": 1,
+        "G5": 6,
+        "G6": 15,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:dict_comprehension",
+          "cell8:multiple_defs_in_cell"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:역할을 나눈 구성에서는 담당자의 정체성은 system에, 금지 사항과 형식은 developer에, 고객 원문은 user에 둡니다",
+          "long:첫 조건에 “고객 지원 담당자로 답하세요”만 쓰고 둘째 조건에 금지 사항과 형식을 추가하면 역할뿐 아니라 지시 내용도 달라집니다",
+          "long:사용자 메시지 하나 조건에는 두 문자열을 연결하고, 역할 분리 조건에는 같은 두 문자열을 system과 developer에 각각 넣습니다",
+          "long:예를 들어 한 안내에서는 “한 문장으로 답하세요”를 user에 넣고 다른 안내에서는 같은 문장을 developer에 넣을 수 있습니다",
+          "long:OpenAI, Chat message reference — developers.openai.com/api/reference/cli/resources/chat · 확인 2026-09-09.",
+          "long:LangChain, ChatPromptTemplate — reference.langchain.com/python/langchain-core/prompts/chat/ChatPromptTemplate · 확인 2026-09-09.",
+          "long:기준: Python 3.12 · LangChain 1.4.0 · langchain-openai 1.6.0 · gpt-5.4-mini.",
+          "english_start:`run()`을 정의한 셀은 요청을 보내지 않지만 `flat = run(",
+          "english_start:developer는 제공자별 역할 규칙을 확인해야 합니다",
+          "english_start:`run(messages)`는 이 노트북에서 작성하는 보조 함수입니다",
+          "english_start:`mention_flags(text)`는 지정 단어가 문자열에 있는지 표",
+          "english_start:`run(messages)`는 바로 앞에서 정의한 함수입니다",
+          "english_start:`role_text`는 담당 역할, `constraint_text`는 답",
+          "english_start:`+ \" \" +`는 문장을 줄바꿈으로 이어 붙입니다",
+          "dense_paragraph:시스템 메시지 (system message) 대화 전체에서 유지할 모델의 역할이나 공통 행동 원칙을 담습니다"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-페르소나와-과업-제약",
+      "code_cells": 7,
+      "sentences": 111,
+      "counts": {
+        "G1": 2,
+        "G2": 0,
+        "G3": 0,
+        "G4": 1,
+        "G5": 6,
+        "G6": 11,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:dict_comprehension",
+          "cell8:multiple_defs_in_cell"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:결정 사항, 담당자, 기한을 추출하되 언급되지 않은 기한은 미정으로 표시하도록 지시하면 확인할 항목과 누락 처리 방식이 정해집니다",
+          "long:OpenAI, GPT-5 model guidance — developers.openai.com/api/docs/guides/latest-model · 확인 2026-09-09.",
+          "long:LangSmith, Prompt engineering quickstart — docs.langchain.com/langsmith/prompt-engineering-quickstart · 확인 2026-09-09.",
+          "long:아래 첫 조건의 “친절한 고객 상담원”은 태도에 관한 문장이고, 다음 조건의 세 줄 형식과 규정 밖 약속 금지는 수행 조건입니다",
+          "long:회의록 정리에서는 “숙련된 비서”라는 역할에 결정 사항·담당자·기한을 추출하라는 과업과 미정 기한을 추측하지 말라는 조건을 따로 붙일 수 있습니다",
+          "english_start:`run(messages)`는 이 노트북에서 작성하는 보조 함수입니다",
+          "english_start:`mention_flags(text)`는 지정 단어가 문자열에 있는지 표",
+          "english_start:`persona`와 `bounded`는 함수가 아니라 `run()`이 반",
+          "english_start:`result[\"text\"]`는 모델이 생성한 원문이고 `len(...)",
+          "dense_paragraph:페르소나 (persona) 모델이 답할 때 취할 역할, 관점, 말투를 설명한 것입니다. 전문성의 범위를 좁히",
+          "dense_paragraph:“좋게 답하세요”는 사람마다 판단이 달라집니다. “분류, 다음 행동, 고객 문장을 세 줄로 작성하세요”는 결"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-Few-shot-예시-선택",
+      "code_cells": 7,
+      "sentences": 107,
+      "counts": {
+        "G1": 2,
+        "G2": 1,
+        "G3": 0,
+        "G4": 1,
+        "G5": 5,
+        "G6": 14,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:dict_comprehension",
+          "cell8:multiple_defs_in_cell"
+        ],
+        "G2": [
+          "cell14:nested_call_2plus"
+        ],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:데이터 누출 (data leakage) 평가 답안이나 평가 대상 자체가 예시에 섞여 결과가 실제 능력보다 좋아 보이는 문제입니다",
+          "long:파손된 셔츠 문의는 어떤 사실을 확인할지 보여 주고, 예시 답은 그 사실을 교환 분류와 사진 요청으로 어떻게 연결할지 보여 줍니다",
+          "long:&quot; + TASK`는 예시와 현재 문의 사이에 빈 줄을 넣어 하나의 문자열을 만들며, 모델의 가중치를 다시 학습하는 코드는 아닙니다",
+          "long:LangChain, Memory concepts: few-shot — docs.langchain.com/oss/python/concepts/memory · 확인 2026-09-09.",
+          "long:LangSmith, Prompt engineering quickstart — docs.langchain.com/langsmith/prompt-engineering-quickstart · 확인 2026-09-09.",
+          "english_start:Zero-shot과 Few-shot 프롬프트의 차이를 설명할 수 있습니다",
+          "english_start:LangChain은 많은 예시 중 관련 항목을 선택하는 구성도 제공합니다",
+          "english_start:Few-shot의 한 예시는 요청 문장 하나가 아니라 입력과 원하는 출력",
+          "english_start:Few-shot은 입출력 쌍으로 원하는 행동을 구체적으로 보여 줍니다",
+          "english_start:`run(messages)`는 이 노트북에서 작성하는 보조 함수입니다",
+          "english_start:`mention_flags(text)`는 지정 단어가 문자열에 있는지 표",
+          "english_start:Few-shot은 예시 입력과 예시 답의 대응을 현재 요청에 함께 넣는 ",
+          "english_start:`relevant_example`과 `irrelevant_example`",
+          "dense_paragraph:Zero-shot 프롬프트 현재 과업의 입출력 예시 없이 지시와 질문만 주는 방식입니다. Few-shot 프"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-ChatPromptTemplate과-MessagesPlaceholder",
+      "code_cells": 7,
+      "sentences": 114,
+      "counts": {
+        "G1": 3,
+        "G2": 1,
+        "G3": 0,
+        "G4": 1,
+        "G5": 6,
+        "G6": 27,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:dict_comprehension",
+          "cell8:multiple_defs_in_cell",
+          "cell10:list_comprehension"
+        ],
+        "G2": [
+          "cell10:one_letter_name:m"
+        ],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:중요한 관찰은 선택적 placeholder가 기록이 없을 때와 있을 때 모두 같은 템플릿을 완성했고, 메시지 역할과 순서를 유지했다는 점입니다",
+          "long:실제 서비스에서는 기록이 현재 질문과 관련 있는지, 이전의 민감 정보가 포함되는지, 오래된 제약이 현재 정책과 맞는지 추가로 확인해야 합니다",
+          "long:다음 학습과 이어지는 지점 — 05절에서는 세부 내부 추론을 요구하지 않고 최종 답과 확인 가능한 짧은 근거를 요청하는 경계를 배웁니다",
+          "long:LangChain, ChatPromptTemplate — reference.langchain.com/python/langchain-core/prompts/chat/ChatPromptTemplate · 확인 2026-09-09.",
+          "long:LangChain, MessagesPlaceholder — reference.langchain.com/python/langchain-core/prompts/chat/MessagesPlaceholder · 확인 2026-09-09.",
+          "english_start:`ChatPromptTemplate`으로 메시지 틀을 만들 수 있습니다",
+          "english_start:`MessagesPlaceholder`에 선택적 대화 기록을 삽입할 수 ",
+          "english_start:`ChatPromptTemplate`은 변하지 않는 메시지 구조와 실행할",
+          "english_start:`MessagesPlaceholder`는 이미 만들어진 메시지 목록을 지",
+          "english_start:`MessagesPlaceholder`는 역할과 순서를 유지한 채 목록을",
+          "english_start:`ChatPromptTemplate.from_messages(...)`는",
+          "english_start:`prompt.invoke(base_values)`는 빈칸을 채워 `Ch",
+          "english_start:`n_messages`는 메시지 개수 기준이므로 대화 한 턴과 메시지 하",
+          "english_start:`optional=True`를 사용하면 기록이 없는 경우 빈 목록처럼 처",
+          "english_start:`n_messages`로 최근 몇 개만 남길 수 있지만 오래된 정책이나 ",
+          "english_start:`optional=True`는 기록이 없어도 정상인 경우에만 사용합니다",
+          "english_start:`ChatPromptTemplate`은 고정 구조와 실행값을 분리합니다",
+          "english_start:`MessagesPlaceholder`는 메시지의 역할과 순서를 유지합니",
+          "english_start:`run(messages)`는 이 노트북에서 작성하는 보조 함수입니다",
+          "english_start:`mention_flags(text)`는 지정 단어가 문자열에 있는지 표",
+          "english_start:`MessagesPlaceholder(optional=True)`는 기록",
+          "english_start:`from_messages()`는 고정 메시지와 빈칸으로 템플릿을 만드는",
+          "english_start:`{format_rule}`와 `{question}`은 실행 때 값으로 ",
+          "english_start:`base_values`가 같은 이름의 키로 값을 제공합니다",
+          "english_start:`prompt.invoke(base_values)`는 완성한 `ChatP",
+          "english_start:`{**base_values, \"history\": ...}`는 기존 딕셔",
+          "dense_paragraph:프롬프트 템플릿 (prompt template) 고정 메시지와 나중에 채울 변수를 함께 정의한 재사용 가능한"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-CoT와-ReAct의-경계",
+      "code_cells": 7,
+      "sentences": 111,
+      "counts": {
+        "G1": 2,
+        "G2": 0,
+        "G3": 0,
+        "G4": 1,
+        "G5": 6,
+        "G6": 19,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:dict_comprehension",
+          "cell8:multiple_defs_in_cell"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:그러나 길게 생성된 설명은 모델이 실제로 계산한 내부 상태의 완전한 기록이 아니며, 설명이 자연스럽다는 이유만으로 결론이 맞다고 판정할 수도 없습니다",
+          "long:고객 지원처럼 근거가 입력에 이미 있는 과제에서는 주문번호, 파손 상태, 필요한 사진처럼 사용자가 다시 확인할 수 있는 사실을 짧게 제시하는 편이 검토에 도움이 됩니다",
+          "long:사고의 연쇄(Chain of Thought, CoT)는 중간 단계를 언어로 생성하도록 유도해 복합 추론 과제를 풀려는 프롬프트 전략으로 알려졌습니다",
+          "long:공개된 OpenAI 모델 지침도 GPT-5 계열에는 상세한 단계 지시를 늘리는 방식보다 목표, 성공 기준, 제약, 출력 형식을 먼저 분명히 하도록 안내합니다",
+          "long:공개 근거(brief evidence)는 답을 검토하는 사람이 입력에서 다시 찾을 수 있도록 사실이나 판단 기준을 짧게 적은 문장입니다",
+          "long:일반적인 실행 흐름에서는 모델이 현재 관찰을 바탕으로 다음 행동을 정하고, 도구가 반환한 관찰을 다시 받아 다음 단계를 정합니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 한 응답의 설명을 길게 받는 대신 같은 질문을 독립적으로 여러 번 실행하고, 공개된 최종 분류만 모아 표본 합의를 계산합니다",
+          "long:해설 — 모델, 과제, 입력 자료, 생성 설정, 평가 기준을 고정하고 정답률이나 기준 충족 여부, 토큰, 지연을 반복 측정해야 합니다",
+          "long:Chain-of-Thought Prompting Elicits Reasoning in Large Language Models · 확인 2026-09-09",
+          "long:ReAct: Synergizing Reasoning and Acting in Language Models · 확인 2026-09-09",
+          "english_start:ReAct는 이후 도구 사용 에이전트를 이해하는 데 필요한 개념입니다",
+          "english_start:ReAct는 추론(reasoning)과 행동(acting)을 결합한 접근",
+          "english_start:ReAct의 행동은 이런 실행 단계와 관찰 결과를 포함합니다",
+          "english_start:`run()`은 응답 원문, 사용량, 전체 호출 지연을 하나의 사전으로 ",
+          "english_start:`run(messages)`는 이 노트북에서 작성하는 보조 함수입니다",
+          "english_start:`mention_flags(text)`는 지정 단어가 문자열에 있는지 표",
+          "english_start:ReAct의 행동·관찰 반복에는 실제 도구 호출과 결과 전달이 필요하지만",
+          "english_start:ReAct의 행동 루프는 구현하지 않습니다",
+          "dense_paragraph:ReAct는 추론(reasoning)과 행동(acting)을 결합한 접근입니다. 일반적인 실행 흐름에서는 모"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "06-Self-Consistency와-표본-합의",
+      "code_cells": 7,
+      "sentences": 119,
+      "counts": {
+        "G1": 14,
+        "G2": 1,
+        "G3": 0,
+        "G4": 1,
+        "G5": 6,
+        "G6": 19,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:dict_comprehension",
+          "cell8:multiple_defs_in_cell",
+          "cell10:list_comprehension",
+          "cell12:list_comprehension",
+          "cell12:dict_comprehension",
+          "cell12:conditional_expression",
+          "cell12:generator_expression",
+          "cell12:conditional_expression",
+          "cell14:list_comprehension",
+          "cell14:conditional_expression",
+          "cell14:list_comprehension",
+          "cell14:conditional_expression",
+          "cell14:generator_expression",
+          "cell14:generator_expression"
+        ],
+        "G2": [
+          "cell14:one_letter_name:v"
+        ],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:자기 일관성(Self-Consistency)은 하나의 문제에 대해 다양한 추론 경로를 표집한 뒤, 각 경로가 도달한 최종 답을 집계하는 전략입니다",
+          "long:앞 응답을 다음 입력에 넣지 않는 별도 호출을 사용하지만, 같은 모델과 지시의 오류가 여러 응답에 함께 나타날 수 있으므로 통계적으로 완전히 독립된 판단을 얻었다고 단정하지 않습니다",
+          "long:세 응답 중 형식 오류가 두 건이고 나머지 한 건이 교환이라면 유효 응답 안에서는 교환이 100%여도 전체 세 건의 과반은 아닙니다",
+          "long:system 메시지는 첫 줄에 ‘배송’, ‘교환’, ‘환불’ 중 하나를 `LABEL:` 형식으로 쓰고 둘째 줄부터 확인 근거를 적도록 요구합니다",
+          "long:세 번의 일치는 이 고객 문의와 현재 모델 실행에서 관찰한 결과이며, 다른 질문의 정답이나 모델 전체의 안정성을 보장하지 않습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 자유로운 문장 대신 JSON 객체를 요청하고, 파싱 성공과 요구한 필드의 존재를 각각 진단합니다",
+          "long:Self-Consistency Improves Chain of Thought Reasoning in Language Models · 확인 2026-09-14",
+          "long:이 노트북은 내부 추론을 수집하지 않고 최종 라벨만 반복 생성·집계하는 축소 실습으로, 원 기법의 전체 절차를 재현하지 않습니다",
+          "english_start:`run(messages)`는 이 노트북에서 작성하는 보조 함수입니다",
+          "english_start:`mention_flags(text)`는 지정 단어가 문자열에 있는지 표",
+          "english_start:Self-Consistency는 다양한 추론 경로를 표집한 뒤 각 경로의",
+          "english_start:`splitlines()`는 응답 문자열을 줄 목록으로 나누고 `[0]`",
+          "english_start:`startswith(\"LABEL: \")`로 접두어를 검사한 뒤 그 길이",
+          "english_start:`allowed`는 허용한 라벨의 집합이며 포함되지 않은 값은 형식 오류",
+          "english_start:`next(..., \"합의 없음\")`는 조건을 만족하는 라벨이 없을 때 ",
+          "english_start:Self-Consistency의 원 기법은 여러 추론 경로를 표집하고 최",
+          "dense_paragraph:생성 모델은 같은 질문에도 실행할 때마다 표현이나 결론이 달라질 수 있습니다. 한 번의 답만 저장하면 그 답",
+          "dense_paragraph:표본(sample)은 같은 실험 조건에서 얻은 응답 한 건입니다. 이번에는 앞 호출의 답을 다음 호출 메시지",
+          "dense_paragraph:유효성 검사(validation)는 첫 줄이 미리 허용한 라벨 중 하나인지 확인하는 단계입니다. 설명이 길어"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "07-구조화-출력-프롬프트-진단",
+      "code_cells": 7,
+      "sentences": 117,
+      "counts": {
+        "G1": 4,
+        "G2": 1,
+        "G3": 0,
+        "G4": 1,
+        "G5": 5,
+        "G6": 18,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:dict_comprehension",
+          "cell8:multiple_defs_in_cell",
+          "cell10:dict_comprehension",
+          "cell12:dict_comprehension"
+        ],
+        "G2": [
+          "cell12:one_letter_name:f"
+        ],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:Ch 6의 ‘구조화 출력과 검증’ 절에서는 Pydantic 모델로 필드 이름, 타입, 허용 범위를 선언하고 `with_structured_output(..., include_raw=True)`의 `raw`, `parsed`, `parsing_error`를 확인했습니다",
+          "long:비교할 때는 첫째로 원문이 JSON 문법인지, 둘째로 세 필드가 있는지, 셋째로 각 값의 자료형과 내용이 요구 조건에 맞는지 확인합니다",
+          "long:일정 추출에 적용하면 “일시”와 “장소”가 담긴 JSON이 문법상 유효해도 프로그램이 요구한 `starts_at`과 `location` 키는 없을 수 있습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 프롬프트 문구와 변경 이유를 버전별 아티팩트로 저장하고, 동일한 평가 조건으로 세 버전을 비교합니다",
+          "long:해설 — 각 조건을 한 번만 호출했고 입력과 생성 결과가 바뀌면 코드 울타리, 부가 설명, 잘못된 자료형이 나타날 수 있기 때문입니다",
+          "long:LangChain Models — structured output · 확인 2026-09-09 · LangChain 1.4.0, langchain-core 1.6.2 환경에서 관련 API 확인",
+          "english_start:Python의 `json.loads()`는 JSON 문자열을 사전이나 목",
+          "english_start:`brief`는 JSON이라는 형식만 요구합니다",
+          "english_start:`fields`는 세 필드 이름을 추가합니다",
+          "english_start:`schema`는 코드 울타리나 부가 설명을 금지하고 필드 이름, 허용 ",
+          "english_start:`json.loads(result[&quot;text&quot;])`는 ",
+          "english_start:`fields`와 `schema` 응답은 요구한 세 영문 필드를 모두 포",
+          "english_start:`run(messages)`는 이 노트북에서 작성하는 보조 함수입니다",
+          "english_start:`mention_flags(text)`는 지정 단어가 문자열에 있는지 표",
+          "english_start:`json.loads()`의 입력은 응답 문자열이고 반환값은 JSON 내",
+          "english_start:`{f: f in parsed for f in fields}`는 필요한 ",
+          "dense_paragraph:필드(field)는 객체 안에서 값을 찾는 이름입니다. 이번 프로그램은 `category`, `next_ac",
+          "dense_paragraph:`brief`는 JSON이라는 형식만 요구합니다. `fields`는 세 필드 이름을 추가합니다. `schem"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "08-프롬프트-버전과-AB-비교",
+      "code_cells": 9,
+      "sentences": 122,
+      "counts": {
+        "G1": 5,
+        "G2": 3,
+        "G3": 0,
+        "G4": 1,
+        "G5": 8,
+        "G6": 28,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:dict_comprehension",
+          "cell8:multiple_defs_in_cell",
+          "cell10:generator_expression",
+          "cell16:conditional_expression",
+          "cell18:dict_comprehension"
+        ],
+        "G2": [
+          "cell10:over_15_lines",
+          "cell16:over_15_lines",
+          "cell18:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_quotes_no_output",
+          "cell16:result_reading_quotes_no_output",
+          "cell18:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이번 JSON에는 모델, 생성 상한, 고객 문의, 단어 목록, 세 프롬프트 원문, 변경 이유, 응답, 사용량, 지연, 캐시 토큰, 예상 비용, 가격 기준일과 100만 토큰당 단가가 들어갑니다",
+          "long:모델 별칭은 이후 다른 스냅샷을 가리킬 수 있으므로 높은 재현성이 필요한 평가에서는 접근 가능한 고정 모델 ID와 실행 날짜도 추가해야 합니다",
+          "long:현재 v1→v2는 형식과 금지 조건을 함께 바꾸고 v2→v3는 예시 추가를 비교하므로, 각 행을 한 가지 순수 효과로 해석하지 않습니다",
+          "long:각 원문을 같은 모델과 system 메시지로 한 번씩 실행한 뒤, 입력·출력·캐시 토큰, 전체 호출 지연, 예상 비용, 단어 포함 개수를 표의 한 행으로 만듭니다",
+          "long:캐시 입력은 세 행 모두 0토큰이었고 예상 비용은 각각 0.00057975달러, 0.0005745달러, 0.00042375달러였습니다",
+          "long:입력이 긴 버전의 출력과 지연이 이번 실행에서 오히려 작았으므로, 입력 길이만으로 출력 길이나 지연 순서를 예측할 수 없음을 확인할 수 있습니다",
+          "long:마지막 셀은 실행 날짜와 ID, Ch 6 기록의 경로·SHA-256 지문, 모델 설정, 세 프롬프트와 원문 응답, 공통 측정 필드를 `prompt-ab-continuity.json`과 실행별 사본에 저장합니다",
+          "long:06절이 이 실행 기록과 지문을 직접 읽은 뒤, 별도 질문으로 full·selected·compressed를 실행하고 같은 측정 필드를 남깁니다",
+          "long:해설 — 실제 프롬프트 원문과 변경 이유, 실행 조건이 없으면 어떤 문장을 실행했는지 복구하거나 결과 차이의 원인을 검토할 수 없습니다",
+          "long:해설 — 실행 날짜, 고정 모델 스냅샷, 제공자 설정, 반복 번호, 입력 ID, 평가자 판정 가운데 목적에 맞는 항목을 추가할 수 있습니다",
+          "long:LangSmith Prompt Engineering Quickstart · 확인 2026-09-09 · 외부 서비스의 prompt commit 개념 참고",
+          "long:이어지는 기록은 같은 필드 형식을 참고하지만 고객 문의와 Ch 6의 질문이 다르므로 두 실행 수치를 성능 변화로 비교하지 않습니다",
+          "english_start:`v2`와 `v3`의 차이는 관련 예시 추가 한 가지로 좁혀져 있습니다",
+          "english_start:`mention_count`는 ‘교환’, ‘A-1042’, ‘사진’ 중 ",
+          "english_start:`run_id`는 한 실행을 구분하는 이름이고 SHA-256은 파일 바이",
+          "english_start:`v2`는 세 줄 형식과 규정 밖 약속 금지를 추가하고, `v3`는 이 ",
+          "english_start:`v2`와 `v3`는 세 줄 형식으로 응답했으며, `v3`는 관련 예시를",
+          "english_start:`mention_count`는 품질 점수가 아니며, 생성 답변의 업무 품",
+          "english_start:`v2`와 `v3` 비교에서 유지한 조건과 추가한 조건은 무엇인가요",
+          "english_start:`run(messages)`는 이 노트북에서 작성하는 보조 함수입니다",
+          "english_start:`mention_flags(text)`는 지정 단어가 문자열에 있는지 표",
+          "english_start:`run_id`는 실행을 구분하는 이름이고 SHA-256은 파일 내용을 ",
+          "english_start:`read_text()`는 텍스트를, `read_bytes()`는 바이트",
+          "english_start:`hexdigest()`는 계산된 지문을 16진수 문자열로 표현합니다",
+          "english_start:`required <= ch06_record.keys()`는 필요한 키 ",
+          "dense_paragraph:Ch 6에서는 `usage_metadata`에서 토큰·캐시 사용량을 읽고 `time.perf_counter(",
+          "dense_paragraph:기준선(baseline)은 이후 변경과 비교할 첫 조건입니다. 통제 변수(control variable)는 ",
+          "dense_paragraph:세 응답은 모두 ‘교환’, ‘A-1042’, ‘사진’을 포함하여 `mention_count`가 3이었습니다."
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

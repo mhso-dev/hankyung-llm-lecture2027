@@ -1,0 +1,9 @@
+flowchart TD
+  %% classes
+  A["글 order_text<br>연필,3 · 노트,2"]:::tool
+  B["with open(..., 'w')<br>write()가 10글자를 씀"]:::flow
+  C["파일 orders.txt<br>연필,3 · 노트,2"]:::tool
+  D["with open(..., 'r')<br>read()가 10글자를 읽음"]:::flow
+  E["블록이 끝남<br>파일이 닫혔는가: True"]:::measure
+  F["splitlines()<br>['연필,3', '노트,2']"]:::measure
+  A --> B --> C --> D --> E --> F

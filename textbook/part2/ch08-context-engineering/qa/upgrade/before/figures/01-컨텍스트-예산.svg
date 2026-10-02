@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 390" width="800" height="390" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif" role="img" aria-label="고정된 컨텍스트 한도 안에서 예산을 배분합니다">
+<title>고정된 컨텍스트 한도 안에서 예산을 배분합니다</title>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+</defs>
+<rect width="800" height="390" fill="#ffffff"/>
+<text x="20" y="32.0" font-size="20" fill="#1e293b" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">고정된 컨텍스트 한도 안에서 예산을 배분합니다</tspan></text>
+<rect x="35" y="72" width="730" height="220" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+<text x="49" y="92.0" font-size="16" fill="#1e293b" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="49" dy="0.0">고정 한도: 입력과 출력이 함께 사용</tspan></text>
+<rect x="55" y="130" width="125" height="105" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="117.5" y="170.3" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="117.5" dy="0.0">지시</tspan><tspan x="117.5" dy="24.3">18%</tspan></text>
+<rect x="190" y="130" width="110" height="105" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="245.0" y="170.3" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="245.0" dy="0.0">질문</tspan><tspan x="245.0" dy="24.3">10%</tspan></text>
+<rect x="310" y="130" width="195" height="105" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="407.5" y="170.3" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="407.5" dy="0.0">근거</tspan><tspan x="407.5" dy="24.3">36%</tspan></text>
+<rect x="515" y="130" width="135" height="105" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+<text x="582.5" y="170.3" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="582.5" dy="0.0">출력 예약</tspan><tspan x="582.5" dy="24.3">26%</tspan></text>
+<rect x="660" y="130" width="85" height="105" rx="10" fill="#ffffff" stroke="#64748b" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="702.5" y="171.7" font-size="16" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="702.5" dy="0.0">여유</tspan><tspan x="702.5" dy="21.6">10%</tspan></text>
+<text x="55" y="330.0" font-size="18" fill="#92400e" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="55" dy="0.0">근거를 추가하면 다른 영역의 예산이 줄어듭니다.</tspan></text>
+</svg>

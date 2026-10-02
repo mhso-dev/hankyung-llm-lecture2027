@@ -1,0 +1,14 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  mw["TodoListMiddleware<br>인자 없이 하나"]:::flow
+  toolbox["도구 write_todos<br>설명 3873자<br>인자 todos"]:::measure
+  itembox["할 일 항목 칸<br>content · status<br>상태 값 셋 가운데 하나"]:::measure
+  nodebox["노드<br>TodoListMiddleware<br>.after_model"]:::measure
+  statebox["상태 칸<br>todos 더해짐"]:::measure
+  guidebox["할 일 설명 글<br>1370자"]:::measure
+  mw --> toolbox
+  mw --> nodebox
+  mw --> statebox
+  mw --> guidebox
+  toolbox --> itembox

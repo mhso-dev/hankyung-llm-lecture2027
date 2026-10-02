@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  job["과제 글 · 공통 사실<br>150~170자 · 꼭 담을 말 넷"]:::tool
+  write["gpt-5.4-mini 쓰기 요청<br>초안 한 편"]:::model
+  judge["gpt-5.4-mini 평가 요청<br>점수 · 고칠 점"]:::model
+  check["check_draft<br>글자 수 · 꼭 담을 말"]:::flow
+  decide["decide_stop<br>기준값 85 · 바퀴 한도 3"]:::flow
+  pass["기준 통과 · 상태 완료<br>교재 출력의 흐름에는 없음"]
+  limit["바퀴 한도<br>상태 멈춤"]:::measure
+  job --> write
+  write --> judge
+  judge --> check
+  check --> decide
+  decide -.->|계속 · 고칠 점을 붙여| write
+  decide -.->|기준 통과| pass
+  decide -.->|바퀴 한도| limit

@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph old["Ch 19 05절 · 우리가 쓴 for 루프"]
+    direction LR
+    o1["bound_model.invoke<br>모델 요청"]:::flow
+    o2["run_tool_calls<br>도구 실행"]:::flow
+    o3(["요청이 없으면<br>break"]):::flow
+    o1 -.->|요청 있음| o2
+    o1 -.->|요청 없음| o3
+    o2 -->|다음 바퀴<br>turn_limit까지| o1
+  end
+  subgraph new["이 절 · 상태 그래프"]
+    direction LR
+    n1["모델 노드<br>call_model"]:::flow
+    n2["도구 실행 노드<br>ToolNode"]
+    n3(["가상 끝점<br>END"])
+    n1 -.->|tools_condition<br>tools| n2
+    n1 -.->|tools_condition<br>END| n3
+    n2 -->|되돌아가는<br>엣지| n1
+  end
+  old ~~~ new

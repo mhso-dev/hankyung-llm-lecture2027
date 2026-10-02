@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph one["첫 질문 · 정답 문서 ACC-001"]
+    direction TB
+    o1["고른 갈래 account"]:::measure
+    o2["정답 문서가 그 안에 있음"]:::measure
+    o3["원문 층 자리 하나"]:::measure
+    o1 ~~~ o2
+    o2 ~~~ o3
+  end
+  subgraph two["바꾼 질문 · 정답 문서 ACC-004"]
+    direction TB
+    t1["고른 갈래 library"]:::measure
+    t2["정답 문서가 그 안에 없음"]:::measure
+    t3["원문 층에서 만나지 못함"]:::measure
+    t1 ~~~ t2
+    t2 ~~~ t3
+  end
+  same["두 질문 모두<br>원문 열두 건을<br>바로 재면<br>자리 하나"]
+  one ~~~ two
+  two ~~~ same

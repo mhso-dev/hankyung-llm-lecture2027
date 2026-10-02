@@ -1,0 +1,87 @@
+{
+  "html_pages": 47,
+  "notebooks": 40,
+  "code_cells": 597,
+  "max_cell_lines": 21,
+  "quiz_questions": 208,
+  "local_links": 360,
+  "missing_links": [],
+  "exposed_credentials": [],
+  "diagrams": [
+    {
+      "chapter": "ch01-development-environment",
+      "svg": 23,
+      "mmd": 23,
+      "png": 23
+    },
+    {
+      "chapter": "ch02-python",
+      "svg": 53,
+      "mmd": 53,
+      "png": 53
+    },
+    {
+      "chapter": "ch03-git-github",
+      "svg": 26,
+      "mmd": 26,
+      "png": 26
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "svg": 23,
+      "mmd": 23,
+      "png": 23
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "svg": 35,
+      "mmd": 35,
+      "png": 35
+    }
+  ],
+  "hours": [
+    {
+      "chapter": "ch01-development-environment",
+      "lecture": 5.0,
+      "practice": 3.0
+    },
+    {
+      "chapter": "ch02-python",
+      "lecture": 12.0,
+      "practice": 28.0
+    },
+    {
+      "chapter": "ch03-git-github",
+      "lecture": 5.0,
+      "practice": 11.0
+    },
+    {
+      "chapter": "ch04-data-tools",
+      "lecture": 5.0,
+      "practice": 11.0
+    },
+    {
+      "chapter": "ch05-llm-principles",
+      "lecture": 10.0,
+      "practice": 6.0
+    }
+  ],
+  "existing_files_unchanged": 0,
+  "historical_baseline_files": 36,
+  "existing_revisions_allowed": true,
+  "archives": [
+    {
+      "file": "part1-practice.zip",
+      "entries": 69,
+      "part1_notebooks": 40,
+      "sha256": "b82d8fc12f7c7df198462e41e704c30888e20ebb27677be53d65251acaa4002d"
+    },
+    {
+      "file": "llm-practice.zip",
+      "entries": 517,
+      "part1_notebooks": 40,
+      "sha256": "b0c5a072cee25d80c118b35925a7bf134d7a88139e33c8e782409f0e866f5638"
+    }
+  ]
+}
+SKIPPED_QUIZ (ch02-python, 6문항): ['01-변수와-자료형', '02-조건문과-반복문', '03-자료구조', '04-함수', '05-파일과-예외', '06-클래스', '07-모듈과-타입힌트', '08-pytest', '09-데코레이터와-컨텍스트-매니저', '10-Pydantic', '11-패키징과-테스트-격리', '12-async와-await']

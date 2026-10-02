@@ -1,0 +1,54 @@
+{
+  "run_id": "2026-09-11-002",
+  "genre": "산문",
+  "minimum_severity": "S1",
+  "phase6_verdict": "corrected",
+  "technical_correction_separate": true,
+  "technical_review": "textbook/part6/qa/ch28-technical-review.md",
+  "gate": {
+    "exit_code": 1,
+    "verdict": "WARN",
+    "P0": "PASS: character change rate 6.2%",
+    "P1": "PASS",
+    "P2": "PASS: antithesis 1 to 1",
+    "P3": "WARN: removed internal execute.py dependencies 0.11.0 and 7.3.0 from student README; no technical claim lost",
+    "P4": "REPORT: 36 of 324 source sentences changed",
+    "P5": "REPORT: average 55.3 chars, short-sentence ratio 6.6%, longest run 2"
+  },
+  "meaning_preservation_15": "PASS after direct source, technical-correction, and stored-notebook-output comparison",
+  "overediting": "none",
+  "spell_check": "skipped: public teaching material but external commercial bulk transfer avoided",
+  "code_output_exception": "01-04 notebook code changed only to find the project root from notebook cwd; fresh kernels passed and stored outputs were refreshed. 05 code/output unchanged by this exception.",
+  "protected_hashes_after": {
+    "01_combined": "9ca402e1d79900ea22cc431dd4f7295ef2e15528e5870a1cff80da2d09d720f4",
+    "02_combined": "3e46316b02052c965be64e0c0b88d762fba82ac83290147a84d39dd512136942",
+    "03_combined": "ec6f002c50a50ad33d85882a686b7a639769e07b0d780bd248a1d36b73a31d50",
+    "04_combined": "21c5402903ee630a6a4586a2854e4011c5700a68e6697b3e52d43c9760d5193a",
+    "05_combined": "1068faf272428d9edda5753471b8fab812fcf37936f92b381b4798f7fcf961b1",
+    "course_server.py": "d7f7e8b963e24efc93cc544c89036291d6dde6aee2b33edd1927430bcbc380a8"
+  },
+  "diagram_sync": {
+    "status": "PASS: 5 SVG/Excalidraw pairs; 12 desktop/mobile visual pages",
+    "generator": "dadf0c2baf1073c61a890fbf3334f64c2a43e6f2b4ea52a303a53a8cdb8261e3",
+    "svg": {
+      "01": "94a911132c7ef0e00fff577715ca4eba74a7ba777c5408fd2a00ebb49120713f",
+      "02": "6d744af1f0448bf3083b1d308069d27ab560fed6a18d7c5c19fe6ce56c77bc17",
+      "03": "3a9a87dd122d3b116835191f5e45aca183246d7de135113ae4f2b0e2fc49afb6",
+      "04": "44908cd5d96b9bb3fc6b8d5cc9e80f285313766f45e151b2fd9d1a36a939b98f",
+      "05": "621379cad880618bd2ef7b582ed4e1027c18cb143de05ffc146c541066840607"
+    }
+  },
+  "remaining": "Before the course opens, verify publication and changes of the curriculum's future MCP 2026-07 target.",
+  "diagram_file_hashes": {
+    "01-흐름.excalidraw": "8d5c8b75c52dce6cd3cf524df6f2c0966e68e557f88d46b96a9c7fefa68ed22b",
+    "01-흐름.svg": "94a911132c7ef0e00fff577715ca4eba74a7ba777c5408fd2a00ebb49120713f",
+    "02-흐름.excalidraw": "d07f8b2334c6f149e82cbeb380dbf49f4b3c8aa852199456f3fcb568157fc34e",
+    "02-흐름.svg": "6d744af1f0448bf3083b1d308069d27ab560fed6a18d7c5c19fe6ce56c77bc17",
+    "03-흐름.excalidraw": "e7ac7a8ba536d932ed5fe5410350ef213757e5714722878707c0b0f6554c3b0b",
+    "03-흐름.svg": "3a9a87dd122d3b116835191f5e45aca183246d7de135113ae4f2b0e2fc49afb6",
+    "04-흐름.excalidraw": "0e7e259c3085cb5e04ff69359db417abb440188e89ff4c4c9ffd4c83daa2aae6",
+    "04-흐름.svg": "44908cd5d96b9bb3fc6b8d5cc9e80f285313766f45e151b2fd9d1a36a939b98f",
+    "05-흐름.excalidraw": "ff8902594d74dd871c7b13b5233f9ccdcff5f2d431730c14b18d110cd91f1e63",
+    "05-흐름.svg": "621379cad880618bd2ef7b582ed4e1027c18cb143de05ffc146c541066840607"
+  }
+}

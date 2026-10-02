@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  c1["03절 CSV 기록<br>row 칸 있음"]:::tool
+  c2["make_unit_mark()<br>row 칸을 읽음"]:::flow
+  c3["[sample csv row.2]"]:::measure
+  h1["04절 HWPX 기록<br>section 칸 있음"]:::tool
+  h2["make_unit_mark()<br>section 칸을 읽지 않음"]:::flow
+  h3["[minimal-marker hwpx]<br>자리 칸이 표시에 없음"]:::measure
+  h4["make_section_mark()<br>section 칸을 읽음"]:::flow
+  h5["[minimal-marker hwpx section.1]"]:::measure
+  c1 --> c2
+  c2 --> c3
+  h1 --> h2
+  h2 --> h3
+  h1 --> h4
+  h4 --> h5

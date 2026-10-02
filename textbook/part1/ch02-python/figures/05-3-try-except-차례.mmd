@@ -1,0 +1,10 @@
+flowchart TD
+  %% classes
+  T["try 블록<br>read_items('missing.txt')"]:::flow
+  X["FileNotFoundError 발생<br>No such file or directory"]:::measure
+  S["print('읽은 줄 목록')<br>건너뜀"]
+  E["except FileNotFoundError as error<br>오류 메시지 출력"]:::flow
+  L["셀의 마지막 줄<br>셀의 마지막 줄까지 실행했습니다"]:::measure
+  T --> X
+  X -.->|건너뜀| S
+  X --> E --> L

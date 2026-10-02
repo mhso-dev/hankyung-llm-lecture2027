@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  L["다시 읽은 기록 5개<br>library-notes.json"]:::tool
+  C["기관 == 미르시립도서관<br>and 주제 in 대출 · 주차"]:::flow
+  Y["고른 기록 2개<br>E01 p.3 대출 · E01 p.5 주차"]:::measure
+  N["빠진 기록 3개<br>E01 p.2 휴관<br>E02 p.5 · E04 p.2 기관 다름"]
+  T["user 글<br>기록 두 줄 + 질문"]:::tool
+  E["메시지 3개 · 추정 입력 124<br>입력 가용분 440 안 True"]:::measure
+  L --> C
+  C --> Y
+  C -.-> N
+  Y --> T
+  T --> E

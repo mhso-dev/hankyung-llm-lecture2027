@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  ask["대화 기록 두 줄과<br>후속 질문"]:::tool
+  rewrite["답 모델이 질문 재작성<br>01절"]:::model
+  first["재작성한 질문으로 검색하고<br>첫 자리 거리 보기 · 06절"]:::flow
+  fix["답 모델이 보정 질문 쓰기<br>06절"]:::model
+  again["검색에 넣을 마지막 글로<br>다시 검색"]:::flow
+  write["답 모델이 앞 세 자리<br>원문으로 답 쓰기 · 01절"]:::model
+  row["기록 한 줄"]:::measure
+  ask --> rewrite
+  rewrite --> first
+  first -.-> fix
+  first -.-> again
+  fix --> again
+  again --> write
+  write --> row

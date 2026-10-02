@@ -1,0 +1,279 @@
+[
+  {
+    "run": "textbook/part3/qa/continuity-evidence/bundle-execution/ch09-rag-first-run-06-실험-하네스.ipynb",
+    "saved": "labs/part3/ch09-rag-first-run/notebooks/06-실험-하네스.ipynb",
+    "code_cells": 28,
+    "run_code_cells": 28,
+    "same_cells": 20,
+    "stream_split_only_cells": 1,
+    "diff_cells": 7,
+    "code_sha256_same": true,
+    "outputs_sha256_run": "79040ac557b8729992b8240ed69a6cea7cc7e438de88db48c3ce89c7780bf40b",
+    "outputs_sha256_saved": "ee22ab8e5415d59da7bf993f65bf0c835536428d04905e3e89b965c2e6923e61",
+    "saved_file_sha256": "a6960af4d046bf00a1954d71f376a719163e562bbd184cea477cc2baa2ea6992",
+    "diffs": [
+      {
+        "code_cell": 5,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -1,3 +1,3 @@",
+          "-고른 앞부분: labs/",
+          "-설정 파일 경로: labs/part3/ch09-rag-first-run/config.yaml",
+          "-평가셋 경로: labs/part3/ch11-evaluation/data/evaluation-queries.jsonl",
+          "+고른 앞부분: ../../../",
+          "+설정 파일 경로: ../../../part3/ch09-rag-first-run/config.yaml",
+          "+평가셋 경로: ../../../part3/ch11-evaluation/data/evaluation-queries.jsonl"
+        ]
+      },
+      {
+        "code_cell": 16,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -3,2 +3,2 @@",
+          "-E01 p.1 | 45 | 0.6491",
+          "-E01 p.2 | 498 | 0.5653",
+          "+E01 p.1 | 45 | 0.6492",
+          "+E01 p.2 | 498 | 0.5652"
+        ]
+      },
+      {
+        "code_cell": 18,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -3 +3 @@",
+          "-첫 검색 항목: {'doc_id': 'E01', 'chunk_id': 'ch09:6f9f83db90:0', 'page': 1, 'rank': 1, 'score': 0.6491}",
+          "+첫 검색 항목: {'doc_id': 'E01', 'chunk_id': 'ch09:6f9f83db90:0', 'page': 1, 'rank': 1, 'score': 0.6492}"
+        ]
+      },
+      {
+        "code_cell": 20,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -4 +4 @@",
+          "-미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2] 법정 공휴일에도 휴관하며, 공휴일이 월요일과 겹치면 그 다음 날인 화요일에도 휴관합니다. [E01 p.2]",
+          "+미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2]"
+        ]
+      },
+      {
+        "code_cell": 23,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -1 +1 @@",
+          "-기록 한 줄의 글자 수: 936",
+          "+기록 한 줄의 글자 수: 876"
+        ]
+      },
+      {
+        "code_cell": 24,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -6 +6 @@",
+          "-미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2] 법정 공휴일에도 휴관하며, 공휴일이 월요일과 겹치면 그 다음 날인 화요일에도 휴관합니다. [E01 p.2]",
+          "+미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2]"
+        ]
+      },
+      {
+        "code_cell": 25,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -4,2 +4,2 @@",
+          "-E01 p.1 | 45 | 0.6491",
+          "-E01 p.2 | 498 | 0.5653",
+          "+E01 p.1 | 45 | 0.6492",
+          "+E01 p.2 | 498 | 0.5652"
+        ]
+      }
+    ]
+  },
+  {
+    "run": "textbook/part3/qa/continuity-evidence/bundle-execution/ch10-document-processing-08-인덱싱-비교-실험.ipynb",
+    "saved": "labs/part3/ch10-document-processing/notebooks/08-인덱싱-비교-실험.ipynb",
+    "code_cells": 28,
+    "run_code_cells": 28,
+    "same_cells": 25,
+    "stream_split_only_cells": 1,
+    "diff_cells": 2,
+    "code_sha256_same": true,
+    "outputs_sha256_run": "a6fceaade42c486d90c04f73af0f651e45c3cf1d402135bdf852dab116620751",
+    "outputs_sha256_saved": "492eb3230b0e73cec21cfa91c0d89173f2767fd924e814222641af95b4ab2b86",
+    "saved_file_sha256": "72600e842b460c8fc700a787c7708bf01967c53a8c2f953893afbfb10880aada",
+    "diffs": [
+      {
+        "code_cell": 4,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -1 +1 @@",
+          "-고른 경로: .",
+          "+고른 경로: ../../../.."
+        ]
+      },
+      {
+        "code_cell": 21,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -5 +5 @@",
+          "-recursive | 100 | 245 | 1 | ['E01', 'E01', 'H03', 'M04', 'H03']",
+          "+recursive | 100 | 245 | 1 | ['E01', 'E01', 'M04', 'H03', 'H03']"
+        ]
+      }
+    ]
+  },
+  {
+    "run": "textbook/part3/qa/continuity-evidence/bundle-execution/ch11-evaluation-06-실험-로그와-자동-실행.ipynb",
+    "saved": "labs/part3/ch11-evaluation/notebooks/06-실험-로그와-자동-실행.ipynb",
+    "code_cells": 31,
+    "run_code_cells": 31,
+    "same_cells": 21,
+    "stream_split_only_cells": 1,
+    "diff_cells": 9,
+    "code_sha256_same": true,
+    "outputs_sha256_run": "2c75441916420eb122516c220a17d50502437dde6a057a18ab5a83f85b09a778",
+    "outputs_sha256_saved": "f3976a14f2d3faa912ade1641f873f1a1d055f20b5aa623c236afe253e55a716",
+    "saved_file_sha256": "d0edddc9c66ad36ba404ef01ca5a6825f913866af0961371a870a7c155c076bd",
+    "diffs": [
+      {
+        "code_cell": 4,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -1 +1 @@",
+          "-고른 경로: .",
+          "+고른 경로: ../../../.."
+        ]
+      },
+      {
+        "code_cell": 18,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -3,2 +3,2 @@",
+          "-  \"실행 ID\": \"embed-dev-20260921\",",
+          "-  \"실행 날짜\": \"2026-09-21\",",
+          "+  \"실행 ID\": \"embed-dev-20261001\",",
+          "+  \"실행 날짜\": \"2026-10-01\","
+        ]
+      },
+      {
+        "code_cell": 19,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -1 +1 @@",
+          "-남긴 파일 이름: notebook-run-20260921.json",
+          "+남긴 파일 이름: notebook-run-20261001.json"
+        ]
+      },
+      {
+        "code_cell": 21,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -2 +2 @@",
+          "-만들 보고서 이름: continuity-upstream-20260921.json",
+          "+만들 보고서 이름: continuity-upstream-20261001.json"
+        ]
+      },
+      {
+        "code_cell": 23,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -14 +14 @@",
+          "-  \"output\": \"labs/part3/ch11-evaluation/runs/continuity-upstream-20260921.json\"",
+          "+  \"output\": \"labs/part3/ch11-evaluation/runs/continuity-upstream-20261001.json\""
+        ]
+      },
+      {
+        "code_cell": 24,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -3 +3 @@",
+          "-실행 날짜: 2026-09-21",
+          "+실행 날짜: 2026-10-01"
+        ]
+      },
+      {
+        "code_cell": 26,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -2,7 +2,7 @@",
+          "-20260921T055009-ch09 | ch09 | 1 | 2 | None | None | None",
+          "-20260921T062600-ch10-01 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0",
+          "-20260921T062600-ch10-02 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0",
+          "-20260921T062600-ch10-03 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0",
+          "-20260921T062600-ch10-04 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0",
+          "-20260921T062600-ch10-05 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0",
+          "-20260921T062600-ch10-06 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0",
+          "+20261001T011536-ch09 | ch09 | 1 | 2 | None | None | None",
+          "+20261001T011548-ch10-01 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0",
+          "+20261001T011548-ch10-02 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0",
+          "+20261001T011548-ch10-03 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0",
+          "+20261001T011548-ch10-04 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0",
+          "+20261001T011548-ch10-05 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0",
+          "+20261001T011548-ch10-06 | ch10 | 1 | 5 | 1.0 | 0.2 | 1.0"
+        ]
+      },
+      {
+        "code_cell": 30,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -2 +2 @@",
+          "-만든 보고서 이름: upstream-top2-20260921.json",
+          "+만든 보고서 이름: upstream-top2-20261001.json"
+        ]
+      },
+      {
+        "code_cell": 31,
+        "kind": "outputs differ",
+        "diff": [
+          "--- saved",
+          "+++ run",
+          "@@ -2,7 +2,7 @@",
+          "-20260921T055009-ch09 | 2 | 2 | None | None",
+          "-20260921T062600-ch10-01 | 5 | 2 | 1.0 | 1.0",
+          "-20260921T062600-ch10-02 | 5 | 2 | 1.0 | 1.0",
+          "-20260921T062600-ch10-03 | 5 | 2 | 1.0 | 1.0",
+          "-20260921T062600-ch10-04 | 5 | 2 | 1.0 | 1.0",
+          "-20260921T062600-ch10-05 | 5 | 2 | 1.0 | 1.0",
+          "-20260921T062600-ch10-06 | 5 | 2 | 1.0 | 1.0",
+          "+20261001T011536-ch09 | 2 | 2 | None | None",
+          "+20261001T011548-ch10-01 | 5 | 2 | 1.0 | 1.0",
+          "+20261001T011548-ch10-02 | 5 | 2 | 1.0 | 1.0",
+          "+20261001T011548-ch10-03 | 5 | 2 | 1.0 | 1.0",
+          "+20261001T011548-ch10-04 | 5 | 2 | 1.0 | 1.0",
+          "+20261001T011548-ch10-05 | 5 | 2 | 1.0 | 1.0",
+          "+20261001T011548-ch10-06 | 5 | 2 | 1.0 | 1.0"
+        ]
+      }
+    ]
+  }
+]

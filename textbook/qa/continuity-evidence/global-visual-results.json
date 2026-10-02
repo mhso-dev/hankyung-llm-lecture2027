@@ -1,0 +1,1823 @@
+{
+  "generated_at": "2026-09-09T17:55:34.969731+00:00",
+  "scope": "Ch1-Ch12 chapter HTML plus textbook/part1/part2/part3 indices",
+  "viewport_widths": [
+    1280,
+    390
+  ],
+  "totals": {
+    "targets": 16,
+    "html": 103,
+    "views": 206,
+    "passed_views": 206,
+    "failed_views": 0,
+    "metrics": {
+      "small": 0,
+      "contrast": 0,
+      "clipped": 0,
+      "outside": 0,
+      "svgBounds": 0,
+      "brokenImages": 0,
+      "copyErrors": 0,
+      "failureErrors": 0,
+      "horizontal": 0
+    }
+  },
+  "representative_screenshots": [
+    {
+      "path": "textbook/qa/continuity-evidence/visual/ch04-data-tools/01-Pandas로-표-다루기-1280.png",
+      "sha256": "afae975f7f0a2479030098597188a685203f2da81e20d169fede59c243fc871a",
+      "visually_read": true
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/visual/ch04-data-tools/01-Pandas로-표-다루기-390.png",
+      "sha256": "cb43d6ec699dee56549ba7c2e7acf51c848d9b017b9d167efa76cc2e96bf0c28",
+      "visually_read": true
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/visual/ch07-prompt-engineering/index-1280.png",
+      "sha256": "55601e1140384f638304d2a41ffe333763ced26a396485b1dd43117111eb5992",
+      "visually_read": true
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/visual/ch07-prompt-engineering/index-390.png",
+      "sha256": "6df01097dd8838d43b2934bc1c488763308b2475f25ea5919d72a3974c9c04bc",
+      "visually_read": true
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/visual/ch12-retrieval-tuning/01-벡터-거리와-정확-검색-1280.png",
+      "sha256": "96663f6d4eb433a42f99a01c8bca579254eaac0275cfe73bb08abeb252cb384d",
+      "visually_read": true
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/visual/ch12-retrieval-tuning/01-벡터-거리와-정확-검색-390.png",
+      "sha256": "0062cdcb87443f9a85f9177659e6f180f677faa9ec768aba185503c5b58afb96",
+      "visually_read": true
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/visual/textbook/index-1280.png",
+      "sha256": "a6d061ea198e7206268cbc5eb7430a9c1f777192fe084ec2dcae933d5ae1c0ed",
+      "visually_read": true
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/visual/textbook/index-390.png",
+      "sha256": "e2dbfd733eaf56fae968ff3ef4f981f25459fc6fcdbd72e590b1c512570c3cad",
+      "visually_read": true
+    }
+  ],
+  "targets": [
+    {
+      "target": "textbook/part1/ch01-development-environment",
+      "report": "textbook/qa/continuity-evidence/visual/ch01-development-environment/visual-results.json",
+      "report_sha256": "a98b3860a28c0f1b67c68f92de18d3330a44ba6660de2395eed1a2caec1f5f94",
+      "report_mtime_ns": 1788974436767939497,
+      "latest_html_mtime_ns": 1788973675942236394,
+      "report_after_all_html": true,
+      "html_count": 6,
+      "view_count": 12,
+      "passed_views": 12,
+      "html": [
+        {
+          "path": "textbook/part1/ch01-development-environment/01-과정-지도와-학습-규칙.html",
+          "sha256": "5ba2acfdd8397f7c51436e4455d75c8f63bf87cd324b184afe1a2ddbf39d8692",
+          "mtime_ns": 1788973675941608079,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch01-development-environment/02-도구-설치와-터미널.html",
+          "sha256": "887fd4e19d72eb0bf4b4fc465f6306ff4a4ae6913a30982745fc619866ade18b",
+          "mtime_ns": 1788973675941711410,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch01-development-environment/03-Python과-가상환경.html",
+          "sha256": "17c44bc59cc4d2951ff52e70019d994413b881e043fa91bd197415fb8e9b343f",
+          "mtime_ns": 1788973675941911487,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch01-development-environment/04-첫-스크립트와-디버거.html",
+          "sha256": "4bb7b0b7ab7c0613904fc4886fc7a0fb92a78643500c817cae669eaf672d1695",
+          "mtime_ns": 1788973675942138272,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch01-development-environment/05-Git과-Docker-준비.html",
+          "sha256": "8a51e10be9776acac28510ac0fa2267626ec463289c22d821b3be8a5b80e1f75",
+          "mtime_ns": 1788973675942236394,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch01-development-environment/index.html",
+          "sha256": "2e6d090a628bd3178195c64c89aa77835c2f93781b1bdea5eea6fc4562f7d304",
+          "mtime_ns": 1788973675941461251,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part1/ch02-python",
+      "report": "textbook/qa/continuity-evidence/visual/ch02-python/visual-results.json",
+      "report_sha256": "40a1b1174a3484b9507eede95a8e005697ff39a7b518e4d0602b69d3e9fef8b8",
+      "report_mtime_ns": 1788974441277402587,
+      "latest_html_mtime_ns": 1788973676027894461,
+      "report_after_all_html": true,
+      "html_count": 13,
+      "view_count": 26,
+      "passed_views": 26,
+      "html": [
+        {
+          "path": "textbook/part1/ch02-python/01-변수와-자료형.html",
+          "sha256": "504b7afb591f20c902ea785d82c24fe71ba0bf63a8d8577c9211a882d74d6c89",
+          "mtime_ns": 1788973676023568758,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/02-조건문과-반복문.html",
+          "sha256": "f1318f608ed865de251a3a183c7a0de7342137f0e42f856e3bdde28828252c10",
+          "mtime_ns": 1788973676023663589,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/03-자료구조.html",
+          "sha256": "7b756dd75ba89c944b7d5791ab0b9d0b1379e188fc9f81795d3d4c99ecc8a4f6",
+          "mtime_ns": 1788973676023746295,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/04-함수.html",
+          "sha256": "49178cf4c1426a71460cd75bec20b3f2879c66f62eda7c73fd5cebe87f5c2ee5",
+          "mtime_ns": 1788973676023929956,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/05-파일과-예외.html",
+          "sha256": "53ee95a143cf0c1f18c06e384dbdadf9b165b2b334c710ea296c64a0ce08c6c9",
+          "mtime_ns": 1788973676024099784,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/06-클래스.html",
+          "sha256": "cbb22b049415debc8678547159ec3efbfaa627aed1dda26777b11c844baf0d43",
+          "mtime_ns": 1788973676024425566,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/07-모듈과-타입힌트.html",
+          "sha256": "674405f2d4dda2d886b09c94f3c3ae666ee3a48878be4c3403c0ab654624313d",
+          "mtime_ns": 1788973676024579770,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/08-pytest.html",
+          "sha256": "089f4a6cdc75de234337c85026a16641674b155ec583e9baa6cfa3187610a065",
+          "mtime_ns": 1788973676024740265,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/09-데코레이터와-컨텍스트-매니저.html",
+          "sha256": "b8f846925dbeb6aa81d40534df63a6f87c2ca394959223b202b79cbf948ce2aa",
+          "mtime_ns": 1788973676024997757,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/10-Pydantic.html",
+          "sha256": "9380301feb40e06284d74fa51849d661e609250834faff097ae88924d328231a",
+          "mtime_ns": 1788973676025063505,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/11-패키징과-테스트-격리.html",
+          "sha256": "1ff6f37f30bfb29ef348e6b12a6ce3711733533907133757c8092e84025ccd6d",
+          "mtime_ns": 1788973676026440213,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/12-async와-await.html",
+          "sha256": "88d43e99e9b1f6c0d1ea9a8bd006b238a1d5bbd36df2e4c1181e940e60e565db",
+          "mtime_ns": 1788973676026554251,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch02-python/index.html",
+          "sha256": "d088e0991470713b489ca551b97ca389398b6dcf8b9ceb42fa4966f3e01af947",
+          "mtime_ns": 1788973676027894461,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part1/ch03-git-github",
+      "report": "textbook/qa/continuity-evidence/visual/ch03-git-github/visual-results.json",
+      "report_sha256": "d3d0dfd17ef782c0debdbd157a6014fd85111a9f5d018fabc1de320c28d87030",
+      "report_mtime_ns": 1788974439619541020,
+      "latest_html_mtime_ns": 1788973676101648389,
+      "report_after_all_html": true,
+      "html_count": 6,
+      "view_count": 12,
+      "passed_views": 12,
+      "html": [
+        {
+          "path": "textbook/part1/ch03-git-github/01-커밋과-gitignore.html",
+          "sha256": "df4d91c8d4bda14383fc5bbbcdf6b315475a91bc7ca99009d7a7079513c46c55",
+          "mtime_ns": 1788973676100876496,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch03-git-github/02-GitHub-Flow와-PR-리뷰.html",
+          "sha256": "ede1085b09468f104c3ace53c4007cf17500f29cf8c6acdf8613886febef9245",
+          "mtime_ns": 1788973676101184403,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch03-git-github/03-병합-충돌-해결.html",
+          "sha256": "171e9973025586e5a607361f5e6718631204c6c793f3b483012530c78b0e79e4",
+          "mtime_ns": 1788973676101268692,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch03-git-github/04-revert-reflog-worktree.html",
+          "sha256": "64a5794ab0d18c34799f85cffc8951e8c5a970a8e70e7b6590a4917a7988f63a",
+          "mtime_ns": 1788973676101357731,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch03-git-github/05-시크릿-이력-정리와-예방.html",
+          "sha256": "ca1065e2eaf15ef30ceb3779be1dc20ba54b136e4b2ec9cd5cd12107e08721e7",
+          "mtime_ns": 1788973676101648389,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch03-git-github/index.html",
+          "sha256": "a981b61dcd0da90b95f500a7aa541c2556b42aa5d1204a8e47024b7da1049815",
+          "mtime_ns": 1788973676100747083,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part1/ch04-data-tools",
+      "report": "textbook/qa/continuity-evidence/visual/ch04-data-tools/visual-results.json",
+      "report_sha256": "835f33cec218eeae4408d37579557555149842d3815ae8de047ba92d4a7501ab",
+      "report_mtime_ns": 1788976137419843299,
+      "latest_html_mtime_ns": 1788975363445779320,
+      "report_after_all_html": true,
+      "html_count": 6,
+      "view_count": 12,
+      "passed_views": 12,
+      "html": [
+        {
+          "path": "textbook/part1/ch04-data-tools/01-Pandas로-표-다루기.html",
+          "sha256": "cf3ab823011a30c278f330cdd4bf69ec9128a26d40663df86f99fe4f347aa341",
+          "mtime_ns": 1788975363445414573,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch04-data-tools/02-관계형-테이블과-키.html",
+          "sha256": "ac9bab3f002993adac7c9dc79298e55e1f5368f8f0ce5ae17201c40d8ba2c080",
+          "mtime_ns": 1788975363445517114,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch04-data-tools/03-SQL로-조회-함수-만들기.html",
+          "sha256": "8fc164a5a9812215117507f748c009fc86bd1e5d20cdc94a298b447695a86d79",
+          "mtime_ns": 1788975363445598946,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch04-data-tools/04-REST와-페이지네이션.html",
+          "sha256": "a645c589b86ae4e52f1ffac5b7f751ff80022d32aa1c8e5b3f2178a5ebafd5ec",
+          "mtime_ns": 1788975363445683737,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch04-data-tools/05-문서-파싱과-스크래핑.html",
+          "sha256": "af7a71ade1a3add1c090f130465e677c851bcebbc1198faf479f5f3182ea9313",
+          "mtime_ns": 1788975363445779320,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch04-data-tools/index.html",
+          "sha256": "93e04c7d76968e0320d28fcc3df2c05c61afa18e00965d67082a69b61c4e9167",
+          "mtime_ns": 1788975363445197659,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part1/ch05-llm-principles",
+      "report": "textbook/qa/continuity-evidence/visual/ch05-llm-principles/visual-results.json",
+      "report_sha256": "1d02f5d7a85dca8284b16822a9f1cd12ccbfd72c080ca244bd3624fa737a750b",
+      "report_mtime_ns": 1788974450412171069,
+      "latest_html_mtime_ns": 1788974163825863547,
+      "report_after_all_html": true,
+      "html_count": 9,
+      "view_count": 18,
+      "passed_views": 18,
+      "html": [
+        {
+          "path": "textbook/part1/ch05-llm-principles/01-토큰화와-한국어-효율.html",
+          "sha256": "f010101984ea5960572fd53b51ce8c964e6d9cd58d6ff721deaf62165b118e2d",
+          "mtime_ns": 1788974163825044280,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch05-llm-principles/02-임베딩과-의미-유사도.html",
+          "sha256": "d358ff6d14b7fa7503f892bc51a5afc8bed28d8b7450b38ab614d5f0d524dffb",
+          "mtime_ns": 1788974163825177359,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch05-llm-principles/03-어텐션-직관.html",
+          "sha256": "868c48b1987576143328b15d0ffe974ee8c198624c54983202db2d992832b3ff",
+          "mtime_ns": 1788974163825269981,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch05-llm-principles/04-컨텍스트-윈도.html",
+          "sha256": "856ec0ff8fe07a9646aec17fd046bb8ccb3dd6066c32336760e259c35e5f9005",
+          "mtime_ns": 1788974163825456851,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch05-llm-principles/05-컨텍스트-로트.html",
+          "sha256": "58aab0c7e92d172c9660221d0d9dca39e8bc6190de9815cd496faa7d7278f54e",
+          "mtime_ns": 1788974163825530307,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch05-llm-principles/06-temperature와-샘플링.html",
+          "sha256": "f5f8185c84b3aa2a940bba81fca617fc0d590b6c88acff37a41f74c152a8f59c",
+          "mtime_ns": 1788974163825609429,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch05-llm-principles/07-환각의-구조적-원인.html",
+          "sha256": "cd710e0510f37eed791f76decdd9460391f7c63315df89e327fc25228a993902",
+          "mtime_ns": 1788974163825778716,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch05-llm-principles/08-모델-선택-기준.html",
+          "sha256": "18754309a57aeaaf84e276cbf7e3c5d4ec713a79b36a06cb0a6eb6e5044e302a",
+          "mtime_ns": 1788974163825863547,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part1/ch05-llm-principles/index.html",
+          "sha256": "51a75ebd935e41dec7493f6ba463407658b5d2816ec50e55ef1103edf937e475",
+          "mtime_ns": 1788974163824673000,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part2/ch06-langchain-start",
+      "report": "textbook/qa/continuity-evidence/visual/ch06-langchain-start/visual-results.json",
+      "report_sha256": "6d0f86f54d5bc1ad442be2271d1846ccfeaa96e135d9f270afd428ca8eff82c0",
+      "report_mtime_ns": 1788976105212510202,
+      "latest_html_mtime_ns": 1788975744728515807,
+      "report_after_all_html": true,
+      "html_count": 7,
+      "view_count": 14,
+      "passed_views": 14,
+      "html": [
+        {
+          "path": "textbook/part2/ch06-langchain-start/01-계층-지도와-첫-호출.html",
+          "sha256": "2c82ff1c923079119e986597bafa5766a197c559f728590945c07ce0df869d5f",
+          "mtime_ns": 1788975744727835264,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch06-langchain-start/02-메시지와-제공자-전환.html",
+          "sha256": "12c4b5cfc22c0ed069c25ee66e73da1e0218be6af0ed2dc01571dd684af335ec",
+          "mtime_ns": 1788975744727931181,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch06-langchain-start/03-구조화-출력과-검증.html",
+          "sha256": "d4c148f98b35f49de26888b599c1ea925b062d21fe65068f9af5771510787cbc",
+          "mtime_ns": 1788975744728023014,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch06-langchain-start/04-스트리밍과-content-blocks.html",
+          "sha256": "75756d7d43b7d1296cc53e4c0bfbcc09ac118208a09dc9cb274bcf8fc0f51fc9",
+          "mtime_ns": 1788975744728236807,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch06-langchain-start/05-타임아웃-재시도-폴백.html",
+          "sha256": "1e9e07dc973359f8f127922326aa1c81a3f1d5ea1bc7288ed68c20135d0d0957",
+          "mtime_ns": 1788975744728318057,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch06-langchain-start/06-토큰-비용-지연-비교.html",
+          "sha256": "8b5fedcd638fe9076a0c90d800f9d7e0a5764f0abd47a04198af85bb81fcbc0f",
+          "mtime_ns": 1788975744728515807,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch06-langchain-start/index.html",
+          "sha256": "b2ae66691b6ad055e2205400b51e6a51a5bd062c5f283883484c583797cd2327",
+          "mtime_ns": 1788975744727664180,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part2/ch07-prompt-engineering",
+      "report": "textbook/qa/continuity-evidence/visual/ch07-prompt-engineering/visual-results.json",
+      "report_sha256": "7df612836d18df19c368dc1a7959e732d0967061998848525b62cd4803c3f070",
+      "report_mtime_ns": 1788976473549557229,
+      "latest_html_mtime_ns": 1788976448213153415,
+      "report_after_all_html": true,
+      "html_count": 9,
+      "view_count": 18,
+      "passed_views": 18,
+      "html": [
+        {
+          "path": "textbook/part2/ch07-prompt-engineering/01-역할별-메시지와-제약.html",
+          "sha256": "5148226a127a7a2fb491a85a3ed826d719de0735e3bd9e15ba8c20ea98d9514e",
+          "mtime_ns": 1788976448212118579,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch07-prompt-engineering/02-페르소나와-과업-제약.html",
+          "sha256": "c99f15e66bd6ebf5e65b826b354ec809c9e8365c40bfd3c3c67c433efcc52827",
+          "mtime_ns": 1788976448212280996,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch07-prompt-engineering/03-Few-shot-예시-선택.html",
+          "sha256": "6e373e8d5bd6f7f502c3203e34f28ed6fc03fe021b7296f95568996fc4ac04ce",
+          "mtime_ns": 1788976448212462663,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch07-prompt-engineering/04-ChatPromptTemplate과-MessagesPlaceholder.html",
+          "sha256": "ce99876fbe1b86136900e3c6bc9a1edd5a7f12ba8367986fb9ba73a6ead59ec9",
+          "mtime_ns": 1788976448212608414,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch07-prompt-engineering/05-CoT와-ReAct의-경계.html",
+          "sha256": "a83b79cb93c1fa44fcdc5ae67f17d3db7a91f916a25a9f21b87d1f0884537e4c",
+          "mtime_ns": 1788976448212755247,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch07-prompt-engineering/06-Self-Consistency와-표본-합의.html",
+          "sha256": "248f19fa515c7cdbfa4269d5d19f614867acb49abe29f4aa85881939732fb60a",
+          "mtime_ns": 1788976448212896623,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch07-prompt-engineering/07-구조화-출력-프롬프트-진단.html",
+          "sha256": "cdc5f15cdc76dc52cc1102e4592647374694ed2053ce598feb7ff4616b064100",
+          "mtime_ns": 1788976448212968956,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch07-prompt-engineering/08-프롬프트-버전과-AB-비교.html",
+          "sha256": "d7660770012030c8be82d510066ca186997dbc71b0d552242afcff4a02788546",
+          "mtime_ns": 1788976448213153415,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch07-prompt-engineering/index.html",
+          "sha256": "235c5449463cf022580ebb24bf1dd476fd527f4199fb6b5541acd3fc05b3c5b5",
+          "mtime_ns": 1788976448211776245,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part2/ch08-context-engineering",
+      "report": "textbook/qa/continuity-evidence/visual/ch08-context-engineering/visual-results.json",
+      "report_sha256": "e704799068c051a57ba5f131cadbb8a204c87ca7698a376d4fd280533c5dcdc7",
+      "report_mtime_ns": 1788976109030864663,
+      "latest_html_mtime_ns": 1788975769104233033,
+      "report_after_all_html": true,
+      "html_count": 7,
+      "view_count": 14,
+      "passed_views": 14,
+      "html": [
+        {
+          "path": "textbook/part2/ch08-context-engineering/01-컨텍스트와-토큰-예산.html",
+          "sha256": "1d924f3445b6317251c81bb97e770e950de7e365917f9936b18759b5c436b615",
+          "mtime_ns": 1788975769094407260,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch08-context-engineering/02-Write와-Select.html",
+          "sha256": "cff998ca89a6c793d7267c7a2951fd1db3016714ebd921e85e1d83723214d6f8",
+          "mtime_ns": 1788975769097901977,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch08-context-engineering/03-Compress와-Isolate.html",
+          "sha256": "e2c6162df4499b51769295d32abf189428d8776f3cad5d84e763192fec03341a",
+          "mtime_ns": 1788975769099687023,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch08-context-engineering/04-네-가지-실패-모드.html",
+          "sha256": "18ca1801d25f61c9e0b508e496a58f68790b7268e59d1f45b434e0c8270f6e07",
+          "mtime_ns": 1788975769101335443,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch08-context-engineering/05-Context-rot-측정.html",
+          "sha256": "48ad25d54aa63b0479f8c30a608a20206bf6b7b0fc15791b062a910b45c44091",
+          "mtime_ns": 1788975769102616404,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch08-context-engineering/06-단계적-공개와-설계-비교.html",
+          "sha256": "4dac325577dd4f0522695f57417d03cdb038b5e4cb12e9d3b69ed9d20c835db3",
+          "mtime_ns": 1788975769104233033,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part2/ch08-context-engineering/index.html",
+          "sha256": "ea87325b5e6e269b26494b1f69a7d25bca7341f7acf546d704d4297711886245",
+          "mtime_ns": 1788975769064878984,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part3/ch09-rag-first-run",
+      "report": "textbook/qa/continuity-evidence/visual/ch09-rag-first-run/visual-results.json",
+      "report_sha256": "5bf4c59a542e88e45a1ef5e4079750c235c05088ca04067769a3d53cc455fb5f",
+      "report_mtime_ns": 1788974829327645556,
+      "latest_html_mtime_ns": 1788974441559288663,
+      "report_after_all_html": true,
+      "html_count": 7,
+      "view_count": 14,
+      "passed_views": 14,
+      "html": [
+        {
+          "path": "textbook/part3/ch09-rag-first-run/01-RAG-지도.html",
+          "sha256": "f839b715a90e8bbff31a95c9cc3a372bcacce943b46a56315674d3e4cdbda6a9",
+          "mtime_ns": 1788974441520791367,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch09-rag-first-run/02-로더와-스플리터.html",
+          "sha256": "ae5deb6688834776e7b706a5bf41d6c8e9b7ae88720c76a74530cc5d78a46237",
+          "mtime_ns": 1788974441522309894,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch09-rag-first-run/03-임베딩과-벡터스토어.html",
+          "sha256": "b8c2268eb4b7258a9bec0878e2b1d2b9999931a82ba9fb3ec4b93df604300bf3",
+          "mtime_ns": 1788974441523324468,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch09-rag-first-run/04-생성과-출처-인용.html",
+          "sha256": "a182f4d2294cf6c830832ceb79a4cfb5e5d1839028c74d1662040c388c6772da",
+          "mtime_ns": 1788974441524309417,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch09-rag-first-run/05-첫-실패-보기.html",
+          "sha256": "e73b95323f2a61cfd32a7160f67504cfaf6116989846d0c9cd95c260c4dc2fe5",
+          "mtime_ns": 1788974441537584372,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch09-rag-first-run/06-실험-하네스.html",
+          "sha256": "7545e0d0fd520c663dedec00ee039fe2bb3bb12c920f094c11306a8fb3945f91",
+          "mtime_ns": 1788974441559288663,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch09-rag-first-run/index.html",
+          "sha256": "f2317cd2017a74a789310962385170b94a49fe754194c2faa0fc3ddbe8bacfe2",
+          "mtime_ns": 1788974441481819993,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part3/ch10-document-processing",
+      "report": "textbook/qa/continuity-evidence/visual/ch10-document-processing/visual-results.json",
+      "report_sha256": "36898389743aeab2a13172a42dbf09793a9f95f73a5109c5bbf4f34692db3bd0",
+      "report_mtime_ns": 1788974830102439007,
+      "latest_html_mtime_ns": 1788974441631308052,
+      "report_after_all_html": true,
+      "html_count": 9,
+      "view_count": 18,
+      "passed_views": 18,
+      "html": [
+        {
+          "path": "textbook/part3/ch10-document-processing/01-문서와-메타데이터.html",
+          "sha256": "f3bcf449167ecc098a00eedf5038440179895304305e9302039ee48fa4b8eafe",
+          "mtime_ns": 1788974441623814541,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch10-document-processing/02-PDF와-표-OCR.html",
+          "sha256": "b080b9c2d5d4666ef0ceeb04add4b8d4b3d0bfdab3f1a66d79ae9229064cef45",
+          "mtime_ns": 1788974441625309943,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch10-document-processing/03-DOCX-HTML-CSV.html",
+          "sha256": "168439505c0c71f7e92e6ff958c7131be221f2856f8ca6cf10548d0891371245",
+          "mtime_ns": 1788974441626331683,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch10-document-processing/04-HWP와-HWPX.html",
+          "sha256": "b91e9727ae4aa93419d780ab5abcb18e4f6b4aef567cced83424ee1ccdbc9943",
+          "mtime_ns": 1788974441627354215,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch10-document-processing/05-문자-재귀-토큰-청킹.html",
+          "sha256": "a59bfb928b2ba0fda60b1c2d5134c5b56bb4fb874727dab6a82d7055c916735e",
+          "mtime_ns": 1788974441628315331,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch10-document-processing/06-구조와-시맨틱-청킹.html",
+          "sha256": "a3d1590c660e89b433793c538f85c1cc867022d460a096c29bc5bb589f9c8ccb",
+          "mtime_ns": 1788974441629257905,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch10-document-processing/07-한국어-임베딩과-캐시.html",
+          "sha256": "1d86627b0ae0322e324b494b58eaaee9899ce9866552593fb8723fa61ae4e4cf",
+          "mtime_ns": 1788974441630242146,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch10-document-processing/08-인덱싱-비교-실험.html",
+          "sha256": "5aec8cb675c4c88bfe3487b29eb9367dd31fd578b5ccef9658d7f537fcf3618a",
+          "mtime_ns": 1788974441631308052,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch10-document-processing/index.html",
+          "sha256": "b11d4a2035da7f4997b33ec9b2b53e7b7eb76106c4c3ba0a83ffae83faa45682",
+          "mtime_ns": 1788974441622426096,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part3/ch11-evaluation",
+      "report": "textbook/qa/continuity-evidence/visual/ch11-evaluation/visual-results.json",
+      "report_sha256": "39ba01f9b6278b445d88dde0137793c728bc4f1276c94b4fa82c0c46eb147a9b",
+      "report_mtime_ns": 1788974826715830138,
+      "latest_html_mtime_ns": 1788974745666934965,
+      "report_after_all_html": true,
+      "html_count": 7,
+      "view_count": 14,
+      "passed_views": 14,
+      "html": [
+        {
+          "path": "textbook/part3/ch11-evaluation/01-질의셋과-정답-문서-ID.html",
+          "sha256": "0e31751c83c03560085dd5d5947328326e77321ff7314cf3f5e2eb95b76d1652",
+          "mtime_ns": 1788974745665832726,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch11-evaluation/02-Recall-at-50.html",
+          "sha256": "d37d0411168e26f1dc9a22aa114192cb789c639172ff8cd5127ee0dd2e717907",
+          "mtime_ns": 1788974745666020724,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch11-evaluation/03-Precision-at-5.html",
+          "sha256": "547007b81811b82497bc58dbee55da454c7f85fc916f846a3c09722ac2e7f47f",
+          "mtime_ns": 1788974745666190264,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch11-evaluation/04-nDCG-at-5.html",
+          "sha256": "b5cb05fddd92f2240b7754462653e4ac4177eaee03dadace62db3c6dc2259607",
+          "mtime_ns": 1788974745666387428,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch11-evaluation/05-조건별-평가와-오류-분류.html",
+          "sha256": "7cd698df00eaa3f6fa253961e81883d20405dd20eeb514efd36e722005b58e79",
+          "mtime_ns": 1788974745666588093,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch11-evaluation/06-실험-로그와-자동-실행.html",
+          "sha256": "dd6bc64757b1fe6d313c2c43b810d2ae28c9e6db7649b300fc6566b1bf605a81",
+          "mtime_ns": 1788974745666934965,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch11-evaluation/index.html",
+          "sha256": "99068a9b8e3532356eeacf4e0b770ab40be24f0c11a8363d54e666db766de2f7",
+          "mtime_ns": 1788974745665431479,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part3/ch12-retrieval-tuning",
+      "report": "textbook/qa/continuity-evidence/visual/ch12-retrieval-tuning/visual-results.json",
+      "report_sha256": "49352bfcd3f7e511c7924df7b5e7208cbafc41836e1a1242addfda27313ffbaf",
+      "report_mtime_ns": 1788976232867067593,
+      "latest_html_mtime_ns": 1788976164501090339,
+      "report_after_all_html": true,
+      "html_count": 13,
+      "view_count": 26,
+      "passed_views": 26,
+      "html": [
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/01-벡터-거리와-정확-검색.html",
+          "sha256": "b0313c1c9c3e44d02d8603104d0de13d12fde3a13f0de1580eb8f713c65d7646",
+          "mtime_ns": 1788976164498025499,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/02-pgvector와-HNSW.html",
+          "sha256": "6da0d3b9d397fee76d71923401533d9f7a123180ee94ca7c9f91455678553ad0",
+          "mtime_ns": 1788976164498295250,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/03-메타데이터-필터와-iterative-scan.html",
+          "sha256": "16fff7962334c82fd52f7a53ce5bff519f5ed0e2daf99e5a92dc99a9877c6267",
+          "mtime_ns": 1788976164498574334,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/04-한국어-Kiwi와-BM25.html",
+          "sha256": "d28e3317dc4ab308138e9f2b9d167093387307ad8c8f9f355fbf8e096e535c91",
+          "mtime_ns": 1788976164498842626,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/05-dense와-sparse-비교.html",
+          "sha256": "97621ad14f71d9dc72d6e31327d702521d152b9b14c1471c0f94d0f0eb948fa2",
+          "mtime_ns": 1788976164499359294,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/06-RRF-하이브리드-검색.html",
+          "sha256": "7cb38fc40545773cf1fe539cf8912fe81bc2c9631568f05b0b55aa9919453ca8",
+          "mtime_ns": 1788976164499854295,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/07-cross-encoder-리랭킹.html",
+          "sha256": "34b101c0fdc77a9281cf8ede4f36ffeb1fe16d38ddb330c89e06d4277a9c2c32",
+          "mtime_ns": 1788976164500087212,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/08-후보-수와-리랭커-비교.html",
+          "sha256": "5d11bf664cb2360f6ef13258104278b1edfbdd1e0e6946549cfb9568f4ea215b",
+          "mtime_ns": 1788976164500201046,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/09-Parent-document-검색.html",
+          "sha256": "9cab2fa3618c2416a31fd6de03399d532d77f53de5a16b3ac2ee8adb430c958a",
+          "mtime_ns": 1788976164500474463,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/10-MMR-다양성-선택.html",
+          "sha256": "6bd751a7eafa279dedea0e1d3df65c0423bd593d9071f4ea1aca7e2cd248e125",
+          "mtime_ns": 1788976164500678755,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/11-질문-재작성과-검색.html",
+          "sha256": "8bbc7e3a9e0da456707d6d03901ac79d9a7fd657f5d85beaedc57a7ee3b4aa4e",
+          "mtime_ns": 1788976164500833214,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/12-종합-튜닝과-실험-로그.html",
+          "sha256": "c4bc856c23e292c1616cdcdf5e63a9e552576e5936275fac424ae4cb216327d0",
+          "mtime_ns": 1788976164501090339,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        },
+        {
+          "path": "textbook/part3/ch12-retrieval-tuning/index.html",
+          "sha256": "020e20250aa5b9a9c6a999d2cd81271040e3926b2f46ed642a55638cb73ed66f",
+          "mtime_ns": 1788976164497658915,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook",
+      "report": "textbook/qa/continuity-evidence/visual/textbook/visual-results.json",
+      "report_sha256": "d94ef96817ad3cfc379a202a905e803ad0ccb7628d509827d343e0f4c895d509",
+      "report_mtime_ns": 1788976233307640316,
+      "latest_html_mtime_ns": 1788976189851181393,
+      "report_after_all_html": true,
+      "html_count": 1,
+      "view_count": 2,
+      "passed_views": 2,
+      "html": [
+        {
+          "path": "textbook/index.html",
+          "sha256": "5f5722674dc691c84000124184076d1bc56f3a8735576f4ff92b506d76835d49",
+          "mtime_ns": 1788976189851181393,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part1",
+      "report": "textbook/qa/continuity-evidence/visual/part1/visual-results.json",
+      "report_sha256": "d94ef96817ad3cfc379a202a905e803ad0ccb7628d509827d343e0f4c895d509",
+      "report_mtime_ns": 1788976233715967381,
+      "latest_html_mtime_ns": 1788976151983166716,
+      "report_after_all_html": true,
+      "html_count": 1,
+      "view_count": 2,
+      "passed_views": 2,
+      "html": [
+        {
+          "path": "textbook/part1/index.html",
+          "sha256": "1e453abe9db59653dd8be47f51efd1c130cda50e43ac394d899f4570aaa17c3f",
+          "mtime_ns": 1788976151983166716,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part2",
+      "report": "textbook/qa/continuity-evidence/visual/part2/visual-results.json",
+      "report_sha256": "d94ef96817ad3cfc379a202a905e803ad0ccb7628d509827d343e0f4c895d509",
+      "report_mtime_ns": 1788976234130009085,
+      "latest_html_mtime_ns": 1788976152385409559,
+      "report_after_all_html": true,
+      "html_count": 1,
+      "view_count": 2,
+      "passed_views": 2,
+      "html": [
+        {
+          "path": "textbook/part2/index.html",
+          "sha256": "eb655269b4dd23749bcb3cc4eed4e5610c384561804ad5464648e0f59e941728",
+          "mtime_ns": 1788976152385409559,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "textbook/part3",
+      "report": "textbook/qa/continuity-evidence/visual/part3/visual-results.json",
+      "report_sha256": "d94ef96817ad3cfc379a202a905e803ad0ccb7628d509827d343e0f4c895d509",
+      "report_mtime_ns": 1788976234538787026,
+      "latest_html_mtime_ns": 1788976177805096523,
+      "report_after_all_html": true,
+      "html_count": 1,
+      "view_count": 2,
+      "passed_views": 2,
+      "html": [
+        {
+          "path": "textbook/part3/index.html",
+          "sha256": "4bc0e2a1e75e4622a0e1a9f8ba5a33c9d766326934c8fdacfe98867cd3a2a0fb",
+          "mtime_ns": 1788976177805096523,
+          "views": [
+            {
+              "width": 1280,
+              "passed": true
+            },
+            {
+              "width": 390,
+              "passed": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

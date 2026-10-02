@@ -1,0 +1,247 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ainvoke 요청 응답 — Ch 30 · FastAPI로 Agent 서빙</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 서비스화 &amp; 배포 · Ch 30 · FastAPI로 Agent 서빙</p>
+<h1>ainvoke 요청 응답</h1><div class="meta"><span>강의 1h</span><span>실습 2.5h</span><span>새 용어 4</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2.5h | 코드 Jupyter Notebook | 새 용어 4 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>HTTP 요청을 Agent 상태로 변환해 실제 `ainvoke`를 호출할 수 있습니다.</li><li>최종 상태에서 공개할 답만 골라 응답 모델을 만들 수 있습니다.</li><li>예외와 시간 초과를 HTTP 오류로 바꿀 위치를 설명할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>Agent를 일반 동기 함수처럼 호출하면 비동기 서버의 장점을 잃습니다. 그래프의 최종 상태를 그대로 반환하면 내부 메시지와 중간 결과도 API에 섞입니다. 서비스 계층은 HTTP 데이터와 Agent 상태 사이를 명시적으로 변환해야 합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch21에서 Agent의 입력과 결과가 상태 사전임을 확인했습니다. Ch25에서는 단일 실행과 스트리밍이 같은 실행 객체의 다른 소비 방법임을 배웠습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><p>택배 창구는 주소와 연락처를 내부 운송 형식으로 바꾸고 결과 중 송장 번호와 상태만 고객에게 줍니다. 내부 분류 코드까지 모두 공개하지 않습니다. FastAPI 라우트도 요청과 Agent 상태 사이에서 같은 경계 변환을 맡습니다.</p><p>`ainvoke`는 비동기 단일 실행 메서드입니다. 호출자는 `await`로 최종 상태를 기다리지만 그동안 이벤트 루프는 다른 요청을 처리할 수 있습니다. 이 교재의 객체는 `StateGraph`를 컴파일한 실제 LangGraph입니다. 입력은 `{'messages': [question]}`이고 출력에는 입력 메시지와 `answer`가 있습니다.</p><p>라우트는 결과의 `answer`만 `ChatResponse`로 옮기고 요청의 `thread_id`를 함께 반환합니다. 이 변환을 명시하면 Agent 내부 키가 추가되어도 외부 계약을 유지할 수 있습니다. 반대로 외부 필드를 바꾸려면 Pydantic 모델과 변환 코드, OpenAPI 변경을 함께 검토합니다.</p><p>외부 모델 호출에는 완료 시간이 보장되지 않습니다. DNS, 공급자 대기열, 네트워크, 도구가 모두 지연 원인입니다. `asyncio.wait_for`로 전체 Agent 실행 시간을 제한하고 단일 응답에서는 504로 바꿉니다. 모델 클라이언트 timeout만 두면 여러 도구를 포함한 전체 실행 시간이 상한을 넘을 수 있습니다.</p><p>예외 원문에는 내부 경로나 공급자 정보가 포함될 수 있습니다. 로그에는 요청 식별자와 원인 예외를 남기고 공개 응답에는 안정적인 오류 코드와 사용자가 취할 행동을 담습니다. 시간 초과만 기록하지 말고 모델과 도구별 소요 시간도 측정해야 느린 단계를 찾을 수 있습니다.</p><h3>코드 읽기와 개념 경계</h3><p><code>await agent.ainvoke(state)</code>는 상태 하나를 입력해 그래프가 끝날 때까지 기다린 뒤 최종 상태 사전을 반환합니다. <code>await</code>는 현재 요청의 결과가 필요하다는 뜻이면서, 기다리는 동안 이벤트 루프가 다른 작업을 처리할 수 있게 하는 지점입니다. 이 예제의 <code>state</code>에는 <code>messages</code>가 있고, 반환값의 <code>answer</code>와 <code>messages</code>는 각각 공개할 답과 실행에 사용된 상태를 나타냅니다. 화면에 <code>print</code>한 값은 반환 사전 전체가 아니라 학습을 위해 선택한 일부입니다.</p><p>단일 응답과 스트리밍은 같은 Agent를 소비하는 두 방식입니다. 최종 결과가 한 번에 필요한 저장·평가 작업에는 <code>ainvoke</code>가 맞고, 중간 조각을 사용자에게 보여 주려면 다음 절의 <code>astream</code>을 사용합니다. 예외가 발생했을 때 내부 예외 문자열을 그대로 HTTP 응답으로 내보내지 않고, 로그의 원인 정보와 공개 오류 코드를 분리합니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 430" style="width:380px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="요청 스키마의 질문이 Agent 상태가 되고 ainvoke의 최종 상태에서 답을 골라 응답 스키마로 반환합니다."><title>요청 스키마의 질문이 Agent 상태가 되고 ainvoke의 최종 상태에서 답을 골라 응답 스키마로 반환합니다.</title><defs><marker id="03-흐름-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190,85 L190,116" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#03-흐름-arrow)"/><path d="M190,185 L190,216" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#03-흐름-arrow)"/><path d="M190,285 L190,316" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#03-흐름-arrow)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="59.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">ChatRequest</text><rect x="30" y="120" width="320" height="65" rx="10" fill="#E9E0F3" stroke="#334155" stroke-width="2"/><text x="190.0" y="159.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">ainvoke</text><rect x="30" y="220" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="259.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">최종 상태</text><rect x="30" y="320" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="359.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">ChatResponse</text></svg></div><p>위쪽의 요청에서 아래쪽의 관찰 결과까지 화살표를 따라 읽습니다. 파란 상자는 데이터, 보라색 상자는 Agent 실행, 초록 상자는 확인할 결과를 나타냅니다.</p><h3>서비스 설계 판단</h3><p>단일 응답 API의 경계 변환에는 입력 상태, 실행 설정, 공개 응답의 세 부분이 있습니다. 질문은 messages로 바꾸고 thread_id는 체크포인터 설정이나 로그 문맥에 사용하며, 최종 상태에서는 사용자에게 공개할 AI 메시지만 선택합니다. 도구 출력에 포함된 출처와 내부 오류를 그대로 응답에 넣기 전에 공개 범위를 검토합니다. 시간 상한은 하나의 숫자로 끝나지 않습니다. 전체 요청 45초 안에서 모델 30초, 도구 10초처럼 하위 단계의 제한과 재시도 예산을 배분해야 합니다. 첫 모델 호출이 30초를 모두 사용한 뒤 같은 제한으로 재시도하면 전체 상한을 넘을 수 있습니다. 남은 시간을 전달하거나 바깥 timeout이 실행을 취소하도록 구성하고, 취소가 공급자 요청까지 전달되는지 로그와 사용량으로 확인합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>컴파일된 Agent에 운영 시간 질문을 전달하고 실제 `ainvoke`를 기다립니다. 반환 상태의 키와 원본 메시지를 확인하여 그래프 자체의 결과와 HTTP 변환을 구분합니다.</p><section class="notebook" data-notebook="03-ainvoke-요청-응답" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="03-ainvoke-요청-응답.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBhaW52b2tlIOyalOyyrSDsnZHri7VcbiIsCiAgICAiXG4iLAogICAgIkZhc3RBUEkg65287Jqw7Yq4IOyVhOuemOyXkOyEnCDtmLjstpzrkJjripQg7Iuk7KCcIExhbmdHcmFwaCBgYWludm9rZWAg6rKw6rO866W8IO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIu2YhOyerCDtj7TrjZTrgpgg7IOB7JyEIO2PtOuNlOyXkOyEnCBgbGFicy9wYXJ0Ny9jaDMwLWZhc3RhcGktc2VydmluZ2DsnYQg7LC+7JWEIOyekeyXhSDtj7TrjZTroZwg7IKs7Jqp7ZWp64uI64ukLiDruYTrsIAg7YKk66W8IOy2nOugpe2VmOyngCDslYrsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAicHJlcC0zMC0wMy0wIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDspIDruYQg7IWA7J20IO2VmOuKlCDsnbxcbiIsCiAgICAiXG4iLAogICAgIuydtCDspIDruYQg7IWA7J2AIGBQYXRoLmN3ZCgpLnJlc29sdmUoKWDroZwg7ZiE7J6sIO2PtOuNlOulvCDsoIjrjIAg6rK966Gc66GcIOydveqzoCwg7ZiE7J6sIO2PtOuNlOyZgCDrtoDrqqgg7Y+0642U7JeQ7IScIGBhZ2VudF9zZXJ2aWNlYOqwgCDsnojripQg7LKrIOychOy5mOulvCBgbmV4dCguLi4sIE5vbmUpYOuhnCDssL7sirXri4jri6QuIOywvuyngCDrqrvtlZjrqbQgYGFzc2VydGDqsIAg7Iuk7ZaJ7J2EIOykkeuLqO2VqeuLiOuLpC4g7LC+7J2AIOuSpCBgb3MuY2hkaXIobGFiKWDsnbQg7J207ZuEIGltcG9ydOyZgCDtjIzsnbwg7KCR6re87J2YIOq4sOykgCDtj7TrjZTrpbwg67CU6r646rOgLCDrp4jsp4Drp4kg7Lac66Cl7J2AIOyLpOygnCDshKDtg53rkJwg7Y+0642UIOydtOumhOydhCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoyOTo0MS4zOTcxMTBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoyOTo0MS4zOTY5NDVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoyOTo0MS40MDQ1MjhaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjI5OjQxLjQwMzkyNloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsi6TsirUg7Y+0642UOiBjaDMwLWZhc3RhcGktc2VydmluZ1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJpbXBvcnQgb3NcbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgInN0YXJ0ID0gUGF0aC5jd2QoKS5yZXNvbHZlKClcbiIsCiAgICAibGFiID0gbmV4dCgocCBmb3IgcCBpbiAoc3RhcnQsICpzdGFydC5wYXJlbnRzKVxuIiwKICAgICIgICAgaWYgKHAgLyAnYWdlbnRfc2VydmljZScpLmlzX2RpcigpKSwgTm9uZSlcbiIsCiAgICAiYXNzZXJ0IGxhYiBpcyBub3QgTm9uZSwgJ2FnZW50X3NlcnZpY2XqsIAg7J6I64qUIENoMzAg7Iuk7Iq1IO2PtOuNlOyXkOyEnCDsi6TtlontlZjshLjsmpQuJ1xuIiwKICAgICJvcy5jaGRpcihsYWIpXG4iLAogICAgInByaW50KCfsi6TsirUg7Y+0642UOicsIFBhdGguY3dkKCkubmFtZSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6riw67O4IOyLpO2WiVxuIiwKICAgICJcbiIsCiAgICAi7Lu07YyM7J2865CcIOq3uOuemO2UhOyXkCDrqZTsi5zsp4Ag7IOB7YOc66W8IOu5hOuPmeq4sOuhnCDsoITri6ztlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY29uY2VwdC0zMC0wMy1hIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOuwlOuhnCDri6TsnYwg7L2U65Oc66W8IOydveuKlCDrsKnrspVcbiIsCiAgICAiXG4iLAogICAgImBhd2FpdCBhZ2VudC5haW52b2tlKHN0YXRlKWDripQg7IOB7YOcIO2VmOuCmOulvCDsnoXroKXtlbQg6re4656Y7ZSE6rCAIOuBneuCoCDrlYzquYzsp4Ag6riw64uk66awIOuSpCDstZzsooUg7IOB7YOcIOyCrOyghOydhCDrsJjtmZjtlanri4jri6QuIGBhd2FpdGDripQg7ZiE7J6sIOyalOyyreydmCDqsrDqs7zqsIAg7ZWE7JqU7ZWY64uk64qUIOucu+ydtOuptOyEnCwg6riw64uk66as64qUIOuPmeyViCDsnbTrsqTtirgg66Oo7ZSE6rCAIOuLpOuluCDsnpHsl4XsnYQg7LKY66as7ZWgIOyImCDsnojqsowg7ZWY64qUIOyngOygkOyeheuLiOuLpC4g7J20IOyYiOygnOydmCBgc3RhdGVg7JeQ64qUIGBtZXNzYWdlc2DqsIAg7J6I6rOgLCDrsJjtmZjqsJLsnZggYGFuc3dlcmDsmYAgYG1lc3NhZ2VzYOuKlCDqsIHqsIEg6rO16rCc7ZWgIOuLteqzvCDsi6Ttlonsl5Ag7IKs7Jqp65CcIOyDge2DnOulvCDrgpjtg4Drg4Xri4jri6QuIO2ZlOuptOyXkCBgcHJpbnRg7ZWcIOqwkuydgCDrsJjtmZgg7IKs7KCEIOyghOyytOqwgCDslYTri4jrnbwg7ZWZ7Iq17J2EIOychO2VtCDshKDtg53tlZwg7J2867aA7J6F64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6Mjk6NDEuNDA2MDQ5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6Mjk6NDEuNDA1OTIzWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6Mjk6NDEuNzMwOTEwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoyOTo0MS43MzA1NDVaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7KeI66y47J2EIO2ZleyduO2WiOyKteuLiOuLpDog7Jq07JiBIOyLnOqwhOydhCDslYzroKQg7KO87IS47JqUXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImZyb20gYWdlbnRfc2VydmljZS5hZ2VudCBpbXBvcnQgYWdlbnRcbiIsCiAgICAic3RhdGUgPSB7J21lc3NhZ2VzJzogWyfsmrTsmIEg7Iuc6rCE7J2EIOyVjOugpCDso7zshLjsmpQnXX1cbiIsCiAgICAicmVzdWx0ID0gYXdhaXQgYWdlbnQuYWludm9rZShzdGF0ZSlcbiIsCiAgICAicHJpbnQocmVzdWx0WydhbnN3ZXInXSlcbiIsCiAgICAiYXNzZXJ0ICfsmrTsmIEg7Iuc6rCE7J2EIOyVjOugpCDso7zshLjsmpQnIGluIHJlc3VsdFsnYW5zd2VyJ10iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg67CY7ZmYIOyDge2DnCDqtIDssLBcbiIsCiAgICAiXG4iLAogICAgIuy1nOyihSDsg4Htg5zsl5DripQg7J6F66ClIOuplOyLnOyngOyZgCDrhbjrk5zqsIAg66eM65OgIOuLteydtCDtlajqu5gg64Ko7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6Mjk6NDEuNzMxNzAyWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6Mjk6NDEuNzMxNjUyWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6Mjk6NDEuNzMzMjk1WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoyOTo0MS43MzI5OTJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiWydhbnN3ZXInLCAnbWVzc2FnZXMnXVxuIiwKICAgICAgIlsn7Jq07JiBIOyLnOqwhOydhCDslYzroKQg7KO87IS47JqUJ11cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAicHJpbnQoc29ydGVkKHJlc3VsdCkpXG4iLAogICAgInByaW50KHJlc3VsdFsnbWVzc2FnZXMnXSlcbiIsCiAgICAiYXNzZXJ0IHNvcnRlZChyZXN1bHQpID09IFsnYW5zd2VyJywgJ21lc3NhZ2VzJ10iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TtjKgg7J6s7ZiEXG4iLAogICAgIlxuIiwKICAgICLshJzruYTsiqQg6rec7LmZ7J20IOyYpOulmCDrrLjqtazrpbwg66eM64KY66m0IO2YuOy2nCDsnpDssrTqsIAg7JiI7Jm466GcIOuBneuCqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjI5OjQxLjczMzkyNFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjI5OjQxLjczMzg4MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjI5OjQxLjczNjMwOVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6Mjk6NDEuNzM1OTExWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiUnVudGltZUVycm9yIOq1kOycoeyaqSDsiqTtirjrprwg7Jik66WYXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgInRyeTpcbiIsCiAgICAiICAgIGF3YWl0IGFnZW50LmFpbnZva2UoeydtZXNzYWdlcyc6IFsn7Jik66WY66W8IOuwnOyDnSddfSlcbiIsCiAgICAiZXhjZXB0IFJ1bnRpbWVFcnJvciBhcyBleGM6XG4iLAogICAgIiAgICBwcmludCh0eXBlKGV4YykuX19uYW1lX18sIHN0cihleGMpKVxuIiwKICAgICIgICAgZmFpbGVkID0gVHJ1ZVxuIiwKICAgICJhc3NlcnQgZmFpbGVkIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xMCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsiJjsoJVcbiIsCiAgICAiXG4iLAogICAgIkhUVFAg7Iqk7Yq466a8IOqzhOy4teyXkOyEnOuKlCDsnbQg7JiI7Jm466W8IGBlcnJvcmAg7J2067Kk7Yq466GcIOuwlOq/ieuLiOuLpC4g7Jes6riw7ISc64qUIOygleyDgSDsp4jrrLjsnLzroZwg7Zi47Lac7J2EIOuniOy5qeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTMwLTAzLWIiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDri6jqs4Tsl5DshJwg6rWs67aE7ZWgIOuylOychFxuIiwKICAgICJcbiIsCiAgICAi64uo7J28IOydkeuLteqzvCDsiqTtirjrpqzrsI3snYAg6rCZ7J2AIEFnZW5066W8IOyGjOu5hO2VmOuKlCDrkZAg67Cp7Iud7J6F64uI64ukLiDstZzsooUg6rKw6rO86rCAIO2VnCDrsojsl5Ag7ZWE7JqU7ZWcIOyggOyepcK37Y+J6rCAIOyekeyXheyXkOuKlCBgYWludm9rZWDqsIAg66ee6rOgLCDspJHqsIQg7KGw6rCB7J2EIOyCrOyaqeyekOyXkOqyjCDrs7Tsl6wg7KO866Ck66m0IOuLpOydjCDsoIjsnZggYGFzdHJlYW1g7J2EIOyCrOyaqe2VqeuLiOuLpC4g7JiI7Jm46rCAIOuwnOyDne2WiOydhCDrlYwg64K067aAIOyYiOyZuCDrrLjsnpDsl7TsnYQg6re464yA66GcIEhUVFAg7J2R64u17Jy866GcIOuCtOuztOuCtOyngCDslYrqs6AsIOuhnOq3uOydmCDsm5Dsnbgg7KCV67O07JmAIOqzteqwnCDsmKTrpZgg7L2U65Oc66W8IOu2hOumrO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjZWxsLTExIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjI5OjQxLjczNjk0OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjI5OjQxLjczNjkwMloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjI5OjQxLjczOTEwNVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6Mjk6NDEuNzM4ODU2WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsp4jrrLjsnYQg7ZmV7J247ZaI7Iq164uI64ukOiDsoJXsg4Eg7KeI66y4XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImZpeGVkID0gYXdhaXQgYWdlbnQuYWludm9rZSh7J21lc3NhZ2VzJzogWyfsoJXsg4Eg7KeI66y4J119KVxuIiwKICAgICJwcmludChmaXhlZFsnYW5zd2VyJ10pXG4iLAogICAgImFzc2VydCBmaXhlZFsnYW5zd2VyJ10uZW5kc3dpdGgoJ+ygleyDgSDsp4jrrLgnKSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAicGFpcmVkIiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNSwKICAgImNvZGVfc2hhMjU2IjogImVlNGI5NTlmZjU1ZWI0MGQ3OGMyYTlmODhkZmRhZDJjNGRlYTllYWZhZWM4MGQxZjU2MDM3ZWY5NTc2ODI1Y2EiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwMjoyOTo0MS44NTUxODMrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjE4MjhjOTZiOTAxNDMzYjBkZWIzNTFkMDM3YzMwMDgwOTdiMmFjZDIzMTZmZWY2YmJjNTA0ZTc4ZmU2Njc5YWEiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>ainvoke 요청 응답</h2>
+<p>FastAPI 라우트 아래에서 호출되는 실제 LangGraph <code>ainvoke</code> 결과를 확인합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>현재 폴더나 상위 폴더에서 <code>labs/part7/ch30-fastapi-serving</code>을 찾아 작업 폴더로 사용합니다. 비밀 키를 출력하지 않습니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>이 준비 셀은 <code>Path.cwd().resolve()</code>로 현재 폴더를 절대 경로로 읽고, 현재 폴더와 부모 폴더에서 <code>agent_service</code>가 있는 첫 위치를 <code>next(..., None)</code>로 찾습니다. 찾지 못하면 <code>assert</code>가 실행을 중단합니다. 찾은 뒤 <code>os.chdir(lab)</code>이 이후 import와 파일 접근의 기준 폴더를 바꾸고, 마지막 출력은 실제 선택된 폴더 이름을 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import os
+from pathlib import Path
+start = Path.cwd().resolve()
+lab = next((p for p in (start, *start.parents)
+    if (p / &#x27;agent_service&#x27;).is_dir()), None)
+assert lab is not None, &#x27;agent_service가 있는 Ch30 실습 폴더에서 실행하세요.&#x27;
+os.chdir(lab)
+print(&#x27;실습 폴더:&#x27;, Path.cwd().name)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">실습 폴더: ch30-fastapi-serving
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p>컴파일된 그래프에 메시지 상태를 비동기로 전달합니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p><code>await agent.ainvoke(state)</code>는 상태 하나를 입력해 그래프가 끝날 때까지 기다린 뒤 최종 상태 사전을 반환합니다. <code>await</code>는 현재 요청의 결과가 필요하다는 뜻이면서, 기다리는 동안 이벤트 루프가 다른 작업을 처리할 수 있게 하는 지점입니다. 이 예제의 <code>state</code>에는 <code>messages</code>가 있고, 반환값의 <code>answer</code>와 <code>messages</code>는 각각 공개할 답과 실행에 사용된 상태를 나타냅니다. 화면에 <code>print</code>한 값은 반환 사전 전체가 아니라 학습을 위해 선택한 일부입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">from agent_service.agent import agent
+state = {&#x27;messages&#x27;: [&#x27;운영 시간을 알려 주세요&#x27;]}
+result = await agent.ainvoke(state)
+print(result[&#x27;answer&#x27;])
+assert &#x27;운영 시간을 알려 주세요&#x27; in result[&#x27;answer&#x27;]</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">질문을 확인했습니다: 운영 시간을 알려 주세요
+</pre></div>
+<div class="nb-markdown"><h3>반환 상태 관찰</h3>
+<p>최종 상태에는 입력 메시지와 노드가 만든 답이 함께 남습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">print(sorted(result))
+print(result[&#x27;messages&#x27;])
+assert sorted(result) == [&#x27;answer&#x27;, &#x27;messages&#x27;]</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[&#x27;answer&#x27;, &#x27;messages&#x27;]
+[&#x27;운영 시간을 알려 주세요&#x27;]
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 최종 상태의 `answer`, `messages` 키와 원본 질문이 실제 출력에 함께 있는지 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before에서는 교육용 오류 질문으로 `RuntimeError`를 관찰합니다. After에서는 정상 질문으로 같은 호출을 마칩니다. 스트림에서는 헤더 전송 뒤 같은 오류가 날 수 있어 처리 방식이 달라집니다.</p><section class="notebook" data-notebook="03-ainvoke-요청-응답" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>서비스 규칙이 오류 문구를 만나면 호출 자체가 예외로 끝납니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">try:
+    await agent.ainvoke({&#x27;messages&#x27;: [&#x27;오류를 발생&#x27;]})
+except RuntimeError as exc:
+    print(type(exc).__name__, str(exc))
+    failed = True
+assert failed</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">RuntimeError 교육용 스트림 오류
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>HTTP 스트림 계층에서는 이 예외를 <code>error</code> 이벤트로 바꿉니다. 여기서는 정상 질문으로 호출을 마칩니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>단일 응답과 스트리밍은 같은 Agent를 소비하는 두 방식입니다. 최종 결과가 한 번에 필요한 저장·평가 작업에는 <code>ainvoke</code>가 맞고, 중간 조각을 사용자에게 보여 주려면 다음 절의 <code>astream</code>을 사용합니다. 예외가 발생했을 때 내부 예외 문자열을 그대로 HTTP 응답으로 내보내지 않고, 로그의 원인 정보와 공개 오류 코드를 분리합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">fixed = await agent.ainvoke({&#x27;messages&#x27;: [&#x27;정상 질문&#x27;]})
+print(fixed[&#x27;answer&#x27;])
+assert fixed[&#x27;answer&#x27;].endswith(&#x27;정상 질문&#x27;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">질문을 확인했습니다: 정상 질문
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>Agent 최종 상태의 모든 키를 응답으로 직렬화하지 않습니다.</li><li>504가 발생하면 어느 내부 단계가 느렸는지 추적할 지표를 함께 남깁니다.</li><li>교육용 Agent는 서비스 검증용이며 실제 모델 품질은 Ch29 평가셋으로 확인합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>HTTP 요청을 Agent 상태로 변환해 실제 `ainvoke`를 호출할 수 있습니다.</li><li>최종 상태에서 공개할 답만 골라 응답 모델을 만들 수 있습니다.</li><li>예외와 시간 초과를 HTTP 오류로 바꿀 위치를 설명할 수 있습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 04절에서는 같은 객체의 `astream`으로 중간 조각을 처리합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. `ainvoke`에 `await`가 필요한 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 비동기 완료를 기다리면서 다른 요청 처리를 허용하기 위해서입니다.</p></details><details class="quiz"><summary>2. 최종 상태 전체를 반환하지 않는 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 내부 정보 노출을 막고 외부 계약을 유지하기 위해서입니다.</p></details><details class="quiz"><summary>3. 전체 시간 상한은 어디에 두나요?</summary><p class="quiz-a"><b>해설</b> — Agent 호출을 감싸는 서비스 경계에 둡니다.</p></details><details class="quiz"><summary>4. 공개 오류를 분리하는 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 민감한 내부 정보를 숨기고 안정적인 처리 규칙을 주기 위해서입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.langchain.com/oss/python/langgraph/graph-api">LangGraph Graph API</a> · 확인 2026-09-11</li><li><a href="https://docs.python.org/3/library/asyncio-task.html#timeouts">asyncio timeout</a> · 확인 2026-09-11</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="02-의존성으로-Agent-주입.html">← 의존성으로 Agent 주입</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="04-astream과-응답-스트림.html">astream과 응답 스트림 →</a></span></div></div></body></html>

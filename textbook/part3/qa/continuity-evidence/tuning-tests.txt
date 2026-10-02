@@ -1,0 +1,16 @@
+Ch12 continuity metric regression evidence
+Date: 2026-09-10 Asia/Seoul
+
+RED — before fixing notebook 08 Recall
+Command: uv -q run --project labs/part3/ch12-retrieval-tuning --with pytest python -m pytest labs/part3/ch12-retrieval-tuning/tests/test_continuity.py -q
+Observed failure:
+__ test_student_metric_functions_handle_multi_gold_duplicates_and_empty_gold ___
+>       assert recall == 0.5
+E       assert 1.0 == 0.5
+1 failed, 3 passed in 0.72s
+
+Cause: notebook 08 evaluate() converted any non-empty gold intersection to bool, so retrieving one of two unique gold documents returned 1.0.
+
+GREEN — after using intersection count / unique gold count and excluding empty/unanswerable items before averaging
+....                                                                     [100%]
+4 passed in 0.47s

@@ -1,0 +1,10 @@
+flowchart BT
+  %% classes
+  BASE["공통 조상<br>merge: 출고 기준 받기"]:::tool
+  AUTH["작성자 main<br>docs: 익일 출고 안내<br>배송 안내: 내일 출고"]:::tool
+  REV["origin/main · 리뷰어<br>docs: 당일 출고 안내<br>배송 안내: 14시 이전은<br>오늘 출고"]:::tool
+  STOP["git merge origin/main<br>같은 줄이라 멈춤<br>UU message.txt"]:::fail
+  BASE --> AUTH
+  BASE --> REV
+  AUTH --> STOP
+  REV --> STOP

@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  qa["질문과<br>기준 답 글"]:::tool
+  req["도구 요청 목록<br>reference_calls 둘"]:::tool
+  res["도구 결과 글<br>tool_results"]:::tool
+  make["make_trajectory<br>요청마다 응답과<br>도구 메시지 한 쌍"]:::flow
+  ref["기준 궤적 reference<br>메시지 수 6"]:::measure
+  names["called_tool_names"]:::flow
+  order["도구 차례<br>search_documents<br>check_source<br>도구 요청 수 2"]:::measure
+  qa --> make
+  req --> make
+  res --> make
+  make --> ref --> names --> order

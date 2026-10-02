@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph rule["비교용 규칙 함수"]
+    direction TB
+    f1["always_first<br>언제나 첫째 자리"]:::flow
+    f2["짧은 답 먼저<br>자리 1 · 짧은 답<br>긴 답 먼저<br>자리 1 · 긴 답"]:::measure
+    f3["같은 글을 골랐는가<br>False"]:::measure
+    f1 --> f2
+    f2 --> f3
+  end
+  subgraph judge["평가 모델"]
+    direction TB
+    j1["gpt-5.4-mini<br>머리글 rag-pair-v1.0.0"]:::model
+    j2["짧은 답 먼저<br>자리 1 · 짧은 답<br>긴 답 먼저<br>자리 2 · 짧은 답"]:::measure
+    j3["같은 글을 골랐는가<br>True"]:::measure
+    j1 --> j2
+    j2 --> j3
+  end
+  same["두 쪽 모두 같은 두 답<br>짧은 답 43자 · 긴 답 86자"]
+  rule ~~~ same
+  judge ~~~ same

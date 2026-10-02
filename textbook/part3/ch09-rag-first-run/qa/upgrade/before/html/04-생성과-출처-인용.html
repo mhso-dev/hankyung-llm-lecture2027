@@ -1,0 +1,399 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · 생성과 출처 인용 — 첫 완주 — Ch 9 · RAG 첫 완주 + 실험 하네스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>{if(!window.hljs)return;document.querySelectorAll("pre:not(.out) code").forEach(el=>hljs.highlightElement(el));});</script>
+<style>
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+pre{white-space:pre-wrap;overflow-wrap:anywhere} .nav-foot>span{min-width:0;overflow-wrap:anywhere} .goal li::before{content:none!important}.goal li{padding-left:0!important}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+.diagram-scroll{overflow-x:auto;max-width:100%}figure svg{width:100%;min-width:760px;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media print{body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style>
+</head><body><div class="page">
+<!-- 생성: _build.py · 원본 조각 _src/04-생성과-출처-인용.html · 도식 figures/*.svg · 삽화 figures/*.png (Higgsfield nano_banana_pro, 2026-09-07) -->
+<header class="top">
+<p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 3 RAG · Ch 9 · RAG 첫 완주 + 실험 하네스</p>
+<h1>04 · 생성과 출처 인용 — 첫 완주</h1>
+<div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 4</span></div>
+</header>
+<nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 04-생성과-출처-인용.ipynb | 새 용어 4 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>이 절을 마치면 검색한 Document의 문서 ID(<code>doc_id</code>)·쪽 번호(<code>page</code>)·본문(<code>page_content</code>)를 별도 변수로 확인할 수 있습니다.</li><li>이 절을 마치면 출처 태그와 본문을 <code>context</code>로 조립하고 삼중따옴표 프롬프트에 넣을 수 있습니다.</li><li>이 절을 마치면 <code>init_chat_model().invoke()</code>의 AIMessage 반환값에서 답과 출처를 검사할 수 있습니다.</li><li>이 절을 마치면 k만 1에서 2로 바꾸어 프롬프트 후보 수의 변화를 비교할 수 있습니다.</li></ul></div>
+
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>마지막 상자입니다. 두 Document를 색인하고 <code>similarity_search()</code>가 반환한 상위 Document 한 건을 모델에게 전달해 답을 받으면 RAG 한 사이클이 완성됩니다. 이 절을 마치면 "이틀 안에 실행되는 RAG"라는 챕터 목표가 달성됩니다.</p>
+<p>이 절에서 정하는 것이 하나 더 있습니다. <strong>출처 표기 형식</strong>입니다. 답 뒤에 <code>[doc_id p.페이지]</code>를 붙이기로 정하면, 그 형식이 05절의 실패 분석, Ch 11의 "무엇을 맞다고 볼지" 합의, 중간 프로젝트 요건("출처 인용")까지 이어집니다. Ch 11에서는 답변 판정 기준을 합의하고 검색 문서 ID 지표만 계산합니다. 답이 출처 형식과 근거를 지켰는지 자동 평가하는 방법은 Ch 15에서 다룹니다.</p>
+
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<ul>
+<li><strong>Ch 6 <code>init_chat_model</code></strong> — 첫 호출 때 쓴 함수 그대로입니다. 이 절에서는 삼중따옴표로 만든 단일 프롬프트 문자열을 <code>invoke()</code>에 전달합니다.</li>
+<li><strong>Ch 7 프롬프트 설계</strong> — 근거 범위와 출력 형식을 명시했습니다. 이 절의 단일 프롬프트에는 “다음 문서만 근거로 답하기”와 “출처 태그 붙이기”가 들어갑니다.</li>
+<li><strong>Ch 8 모델에 넣을 정보량</strong> — 기본 노트북은 k=1로 선택한 짧은 Document 한 건을 문맥으로 보냅니다. 이어서 k만 2로 바꾸어 후보 Document 수가 늘어나는 것을 관찰합니다.</li>
+<li><strong>03절의 검색</strong> — 기본 노트북은 독립 실행을 위해 벡터스토어를 다시 만들고 <code>similarity_search()</code>를 직접 호출합니다. 검색이 틀리면 생성은 그 틀린 재료로 답을 만듭니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+
+<h3>비유 — 답안지 규칙</h3>
+<p>오픈북 시험에서 감독관이 규칙을 정합니다. "책상 위 자료만 보고 답하라. 답의 근거가 된 쪽 번호를 답 옆에 적어라." 규칙이 없으면 학생은 기억으로 답하거나 근거 없이 씁니다. 이 규칙과 검색 문맥, 질문을 합친 단일 프롬프트 문자열을 모델에 전달합니다. <code>[D01 p.1]</code>은 문맥 앞과 답에 사용하는 출처 태그입니다.</p>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>문맥 조립 (context assembly)</dt>
+<dd>검색된 Document의 본문과 출처 태그를 모델이 읽을 문자열로 조립하는 것입니다. 기본 노트북은 k=1 Document의 <code>page_content</code> 앞에 <code>[D01 p.1]</code> 태그를 붙여 <code>context</code>를 만듭니다.</dd>
+<dt>프롬프트 (prompt)</dt>
+<dd>모델에 전달하는 입력 문자열입니다. 이 절에서는 “다음 문서만 근거로 답하라”와 “출처를 <code>[doc_id p.페이지]</code>로 붙여라”는 지시, 검색 문맥, 질문을 하나의 삼중따옴표 문자열에 넣습니다.</dd>
+<dt>출처 인용 (citation)</dt>
+<dd>답의 근거가 된 청크의 <code>doc_id</code>·<code>page</code>를 답에 표기하는 것입니다. 모델이 표기한 출처는 검색된 k개 중 하나여야 합니다. 그렇지 않으면 지어낸 출처입니다.</dd>
+<dt>AIMessage</dt>
+<dd><code>model.invoke(prompt)</code>가 반환하는 LangChain 메시지 객체입니다. 기본 노트북은 객체 타입을 출력하고 <code>.text</code> 속성에서 답 문자열을 읽습니다.</dd>
+</dl>
+
+<h3>기본 노트북의 조립과 생성</h3>
+<p>첫째, 검색한 문서의 <code>doc_id</code>와 <code>page</code>로 출처 태그를 만듭니다. 둘째, 태그와 본문을 질문 앞에 놓습니다. 셋째, 모델에 전달한 뒤 답과 출처가 함께 있는지 검사합니다. 기본 노트북은 이 과정을 <code>doc_id</code>·<code>page</code>·<code>source_tag</code>·<code>context</code> 변수로 직접 보여 줍니다.</p>
+<div class="callout yellow"><b>모델 선택</b><code>gpt-5.4-mini</code>를 사용하고 <code>temperature=0</code>을 명시합니다. 출력 표현은 실행 시점에 따라 다를 수 있으므로 문장 전체가 같은지보다 휴관일 내용과 <code>[D01 p.1]</code> 태그가 포함되었는지 확인합니다.</div>
+
+<h3>검색 결과가 답과 출처가 되는 과정</h3><p>검색기는 <code>Document</code>를 반환하지만 모델은 그 객체를 자동으로 알지 못합니다. 코드가 각 문서의 <code>page_content</code>와 <code>metadata</code>를 사람이 읽을 수 있는 문맥 문자열로 조합한 뒤 프롬프트에 넣습니다. <code>model.invoke(prompt)</code>를 호출하는 순간에만 생성 요청이 실행되고, 반환된 <code>AIMessage.text</code>가 답 문자열입니다.</p><p>출처를 프롬프트에 적는 것, 모델이 답에 출처를 표시하는 것, 표시한 출처가 실제 근거를 포함하는지는 서로 다른 검사입니다. 이 절은 표시된 ID가 검색 결과에 있었는지 확인합니다. 문장 단위 근거가 필요하면 답의 각 주장과 원문 구절을 별도로 대조해야 하며, 단순한 ID 포함 검사만으로 내용의 정확성을 보장할 수 없습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>Document 두 건을 숫자 벡터로 바꿔 검색할 수 있게 저장하고 k=1의 반환 Document를 출력합니다. 문서 ID와 쪽 번호(metadata)로 출처 태그를 만들고 본문과 함께 삼중따옴표 프롬프트에 넣은 뒤 AIMessage를 받습니다. 마지막에 k만 2로 바꿔 문맥 후보 수를 비교합니다.</p>
+<section class="notebook" data-notebook="04-생성과-출처-인용" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-09</span><button type="button" class="copy-all">전체 코드 복사</button><a download="04-생성과-출처-인용.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJkN2JkNWRjYiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIjxoMz7si6TsirUg7JWI64K0PC9oMz48cD7rrLjshJwgSUTsmYAg7Kq9IOuyiO2YuOqwgCDsnojripQg66y47ISc66W8IOqygOyDie2VqeuLiOuLpC4g7Lac7LKYIO2DnOq3uCwg66qo64247J20IOywuOqzoO2VoCDrrLjrp6UsIOuqqOuNuOyXkCDrs7Trgrwg7ZSE66Gs7ZSE7Yq4LCDrqqjrjbgg7J2R64u1IOqwneyytOyduCBBSU1lc3NhZ2Xrpbwg7LCo66GA66GcIO2ZleyduO2VqeuLiOuLpC48L3A+XG4iLAogICAgIjxoMz7qsoDsg4kg6rKw6rO86rCAIOuLteqzvCDstpzsspjqsIAg65CY64qUIOqzvOyglTwvaDM+PHA+6rKA7IOJ65CcIDxjb2RlPkRvY3VtZW50PC9jb2RlPuuKlCDrqqjrjbjsl5Ag7J6Q64+ZIOyghOuLrOuQmOyngCDslYrsirXri4jri6QuIOy9lOuTnOqwgCA8Y29kZT5wYWdlX2NvbnRlbnQ8L2NvZGU+7JmAIDxjb2RlPm1ldGFkYXRhPC9jb2RlPuulvCDrrLjrp6Ug66y47J6Q7Je066GcIOunjOuToCDrkqQgPGNvZGU+bW9kZWwuaW52b2tlKHByb21wdCk8L2NvZGU+66W8IO2YuOy2nO2VoCDrlYwg7IOd7ISx7J20IOyLpO2WieuQqeuLiOuLpC4g67CY7ZmYIOqwneyytOydmCA8Y29kZT50ZXh0PC9jb2RlPuqwgCDri7Ug66y47J6Q7Je07J6F64uI64ukLjwvcD48cD7tlITroaztlITtirjsl5Ag7Lac7LKY66W8IOuEo+uKlCDqsoMsIOuLteyXkCDstpzsspjqsIAg7ZGc7Iuc65CY64qUIOqygywg7ZGc7Iuc7ZWcIOy2nOyymOqwgCDsi6TsoJwg7KO87J6l7J2EIOuSt+uwm+y5qO2VmOuKlCDqsoPsnYAg7ISc66GcIOuLpOuluCDqsoDsgqzsnoXri4jri6QuIOydtCDsoIjsnZggSUQg7Y+s7ZWoIOqygOyCrOuKlCDrrLjsnqUg64uo7JyEIOyCrOyLpCDqsoDspp3snYQg64yA7Iug7ZWY7KeAIOyViuyKteuLiOuLpC48L3A+IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiNTcxYWJlODkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTQ6MTc6MDEuNjMzNjIwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTQ6MTc6MDEuNjMzNTQ1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTQ6MTc6MDIuMDUzNzk4WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNDoxNzowMi4wNTMzNThaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiTm90ZTogeW91IG1heSBuZWVkIHRvIHJlc3RhcnQgdGhlIGtlcm5lbCB0byB1c2UgdXBkYXRlZCBwYWNrYWdlcy5cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDrrLjshJwsIOuyoe2EsCDqsoDsg4ksIE9wZW5BSSDsnoTrsqDrlKnCt+yDneyEseyXkCDtlYTsmpTtlZwg7Yyo7YKk7KeA66W8IOyEpOy5mO2VqeuLiOuLpC5cbiIsCiAgICAiIyA9PeuhnCDrsoTsoITsnYQg6rOg7KCV7ZW0IOyLpO2WiSDtmZjqsr0g7LCo7J2066W8IOykhOyeheuLiOuLpC5cbiIsCiAgICAiJXBpcCBpbnN0YWxsIC1xIFwibGFuZ2NoYWluPT0xLjQuMFwiIFwibGFuZ2NoYWluLW9wZW5haT09MS42LjBcIiBcInB5dGhvbi1kb3RlbnY9PTEuMi4zXCIiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI2NjBmYWU0NyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIjxoMz4xLiBBUEkg7YKkIOykgOu5hDwvaDM+PHA+PGNvZGU+LmVudjwvY29kZT7rpbwg66Gc65Oc7ZWY6rOgIE9wZW5BSSBBUEkg7YKk6rCAIOyhtOyerO2VmOuKlOyngCDtmZXsnbjtlanri4jri6QuPC9wPiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImIxYTVjYmQ3IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE0OjE3OjAyLjA1NDcxOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAyLjA1NDY1MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAyLjA1ODQzOFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTQ6MTc6MDIuMDU4MTgxWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIkFQSSDtgqQg7KSA67mEIOyZhOujjFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGZpbmRfZG90ZW52KCnripQgLmVudiDqsr3roZzrpbwsIG9zLmdldGVudigp64qUIOuhnOuTnOuQnCBBUEkg7YKkIOqwkuydhCDrsJjtmZjtlanri4jri6QuXG4iLAogICAgIiMgYXNzZXJ064qUIOyZuOu2gCDtmLjstpwg7KCE7JeQIOykgOu5hCDsg4Htg5zrpbwg6rKA7IKs7ZWp64uI64ukLlxuIiwKICAgICJpbXBvcnQgb3NcbiIsCiAgICAiZnJvbSBkb3RlbnYgaW1wb3J0IGZpbmRfZG90ZW52LCBsb2FkX2RvdGVudlxuIiwKICAgICJcbiIsCiAgICAiZW52X2ZpbGUgPSBmaW5kX2RvdGVudih1c2Vjd2Q9VHJ1ZSlcbiIsCiAgICAiYXNzZXJ0IGVudl9maWxlLCBcIi5lbnbrpbwg7LC+7KeAIOuqu+2WiOyKteuLiOuLpC5cIlxuIiwKICAgICJsb2FkX2RvdGVudihlbnZfZmlsZSlcbiIsCiAgICAiYXNzZXJ0IG9zLmdldGVudihcIk9QRU5BSV9BUElfS0VZXCIpLCBcIk9QRU5BSV9BUElfS0VZ6rCAIOyXhuyKteuLiOuLpC5cIlxuIiwKICAgICJwcmludChcIkFQSSDtgqQg7KSA67mEIOyZhOujjFwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjJlYjU0NTA5IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiPGgzPjIuIOy2nOyymOqwgCDsnojripQg66y47ISc66W8IOyDieyduDwvaDM+PHA+6rCBIERvY3VtZW507JeQIOusuOyEnCBJRCg8Y29kZT5kb2NfaWQ8L2NvZGU+KeyZgCDsqr0g67KI7Zi4KDxjb2RlPnBhZ2U8L2NvZGU+KeulvCDrhKPsirXri4jri6QuIOq3uOufsCDri6TsnYwg66y47ISc66W8IOyIq+yekCDrsqHthLDroZwg67CU6r+UIOqygOyDie2VoCDsiJgg7J6I64qUIOuplOuqqOumrCDsoIDsnqXshozrpbwg66eM65Ot64uI64ukLjwvcD4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICI5N2Q3ZTBhZSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNDoxNzowMi4wNTkxNjVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNDoxNzowMi4wNTkxMTJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNDoxNzowMi45ODE3ODFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAyLjk4MTM4NFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLrrLjshJwg7IiYOiAyIHN0b3JlOiBJbk1lbW9yeVZlY3RvclN0b3JlXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgZG9jdW1lbnRz64qUIOuzuOusuOqzvCDstpzsspgg66mU7YOA642w7J207YSw66W8IOqwgOynhCBEb2N1bWVudCDrpqzsiqTtirjsnoXri4jri6QuXG4iLAogICAgIiMgZnJvbV9kb2N1bWVudHMoKeuKlCDrrLjshJzrpbwg7J6E67Kg65Sp7ZW0IHN0b3Jl66W8IOuwmO2ZmO2VqeuLiOuLpC5cbiIsCiAgICAiZnJvbSBsYW5nY2hhaW5fY29yZS5kb2N1bWVudHMgaW1wb3J0IERvY3VtZW50XG4iLAogICAgImZyb20gbGFuZ2NoYWluX2NvcmUudmVjdG9yc3RvcmVzIGltcG9ydCBJbk1lbW9yeVZlY3RvclN0b3JlXG4iLAogICAgImZyb20gbGFuZ2NoYWluX29wZW5haSBpbXBvcnQgT3BlbkFJRW1iZWRkaW5nc1xuIiwKICAgICJcbiIsCiAgICAiZG9jdW1lbnRzID0gW1xuIiwKICAgICIgICAgRG9jdW1lbnQocGFnZV9jb250ZW50PVwi7KCV6riwIO2ctOq0gOydvOydgCDrp6Tso7wg7JuU7JqU7J287J6F64uI64ukLlwiLCBtZXRhZGF0YT17XCJkb2NfaWRcIjogXCJEMDFcIiwgXCJwYWdlXCI6IDF9KSxcbiIsCiAgICAiICAgIERvY3VtZW50KHBhZ2VfY29udGVudD1cIuuMgOy2nCDquLDqsITsnYAgMTTsnbzsnoXri4jri6QuXCIsIG1ldGFkYXRhPXtcImRvY19pZFwiOiBcIkQwMlwiLCBcInBhZ2VcIjogMn0pLFxuIiwKICAgICJdXG4iLAogICAgImVtYmVkZGluZyA9IE9wZW5BSUVtYmVkZGluZ3MobW9kZWw9XCJ0ZXh0LWVtYmVkZGluZy0zLXNtYWxsXCIpXG4iLAogICAgInN0b3JlID0gSW5NZW1vcnlWZWN0b3JTdG9yZS5mcm9tX2RvY3VtZW50cyhkb2N1bWVudHMsIGVtYmVkZGluZylcbiIsCiAgICAicHJpbnQoXCLrrLjshJwg7IiYOlwiLCBsZW4oZG9jdW1lbnRzKSwgXCJzdG9yZTpcIiwgdHlwZShzdG9yZSkuX19uYW1lX18pIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiODI0YTRmZmMiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICI8aDM+My4g6rSA66CoIOusuOyEnCDtlZwg6rG0IOqygOyDiTwvaDM+PHA+PGNvZGU+az0xPC9jb2RlPuuhnCDqsIDsnqUg6rCA6rmM7Jq0IERvY3VtZW50IO2VnCDqsbTsnYQg6rCA7KC47Ji164uI64ukLiDrrLjshJwgSUTsmYAg7Kq9IOuyiO2YuOulvCDri7TsnYAg7Lac7LKYIOygleuztChtZXRhZGF0YSksIOuzuOusuOydhCDrlLDroZwg7Lac66Cl7ZWp64uI64ukLjwvcD4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJlZmVlMTYxYSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNDoxNzowMi45ODI2MzdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNDoxNzowMi45ODI1NjNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNDoxNzowMy4xNDIxODRaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAzLjE0MTc5MVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJEb2N1bWVudCDtg4DsnoU6IERvY3VtZW50XG4iLAogICAgICAibWV0YWRhdGE6IHsnZG9jX2lkJzogJ0QwMScsICdwYWdlJzogMX1cbiIsCiAgICAgICJjb250ZW50OiDsoJXquLAg7Zy06rSA7J287J2AIOunpOyjvCDsm5TsmpTsnbzsnoXri4jri6QuXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgaGl0c+uKlCDsp4jrrLjqs7wg6rCA7J6lIOq0gOugqCDrhpLsnYAgRG9jdW1lbnQg7ZWcIOqxtOydhCDri7TsnYAg66as7Iqk7Yq47J6F64uI64ukLlxuIiwKICAgICIjIGhpdOuKlCBoaXRz7J2YIOyyqyDrsojsp7ggRG9jdW1lbnTrpbwg6rCA66as7YK164uI64ukLlxuIiwKICAgICJxdWVzdGlvbiA9IFwi7KCV6riwIO2ctOq0gOydvOydgCDslrjsoJzsnbjqsIDsmpQ/XCJcbiIsCiAgICAiaGl0cyA9IHN0b3JlLnNpbWlsYXJpdHlfc2VhcmNoKHF1ZXN0aW9uLCBrPTEpXG4iLAogICAgImhpdCA9IGhpdHNbMF1cbiIsCiAgICAicHJpbnQoXCJEb2N1bWVudCDtg4DsnoU6XCIsIHR5cGUoaGl0KS5fX25hbWVfXylcbiIsCiAgICAicHJpbnQoXCJtZXRhZGF0YTpcIiwgaGl0Lm1ldGFkYXRhKVxuIiwKICAgICJwcmludChcImNvbnRlbnQ6XCIsIGhpdC5wYWdlX2NvbnRlbnQpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiNDMzYTg0NGQiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICI8aDM+NC4g7Lac7LKYIO2DnOq3uOyZgCDrrLjrp6Ug66eM65Ok6riwPC9oMz48cD7qsoDsg4ntlZwgRG9jdW1lbnTsnZgg66y47IScIElE7JmAIOyqvSDrsojtmLjroZwgPGNvZGU+W0QwMSBwLjFdPC9jb2RlPiDrqqjslpHsnZgg7Lac7LKYIO2DnOq3uOulvCDrp4zrk6Tqs6Ag67O466y4IOyVnuyXkCDrtpnsnoXri4jri6QuPC9wPiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogIjNlNTIwNGQyIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE0OjE3OjAzLjE0MzA4NloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAzLjE0MzAyM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAzLjE0NTA1OVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTQ6MTc6MDMuMTQ0NzYzWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuy2nOyymDogW0QwMSBwLjFdXG4iLAogICAgICAi66y466elOiBbRDAxIHAuMV0g7KCV6riwIO2ctOq0gOydvOydgCDrp6Tso7wg7JuU7JqU7J287J6F64uI64ukLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIHNvdXJjZV90YWfripQgW+usuOyEnElEIHAu7Kq9XSDtmJXsi53snZgg66y47J6Q7Je07J6F64uI64ukLlxuIiwKICAgICIjIGYtc3RyaW5n7J2AIOykkeq0hO2YuCDslYjsnZggbWV0YWRhdGEg6rCS6rO8IHBhZ2VfY29udGVudOulvCBjb250ZXh07JeQIOyCveyehe2VqeuLiOuLpC5cbiIsCiAgICAiZG9jX2lkID0gaGl0Lm1ldGFkYXRhW1wiZG9jX2lkXCJdXG4iLAogICAgInBhZ2UgPSBoaXQubWV0YWRhdGFbXCJwYWdlXCJdXG4iLAogICAgInNvdXJjZV90YWcgPSBmXCJbe2RvY19pZH0gcC57cGFnZX1dXCJcbiIsCiAgICAiY29udGV4dCA9IGZcIntzb3VyY2VfdGFnfSB7aGl0LnBhZ2VfY29udGVudH1cIlxuIiwKICAgICJwcmludChcIuy2nOyymDpcIiwgc291cmNlX3RhZylcbiIsCiAgICAicHJpbnQoXCLrrLjrp6U6XCIsIGNvbnRleHQpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiNTY0MzNjYjAiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICI8aDM+NS4g7IK87KSR65Sw7Ji07ZGc66GcIO2UhOuhrO2UhO2KuCDsobDrpr08L2gzPjxwPuyXrOufrCDspIQg66y47J6Q7Je07JeQIOusuOunpeqzvCDsp4jrrLjsnYQg7IK97J6F7ZWY6rOgIOuqqOuNuOyXkCDsoITri6zrkJjripQg7KCE7LK0IO2UhOuhrO2UhO2KuOulvCDrqLzsoIAg7Lac66Cl7ZWp64uI64ukLjwvcD4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDYsCiAgICJpZCI6ICIwYjM3Yjg5NyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNDoxNzowMy4xNDU4MjBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNDoxNzowMy4xNDU3NjdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNDoxNzowMy4xNDc1NjhaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAzLjE0NzE2OFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLri6TsnYwg66y47ISc66eMIOq3vOqxsOuhnCDri7XtlZjshLjsmpQuXG4iLAogICAgICAi64u1IOuBneyXkCDrrLjshJzsnZgg7Lac7LKYIO2DnOq3uOulvCDqt7jrjIDroZwg67aZ7J207IS47JqULlxuIiwKICAgICAgIlxuIiwKICAgICAgIlvrrLjshJxdXG4iLAogICAgICAiW0QwMSBwLjFdIOygleq4sCDtnLTqtIDsnbzsnYAg66ek7KO8IOyblOyalOydvOyeheuLiOuLpC5cbiIsCiAgICAgICJcbiIsCiAgICAgICJb7KeI66y4XVxuIiwKICAgICAgIuygleq4sCDtnLTqtIDsnbzsnYAg7Ja47KCc7J246rCA7JqUP1xuIiwKICAgICAgIlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGYg7IK87KSRIOusuOyekOyXtOydgCDsl6zrn6wg7KSE7J2EIOycoOyngO2VmOupsCBjb250ZXh07JmAIHF1ZXN0aW9uIOqwkuydhCDsgr3snoXtlanri4jri6QuXG4iLAogICAgIiMg7IOd7ISxIOyghOyXkCBwcm9tcHTrpbwg7Lac66Cl7ZW0IOuqqOuNuOydtCDsi6TsoJzroZwg67Cb64qUIOyeheugpeydhCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgInByb21wdCA9IGZcIlwiXCLri6TsnYwg66y47ISc66eMIOq3vOqxsOuhnCDri7XtlZjshLjsmpQuXG4iLAogICAgIuuLtSDrgZ3sl5Ag66y47ISc7J2YIOy2nOyymCDtg5zqt7jrpbwg6re464yA66GcIOu2meydtOyEuOyalC5cbiIsCiAgICAiXG4iLAogICAgIlvrrLjshJxdXG4iLAogICAgIntjb250ZXh0fVxuIiwKICAgICJcbiIsCiAgICAiW+yniOusuF1cbiIsCiAgICAie3F1ZXN0aW9ufVxuIiwKICAgICJcIlwiXCJcbiIsCiAgICAicHJpbnQocHJvbXB0KSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjk3MTJkMzc2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiPGgzPjYuIOyDneyEsSDrqqjrjbgg7Zi47LacPC9oMz48cD48Y29kZT5pbml0X2NoYXRfbW9kZWw8L2NvZGU+66GcIOuqqOuNuOydhCDrp4zrk6Tqs6AgPGNvZGU+aW52b2tlKCk8L2NvZGU+66GcIO2UhOuhrO2UhO2KuOulvCDsoITri6ztlanri4jri6QuPC9wPiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNywKICAgImlkIjogImQ4ZWQ5ODk4IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE0OjE3OjAzLjE0ODI2MloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE0OjE3OjAzLjE0ODIxMVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE0OjE3OjA0LjMxMzM4NVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTQ6MTc6MDQuMzEyODc1WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgImFuc3dlciDtg4DsnoU6IEFJTWVzc2FnZVxuIiwKICAgICAgIuygleq4sCDtnLTqtIDsnbzsnYAg66ek7KO8IOyblOyalOydvOyeheuLiOuLpC4gW0QwMSBwLjFdXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgbW9kZWzsnYAgTGFuZ0NoYWlu7J20IOygnOqzte2VmOuKlCBPcGVuQUkg64yA7ZmUIOuqqOuNuCDqsJ3ssrTsnoXri4jri6QuXG4iLAogICAgIiMgYW5zd2Vy64qUIEFJTWVzc2FnZeydtOqzoCAudGV4dOuKlCDsg53shLHrkJwg64u167OAIOusuOyekOyXtOyeheuLiOuLpC5cbiIsCiAgICAiZnJvbSBsYW5nY2hhaW4uY2hhdF9tb2RlbHMgaW1wb3J0IGluaXRfY2hhdF9tb2RlbFxuIiwKICAgICJcbiIsCiAgICAibW9kZWwgPSBpbml0X2NoYXRfbW9kZWwoXCJvcGVuYWk6Z3B0LTUuNC1taW5pXCIsIHRlbXBlcmF0dXJlPTApXG4iLAogICAgImFuc3dlciA9IG1vZGVsLmludm9rZShwcm9tcHQpXG4iLAogICAgInByaW50KFwiYW5zd2VyIO2DgOyehTpcIiwgdHlwZShhbnN3ZXIpLl9fbmFtZV9fKVxuIiwKICAgICJwcmludChhbnN3ZXIudGV4dClcbiIsCiAgICAiYXNzZXJ0IFwi7JuU7JqU7J28XCIgaW4gYW5zd2VyLnRleHRcbiIsCiAgICAiYXNzZXJ0IHNvdXJjZV90YWcgaW4gYW5zd2VyLnRleHQiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI5ZGJjMWI3ZSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIjxoMz43LiBr66eMIDLroZwg67CU6r647Ja0IOusuOunpSDruYTqtZA8L2gzPjxwPuyniOusuOqzvCDrqqjrjbjsnYAg7Jyg7KeA7ZWY6rOgIOqygOyDiSDqsJzsiJjrp4wg64qY66CkIO2UhOuhrO2UhO2KuOyXkCDrk6TslrTqsIgg7ZuE67O06rCAIOyWtOuWu+qyjCDripjslrTrgpjripTsp4Ag7ZmV7J247ZWp64uI64ukLjwvcD4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDgsCiAgICJpZCI6ICJiMGFiOWRiMiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNDoxNzowNC4zMTQyODVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNDoxNzowNC4zMTQyMjFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNDoxNzowNC40NTc5NjVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE0OjE3OjA0LjQ1NzUzNloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJrPTEg66y47IScIOyImDogMVxuIiwKICAgICAgIms9MiDrrLjshJwg7IiYOiAyXG4iLAogICAgICAiRDAxIDE4XG4iLAogICAgICAiRDAyIDE0XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgbW9yZV9oaXRz64qUIGs9MuuhnCDqsIDsoLjsmKggRG9jdW1lbnQg66as7Iqk7Yq47J6F64uI64ukLlxuIiwKICAgICIjIElE7JmAIOuzuOusuCDquLjsnbTrpbwg66qo65GQIOy2nOugpe2VtCBrPTEg6rKw6rO87JmAIOu5hOq1kO2VqeuLiOuLpC5cbiIsCiAgICAibW9yZV9oaXRzID0gc3RvcmUuc2ltaWxhcml0eV9zZWFyY2gocXVlc3Rpb24sIGs9MilcbiIsCiAgICAicHJpbnQoXCJrPTEg66y47IScIOyImDpcIiwgbGVuKGhpdHMpKVxuIiwKICAgICJwcmludChcIms9MiDrrLjshJwg7IiYOlwiLCBsZW4obW9yZV9oaXRzKSlcbiIsCiAgICAiZm9yIGRvY3VtZW50IGluIG1vcmVfaGl0czpcbiIsCiAgICAiICAgIHByaW50KGRvY3VtZW50Lm1ldGFkYXRhW1wiZG9jX2lkXCJdLCBsZW4oZG9jdW1lbnQucGFnZV9jb250ZW50KSlcbiIsCiAgICAiYXNzZXJ0IGxlbihtb3JlX2hpdHMpID09IDIiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJiNzY1YzY0MCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIjxoMz7soJXrpqw8L2gzPjxwPkRvY3VtZW507J2YIOusuOyEnCBJROyZgCDsqr0g67KI7Zi466GcIOy2nOyymCDtg5zqt7jrpbwg66eM65Ok7JeI7Iq164uI64ukLiDtg5zqt7jsmYAg67O466y47J2EIO2UhOuhrO2UhO2KuOyXkCDrhKPsl4jqs6AsIDxjb2RlPmludm9rZSgpPC9jb2RlPuqwgCDrsJjtmZjtlZwgQUlNZXNzYWdl7JeQ7IScIOuLteqzvCDstpzsspjrpbwg7J297JeI7Iq164uI64ukLjwvcD4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICIzYzQyZTAwYyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiPHA+PHN0cm9uZz7sm5Dsnbg8L3N0cm9uZz4g4oCUIOqygOyDiSDqsrDqs7zrpbwg7IOIIERvY3VtZW5066GcIOyYruq4sOuptOyEnCA8Y29kZT5wYWdlPC9jb2RlPuulvCDruaDrnKjrpqzrqbQg7Kq9IOuyiO2YuOqwgCDsnojripQg7Lac7LKYIO2DnOq3uOulvCDrp4zrk6Qg7IiYIOyXhuyKteuLiOuLpC48L3A+IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA5LAogICAiaWQiOiAiOTc3MWFhYWQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTQ6MTc6MDQuNDU4ODEzWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTQ6MTc6MDQuNDU4NzYxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTQ6MTc6MDQuNDYxMDE5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNDoxNzowNC40NjA1MzJaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsmIjsg4HtlZwg7Iuk7YyoOiDriITrnb3rkJwg66mU7YOA642w7J207YSwICdwYWdlJ1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGJyb2tlbuydgCDsi6TsoJwg6rKA7IOJIOqysOqzvCBoaXTsnZgg67O466y46rO8IOusuOyEnCBJROunjCDsmK7qsqggcGFnZeulvCDruaDrnKjrprAg6rK97Jqw7J6F64uI64ukLlxuIiwKICAgICIjIG1ldGFkYXRhW1wicGFnZVwiXeulvCDsnb3snYQg65WMIEtleUVycm9y6rCAIOuwnOyDne2VmOuKlOyngCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgImJyb2tlbiA9IERvY3VtZW50KFxuIiwKICAgICIgICAgcGFnZV9jb250ZW50PWhpdC5wYWdlX2NvbnRlbnQsXG4iLAogICAgIiAgICBtZXRhZGF0YT17XCJkb2NfaWRcIjogaGl0Lm1ldGFkYXRhW1wiZG9jX2lkXCJdfSxcbiIsCiAgICAiKVxuIiwKICAgICJ0cnk6XG4iLAogICAgIiAgICBwcmludChmXCJbe2Jyb2tlbi5tZXRhZGF0YVsnZG9jX2lkJ119IHAue2Jyb2tlbi5tZXRhZGF0YVsncGFnZSddfV1cIilcbiIsCiAgICAiZXhjZXB0IEtleUVycm9yIGFzIGVycm9yOlxuIiwKICAgICIgICAgcHJpbnQoXCLsmIjsg4HtlZwg7Iuk7YyoOiDriITrnb3rkJwg66mU7YOA642w7J207YSwXCIsIGVycm9yKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjI3NjlkNjE5IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIjxwPjxzdHJvbmc+7IiY7KCVPC9zdHJvbmc+IOKAlCDqsJnsnYAg6rKA7IOJIOqysOqzvOyXkOyEnCDsi6TsoJwgPGNvZGU+cGFnZTwvY29kZT4g6rCS64+EIO2VqOq7mCDsmK7quYHri4jri6QuIOuzteq1rO2VnCDstpzsspgg7YOc6re47JmAIOuzuOusuOycvOuhnCDqsJnsnYAg7KeI66y47J2YIO2UhOuhrO2UhO2KuOulvCDrp4zrk6Tqs6Ag7Iuk7KCcIOuLteq5jOyngCDtmZXsnbjtlanri4jri6QuPC9wPiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMTAsCiAgICJpZCI6ICJhMjkyMTc0MCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNDoxNzowNC40NjE4MjlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNDoxNzowNC40NjE3NzdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNDoxNzowNS42MTAxMTZaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE0OjE3OjA1LjYwOTYyNFoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiQWZ0ZXIg7YOc6re4OiBbRDAxIHAuMV1cbiIsCiAgICAgICJBZnRlciDri7U6IOygleq4sCDtnLTqtIDsnbzsnYAg66ek7KO8IOyblOyalOydvOyeheuLiOuLpC4gW0QwMSBwLjFdXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgZml4ZWTripQgaGl07JeQIOyeiOuNmCDsi6TsoJwgZG9jX2lk7JmAIHBhZ2Xrpbwg66qo65GQIOuzteyCrO2VnCBEb2N1bWVudOyeheuLiOuLpC5cbiIsCiAgICAiIyDrs7XqtaztlZwg7YOc6re47JmAIOuzuOusuOycvOuhnCDqsJnsnYAg7KeI66y47J2EIOuLpOyLnCDsi6TtlontlbQg7Lac7LKY6rCAIOuLteyXkCDrgqjripTsp4Ag7ZmV7J247ZWp64uI64ukLlxuIiwKICAgICJmaXhlZCA9IERvY3VtZW50KFxuIiwKICAgICIgICAgcGFnZV9jb250ZW50PWhpdC5wYWdlX2NvbnRlbnQsXG4iLAogICAgIiAgICBtZXRhZGF0YT17XCJkb2NfaWRcIjogaGl0Lm1ldGFkYXRhW1wiZG9jX2lkXCJdLCBcInBhZ2VcIjogaGl0Lm1ldGFkYXRhW1wicGFnZVwiXX0sXG4iLAogICAgIilcbiIsCiAgICAiZml4ZWRfdGFnID0gZlwiW3tmaXhlZC5tZXRhZGF0YVsnZG9jX2lkJ119IHAue2ZpeGVkLm1ldGFkYXRhWydwYWdlJ119XVwiXG4iLAogICAgImZpeGVkX2NvbnRleHQgPSBmXCJ7Zml4ZWRfdGFnfSB7Zml4ZWQucGFnZV9jb250ZW50fVwiXG4iLAogICAgImZpeGVkX3Byb21wdCA9IGZcIlwiXCLri6TsnYwg66y47ISc66eMIOq3vOqxsOuhnCDri7XtlZjshLjsmpQuIOuLtSDrgZ3sl5Ag7Lac7LKYIO2DnOq3uOulvCDrtpnsnbTshLjsmpQuXG4iLAogICAgIlxuIiwKICAgICJb66y47IScXVxuIiwKICAgICJ7Zml4ZWRfY29udGV4dH1cbiIsCiAgICAiXG4iLAogICAgIlvsp4jrrLhdXG4iLAogICAgIntxdWVzdGlvbn1cIlwiXCJcbiIsCiAgICAiZml4ZWRfYW5zd2VyID0gbW9kZWwuaW52b2tlKGZpeGVkX3Byb21wdClcbiIsCiAgICAicHJpbnQoXCJBZnRlciDtg5zqt7g6XCIsIGZpeGVkX3RhZylcbiIsCiAgICAicHJpbnQoXCJBZnRlciDri7U6XCIsIGZpeGVkX2Fuc3dlci50ZXh0KVxuIiwKICAgICJhc3NlcnQgZml4ZWRfdGFnID09IHNvdXJjZV90YWdcbiIsCiAgICAiYXNzZXJ0IGZpeGVkX3RhZyBpbiBmaXhlZF9hbnN3ZXIudGV4dCIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDEwLAogICAiY29kZV9zaGEyNTYiOiAiY2ZkNTY0ZjIwMDM5NGJiM2I4MzZlMTRhODBmNTRlZTc1ODJlMjJkZmJlOTczOWRmZDgwZmYxYzhlYTdlYzE5YyIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTA5VDE0OjE3OjA1LjcyNjY2MSswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiNjY1NmNlNjUwNmI0NGQxYzBkZjg2ODU2MmExMWQ2ZmZlNDY4ZjhmMTQzYmY0NmYzMTFmNGYwYzJiNDEzYjE1NiIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h3>실습 안내</h3><p>문서 ID와 쪽 번호가 있는 문서를 검색합니다. 출처 태그, 모델이 참고할 문맥, 모델에 보낼 프롬프트, 모델 응답 객체인 AIMessage를 차례로 확인합니다.</p>
+<h3>검색 결과가 답과 출처가 되는 과정</h3><p>검색된 <code>Document</code>는 모델에 자동 전달되지 않습니다. 코드가 <code>page_content</code>와 <code>metadata</code>를 문맥 문자열로 만든 뒤 <code>model.invoke(prompt)</code>를 호출할 때 생성이 실행됩니다. 반환 객체의 <code>text</code>가 답 문자열입니다.</p><p>프롬프트에 출처를 넣는 것, 답에 출처가 표시되는 것, 표시한 출처가 실제 주장을 뒷받침하는 것은 서로 다른 검사입니다. 이 절의 ID 포함 검사는 문장 단위 사실 검증을 대신하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 문서, 벡터 검색, OpenAI 임베딩·생성에 필요한 패키지를 설치합니다.
+# ==로 버전을 고정해 실행 환경 차이를 줄입니다.
+%pip install -q &quot;langchain==1.4.0&quot; &quot;langchain-openai==1.6.0&quot; &quot;python-dotenv==1.2.3&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-markdown"><h3>1. API 키 준비</h3><p><code>.env</code>를 로드하고 OpenAI API 키가 존재하는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># find_dotenv()는 .env 경로를, os.getenv()는 로드된 API 키 값을 반환합니다.
+# assert는 외부 호출 전에 준비 상태를 검사합니다.
+import os
+from dotenv import find_dotenv, load_dotenv
+
+env_file = find_dotenv(usecwd=True)
+assert env_file, &quot;.env를 찾지 못했습니다.&quot;
+load_dotenv(env_file)
+assert os.getenv(&quot;OPENAI_API_KEY&quot;), &quot;OPENAI_API_KEY가 없습니다.&quot;
+print(&quot;API 키 준비 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">API 키 준비 완료
+</pre></div>
+<div class="nb-markdown"><h3>2. 출처가 있는 문서를 색인</h3><p>각 Document에 문서 ID(<code>doc_id</code>)와 쪽 번호(<code>page</code>)를 넣습니다. 그런 다음 문서를 숫자 벡터로 바꿔 검색할 수 있는 메모리 저장소를 만듭니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># documents는 본문과 출처 메타데이터를 가진 Document 리스트입니다.
+# from_documents()는 문서를 임베딩해 store를 반환합니다.
+from langchain_core.documents import Document
+from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_openai import OpenAIEmbeddings
+
+documents = [
+    Document(page_content=&quot;정기 휴관일은 매주 월요일입니다.&quot;, metadata={&quot;doc_id&quot;: &quot;D01&quot;, &quot;page&quot;: 1}),
+    Document(page_content=&quot;대출 기간은 14일입니다.&quot;, metadata={&quot;doc_id&quot;: &quot;D02&quot;, &quot;page&quot;: 2}),
+]
+embedding = OpenAIEmbeddings(model=&quot;text-embedding-3-small&quot;)
+store = InMemoryVectorStore.from_documents(documents, embedding)
+print(&quot;문서 수:&quot;, len(documents), &quot;store:&quot;, type(store).__name__)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">문서 수: 2 store: InMemoryVectorStore
+</pre></div>
+<div class="nb-markdown"><h3>3. 관련 문서 한 건 검색</h3><p><code>k=1</code>로 가장 가까운 Document 한 건을 가져옵니다. 문서 ID와 쪽 번호를 담은 출처 정보(metadata), 본문을 따로 출력합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># hits는 질문과 가장 관련 높은 Document 한 건을 담은 리스트입니다.
+# hit는 hits의 첫 번째 Document를 가리킵니다.
+question = &quot;정기 휴관일은 언제인가요?&quot;
+hits = store.similarity_search(question, k=1)
+hit = hits[0]
+print(&quot;Document 타입:&quot;, type(hit).__name__)
+print(&quot;metadata:&quot;, hit.metadata)
+print(&quot;content:&quot;, hit.page_content)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Document 타입: Document
+metadata: {&#x27;doc_id&#x27;: &#x27;D01&#x27;, &#x27;page&#x27;: 1}
+content: 정기 휴관일은 매주 월요일입니다.
+</pre></div>
+<div class="nb-markdown"><h3>4. 출처 태그와 문맥 만들기</h3><p>검색한 Document의 문서 ID와 쪽 번호로 <code>[D01 p.1]</code> 모양의 출처 태그를 만들고 본문 앞에 붙입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># source_tag는 [문서ID p.쪽] 형식의 문자열입니다.
+# f-string은 중괄호 안의 metadata 값과 page_content를 context에 삽입합니다.
+doc_id = hit.metadata[&quot;doc_id&quot;]
+page = hit.metadata[&quot;page&quot;]
+source_tag = f&quot;[{doc_id} p.{page}]&quot;
+context = f&quot;{source_tag} {hit.page_content}&quot;
+print(&quot;출처:&quot;, source_tag)
+print(&quot;문맥:&quot;, context)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">출처: [D01 p.1]
+문맥: [D01 p.1] 정기 휴관일은 매주 월요일입니다.
+</pre></div>
+<div class="nb-markdown"><h3>5. 삼중따옴표로 프롬프트 조립</h3><p>여러 줄 문자열에 문맥과 질문을 삽입하고 모델에 전달되는 전체 프롬프트를 먼저 출력합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># f 삼중 문자열은 여러 줄을 유지하며 context와 question 값을 삽입합니다.
+# 생성 전에 prompt를 출력해 모델이 실제로 받는 입력을 확인합니다.
+prompt = f&quot;&quot;&quot;다음 문서만 근거로 답하세요.
+답 끝에 문서의 출처 태그를 그대로 붙이세요.
+
+[문서]
+{context}
+
+[질문]
+{question}
+&quot;&quot;&quot;
+print(prompt)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">다음 문서만 근거로 답하세요.
+답 끝에 문서의 출처 태그를 그대로 붙이세요.
+
+[문서]
+[D01 p.1] 정기 휴관일은 매주 월요일입니다.
+
+[질문]
+정기 휴관일은 언제인가요?
+
+</pre></div>
+<div class="nb-markdown"><h3>6. 생성 모델 호출</h3><p><code>init_chat_model</code>로 모델을 만들고 <code>invoke()</code>로 프롬프트를 전달합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># model은 LangChain이 제공하는 OpenAI 대화 모델 객체입니다.
+# answer는 AIMessage이고 .text는 생성된 답변 문자열입니다.
+from langchain.chat_models import init_chat_model
+
+model = init_chat_model(&quot;openai:gpt-5.4-mini&quot;, temperature=0)
+answer = model.invoke(prompt)
+print(&quot;answer 타입:&quot;, type(answer).__name__)
+print(answer.text)
+assert &quot;월요일&quot; in answer.text
+assert source_tag in answer.text</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">answer 타입: AIMessage
+정기 휴관일은 매주 월요일입니다. [D01 p.1]
+</pre></div>
+<div class="nb-markdown"><h3>7. k만 2로 바꾸어 문맥 비교</h3><p>질문과 모델은 유지하고 검색 개수만 늘려 프롬프트에 들어갈 후보가 어떻게 늘어나는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [8]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># more_hits는 k=2로 가져온 Document 리스트입니다.
+# ID와 본문 길이를 모두 출력해 k=1 결과와 비교합니다.
+more_hits = store.similarity_search(question, k=2)
+print(&quot;k=1 문서 수:&quot;, len(hits))
+print(&quot;k=2 문서 수:&quot;, len(more_hits))
+for document in more_hits:
+    print(document.metadata[&quot;doc_id&quot;], len(document.page_content))
+assert len(more_hits) == 2</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">k=1 문서 수: 1
+k=2 문서 수: 2
+D01 18
+D02 14
+</pre></div>
+<div class="nb-markdown"><h3>정리</h3><p>Document의 문서 ID와 쪽 번호로 출처 태그를 만들었습니다. 태그와 본문을 프롬프트에 넣었고, <code>invoke()</code>가 반환한 AIMessage에서 답과 출처를 읽었습니다.</p></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<p class="look"><b>확인할 점</b> — Document 타입·출처 정보(metadata)·본문, <code>source_tag</code>, <code>context</code>, 모델에 전달한 전체 프롬프트, AIMessage 타입·본문을 순서대로 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before에서 실제 검색 결과를 새 Document로 옮기면서 <code>page</code>를 빠뜨려 <code>KeyError</code>가 나는지 확인합니다. After에서는 쪽 번호를 지어내지 않고 원래 검색 결과의 <code>page</code>를 함께 옮겨 같은 출처 태그를 복구합니다. 복구한 태그와 본문으로 같은 질문을 실제 호출해 답의 출처까지 확인합니다.</p>
+<section class="notebook" data-notebook="04-생성과-출처-인용" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><p><strong>원인</strong> — 검색 결과를 새 Document로 옮기면서 <code>page</code>를 빠뜨리면 쪽 번호가 있는 출처 태그를 만들 수 없습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [9]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># broken은 실제 검색 결과 hit의 본문과 문서 ID만 옮겨 page를 빠뜨린 경우입니다.
+# metadata[&quot;page&quot;]를 읽을 때 KeyError가 발생하는지 확인합니다.
+broken = Document(
+    page_content=hit.page_content,
+    metadata={&quot;doc_id&quot;: hit.metadata[&quot;doc_id&quot;]},
+)
+try:
+    print(f&quot;[{broken.metadata[&#x27;doc_id&#x27;]} p.{broken.metadata[&#x27;page&#x27;]}]&quot;)
+except KeyError as error:
+    print(&quot;예상한 실패: 누락된 메타데이터&quot;, error)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">예상한 실패: 누락된 메타데이터 &#x27;page&#x27;
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><p><strong>수정</strong> — 같은 검색 결과에서 실제 <code>page</code> 값도 함께 옮깁니다. 복구한 출처 태그와 본문으로 같은 질문의 프롬프트를 만들고 실제 답까지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [10]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># fixed는 hit에 있던 실제 doc_id와 page를 모두 복사한 Document입니다.
+# 복구한 태그와 본문으로 같은 질문을 다시 실행해 출처가 답에 남는지 확인합니다.
+fixed = Document(
+    page_content=hit.page_content,
+    metadata={&quot;doc_id&quot;: hit.metadata[&quot;doc_id&quot;], &quot;page&quot;: hit.metadata[&quot;page&quot;]},
+)
+fixed_tag = f&quot;[{fixed.metadata[&#x27;doc_id&#x27;]} p.{fixed.metadata[&#x27;page&#x27;]}]&quot;
+fixed_context = f&quot;{fixed_tag} {fixed.page_content}&quot;
+fixed_prompt = f&quot;&quot;&quot;다음 문서만 근거로 답하세요. 답 끝에 출처 태그를 붙이세요.
+
+[문서]
+{fixed_context}
+
+[질문]
+{question}&quot;&quot;&quot;
+fixed_answer = model.invoke(fixed_prompt)
+print(&quot;After 태그:&quot;, fixed_tag)
+print(&quot;After 답:&quot;, fixed_answer.text)
+assert fixed_tag == source_tag
+assert fixed_tag in fixed_answer.text</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">After 태그: [D01 p.1]
+After 답: 정기 휴관일은 매주 월요일입니다. [D01 p.1]
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>검색 후보와 답의 출처 태그는 다릅니다.</strong> <code>hits</code>는 검색이 반환한 Document 리스트이고, 답에 붙은 <code>[D01 p.1]</code>는 모델이 생성한 문자열입니다. 기본 노트북은 k=1 Document의 metadata로 만든 <code>source_tag</code>가 실제 답에 포함되는지 검사합니다.</li>
+<li><strong>metadata가 먼저 필요합니다.</strong> <code>doc_id</code>나 <code>page</code>가 없으면 출처 태그를 만들 수 없습니다. Before는 실제 검색 결과에서 <code>page</code>를 빠뜨렸을 때 발생한 <code>KeyError</code>를 확인하고, After는 원래 검색 결과의 <code>page</code>를 복사해 태그를 완성합니다.</li>
+<li><strong>비용.</strong> 기본 노트북은 짧은 Document 두 건을 임베딩하고 k=1 문맥으로 생성 모델을 한 번 호출합니다. k=2 셀은 후보 수와 본문 길이만 비교하며 생성 모델을 다시 호출하지 않습니다. 모델 요금은 바뀔 수 있으므로 실행 시점의 공식 요금표를 확인합니다.</li>
+<li><strong>출력 언어.</strong> 기본 프롬프트에는 별도의 언어 지시를 넣지 않았고 문서와 질문을 한국어로 작성했습니다. 여러 언어의 문서를 함께 사용할 때는 원하는 출력 언어를 프롬프트에 명시하고 실제 응답을 확인합니다.</li>
+<li><strong>응답에서 텍스트 읽기.</strong> <code>model.invoke()</code>는 <code>AIMessage</code>를 반환합니다. 기본 노트북은 <code>answer.text</code>로 텍스트를 읽습니다. <code>content</code>는 문자열이나 콘텐츠 블록 목록일 수 있으므로 멀티모달 응답을 다루는 Ch 26에서 별도로 확인합니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>검색 Document의 문서 ID와 쪽 번호(metadata)가 출처 태그가 되었고, 본문(page_content)은 모델이 참고할 문맥이 되었습니다.</li><li>삼중따옴표 프롬프트에 문맥과 질문을 넣고 AIMessage의 <code>.text</code>로 답을 읽었습니다.</li><li>k만 1에서 2로 바꾸어 모델에 전달할 후보 문서 수가 늘어나는 것을 확인했습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 05절에서 생성 답만 읽지 않고 검색한 Document ID를 함께 보며 실패 원인을 구분합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. <code>source_tag</code>에 사용한 출처 정보(metadata) 두 개는 무엇입니까?</p><p class="quiz-a"><code>doc_id</code>와 <code>page</code>입니다. 두 값으로 <code>[D01 p.1]</code> 형식을 만듭니다.</p>
+<p class="quiz-q">2. 생성 전에 전체 <code>prompt</code>를 출력하는 이유는 무엇입니까?</p><p class="quiz-a">모델이 실제로 받은 문맥, 출처 형식, 질문을 확인해 조립 문제와 생성 문제를 구분할 수 있습니다.</p>
+<p class="quiz-q">3. <code>invoke()</code>의 반환값과 응답 문자열을 읽는 속성은 무엇입니까?</p><p class="quiz-a">AIMessage를 반환하고 <code>.text</code>로 응답 문자열을 읽습니다.</p>
+<p class="quiz-q">4. k=2 비교 셀에서 모델을 다시 호출하지 않고도 확인할 수 있는 것은 무엇입니까?</p><p class="quiz-a">프롬프트 후보로 사용할 Document 개수와 각 Document의 ID·본문 길이를 확인할 수 있습니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul>
+<li>LangChain 「Build a RAG agent」 — <code>init_chat_model</code> 절과 검색 결과를 프롬프트에 넣는 예제 — <a href="https://docs.langchain.com/oss/python/langchain/rag">docs.langchain.com/oss/python/langchain/rag</a> · 확인 2026-09-07.</li>
+<li>OpenAI API 요금 — gpt-5.4-mini 입력 0.75 / 출력 4.50달러 per 1M tokens (standard) — <a href="https://developers.openai.com/api/docs/pricing">developers.openai.com/api/docs/pricing</a> · 확인 2026-09-07.</li>
+<li>기준 버전: langchain 1.4.0 · langchain-openai 1.6.0 · 모델 gpt-5.4-mini-2026-03-17.</li>
+</ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script>
+<div class="nav-foot"><span><a href="03-임베딩과-벡터스토어.html">← 03 · 임베딩·벡터스토어·top-k 검색</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="05-첫-실패-보기.html">05 · 첫 실패를 일부러 보기 →</a></span></div>
+</div></body></html>

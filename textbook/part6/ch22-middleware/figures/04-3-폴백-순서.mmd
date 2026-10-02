@@ -1,0 +1,6 @@
+flowchart TD
+  %% classes
+  q["질문"]:::flow --> p["gpt-no-such-model 호출"]:::model
+  p --> e["호출 실패"]:::fail
+  e --> b["gpt-5.4-nano 호출"]:::model
+  b --> ans["답"]:::flow

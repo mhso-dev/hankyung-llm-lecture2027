@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  q["같은 질문 셋<br>같은 검색 도구 · 같은 모델<br>바꾼 것은 검색을 부르는 쪽<br>요청 모양도 따라 다름"]:::tool
+  subgraph fx["고정 흐름"]
+    direction TB
+    f1["질문마다 모델 요청 한 번<br>도구 메시지 없음<br>입력 토큰<br>C01 178 · C05 186<br>C07 185<br>정답 문서 자리<br>C01 2 · C05 1 · C07 1"]:::measure
+  end
+  subgraph ag["에이전트 흐름"]
+    direction TB
+    a1["질문마다 모델 요청 두 번<br>도구 메시지 하나씩<br>입력 토큰<br>C01 632 · C05 638<br>정답 문서 자리<br>C01 1 · C05 1 · C07 1"]:::measure
+  end
+  same["세 질문 두 흐름 공통<br>정답 문서가 준 세 건 안에 듦<br>근거 충실도 판정 여섯 모두 1"]
+  q --> fx
+  q --> ag
+  fx ~~~ same
+  ag ~~~ same

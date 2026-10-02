@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  subgraph one["실행 1 · 호출 한도 둘"]
+    direction TB
+    o1["받은 답 둘<br>예약한 호출 둘<br>answer 둘 · stopped 하나"]:::measure
+  end
+  subgraph two["실행 2 · 호출 한도 하나"]
+    direction TB
+    t1["받은 답 하나<br>예약한 호출 하나<br>answer 하나 · stopped 둘"]:::measure
+  end
+  d["지문으로 짝지은 줄 셋<br>사건이 달라진 줄 하나<br>둘째 질문이 실행 2에서 멈춤"]:::measure
+  same["두 칸 모두 같은 질문 셋<br>같은 소금값 · 기록 줄 셋<br>원문 값 없음"]
+  one --> d
+  two --> d
+  d ~~~ same

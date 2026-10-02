@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  same["같은 실험 번호 · 정책 글<br>문의 글 둘 · 같은 모델 설정"]
+  subgraph r1["실행 1 · 문의 글을 뒤에"]
+    direction TB
+    a1["문의 글 자리<br>정책 글 뒤"]:::tool
+    a2["첫 요청 캐시 입력 0<br>둘째 요청 0보다 큼"]:::measure
+    a1 --> a2
+  end
+  subgraph r2["실행 2 · 값 하나만 바꿈"]
+    direction TB
+    b1["문의 글 자리<br>정책 글 앞"]:::flow
+    b2["첫 요청 캐시 입력 0<br>둘째 요청 0"]:::measure
+    b1 --> b2
+  end
+  both["같은 문의 글끼리<br>입력 토큰 수 같음 True True<br>네 요청 128로 나눈 나머지 0"]
+  same --> r1
+  same --> r2
+  r1 ~~~ both
+  r2 ~~~ both

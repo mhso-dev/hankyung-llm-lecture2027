@@ -1,0 +1,45 @@
+{
+  "part": 1,
+  "part_title": "Part 1 · 개발 기반",
+  "chapter": "ch01-development-environment",
+  "title": "오리엔테이션 · 개발환경",
+  "hours": "총 8h · 강의 5h · 실습 3h",
+  "objectives": [
+    "도구를 설치하고 프로젝트의 Python 3.12 실행 환경을 준비합니다.",
+    "파일 경로와 실행 환경을 확인하고 첫 스크립트의 계산 오류를 수정합니다.",
+    "Git·Docker의 준비 상태를 구분하고 다음 학습에 필요한 기초를 점검합니다."
+  ],
+  "lab_path": "labs/part1/ch01-development-environment",
+  "sections": [
+    {
+      "slug": "01-과정-지도와-학습-규칙",
+      "title": "과정 지도와 학습 규칙",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-도구-설치와-터미널",
+      "title": "도구 설치와 터미널",
+      "format": "paired"
+    },
+    {
+      "slug": "03-Python과-가상환경",
+      "title": "Python과 가상환경",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-첫-스크립트와-디버거",
+      "title": "첫 스크립트와 디버거",
+      "format": "paired"
+    },
+    {
+      "slug": "05-Git과-Docker-준비",
+      "title": "Git과 Docker 준비",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-개발환경-실습",
+      "title": "개발환경 실습: 새 연습 폴더 점검하기",
+      "format": "experiment"
+    }
+  ]
+}

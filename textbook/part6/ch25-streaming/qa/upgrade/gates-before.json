@@ -1,0 +1,228 @@
+{
+  "chapter": "ch25-streaming",
+  "label": "before",
+  "totals": {
+    "G1": 7,
+    "G2": 9,
+    "G3": 0,
+    "G4": 2,
+    "G5": 15,
+    "G6": 82,
+    "G7": 9
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-일곱-가지-stream-mode",
+      "code_cells": 4,
+      "sentences": 83,
+      "counts": {
+        "G1": 3,
+        "G2": 1,
+        "G3": 0,
+        "G4": 0,
+        "G5": 5,
+        "G6": 28,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:multiple_defs_in_cell",
+          "cell6:conditional_expression",
+          "cell8:set_comprehension"
+        ],
+        "G2": [
+          "cell4:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이번 절에서는 상태 전체, 변경분, 메시지 조각, 사용자 정의 진행률, 체크포인트, 태스크, 디버그 사건의 크기와 용도를 실제 출력으로 구분합니다",
+          "long:Ch23에서 체크포인터와 thread_id가 상태를 저장하는 방법을 배웠고, Ch24에서 interrupt와 재개 사건을 확인했습니다",
+          "long:고객 문의 그래프의 prepare와 write 노드는 같은 상태를 처리하지만, 운영 화면은 진행률만 필요하고 디버거는 태스크와 체크포인트가 필요합니다",
+          "long:values는 각 단계 뒤의 전체 상태, updates는 노드가 바꾼 값, messages는 모델 메시지 조각과 메타데이터, custom은 노드가 직접 보낸 자료를 반환합니다",
+          "long:checkpoints는 저장된 상태 스냅숏, tasks는 태스크 시작·종료·오류, debug는 체크포인트와 태스크를 포함한 자세한 실행 정보를 제공합니다",
+          "long:따라서 이 셀의 `list`는 모드별 자료형과 사건 수를 비교하기 위한 선택이며, 사용자 화면에 즉시 표시하는 구현에서는 `for` 반복문 안에서 사건을 바로 처리합니다",
+          "long:주문 상태에 고객 정보, 검색 결과, 답변이 모두 있다면 `values`는 매 단계 전체를 보내고 `updates`는 이번 노드가 바꾼 필드만 보냅니다",
+          "long:설치 셀은 Python 3.12 환경에 LangChain 1.4.0, langchain-openai 1.6.0, LangGraph 1.2.11을 고정합니다",
+          "long:values 3개, updates 2개, custom 2개, checkpoints 4개, tasks 4개, debug 8개가 실제로 출력되었습니다",
+          "long:최신 문서의 version='v2'는 type·ns·data 필드를 가진 통일된 형식을 제공하지만, 기준 버전의 기본값은 v1이므로 코드에서 선택한 형식을 밝혀 둡니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 messages·updates·custom을 한 실행에서 함께 구독하고 화면 문구를 각 사건의 의미에 맞춰 나눕니다",
+          "long:따라서 이 셀의 `list`는 모드별 자료형과 사건 수를 비교하기 위한 선택이며, 사용자 화면에 즉시 표시하는 구현에서는 `for` 반복문 안에서 사건을 바로 처리합니다",
+          "long:주문 상태에 고객 정보, 검색 결과, 답변이 모두 있다면 `values`는 매 단계 전체를 보내고 `updates`는 이번 노드가 바꾼 필드만 보냅니다",
+          "english_start:LangGraph는 한 실행에서 생긴 사건을 일곱 방식으로 관찰하게 합니",
+          "english_start:values는 각 단계 뒤의 전체 상태, updates는 노드가 바꾼 값",
+          "english_start:checkpoints는 저장된 상태 스냅숏, tasks는 태스크 시작·종",
+          "english_start:checkpoints와 tasks는 체크포인터가 있어야 사건이 생깁니다",
+          "english_start:`input`은 처음 상태, `config`는 `thread_id` 같은",
+          "english_start:`list(...)`로 감싸면 스트리밍 중간에 처리하지 않고 실행이 끝난",
+          "english_start:`values`와 `updates`의 차이는 같은 상태를 얼마나 크게 복",
+          "english_start:StateGraph에 InMemorySaver를 연결한 뒤 values부",
+          "english_start:custom은 두 노드가 각각 한 번 보낸 두 사건입니다",
+          "english_start:checkpoints와 tasks는 체크포인터가 있어야 관찰할 수 있습니",
+          "english_start:messages는 그래프 안의 모델 호출에서 생깁니다",
+          "english_start:mode가 사건의 종류를, data가 그 사건의 내용을 나타냅니다",
+          "english_start:`input`은 처음 상태, `config`는 `thread_id` 같은",
+          "english_start:`list(...)`로 감싸면 스트리밍 중간에 처리하지 않고 실행이 끝난",
+          "english_start:`values`와 `updates`의 차이는 같은 상태를 얼마나 크게 복"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-토큰과-중간-진행-스트리밍",
+      "code_cells": 4,
+      "sentences": 81,
+      "counts": {
+        "G1": 0,
+        "G2": 2,
+        "G3": 0,
+        "G4": 1,
+        "G5": 5,
+        "G6": 23,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [
+          "cell4:over_15_lines",
+          "cell6:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:토큰은 모델이 생성한 글의 일부이고, 중간 단계는 그래프 노드가 끝났다는 신호이며, custom 사건은 개발자가 정한 업무 진행 상황입니다",
+          "long:Ch23에서 체크포인터와 thread_id가 상태를 저장하는 방법을 배웠고, Ch24에서 interrupt와 재개 사건을 확인했습니다",
+          "long:`custom`의 30과 100은 코드가 정한 값이므로 파일 개수나 처리 건수 같은 계산 근거가 없으면 정확한 진행률로 약속할 수 없습니다",
+          "long:예를 들어 검색 도구가 재시도 중이라면 토큰이 잠시 없어도 작업은 진행될 수 있고, 답변 토큰이 나오기 시작해도 전체 업무가 끝났다는 뜻은 아닙니다",
+          "long:내용이 있는 messages 조각만 preview에 모은 뒤, 이어 붙인 문자열이 answer 상태의 최종 답변과 같은지 검사합니다",
+          "long:설치 셀은 Python 3.12 환경에 LangChain 1.4.0, langchain-openai 1.6.0, LangGraph 1.2.11을 고정합니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 같은 에이전트를 세 모드로 각각 실행해 first_event, TTFT, total을 구분해 측정합니다",
+          "long:`custom`의 30과 100은 코드가 정한 값이므로 파일 개수나 처리 건수 같은 계산 근거가 없으면 정확한 진행률로 약속할 수 없습니다",
+          "long:예를 들어 검색 도구가 재시도 중이라면 토큰이 잠시 없어도 작업은 진행될 수 있고, 답변 토큰이 나오기 시작해도 전체 업무가 끝났다는 뜻은 아닙니다",
+          "english_start:`get_stream_writer()`는 현재 실행에 연결된 기록 함수를",
+          "english_start:`messages`의 `data`는 `(message_chunk, met",
+          "english_start:`messages`는 실제 답변 일부이므로 채팅 말풍선에 이어 붙일 수 ",
+          "english_start:`updates`는 노드가 끝났다는 사실이므로 단계 목록을 갱신하는 데 ",
+          "english_start:`custom`의 30과 100은 코드가 정한 값이므로 파일 개수나 처리",
+          "english_start:updates는 answer 노드가 끝난 뒤의 변경분 1개, custom",
+          "english_start:messages의 metadata로 노드 이름과 호출을 필터링할 수 있습",
+          "english_start:messages는 답변 조각, updates는 answer 상태 변경, ",
+          "english_start:`get_stream_writer()`는 현재 실행에 연결된 기록 함수를",
+          "english_start:`messages`의 `data`는 `(message_chunk, met",
+          "english_start:`messages`는 실제 답변 일부이므로 채팅 말풍선에 이어 붙일 수 ",
+          "english_start:`updates`는 노드가 끝났다는 사실이므로 단계 목록을 갱신하는 데 ",
+          "english_start:`custom`의 30과 100은 코드가 정한 값이므로 파일 개수나 처리",
+          "english_start:`custom`은 코드가 명시적으로 보낸 진행 사건이고, `updates"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-TTFT와-total-비교",
+      "code_cells": 5,
+      "sentences": 85,
+      "counts": {
+        "G1": 4,
+        "G2": 6,
+        "G3": 0,
+        "G4": 1,
+        "G5": 5,
+        "G6": 31,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell6:conditional_expression",
+          "cell8:generator_expression",
+          "cell10:conditional_expression",
+          "cell10:generator_expression"
+        ],
+        "G2": [
+          "cell4:over_15_lines",
+          "cell6:over_15_lines",
+          "cell8:over_15_lines",
+          "cell8:one_letter_name:r",
+          "cell10:nested_call_2plus",
+          "cell10:one_letter_name:r"
+        ],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:사용자가 첫 변화를 본 시간, 클라이언트가 내용이 있는 첫 답변 조각을 받은 시간, 최종 결과가 끝난 시간을 따로 측정해야 합니다",
+          "long:Ch23에서 체크포인터와 thread_id가 상태를 저장하는 방법을 배웠고, Ch24에서 interrupt와 재개 사건을 확인했습니다",
+          "long:사용자는 화면에 첫 변화가 나타나면 시스템이 동작한다고 느끼지만, 그 변화가 실제 답변 내용인지 ‘시작됨’ 표시인지는 구분하기 어렵습니다",
+          "long:이 실습의 첫 토큰까지의 시간(Time To First Token, TTFT) 근삿값은 요청을 시작한 뒤 클라이언트가 내용이 있는 첫 모델 메시지 조각을 받을 때까지 걸린 시간입니다",
+          "long:`measure()`는 스트림을 만들기 직전에 시작 시각을 기록하고, 첫 `yield`에서 `first_event`, `messages`의 내용 있는 첫 조각에서 `ttft_s`, 반복문이 끝난 뒤 `total_s`를 계산합니다",
+          "long:세 모드의 시간을 공정하게 비교하려면 한 모델 호출에서 여러 모드를 동시에 구독하거나, 실행 순서를 섞어 충분히 반복해야 합니다",
+          "long:perf_counter()를 요청 직전에 시작하고 updates, messages, custom을 순서대로 각각 새로 실행합니다",
+          "long:첫 yield를 first_event로, messages의 내용이 있는 첫 chunk를 TTFT 근삿값으로, 반복 종료를 total로 기록합니다",
+          "long:설치 셀은 Python 3.12 환경에 LangChain 1.4.0, langchain-openai 1.6.0, LangGraph 1.2.11을 고정합니다",
+          "long:입력은 각 45토큰, 캐시 입력은 각 0토큰이었지만 출력은 91·84·111토큰, 답변 길이는 143·150·179자로 달랐습니다",
+          "long:호출별 추정 비용은 각각 $0.00044325, $0.00041175, $0.00053325이며 세 호출의 합계는 $0.00138825입니다",
+          "long:다음 학습과 이어지는 지점 — Ch30에서는 messages와 custom 사건을 FastAPI SSE로 브라우저에 전송하고 연결 종료와 재접속을 처리합니다",
+          "long:해설 — first_event는 받은 첫 사건을 기록하고, TTFT 근삿값은 내용이 있는 첫 조각이 도착할 때까지 기다려 기록하기 때문입니다",
+          "long:`measure()`는 스트림을 만들기 직전에 시작 시각을 기록하고, 첫 `yield`에서 `first_event`, `messages`의 내용 있는 첫 조각에서 `ttft_s`, 반복문이 끝난 뒤 `total_s`를 계산합니다",
+          "long:세 모드의 시간을 공정하게 비교하려면 한 모델 호출에서 여러 모드를 동시에 구독하거나, 실행 순서를 섞어 충분히 반복해야 합니다",
+          "english_start:TTFT와 total 비교의 핵심 구성 요소를 실제 출력에서 구분할 수 ",
+          "english_start:first_event는 모드와 관계없이 첫 사건을 받은 시간이고 tota",
+          "english_start:custom의 시작 사건을 TTFT라고 부르면 모델이 아직 답을 만들기 ",
+          "english_start:`perf_counter()`는 시스템 시계가 수정되어도 경과 시간 측정",
+          "english_start:`measure()`는 스트림을 만들기 직전에 시작 시각을 기록하고, 첫",
+          "english_start:`custom`의 첫 사건이 매우 빨리 도착해도 그것은 ‘작업 시작’을 ",
+          "english_start:TTFT와 total 비교의 실행 흐름. 위에서 아래로 사건 또는 제어권",
+          "english_start:perf_counter()를 요청 직전에 시작하고 updates, mes",
+          "english_start:rows의 ttft_s는 messages에서만 숫자가 됩니다",
+          "english_start:messages는 first_event 0.613초, 내용이 있는 첫 조",
+          "english_start:custom은 시작 사건이 0.003초에 왔고 total은 1.431초였",
+          "english_start:updates와 custom에는 내용이 있는 messages 조각이 없으",
+          "english_start:`perf_counter()`는 시스템 시계가 수정되어도 경과 시간 측정",
+          "english_start:`measure()`는 스트림을 만들기 직전에 시작 시각을 기록하고, 첫",
+          "english_start:`custom`의 첫 사건이 매우 빨리 도착해도 그것은 ‘작업 시작’을 ",
+          "english_start:TTFT는 사용자가 첫 반응을 보는 시점을, total은 모든 사건을 소"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

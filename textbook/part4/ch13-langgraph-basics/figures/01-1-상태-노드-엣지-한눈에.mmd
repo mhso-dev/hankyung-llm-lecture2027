@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  inp["들어간 상태<br>질문 칸에 빈칸이 붙어 있음"]:::tool
+  st([START])
+  n1["노드 normalize<br>질문 칸 정리"]:::flow
+  n2["노드 make_query<br>검색어 칸 만들기"]:::flow
+  fin([END])
+  out["나온 상태<br>검색어 칸 대출 기간은 며칠"]:::measure
+  inp --> st
+  st --> n1
+  n1 --> n2
+  n2 --> fin
+  fin --> out

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  q["받은 질문<br>빈칸과 길이가 제각각"]:::tool
+  v1["입력 검사<br>빈칸 정리 · 빈 질문<br>글자 수 상한 500"]:::flow
+  m["모델 gpt-5.4-mini<br>답을 한 문장으로 씀"]:::model
+  marks["답에서 뽑은<br>출처 표시"]:::measure
+  allow["허용 목록<br>이번 검색 결과로 만듦"]:::measure
+  v2["출력 검사<br>표시를 허용 목록과 대조"]:::flow
+  out["내보낸 답<br>검사를 통과한 답만"]:::measure
+  q --> v1
+  v1 --> m
+  m --> marks
+  marks --> v2
+  allow --> v2
+  v2 --> out

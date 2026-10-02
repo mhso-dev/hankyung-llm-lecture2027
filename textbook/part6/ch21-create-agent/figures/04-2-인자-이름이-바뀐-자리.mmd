@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  sys["같은 시스템 메시지 글<br>system_text"]:::tool
+  subgraph oa["옛 함수 create_react_agent"]
+    direction TB
+    o1["prompt=<br>system_text"]:::flow
+    o2["견준 여덟 가운데<br>옛 함수에만 있는 인자<br>prompt<br>pre_model_hook<br>post_model_hook"]:::measure
+    o1 ~~~ o2
+  end
+  subgraph na["새 함수 create_agent"]
+    direction TB
+    n1["system_prompt=<br>system_text"]:::flow
+    n2["견준 여덟 가운데<br>새 함수에만 있는 인자<br>system_prompt<br>middleware"]:::measure
+    n1 ~~~ n2
+  end
+  both["견준 여덟 가운데<br>두 함수 모두 받는 인자<br>response_format<br>state_schema<br>context_schema"]
+  sys --> oa
+  sys --> na
+  oa ~~~ both
+  na ~~~ both

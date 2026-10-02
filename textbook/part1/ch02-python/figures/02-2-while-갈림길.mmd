@@ -1,0 +1,16 @@
+flowchart TD
+  %% classes
+  S{"index #lt;<br>len(amounts_with_stop)"}:::measure
+  R["값 읽기 · 번호 1 늘리기<br>읽은 값 출력"]:::flow
+  N{"amount #lt; 0"}:::measure
+  Z{"amount == 0"}:::measure
+  P["처리한 금액 출력"]:::flow
+  E["반복 뒤 줄<br>위치 번호 출력"]:::flow
+  S -- "참" --> R
+  S -- "거짓" --> E
+  R --> N
+  N -- "참 · continue" --> S
+  N -- "거짓" --> Z
+  Z -- "거짓" --> P
+  Z -- "참 · break" --> E
+  P -- "다음 차례" --> S

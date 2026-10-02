@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  lab["실습 폴더<br>alembic.ini · migrations"]
+  cpy["임시 폴더 사본<br>폴더 이름 ch31-03-<br>판 파일 하나"]:::flow
+  envv["환경 변수<br>CH31_SYNC_URL<br>postgresql+psycopg<br>접속 글"]:::tool
+  envpy["사본의 env.py 12~15행<br>환경 변수로 접속 글을 정함"]
+  up["try_upgrade<br>command.upgrade<br>목표 head"]:::flow
+  out["판 번호 20260911_01<br>칸 id · question"]:::measure
+  lab --> cpy --> envpy
+  envv --> envpy
+  envpy --> up --> out

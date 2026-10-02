@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  a1["stream_obj = agent.astream<br>부르기만 함"]:::flow
+  a2["받은 값의 종류<br>async_generator"]:::measure
+  b1["async for event<br>in stream_obj"]:::flow
+  b2["받은 사건 여섯<br>첫 사건의 종류 dict"]:::measure
+  c1["같은 stream_obj를<br>다시 async for"]:::flow
+  c2["다시 꺼낸 사건 없음"]:::measure
+  a1 --> a2 --> b1 --> b2 --> c1 --> c2

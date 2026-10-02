@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph DOCKER["Docker"]
+    direction TB
+    d1["① 명령 찾기<br>docker를 찾았는가 False"]:::fail
+    d2["② 클라이언트 확인<br>명령을 찾지 못함"]:::fail
+    d3["③ 서버 확인<br>확인하지 않음"]
+    d1 --> d2 --> d3
+  end
+  subgraph GIT["Git"]
+    direction TB
+    g1["① 명령 찾기<br>git을 찾았는가 True"]:::measure
+    g2["② 버전 묻기<br>git 종료 코드 0"]:::measure
+    g3["③ 임시 저장소에서<br>커밋 종료 코드 0"]:::measure
+    g1 --> g2 --> g3
+  end

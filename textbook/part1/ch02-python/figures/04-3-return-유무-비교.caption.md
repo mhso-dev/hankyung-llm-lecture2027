@@ -1,0 +1,4 @@
+- 설명 대상 문장: return 줄이 없는 함수를 부르자 반환값으로 None을 받았습니다.
+- 캡션: return 줄이 있는 함수와 없는 함수. 같은 인자를 넣어도, 이름에 담기는 값은 70200과 None으로 갈립니다.
+- 읽는 법: 위 칸은 calculate_payment, 아래 칸은 print_payment이고, 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 초록 상자는 넣은 인자로 두 칸이 같습니다. 파란 상자에서 위 칸은 70200을 반환하고, 아래 칸은 화면에 70200을 출력만 합니다. 노란 상자에서 이름 payment에는 70200이, 이름 result에는 None이 담깁니다.
+- alt: 인자 78000과 0.1을 넣었을 때 return 줄이 있는 calculate_payment는 70200을 반환해 payment에 담기고, return 줄이 없는 print_payment는 화면에 70200을 출력만 해 result에 None이 담기는 것을 위아래 두 칸으로 비교한 그림

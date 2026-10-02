@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  st["5절 직접 실행<br>도구를 한 번 부른 실행"]:::flow
+  m1["노드 model<br>글 없는 스트림 청크"]:::model
+  t1["노드 tools<br>ToolMessage 하나<br>글 09:00~18:00"]:::tool
+  m2["노드 model<br>답 글이 든 스트림 청크"]:::model
+  rq["모델 요청 수<br>사용량이 든 스트림 청크 2<br>노드 tools 사건 1 + 1"]:::measure
+  st --> m1
+  m1 --> t1
+  t1 --> m2
+  m2 --> rq

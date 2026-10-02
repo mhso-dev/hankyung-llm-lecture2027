@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  H["대화 기록 2개<br>고객 문의 · 5절 답<br>5절 답에 A-1042 True"]:::tool
+  subgraph ALL["기록 있음 · 메시지 5개"]
+    a1["입력 239 · 출력 81토큰<br>A-1042 True"]:::measure
+  end
+  subgraph LAST["n_messages=1 · 메시지 4개"]
+    direction TB
+    x1["고객 문의 메시지는<br>목록에 넣지 않음"]
+    l1["입력 200 · 출력 72토큰<br>A-1042 True"]:::measure
+    x1 ~~~ l1
+  end
+  D["빠진 메시지 하나<br>입력 39토큰"]:::measure
+  H --> ALL
+  H --> LAST
+  LAST --> D

@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  qi["입력 messages에<br>질문 하나"]:::tool
+  nd["노드 answer<br>낱말마다 쓰기 함수로<br>진행 값을 적음"]:::tool
+  st["astream<br>모드 custom"]
+  lp["async for로<br>사건을 하나씩 받음"]:::flow
+  ev["스트림 사건 여섯<br>모두 칸 token 하나"]:::measure
+  jn["받을 때마다 글을<br>뒤에 이어 붙임"]:::flow
+  rs["이어 붙인 글 끝에 공백 하나<br>공백을 지우면<br>ainvoke 답과 같음 True"]:::measure
+  qi --> nd --> st --> lp --> ev --> jn --> rs

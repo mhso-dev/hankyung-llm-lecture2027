@@ -1,0 +1,207 @@
+{
+  "chat_model": "gpt-5.4-mini",
+  "embedding_model": "text-embedding-3-small",
+  "embedding_dimensions": 256,
+  "document_hash": "d54899d90030b2e5f15465826100e67c318f62bd3a3d6dbc16c2ee4fecc58668",
+  "query_hash": "abdbb041279f0ae5228f622d2e19fda20af79aa0f0bf63a980fd5de96f385f8e",
+  "rows": [
+    {
+      "pattern": "기준선",
+      "qid": "C02",
+      "question": "책을 늦게 반납하면 돈을 내나요?",
+      "gold_doc_id": "LIB-002",
+      "found_ids": [
+        "LIB-003",
+        "LIB-004",
+        "LIB-001",
+        "FAC-002",
+        "ACC-002",
+        "ACC-001",
+        "LIB-002",
+        "ACC-004",
+        "FAC-004",
+        "ACC-003",
+        "FAC-001",
+        "FAC-003"
+      ],
+      "rank": 7,
+      "service_calls": 1
+    },
+    {
+      "pattern": "변형 질문",
+      "qid": "C02",
+      "question": "책을 늦게 반납하면 돈을 내나요?",
+      "gold_doc_id": "LIB-002",
+      "found_ids": [
+        "LIB-003",
+        "LIB-004",
+        "LIB-001",
+        "FAC-002",
+        "LIB-002",
+        "ACC-002",
+        "ACC-001",
+        "ACC-004",
+        "FAC-004",
+        "ACC-003",
+        "FAC-001",
+        "FAC-003"
+      ],
+      "rank": 5,
+      "service_calls": 4
+    },
+    {
+      "pattern": "가상 문서",
+      "qid": "C02",
+      "question": "책을 늦게 반납하면 돈을 내나요?",
+      "gold_doc_id": "LIB-002",
+      "found_ids": [
+        "FAC-004",
+        "LIB-001",
+        "LIB-002",
+        "LIB-003",
+        "LIB-004",
+        "ACC-002",
+        "ACC-003",
+        "ACC-001",
+        "ACC-004",
+        "FAC-002",
+        "FAC-003",
+        "FAC-001"
+      ],
+      "rank": 3,
+      "service_calls": 2
+    },
+    {
+      "pattern": "기준선",
+      "qid": "C05",
+      "question": "토요일 자료실 폐관 시각은?",
+      "gold_doc_id": "FAC-003",
+      "found_ids": [
+        "FAC-003",
+        "LIB-002",
+        "FAC-004",
+        "ACC-004",
+        "ACC-002",
+        "LIB-001",
+        "FAC-002",
+        "FAC-001",
+        "LIB-004",
+        "ACC-001",
+        "ACC-003",
+        "LIB-003"
+      ],
+      "rank": 1,
+      "service_calls": 1
+    },
+    {
+      "pattern": "변형 질문",
+      "qid": "C05",
+      "question": "토요일 자료실 폐관 시각은?",
+      "gold_doc_id": "FAC-003",
+      "found_ids": [
+        "FAC-003",
+        "LIB-002",
+        "FAC-004",
+        "LIB-004",
+        "ACC-002",
+        "LIB-001",
+        "ACC-004",
+        "ACC-001",
+        "FAC-001",
+        "FAC-002",
+        "ACC-003",
+        "LIB-003"
+      ],
+      "rank": 1,
+      "service_calls": 4
+    },
+    {
+      "pattern": "가상 문서",
+      "qid": "C05",
+      "question": "토요일 자료실 폐관 시각은?",
+      "gold_doc_id": "FAC-003",
+      "found_ids": [
+        "FAC-003",
+        "FAC-004",
+        "LIB-002",
+        "LIB-001",
+        "ACC-002",
+        "ACC-004",
+        "LIB-004",
+        "FAC-001",
+        "ACC-001",
+        "ACC-003",
+        "LIB-003",
+        "FAC-002"
+      ],
+      "rank": 1,
+      "service_calls": 2
+    },
+    {
+      "pattern": "기준선",
+      "qid": "C06",
+      "question": "재설정 URL은 언제까지 쓸 수 있나요?",
+      "gold_doc_id": "ACC-001",
+      "found_ids": [
+        "ACC-001",
+        "ACC-003",
+        "LIB-002",
+        "LIB-001",
+        "FAC-001",
+        "FAC-002",
+        "FAC-004",
+        "LIB-004",
+        "ACC-004",
+        "FAC-003",
+        "ACC-002",
+        "LIB-003"
+      ],
+      "rank": 1,
+      "service_calls": 1
+    },
+    {
+      "pattern": "변형 질문",
+      "qid": "C06",
+      "question": "재설정 URL은 언제까지 쓸 수 있나요?",
+      "gold_doc_id": "ACC-001",
+      "found_ids": [
+        "ACC-001",
+        "ACC-003",
+        "FAC-004",
+        "FAC-001",
+        "LIB-001",
+        "FAC-002",
+        "LIB-002",
+        "FAC-003",
+        "LIB-004",
+        "ACC-004",
+        "ACC-002",
+        "LIB-003"
+      ],
+      "rank": 1,
+      "service_calls": 4
+    },
+    {
+      "pattern": "가상 문서",
+      "qid": "C06",
+      "question": "재설정 URL은 언제까지 쓸 수 있나요?",
+      "gold_doc_id": "ACC-001",
+      "found_ids": [
+        "ACC-001",
+        "FAC-004",
+        "ACC-003",
+        "FAC-001",
+        "LIB-001",
+        "LIB-004",
+        "FAC-003",
+        "FAC-002",
+        "LIB-002",
+        "ACC-002",
+        "LIB-003",
+        "ACC-004"
+      ],
+      "rank": 1,
+      "service_calls": 2
+    }
+  ]
+}

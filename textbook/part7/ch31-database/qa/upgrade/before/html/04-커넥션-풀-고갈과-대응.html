@@ -1,0 +1,266 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>커넥션 풀 고갈과 대응 — Ch 31 · DB &amp; 상태 영속화</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · Agent 서비스 개발 · Ch 31 · DB &amp; 상태 영속화</p>
+<h1>커넥션 풀 고갈과 대응</h1><div class="meta"><span>강의 1h · 실습 2h</span><span>새 용어 4</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h · 실습 2h | 코드 Jupyter Notebook | 새 용어 4 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>연결 풀의 크기·초과 연결·대기 제한이 요청에 미치는 영향을 설명할 수 있습니다.</li><li>유일한 연결을 오래 점유해 두 번째 요청의 TimeoutError를 재현할 수 있습니다.</li><li>연결을 일찍 반환하고 대기 제한을 조정한 뒤 두 작업의 성공을 확인할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>FastAPI가 동시에 많은 요청을 받아도 PostgreSQL이 허용하는 연결 수는 제한되어 있습니다. 요청마다 새 연결을 무제한으로 만들거나 반환을 늦추면 데이터베이스가 정상이어도 애플리케이션에서 대기 시간 초과가 발생합니다. 이 절에서는 크기 1인 풀을 의도적으로 고갈시키고 대기 제한과 연결 범위를 조정합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>첫 절에서 `AsyncEngine`이 연결 풀을 관리한다는 점을 확인했습니다. 앞 절까지 만든 트랜잭션과 마이그레이션도 결국 풀에서 빌린 연결로 실행됩니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>구체적인 상황</h3><p>도서관에 열람용 태블릿이 한 대뿐이면 한 사람이 반납할 때까지 다음 사람이 기다립니다.</p><h3>정의</h3><p>반납 시간이 없으면 대기열은 끝없이 늘어납니다. 커넥션 풀(connection pool)은 미리 열어 둔 데이터베이스 연결을 요청에 빌려주고 사용 뒤 다시 보관하는 구성 요소입니다. `pool_size`는 유지하는 연결 수, `max_overflow`는 순간적으로 추가할 연결 수, `pool_timeout`은 연결을 얻기 위해 기다릴 최대 초입니다. 이 값은 각각 크게 정하는 문제가 아닙니다. 애플리케이션 프로세스 수를 곱한 전체 연결 수가 PostgreSQL 한도와 운영 여유 안에 들어가야 합니다.</p><p><strong>이 절의 새 용어</strong> — 커넥션 풀, pool_size, max_overflow, pool_timeout</p><h3>운영에서 경계를 정하는 방법</h3><p>풀 설정은 프로세스 하나의 숫자만 보면 부족합니다. 예를 들어 웹 프로세스 네 개가 `pool_size=5`, `max_overflow=5`를 사용하면 순간 최대 연결은 40개가 될 수 있습니다. 여기에 작업 프로세스, 관리자 접속, 마이그레이션 연결을 더한 값이 PostgreSQL의 허용 범위 안에 있어야 합니다. 풀 고갈 지표는 오류 수만이 아닙니다. 연결 체크아웃 대기 시간, 체크아웃된 연결 수, 쿼리 시간, 트랜잭션 시간을 함께 관찰해야 원인이 느린 SQL인지 반환 누락인지 구분할 수 있습니다. `pool_pre_ping`은 오래된 연결을 사용하기 전에 상태를 확인하는 데 도움을 주지만 매번 추가 왕복이 생깁니다. `pool_recycle`은 일정 시간이 지난 연결을 교체하지만 실행 중인 쿼리를 빠르게 만들지는 않습니다. 요청 제한과 백프레셔도 필요합니다. 데이터베이스가 처리할 수 있는 수보다 많은 작업을 무제한으로 대기시키면 메모리와 사용자 대기 시간만 늘어납니다. 짧은 대기 뒤 명확한 오류를 반환하고 재시도 정책을 적용할지 업무 특성에 따라 결정합니다.</p><h3>코드 읽기와 개념 경계</h3><p>연결 풀은 열린 데이터베이스 연결을 재사용하고 동시에 빌릴 수 있는 수를 제한합니다. <code>pool_size</code>는 유지할 기본 연결 수, <code>max_overflow</code>는 일시적으로 더 만들 수 있는 수, <code>pool_timeout</code>은 연결을 얻기 위해 기다릴 최대 시간입니다. 연결을 빌린 <code>async with</code> 블록이 끝나면 실제 소켓을 없애기보다 풀에 반환합니다.</p><p>풀을 크게 하면 모든 문제가 해결되는 것이 아닙니다. 애플리케이션 인스턴스 수와 각 풀의 최대 연결을 곱한 값이 데이터베이스 허용치를 넘을 수 있습니다. 느린 쿼리나 커밋하지 않은 트랜잭션이 연결을 오래 점유하면 작은 트래픽에서도 고갈됩니다. 따라서 대기 시간, 사용 중 연결 수, 쿼리 시간을 함께 봐야 원인을 구분할 수 있습니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 430" style="width:340px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="커넥션 풀 대기"><title>커넥션 풀 대기</title><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190 85 L190 116" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><path d="M190 185 L190 216" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><path d="M190 285 L190 316" stroke="#334155" stroke-width="2" marker-end="url(#a)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><rect x="30" y="120" width="320" height="65" rx="10" fill="#F4D9D5" stroke="#334155" stroke-width="2"/><rect x="30" y="220" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><rect x="30" y="320" width="320" height="65" rx="10" fill="#E8E2F4" stroke="#334155" stroke-width="2"/><text x="190" y="59" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">동시 요청</text><text x="190" y="159" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">크기 1인 풀</text><text x="190" y="259" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">대기 제한</text><text x="190" y="359" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">반환 또는 TimeoutError</text></svg></div><p>푸른 동시 요청이 붉은 크기 1인 풀에 모이고 초록색 대기 제한을 지납니다. 보라색 마지막 상자는 연결 반환과 TimeoutError 두 결과가 갈리는 지점입니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>노트북은 연결 하나와 짧은 `pool_timeout`을 둔 엔진에서 첫 작업이 연결을 점유하게 합니다. 두 번째 작업의 제한 시간 초과를 관찰한 뒤, 짧은 쿼리와 충분한 대기 시간을 사용해 두 작업을 완료합니다.</p><section class="notebook" data-notebook="04-커넥션-풀-고갈과-대응" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="04-커넥션-풀-고갈과-대응.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsu6TrhKXshZgg7ZKAIOqzoOqwiOqzvCDrjIDsnZFcbiIsCiAgICAiXG4iLAogICAgIuyLpOygnCBQb3N0Z3JlU1FMIDE37JeQ7IScIOyatOyYgSDrjbDsnbTthLDrsqDsnbTsiqTsnZgg7ZWcIOqwgOyngCDrrLjsoJzrpbwg7J6s7ZiE7ZWY6rOgIO2VtOqysO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIuyXsOqysCDtlZwg6rCc66eMIO2XiOyaqe2VnCDtkoDsl5DshJwg65GQIOuyiOynuCDsnpHsl4XsnbQg6riw64uk66as64ukIOyLpO2MqO2VmOuKlCDsg4HtmansnYQg7J6s7ZiE7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogInByZXAtMzEtMDQtMCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg7KSA67mEIOyFgOydtCDtlZjripQg7J28XG4iLAogICAgIlxuIiwKICAgICLslZ7snZggYCVwaXAgaW5zdGFsbGAg7IWA7J2AIOydtCDrhbjtirjrtoHsnYQg7Iuk7ZaJ7ZWY64qUIO2YhOyerCDsu6TrhJDsl5AgQ2gzMeyXkOyEnCDqs6DsoJXtlZwgU1FMQWxjaGVtecK3UG9zdGdyZVNRTMK3cGd2ZWN0b3LCt0xhbmdHcmFwaCDtjKjtgqTsp4Drpbwg7ISk7LmY7ZWp64uI64ukLiDshKTsuZgg66qF66C57J2YIOy2nOugpeydgCDsiKjquLDsp4Drp4wsIOuLpOydjCDshYDsnZggaW1wb3J06rCAIOyEseqzte2VmOugpOuptCDsnbQg64uo6rOE6rCAIOuovOyggCDrgZ3rgpjslbwg7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MDg6MTYuMTU4ODQ0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MDg6MTYuMTU4NzcyWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MDg6MTcuNDM3NDQ3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjowODoxNy40MzY5MjhaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiTm90ZTogeW91IG1heSBuZWVkIHRvIHJlc3RhcnQgdGhlIGtlcm5lbCB0byB1c2UgdXBkYXRlZCBwYWNrYWdlcy5cbiIKICAgICBdCiAgICB9LAogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJOb3RlOiB5b3UgbWF5IG5lZWQgdG8gcmVzdGFydCB0aGUga2VybmVsIHRvIHVzZSB1cGRhdGVkIHBhY2thZ2VzLlxuIgogICAgIF0KICAgIH0sCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIk5vdGU6IHlvdSBtYXkgbmVlZCB0byByZXN0YXJ0IHRoZSBrZXJuZWwgdG8gdXNlIHVwZGF0ZWQgcGFja2FnZXMuXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7J20IOyxle2EsOyXkOyEnCDqs6DsoJXtlZwg7Yyo7YKk7KeA66W8IOyEpOy5mO2VqeuLiOuLpC5cbiIsCiAgICAiJXBpcCBpbnN0YWxsIC1xICdzcWxhbGNoZW15W2FzeW5jaW9dPT0yLjAuNDMnIGFzeW5jcGc9PTAuMzAuMCBhbGVtYmljPT0xLjE2LjVcbiIsCiAgICAiJXBpcCBpbnN0YWxsIC1xICdwc3ljb3BnW2JpbmFyeSxwb29sXT09My4zLjMnIHBndmVjdG9yPT0wLjQuMVxuIiwKICAgICIlcGlwIGluc3RhbGwgLXEgbGFuZ2dyYXBoPT0xLjIuMTEgbGFuZ2dyYXBoLWNoZWNrcG9pbnQtcG9zdGdyZXM9PTMuMC41IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAicHJlcC0zMS0wNC0xIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDspIDruYQg7IWA7J20IO2VmOuKlCDsnbxcbiIsCiAgICAiXG4iLAogICAgIuuRkCDrsojsp7gg7KSA67mEIOyFgOydgCBgQ0gzMV9EQVRBQkFTRV9VUkxg7J2EIOydveqzoCDsl4bsnLzrqbQg66Gc7LusIOyLpOyKteyaqSDso7zshozrpbwg7IKs7Jqp7ZWp64uI64ukLiDqsJnsnYAg642w7J207YSw67Kg7J207Iqk66W8IOu5hOuPmeq4sCBTUUxBbGNoZW15LCBwc3ljb3BnLCBQb3N0Z3JlU1FMIOuqheugueyXkOyEnCDsgqzsmqntlaAg7IiYIOyeiOuPhOuhnSDrk5zrnbzsnbTrsoQg7ZGc6riw66eMIOuwlOq+vCDshLggVVJM7J2EIOunjOuTreuLiOuLpC4g7ZmU66m07JeQ64qUIOuNsOydtO2EsOuyoOydtOyKpCDsnbTrpoTqs7wg67mE67CA6rCS7J2EIOyIqOqyvOuLpOuKlCDsgqzsi6Trp4wg7Lac66Cl7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MDg6MTcuNDM4NzIyWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MDg6MTcuNDM4NjE3WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MDg6MTcuNDQwOTkyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjowODoxNy40NDA2MjJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiZGF0YWJhc2U6IGNoMzFfbGFiLCBjcmVkZW50aWFsczogaGlkZGVuXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7KCE7JqpIOyLpOyKtSDrjbDsnbTthLDrsqDsnbTsiqQg7KO87IaM66eMIOykgOu5hO2VmOupsCDruYTrsIAg6rCS7J2AIOy2nOugpe2VmOyngCDslYrsirXri4jri6QuXG4iLAogICAgImltcG9ydCBvc1xuIiwKICAgICJBU1lOQ19VUkwgPSBvcy5nZXRlbnYoXG4iLAogICAgIiAgICBcIkNIMzFfREFUQUJBU0VfVVJMXCIsXG4iLAogICAgIiAgICBcInBvc3RncmVzcWwrYXN5bmNwZzovL3Bvc3RncmVzOnBvc3RncmVzQGxvY2FsaG9zdDo1NTQzMS9jaDMxX2xhYlwiLFxuIiwKICAgICIpXG4iLAogICAgIlNZTkNfVVJMID0gQVNZTkNfVVJMLnJlcGxhY2UoXCJwb3N0Z3Jlc3FsK2FzeW5jcGdcIiwgXCJwb3N0Z3Jlc3FsK3BzeWNvcGdcIilcbiIsCiAgICAiTkFUSVZFX1VSTCA9IEFTWU5DX1VSTC5yZXBsYWNlKFwicG9zdGdyZXNxbCthc3luY3BnXCIsIFwicG9zdGdyZXNxbFwiKVxuIiwKICAgICJwcmludChcImRhdGFiYXNlOiBjaDMxX2xhYiwgY3JlZGVudGlhbHM6IGhpZGRlblwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2MqCDsnqztmIRcbiIsCiAgICAiXG4iLAogICAgIuyyqyDsnpHsl4XsnbQg7Jew6rKw7J2EIOygkOycoO2VnCDrj5nslYgg65GQIOuyiOynuCDsnpHsl4XsnZgg64yA6riwIOygnO2VnOydhCAwLjLstIjroZwg65Gh64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNvbmNlcHQtMzEtMDQtYSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOuwlOuhnCDri6TsnYwg7L2U65Oc66W8IOydveuKlCDrsKnrspVcbiIsCiAgICAiXG4iLAogICAgIuyXsOqysCDtkoDsnYAg7Je066awIOuNsOydtO2EsOuyoOydtOyKpCDsl7DqsrDsnYQg7J6s7IKs7Jqp7ZWY6rOgIOuPmeyLnOyXkCDruYzrprQg7IiYIOyeiOuKlCDsiJjrpbwg7KCc7ZWc7ZWp64uI64ukLiBgcG9vbF9zaXplYOuKlCDsnKDsp4DtlaAg6riw67O4IOyXsOqysCDsiJgsIGBtYXhfb3ZlcmZsb3dg64qUIOydvOyLnOyggeycvOuhnCDrjZQg66eM65OkIOyImCDsnojripQg7IiYLCBgcG9vbF90aW1lb3V0YOydgCDsl7DqsrDsnYQg7Ja76riwIOychO2VtCDquLDri6TrprQg7LWc64yAIOyLnOqwhOyeheuLiOuLpC4g7Jew6rKw7J2EIOu5jOumsCBgYXN5bmMgd2l0aGAg67iU66Gd7J20IOuBneuCmOuptCDsi6TsoJwg7IaM7LyT7J2EIOyXhuyVoOq4sOuztOuLpCDtkoDsl5Ag67CY7ZmY7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDYiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MDg6MTcuNDQyMDE0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MDg6MTcuNDQxOTIzWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MDg6MTguMTcyMDI1WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjowODoxOC4xNzE2MDRaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJiZWZvcmU6IFRpbWVvdXRFcnJvclxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJpbXBvcnQgYXN5bmNpb1xuIiwKICAgICJmcm9tIHNxbGFsY2hlbXkgaW1wb3J0IHRleHRcbiIsCiAgICAiZnJvbSBzcWxhbGNoZW15LmV4YyBpbXBvcnQgVGltZW91dEVycm9yXG4iLAogICAgImZyb20gc3FsYWxjaGVteS5leHQuYXN5bmNpbyBpbXBvcnQgY3JlYXRlX2FzeW5jX2VuZ2luZVxuIiwKICAgICJcbiIsCiAgICAic21hbGwgPSBjcmVhdGVfYXN5bmNfZW5naW5lKEFTWU5DX1VSTCwgcG9vbF9zaXplPTEsIG1heF9vdmVyZmxvdz0wLCBwb29sX3RpbWVvdXQ9MC4yKVxuIiwKICAgICJhc3luYyBkZWYgaG9sZF9jb25uZWN0aW9uKGRlbGF5OiBmbG9hdCkgLT4gTm9uZTpcbiIsCiAgICAiICAgIGFzeW5jIHdpdGggc21hbGwuY29ubmVjdCgpIGFzIGNvbm46XG4iLAogICAgIiAgICAgICAgYXdhaXQgY29ubi5leGVjdXRlKHRleHQoXCJTRUxFQ1QgcGdfc2xlZXAoOmRlbGF5KVwiKSwge1wiZGVsYXlcIjogZGVsYXl9KVxuIiwKICAgICJob2xkZXIgPSBhc3luY2lvLmNyZWF0ZV90YXNrKGhvbGRfY29ubmVjdGlvbigwLjYpKVxuIiwKICAgICJhd2FpdCBhc3luY2lvLnNsZWVwKDAuMDUpXG4iLAogICAgInRyeTpcbiIsCiAgICAiICAgIGF3YWl0IGhvbGRfY29ubmVjdGlvbigwLjAxKVxuIiwKICAgICJleGNlcHQgVGltZW91dEVycm9yIGFzIGV4YzpcbiIsCiAgICAiICAgIGV4aGF1c3RlZCA9IHR5cGUoZXhjKS5fX25hbWVfX1xuIiwKICAgICJhd2FpdCBob2xkZXJcbiIsCiAgICAicHJpbnQoXCJiZWZvcmU6XCIsIGV4aGF1c3RlZClcbiIsCiAgICAiYXNzZXJ0IGV4aGF1c3RlZCA9PSBcIlRpbWVvdXRFcnJvclwiXG4iLAogICAgImF3YWl0IHNtYWxsLmRpc3Bvc2UoKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7IiY7KCVXG4iLAogICAgIlxuIiwKICAgICLrjIDquLAg7KCc7ZWc7J2EIOyLpOygnCDsv7zrpqwg7Iuc6rCE67O064ukIOq4uOqyjCDrkZDqs6AsIOyXsOqysCDruJTroZ3snYQg7Ken6rKMIOycoOyngO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTMxLTA0LWIiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDri6jqs4Tsl5DshJwg6rWs67aE7ZWgIOuylOychFxuIiwKICAgICJcbiIsCiAgICAi7ZKA7J2EIO2BrOqyjCDtlZjrqbQg66qo65OgIOusuOygnOqwgCDtlbTqsrDrkJjripQg6rKD7J20IOyVhOuLmeuLiOuLpC4g7JWg7ZSM66as7LyA7J207IWYIOyduOyKpO2EtOyKpCDsiJjsmYAg6rCBIO2SgOydmCDstZzrjIAg7Jew6rKw7J2EIOqzse2VnCDqsJLsnbQg642w7J207YSw67Kg7J207IqkIO2XiOyaqey5mOulvCDrhJjsnYQg7IiYIOyeiOyKteuLiOuLpC4g64qQ66awIOy/vOumrOuCmCDsu6TrsIvtlZjsp4Ag7JWK7J2AIO2KuOuenOyereyFmOydtCDsl7DqsrDsnYQg7Jik656YIOygkOycoO2VmOuptCDsnpHsnYAg7Yq4656Y7ZS97JeQ7ISc64+EIOqzoOqwiOuQqeuLiOuLpC4g65Sw65287IScIOuMgOq4sCDsi5zqsIQsIOyCrOyaqSDspJEg7Jew6rKwIOyImCwg7L+866asIOyLnOqwhOydhCDtlajqu5gg67SQ7JW8IOybkOyduOydhCDqtazrtoTtlaAg7IiYIOyeiOyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjA4OjE4LjE3Mjc4MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjA4OjE4LjE3MjcyN1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjA4OjE4LjQ3MzQwOFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MDg6MTguNDczMDU5WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJhZnRlcjogMSAxIFBvb2wgc2l6ZTogMSAgQ29ubmVjdGlvbnMgaW4gcG9vbDogMSBDdXJyZW50IE92ZXJmbG93OiAwIEN1cnJlbnQgQ2hlY2tlZCBvdXQgY29ubmVjdGlvbnM6IDBcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaGVhbHRoeSA9IGNyZWF0ZV9hc3luY19lbmdpbmUoQVNZTkNfVVJMLCBwb29sX3NpemU9MSwgbWF4X292ZXJmbG93PTAsIHBvb2xfdGltZW91dD0xLjApXG4iLAogICAgImFzeW5jIGRlZiBzaG9ydF9xdWVyeShkZWxheTogZmxvYXQpIC0+IGludDpcbiIsCiAgICAiICAgIGFzeW5jIHdpdGggaGVhbHRoeS5jb25uZWN0KCkgYXMgY29ubjpcbiIsCiAgICAiICAgICAgICByZXN1bHQgPSBhd2FpdCBjb25uLmV4ZWN1dGUoXG4iLAogICAgIiAgICAgICAgICAgIHRleHQoXCJTRUxFQ1QgMSBGUk9NIHBnX3NsZWVwKDpkZWxheSlcIiksIHtcImRlbGF5XCI6IGRlbGF5fVxuIiwKICAgICIgICAgICAgIClcbiIsCiAgICAiICAgICAgICByZXR1cm4gcmVzdWx0LnNjYWxhcl9vbmUoKVxuIiwKICAgICJmaXJzdCA9IGFzeW5jaW8uY3JlYXRlX3Rhc2soc2hvcnRfcXVlcnkoMC4yNSkpXG4iLAogICAgImF3YWl0IGFzeW5jaW8uc2xlZXAoMC4wNSlcbiIsCiAgICAic2Vjb25kID0gYXdhaXQgc2hvcnRfcXVlcnkoMC4wMSlcbiIsCiAgICAicHJpbnQoXCJhZnRlcjpcIiwgYXdhaXQgZmlyc3QsIHNlY29uZCwgaGVhbHRoeS5wb29sLnN0YXR1cygpKVxuIiwKICAgICJhc3NlcnQgc2Vjb25kID09IDFcbiIsCiAgICAiYXdhaXQgaGVhbHRoeS5kaXNwb3NlKCkiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogInBhaXJlZCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDQsCiAgICJjb2RlX3NoYTI1NiI6ICJkOGYwMDdiMTY4ZGM1ZmQ5OTZkNDYxNDE0ODk2NTYzOGU5NDAwY2Y5ODFjMmE5MTFkNDA1YzJhMzUyYTE1ODJmIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDI6MDg6MTguNTg4MTI3KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICI0YWU5M2NiOTRmY2NkZWYyM2MwOGMwOTAyYTRiMDZjOGNlOTU3OTcxN2E3NjkzMDM1NmFmMDBmZTQwOWM5MTdhIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>커넥션 풀 고갈과 대응</h2>
+<p>실제 PostgreSQL 17에서 운영 데이터베이스의 한 가지 문제를 재현하고 해결합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>연결 한 개만 허용한 풀에서 두 번째 작업이 기다리다 실패하는 상황을 재현합니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>앞의 <code>%pip install</code> 셀은 이 노트북을 실행하는 현재 커널에 Ch31에서 고정한 SQLAlchemy·PostgreSQL·pgvector·LangGraph 패키지를 설치합니다. 설치 명령의 출력은 숨기지만, 다음 셀의 import가 성공하려면 이 단계가 먼저 끝나야 합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 챕터에서 고정한 패키지를 설치합니다.
+%pip install -q &#x27;sqlalchemy[asyncio]==2.0.43&#x27; asyncpg==0.30.0 alembic==1.16.5
+%pip install -q &#x27;psycopg[binary,pool]==3.3.3&#x27; pgvector==0.4.1
+%pip install -q langgraph==1.2.11 langgraph-checkpoint-postgres==3.0.5</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>두 번째 준비 셀은 <code>CH31_DATABASE_URL</code>을 읽고 없으면 로컬 실습용 주소를 사용합니다. 같은 데이터베이스를 비동기 SQLAlchemy, psycopg, PostgreSQL 명령에서 사용할 수 있도록 드라이버 표기만 바꾼 세 URL을 만듭니다. 화면에는 데이터베이스 이름과 비밀값을 숨겼다는 사실만 출력합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 전용 실습 데이터베이스 주소만 준비하며 비밀 값은 출력하지 않습니다.
+import os
+ASYNC_URL = os.getenv(
+    &quot;CH31_DATABASE_URL&quot;,
+    &quot;postgresql+asyncpg://postgres:postgres@localhost:55431/ch31_lab&quot;,
+)
+SYNC_URL = ASYNC_URL.replace(&quot;postgresql+asyncpg&quot;, &quot;postgresql+psycopg&quot;)
+NATIVE_URL = ASYNC_URL.replace(&quot;postgresql+asyncpg&quot;, &quot;postgresql&quot;)
+print(&quot;database: ch31_lab, credentials: hidden&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">database: ch31_lab, credentials: hidden
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — Before의 `TimeoutError`와 풀 상태, After의 두 결과와 전체 소요 시간을 확인합니다. 성공은 연결을 빌리고 반환한 이 실험 조건을 뜻하며 운영 연결 수의 적정값을 정하지 않습니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before에서는 풀 크기 1, 추가 연결 0, 대기 제한 0.2초로 설정했습니다. 첫 쿼리가 0.6초 동안 연결을 점유하자 두 번째 쿼리는 `TimeoutError`를 냈습니다. After에서는 첫 작업을 0.25초로 줄이고 대기 제한을 1초로 늘렸습니다. 두 번째 작업은 첫 연결이 반환된 뒤 같은 풀 연결을 받아 1을 반환했습니다.</p><section class="notebook" data-notebook="04-커넥션-풀-고갈과-대응" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>첫 작업이 연결을 점유한 동안 두 번째 작업의 대기 제한을 0.2초로 둡니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>연결 풀은 열린 데이터베이스 연결을 재사용하고 동시에 빌릴 수 있는 수를 제한합니다. <code>pool_size</code>는 유지할 기본 연결 수, <code>max_overflow</code>는 일시적으로 더 만들 수 있는 수, <code>pool_timeout</code>은 연결을 얻기 위해 기다릴 최대 시간입니다. 연결을 빌린 <code>async with</code> 블록이 끝나면 실제 소켓을 없애기보다 풀에 반환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import asyncio
+from sqlalchemy import text
+from sqlalchemy.exc import TimeoutError
+from sqlalchemy.ext.asyncio import create_async_engine
+
+small = create_async_engine(ASYNC_URL, pool_size=1, max_overflow=0, pool_timeout=0.2)
+async def hold_connection(delay: float) -&gt; None:
+    async with small.connect() as conn:
+        await conn.execute(text(&quot;SELECT pg_sleep(:delay)&quot;), {&quot;delay&quot;: delay})
+holder = asyncio.create_task(hold_connection(0.6))
+await asyncio.sleep(0.05)
+try:
+    await hold_connection(0.01)
+except TimeoutError as exc:
+    exhausted = type(exc).__name__
+await holder
+print(&quot;before:&quot;, exhausted)
+assert exhausted == &quot;TimeoutError&quot;
+await small.dispose()</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">before: TimeoutError
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>대기 제한을 실제 쿼리 시간보다 길게 두고, 연결 블록을 짧게 유지합니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>풀을 크게 하면 모든 문제가 해결되는 것이 아닙니다. 애플리케이션 인스턴스 수와 각 풀의 최대 연결을 곱한 값이 데이터베이스 허용치를 넘을 수 있습니다. 느린 쿼리나 커밋하지 않은 트랜잭션이 연결을 오래 점유하면 작은 트래픽에서도 고갈됩니다. 따라서 대기 시간, 사용 중 연결 수, 쿼리 시간을 함께 봐야 원인을 구분할 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">healthy = create_async_engine(ASYNC_URL, pool_size=1, max_overflow=0, pool_timeout=1.0)
+async def short_query(delay: float) -&gt; int:
+    async with healthy.connect() as conn:
+        result = await conn.execute(
+            text(&quot;SELECT 1 FROM pg_sleep(:delay)&quot;), {&quot;delay&quot;: delay}
+        )
+        return result.scalar_one()
+first = asyncio.create_task(short_query(0.25))
+await asyncio.sleep(0.05)
+second = await short_query(0.01)
+print(&quot;after:&quot;, await first, second, healthy.pool.status())
+assert second == 1
+await healthy.dispose()</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">after: 1 1 Pool size: 1  Connections in pool: 1 Current Overflow: 0 Current Checked out connections: 0
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p>이 결과는 Docker의 독립 PostgreSQL 17.8 컨테이너와 작은 데이터에서 측정했습니다. 행 수, 네트워크, 디스크, 동시 요청 수가 달라지면 시간과 실행 계획도 달라집니다.</p><p>After가 성공한 이유는 풀 용량이 늘어서가 아니라 첫 연결이 제한 시간 안에 반환됐기 때문입니다. 요청 수가 계속 늘면 다시 대기하므로 실제 처리량과 허용 지연을 기준으로 풀과 작업 큐를 함께 조정합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>대기 제한만 늘리면 오류가 늦게 나타날 뿐 처리량 문제는 남을 수 있습니다.</li><li>세션과 결과 스트림을 요청 수명보다 오래 보관하지 말고 필요한 데이터만 읽은 뒤 연결을 반환합니다.</li><li>프로세스가 네 개면 프로세스별 풀 설정의 합계를 계산하고 관리자·마이그레이션용 연결 여유도 남깁니다.</li></ul><h3>운영 전 확인 순서</h3><p>부하 시험은 평균 지연만 보지 않고 연결 대기 시간의 상위 백분위수와 시간 초과 수를 함께 기록합니다. 쿼리 종료 뒤 체크아웃 수가 원래 값으로 돌아오는지 확인합니다. 연결 누수가 의심되면 요청별 체크아웃과 체크인 이벤트를 짧은 기간 추적합니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>풀 크기와 추가 연결 수는 모든 프로세스의 합계로 계산합니다.</li><li>유일한 연결이 대기 제한보다 오래 점유되자 `TimeoutError`가 발생했습니다.</li><li>연결 범위를 짧게 하고 대기 시간·쿼리 시간·체크아웃 수를 함께 관찰합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 마지막 절에서는 같은 PostgreSQL 인스턴스에 벡터 표와 체크포인터 표가 있을 때 색인과 백업 범위를 확인합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. `pool_timeout`은 무엇을 제한하나요?</summary><p class="quiz-a"><b>해설</b> — 풀에서 사용 가능한 연결을 얻기 위해 기다리는 최대 시간을 제한합니다.</p></details><details class="quiz"><summary>2. 풀 크기를 무조건 크게 잡을 수 없는 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 여러 프로세스의 풀 합계가 PostgreSQL 연결 한도와 메모리를 소모하기 때문입니다.</p></details><details class="quiz"><summary>3. Before에서 `TimeoutError`가 난 직접 원인은 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 유일한 연결이 0.6초 동안 점유됐는데 두 번째 작업의 대기 제한은 0.2초였기 때문입니다.</p></details><details class="quiz"><summary>4. After에서 함께 바꾼 두 조건은 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 연결 점유 시간을 줄이고 대기 제한을 실제 쿼리 시간보다 길게 정했습니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.sqlalchemy.org/en/20/core/pooling.html">커넥션 풀 고갈과 대응 공식 문서</a> · 확인 2026-09-11 · SQLAlchemy 2.0</li><li><a href="https://docs.sqlalchemy.org/en/20/errors.html#queuepool-limit-of-size-x-overflow-y-reached-connection-timed-out-timeout-z">커넥션 풀 고갈과 대응 공식 문서</a> · 확인 2026-09-11</li></ul><p><strong>확인 필요 항목</strong> — 운영 배포 전에는 조직의 허용 연결 수, 백업 보존 기간, 복구 목표 시간과 실제 데이터 규모를 별도로 확인해야 합니다.</p>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="03-Alembic-적용과-롤백.html">← Alembic 적용과 롤백</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="05-pgvector-체크포인터-공존과-백업.html">pgvector 체크포인터 공존과 백업 →</a></span></div></div></body></html>

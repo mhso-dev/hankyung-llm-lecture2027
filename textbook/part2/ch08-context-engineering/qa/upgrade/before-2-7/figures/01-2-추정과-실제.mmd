@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  M["3절 목록 · 메시지 3개<br>페르소나 · 과업 명세<br>근거와 질문"]:::tool
+  C["count_tokens<br>글 내용만 셈"]:::flow
+  E["추정 입력 187"]:::measure
+  G["gpt-5.4-mini<br>출력 상한 None"]:::model
+  U["실제 입력 201 · 출력 52<br>끝난 이유 stop"]:::measure
+  D["실제 - 추정 = 14<br>여유분 40 안에 듦"]:::measure
+  M --> C
+  C --> E
+  M --> G
+  G --> U
+  E --> D
+  U --> D

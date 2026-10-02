@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph U["단계 1에서 값 고쳐 넣기 · update_state"]
+    direction TB
+    u1["할인 20을 넣음"]:::tool
+    u2["새 체크포인트<br>단계 2 · 만든 자리 update"]:::measure
+    u3["다시 실행된 노드<br>discount · ask_price<br>질문 값 최종 가격 8000"]:::measure
+    u1 --> u2
+    u2 --> u3
+  end
+  subgraph F["단계 1에서 그대로 다시 실행 · invoke에 None"]
+    direction TB
+    f1["고친 값 없음<br>입력 자리에 None"]:::tool
+    f2["새 체크포인트<br>단계 2 · 만든 자리 fork"]:::measure
+    f3["다시 실행된 노드<br>discount · ask_price<br>질문 값 최종 가격 9000"]:::measure
+    f1 --> f2
+    f2 --> f3
+  end
+  cm["두 장면 같음<br>quote는 다시 실행하지 않음<br>ask_price 멈춤 표시에서<br>다시 멈춤"]
+  U ~~~ cm
+  F ~~~ cm

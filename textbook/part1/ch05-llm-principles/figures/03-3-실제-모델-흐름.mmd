@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  SENT["문장 · 조각 21개<br>… 노란색입니다. 상품 B는"]:::tool
+  MODEL["언어 모델<br>Qwen2.5-0.5B-Instruct"]:::model
+  TABLES["비중 표 24개<br>한 표 모양 (1, 14, 21, 21)"]:::measure
+  ROW["마지막 층 · 20번 조각 줄<br>머리 평균 · 합 1.0"]:::measure
+  COUNT["첫 조각 상이 가장 큰 층<br>24개 가운데 19개"]:::measure
+  SENT -- "encode()" --> MODEL
+  MODEL -- "비중 표도 반환" --> TABLES
+  TABLES -- "average_heads()" --> ROW
+  TABLES -- "층마다 가장 큰 조각" --> COUNT

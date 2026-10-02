@@ -1,0 +1,6 @@
+flowchart TD
+  %% classes
+  h["human: 운영 시간 질문"]:::flow --> a1["ai: 도구 요청 (모델 호출 1번)"]:::model
+  a1 --> t["tool: 평일 09:00~20:00"]:::tool
+  t --> stop["두 번째 모델 호출 — 한도 1 초과"]:::measure
+  stop --> end1["ai: Model call limits exceeded"]:::fail

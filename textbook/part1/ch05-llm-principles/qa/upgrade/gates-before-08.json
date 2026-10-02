@@ -1,0 +1,78 @@
+{
+  "chapter": "ch05-llm-principles",
+  "label": "before",
+  "totals": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 1,
+    "G4": 0,
+    "G5": 6,
+    "G6": 24,
+    "G7": 3
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "08-모델-선택-기준",
+      "code_cells": 4,
+      "sentences": 130,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 1,
+        "G4": 0,
+        "G5": 6,
+        "G6": 24,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [
+          "cell8:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:01절은 tokenizer가 문장을 토큰 ID로 바꾸는 결과를 비교했고, 02절은 문장 임베딩과 코사인 유사도가 특정 모델과 문장 집합에서의 근접도를 나타낸다는 점을 확인했습니다",
+          "long:텍스트 생성 모델은 입력 뒤의 토큰을 이어 문장을 만들고, 문장 유사도 모델은 문장을 벡터로 바꾸어 거리를 비교하며, 빈칸 채우기 모델은 문장 안의 가려진 위치에 올 후보를 계산합니다",
+          "long:각 수치를 저장하는 정밀도, CPU나 GPU 중 어디서 실행하는지, 프로그램 구현에 따라 필요한 메모리와 처리 시간이 달라집니다",
+          "long:첫 토큰 지연시간(time to first token, TTFT) 은 요청을 시작한 뒤 첫 출력 토큰을 받을 때까지의 시간입니다",
+          "long:서비스 모델을 선택할 때는 모델을 처음 실행하는 경우와 한 번 실행해 준비된 경우를 구분하고, 입력 길이, 출력 길이, 동시에 처리하는 요청 수를 고정해 별도로 측정해야 합니다",
+          "long:이미 캐시된 모델의 로딩 시간은 0.384초였고, 같은 한국어 문장을 100번 반복한 입력은 1,202토큰으로 나뉘며 토큰화에 3.631밀리초가 걸렸습니다",
+          "long:확인할 점 — `eligible` 목록에는 한 모델만 남지만 출력의 마지막 문장은 선택 전에 실제 대표 질문과 정답 기준으로 품질과 속도를 측정해야 한다고 명시합니다",
+          "long:작업 종류와 라이선스 값은 실제 제품 요구에서 먼저 정해야 하며, 원하는 모델이 남도록 사후에 조건을 바꾸면 선택 기준의 의미가 없어집니다",
+          "long:모델이 입력을 계산하고 새 토큰을 만드는 시간, 네트워크 전송, 요청 대기, 생성 중인 답을 조금씩 전송하는 시간은 포함하지 않습니다",
+          "long:다음 학습과 이어지는 지점 — Ch 6에서는 외부 모델 API를 LangChain의 공통 인터페이스로 호출하고 메시지와 응답 객체를 다룹니다",
+          "long:Ch 5의 로컬 Qwen·MiniLM·KLUE 표를 그대로 사용하지 않고, 생성 API를 제공하는 OpenAI·Anthropic·Google 후보에 작업 적합성과 키 준비 여부를 적용합니다",
+          "long:정답: tokenizer가 문자열을 토큰 ID로 바꾸는 전처리만 측정했고 모델 추론과 새 토큰 생성은 실행하지 않았기 때문입니다",
+          "long:Hugging Face Transformers: Auto Classes · 확인 2026-09-09 · 기준 Transformers 4.56.2",
+          "long:작업 일치 여부와 라이선스 일치 여부를 각각 불리언 값으로 계산하고, 두 값이 모두 `True`일 때만 `append()`로 후보를 목록 끝에 추가합니다",
+          "english_start:`Qwen/Qwen2.5-0.5B-Instruct`는 텍스트 생성, `s",
+          "english_start:`AutoTokenizer.from_pretrained()`는 모델 ID",
+          "english_start:`AutoModelForCausalLM.from_pretrained()`",
+          "english_start:`num_parameters()`는 모델이 가진 파라미터 수를 정수로 반",
+          "english_start:`for`가 후보를 하나씩 읽고 두 비교 결과를 참 또는 거짓으로 저장합",
+          "english_start:`and`로 둘 다 참인지 확인한 뒤 `eligible.append(it",
+          "english_start:`task`는 실습에서 사용할 입력·출력 목적이고 `license`는 모",
+          "english_start:`AutoTokenizer.from_pretrained()`는 모델 ID",
+          "english_start:`num_parameters()`는 파라미터 수를 정수로 반환합니다",
+          "dense_paragraph:마지막 셀은 `required_task`를 `text-generation`, `required_license"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

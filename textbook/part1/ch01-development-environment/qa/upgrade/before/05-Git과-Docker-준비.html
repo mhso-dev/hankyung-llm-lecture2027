@@ -1,0 +1,495 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git과 Docker 준비 — Ch 1 · 오리엔테이션 · 개발환경</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 1 · 오리엔테이션 · 개발환경</p>
+<h1>Git과 Docker 준비</h1><div class="meta"><span>강의 1h</span><span>실습 0.5h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 0.5h | 코드 Jupyter Notebook | 새 용어 7 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 Git과 GitHub의 역할을 구분하고, 임시 저장소에서 <code>git init</code>과 <code>git status</code>의 결과를 읽을 수 있습니다.</li>
+<li>이 절을 마치면 Docker의 클라이언트와 데몬을 구분하고, <code>docker version</code>에서 어느 쪽이 준비되지 않았는지 확인할 수 있습니다.</li>
+<li>이 절을 마치면 자신의 운영체제에 맞는 Docker Desktop 공식 설치 문서를 찾아 필수 조건을 확인할 수 있습니다.</li>
+<li>이 절을 마치면 여섯 가지 준비 항목의 진단 결과를 읽고 Ch 2 시작 전에 보완할 항목을 정할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>4절까지 만든 <code>hello.py</code>는 한 파일이지만, 이후에는 여러 파일을 수정하고 이전 상태와 비교해야 합니다. Git은 어떤 파일이 달라졌는지 기록하는 도구입니다. 한편 뒤의 과정에서는 다른 컴퓨터에서도 같은 실행 조건을 준비해야 합니다. Docker는 필요한 프로그램과 설정을 묶은 실행 환경을 만드는 데 사용합니다.</p>
+<p>이번 절의 목표는 두 도구를 깊이 사용하는 것이 아닙니다. Git은 현재 폴더를 저장소로 준비하고 상태를 읽는 데까지 다룹니다. Docker는 설치 파일을 임의로 내려받지 않고 운영체제별 공식 안내를 확인하며, 명령을 입력할 수 있는 상태와 실제 실행 서비스가 준비된 상태를 구분합니다. Git의 브랜치와 협업은 뒤의 실습에서, 컨테이너 설계와 배포는 Ch 32에서 자세히 배웁니다.</p>
+
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>2절에서 명령이 발견되는지와 실행이 성공했는지를 구분했습니다. 3절에서는 프로젝트마다 Python 버전과 패키지를 분리했습니다. 4절에서는 <code>hello.py</code>를 저장하고 실행했습니다. 이 절은 같은 원리를 개발 도구의 준비 상태에 적용합니다. 명령 이름이 존재하는지, 현재 폴더가 저장소인지, Docker의 실행 서비스가 응답하는지를 각각 확인합니다.</p>
+<p>진단 노트북은 실제 프로젝트를 바꾸지 않도록 임시 폴더에서 Git 저장소를 만듭니다. 노트북이 끝나면 임시 폴더는 정리됩니다. Docker Desktop 설치는 운영체제 설정과 이용 조건을 확인해야 하므로 노트북이 대신 설치하지 않습니다.</p>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유 — 변경 기록과 준비된 작업대</h3>
+<p>문서를 여러 차례 수정할 때 파일 이름을 <code>최종</code>, <code>진짜최종</code>처럼 늘리는 대신, 변경 이력을 한곳에 기록하면 어느 부분이 달라졌는지 찾기 쉽습니다. Git이 이 기록을 맡습니다. Docker는 필요한 도구가 놓인 작업대의 설계와 실행을 담당합니다. 작업대 설계도가 있어도 실제 작업대를 펼치지 않았다면 사용할 수 없습니다. Docker 명령줄 도구가 설치되어 있어도 실행 서비스가 시작되지 않은 상태가 이와 비슷합니다.</p>
+
+<h3>Git과 GitHub를 구분합니다</h3>
+<dl class="term">
+<dt>Git</dt>
+<dd>컴퓨터의 폴더에서 파일 변경 이력을 기록하고 비교하는 버전 관리 프로그램입니다. 인터넷 연결 없이도 새 저장소를 만들고 상태를 확인할 수 있습니다.</dd>
+<dt>저장소(repository)</dt>
+<dd>Git이 변경 이력을 관리하는 프로젝트 폴더입니다. <code>git init</code>을 실행하면 현재 폴더에 Git 관리 정보가 생기며, 일반 작업 파일과 함께 상태를 추적할 수 있습니다.</dd>
+<dt>GitHub</dt>
+<dd>Git 저장소를 인터넷에 보관하고 다른 사람과 검토·협업할 수 있게 하는 서비스입니다. Git을 설치했다고 GitHub 계정이 자동으로 생기지 않으며, <code>git init</code>만으로 파일이 GitHub에 전송되지도 않습니다.</dd>
+</dl>
+<p><code>git status</code>는 현재 저장소에서 무엇이 달라졌는지 보여 줍니다. 아직 기록 대상으로 추가하지 않은 파일은 <strong>추적하지 않은 파일(untracked files)</strong>로 표시됩니다. 이 상태는 오류가 아니라 Git이 새 파일을 발견했다는 뜻입니다. 이번 절에서는 임시 폴더에 파일 하나를 만들고 상태 표시가 바뀌는 과정을 관찰합니다. 커밋과 원격 저장소 전송은 다음 학습에서 다룹니다.</p>
+
+<h3>Docker의 설치와 실행 상태를 구분합니다</h3>
+<dl class="term">
+<dt>클라이언트(client)</dt>
+<dd>사용자가 입력한 <code>docker</code> 명령을 받아 Docker의 실행 서비스에 요청하는 명령줄 프로그램입니다.</dd>
+<dt>데몬(daemon)</dt>
+<dd>백그라운드에서 요청을 받고 이미지와 컨테이너를 관리하는 Docker의 실행 서비스입니다. <code>docker version</code>의 Server 정보가 이 서비스와 통신한 결과입니다.</dd>
+<dt>이미지(image)</dt>
+<dd>프로그램과 실행에 필요한 파일을 묶어 둔 읽기 전용 실행 설계입니다.</dd>
+<dt>컨테이너(container)</dt>
+<dd>이미지를 바탕으로 실제 실행한 격리된 프로세스입니다. 이 절에서는 뜻과 준비 상태만 확인하며, 제작과 배포는 Ch 32에서 다룹니다.</dd>
+</dl>
+<p><code>docker --version</code>이 출력되면 클라이언트 명령을 찾았다는 뜻입니다. 이것만으로 데몬이 실행 중이라고 판단할 수 없습니다. Docker Desktop을 시작한 뒤 <code>docker version</code>을 실행하여 클라이언트에 해당하는 Client 구역과 데몬에 해당하는 Server 구역이 모두 나타나는지 확인합니다. 설치본이 Docker Desktop CLI를 지원하면 <code>docker desktop status</code>로 상태를 볼 수 있습니다. 해당 하위 명령이 없으면 Docker Desktop 앱을 연 뒤 <code>docker version</code>으로 확인합니다.</p>
+
+<h3>운영체제별 공식 설치 페이지를 사용합니다</h3>
+<p>Docker Desktop의 지원 운영체제와 필요한 메모리, 가상화 조건은 제품이 갱신되면서 달라질 수 있습니다. Windows는 WSL 2와 하드웨어 가상화, 지원 Windows 빌드를 확인합니다. macOS는 Apple silicon과 Intel 중 자신의 칩에 맞는 설치본 및 지원되는 macOS 범위를 확인합니다. Linux는 지원 배포판, KVM, QEMU, systemd, 데스크톱 환경을 확인합니다. 아래 참고 자료의 공식 운영체제별 페이지에서 현재 조건을 확인한 뒤 설치합니다.</p>
+<p>조직과 교육 환경에 적용되는 이용 조건도 최신 공식 안내에서 확인합니다. 이 교재는 특정 조직의 사용 권한이나 비용을 판정하지 않습니다. 설치 전에 자신의 운영체제, 장치 관리 정책, 계정 권한을 확인해야 합니다.</p>
+
+<h3>도식 — 명령 발견과 실제 준비를 따로 확인합니다</h3>
+<figure>
+<div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:800px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 485" width="800" height="485" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-05-tool-readiness desc-05-tool-readiness">
+<title id="title-05-tool-readiness">설치 여부와 실행 상태를 구분하여 확인한다</title>
+<desc id="desc-05-tool-readiness">CLI 설치, 서버 실행, Git 저장소 생성은 서로 다른 준비 상태입니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="800" height="485" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">설치 여부와 실행 상태를 구분하여 확인한다</tspan></text>
+<rect x="45" y="105" width="205" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="147.5" y="134.9" font-size="15" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="147.5" dy="0.0">Docker CLI 설치</tspan><tspan x="147.5" dy="20.2">docker --version</tspan></text>
+<polyline points="147,185 147,230" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#m-yellow)"/>
+<rect x="112.0" y="180.5" width="70.0" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="147.0" y="192.5" font-size="14" fill="#92400e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="147.0" dy="0.0">명령 확인</tspan></text>
+<rect x="45" y="230" width="205" height="90" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="147.5" y="264.9" font-size="15" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="147.5" dy="0.0">Docker 서버 실행</tspan><tspan x="147.5" dy="20.2">docker info</tspan></text>
+<rect x="350" y="105" width="205" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="452.5" y="134.9" font-size="15" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="452.5" dy="0.0">Git 설치</tspan><tspan x="452.5" dy="20.2">git --version</tspan></text>
+<polyline points="452,185 452,230" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="410.3" y="180.5" width="83.4" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="452.0" y="192.5" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="452.0" dy="0.0">git init</tspan></text>
+<rect x="350" y="230" width="205" height="90" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="452.5" y="264.9" font-size="15" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="452.5" dy="0.0">현재 폴더가 저장소</tspan><tspan x="452.5" dy="20.2">git status</tspan></text>
+<rect x="620" y="145" width="140" height="135" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="690.0" y="184.2" font-size="14" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="690.0" dy="0.0">각 상태 기록</tspan><tspan x="690.0" dy="18.9">CLI 응답 여부</tspan><tspan x="690.0" dy="18.9">서버 응답 여부</tspan><tspan x="690.0" dy="18.9">저장소 상태</tspan></text>
+<polyline points="250,275 620,220" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#m-yellow)"/>
+<polyline points="555,275 620,245" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#m-yellow)"/>
+<text x="45" y="375.0" font-size="15" fill="#991b1b" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="45" dy="0.0">Docker CLI가 설치되어도 Docker 서버가 실행 중이라는 뜻은 아닙니다.</tspan></text>
+<text x="45" y="420.0" font-size="15" fill="#4b5563" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="45" dy="0.0">Git이 설치되어도 현재 폴더가 Git 저장소라는 뜻은 아닙니다.</tspan></text>
+</svg></div>
+<figcaption>파란색은 학생이 버전과 상태 명령을 입력하는 행동, 초록색은 Git·Docker 클라이언트와 Docker 데몬, 노란색은 출력에서 확인할 저장소 상태와 Client·Server 구역, 빨간색은 명령을 찾지 못했거나 Server가 응답하지 않는 상태를 뜻합니다. Git 경로는 임시 저장소의 파일 상태로 이어지고, Docker 경로는 클라이언트 확인 뒤 데몬 응답 확인으로 이어집니다.</figcaption>
+</figure>
+<p>도식의 Docker 경로가 두 단계인 이유는 설치 확인과 실행 확인이 서로 다른 질문이기 때문입니다. Client만 보이면 명령줄 도구는 준비되었지만 데몬과의 통신은 확인되지 않았습니다. Server까지 보이면 현재 터미널에서 데몬에 요청을 보낼 수 있습니다.</p>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>첫 셀의 <code>shutil.which("git")</code>는 터미널에서 <code>git</code>을 입력했을 때 실행할 프로그램의 위치를 찾습니다. 결과가 <code>None</code>이면 명령을 찾지 못한 상태입니다. <code>git_command is not None</code>은 위치를 찾았는지 비교하여 <code>True</code> 또는 <code>False</code>를 만듭니다. 설치 파일이 있다는 사실만으로 명령 실행까지 성공한다고 단정하지 않기 때문에, 다음 셀에서 <code>git --version</code>의 종료 상태를 다시 확인합니다.</p>
+<p><code>if</code>는 조건이 참일 때 들여쓴 코드만 실행하고, <code>else</code>는 조건이 거짓일 때 다른 코드를 실행합니다. Git이 없는 컴퓨터에서 Git 명령을 무리하게 호출하지 않고 안내를 출력하기 위해 이 구조를 사용합니다. <code>git_version.returncode == 0</code>은 명령이 운영체제에 성공 상태를 반환했는지 확인합니다. 여기서 0은 명령이 정상 종료되었다는 관례이며, Git의 버전 번호를 뜻하지 않습니다.</p>
+<p><code>subprocess.run</code>의 <code>cwd=repository</code>는 그 명령만 임시 저장소 폴더를 현재 작업 폴더로 사용하게 합니다. <code>git init</code>은 그 폴더 안에 Git 관리 정보를 준비하고, <code>git status --short</code>는 파일 상태를 짧은 형식으로 반환합니다. 새 파일 앞의 <code>??</code>는 Git이 파일을 발견했지만 아직 추적 대상으로 등록하지 않았다는 표시입니다. 파일을 만들었다는 사실, Git이 발견했다는 사실, 변경 이력에 기록했다는 사실은 서로 다른 단계입니다.</p>
+<p>Docker 확인도 같은 순서를 따릅니다. <code>docker --version</code>은 명령을 보내는 클라이언트 프로그램이 응답하는지 확인합니다. 이어지는 <code>docker version --format "{{.Server.Version}}"</code>은 요청을 처리하는 서버인 데몬의 버전만 요청합니다. <code>timeout=10</code>은 10초 안에 응답하지 않으면 계속 기다리지 않도록 제한합니다. 이때 발생하는 <code>TimeoutExpired</code>를 따로 처리하므로, 응답 지연을 성공이나 명령 없음으로 잘못 기록하지 않습니다.</p>
+<p>노트북은 Python에서 외부 명령을 호출하여 현재 환경을 점검합니다. 먼저 Git과 Docker 명령을 찾을 수 있는지 확인합니다. Git은 임시 폴더를 만들고 <code>git init</code>을 실행한 뒤, 파일 생성 전후의 <code>git status --short</code> 결과를 비교합니다. Docker는 설치를 변경하지 않고 버전과 응답 가능 여부만 확인합니다.</p>
+<p>마지막에는 Python, uv, 가상환경, Git, Docker 클라이언트, Docker 데몬의 여섯 항목을 같은 표에 표시합니다. 이 표는 현재 컴퓨터에서 관찰한 준비 상태를 정리하는 자가 점검표입니다. 과정의 공식 평가 점수나 자격 판정이 아닙니다.</p>
+<p><code>server.returncode == 0</code>은 명령이 성공 상태로 마쳤는지 확인합니다. <code>server.stdout.strip()</code>은 받은 출력의 앞뒤 공백과 줄바꿈을 제거합니다. <code>bool(...)</code>은 남은 글자가 있으면 <code>True</code>, 빈 문자열이면 <code>False</code>로 바꿉니다. <code>and</code>로 두 조건을 연결했으므로 명령이 성공하고 버전 글자도 있어야 서버가 응답했다고 판정합니다.</p>
+<section class="notebook" data-notebook="05-Git과-Docker-준비" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-09</span><button type="button" class="copy-all">전체 코드 복사</button><a download="05-Git과-Docker-준비.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBHaXTqs7wgRG9ja2VyIOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAi7J2067KIIOyLpOyKteydgCDrj4Tqtawg7ISk7LmY7JmAIOyLpO2WiSDspIDruYQg7IOB7YOc66W8IOqwgeqwgSDtmZXsnbjtlanri4jri6QuIDPsoIjsnZggUHl0aG9uIDMuMTIg7ZSE66Gc7KCd7Yq4IO2ZmOqyveydhCDspIDruYTtlanri4jri6QuIEdpdOqzvCBEb2NrZXLqsIAg7JWE7KeBIOyXhuycvOuptCDtlbTri7kg7Iuk7Iq17J2EIOyDneuete2VmOqzoCDrr7jspIDruYQg7IOB7YOc66W8IOq4sOuhne2VqeuLiOuLpC4gYGltcG9ydGDripQgUHl0aG9u7JeQIO2PrO2VqOuQnCDquLDriqXsnYQg6rCA7KC47Ji164uI64ukLiBgc2h1dGlsLndoaWNoYOuKlCDthLDrr7jrhJDsl5DshJwg7Iuk7ZaJ7ZWgIOyImCDsnojripQg66qF66C5IOychOy5mOulvCDssL7slYQg6rK966Gc66W8IOuwmO2ZmO2VmOqzoCwg7LC+7KeAIOuqu+2VmOuptCDqsJLsnbQg7JeG64uk64qUIOucu+ydmCBgTm9uZWDsnYQg67CY7ZmY7ZWp64uI64ukLiDssqsg7Lac66Cl7J2AIOyEpOy5mCDsmYTro4zrpbwg64uo7KCV7ZWY7KeAIOyViuqzoCDrqoXroLkg7JyE7LmY66W8IOuwnOqyrO2WiOuKlOyngOunjCDrs7Tsl6wg7KSN64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTI6MTU6MDIuNzc5NzA3WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTI6MTU6MDIuNzc5NDk1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTI6MTU6MDIuNzg3NjI2WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi43ODY2OTdaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiR2l0IOuqheuguSDrsJzqsqw6IFRydWVcbiIsCiAgICAgICJ1diDrqoXroLkg67Cc6rKsOiBUcnVlXG4iLAogICAgICAiRG9ja2VyIOuqheuguSDrsJzqsqw6IFRydWVcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IHN5c1xuIiwKICAgICJpbXBvcnQgc2h1dGlsXG4iLAogICAgImltcG9ydCBzdWJwcm9jZXNzXG4iLAogICAgImZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aFxuIiwKICAgICJmcm9tIHRlbXBmaWxlIGltcG9ydCBUZW1wb3JhcnlEaXJlY3RvcnlcbiIsCiAgICAiXG4iLAogICAgIiMgd2hpY2jripQg66qF66C57J2YIOychOy5mOulvCDssL7sirXri4jri6QuIOqwnOyduCDqsr3roZwg64yA7IugIOuwnOqyrCDsl6zrtoDrp4wg7Lac66Cl7ZWp64uI64ukLlxuIiwKICAgICJnaXRfY29tbWFuZCA9IHNodXRpbC53aGljaChcImdpdFwiKVxuIiwKICAgICJ1dl9jb21tYW5kID0gc2h1dGlsLndoaWNoKFwidXZcIilcbiIsCiAgICAiZG9ja2VyX2NvbW1hbmQgPSBzaHV0aWwud2hpY2goXCJkb2NrZXJcIilcbiIsCiAgICAicHJpbnQoZlwiR2l0IOuqheuguSDrsJzqsqw6IHtnaXRfY29tbWFuZCBpcyBub3QgTm9uZX1cIilcbiIsCiAgICAicHJpbnQoZlwidXYg66qF66C5IOuwnOqyrDoge3V2X2NvbW1hbmQgaXMgbm90IE5vbmV9XCIpXG4iLAogICAgInByaW50KGZcIkRvY2tlciDrqoXroLkg67Cc6rKsOiB7ZG9ja2VyX2NvbW1hbmQgaXMgbm90IE5vbmV9XCIpXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAzIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgMS4gR2l0IOuqheugueydmCDsi6TsoJwg7J2R64u1XG4iLAogICAgIlxuIiwKICAgICLrqoXroLkg7JyE7LmY66W8IOywvuuKlCDqsoPqs7wg7Iuk7KCcIOyLpO2WieydgCDqtazrtoTtlanri4jri6QuIGBzdWJwcm9jZXNzLnJ1bmDsnZgg64yA6rSE7Zi4IOyViOyXkOuKlCDsi6TtlontlaAg7ZSE66Gc6re4656o6rO8IOyduOyekOulvCDsiJzshJzrjIDroZwg7KCB7Iq164uI64ukLiBgY2FwdHVyZV9vdXRwdXQ9VHJ1ZWDripQg6rKw6rO866W8IOuzgOyImOyXkCDsoIDsnqXtlZjqs6AsIGB0ZXh0PVRydWVg64qUIOq4gOyekOuhnCDsnb3qsowg7ZWp64uI64ukLiDrsJjtmZgg6rKw6rO87J2YIGByZXR1cm5jb2RlYOqwgCAw7J2066m0IOuqheugueydtCDshLHqs7Ug7IOB7YOc66GcIOuBneuCrOuLpOuKlCDrnLvsnoXri4jri6QuIGBpZmDripQg7KGw6rG07J20IOywuOydvCDrlYwg65Ok7Jes7JO0IOy9lOuTnOulvCDsi6TtlontlZjqs6AsIGBlbHNlYOuKlCDqsbDsp5Psnbwg65WMIOuLpOuluCDsvZTrk5zrpbwg7Iuk7ZaJ7ZWp64uI64ukLiDsnbQg66y467KV7J2AIENoIDLsl5DshJwg67Cw7Jqw66mwLCDsl6zquLDshJzripQgR2l07J20IOyXhuuKlCDsu7Ttk6jthLDsl5DshJzrj4Qg64uk7J2MIOygkOqygOydhCDqs4Tsho3tlZjquLAg7JyE7ZW0IOyCrOyaqe2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDEyOjE1OjAyLjc4OTIyM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAyLjc4OTA3MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAyLjgxNjY0MloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTI6MTU6MDIuODE2MDg3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIkdpdCDsnZHri7U6IFRydWVcbiIsCiAgICAgICJnaXQgdmVyc2lvbiAyLjUwLjEgKEFwcGxlIEdpdC0xNTUpXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg66qF66C57J20IOyXhuycvOuptCBHaXQg66+47KSA67mE66W8IOq4sOuhne2VmOqzoCDri6Trpbgg64+E6rWsIOygkOqygOydhCDqs4Tsho3tlanri4jri6QuXG4iLAogICAgImdpdF9yZWFkeSA9IEZhbHNlXG4iLAogICAgImlmIGdpdF9jb21tYW5kIGlzIE5vbmU6XG4iLAogICAgIiAgICBwcmludChcIkdpdDogMuygiOydmCDshKTsuZgg7JWI64K066W8IO2ZleyduO2VmOyEuOyalC5cIilcbiIsCiAgICAiZWxzZTpcbiIsCiAgICAiICAgIGdpdF92ZXJzaW9uID0gc3VicHJvY2Vzcy5ydW4oXG4iLAogICAgIiAgICAgICAgW2dpdF9jb21tYW5kLCBcIi0tdmVyc2lvblwiXSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgdGV4dD1UcnVlLFxuIiwKICAgICIgICAgKVxuIiwKICAgICIgICAgZ2l0X3JlYWR5ID0gZ2l0X3ZlcnNpb24ucmV0dXJuY29kZSA9PSAwXG4iLAogICAgIiAgICBwcmludChmXCJHaXQg7J2R64u1OiB7Z2l0X3JlYWR5fVwiKVxuIiwKICAgICIgICAgaWYgZ2l0X3JlYWR5OlxuIiwKICAgICIgICAgICAgIHByaW50KGdpdF92ZXJzaW9uLnN0ZG91dC5zdHJpcCgpKVxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIDIuIOu5hOyWtCDsnojripQg7J6E7IucIOyggOyepeyGjFxuIiwKICAgICJcbiIsCiAgICAi7Iuk7KCcIO2UhOuhnOygne2KuCDrjIDsi6Ag7IOIIOyehOyLnCDtj7TrjZTsl5DshJwgYGdpdCBpbml0YOydhCDsi6Ttlontlanri4jri6QuIOyggOyepeyGjOuKlCBHaXTsnbQg7YyM7J287J2YIOuzgOqyvSDsg4Htg5zsmYAg7J2066Cl7J2EIOq0gOumrO2VmOuKlCDtj7TrjZTsnoXri4jri6QuIGBjd2Rg64qUIOuqheugueydtCDsgqzsmqntlaAg7ZiE7J6sIOyekeyXhSDtj7TrjZTrpbwg7KeA7KCV7ZWY66+A66GcIOuFuO2KuOu2gSDtj7TrjZTqsIAg7JWE64uI6528IOyDiCDsnoTsi5wg7Y+0642U7JeQ7IScIEdpdOydtCDsi6TtlonrkKnri4jri6QuIGBnaXQgc3RhdHVzIC0tc2hvcnRg7J2YIOy2nOugpeydtCDruYTslrQg7J6I7Jy866m0IO2RnOyLnO2VoCDrs4Dqsr0g7YyM7J287J20IOyXhuuLpOuKlCDrnLvsnoXri4jri6QuIGBnaXQgaW5pdGDsnYAg6rSA66asIOygleuztOulvCDspIDruYTtlaAg67+QIO2MjOydvOydhCDsu6TrsIvtlZjqsbDrgpggR2l0SHVi66GcIOyghOyGoe2VmOyngCDslYrsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi44MTc4NjZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi44MTc2MTZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi44NTE0MDNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAyLjg1MTAxNloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLtjIzsnbwg7IOd7ISxIOyghCDsg4Htg5zqsIAg67mE7Ja0IOyeiOydjDogVHJ1ZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJ0ZW1wb3JhcnlfZm9sZGVyID0gVGVtcG9yYXJ5RGlyZWN0b3J5KClcbiIsCiAgICAicmVwb3NpdG9yeSA9IFBhdGgodGVtcG9yYXJ5X2ZvbGRlci5uYW1lKVxuIiwKICAgICJcbiIsCiAgICAiaWYgZ2l0X3JlYWR5OlxuIiwKICAgICIgICAgIyAtceuKlCDstIjquLDtmZQg7JWI64K066W8IOykhOydtOqzoCwgLWPripQg7J2067KIIOuqheugueyXkOunjCDshKTsoJXsnYQg7KCB7Jqp7ZWp64uI64ukLlxuIiwKICAgICIgICAgc3VicHJvY2Vzcy5ydW4oXG4iLAogICAgIiAgICAgICAgW2dpdF9jb21tYW5kLCBcIi1jXCIsIFwiaW5pdC5kZWZhdWx0QnJhbmNoPW1haW5cIiwgXCJpbml0XCIsIFwiLXFcIl0sXG4iLAogICAgIiAgICAgICAgY3dkPXJlcG9zaXRvcnksIGNhcHR1cmVfb3V0cHV0PVRydWUsIHRleHQ9VHJ1ZSwgY2hlY2s9VHJ1ZSxcbiIsCiAgICAiICAgIClcbiIsCiAgICAiICAgIGJlZm9yZSA9IHN1YnByb2Nlc3MucnVuKFxuIiwKICAgICIgICAgICAgIFtnaXRfY29tbWFuZCwgXCJzdGF0dXNcIiwgXCItLXNob3J0XCJdLCBjd2Q9cmVwb3NpdG9yeSxcbiIsCiAgICAiICAgICAgICBjYXB0dXJlX291dHB1dD1UcnVlLCB0ZXh0PVRydWUsIGNoZWNrPVRydWUsXG4iLAogICAgIiAgICApXG4iLAogICAgIiAgICBwcmludChmXCLtjIzsnbwg7IOd7ISxIOyghCDsg4Htg5zqsIAg67mE7Ja0IOyeiOydjDoge2JlZm9yZS5zdGRvdXQgPT0gJyd9XCIpXG4iLAogICAgIiAgICBhc3NlcnQgYmVmb3JlLnN0ZG91dCA9PSBcIlwiXG4iLAogICAgImVsc2U6XG4iLAogICAgIiAgICBwcmludChcIuyggOyepeyGjCDruYTqtZA6IEdpdCDrr7jspIDruYTroZwg7Iuk7ZaJ7ZWY7KeAIOyViuydjFwiKVxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIDMuIO2MjOydvCDtlZjrgpjrpbwg66eM65OgIOuSpCDruYTqtZBcbiIsCiAgICAiXG4iLAogICAgIuqwmeydgCDsoIDsnqXshozsl5AgYGhlbGxvLnB5YCDtjIzsnbwg7ZWY64KY66W8IOy2lOqwgO2VqeuLiOuLpC4g7LaU7KCB7J2AIEdpdOydtCDtjIzsnbzsnYQg7J207ZuEIOuzgOqyvSDsnbTroKXsnZgg64yA7IOB7Jy866GcIOq0gOumrO2VmOuPhOuhnSDrk7HroZ3tlZjripQg7J287J6F64uI64ukLiBgPz9g64qUIEdpdOydtCDsg4gg7YyM7J287J2EIOuwnOqyrO2WiOyngOunjCDslYTsp4Eg7LaU7KCB7ZWY7KeAIOyViuuKlOuLpOuKlCDtkZzsi5zsnoXri4jri6QuIO2MjOydvOydhCDrp4zrk6Tsl4jri6TripQg7IKs7Iuk6rO8IOy7pOuwi+ydhCDrp4zrk6Tsl4jri6TripQg7IKs7Iuk7J2AIOuLpOumheuLiOuLpC4g7J20IOyFgOydgCDtjIzsnbwg64K07Jqp7J2EIOyLpO2Wie2VmOyngCDslYrqs6Ag7IOd7ISxIOyghO2bhOydmCBHaXQg7IOB7YOc66eMIOu5hOq1kO2VnCDrkqQg7J6E7IucIOyggOyepeyGjOulvCDsoJXrpqztlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiY2VsbC0wOCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi44NTI0NzVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi44NTIzOTZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi44NjU5MzhaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAyLjg2NTUzNFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICI/PyBoZWxsby5weVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJpZiBnaXRfcmVhZHk6XG4iLAogICAgIiAgICAjIOyekeydgCDtjIzsnbwg7ZWY64KY66W8IOunjOuTpOqzoCBHaXTsnbQg67Cc6rKs7ZWY64qU7KeAIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiICAgIHNjcmlwdF9maWxlID0gcmVwb3NpdG9yeSAvIFwiaGVsbG8ucHlcIlxuIiwKICAgICIgICAgc2NyaXB0X2ZpbGUud3JpdGVfdGV4dChcInByaWNlID0gMzAwMFwiLCBlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgIiAgICBhZnRlciA9IHN1YnByb2Nlc3MucnVuKFxuIiwKICAgICIgICAgICAgIFtnaXRfY29tbWFuZCwgXCJzdGF0dXNcIiwgXCItLXNob3J0XCJdLCBjd2Q9cmVwb3NpdG9yeSxcbiIsCiAgICAiICAgICAgICBjYXB0dXJlX291dHB1dD1UcnVlLCB0ZXh0PVRydWUsIGNoZWNrPVRydWUsXG4iLAogICAgIiAgICApXG4iLAogICAgIiAgICBwcmludChhZnRlci5zdGRvdXQuc3RyaXAoKSlcbiIsCiAgICAiICAgIGFzc2VydCBhZnRlci5zdGRvdXQuc3RyaXAoKSA9PSBcIj8/IGhlbGxvLnB5XCJcbiIsCiAgICAiZWxzZTpcbiIsCiAgICAiICAgIHByaW50KFwi7YyM7J28IOyDge2DnCDruYTqtZA6IEdpdCDrr7jspIDruYTroZwg7Iuk7ZaJ7ZWY7KeAIOyViuydjFwiKVxuIiwKICAgICIjIOyehOyLnCDsoIDsnqXshozrp4wg7KCV66as7ZWY66mwIOyCrOyaqeyekOydmCDtlITroZzsoJ3tirgg7YyM7J287J2AIOuwlOq+uOyngCDslYrsirXri4jri6QuXG4iLAogICAgInRlbXBvcmFyeV9mb2xkZXIuY2xlYW51cCgpXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgNC4gRG9ja2VyIO2BtOudvOydtOyWuO2KuCDtmZXsnbhcbiIsCiAgICAiXG4iLAogICAgImBkb2NrZXIgLS12ZXJzaW9uYOydgCDtgbTrnbzsnbTslrjtirgg7ZSE66Gc6re4656o7J20IOydkeuLte2VmOuKlOyngCDtmZXsnbjtlanri4jri6QuIO2BtOudvOydtOyWuO2KuOuKlCDsgqzsmqnsnpDqsIAg7J6F66Cl7ZWcIERvY2tlciDrqoXroLnsnYQg67Cb7JWEIOyEnOuyhOyXkCDsmpTssq3tlZjripQg7ZSE66Gc6re4656o7J6F64uI64ukLiDsnbQg66qF66C57J2AIOyEnOuyhOyXkCDsu6jthYzsnbTrhIgg7Iuk7ZaJ7J2EIOyalOyyre2VmOyngCDslYrsirXri4jri6QuIOuqheuguSDsnITsuZjqsIAg7J6I642U652864+EIOyLpO2WiSDqsrDqs7zsnZggYHJldHVybmNvZGVg66W8IOuzhOuPhOuhnCDtmZXsnbjtlZjrqbAsIOuyhOyghCDrrLjsnpDsl7TsnYAg7Lu07ZOo7YSw66eI64ukIOuLrOudvOyniCDsiJgg7J6I7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTI6MTU6MDIuODY2NzYwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTI6MTU6MDIuODY2Njk1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTI6MTU6MDIuOTM5NjA0WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi45MzkxMjJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiRG9ja2VyIO2BtOudvOydtOyWuO2KuCDsnZHri7U6IFRydWVcbiIsCiAgICAgICJEb2NrZXIgdmVyc2lvbiAyOS40LjEsIGJ1aWxkIDA1NWE0NzhcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiZG9ja2VyX2NsaWVudF9yZWFkeSA9IEZhbHNlXG4iLAogICAgImlmIGRvY2tlcl9jb21tYW5kIGlzIE5vbmU6XG4iLAogICAgIiAgICBwcmludChcIkRvY2tlciDtgbTrnbzsnbTslrjtirg6IOuqheugueydhCDssL7sp4Ag66q77ZWoXCIpXG4iLAogICAgImVsc2U6XG4iLAogICAgIiAgICAjIOydtCDsmpTssq3snYAgRG9ja2VyIOyEnOuyhOulvCDsi5zsnpHtlZjqsbDrgpgg7J2066+47KeA66W8IOuCtOugpOuwm+yngCDslYrsirXri4jri6QuXG4iLAogICAgIiAgICBjbGllbnQgPSBzdWJwcm9jZXNzLnJ1bihcbiIsCiAgICAiICAgICAgICBbZG9ja2VyX2NvbW1hbmQsIFwiLS12ZXJzaW9uXCJdLCBjYXB0dXJlX291dHB1dD1UcnVlLCB0ZXh0PVRydWUsXG4iLAogICAgIiAgICApXG4iLAogICAgIiAgICBkb2NrZXJfY2xpZW50X3JlYWR5ID0gY2xpZW50LnJldHVybmNvZGUgPT0gMFxuIiwKICAgICIgICAgcHJpbnQoZlwiRG9ja2VyIO2BtOudvOydtOyWuO2KuCDsnZHri7U6IHtkb2NrZXJfY2xpZW50X3JlYWR5fVwiKVxuIiwKICAgICIgICAgaWYgZG9ja2VyX2NsaWVudF9yZWFkeTpcbiIsCiAgICAiICAgICAgICBwcmludChjbGllbnQuc3Rkb3V0LnN0cmlwKCkpXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTExIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiAiIyMgNS4gRG9ja2VyIOuNsOuqrCDsnZHri7Ug7ZmV7J24XG5cbkRvY2tlciDshJzrsoTripQg7JqU7LKt7J2EIOyymOumrO2VmOuKlCDrjbDrqqwoZGFlbW9uKeydhCDrnLvtlZjrqbAsIOy2nOugpeydmCBTZXJ2ZXIg7ZWt66qp7JeQIO2VtOuLue2VqeuLiOuLpC4g7YG065287J207Ja47Yq46rCAIOydkeuLte2VnCDqsr3smrDsl5Drp4wg642w66qs7J2YIOuyhOyghOydhCDsmpTssq3tlanri4jri6QuIGAtLWZvcm1hdGDsnYAg7KCE7LK0IOygleuztOyXkOyEnCDshJzrsoQg67KE7KCE66eMIOyEoO2Dne2VqeuLiOuLpC4gYHRpbWVvdXQ9MTBg7J2AIDEw7LSI6rCAIOyngOuCmOuptCDqs4Tsho0g6riw64uk66as7KeAIOyViuqyjCDtlZjrqbAsIOydtOuVjCDrsJzsg53tlZjripQgYFRpbWVvdXRFeHBpcmVkYOunjCBgZXhjZXB0YOyXkOyEnCDqtazrtoTtlbQg6riw66Gd7ZWp64uI64ukLiDshJzrsoTqsIAg7J2R64u17ZWY7KeAIOyViuycvOuptCDsm5DsnbjsnYQg7Iio6rKoIOyEseqzteycvOuhnCDtkZzsi5ztlZjsp4Ag7JWK7Iq164uI64ukLlxuXG5gc2VydmVyLnJldHVybmNvZGUgPT0gMGDsnYAg66qF66C57J20IOyEseqztSDsg4Htg5zroZwg66eI7LOk64qU7KeAIO2ZleyduO2VqeuLiOuLpC4gYHNlcnZlci5zdGRvdXQuc3RyaXAoKWDsnYAg67Cb7J2AIOy2nOugpeydmCDslZ7rkqQg6rO167Cx6rO8IOykhOuwlOq/iOydhCDsoJzqsbDtlanri4jri6QuIGBib29sKC4uLilg7J2AIOuCqOydgCDquIDsnpDqsIAg7J6I7Jy866m0IGBUcnVlYCwg67mIIOusuOyekOyXtOydtOuptCBgRmFsc2Vg66GcIOuwlOq/ieuLiOuLpC4gYGFuZGDroZwg65GQIOyhsOqxtOydhCDsl7DqsrDtlojsnLzrr4DroZwg66qF66C57J20IOyEseqzte2VmOqzoCDrsoTsoIQg6riA7J6Q64+EIOyeiOyWtOyVvCDshJzrsoTqsIAg7J2R64u17ZaI64uk6rOgIO2MkOygle2VqeuLiOuLpC4iCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA2LAogICAiaWQiOiAiY2VsbC0xMiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi45NDA0NjVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi45NDAzOTFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi45NzIwNjFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAyLjk3MTU2MloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJEb2NrZXIg7ISc67KEIOydkeuLtTogVHJ1ZVxuIiwKICAgICAgIuyEnOuyhCDrsoTsoIQ6IDI5LjQuMVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJkb2NrZXJfc2VydmVyX3JlYWR5ID0gRmFsc2VcbiIsCiAgICAiaWYgZG9ja2VyX2NsaWVudF9yZWFkeTpcbiIsCiAgICAiICAgIHRyeTpcbiIsCiAgICAiICAgICAgICBzZXJ2ZXIgPSBzdWJwcm9jZXNzLnJ1bihcbiIsCiAgICAiICAgICAgICAgICAgW2RvY2tlcl9jb21tYW5kLCBcInZlcnNpb25cIiwgXCItLWZvcm1hdFwiLCBcInt7LlNlcnZlci5WZXJzaW9ufX1cIl0sXG4iLAogICAgIiAgICAgICAgICAgIGNhcHR1cmVfb3V0cHV0PVRydWUsIHRleHQ9VHJ1ZSwgdGltZW91dD0xMCxcbiIsCiAgICAiICAgICAgICApXG4iLAogICAgIiAgICAgICAgZG9ja2VyX3NlcnZlcl9yZWFkeSA9IHNlcnZlci5yZXR1cm5jb2RlID09IDAgYW5kIGJvb2woc2VydmVyLnN0ZG91dC5zdHJpcCgpKVxuIiwKICAgICIgICAgICAgIHByaW50KGZcIkRvY2tlciDshJzrsoQg7J2R64u1OiB7ZG9ja2VyX3NlcnZlcl9yZWFkeX1cIilcbiIsCiAgICAiICAgICAgICBpZiBkb2NrZXJfc2VydmVyX3JlYWR5OlxuIiwKICAgICIgICAgICAgICAgICBwcmludChmXCLshJzrsoQg67KE7KCEOiB7c2VydmVyLnN0ZG91dC5zdHJpcCgpfVwiKVxuIiwKICAgICIgICAgZXhjZXB0IHN1YnByb2Nlc3MuVGltZW91dEV4cGlyZWQ6XG4iLAogICAgIiAgICAgICAgcHJpbnQoXCJEb2NrZXIg7ISc67KEOiAxMOy0iCDslYjsl5Ag7J2R64u17ZWY7KeAIOyViuydjFwiKVxuIiwKICAgICJlbHNlOlxuIiwKICAgICIgICAgcHJpbnQoXCJEb2NrZXIg7ISc67KEOiDtgbTrnbzsnbTslrjtirgg66+47KSA67mE66GcIO2ZleyduO2VmOyngCDslYrsnYxcIilcbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTMiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyA2LiDsl6zshK8g6rCA7KeAIOykgOu5hCDsg4Htg5xcbiIsCiAgICAiXG4iLAogICAgIlB5dGhvbiDrsoTsoIQsIHV2IOydkeuLtSwg7ZiE7J6sIOy7pOuEkOydmCDqsIDsg4HtmZjqsr0g7Jes67aALCBHaXQsIERvY2tlciDtgbTrnbzsnbTslrjtirgsIERvY2tlciDshJzrsoTrpbwg6rCB6rCBIOydveyKteuLiOuLpC4g6rCBIOydtOumhOyXkOuKlCBgVHJ1ZWAg65iQ64qUIGBGYWxzZWDqsIAg7KCA7J6l65Cp64uI64ukLiBgc3lzLnByZWZpeCAhPSBzeXMuYmFzZV9wcmVmaXhg64qUIO2YhOyerCDsu6TrhJDsnZgg7Iuk7ZaJIOychOy5mOyZgCDquLDrsJggUHl0aG9u7J2YIOychOy5mOqwgCDri6Trpbjsp4Ag67mE6rWQ7ZWp64uI64ukLiDsnbTripQg7Ja065akIOqwgOyDge2ZmOqyvSDslYjsl5Ag7J6I64uk64qUIOyCrOyLpOunjCDtmZXsnbjtlZjrqbAsIOybkO2VmOuKlCDtlITroZzsoJ3tirjsnZggYC52ZW52YOyduOyngCDsl6zrtoDripQgM+ygiOydmCDshKDtg50g7ZmU66m06rO8IO2VqOq7mCDtmZXsnbjtlanri4jri6QuIOyVhOuemCDqsrDqs7zripQg64+E6rWsIOykgOu5hCDsg4Htg5zsnbTrqbAgQS9CIO2VmeyKtSDsiJjspIDsnYQg7LGE7KCQ7ZWY64qUIO2RnOqwgCDslYTri5nri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA3LAogICAiaWQiOiAiY2VsbC0xNCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi45NzI5OTlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi45NzI5MjVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxMjoxNTowMi45ODM2MzBaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDEyOjE1OjAyLjk4MzEyM1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJQeXRob24gMy4xMjogVHJ1ZVxuIiwKICAgICAgInV2IOydkeuLtTogVHJ1ZVxuIiwKICAgICAgIu2YhOyerCDsu6TrhJDsnbQg6rCA7IOB7ZmY6rK9IOuCtOu2gDogVHJ1ZVxuIiwKICAgICAgIkdpdCDsnZHri7U6IFRydWVcbiIsCiAgICAgICJEb2NrZXIg7YG065287J207Ja47Yq4IOydkeuLtTogVHJ1ZVxuIiwKICAgICAgIkRvY2tlciDshJzrsoQg7J2R64u1OiBUcnVlXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgdXYg7Jet7IucIOychOy5mCDrsJzqsqzsl5Ag6re47LmY7KeAIOyViuqzoCDrsoTsoIQg66qF66C57J2YIOyEseqzteydhCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgInV2X3JlYWR5ID0gRmFsc2VcbiIsCiAgICAiaWYgdXZfY29tbWFuZCBpcyBub3QgTm9uZTpcbiIsCiAgICAiICAgIHV2X3Jlc3VsdCA9IHN1YnByb2Nlc3MucnVuKFt1dl9jb21tYW5kLCBcIi0tdmVyc2lvblwiXSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgdGV4dD1UcnVlKVxuIiwKICAgICIgICAgdXZfcmVhZHkgPSB1dl9yZXN1bHQucmV0dXJuY29kZSA9PSAwXG4iLAogICAgInB5dGhvbl9yZWFkeSA9IHN5cy52ZXJzaW9uX2luZm9bOjJdID09ICgzLCAxMilcbiIsCiAgICAidmlydHVhbF9lbnZpcm9ubWVudCA9IHN5cy5wcmVmaXggIT0gc3lzLmJhc2VfcHJlZml4XG4iLAogICAgInByaW50KGZcIlB5dGhvbiAzLjEyOiB7cHl0aG9uX3JlYWR5fVwiKVxuIiwKICAgICJwcmludChmXCJ1diDsnZHri7U6IHt1dl9yZWFkeX1cIilcbiIsCiAgICAicHJpbnQoZlwi7ZiE7J6sIOy7pOuEkOydtCDqsIDsg4HtmZjqsr0g64K067aAOiB7dmlydHVhbF9lbnZpcm9ubWVudH1cIilcbiIsCiAgICAicHJpbnQoZlwiR2l0IOydkeuLtToge2dpdF9yZWFkeX1cIilcbiIsCiAgICAicHJpbnQoZlwiRG9ja2VyIO2BtOudvOydtOyWuO2KuCDsnZHri7U6IHtkb2NrZXJfY2xpZW50X3JlYWR5fVwiKVxuIiwKICAgICJwcmludChmXCJEb2NrZXIg7ISc67KEIOydkeuLtToge2RvY2tlcl9zZXJ2ZXJfcmVhZHl9XCIpXG4iLAogICAgImFzc2VydCBweXRob25fcmVhZHksIFwiUHl0aG9uIDMuMTIg7Luk64SQ7J2EIOyEoO2Dne2VmOyEuOyalC5cIlxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xNSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOqysOqzvOulvCDtlbTshJ3tlanri4jri6RcbiIsCiAgICAiXG4iLAogICAgIkdpdOydmCDrs4Dqsr0g7IOB7YOc64qUIO2MjOydvCDtlZjrgpjsnZgg7IOd7ISxIOyghO2bhOulvCDruYTqtZDtlZwg7Iuk7KCcIOqysOqzvOyeheuLiOuLpC4gRG9ja2VyIOyEnOuyhOqwgCDrr7jspIDruYTsnbTrqbQgRG9ja2VyIERlc2t0b3DsnYQg7Iuc7J6R7ZWcIOuSpCDri6Tsi5wg7ZmV7J247ZWp64uI64ukLiDshJzrsoTqsIAg7J2R64u17ZW064+EIOydtOuvuOyngCDrgrTroKTrsJvquLDsmYAg7Luo7YWM7J2064SIIOyLpO2WieydhCDqsoDspp3tlZwg6rKD7J2AIOyVhOuLmeuLiOuLpC4g7Jes7ISvIOy2nOugpeydgCDshJzroZwg64uk66W4IOyniOusuOydmCDri7XsnbTrr4DroZwg7ZWcIO2VreuqqeydmCBgVHJ1ZWDqsIAg64uk66W4IO2VreuqqeydmCDspIDruYTrpbwg67O07J6l7ZWY7KeAIOyViuyKteuLiOuLpC4gUHl0aG9uwrdHaXQg7Iuk7Iq16rO8IERvY2tlciDspIDruYTrpbwg64KY64igIOq4sOuhne2VqeuLiOuLpC4iCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogImV4cGVyaW1lbnQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA3LAogICAiY29kZV9zaGEyNTYiOiAiNDFjZWY3MmYzNjIyZDEyY2UwYmMzZTQyOWFhYzU1YTA5OGNlY2NhNWU1ZTQwZDA1ODQzYjI3ZDY0M2FhY2IwMyIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTA5VDEyOjE1OjAzLjEwMDI5NCswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiZjc3NmU4ZDM2NGUxNzFkNzVjZTBhNjEzMDAzZTI4Y2ExODBiMzlhNzBmMGJmZTQ4ODI0N2VlNDEzMTkyMzg1ZSIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>Git과 Docker 준비</h2>
+<p>이번 실습은 도구 설치와 실행 준비 상태를 각각 확인합니다. 3절의 Python 3.12 프로젝트 환경을 준비합니다. Git과 Docker가 아직 없으면 해당 실습을 생략하고 미준비 상태를 기록합니다. <code>import</code>는 Python에 포함된 기능을 가져옵니다. <code>shutil.which</code>는 터미널에서 실행할 수 있는 명령 위치를 찾아 경로를 반환하고, 찾지 못하면 값이 없다는 뜻의 <code>None</code>을 반환합니다. 첫 출력은 설치 완료를 단정하지 않고 명령 위치를 발견했는지만 보여 줍니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import sys
+import shutil
+import subprocess
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+# which는 명령의 위치를 찾습니다. 개인 경로 대신 발견 여부만 출력합니다.
+git_command = shutil.which(&quot;git&quot;)
+uv_command = shutil.which(&quot;uv&quot;)
+docker_command = shutil.which(&quot;docker&quot;)
+print(f&quot;Git 명령 발견: {git_command is not None}&quot;)
+print(f&quot;uv 명령 발견: {uv_command is not None}&quot;)
+print(f&quot;Docker 명령 발견: {docker_command is not None}&quot;)
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Git 명령 발견: True
+uv 명령 발견: True
+Docker 명령 발견: True
+</pre></div>
+<div class="nb-markdown"><h3>1. Git 명령의 실제 응답</h3>
+<p>명령 위치를 찾는 것과 실제 실행은 구분합니다. <code>subprocess.run</code>의 대괄호 안에는 실행할 프로그램과 인자를 순서대로 적습니다. <code>capture_output=True</code>는 결과를 변수에 저장하고, <code>text=True</code>는 글자로 읽게 합니다. 반환 결과의 <code>returncode</code>가 0이면 명령이 성공 상태로 끝났다는 뜻입니다. <code>if</code>는 조건이 참일 때 들여쓴 코드를 실행하고, <code>else</code>는 거짓일 때 다른 코드를 실행합니다. 이 문법은 Ch 2에서 배우며, 여기서는 Git이 없는 컴퓨터에서도 다음 점검을 계속하기 위해 사용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 명령이 없으면 Git 미준비를 기록하고 다른 도구 점검을 계속합니다.
+git_ready = False
+if git_command is None:
+    print(&quot;Git: 2절의 설치 안내를 확인하세요.&quot;)
+else:
+    git_version = subprocess.run(
+        [git_command, &quot;--version&quot;], capture_output=True, text=True,
+    )
+    git_ready = git_version.returncode == 0
+    print(f&quot;Git 응답: {git_ready}&quot;)
+    if git_ready:
+        print(git_version.stdout.strip())
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Git 응답: True
+git version 2.50.1 (Apple Git-155)
+</pre></div>
+<div class="nb-markdown"><h3>2. 비어 있는 임시 저장소</h3>
+<p>실제 프로젝트 대신 새 임시 폴더에서 <code>git init</code>을 실행합니다. 저장소는 Git이 파일의 변경 상태와 이력을 관리하는 폴더입니다. <code>cwd</code>는 명령이 사용할 현재 작업 폴더를 지정하므로 노트북 폴더가 아니라 새 임시 폴더에서 Git이 실행됩니다. <code>git status --short</code>의 출력이 비어 있으면 표시할 변경 파일이 없다는 뜻입니다. <code>git init</code>은 관리 정보를 준비할 뿐 파일을 커밋하거나 GitHub로 전송하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">temporary_folder = TemporaryDirectory()
+repository = Path(temporary_folder.name)
+
+if git_ready:
+    # -q는 초기화 안내를 줄이고, -c는 이번 명령에만 설정을 적용합니다.
+    subprocess.run(
+        [git_command, &quot;-c&quot;, &quot;init.defaultBranch=main&quot;, &quot;init&quot;, &quot;-q&quot;],
+        cwd=repository, capture_output=True, text=True, check=True,
+    )
+    before = subprocess.run(
+        [git_command, &quot;status&quot;, &quot;--short&quot;], cwd=repository,
+        capture_output=True, text=True, check=True,
+    )
+    print(f&quot;파일 생성 전 상태가 비어 있음: {before.stdout == &#x27;&#x27;}&quot;)
+    assert before.stdout == &quot;&quot;
+else:
+    print(&quot;저장소 비교: Git 미준비로 실행하지 않음&quot;)
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">파일 생성 전 상태가 비어 있음: True
+</pre></div>
+<div class="nb-markdown"><h3>3. 파일 하나를 만든 뒤 비교</h3>
+<p>같은 저장소에 <code>hello.py</code> 파일 하나를 추가합니다. 추적은 Git이 파일을 이후 변경 이력의 대상으로 관리하도록 등록하는 일입니다. <code>??</code>는 Git이 새 파일을 발견했지만 아직 추적하지 않는다는 표시입니다. 파일을 만들었다는 사실과 커밋을 만들었다는 사실은 다릅니다. 이 셀은 파일 내용을 실행하지 않고 생성 전후의 Git 상태만 비교한 뒤 임시 저장소를 정리합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">if git_ready:
+    # 작은 파일 하나를 만들고 Git이 발견하는지 확인합니다.
+    script_file = repository / &quot;hello.py&quot;
+    script_file.write_text(&quot;price = 3000&quot;, encoding=&quot;utf-8&quot;)
+    after = subprocess.run(
+        [git_command, &quot;status&quot;, &quot;--short&quot;], cwd=repository,
+        capture_output=True, text=True, check=True,
+    )
+    print(after.stdout.strip())
+    assert after.stdout.strip() == &quot;?? hello.py&quot;
+else:
+    print(&quot;파일 상태 비교: Git 미준비로 실행하지 않음&quot;)
+# 임시 저장소만 정리하며 사용자의 프로젝트 파일은 바꾸지 않습니다.
+temporary_folder.cleanup()
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">?? hello.py
+</pre></div>
+<div class="nb-markdown"><h3>4. Docker 클라이언트 확인</h3>
+<p><code>docker --version</code>은 클라이언트 프로그램이 응답하는지 확인합니다. 클라이언트는 사용자가 입력한 Docker 명령을 받아 서버에 요청하는 프로그램입니다. 이 명령은 서버에 컨테이너 실행을 요청하지 않습니다. 명령 위치가 있더라도 실행 결과의 <code>returncode</code>를 별도로 확인하며, 버전 문자열은 컴퓨터마다 달라질 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">docker_client_ready = False
+if docker_command is None:
+    print(&quot;Docker 클라이언트: 명령을 찾지 못함&quot;)
+else:
+    # 이 요청은 Docker 서버를 시작하거나 이미지를 내려받지 않습니다.
+    client = subprocess.run(
+        [docker_command, &quot;--version&quot;], capture_output=True, text=True,
+    )
+    docker_client_ready = client.returncode == 0
+    print(f&quot;Docker 클라이언트 응답: {docker_client_ready}&quot;)
+    if docker_client_ready:
+        print(client.stdout.strip())
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Docker 클라이언트 응답: True
+Docker version 29.4.1, build 055a478
+</pre></div>
+<div class="nb-markdown"><h3>5. Docker 데몬 응답 확인</h3>
+<p>Docker 서버는 요청을 처리하는 데몬(daemon)을 뜻하며, 출력의 Server 항목에 해당합니다. 클라이언트가 응답한 경우에만 데몬의 버전을 요청합니다. <code>--format</code>은 전체 정보에서 서버 버전만 선택합니다. <code>timeout=10</code>은 10초가 지나면 계속 기다리지 않게 하며, 이때 발생하는 <code>TimeoutExpired</code>만 <code>except</code>에서 구분해 기록합니다. 서버가 응답하지 않으면 원인을 숨겨 성공으로 표시하지 않습니다.</p>
+<p><code>server.returncode == 0</code>은 명령이 성공 상태로 마쳤는지 확인합니다. <code>server.stdout.strip()</code>은 받은 출력의 앞뒤 공백과 줄바꿈을 제거합니다. <code>bool(...)</code>은 남은 글자가 있으면 <code>True</code>, 빈 문자열이면 <code>False</code>로 바꿉니다. <code>and</code>로 두 조건을 연결했으므로 명령이 성공하고 버전 글자도 있어야 서버가 응답했다고 판정합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">docker_server_ready = False
+if docker_client_ready:
+    try:
+        server = subprocess.run(
+            [docker_command, &quot;version&quot;, &quot;--format&quot;, &quot;{{.Server.Version}}&quot;],
+            capture_output=True, text=True, timeout=10,
+        )
+        docker_server_ready = server.returncode == 0 and bool(server.stdout.strip())
+        print(f&quot;Docker 서버 응답: {docker_server_ready}&quot;)
+        if docker_server_ready:
+            print(f&quot;서버 버전: {server.stdout.strip()}&quot;)
+    except subprocess.TimeoutExpired:
+        print(&quot;Docker 서버: 10초 안에 응답하지 않음&quot;)
+else:
+    print(&quot;Docker 서버: 클라이언트 미준비로 확인하지 않음&quot;)
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Docker 서버 응답: True
+서버 버전: 29.4.1
+</pre></div>
+<div class="nb-markdown"><h3>6. 여섯 가지 준비 상태</h3>
+<p>Python 버전, uv 응답, 현재 커널의 가상환경 여부, Git, Docker 클라이언트, Docker 서버를 각각 읽습니다. 각 이름에는 <code>True</code> 또는 <code>False</code>가 저장됩니다. <code>sys.prefix != sys.base_prefix</code>는 현재 커널의 실행 위치와 기반 Python의 위치가 다른지 비교합니다. 이는 어떤 가상환경 안에 있다는 사실만 확인하며, 원하는 프로젝트의 <code>.venv</code>인지 여부는 3절의 선택 화면과 함께 확인합니다. 아래 결과는 도구 준비 상태이며 A/B 학습 수준을 채점하는 표가 아닙니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># uv 역시 위치 발견에 그치지 않고 버전 명령의 성공을 확인합니다.
+uv_ready = False
+if uv_command is not None:
+    uv_result = subprocess.run([uv_command, &quot;--version&quot;], capture_output=True, text=True)
+    uv_ready = uv_result.returncode == 0
+python_ready = sys.version_info[:2] == (3, 12)
+virtual_environment = sys.prefix != sys.base_prefix
+print(f&quot;Python 3.12: {python_ready}&quot;)
+print(f&quot;uv 응답: {uv_ready}&quot;)
+print(f&quot;현재 커널이 가상환경 내부: {virtual_environment}&quot;)
+print(f&quot;Git 응답: {git_ready}&quot;)
+print(f&quot;Docker 클라이언트 응답: {docker_client_ready}&quot;)
+print(f&quot;Docker 서버 응답: {docker_server_ready}&quot;)
+assert python_ready, &quot;Python 3.12 커널을 선택하세요.&quot;
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Python 3.12: True
+uv 응답: True
+현재 커널이 가상환경 내부: True
+Git 응답: True
+Docker 클라이언트 응답: True
+Docker 서버 응답: True
+</pre></div>
+<div class="nb-markdown"><h3>결과를 해석합니다</h3>
+<p>Git의 변경 상태는 파일 하나의 생성 전후를 비교한 실제 결과입니다. Docker 서버가 미준비이면 Docker Desktop을 시작한 뒤 다시 확인합니다. 서버가 응답해도 이미지 내려받기와 컨테이너 실행을 검증한 것은 아닙니다. 여섯 출력은 서로 다른 질문의 답이므로 한 항목의 <code>True</code>가 다른 항목의 준비를 보장하지 않습니다. Python·Git 실습과 Docker 준비를 나눠 기록합니다.</p></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<p class="look"><b>확인할 점</b> — Git 임시 저장소에서 파일을 만들기 전에는 짧은 상태 출력에 새 파일이 없고, 파일을 만든 뒤에는 아직 추적하지 않은 파일 표시가 나타나는지 확인합니다. Docker는 Client와 Server를 나누어 읽습니다. 설치하지 않은 도구나 시작하지 않은 데몬은 실패를 숨기지 않고 보완 항목으로 표시됩니다.</p>
+
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2>
+<p>여섯 항목은 서로 다른 준비 조건을 확인합니다. Python과 uv 항목은 과정의 명령을 실행할 기반을, 가상환경 항목은 프로젝트별 환경 분리를 확인합니다. Git 항목은 변경 상태를 기록할 도구를, Docker 클라이언트와 데몬 항목은 이후 컨테이너 실습을 시작할 준비를 각각 확인합니다. 한 항목의 통과가 다른 항목의 통과를 대신하지 않습니다.</p>
+<div class="tw"><table>
+<tr><th>관찰 범위</th><th>확인하는 질문</th><th>미통과 시 다음 행동</th></tr>
+<tr><td>Python</td><td>Python 3.12 명령을 실행할 수 있는가?</td><td>03절의 Python 설치와 버전 고정을 다시 확인합니다.</td></tr>
+<tr><td>uv</td><td>프로젝트 명령을 uv로 실행할 수 있는가?</td><td>공식 설치 안내로 uv를 설치하고 터미널을 다시 엽니다.</td></tr>
+<tr><td>가상환경</td><td>현재 커널이 어떤 가상환경 안에서 실행되는가?</td><td>프로젝트의 <code>.venv</code>인지 3절의 VS Code 인터프리터·커널 선택 화면에서 별도로 확인합니다.</td></tr>
+<tr><td>Git</td><td>Git 명령과 임시 저장소 상태 확인이 동작하는가?</td><td>운영체제별 Git 설치 안내를 확인합니다.</td></tr>
+<tr><td>Docker 클라이언트</td><td><code>docker</code> 명령을 찾을 수 있는가?</td><td>운영체제별 Docker Desktop 설치 안내를 확인합니다.</td></tr>
+<tr><td>Docker 데몬</td><td>Client가 Server와 통신할 수 있는가?</td><td>Docker Desktop 앱을 시작하고 다시 확인합니다.</td></tr>
+</table></div>
+<p><strong>환경 준비 안내는 학습 시작 순서를 정합니다.</strong> 여섯 항목이 모두 준비되면 Ch 2의 기본 실습을 시작할 수 있습니다. Python·uv·가상환경·Git 중 하나가 준비되지 않았다면 관련 절을 다시 실행한 뒤 시작합니다. Docker 클라이언트나 데몬만 준비되지 않았다면 Ch 2의 Python 학습은 진행할 수 있지만, Docker를 사용하는 후속 실습 전에 설치와 실행 상태를 보완합니다. 도구의 설치 여부는 프로그래밍 경험이나 학습 트랙을 판정하지 않습니다.</p>
+<p>이 실험은 명령의 존재와 제한된 상태 응답을 한 번 확인합니다. Git의 사용자 이름 설정, GitHub 로그인, 네트워크 연결, Docker 이미지 내려받기, 컨테이너 실행 성능은 측정하지 않습니다. 한 번 통과한 결과도 운영체제 갱신이나 설정 변경 뒤에는 달라질 수 있습니다.</p>
+<p>2026년 9월 9일 검증 환경에서는 Python 3.12, uv, 현재 커널의 가상환경 여부, Git, Docker 클라이언트, Docker 서버가 모두 <code>True</code>로 출력되었습니다. Git은 파일 생성 전에 상태 출력이 비어 있었고, 파일 생성 뒤 <code>?? hello.py</code>가 나타났습니다. Docker 클라이언트와 서버 버전은 이 실행 환경의 값일 뿐 학생 컴퓨터의 기준 버전이 아닙니다. 같은 명령을 자신의 컴퓨터에서 실행한 결과로 준비 상태를 판단합니다.</p>
+
+<h3>A/B 트랙 자가진단</h3>
+<p>다음 여섯 과제는 Ch 2를 시작할 학습 경로를 임시로 고르는 비공식 자가진단입니다. 설치된 도구의 수를 점수로 바꾸지 않습니다. 답을 보지 않고 수행한 뒤, 자신이 어떤 근거로 답했는지 한두 문장으로 적습니다.</p>
+<ol>
+<li><code>price = 3000</code>, <code>count = 2</code>, <code>total = price * count</code>를 읽고 출력할 합계를 예측합니다.</li>
+<li><code>count</code>만 <code>4</code>로 바꾸면 어느 값이 달라지는지 설명하고 결과를 확인합니다.</li>
+<li><code>uv run python hello.py</code>에서 상대 경로로 적은 <code>hello.py</code>를 어느 폴더에서 찾는지 설명합니다.</li>
+<li><code>total = price * count</code> 줄의 중단점에서 F5로 멈췄을 때, 그 줄의 실행 전과 F10을 누른 후 Variables 패널이 어떻게 다른지 설명합니다.</li>
+<li>이전에 직접 작성한 함수가 있다면 입력과 반환값을 예로 들어 설명합니다. 경험이 없다면 “아직 경험 없음”이라고 표시합니다.</li>
+<li>이전에 예외 처리나 자동 테스트를 작성한 적이 있다면 한 사례와 확인 목적을 설명합니다. 경험이 없다면 “아직 경험 없음”이라고 표시합니다.</li>
+</ol>
+<p><strong>B 트랙 권장</strong> — 1~4번을 독립적으로 수행하고 5~6번에서 실제 작성 경험을 구체적으로 설명할 수 있다면 확장 과제를 함께 수행합니다. <strong>A 트랙 권장</strong> — B 트랙의 조건을 모두 충족하지 않으면 기초 경로에서 Ch 2의 변수, 연산자, 조건문, 함수 단계를 순서대로 학습합니다. 1~4번은 수행했지만 함수·예외 처리·테스트 경험이 부족한 학습자도 A 트랙에서 해당 내용을 익힌 뒤 B 트랙 확장 과제를 선택할 수 있습니다. 이 기준은 교육기관의 공식 배치 기준이 아니라 이 절에서 제안한 학습 안내입니다. 첫 주 실습 뒤 결과가 맞지 않으면 트랙을 다시 선택할 수 있으며, 공식 배치 기준은 <code>[[미정: Ch 1 A/B 트랙 공식 배치 기준]]</code>으로 남깁니다.</p>
+<details><summary>자가진단 답안과 판단 근거</summary>
+<p>1번의 합계는 6000원입니다. 2번에서 <code>count = 4</code>로 바꾸면 가격은 유지되고 합계는 12000원이 됩니다. 3번의 <code>hello.py</code>는 터미널의 현재 작업 폴더를 기준으로 찾습니다. 4번은 중단점 줄을 실행하기 전에는 그 줄이 만들 새 <code>total</code>을 아직 확인할 수 없고, F10을 누른 뒤에는 계산된 <code>total</code>을 변수 창에서 확인할 수 있다고 설명해야 합니다. 5~6번은 공통 정답이 없습니다. 직접 만든 사례의 입력·반환값 또는 확인 목적을 구체적으로 설명하면 되며, 경험이 없다면 그대로 기록합니다. 경험이 없다는 답을 실패로 꾸미지 않습니다.</p>
+</details>
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>현재 프로젝트에서 <code>git init</code>을 시험하지 않습니다.</strong> 노트북은 임시 폴더를 사용하여 기존 파일의 관리 상태를 바꾸지 않습니다.</li>
+<li><strong>Git과 GitHub를 같은 도구로 설명하지 않습니다.</strong> 로컬 Git 저장소는 계정이나 인터넷 연결 없이 만들 수 있으며, GitHub 전송에는 별도 원격 저장소와 인증이 필요합니다.</li>
+<li><strong>Docker 명령의 버전 출력만으로 데몬 실행을 단정하지 않습니다.</strong> <code>docker version</code>에서 Server 응답을 별도로 확인합니다.</li>
+<li><strong>설치 조건은 운영체제별 공식 페이지에서 다시 확인합니다.</strong> Windows 빌드와 WSL 버전, 지원 macOS 범위, Linux 배포판과 가상화 조건은 바뀔 수 있습니다.</li>
+<li><strong>관리되는 학교·회사 컴퓨터는 설치 권한을 먼저 확인합니다.</strong> 가상화 설정이나 애플리케이션 설치가 관리 정책으로 제한될 수 있습니다.</li>
+<li><strong>컨테이너 개념은 준비 수준까지만 다룹니다.</strong> 이미지 작성, 포트, 볼륨, 네트워크, 배포 구성은 Ch 32의 학습 범위입니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul>
+<li>Git은 로컬 변경 이력을 관리하는 프로그램이고, GitHub는 저장소 협업 서비스입니다.</li>
+<li>Docker 클라이언트가 설치된 상태와 Docker 데몬이 실행 중인 상태는 별도로 확인합니다.</li>
+<li>여섯 항목의 자가 점검은 현재 준비 상태와 다음 행동을 정하며, 공식 성적이나 고정된 반 배치가 아닙니다.</li>
+</ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — Ch 2에서는 여기서 준비한 Python 3.12와 uv 환경으로 문법과 자료구조를 배우며 여러 스크립트를 작성합니다. Git 상태와 커밋은 Ch 3에서 노트북이 만든 임시 저장소의 변경을 확인할 때 사용합니다. Docker는 후속 프로젝트의 실행 환경을 준비할 때 다시 사용하고, Ch 32에서 이미지와 컨테이너를 직접 다룹니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz"><summary>1번 문제와 해설</summary>
+<p class="quiz-q"><strong>[하]</strong> 1. <code>git init</code>을 실행하면 파일이 곧바로 GitHub에 전송됩니까?</p>
+<p class="quiz-a"><strong>정답과 해설</strong> — 전송되지 않습니다. <code>git init</code>은 현재 폴더를 로컬 Git 저장소로 준비합니다. GitHub에 전송하려면 원격 저장소 설정, 인증, 전송 명령이 추가로 필요합니다.</p>
+</details>
+<details class="quiz"><summary>2번 문제와 해설</summary>
+<p class="quiz-q"><strong>[중]</strong> 2. 임시 저장소에서 새 파일을 만든 뒤 <code>git status --short</code>에 아직 추적하지 않은 파일이 표시됩니다. 이것은 무엇을 뜻합니까?</p>
+<p class="quiz-a"><strong>정답과 해설</strong> — Git이 새 파일을 발견했지만 아직 변경 이력에 추가할 대상으로 등록하지 않았다는 뜻입니다. 명령 실패가 아니라 현재 저장소 상태에 대한 정보입니다.</p>
+</details>
+<details class="quiz"><summary>3번 문제와 해설</summary>
+<p class="quiz-q"><strong>[중]</strong> 3. <code>docker --version</code>은 출력되지만 <code>docker version</code>의 Server 정보가 나타나지 않습니다. 어떤 상태입니까?</p>
+<p class="quiz-a"><strong>정답과 해설</strong> — Docker 클라이언트 명령은 설치되어 있지만 데몬이 실행되지 않았거나 현재 클라이언트가 데몬과 통신하지 못하는 상태입니다. Docker Desktop을 시작하고 다시 확인합니다.</p>
+</details>
+<details class="quiz"><summary>4번 문제와 해설</summary>
+<p class="quiz-q"><strong>[상]</strong> 4. 자가 점검에서 Python·uv·가상환경·Git은 통과하고 Docker 두 항목만 준비되지 않았습니다. Ch 2 학습과 후속 Docker 실습을 어떻게 진행해야 합니까?</p>
+<p class="quiz-a"><strong>정답과 해설</strong> — Ch 2의 Python 기본 실습은 진행할 수 있습니다. Docker를 사용하는 후속 실습 전에는 운영체제별 공식 안내로 Docker Desktop을 설치하고, 클라이언트와 데몬 상태를 각각 다시 확인합니다. 자가 점검 결과는 보완 순서를 정하는 안내이며 공식 성적이 아닙니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul>
+<li>Git Project, 「Installing Git」 — <a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">git-scm.com/book/en/v2/Getting-Started-Installing-Git</a> · 확인 2026-09-09. macOS·Windows·Linux 설치 경로.</li>
+<li>Git Project, 「git-status」 — <a href="https://git-scm.com/docs/git-status">git-scm.com/docs/git-status</a> · 문서 표시 2.53.0 · 확인 2026-09-09. 작업 폴더와 아직 추적하지 않은 파일의 상태 표시 기준.</li>
+<li>Docker, 「Install Docker Desktop on Windows」 — <a href="https://docs.docker.com/desktop/setup/install/windows-install/">docs.docker.com/desktop/setup/install/windows-install</a> · 확인 2026-09-09. Windows와 WSL 2 요구 사항.</li>
+<li>Docker, 「Install Docker Desktop on Mac」 — <a href="https://docs.docker.com/desktop/setup/install/mac-install/">docs.docker.com/desktop/setup/install/mac-install</a> · 확인 2026-09-09. macOS와 칩별 설치 안내.</li>
+<li>Docker, 「Install Docker Desktop on Linux」 — <a href="https://docs.docker.com/desktop/setup/install/linux/">docs.docker.com/desktop/setup/install/linux</a> · 확인 2026-09-09. 지원 배포판과 KVM·QEMU 요구 사항.</li>
+<li>Docker, 「Docker Desktop CLI」 — <a href="https://docs.docker.com/desktop/features/desktop-cli/">docs.docker.com/desktop/features/desktop-cli</a> · 확인 2026-09-09. <code>docker desktop status</code> 등 Desktop 상태 명령.</li>
+</ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="04-첫-스크립트와-디버거.html">← 첫 스크립트와 디버거</a></span><span><a href="index.html">챕터 목차</a></span><span>챕터 끝</span></div></div></body></html>

@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  src["문서 12개 · 질문 8개"]:::tool
+  dvec["벡터로 바꿔<br>코사인 거리 재기"]:::flow
+  drank["거리가 작은 순서로 순위"]:::measure
+  sterm["검색 낱말로 바꿔<br>BM25 점수 내기"]:::flow
+  srank["점수가 큰 순서로 순위"]:::measure
+  metric["같은 지표 함수로<br>정답 자리와 재현율"]:::flow
+  out["질문 평균 재현율 여섯 값"]:::measure
+  src --> dvec
+  src --> sterm
+  dvec --> drank
+  sterm --> srank
+  drank --> metric
+  srank --> metric
+  metric --> out

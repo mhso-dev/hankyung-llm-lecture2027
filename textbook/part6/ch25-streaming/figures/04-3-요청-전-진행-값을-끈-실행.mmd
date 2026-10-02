@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  cm["세 실행 같음<br>같은 문의 · 같은 노드<br>모드 셋 · 요청 한 번씩"]
+  subgraph one["실행 1 · 같은 설정 다시"]
+    direction TB
+    x1["칸 show_notice<br>yes"]:::tool
+    a["모드 차례<br>custom · messages<br>custom · updates<br>첫 사건 진행 값 30<br>첫 글자 자리 3<br>화면 진행 값 30 · 100"]:::measure
+    x1 --> a
+  end
+  subgraph two["실행 2"]
+    direction TB
+    x2["칸 show_notice<br>no"]:::tool
+    b["모드 차례<br>messages · custom<br>updates<br>첫 사건 글자 없는<br>스트림 청크<br>첫 글자 자리 2<br>화면 진행 값 100"]:::measure
+    x2 --> b
+  end
+  r["세 실행 모두<br>화면 글과 답 글이 같음<br>updates가 맨 끝"]
+  cm --> one
+  cm --> two
+  one ~~~ r
+  two ~~~ r

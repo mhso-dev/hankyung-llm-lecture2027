@@ -1,0 +1,47 @@
+{
+  "part": 1,
+  "part_title": "Part 1 · 개발 기반",
+  "chapter": "ch03-git-github",
+  "title": "Git & GitHub 협업",
+  "hours": "총 16h · 강의 5h · 실습 11h",
+  "objectives": [
+    "작업 목적에 맞는 커밋을 만들고 추적하지 않을 파일을 .gitignore로 관리합니다.",
+    "GitHub Flow에서 기능 브랜치의 변경을 비교하고 PR 리뷰 의견을 반영합니다.",
+    "병합 충돌의 표시를 읽고 팀의 의도에 맞는 결과를 직접 확정합니다.",
+    "revert·reflog·worktree를 사용해 공개 변경과 로컬 작업을 안전하게 복구합니다.",
+    "더미 자격 증명을 사용해 Git 이력 정리 절차와 시크릿 사고 예방 원칙을 설명합니다."
+  ],
+  "lab_path": "labs/part1/ch03-git-github",
+  "sections": [
+    {
+      "slug": "01-커밋과-gitignore",
+      "title": "커밋과 gitignore",
+      "format": "paired"
+    },
+    {
+      "slug": "02-GitHub-Flow와-PR-리뷰",
+      "title": "GitHub Flow와 PR 리뷰",
+      "format": "paired"
+    },
+    {
+      "slug": "03-병합-충돌-해결",
+      "title": "병합 충돌 해결",
+      "format": "paired"
+    },
+    {
+      "slug": "04-revert-reflog-worktree",
+      "title": "revert reflog worktree",
+      "format": "paired"
+    },
+    {
+      "slug": "05-시크릿-이력-정리와-예방",
+      "title": "시크릿 이력 정리와 예방",
+      "format": "paired"
+    },
+    {
+      "slug": "06-Git-실습",
+      "title": "Git 실습: 할인율 설정 PR 합치기",
+      "format": "experiment"
+    }
+  ]
+}

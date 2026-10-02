@@ -1,0 +1,8 @@
+flowchart TB
+  %% classes
+  rq["요청 POST /v1/chat<br>질문 반납 기한을 알려 주세요"]:::tool
+  bd["처리 함수 chat 몸통<br>await로<br>runtime.ainvoke를 기다림"]:::tool
+  gr["에이전트 그래프 agent<br>비동기 노드 answer 하나"]:::tool
+  rs["결과 딕셔너리<br>칸 messages와 answer"]:::measure
+  rp["응답 상태 코드 200<br>칸 answer와 thread_id"]:::measure
+  rq --> bd --> gr --> rs --> rp

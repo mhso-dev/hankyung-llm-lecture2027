@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph ke["exit"]
+    direction TB
+    e1["4절 끊긴 뒤 파일<br>칸 값 빈 딕셔너리<br>다음 노드 없음<br>체크포인트 없음"]:::measure
+    e2["6절 되풀이 다섯 번<br>모두 first를 잃음"]:::measure
+    e1 ~~~ e2
+  end
+  subgraph ks["sync"]
+    direction TB
+    s1["5절 끊긴 뒤 파일<br>completed first<br>다음 노드 second<br>체크포인트 셋"]:::measure
+    s2["6절 되풀이 다섯 번<br>모두 first가 남음"]:::measure
+    s1 ~~~ s2
+  end
+  cm["두 값 모두<br>끊기 전 first second 실행<br>종료 코드 -9"]
+  ke ~~~ cm
+  ks ~~~ cm

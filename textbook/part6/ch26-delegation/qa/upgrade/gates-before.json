@@ -1,0 +1,262 @@
+{
+  "chapter": "ch26-delegation",
+  "label": "before",
+  "totals": {
+    "G1": 8,
+    "G2": 4,
+    "G3": 0,
+    "G4": 3,
+    "G5": 24,
+    "G6": 77,
+    "G7": 12
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-Subagent-도구-위임",
+      "code_cells": 4,
+      "sentences": 87,
+      "counts": {
+        "G1": 1,
+        "G2": 1,
+        "G3": 0,
+        "G4": 1,
+        "G5": 5,
+        "G6": 17,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell6:list_comprehension"
+        ],
+        "G2": [
+          "cell4:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:중앙 `supervisor.invoke(...)`가 실행되면 모델이 먼저 `policy_specialist` 호출을 요청하고, LangChain이 함수를 실행한 뒤 반환 문자열을 `ToolMessage`로 대화에 넣습니다",
+          "long:전문 에이전트의 `invoke`는 그 함수 안에서 별도의 모델 실행을 시작하므로 한 번의 위임에는 중앙 판단, 전문 처리, 중앙 종합이라는 호출 경계가 생길 수 있습니다",
+          "long:전문 에이전트가 더 정확해졌는지, 전체 토큰이 줄었는지, 고객 답변이 좋아졌는지는 별도의 질문 묶음과 평가 기준으로 측정해야 합니다",
+          "long:calls와 메시지의 tool_calls에는 policy_specialist가 남으며, 중앙 기록 639자 중 고객 질문 부분은 38자입니다",
+          "long:설치 셀은 Python 3.12 환경에 LangChain 1.4.0, langchain-openai 1.6.0, LangGraph 1.2.11을 고정합니다",
+          "long:create_agent supervisor의 실제 메시지 기록에는 policy_specialist 도구 호출이 한 번 있었고 도구 함수 실행 기록도 같은 이름을 남겼습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 사용자가 직접 대화하는 담당자가 바뀌는 Handoff를 active_agent 상태와 thread_id로 구현합니다",
+          "long:중앙 `supervisor.invoke(...)`가 실행되면 모델이 먼저 `policy_specialist` 호출을 요청하고, LangChain이 함수를 실행한 뒤 반환 문자열을 `ToolMessage`로 대화에 넣습니다",
+          "long:전문 에이전트의 `invoke`는 그 함수 안에서 별도의 모델 실행을 시작하므로 한 번의 위임에는 중앙 판단, 전문 처리, 중앙 종합이라는 호출 경계가 생길 수 있습니다",
+          "long:전문 에이전트가 더 정확해졌는지, 전체 토큰이 줄었는지, 고객 답변이 좋아졌는지는 별도의 질문 묶음과 평가 기준으로 측정해야 합니다",
+          "english_start:`@tool`은 Python 함수를 모델이 선택할 수 있는 도구 객체로 ",
+          "english_start:policy_specialist를 @tool로 정의하고 내부에서 교재용 ",
+          "english_start:supervisor는 이 도구를 선택하고 반환값을 다음 모델 호출의 근거",
+          "english_start:calls와 메시지의 tool_calls에는 policy_speciali",
+          "english_start:Subagent는 중앙 에이전트가 호출하는 전문 도구입니다",
+          "english_start:calls로 호출 경계를 확인하고, 38자는 전문 입력 전체가 아니라 고",
+          "english_start:`@tool`은 Python 함수를 모델이 선택할 수 있는 도구 객체로 "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-Handoff-상태-전환",
+      "code_cells": 6,
+      "sentences": 77,
+      "counts": {
+        "G1": 2,
+        "G2": 0,
+        "G3": 0,
+        "G4": 0,
+        "G5": 5,
+        "G6": 21,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell6:multiple_defs_in_cell",
+          "cell12:conditional_expression"
+        ],
+        "G2": [],
+        "G3": [],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:핸드오프(Handoff)는 도구 호출이나 그래프 노드가 active_agent 또는 current_step 상태를 바꾸어 제어권을 다른 담당 동작으로 전환하는 패턴입니다",
+          "long:전환된 담당자는 사용자와 직접 대화할 수 있고, 체크포인터가 active_agent를 저장하면 다음 턴도 그 상태에서 이어집니다",
+          "long:첫 턴의 ‘환불’ 표현이 active_agent를 refund_agent로 바꿨고 같은 thread_id의 두 번째 호출도 refund_agent를 유지했습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 한 번의 구조화 분류가 여러 독립 전문가를 선택하고 병렬 실행하는 Router를 구현합니다",
+          "long:해설 — 첫 턴의 active_agent가 저장된 체크포인트를 읽지 못하므로, 이 실습의 dispatch는 general_agent를 선택합니다",
+          "long:해설 — 다음 턴에 담당자를 유지하려면 상태를 저장해야 하지만, 주문 정보와 대화 기록은 보관 기간과 삭제 방법도 함께 정해야 합니다",
+          "english_start:Handoff는 active_agent 같은 상태를 바꾸고 다음 턴의 동",
+          "english_start:`active_agent`는 현재 대화를 담당하는 이름을 상태에 저장하는",
+          "english_start:`dispatch()`는 새 메시지에 명시적인 전환 신호가 있으면 담당자",
+          "english_start:`respond()`는 갱신된 상태를 받아 답변을 만듭니다",
+          "english_start:dispatch는 새 메시지와 저장된 active_agent를 함께 읽습",
+          "english_start:InMemorySaver와 thread_id='handoff-demo'를",
+          "english_start:Handoff는 다음 사용자 턴의 담당자를 바꾸는 상태 전환입니다",
+          "english_start:`InMemorySaver`는 프로세스 내 실습에 적합합니다",
+          "english_start:Handoff는 다음 턴의 동작을 바꾸는 상태 전환입니다",
+          "english_start:`thread_id`가 연결한 두 호출에서 `active_agent`가 ",
+          "english_start:`active_agent`는 현재 대화를 담당하는 이름을 상태에 저장하는",
+          "english_start:`dispatch()`는 새 메시지에 명시적인 전환 신호가 있으면 담당자",
+          "english_start:`respond()`는 갱신된 상태를 받아 답변을 만듭니다",
+          "english_start:`dispatch()`는 현재 메시지와 저장된 담당자를 함께 읽고 새 `",
+          "english_start:`respond()`는 이 갱신된 상태를 받아 답변을 만듭니다"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-Router-분류와-병렬-실행",
+      "code_cells": 4,
+      "sentences": 82,
+      "counts": {
+        "G1": 1,
+        "G2": 1,
+        "G3": 0,
+        "G4": 1,
+        "G5": 6,
+        "G6": 19,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:generator_expression"
+        ],
+        "G2": [
+          "cell6:nested_call_2plus"
+        ],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:설치 셀은 Python 3.12 환경에 LangChain 1.4.0, langchain-openai 1.6.0, LangGraph 1.2.11을 고정합니다",
+          "long:다음 학습과 이어지는 지점 — 마지막 절에서는 같은 고객 문의를 세 구조로 실행하고 호출 수·토큰·비용·종료 조건을 한 표로 비교합니다",
+          "english_start:Router는 입력을 한 번 분류한 뒤 선택된 전문 작업을 실행합니다",
+          "english_start:Command는 한 경로, Send는 여러 경로로 동적 fan-out할 ",
+          "english_start:`with_structured_output(Route)`는 모델의 응답을",
+          "english_start:`destinations`는 `policy`와 `shipping`만 담을",
+          "english_start:`router.invoke(...)`가 실제 모델을 호출한 뒤 반환한 `",
+          "english_start:`ThreadPoolExecutor(max_workers=2)`는 두 전",
+          "english_start:`pool.map`은 입력 순서에 맞춰 결과를 반환하고 `zip`이 분야",
+          "english_start:ThreadPoolExecutor는 선택된 이름만 run_speciali",
+          "english_start:results의 키와 route.destinations의 집합이 같은지 ",
+          "english_start:Router는 장기 대화를 스스로 관리하지 않습니다",
+          "english_start:Router는 먼저 경로를 정하고 독립 작업을 병렬 실행합니다",
+          "english_start:`with_structured_output(Route)`는 모델의 응답을",
+          "english_start:`destinations`는 `policy`와 `shipping`만 담을",
+          "english_start:`router.invoke(...)`가 실제 모델을 호출한 뒤 반환한 `",
+          "english_start:`ThreadPoolExecutor(max_workers=2)`는 두 전",
+          "english_start:`pool.map`은 입력 순서에 맞춰 결과를 반환하고 `zip`이 분야",
+          "english_start:`results`의 키 집합과 `route.destinations`를 비"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-호출-수-비용-종료-조건-비교",
+      "code_cells": 9,
+      "sentences": 83,
+      "counts": {
+        "G1": 4,
+        "G2": 2,
+        "G3": 0,
+        "G4": 1,
+        "G5": 8,
+        "G6": 20,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell6:multiple_defs_in_cell",
+          "cell8:list_comprehension",
+          "cell10:multiple_defs_in_cell",
+          "cell16:generator_expression"
+        ],
+        "G2": [
+          "cell10:over_15_lines",
+          "cell14:over_15_lines"
+        ],
+        "G3": [],
+        "G4": [
+          "cell4:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell12:result_reading_quotes_no_output",
+          "cell14:result_reading_quotes_no_output",
+          "cell16:result_reading_quotes_no_output",
+          "cell18:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이름만 바꾼 고정 호출 목록으로는 차이를 검증할 수 없으므로 각 구조의 도구, 상태 전환, 분류 결과가 실제 다음 호출을 결정해야 합니다",
+          "long:서브에이전트는 중앙 종합 호출이 추가될 수 있고, 핸드오프는 담당자가 바뀐 뒤 여러 턴을 이어 갈 수 있으며, 라우터는 분류 호출 뒤 독립 전문가를 병렬로 실행합니다",
+          "long:Subagent에서는 create_agent가 policy_tool을 선택하고, 도구 내부의 measured_call이 전문 모델 응답을 반환합니다",
+          "long:설치 셀은 Python 3.12 환경에 LangChain 1.4.0, langchain-openai 1.6.0, LangGraph 1.2.11을 고정합니다",
+          "long:실제 제어 흐름에서 Subagent는 create_agent가 policy_tool을 선택했고, Handoff 조건부 엣지는 active_agent를 읽어 shipping→refund→done으로 이동했으며, Router의 구조화 출력은 policy와 shipping을 선택해 두 경로를 실행했습니다",
+          "long:Subagent는 3회·0.005498달러, Handoff는 2회·0.000785달러, Router는 4회·0.001574달러로 추정되었고 세 종료 조건은 모두 참이었습니다",
+          "long:langgraph-supervisor 저장소는 대부분의 새 사용 사례에서 라이브러리보다 도구를 통한 직접 supervisor 구현을 권고합니다",
+          "long:다음 학습과 이어지는 지점 — Ch27에서는 파일시스템·Subagent·문맥 관리를 미리 조립한 DeepAgents 하네스로 이 위임 구조를 확장합니다",
+          "long:해설 — sub_done·handoff_done·router_done을 각 구조의 반환값과 상태에서 계산하고 마지막 셀에서 모두 참인지 assert로 검사합니다",
+          "long:서브에이전트는 중앙 종합 호출이 추가될 수 있고, 핸드오프는 담당자가 바뀐 뒤 여러 턴을 이어 갈 수 있으며, 라우터는 분류 호출 뒤 독립 전문가를 병렬로 실행합니다",
+          "english_start:`records`는 모델 응답마다 구조 이름, 역할, 입력·출력 토큰을 ",
+          "english_start:`measured_call()`은 모델 호출과 기록을 한 경계에 묶어, ",
+          "english_start:Handoff는 active_agent를 shipping에서 refund",
+          "english_start:Router는 classifier의 구조화 출력에서 destination",
+          "english_start:Subagent는 3회·0.005498달러, Handoff는 2회·0.0",
+          "english_start:`records`는 모델 응답마다 구조 이름, 역할, 입력·출력 토큰을 ",
+          "english_start:`measured_call()`은 모델 호출과 기록을 한 경계에 묶어, ",
+          "english_start:Subagent의 종료 값은 전문 도구가 반환한 업무 결과입니다",
+          "english_start:`records`의 호출 수나 토큰 수와 서로 다른 층의 값입니다",
+          "english_start:Router의 분류 1회와 선택된 전문 작업 호출을 구분해 기록합니다"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

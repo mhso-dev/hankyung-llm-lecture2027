@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title desc">
+<title id="title">문서 형식마다 의미 있는 단위가 다르다</title>
+<desc id="desc">DOCX는 문단과 표, HTML은 제목과 본문, CSV는 머리글이 붙은 행으로 변환되는 세 경로</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a9eed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ef4444"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#757575"/></marker>
+</defs>
+<rect width="900" height="430" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="18" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">문서 형식마다 의미 있는 단위가 다르다</tspan></text>
+<rect x="50" y="90" width="150" height="65" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="125.0" y="122.5" font-size="16" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="125.0" dy="0.0">DOCX</tspan></text>
+<rect x="50" y="185" width="150" height="65" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="125.0" y="217.5" font-size="16" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="125.0" dy="0.0">HTML</tspan></text>
+<rect x="50" y="280" width="150" height="65" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="125.0" y="312.5" font-size="16" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="125.0" dy="0.0">CSV</tspan></text>
+<polyline points="200,122 320,122" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="220.8" y="99.5" width="78.5" height="21.0" fill="#ffffff" fill-opacity="0.94" rx="4"/>
+<text x="260.0" y="110.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="260.0" dy="0.0">구조 읽기</tspan></text>
+<polyline points="200,217 320,217" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="220.8" y="194.5" width="78.5" height="21.0" fill="#ffffff" fill-opacity="0.94" rx="4"/>
+<text x="260.0" y="205.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="260.0" dy="0.0">구조 읽기</tspan></text>
+<polyline points="200,312 320,312" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="220.8" y="289.5" width="78.5" height="21.0" fill="#ffffff" fill-opacity="0.94" rx="4"/>
+<text x="260.0" y="300.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="260.0" dy="0.0">구조 읽기</tspan></text>
+<rect x="320" y="80" width="240" height="85" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="440.0" y="113.0" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="440.0" dy="0.0">문단 + 표</tspan><tspan x="440.0" dy="18.9">스타일 · 표 위치 메타데이터</tspan></text>
+<rect x="320" y="175" width="240" height="85" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="440.0" y="208.1" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="440.0" dy="0.0">제목 + 본문</tspan><tspan x="440.0" dy="18.9">h1~h6 계층 · URL</tspan></text>
+<rect x="320" y="270" width="240" height="85" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="440.0" y="303.1" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="440.0" dy="0.0">머리글이 붙은 행</tspan><tspan x="440.0" dy="18.9">행 번호 · 열 이름</tspan></text>
+<polyline points="560,122 690,217" fill="none" stroke="#22c55e" stroke-width="2" marker-end="url(#m-green)"/>
+<polyline points="560,217 690,217" fill="none" stroke="#22c55e" stroke-width="2" marker-end="url(#m-green)"/>
+<polyline points="560,312 690,217" fill="none" stroke="#22c55e" stroke-width="2" marker-end="url(#m-green)"/>
+<rect x="690" y="170" width="170" height="95" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="775.0" y="208.1" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="775.0" dy="0.0">타입이 있는 단위</tspan><tspan x="775.0" dy="18.9">text + type + source</tspan></text>
+<text x="450" y="390.0" font-size="15" fill="#595959" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450" dy="0.0">형식의 구조를 보존하면 청킹 기준과 출처 표시를 문서 유형에 맞게 선택할 수 있습니다.</tspan></text>
+</svg>

@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph TPL["메시지 틀 prompt"]
+    direction LR
+    S["system<br>페르소나"]:::tool
+    D["developer<br>과업 명세<br>네 글"]:::tool
+    U["user<br>빈자리<br>{inquiry}"]:::tool
+    S ~~~ D ~~~ U
+  end
+  V["채울 값<br>inquiry<br>텀블러 문의<br>A-1042"]:::tool
+  F["prompt.invoke<br>→ to_messages<br>요청 0번"]:::flow
+  P["메시지 객체 3개<br>03절 목록과 같음 True"]:::measure
+  M["gpt-5.4-mini<br>입력 134토큰"]:::model
+  TPL --> F
+  V --> F
+  F --> P
+  P --> M

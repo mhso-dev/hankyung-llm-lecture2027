@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  h["대화 기록 두 줄"]:::tool
+  q["후속 질문<br>거기 늦게 가면 어떻게 되나요"]:::tool
+  p["우리가 적은<br>재작성 프롬프트"]:::flow
+  m["답 모델 gpt-5.4-mini"]:::model
+  r["재작성한 질문<br>스터디룸에 늦게 가면 어떻게 되나요"]:::measure
+  s["우리가 적은 거리 검색"]:::flow
+  g["정답 문서 FAC-001이<br>자리 하나"]:::measure
+  h --> p
+  q --> p
+  p --> m
+  m --> r
+  r --> s
+  s --> g

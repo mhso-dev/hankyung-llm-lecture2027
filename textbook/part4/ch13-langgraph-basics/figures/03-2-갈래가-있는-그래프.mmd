@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  st([START])
+  n1["노드 normalize"]:::flow
+  n2["노드 make_query"]:::flow
+  ok["노드 make_answer"]:::flow
+  more["노드 ask_more"]:::flow
+  fin([END])
+  st --> n1
+  n1 --> n2
+  n2 -.->|조건 함수가 낸 이름표 enough| ok
+  n2 -.->|조건 함수가 낸 이름표 short| more
+  ok --> fin
+  more --> fin

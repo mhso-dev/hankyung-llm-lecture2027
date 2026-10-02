@@ -1,0 +1,20 @@
+flowchart LR
+  %% classes
+  subgraph REV["git revert HEAD · 공개한 main"]
+    direction BT
+    r1["feat: 할인율 10 설정<br>discount=10"]:::tool
+    r2["fix: 할인율 90 설정<br>discount=90"]:::tool
+    r3["Revert<br>#quot;fix: 할인율 90 설정#quot;<br>discount=10"]:::tool
+    rn["main"]
+    r1 --> r2 --> r3
+    r3 -.- rn
+  end
+  subgraph RES["git reset --hard HEAD~1 · experiment"]
+    direction BT
+    e1["Revert<br>#quot;fix: 할인율 90 설정#quot;<br>discount=10"]:::tool
+    e2["docs: 쿠폰 아이디어 기록<br>가리키는 이름 없음"]:::tool
+    en["experiment"]
+    e1 --> e2
+    e1 -.- en
+  end
+  REV ~~~ RES

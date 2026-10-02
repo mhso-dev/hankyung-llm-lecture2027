@@ -1,0 +1,12 @@
+sequenceDiagram
+  participant N as 노트북
+  participant P as Python
+  participant G as git
+  Note over N: 작업 폴더 practice
+  Note over N: Python 3.12 True<br>가상환경 True<br>message.txt True
+  N->>P: python hello.py · cwd practice
+  P-->>N: 종료 코드 0 · 총액: 6000원
+  N->>G: git status --short · cwd practice
+  G-->>N: 종료 코드 0 · 상태 출력 0줄
+  Note over N: Docker 명령을 찾지 못함
+  Note over N: 점검표 True 5칸

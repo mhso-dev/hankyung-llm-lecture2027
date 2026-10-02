@@ -1,0 +1,4 @@
+- 설명 대상 문장: Before 셀과 달라진 곳은 `backup = cart.copy()` 한 줄입니다.
+- 캡션: 대입한 Before는 목록 하나에 이름 두 개가 붙어 백업에도 헤드셋이 들어가고, copy()를 쓴 After는 백업이 두 상품 그대로입니다.
+- 읽는 법: 위 칸이 Before, 아래 칸이 After이고, 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 파란 상자는 이름, 초록 상자는 목록입니다. Before는 이름 cart와 backup이 초록 상자 하나로 모여 빨간 상자(같은 목록인가 True, 백업 그대로인가 False)에 이릅니다. After는 두 이름이 서로 다른 초록 상자로 가고, backup 쪽 새 목록에는 키보드와 마우스만 있습니다. 노란 상자의 결과는 False와 True입니다. 빨강은 실제로 틀린 Before 결과에만 썼습니다.
+- alt: Before는 이름 cart와 backup이 목록 하나를 함께 가리켜 같은 목록 True와 백업 그대로 False가 나오고, After는 두 이름이 서로 다른 목록을 가리켜 backup이 키보드와 마우스 두 상품 그대로이며 False와 True가 나오는 비교 그림

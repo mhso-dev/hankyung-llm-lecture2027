@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" role="img" aria-label="RAG의 두 단계: 문서를 준비하고 질문에 답하기">
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a9eed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ef4444"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#757575"/></marker>
+</defs>
+<rect width="800" height="500" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="18" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">RAG의 두 단계: 문서를 준비하고 질문에 답하기</tspan></text>
+<rect x="30" y="60" width="740" height="150" rx="12" fill="#d3f9d8" fill-opacity="0.35" stroke="#22c55e" stroke-width="1"/>
+<text x="44" y="76.0" font-size="15" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="44" dy="0.0">① 색인 (문서·청크 설정·임베딩 모델이 바뀔 때 다시 만들기)</tspan></text>
+<rect x="50" y="110" width="140" height="70" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="120.0" y="134.2" font-size="16" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="120.0" dy="0.0">수업용 PDF</tspan><tspan x="120.0" dy="21.6">E01.pdf</tspan></text>
+<polyline points="190,145 230,145" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="230" y="110" width="140" height="70" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="300.0" y="134.2" font-size="16" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="300.0" dy="0.0">PDF 읽기 →</tspan><tspan x="300.0" dy="21.6">청크 나누기</tspan></text>
+<polyline points="370,145 410,145" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="376.3" y="122.5" width="27.4" height="21.0" fill="#ffffff" fill-opacity="0.9" rx="4"/>
+<text x="390.0" y="133.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="390.0" dy="0.0">청크</tspan></text>
+<rect x="410" y="110" width="140" height="70" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="480.0" y="134.2" font-size="16" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="480.0" dy="0.0">임베딩</tspan><tspan x="480.0" dy="21.6">embed</tspan></text>
+<polyline points="550,145 590,145" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="556.3" y="122.5" width="27.4" height="21.0" fill="#ffffff" fill-opacity="0.9" rx="4"/>
+<text x="570.0" y="133.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="570.0" dy="0.0">벡터</tspan></text>
+<rect x="590" y="110" width="150" height="70" rx="10" fill="#c3fae8" stroke="#22c55e" stroke-width="2"/>
+<text x="665.0" y="135.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="665.0" dy="0.0">벡터스토어</tspan><tspan x="665.0" dy="18.9">InMemoryVectorStore</tspan></text>
+<rect x="30" y="250" width="740" height="230" rx="12" fill="#dbe4ff" fill-opacity="0.35" stroke="#4a9eed" stroke-width="1"/>
+<text x="44" y="266.0" font-size="15" fill="#1e40af" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="44" dy="0.0">② 질문 처리 (질문할 때마다): 검색 → 답 만들기</tspan></text>
+<text x="60" y="338.0" font-size="18" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="60" dy="0.0">질문</tspan></text>
+<polyline points="110,330 170,330" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="170" y="295" width="150" height="70" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="245.0" y="319.2" font-size="16" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="245.0" dy="0.0">가까운 청크 검색</tspan><tspan x="245.0" dy="21.6">k=2</tspan></text>
+<polyline points="665,180 665,240 500,240 500,280 245,280 245,295" fill="none" stroke="#22c55e" stroke-width="2" marker-end="url(#m-green)" stroke-dasharray="7 5"/>
+<rect x="525.4" y="217.5" width="114.2" height="21.0" fill="#ffffff" fill-opacity="0.9" rx="4"/>
+<text x="582.5" y="228.0" font-size="14" fill="#166534" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="582.5" dy="0.0">질문 벡터로 이웃 찾기</tspan></text>
+<polyline points="320,330 370,330" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="318.3" y="307.5" width="53.4" height="21.0" fill="#ffffff" fill-opacity="0.9" rx="4"/>
+<text x="345.0" y="318.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="345.0" dy="0.0">청크 k개</tspan></text>
+<rect x="370" y="295" width="150" height="70" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="445.0" y="319.2" font-size="16" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="445.0" dy="0.0">문맥과 질문을</tspan><tspan x="445.0" dy="21.6">프롬프트로 합치기</tspan></text>
+<polyline points="520,330 570,330" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="570" y="295" width="150" height="70" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="645.0" y="319.2" font-size="16" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="645.0" dy="0.0">LLM으로</tspan><tspan x="645.0" dy="21.6">답 만들기</tspan></text>
+<polyline points="645,365 645,405" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<text x="645" y="430.0" font-size="16" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="645" dy="0.0">답 + 출처 [E01 p.2]</tspan></text>
+<text x="60" y="420.0" font-size="14" fill="#595959" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="60" dy="0.0">파랑 = 학생 코드가 고정한 흐름 · 모델은 이 흐름을 판단하지 않는다</tspan></text>
+<text x="60" y="445.0" font-size="14" fill="#757575" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="60" dy="0.0">초록 = 문서·데이터 저장소   (몇 번 검색할지도 학생이 정한다)</tspan></text>
+</svg>

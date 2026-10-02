@@ -1,0 +1,32 @@
+{
+  "version": "v1.6",
+  "genre": "공적",
+  "char_count": 68832,
+  "metrics": {
+    "comma_inclusion_rate": 0.14778129952456417,
+    "comma_usage_rate": 0.20879556259904913,
+    "ending_comma_rate": 0.3501144164759725,
+    "comma_segment_length": 5.390808453539081,
+    "conclusion_pivot_count": 5,
+    "safe_balance_count": 0,
+    "hanja_nominalizer_density": 0.003923766816143498,
+    "lexical_diversity": 0.30038614848031886
+  },
+  "z_scores": {
+    "comma_inclusion_rate": -0.6642782285451372,
+    "comma_usage_rate": -1.288397814546784,
+    "ending_comma_rate": 3.9302532291922763,
+    "comma_segment_length": 0.4944458211587083,
+    "hanja_nominalizer_density": -1.8692077727952168,
+    "lexical_diversity": -6.992277030393625
+  },
+  "risk_band": "medium",
+  "risk_score": 4,
+  "evidence": {
+    "conclusion_pivots": [
+      "따라서"
+    ],
+    "safe_balances": []
+  },
+  "warning": "baseline_genre_null:공적->essay"
+}

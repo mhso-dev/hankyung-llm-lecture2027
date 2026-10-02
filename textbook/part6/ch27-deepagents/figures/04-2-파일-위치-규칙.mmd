@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  backend["FilesystemBackend<br>기준 폴더는 임시 폴더<br>virtual_mode True"]:::flow
+  p1["/notes/rules.md"]:::tool
+  p2["/etc/rules.md"]:::tool
+  p3["../outside.md"]:::tool
+  r1["임시 폴더 안<br>notes/rules.md"]:::measure
+  r2["임시 폴더 안 etc/rules.md<br>컴퓨터의 /etc 아님"]:::measure
+  r3["받은 오류 ValueError<br>쓰기 전에 막힘"]:::measure
+  backend --> p1
+  backend --> p2
+  backend --> p3
+  p1 --> r1
+  p2 --> r2
+  p3 --> r3

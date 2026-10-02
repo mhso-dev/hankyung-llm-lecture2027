@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  REQ["요청: C001 고객의<br>주문 번호 · 이름 · 금액을<br>주문 번호 순서로"]
+  SEL["SELECT orders.order_id,<br>customers.name, orders.amount"]:::flow
+  FRM["FROM orders<br>JOIN customers<br>ON 고객 번호가 같은 행끼리"]:::flow
+  WHR["WHERE orders.customer_id = ?"]:::flow
+  VAL["값 목록 · C001"]:::tool
+  ORD["ORDER BY orders.order_id"]:::flow
+  RES["결과 2행<br>O101 · 김하나 · 32000<br>O103 · 김하나 · 27000"]:::measure
+  REQ --> SEL --> FRM --> WHR --> ORD --> RES
+  VAL --> WHR

@@ -1,0 +1,617 @@
+"""Ch 19 07절(챕터 끝 실습 절) 노트북 + 본문 생성기 (QUALITY-UPGRADE.md §2·§2-7·§3·§4·§6·§7-2).
+
+사용:
+  python3 author_07.py            → 노트북 + _src 본문을 함께 쓴다(노트북 출력이 지워지므로 새 커널로 다시 실행해야 한다)
+  python3 author_07.py --src-only → _src 본문만 다시 쓴다(노트북은 그대로)
+  AUTHOR07_NB_ONLY=1 python3 author_07.py → 노트북만 다시 쓴다
+이후 run_section.sh 가 새 커널 실행 → Mermaid 렌더 → 그림 첨부 → 빌드 → verify → 게이트를 이어서 한다.
+새 절이라 수정 전 원본이 없다. **서비스 모델 절이다.** 설명만 고칠 때는 mdpatch.py → run_section.sh --no-exec(규격 §3).
+
+주제(새 작은 일): 주문 취소 창구. 손님의 주문 문의 하나(「O102 주문이 아직 결제 대기 중이면 취소해 주세요. 다른 상품을
+잘못 주문했어요.」 — 이 절에서 실행 전에 정한 글)를 읽기 도구와 쓰기 도구로 처리한다. 실행 1은 사람 확인 값 False,
+실행 2는 그 값 하나만 True로 바꾼다.
+
+## 함께 붙인 앞 절 기능 세 가지 (규격 §7-2 「앞 절 기능 2~3개」, handoff 「§06 → 실습(07)」 5번)
+
+1. 02절 입력 검사 — 쓰기 도구 request_cancel의 입력 형식을 양식 클래스 CancelForm(취소 까닭 Literal 셋)으로 정함.
+   정해 둔 셋에 없는 까닭은 몸통 전에 ValidationError(모델 요청 0으로 확인).
+2. 05절 도구 실행 루프 — ask_until_answer가 도구 호출 요청을 실행하고 도구 메시지를 넣어 다시 묻는다.
+3. 06절 읽기·쓰기 분리 — pick_tools(read_tools, write_tools, person_confirmed)가 알려 줄 목록을 고른다(바꾸는 값).
+읽기에 이어 쓴 것(기능으로 세지 않음): 06절 읽기 도구 셀 그대로(오류 담기 설정 True), 03절 find_order·자세한 판 설명,
+04절 tool_call_names·입력 토큰, 06절 make_tools_table·spec_names·show_messages, 05절 sum_usage, Ch 6 06 estimate_cost.
+
+## 뺀 것과 까닭 (b3 · 07-diagnosis.md §2)
+
+- 04절 선택 채점(ask_questions): 질문 × 반복만큼 요청이 들어 3~5번을 넘음.
+- 05절 여럿 담기(parallel_tool_calls=True): 한 응답에 담길 요청 수를 모델 답이 정함.
+- 06절 오류 담기 장면(없는 주문 번호): 읽기 도구에 켜 두기만 함. 없는 주문에 쓰기 도구까지 알려 주면 흉내 쓰기 도구가
+  그 취소도 등록할 수 있어, 06 b7이 다루지 않은 「쓰기 도구 안 주문 번호 재검사」가 필요해짐.
+- 06절 한 목록/나눈 목록 견주기: 06 실험 되풀이(규격 §7-2 5항).
+
+## 흔들림 확인 (규격 §2-7 10번 끝, qa/upgrade/07-probe.md)
+
+노트북 실행 전 같은 두 실행을 노트북 밖에서 다섯 번(이 파일의 셀 글을 exec). 다섯 번 모두 실행 1 = 읽기 도구만·요청 2,
+실행 2 = 읽기 → 쓰기(까닭 wrong_order)·요청 3, 결과 상태 모두 success, 흐름 끝 도구 호출 요청 0건.
+
+## 요청 수
+
+노트북 한 번 모델 5번 예상(실행 1 두 번 + 실행 2 세 번), 바퀴 한도 5라 실행 한 번에 5번을 넘지 않음. 모두 gpt-5.4-mini
+(temperature=0 · reasoning_effort none · parallel_tool_calls=False). 임베딩 0. 읽는 파일 orders.csv, 쓰는 파일 0.
+
+## §2-7 도구 파일
+
+03~06절 함수 여덟(find_order·tool_call_names·ask_until_answer·sum_usage·pick_tools·make_tools_table·spec_names·
+show_messages)과 Ch 6 06 estimate_cost는 이미 도구 파일에 있어 옮긴 것 없음. 06절 도구 객체 get_order_by_id는 06절
+3절 셀을 그대로 다시 적는다(author_06.DEF_READ와 문자열 대조 — 도구 객체는 파일에 두지 않음, 챕터 리드 결정 2).
+이 절이 새로 만든 함수 셋(노트북에만): handle_inquiry(조립 함수)·summarize_run·print_summaries(기록 장치).
+
+## 쓰지 않은 것
+
+f-string·내포식·제너레이터 식·lambda·조건 표현식·elif·else·next·all·any·sum·max·min·enumerate·zip·sorted·key=·
+reverse=·set·setdefault·노트북 .get·+=·기본값 매개변수·반환 힌트·튜플 풀기·별표 풀기·isinstance·클래스(양식 클래스 밖)·
+try else·tool_choice·시스템 메시지·ToolNode·ToolMessage(…) 직접 만들기·파일 쓰기·time. 모델 글에 assert 0.
+"""
+from __future__ import annotations
+
+import os
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[5]
+sys.path.insert(0, str(ROOT / "textbook/_notebook/upgrade"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from nbkit import RUN_DATE, code, install_source, key_and_model_cells, md, setup, write_notebook  # noqa: E402
+import author_06  # noqa: E402
+from author_05 import html_text  # noqa: E402
+
+LAB = ROOT / "labs/part5/ch19-model-tools/notebooks"
+
+SLUG = "07-모델과-도구-실습"
+
+INSTALL = install_source([
+    "langchain==1.4.0", "langchain-core==1.6.2", "langchain-openai==1.6.0", "pandas==3.0.5", "pydantic==2.12.5",
+    "python-dotenv==1.2.3",
+])
+
+IMPORTS = r'''# 모델·도구·양식 클래스·메시지를 만드는 이름과, 도구 파일에서 앞 절 함수 아홉을 가져옵니다
+import os
+from typing import Literal
+
+from langchain.chat_models import init_chat_model
+from langchain.tools import ToolException, tool
+from langchain_core.messages import HumanMessage
+from pydantic import BaseModel, Field, ValidationError
+
+from order_tools import ask_until_answer, estimate_cost, find_order, make_tools_table, pick_tools, show_messages, spec_names, sum_usage, tool_call_names
+
+print("가져온 이름:", "os", "Literal", "init_chat_model", "ToolException", "tool", "HumanMessage")
+print("가져온 이름:", "BaseModel", "Field", "ValidationError")'''
+
+# 01~06절 자리 찾기 셀과 글자까지 같다(아래 assert)
+PATH = author_06.PATH
+
+INQUIRY = r'''# 이 실습의 새 주문 문의를 적습니다(이 절에서 실행 전에 정한 글이고, 실제 손님이 보낸 글이 아닙니다)
+inquiry = "O102 주문이 아직 결제 대기 중이면 취소해 주세요. 다른 상품을 잘못 주문했어요."
+print("주문 문의:", inquiry)
+print("출처:", "이 절에서 실행 전에 적은 글")'''
+
+TARGET = r'''# 문의에 적힌 주문 O102를 03절 몸통 함수로 CSV에서 찾아 봅니다(모델 요청 없음)
+target_order = find_order(csv_path, "O102")
+print("문의 대상 주문:", target_order)
+print("주문 상태:", target_order["status"])'''
+
+# 06절 3절 셀과 글자까지 같다(아래 assert)
+DEF_READ = author_06.DEF_READ
+
+READ_SET = r'''# 06절 After처럼 읽기 도구의 오류 담기 설정을 켜고, 읽기 도구 목록에 담습니다
+get_order_by_id.handle_tool_error = True
+read_tools = [get_order_by_id]
+print("읽기 도구:", read_tools[0].name)
+print("오류 담기 설정(handle_tool_error):", get_order_by_id.handle_tool_error)'''
+
+DEF_FORM = r'''# 쓰기 도구의 입력 형식: 주문 번호 칸과, 정해 둔 셋 가운데 하나만 받는 취소 까닭 칸을 정합니다
+class CancelForm(BaseModel):
+    # 주문 번호 칸은 글이고, 칸 설명은 도구 명세에 그대로 실립니다
+    order_id: str = Field(description="취소할 주문 번호")
+    # 취소 까닭 칸에는 괄호 안 세 글 가운데 하나만 적을 수 있습니다
+    reason: Literal["changed_mind", "wrong_order", "late_delivery"] = Field(description="취소 까닭")'''
+
+WRITE_DOC = "주문 번호와 취소 까닭으로 주문 취소 요청을 등록합니다. 손님이 주문을 취소해 달라고 할 때 씁니다. 인자 reason은 정해 둔 취소 까닭 셋 가운데 하나입니다. 등록한 주문 번호와 까닭을 딕셔너리로 내놓습니다."
+
+DEF_WRITE = r'''# 취소 까닭 양식을 입력 형식으로 붙여 쓰기 도구를 만듭니다(06절처럼 흉내라 아무 파일도 바꾸지 않습니다)
+@tool(args_schema=CancelForm)
+def request_cancel(order_id, reason):
+    """''' + WRITE_DOC + r'''"""
+    # 몸통이 실행되었는지 보이려고 받은 값을 먼저 출력합니다(02절과 같은 방법)
+    print("쓰기 도구 몸통 실행 | 주문 번호:", order_id, "| 까닭:", reason)
+    # 실제 서비스라면 여기서 주문 상태가 바뀝니다. 이 절에서는 받은 값만 적어 내놓습니다
+    return {"order_id": order_id, "reason": reason, "cancel_requested": True}'''
+
+WRITE_ARGS = r'''# 쓰기 도구를 쓰기 도구 목록에 담고, 입력 형식의 취소 까닭 칸을 봅니다(모델 요청 없음)
+write_tools = [request_cancel]
+print("쓰기 도구:", write_tools[0].name)
+print("취소 까닭 칸:", request_cancel.args["reason"])'''
+
+BAD_REASON = r'''# 정해 둔 셋에 없는 까닭 too_expensive를 넣어 봅니다(모델 요청 없음, 이 셀만 그 오류를 받아 출력합니다)
+try:
+    request_cancel.invoke({"order_id": "O102", "reason": "too_expensive"})
+except ValidationError as error:
+    print("받은 오류:", type(error).__name__)
+    print("오류 글:")
+    print(error)'''
+
+DEF_HANDLE = r'''# 조립 함수: 06절 pick_tools로 알려 줄 목록을 고르고, 05절 ask_until_answer로 문의를 끝까지 처리합니다
+def handle_inquiry(model, read_tools, write_tools, person_confirmed, question, turn_limit):
+    # 06절: 사람 확인 값으로 목록을 고르고, 같은 목록으로 명세와 도구 찾기 표를 만듭니다
+    tools = pick_tools(read_tools, write_tools, person_confirmed)
+    bound_model = model.bind_tools(tools, parallel_tool_calls=False)
+    tools_by_name = make_tools_table(tools)
+    # 05절: 질문 하나로 새 메시지 목록을 만들어, 도구 호출 요청이 없는 응답까지 처리합니다
+    messages = [HumanMessage(content=question)]
+    messages = ask_until_answer(bound_model, messages, tools_by_name, turn_limit)
+    return {"사람 확인": person_confirmed, "명세": spec_names(bound_model), "메시지": messages}'''
+
+DEF_SUMMARIZE = r'''# 기록 장치: 흐름 결과 하나에서 사람 확인 값·명세·요청한 도구·결과 상태·요청 수를 실행 요약으로 모읍니다
+def summarize_run(result):
+    summary = {"사람 확인": result["사람 확인"], "명세": result["명세"], "요청한 도구": [], "결과 상태": []}
+    for message in result["메시지"]:
+        # 응답이면 04절 함수로 도구 호출 요청 이름을, 도구 메시지면 결과 상태를 차례대로 모읍니다
+        if type(message).__name__ == "AIMessage":
+            summary["요청한 도구"] = summary["요청한 도구"] + tool_call_names(message)
+        if type(message).__name__ == "ToolMessage":
+            summary["결과 상태"].append(message.status)
+    # 요청 수는 05절 함수 sum_usage로 센 모델 응답 수입니다
+    summary["요청 수"] = sum_usage(result["메시지"])["requests"]
+    return summary'''
+
+DEF_PRINT = r'''# 기록 장치: 실행 요약을 실행마다 한 줄로 출력합니다
+def print_summaries(summaries):
+    print("사람 확인 | 명세 | 요청한 도구 | 결과 상태 | 요청 수")
+    for summary in summaries:
+        print(summary["사람 확인"], "|", summary["명세"], "|", summary["요청한 도구"], "|", summary["결과 상태"], "|", summary["요청 수"])'''
+
+RUN_ONE = r'''# 실행 1: 사람 확인 전(False)으로 문의를 끝까지 처리합니다(모델 요청 2번 안팎)
+turn_limit = 5
+person_confirmed = False
+result_one = handle_inquiry(model, read_tools, write_tools, person_confirmed, inquiry, turn_limit)
+print("실어 보낸 도구 이름:", result_one["명세"])
+show_messages(result_one["메시지"])
+print("답 글:")
+print(result_one["메시지"][-1].content)'''
+
+SUMMARY_ONE = r'''# 실행 1의 요약을 한 줄로 보고, 쓰기 도구 요청이 있었는지 봅니다(모델 요청 없음)
+summary_one = summarize_run(result_one)
+print_summaries([summary_one])
+print("쓰기 도구 요청이 있었는가:", "request_cancel" in summary_one["요청한 도구"])'''
+
+RUN_TWO = r'''# 실행 2: 바꿀 값은 person_confirmed 하나이고, True로 바꿔 같은 문의를 처리합니다(모델 요청 3번 안팎)
+person_confirmed = True
+result_two = handle_inquiry(model, read_tools, write_tools, person_confirmed, inquiry, turn_limit)
+print("실어 보낸 도구 이름:", result_two["명세"])
+show_messages(result_two["메시지"])
+print("답 글:")
+print(result_two["메시지"][-1].content)'''
+
+CSV_CHECK = r'''# 쓰기 도구가 흉내였는지, 주문 CSV에서 O102의 상태를 다시 읽어 봅니다(모델 요청 없음)
+order_after = find_order(csv_path, "O102")
+print("CSV의 O102 상태:", order_after["status"])
+# CSV 파일에서 정해지는 값이라 assert로 확인할 수 있습니다
+assert order_after["status"] == "pending", "쓰기 도구는 흉내라 CSV를 바꾸지 않아야 합니다"'''
+
+COMPARE = r'''# 두 실행의 요약을 한 표로 견주고, 쓰기 도구 요청이 있었는지 실행마다 봅니다(모델 요청 없음)
+summary_two = summarize_run(result_two)
+print_summaries([summary_one, summary_two])
+print("쓰기 도구 요청 | 실행 1", "request_cancel" in summary_one["요청한 도구"], "| 실행 2", "request_cancel" in summary_two["요청한 도구"])'''
+
+FIRST_TOKENS = r'''# 두 실행의 첫 요청 입력 토큰을 견줍니다: 질문은 같고, 실어 보낸 명세만 다릅니다(모델 요청 없음)
+first_one = result_one["메시지"][1]
+first_two = result_two["메시지"][1]
+print("두 실행의 질문이 같은가:", result_one["메시지"][0].content == result_two["메시지"][0].content)
+print("첫 요청 입력 토큰 | 실행 1", first_one.usage_metadata["input_tokens"], "| 실행 2", first_two.usage_metadata["input_tokens"])'''
+
+COST = r'''# 두 실행의 모델 응답을 모두 모아 요청 수·토큰과 예상 비용을 셉니다(요청 없음)
+all_messages = result_one["메시지"] + result_two["메시지"]
+total_usage = sum_usage(all_messages)
+pricing_date = "2026-09-17"
+input_rate = 0.75
+cached_input_rate = 0.075
+output_rate = 4.50
+total_cost = estimate_cost(total_usage, input_rate, cached_input_rate, output_rate)
+print("요금 확인 날짜:", pricing_date)
+print("모두 합친 사용량:", total_usage)
+print("예상 비용(달러):", round(total_cost, 6))'''
+
+# 노트북 밖 확인(probe07.py)이 차례대로 exec 하는 셀(모델을 부르지 않는 재료·정의 셀)
+SETUP_CELLS = [IMPORTS, PATH, INQUIRY, TARGET, DEF_READ, READ_SET, DEF_FORM, DEF_WRITE, WRITE_ARGS, BAD_REASON,
+               DEF_HANDLE, DEF_SUMMARIZE, DEF_PRINT]
+
+SRC = ROOT / "textbook/part5/ch19-model-tools/_src" / (SLUG + ".html")
+
+FIG1 = "07-1-취소-문의-조립도"
+FIG1_ALT = "위에서 아래로 읽는 그림으로 맨 위에 초록 상자 주문 문의 하나 O102가 결제 대기 중이면 취소 까닭은 잘못 주문함, 초록 상자 바꾸는 값 하나 사람 확인 값 person_confirmed, 회색 상자 부품 둘 읽기 도구 get_order_by_id 쓰기 도구 request_cancel 입력 형식 CancelForm이 나란히 있고, 셋이 가운데 파란 상자 조립 함수 handle_inquiry 06절 pick_tools로 목록 고르기 bind_tools 도구 찾기 표로 모인 뒤 파란 상자 05절 ask_until_answer 도구 실행과 다시 묻기로 이어지며, 그 아래 왼쪽 보라 상자 gpt-5.4-mini 도구 호출 요청 또는 최종 답과는 메시지 목록과 응답 화살표가 오가고, 오른쪽 아래 노란 상자 실행 요약 명세 요청한 도구 결과 상태 요청 수로 끝나는 그림"
+FIG1_CAP = "문의 하나와 사람 확인 값, 부품 둘이 조립 함수로 모이고, 05절 반복이 모델과 메시지를 주고받은 뒤 실행 요약을 냅니다."
+FIG1_READ = "위에서 아래로 읽습니다. 맨 위 초록 상자 둘은 손으로 정한 문의와 바꾸는 값이고, 오른쪽 회색 상자는 부품 둘입니다. 가운데 파란 조립 함수가 사람 확인 값으로 알려 줄 목록을 고릅니다. 그 아래 파란 반복 상자는 왼쪽 아래 보라 모델과 메시지 목록과 응답을 주고받습니다. 오른쪽 아래 노란 상자는 실행마다 출력하는 실행 요약입니다."
+
+FIG2 = "07-2-실행-1의-실제-순서"
+FIG2_ALT = "위에서 아래로 읽는 차례 그림으로 세로줄 셋이 왼쪽부터 조립 함수 handle_inquiry, gpt-5.4-mini, 읽기 도구 get_order_by_id이고, 맨 위 노란 메모 사람 확인 False 명세 get_order_by_id 하나 아래로 요청 1 주문 문의, 점선 응답 도구 호출 요청 get_order_by_id O102, 요청을 통째로 invoke, 점선 응답 도구 메시지 결과 상태 success pending, 요청 2 문의 첫 응답 도구 메시지, 점선 응답 최종 답 도구 호출 요청 0건이 차례로 오가고, 맨 아래 노란 메모 요청 수 2 쓰기 도구 요청 없음이 있는 그림"
+FIG2_CAP = "실행 1은 읽기 도구로 O102의 상태를 읽은 뒤, 쓰기 도구 요청 없이 두 번째 요청에서 글로 답했습니다."
+FIG2_READ = "위에서 아래로 읽는 차례 그림이고, 세로줄은 왼쪽부터 조립 함수, 모델, 읽기 도구입니다. 실선은 보내는 쪽, 점선은 받는 쪽입니다. 첫 요청의 응답이 O102로 읽기 도구를 요청하고, 조립 함수는 결과 상태 `success`인 도구 메시지를 받습니다. 둘째 요청의 응답은 도구 호출 요청 없이 최종 답입니다. 노란 메모 둘은 노트북 7절 출력이고, 세로줄 머리 상자는 색을 칠하지 않은 기본 회색입니다."
+
+FIG3 = "07-3-사람-확인-전과-뒤"
+FIG3_ALT = "맨 위 초록 상자 바꾼 값 하나 person_confirmed에서 화살표 둘이 칸 둘로 가는 그림으로 왼쪽 칸 실행 1 사람 확인 False에는 노란 상자 명세 get_order_by_id 첫 요청 입력 토큰 203과 노란 상자 요청한 도구 get_order_by_id 결과 상태 success 요청 수 2가 위아래로 있고, 오른쪽 칸 실행 2 사람 확인 True에는 노란 상자 명세 get_order_by_id request_cancel 첫 요청 입력 토큰 319와 노란 상자 요청한 도구 get_order_by_id request_cancel 결과 상태 success 둘 요청 수 3이 위아래로 있으며, 맨 아래 가운데 회색 상자에 두 실행 공통 같은 문의 같은 두 도구 바퀴 한도 5 흐름 끝 도구 호출 요청 0건 CSV의 O102 상태 pending이 적힌 그림"
+FIG3_CAP = "사람 확인 값만 바꾸자 명세에 쓰기 도구가 더해졌고, 흐름 안에서 그 도구가 실행되어 요청이 한 번 늘었습니다."
+FIG3_READ = "맨 위 초록 상자가 두 실행에서 바꾼 값 하나입니다. 왼쪽 칸이 실행 1, 오른쪽 칸이 실행 2이고, 칸마다 위에서 아래로 읽습니다. 노란 상자는 노트북 9절 출력이고, 칸 안 두 상자는 같은 실행의 값이라 화살표로 잇지 않았습니다. 맨 아래 회색 상자는 두 실행의 출력과 설정에서 모두 확인한 공통 사실입니다."
+
+ILLU = "07-4-도장-받은-전표와-취소-상자"
+ILLU_ALT = "흰 바탕 그림으로 연초록 벽 왼쪽에 문짝 하나가 열린 나무 틀 창이 있고 안쪽은 짙은 초록이며 창턱은 비어 있고, 벽 아래 긴 나무 카운터 가운데 앞쪽에 줄 그은 흰 전표 한 장이 아무 표시 없이 누워 있으며, 오른쪽에는 윗면에 좁은 입구가 있는 나무 상자 하나가 있어 그 입구에 줄 그은 전표 한 장이 반쯤 꽂혀 있고 상자 앞면으로 그 전표의 아래쪽이 비쳐 보이며 거기에 빨간 동그라미 테두리 도장 자국이 있으며, 상자 오른쪽에 둥근 손잡이가 달린 나무 도장 하나가 서 있는 그림"
+ILLU_CAP = "도장 자국이 찍힌 전표 한 장은 상자 입구에 꽂혀 있고, 표시 없는 전표는 카운터에 그대로 놓여 있습니다."
+ILLU_READ = "연초록 벽 왼쪽에 문짝 하나가 열린 나무 틀 창이 있고, 창턱은 비어 있습니다. 카운터 가운데 앞쪽에는 아무 표시 없는 줄 그은 전표 한 장이 상자와 떨어져 누워 있습니다. 오른쪽 나무 상자의 윗면 입구에는 전표 한 장이 반쯤 꽂혀 있습니다. 상자 앞면에는 그 전표의 아래쪽이 비쳐 보이게 그려져 있고, 거기에 빨간 동그라미 도장 자국이 있습니다. 상자 옆에는 나무 도장 하나가 서 있습니다."
+
+TITLE = """# 모델과 도구 실습: 주문 취소 문의를 도구 둘로 처리하고 사람 확인 값 바꾸기
+
+**이 노트북에서 할 일**
+
+1. 06절 읽기 도구와, 02절 입력 검사를 붙인 쓰기 도구를 부품으로 만듭니다.
+2. 사람 확인 값으로 목록을 고르는 조립 함수로 주문 취소 문의 하나를 처리합니다.
+3. 사람 확인 값 하나만 바꿔 다시 실행하고, 두 실행을 한 표로 견줍니다.
+
+**준비물** — 프로젝트 맨 위 폴더의 `.env`에 적어 둔 `OPENAI_API_KEY`를 씁니다.
+모델은 `gpt-5.4-mini`이고, 모델 요청은 모두 4~5번입니다.
+교재 출력에서는 실행 1이 2번, 실행 2가 3번으로 모두 5번이었습니다.
+바퀴 한도가 5라서, 실행 한 번의 요청은 5번을 넘지 않습니다.
+요금표로 어림한 예상 비용은 0.01달러 아래이고, 청구 금액이 아닙니다.
+
+읽기 도구는 실습 폴더의 주문 CSV를 읽기만 합니다.
+쓰기 도구는 06절처럼 이 절에서 만든 흉내라 아무 파일도 바꾸지 않습니다.
+앞 절 함수와 Ch 6 06절 함수는 도구 파일 `order_tools.py`에서 가져옵니다.
+걸린 시간은 재지 않습니다. 교재 출력을 만든 실행에서는 노트북 전체가 10초 안에 끝났습니다.
+
+**기준 버전** — 첫 셀에서 패키지 여섯을 설치합니다.
+판은 langchain 1.4.0, langchain-core 1.6.2, langchain-openai 1.6.0입니다.
+pandas 3.0.5, pydantic 2.12.5, python-dotenv 1.2.3도 함께 설치합니다.
+교재 출력은 Linux의 Python 3.12.13으로 만들었습니다.
+다른 판과 Windows·macOS에서는 이번에 실행하지 않았습니다.
+
+**실습 범위** — 이 절은 챕터 끝 실습 절이고 30분 안에 끝나는 분량입니다.
+강사와 함께 첫 셀부터 차례로 실행하고, 따로 내는 과제는 없습니다.
+01~06절에서 쓴 이름과 문법만 씁니다.
+
+실습 폴더 `labs/part5/ch19-model-tools`에서 `uv sync --locked`를 실행합니다.
+그다음 `notebooks/` 폴더의 이 노트북을 열고, 실습 폴더의 `.venv` 커널을 고릅니다.
+첫 셀부터 순서대로 실행합니다."""
+
+
+def cells() -> list[dict]:
+    return [
+        md(TITLE, html="skip"),
+        md("## 오늘 볼 그림\n\n![" + FIG1_ALT + "](attachment:" + FIG1 + ".png)\n\n" + FIG1_READ, html="skip"),
+        md("""## 1. 준비
+
+이번 절은 이 챕터의 실습입니다.
+01~06절에서 쓴 이름과 문법만 쓰고, 따로 내는 과제는 없습니다.
+첫 셀은 패키지 여섯 개를 설치하고 설치된 판 번호를 출력합니다.
+설치에는 몇십 초가 걸릴 수 있습니다."""),
+        setup(INSTALL),
+        md("""**결과 읽기** — 출력 줄 `langchain: 1.4.0`·`langchain-core: 1.6.2`·`langchain-openai: 1.6.0`이 보입니다.
+출력 줄 `pandas: 3.0.5`·`pydantic: 2.12.5`·`python-dotenv: 1.2.3`도 잠금과 같은 판입니다.
+이 노트북의 출력은 """ + RUN_DATE + """에 이 판으로 실행한 결과입니다.
+
+앞에서 배운 함수는 `order_tools.py`에 모아 두었습니다. 파일을 열면 코드를 볼 수 있습니다. 노트북과 같은 폴더(`notebooks/`)에 있는 파일입니다. 커널이 `notebooks/` 폴더에서 시작해야 이 파일을 가져올 수 있습니다.
+
+다음 셀은 이 실습에서 쓸 이름을 가져옵니다.
+도구 파일에서는 03~06절 함수 여덟과 Ch 6 06절 함수 `estimate_cost`를 가져옵니다."""),
+        setup(IMPORTS),
+        md("""**결과 읽기** — 출력 두 줄에 셀 위쪽에서 가져온 이름 아홉이 보입니다.
+도구 파일에서 가져온 함수 아홉은 셀의 `from order_tools import …` 줄에 적혀 있습니다.
+양식 클래스를 만드는 `BaseModel`·`Field`와 오류 이름 `ValidationError`는 02절에서 쓴 이름입니다.
+표시 `Literal`도 02절처럼 칸에 적을 수 있는 값을 몇 개로 정할 때 씁니다.
+
+다음 셀은 01~06절과 같은 방법으로 주문 CSV가 있는 프로젝트 맨 위 폴더를 찾습니다.
+읽기 도구의 몸통이 이 CSV 파일을 읽습니다."""),
+        setup(PATH),
+        md("""**결과 읽기** — 출력 줄 `찾은 프로젝트 맨 위: .`은 교재 출력을 프로젝트 맨 위에서 실행했다는 뜻입니다.
+교재 출력은 실행 도구에 도구 파일 폴더를 따로 알려 준 실행이라 `.`이 찍혔습니다.
+노트북을 `notebooks/` 폴더에서 열면 이 줄에 `../../../..`가 찍힙니다.
+셀 안의 안내 글은 실습 폴더 맨 위도 적었지만, 도구 파일을 가져오려면 `notebooks/` 폴더에서 열어야 합니다.
+
+## 2. 키와 모델 준비
+
+모델은 04~06절과 같은 `gpt-5.4-mini`이고, 과정의 같은 설정으로 부릅니다."""),
+    ] + key_and_model_cells(
+        "openai:gpt-5.4-mini",
+        "temperature 값을 0으로 두어도, 모델이 고르는 도구가 매번 같다고 보장하지는 않습니다.",
+    ) + [
+        md("""## 3. 상황과 대상 주문
+
+손님의 주문 문의를 받는 창구 하나를 만든다고 해 봅니다.
+창구는 주문을 찾는 읽기 도구와, 취소 요청을 등록하는 쓰기 도구를 씁니다.
+쓰기 도구는 06절처럼 사람이 확인한 뒤에만 모델에게 알려 줍니다.
+
+다음 셀은 이 실습의 새 주문 문의를 적습니다.
+이 절에서 실행 전에 정한 글이고, 실제 손님이 보낸 글이 아닙니다."""),
+        code(INQUIRY),
+        md("""**결과 읽기** — 출력 줄 `주문 문의:` 뒤 두 문장이 창구에 넣을 문의입니다.
+출력 줄 `출처: 이 절에서 실행 전에 적은 글`처럼 문의 글은 실행 전에 적었습니다.
+문의에는 조건이 있어, 주문이 결제 대기 중일 때만 취소해 달라고 합니다.
+까닭은 다른 상품을 잘못 주문했다는 것입니다.
+
+다음 셀은 문의에 적힌 주문 O102를 03절 몸통 함수 `find_order`로 CSV에서 찾습니다.
+모델 요청은 없습니다."""),
+        code(TARGET),
+        md("""**결과 읽기** — 라벨 `문의 대상 주문:` 뒤 딕셔너리는 주문 O102 한 줄이고, 금액은 `18000`입니다.
+출력 줄 `주문 상태: pending`처럼 O102는 결제 대기 중입니다.
+02절에서 본 것처럼 실습 CSV에서 결제 대기 중인 주문은 O102 하나뿐이라, 이 번호를 문의에 적었습니다.
+
+## 4. 부품 하나 · 읽기 도구
+
+첫 부품은 06절의 읽기 도구입니다.
+다음 셀은 06절 노트북 3절 셀을 그대로 다시 적습니다.
+찾지 못하면 None 대신 도구 오류(`ToolException`)를 내는 도구입니다."""),
+        code(DEF_READ),
+        md("""**결과 읽기** — 정의 셀이라 출력이 없습니다.
+도구 이름과 설명, 몸통이 06절 노트북 3절 셀과 글자까지 같습니다.
+몸통은 도구 파일의 `find_order`로 주문을 찾고, 없으면 `raise` 줄로 도구 오류를 냅니다.
+
+다음 셀은 06절 After처럼 오류 담기 설정을 켜고, 읽기 도구 목록에 담습니다.
+이번 문의는 CSV에 있는 주문이라, 도구 오류는 나지 않을 것으로 예상합니다."""),
+        code(READ_SET),
+        md("""**결과 읽기** — 출력 줄 `읽기 도구: get_order_by_id`와 `오류 담기 설정(handle_tool_error): True`가 보입니다.
+모델이 없는 주문 번호를 적어 보내면 읽기 도구가 도구 오류를 냅니다.
+이 설정이 켜져 있어, 그 오류는 흐름을 멈추지 않고 결과 상태 `error`인 도구 메시지가 됩니다.
+이 설정은 읽기 도구에만 켰고, 쓰기 도구의 입력 검사 오류는 받지 않습니다.
+그 모습은 06절 7절에서 보았고, 이 실습에서는 다시 보지 않습니다.
+
+## 5. 부품 둘 · 취소 까닭을 검사하는 쓰기 도구
+
+둘째 부품은 06절의 쓰기 도구에 02절 입력 검사를 붙인 것입니다.
+취소 요청에는 주문 번호와 함께 취소 까닭을 적게 합니다.
+까닭은 정해 둔 셋 가운데 하나만 받고, 다른 글은 몸통이 실행되기 전에 막습니다.
+
+다음 셀은 02절처럼 양식 클래스로 쓰기 도구의 입력 형식을 정합니다."""),
+        code(DEF_FORM),
+        md("""**결과 읽기** — 정의 셀이라 출력이 없습니다.
+양식 클래스 `CancelForm`의 칸은 주문 번호 `order_id`와 취소 까닭 `reason` 둘입니다.
+칸 `reason`에는 `changed_mind`·`wrong_order`·`late_delivery` 세 글 가운데 하나만 적을 수 있습니다.
+세 글은 마음이 바뀜, 잘못 주문함, 배송이 늦음이라는 뜻이고, 이 절에서 정한 값입니다.
+
+다음 셀은 이 양식 클래스를 입력 형식으로 붙여 쓰기 도구를 만듭니다.
+02절처럼 `@tool` 줄 괄호 안에 입력 형식을 따로 주고, 매개변수 이름은 칸 이름과 같게 둡니다.
+몸통은 06절처럼 흉내라, 받은 값만 적어 내놓고 아무 파일도 바꾸지 않습니다."""),
+        code(DEF_WRITE),
+        md("""**결과 읽기** — 정의 셀이라 출력이 없습니다.
+쓰기 도구의 공개 이름은 `request_cancel`이고, 하는 일을 뜻하는 동사 request를 앞에 두었습니다.
+설명은 03절 자세한 판처럼 하는 일·사용 조건·인자·내놓는 값의 네 문장입니다.
+몸통 첫 줄은 02절처럼 받은 값을 출력해, 몸통이 실행되었는지 보이게 합니다.
+
+다음 셀은 쓰기 도구를 쓰기 도구 목록에 담고, 입력 형식의 취소 까닭 칸을 봅니다."""),
+        code(WRITE_ARGS),
+        md("""**결과 읽기** — 출력 줄 `쓰기 도구: request_cancel`이 보입니다.
+라벨 `취소 까닭 칸:` 뒤 딕셔너리의 칸 `enum`에 세 글이 들어 있습니다.
+02절 4절에서 본 것처럼, 이 칸은 도구 명세에도 실려 모델이 고를 수 있는 값이 됩니다.
+
+다음 셀은 정해 둔 셋에 없는 까닭 `too_expensive`를 넣어 봅니다.
+이 값은 이 절에서 정한 값이고, 모델 요청은 없습니다.
+실행 전에 예상해 봅니다.
+02절 7절처럼 입력 검사에 걸려, 몸통이 실행되기 전에 값 검사 오류가 날 것입니다."""),
+        code(BAD_REASON),
+        md("""**결과 읽기** — 출력 줄 `받은 오류: ValidationError`처럼 값 검사 오류가 셀까지 올라왔습니다.
+라벨 줄 `오류 글:` 아래 첫 줄은 `1 validation error for CancelForm`이고, 걸린 칸은 `reason`입니다.
+출력에 「쓰기 도구 몸통 실행」으로 시작하는 줄이 없어, 몸통은 실행되지 않았습니다.
+오류를 받지 않는 실제 프로그램이라면 여기서 멈춥니다.
+
+## 6. 조립 함수와 기록 장치
+
+부품이 모였으니, 문의 하나를 처리하는 조립 함수를 만듭니다.
+조립 함수는 06절 함수 `pick_tools`로 알려 줄 목록을 고릅니다.
+그다음 05절 함수 `ask_until_answer`로 도구 호출 요청이 없는 응답까지 처리합니다.
+함수 안 주석에 어느 절에서 배운 일인지 적었습니다."""),
+        code(DEF_HANDLE),
+        md("""**결과 읽기** — 정의 셀이라 출력이 없습니다.
+함수 `handle_inquiry`는 모델, 두 도구 목록, 사람 확인 값, 문의 글, 바퀴 한도를 받습니다.
+알려 준 목록으로 명세와 도구 찾기 표를 함께 만들어, 알려 주지 않은 도구는 실행할 수 없게 합니다.
+흐름 결과는 사람 확인 값, 명세 이름, 메시지 목록을 담은 딕셔너리입니다.
+
+다음 셀은 이 실습의 기록 장치입니다.
+흐름 결과 하나에서 볼 값을 실행 요약 딕셔너리 하나로 모읍니다."""),
+        code(DEF_SUMMARIZE),
+        md("""**결과 읽기** — 정의 셀이라 출력이 없습니다.
+함수 `summarize_run`은 응답에서 04절 함수로 도구 호출 요청 이름을 모읍니다.
+도구 메시지에서는 결과 상태를 모읍니다.
+05절에서 본 것처럼 요청마다 도구 메시지가 하나씩 생겨, 결과 상태 수는 요청한 도구 수와 같습니다.
+요청 수는 05절 함수 `sum_usage`로 센 모델 응답 수입니다.
+
+다음 셀은 실행 요약 여러 개를 받아 실행마다 한 줄로 출력합니다."""),
+        code(DEF_PRINT),
+        md("""**결과 읽기** — 정의 셀이라 출력이 없습니다.
+함수 `print_summaries`는 라벨 줄을 먼저 출력하고, 실행 요약 하나마다 한 줄씩 출력합니다.
+칸은 06절 함수 `show_messages`의 출력처럼 세로 막대로 나눕니다.
+
+## 7. 실행 1 · 사람 확인 전
+
+실행 1은 사람 확인 전이라 `person_confirmed`를 `False`로 둡니다.
+바퀴 한도는 06절과 같은 5입니다.
+
+실행 전에 예상해 봅니다.
+명세에는 읽기 도구 하나만 실리고, 모델은 먼저 O102의 상태를 읽을 것입니다.
+쓰기 도구를 모르니 취소는 요청하지 못하고, 글로 답할 것입니다.
+그러면 읽기 도구를 요청한 응답과 최종 답, 모두 두 번 요청할 것입니다."""),
+        code(RUN_ONE),
+        md("""**결과 읽기** — 출력 줄 `실어 보낸 도구 이름: ['get_order_by_id']`로 명세에는 읽기 도구 하나만 실렸습니다.
+응답 줄은 `AIMessage | 도구 호출 요청: ['get_order_by_id']`와 `AIMessage | 도구 호출 요청: []`입니다.
+도구 메시지 줄은 `결과 상태: success`이고, 내용에서 O102의 상태 `pending`을 읽었습니다.
+출력에 「쓰기 도구 몸통 실행」으로 시작하는 줄이 없습니다.
+
+라벨 줄 `답 글:` 아래가 모델이 적은 최종 답이고, 문장은 실행마다 달라질 수 있습니다.
+이번 실행에서는 답 글이 O102가 결제 대기 중이라 취소할 수 있다고 적었습니다.
+다만 이 대화에는 실제 취소 기능이 없어, 상태를 바꾸지 못한다고도 적었습니다.
+새 커널로 한 번 더 실행했을 때는 「취소 처리해 드릴게요」처럼 적은 답 글도 나왔습니다.
+답 글이 무엇이라고 적든, 이 흐름에 쓰기 도구 요청은 없었습니다.
+
+다음 셀은 실행 1의 값을 실행 요약으로 모아 한 줄로 봅니다."""),
+        code(SUMMARY_ONE),
+        md("""**결과 읽기** — 라벨 줄 `사람 확인 | 명세 | 요청한 도구 | 결과 상태 | 요청 수` 아래 한 줄이 실행 1의 요약입니다.
+출력 줄 `False | ['get_order_by_id'] | ['get_order_by_id'] | ['success'] | 2`를 봅니다.
+출력 줄 `쓰기 도구 요청이 있었는가: False`로 쓰기 도구 요청은 없었습니다.
+요청 수 2는 읽기 도구를 요청한 응답과 최종 답을 더한 수이고, 예상과 맞았습니다.
+
+## 8. 실행 2 · 사람 확인 뒤
+
+바꿀 값은 `person_confirmed` 하나이고, `False`를 `True`로 바꿉니다.
+사람이 이 문의의 취소를 확인했다고 노트북이 기록한 경우입니다.
+문의 글과 두 도구, 바퀴 한도, 조립 함수는 실행 1과 같습니다.
+
+실행 전에 예상해 봅니다.
+명세에 쓰기 도구가 더해지고, 모델은 먼저 O102의 상태를 읽을 것입니다.
+결제 대기 중이니 쓰기 도구를 요청하고, 프로그램이 그 도구를 실행할 것입니다.
+그러면 읽기, 쓰기, 최종 답으로 세 번 요청할 것입니다."""),
+        code(RUN_TWO),
+        md("""**결과 읽기** — 출력 줄 `실어 보낸 도구 이름: ['get_order_by_id', 'request_cancel']`로 명세가 둘이 되었습니다.
+출력 줄 `쓰기 도구 몸통 실행 | 주문 번호: O102 | 까닭: wrong_order`는 쓰기 도구 몸통이 찍은 줄입니다.
+응답 줄의 도구 호출 요청은 차례로 `['get_order_by_id']`, `['request_cancel']`, `[]`입니다.
+도구 메시지 둘은 모두 `결과 상태: success`이고, 둘째 내용에 `"cancel_requested": true`가 있습니다.
+모델이 적은 취소 까닭이 입력 검사를 지나, 몸통이 실행되었습니다.
+
+라벨 줄 `답 글:` 아래 최종 답 문장은 실행마다 달라질 수 있습니다.
+이번 실행에서는 답 글이 취소 요청을 등록했다고 적었습니다.
+노트북 밖에서 다섯 번 보냈을 때도 세 응답의 도구 호출 요청 차례와 까닭 `wrong_order`는 다섯 번 모두 같았습니다.
+
+다음 셀은 쓰기 도구가 흉내였는지, 주문 CSV에서 O102의 상태를 다시 읽어 봅니다."""),
+        code(CSV_CHECK),
+        md("""**결과 읽기** — 출력 줄 `CSV의 O102 상태: pending`으로, 주문 CSV는 그대로입니다.
+쓰기 도구가 흉내라 파일을 바꾸지 않았다는 것을 코드로 확인했습니다.
+이 값은 CSV 파일에서 정해져서, 셀 끝의 `assert`로도 확인했습니다.
+실제 쓰기 도구였다면, 사람 확인 뒤 이 자리에서 주문 상태가 바뀌었을 것입니다.
+
+## 9. 두 실행 견주기
+
+다음 셀은 두 실행의 요약을 한 표로 견주고, 쓰기 도구 요청이 있었는지 실행마다 봅니다."""),
+        code(COMPARE),
+        md("""**결과 읽기** — 라벨 줄 아래 두 줄을 견줍니다.
+출력 줄 `False | ['get_order_by_id'] | ['get_order_by_id'] | ['success'] | 2`가 실행 1입니다.
+출력 줄 `True | ['get_order_by_id', 'request_cancel'] | ['get_order_by_id', 'request_cancel'] | ['success', 'success'] | 3`이 실행 2입니다.
+출력 줄 `쓰기 도구 요청 | 실행 1 False | 실행 2 True`로, 쓰기 도구는 실행 2에서만 요청되었습니다.
+사람 확인 값 하나로 명세가 달라졌고, 명세에 있던 쓰기 도구만 흐름 안에서 실행되었습니다.
+
+다음 셀은 두 실행의 첫 요청 입력 토큰을 견줍니다.
+질문은 같고, 실어 보낸 명세만 다릅니다."""),
+        code(FIRST_TOKENS),
+        md("""**결과 읽기** — 출력 줄 `두 실행의 질문이 같은가: True`로 두 실행의 첫 메시지는 같은 문의입니다.
+출력 줄 `첫 요청 입력 토큰 | 실행 1 203 | 실행 2 319`를 봅니다.
+쓰기 도구의 이름·설명·입력 형식이 더 실려, 실행 2의 첫 요청 입력 토큰이 더 많습니다.
+명세는 요청마다 실리므로, 쓰기 도구를 알려 주면 흐름의 모든 요청에 이 몫이 붙습니다.
+
+## 10. 요청 수와 예상 비용
+
+다음 셀은 두 실행의 모델 응답을 모두 모아, 요청 수와 토큰을 셉니다.
+05절 함수 `sum_usage`로 더하고, Ch 6 06절 요금표로 예상 비용을 셉니다."""),
+        code(COST),
+        md("""**결과 읽기** — 출력 줄 `요금 확인 날짜: 2026-09-17`은 Ch 6 06절 요금표를 확인한 날짜입니다.
+라벨 `모두 합친 사용량:` 뒤 딕셔너리의 칸 `requests`가 두 실행의 모델 요청 수입니다.
+예상 비용은 요금표로 어림한 값이고 청구 금액이 아닙니다.
+
+이번 실행에서는 칸 `requests`가 5이고, 예상 비용은 0.002079달러였습니다.
+새 커널로 한 번 더 실행했을 때는 출력 토큰 합이 154라, 예상 비용도 0.001899달러로 달랐습니다.
+두 번의 답 글 길이가 달랐기 때문입니다.
+요청 수 5와 입력 토큰 합 1608은 두 번 모두 같았습니다.
+
+## 정리
+
+1. 06절 읽기 도구와 02절 입력 검사를 붙인 쓰기 도구를 조립 함수 하나로 이어, 주문 취소 문의를 처리했습니다.
+2. 사람 확인 전인 실행 1은 명세가 읽기 도구 하나였고, 쓰기 도구 요청 없이 두 번 요청으로 끝났습니다.
+3. 사람 확인 값만 바꾼 실행 2는 쓰기 도구가 명세에 들어가 실행되었고, 흉내라 CSV는 그대로였습니다.
+
+이 절로 Ch 19가 끝납니다.
+Ch 20에서는 도구를 실행하고 다시 묻는 반복을, Ch 13의 상태 그래프로 조립합니다."""),
+    ]
+
+
+L01 = "01-tool과-Ch4-함수-재사용.html"
+L02 = "02-Pydantic-인자와-반환-스키마.html"
+L03 = "03-좋은-도구-이름과-설명.html"
+L04 = "04-설명만으로-도구-선택하기.html"
+L05 = "05-bind_tools와-병렬-호출.html"
+L06 = "06-오류와-읽기-쓰기-분리.html"
+L_CH6 = "../../part2/ch06-langchain-start/06-토큰-비용-지연-비교.html"
+STYLE = "<style>html,body{overflow-x:hidden}.notebook,.nb-cell,.nb-main,.nb-input,.nb-result{min-width:0;max-width:100%}.nb-input pre,.nb-output{box-sizing:border-box;max-width:100%;overflow-x:auto}code.nb-source{display:block!important;width:100%!important;min-width:0!important;overflow-x:auto!important;padding:0!important}</style>"
+
+
+def src_html() -> str:
+    return """<!--meta: 실습 30분 | 코드 notebooks/""" + SLUG + """.ipynb | 새 용어 0 -->
+""" + STYLE + """
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul>
+<li>02·05·06절 기능을 조립 함수 하나로 이어, 주문 취소 문의를 읽기 도구와 쓰기 도구로 처리할 수 있습니다.</li>
+<li>쓰기 도구의 입력 형식에 취소 까닭 칸을 두어, 정해 둔 값이 아니면 몸통 전에 막을 수 있습니다.</li>
+<li>사람 확인 값 하나만 바꿔 다시 실행하고, 명세·요청한 도구·결과 상태·요청 수를 견줄 수 있습니다.</li>
+</ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>이 챕터에서는 도구를 만들고, 모델에게 알려 주고, 실행하는 법을 절마다 따로 익혔습니다. 06절은 한 목록과 나눈 목록을 Before와 After로 견줬습니다. 실제 창구에서는 이 부품들이 한 흐름 안에서 함께 일합니다. 모델이 주문을 읽고, 그 결과를 보고 다음 도구를 고르는 식입니다.</p>
+<p>이번 실습은 새 주문 취소 문의 하나에 앞 절 기능 셋을 이어 붙입니다. 02절 입력 검사를 붙인 쓰기 도구, 05절 도구 실행 반복, 06절 사람 확인 값으로 고르는 목록입니다. 읽기 도구는 06절 도구를 그대로 씁니다. 사람 확인 값 하나만 바꿔 한 번 더 실행하고, 두 실행을 한 표로 견줍니다. 바꾸는 값은 06절 값 바꿔 보기와 같고, 새로 볼 것은 입력 검사를 붙인 쓰기 도구가 읽기 결과 뒤에 이어 불리는 차례입니다.</p>
+<p>이번 절은 이 챕터의 실습입니다. 01~06절에서 쓴 이름과 문법만 쓰고 따로 내는 과제는 없습니다. 강사와 함께 노트북 셀을 차례로 실행합니다.</p>
+<p><strong>이 절의 질문</strong> — 부품을 이은 흐름에서 사람 확인 값 하나를 바꾸면, 무엇이 달라지고 무엇이 그대로일까요? 쓰기 도구 앞의 입력 검사는 흐름의 어느 자리에서 일할까요?</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>이번 실습은 아래 절에서 배운 이름을 그대로 씁니다. 함수는 도구 파일 <code>order_tools.py</code>에서 가져오고, 도구 객체와 양식 클래스는 노트북에 적습니다.</p>
+<table><thead><tr><th>절</th><th>배운 것</th><th>실습에서 쓰는 곳</th></tr></thead><tbody>
+<tr><td><a href=\"""" + L01 + """\">01절</a></td><td><code>@tool</code>로 함수를 도구로 감싸기, 독스트링이 도구 설명이 되는 것, 속성 <code>.args</code>와 메서드 <code>.invoke</code></td><td>두 도구 만들기, 취소 까닭 칸 보기, 입력 검사 확인 셀</td></tr>
+<tr><td><a href=\"""" + L02 + """\">02절</a></td><td>양식 클래스(<code>BaseModel</code>·<code>Field</code>·<code>Literal</code>)와 <code>@tool(args_schema=…)</code>, 몸통 전 입력 검사와 값 검사 오류 <code>ValidationError</code></td><td>쓰기 도구의 입력 형식 <code>CancelForm</code>, 정해 둔 셋에 없는 까닭을 막는 셀</td></tr>
+<tr><td><a href=\"""" + L03 + """\">03절</a></td><td>몸통 함수 <code>find_order</code>, 자세한 판 설명의 네 기준</td><td>대상 주문 찾기, 읽기 도구 몸통, 쓰기 도구 설명, CSV 다시 읽기</td></tr>
+<tr><td><a href=\"""" + L04 + """\">04절</a></td><td><code>bind_tools</code>와 도구 호출 요청, 함수 <code>tool_call_names</code>, 입력 토큰</td><td>조립 함수의 명세, 기록 장치의 요청한 도구, 첫 요청 입력 토큰 견주기</td></tr>
+<tr><td><a href=\"""" + L05 + """\">05절</a></td><td>도구 실행과 도구 메시지, 함수 <code>ask_until_answer</code>·<code>sum_usage</code></td><td>조립 함수의 반복, 요청 수 세기</td></tr>
+<tr><td><a href=\"""" + L06 + """\">06절</a></td><td>읽기 도구·쓰기 도구, 도구 오류와 오류 담기 설정, 함수 <code>pick_tools</code>·<code>make_tools_table</code>·<code>spec_names</code>·<code>show_messages</code></td><td>읽기 도구 그대로, 실행 1·2의 바꾸는 값, 흐름 출력</td></tr>
+<tr><td><a href=\"""" + L_CH6 + """\">Ch 6 06절</a></td><td>요금표와 함수 <code>estimate_cost</code></td><td>예상 비용</td></tr>
+</tbody></table>
+<p>세 기능을 고른 까닭은 두 실행의 요청 수를 실행 전에 범위로 어림할 수 있기 때문입니다. 02절 입력 검사는 도구 안에서 일해 모델 요청을 늘리지 않습니다. 05절 반복과 06절 목록 고르기를 이으면, 요청 수는 모델이 요청한 도구 수에 최종 답 하나를 더한 수입니다.</p>
+<p>04절 선택 채점은 질문과 반복마다 요청이 들어, 이 실습의 요청 수를 넘습니다. 05절 여럿 담기는 한 응답에 담길 요청 수를 모델 답이 정해 뺐습니다. 06절 오류 담기는 읽기 도구에 켜 두기만 하고, 없는 주문 번호를 넣는 장면은 만들지 않았습니다. 그 장면에 쓰기 도구까지 알려 주면, 흉내 쓰기 도구가 없는 주문의 취소도 등록할 수 있습니다. 그러면 06절이 다루지 않은 주문 번호 검사가 필요해집니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>비유로 시작하기</h3><p>01절부터 이어 온 식당에 앞 절 소품을 함께 놓아 봅니다. 손님의 전표는 먼저 열린 창으로 가고, 주방은 그 주문의 지금 상태를 알려 줍니다. 창 옆 카운터에는 취소 전표를 넣는 나무 상자가 있습니다. 이 상자에는 주인이 도장을 찍어 준 전표만 넣습니다.</p>
+{{img:""" + ILLU + "|" + ILLU_ALT + "|" + ILLU_CAP + """}}
+<p class="look"><b>그림 읽기</b> — """ + ILLU_READ + """</p>
+<p class="look">열린 창은 두 실행이 모두 쓴 읽기 도구이고, 입구가 있는 상자는 쓰기 도구입니다. 도장은 사람 확인 값입니다. 표시 없이 카운터에 남은 전표가 실행 1이고, 도장 자국이 찍힌 채 상자 입구에 꽂힌 전표가 실행 2입니다.</p>
+<h3>실습 조립의 구성</h3>
+{{mermaid:""" + FIG1 + "|" + FIG1_ALT + "|" + FIG1_CAP + """}}
+<p class="look"><b>도식 읽기</b> — """ + html_text(FIG1_READ) + """</p>
+<table><thead><tr><th>함수</th><th>하는 일</th><th>가져온 곳</th></tr></thead><tbody>
+<tr><td><code>handle_inquiry()</code></td><td>사람 확인 값으로 알려 줄 목록을 고르고, 도구를 알려 준 모델로 문의 하나를 끝까지 처리해 흐름 결과를 내놓음</td><td>02·05·06절 부품을 이 절이 묶은 조립 함수</td></tr>
+<tr><td><code>summarize_run()</code>·<code>print_summaries()</code></td><td>흐름 결과에서 사람 확인 값·명세·요청한 도구·결과 상태·요청 수를 모으고, 실행마다 한 줄로 출력</td><td>이 절의 기록 장치</td></tr>
+<tr><td><code>pick_tools()</code>·<code>make_tools_table()</code>·<code>spec_names()</code>·<code>show_messages()</code></td><td>목록 고르기, 도구 찾기 표, 명세 이름, 흐름 출력</td><td>06절</td></tr>
+<tr><td><code>ask_until_answer()</code>·<code>sum_usage()</code></td><td>도구 실행과 다시 묻기, 요청 수와 토큰 더하기</td><td>05절</td></tr>
+<tr><td><code>tool_call_names()</code></td><td>응답의 도구 호출 요청 이름 모으기</td><td>04절</td></tr>
+<tr><td><code>find_order()</code></td><td>주문 번호로 주문 한 줄 찾기</td><td>03절</td></tr>
+</tbody></table>
+<h3>두 번의 실행</h3><p>실행 1은 사람 확인 전이라 <code>person_confirmed</code>가 <code>False</code>입니다. 실행 2는 이 값 하나만 <code>True</code>로 바꿉니다. 문의 글과 두 도구, 바퀴 한도, 조립 함수는 두 실행이 같습니다.</p><p>사람 확인 값은 모델에게 보내는 글에 들어가지 않습니다. 조립 함수가 알려 줄 목록을 고를 때만 씁니다. 그래서 두 실행의 첫 요청이 다른 자리는 실어 보내는 명세뿐입니다.</p>
+<h3>비교와 경계</h3><p>쓰기 도구 앞에는 막는 자리가 둘 있습니다. 사람 확인 값은 모델이 쓰기 도구를 고를 수 있는지를 정합니다. 입력 형식은 모델이 고른 뒤, 몸통이 실행되기 전에 인자를 검사합니다. 입력 검사는 취소 까닭 칸만 보고, 주문 번호가 CSV에 있는지는 보지 않습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>노트북은 먼저 새 주문 문의를 적고, 문의에 적힌 주문 O102를 CSV에서 찾습니다. 그다음 부품 둘을 만듭니다. 06절 읽기 도구를 그대로 다시 적고, 02절 입력 검사를 붙인 쓰기 도구를 새로 만듭니다. 조립 함수와 기록 장치를 만든 뒤 실행 1과 실행 2를 차례로 합니다. 마지막에 두 실행을 한 표로 견주고, 요청 수와 예상 비용을 셉니다.</p><p>실제 OpenAI 모델을 부릅니다. 교재 출력은 """ + RUN_DATE + """에 실행한 결과입니다. 모델은 <code>gpt-5.4-mini</code>이고 temperature 0과 추론 끔(<code>reasoning_effort="none"</code>)으로 부릅니다.</p><p>교재 출력에서 요청은 실행 1이 2번, 실행 2가 3번으로 모두 5번이었습니다. 요금표로 어림한 예상 비용은 0.01달러 아래이고, 청구 금액과는 다를 수 있습니다. 새로 쓰는 파일은 없습니다.</p>
+{{notebook:""" + SLUG + """}}
+<p class="look"><b>확인할 점</b> — 노트북 5절 마지막 셀에서 몸통 실행 줄 없이 값 검사 오류가 났는지 봅니다. 노트북 7절과 8절의 흐름 출력에서 쓰기 도구 요청이 어느 실행에만 있는지 봅니다. 노트북 9절 표에서 두 실행의 명세와 요청 수를 견줍니다. 답 글 문장과 실행 1 답의 출력 토큰은 여러분의 실행에서 교재 출력과 다를 수 있습니다.</p>
+<h3>실행 1의 실제 순서</h3>
+{{mermaid:""" + FIG2 + "|" + FIG2_ALT + "|" + FIG2_CAP + """}}
+<p class="look"><b>도식 읽기</b> — """ + html_text(FIG2_READ) + """</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>두 실행은 사람 확인 값 하나만 달랐습니다.</p>
+<table><thead><tr><th>실행</th><th>사람 확인</th><th>명세</th><th>요청한 도구</th><th>결과 상태</th><th>요청 수</th><th>첫 요청 입력 토큰</th></tr></thead><tbody>
+<tr><td>실행 1</td><td>False</td><td>get_order_by_id</td><td>get_order_by_id</td><td>success</td><td>2</td><td>203</td></tr>
+<tr><td>실행 2</td><td>True</td><td>get_order_by_id, request_cancel</td><td>get_order_by_id, request_cancel</td><td>success, success</td><td>3</td><td>319</td></tr>
+</tbody></table>
+<p>실행 1은 명세에 읽기 도구 하나만 실렸습니다. 모델은 읽기 도구로 O102가 결제 대기 중인 것을 확인하고, 도구 없이 글로 답했습니다. 쓰기 도구를 모르니 취소 요청은 흐름 어디에도 없었습니다.</p>
+<p>실행 2는 사람 확인 값을 참으로 바꾸자 명세에 쓰기 도구가 더해졌습니다. 모델은 읽기 도구로 상태를 본 뒤 쓰기 도구를 요청했습니다. 모델이 적은 취소 까닭은 입력 검사를 지났고, 몸통이 실행되었습니다. 도구 메시지 둘은 모두 결과 상태 <code>success</code>였고, 흉내라 CSV의 O102 상태는 <code>pending</code> 그대로였습니다.</p>
+{{mermaid:""" + FIG3 + "|" + FIG3_ALT + "|" + FIG3_CAP + """}}
+<p class="look"><b>도식 읽기</b> — """ + html_text(FIG3_READ) + """</p>
+<p>두 실행에서 바꾼 것은 코드가 쥔 사람 확인 값 하나입니다. 문의 글은 같았지만, 명세가 달라 첫 요청 입력 토큰은 203과 319였습니다. 요청 수는 실행 1이 2번, 실행 2가 3번이었습니다. 늘어난 한 번은 쓰기 도구를 요청한 응답입니다.</p>
+<p>이 흐름의 요청 수는 모델이 요청한 도구 수에 달려 있습니다. 이번 문의에는 조건이 있어, 두 실행 모두 먼저 읽기 도구를 불렀습니다. 모델이 읽기 도구를 건너뛰고 곧바로 쓰기 도구를 요청하면, 실행 2의 요청은 2번이 됩니다.</p>
+<p>노트북 7~9절의 명세와 요청한 도구, 결과 상태, 요청 수, 첫 요청 입력 토큰은 새 커널 두 번에서 모두 같았습니다. 노트북 밖에서 같은 두 실행을 다섯 번 보냈을 때도 같았습니다. 답 글 문장과 출력 토큰은 두 번이 달라 결론에 쓰지 않았습니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>새 문의 글과 주문 번호 O102는 실행 전에 정했습니다. 문의 글은 이 절에서 적은 글이고, 실제 손님이 보낸 글이 아닙니다. 주문 O102는 실습 CSV에서 결제 대기 중인 주문 하나뿐이라 골랐습니다.</li><li>취소 까닭 셋(<code>changed_mind</code>·<code>wrong_order</code>·<code>late_delivery</code>)과 막히는 예 <code>too_expensive</code>도 이 절에서 정한 값입니다.</li><li>노트북을 실행하기 전에 같은 두 실행을 노트북 밖에서 다섯 번 보냈습니다. 다섯 번 모두 실행 1은 읽기 도구만 요청해 요청이 2번이었습니다. 실행 2는 읽기 도구 뒤 쓰기 도구를 요청해 요청이 3번이었습니다.</li><li>같은 문의도 실행한 때에 따라 모델이 고르는 도구와 차례가 달라질 수 있습니다. 그러면 요청한 도구와 요청 수가 달라집니다.</li><li>모델이 고른 취소 까닭은 새 커널 두 번과 노트북 밖 다섯 번 모두 <code>wrong_order</code>였습니다. 까닭 값은 모델이 문의 글을 읽고 고른 값이라 결론에 쓰지 않았습니다.</li><li>답 글은 모델이 적은 문장이라 실행마다 달라집니다. 새 커널 두 번째 실행의 실행 1 답 글은 「취소 처리해 드릴게요」처럼 적었지만, 흐름에 쓰기 도구 요청은 없었습니다. 모델이 무엇을 했는지는 답 글이 아니라 도구 호출 요청과 도구 메시지로 확인합니다.</li><li>쓰기 도구 <code>request_cancel</code>은 이 절의 흉내입니다. 받은 값만 적어 내놓고, 주문 CSV와 다른 파일을 바꾸지 않습니다.</li><li>입력 검사는 취소 까닭 칸만 봅니다. 주문 번호가 CSV에 있는지, 결제 대기 중인지는 쓰기 도구 안에서 다시 검사하지 않았습니다.</li><li>사람 확인 값은 참과 거짓 하나라, 어느 주문의 취소를 확인했는지는 가리지 않습니다.</li><li>읽기 도구의 오류 담기 설정은 06절 After처럼 켰지만, 이번 흐름에서는 도구 오류가 나지 않았습니다. 결과 상태는 모두 <code>success</code>였습니다.</li><li>흐름 안에서 모델이 정해 둔 셋 밖의 까닭을 보내면 값 검사 오류가 납니다. 이 오류는 오류 담기 설정으로 받지 못해, 06절 Before처럼 흐름을 멈춥니다. 오류 담기 설정은 읽기 도구에만 켰고, 켜더라도 도구 오류만 받습니다. 설치한 langchain-core 1.6.2 소스로 확인했고, 이번에 실행하지 않았습니다.</li><li>모델 서비스 쪽 오류, 곧 요청 한도 초과·서버 오류·시간 제한은 이 절에서 다루지 않았습니다.</li><li>인자 <code>parallel_tool_calls=False</code>는 06절처럼 흐름을 한 건씩 읽으려고 정했습니다.</li><li>모델이 정하는 값, 곧 도구 호출 요청과 답 글에는 <code>assert</code>를 걸지 않았습니다. 준비 셀 둘 밖의 <code>assert</code>는 CSV에서 정해지는 O102 상태에만 걸었습니다.</li><li>이 절은 파일을 쓰지 않아, 실행 요약은 커널을 다시 시작하면 사라집니다.</li><li>예상 비용은 2026-09-17 요금표로 어림한 값이고 청구 금액이 아닙니다. 걸린 시간은 재지 않았습니다.</li><li>교재 출력은 Linux의 Python 3.12.13으로 만들었습니다. 다른 판과 Windows·macOS에서는 이번에 실행하지 않았습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>06절 읽기 도구와 02절 입력 검사를 붙인 쓰기 도구를 조립 함수 하나로 이어, 주문 취소 문의를 처리했습니다.</li><li>사람 확인 전인 실행 1은 명세가 읽기 도구 하나였고, 쓰기 도구 요청 없이 두 번 요청으로 끝났습니다.</li><li>사람 확인 값만 바꾼 실행 2는 쓰기 도구가 명세에 들어가 실행되었고, 흉내라 CSV는 그대로였습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 이 절로 Ch 19가 끝납니다. Ch 20에서는 도구를 실행하고 다시 묻는 반복을, Ch 13의 상태 그래프로 조립합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz" open><summary>문제 4개 · 해설 포함</summary><p class="quiz-q">1. [하] 두 실행에서 바꾼 값은 무엇입니까?</p><p class="quiz-a">사람 확인 값 <code>person_confirmed</code> 하나입니다. 실행 1은 <code>False</code>, 실행 2는 <code>True</code>입니다. 문의 글과 두 도구, 바퀴 한도, 조립 함수는 같게 두었습니다.</p><p class="quiz-q">2. [중] 실행 1에서 쓰기 도구 요청이 없었던 까닭은 무엇입니까?</p><p class="quiz-a">함수 <code>pick_tools</code>가 확인 전에는 쓰기 도구를 목록에 넣지 않아, 명세에 읽기 도구 하나만 실렸기 때문입니다. 모델은 알려 준 도구 가운데서만 고릅니다. 틀렸다면 노트북 7절과 본문 4 「핵심 개념」의 「두 번의 실행」을 다시 읽습니다.</p><p class="quiz-q">3. [중] 노트북 5절에서 까닭 <code>too_expensive</code>를 넣었을 때, 몸통이 실행되지 않았다는 것은 무엇으로 알 수 있습니까?</p><p class="quiz-a">출력에 몸통 첫 줄이 찍는 「쓰기 도구 몸통 실행」 줄이 없고, 값 검사 오류 <code>ValidationError</code>만 있습니다. 입력 검사가 몸통보다 먼저 일했습니다. 틀렸다면 노트북 5절과 02절을 다시 읽습니다.</p><p class="quiz-q">4. [상] 동료가 「사람이 확인했으니 쓰기 도구의 입력 검사는 필요 없다」고 말합니다. 이 절 결과로 무엇이라고 답하나요?</p><p class="quiz-a">두 자리는 하는 일이 다르다고 답합니다. 사람 확인 값은 쓰기 도구를 모델에게 알려 줄지를 정합니다. 입력 검사는 모델이 쓰기 도구를 고른 뒤, 인자가 정해 둔 까닭인지 몸통 전에 봅니다. 노트북 5절에서 목록에 없는 까닭은 몸통 전에 막혔습니다. 이번 흐름에서 모델이 목록에 없는 까닭을 보낸 적은 없었습니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li>01절 — <code>@tool</code>로 도구 만들기와 도구 명세.</li><li>02절 — 양식 클래스로 입력 형식을 정하고, 몸통 전에 인자를 검사한 자리.</li><li>03절 — 몸통 함수 <code>find_order</code>와 자세한 판 설명.</li><li>04절 — <code>bind_tools</code>와 도구 호출 요청, 입력 토큰.</li><li>05절 — 도구 실행과 도구 메시지, 함수 <code>ask_until_answer</code>.</li><li>06절 — 읽기 도구·쓰기 도구와 사람 확인 값으로 고르는 목록.</li><li>Ch 6 06절 — 요금표와 예상 비용.</li><li>기준 버전은 노트북 1절 첫 셀에서 설치한 패키지 여섯의 판입니다. 모델과 도구는 langchain 1.4.0과 langchain-core 1.6.2로 만들었습니다.</li></ul>
+"""
+
+
+def write_src() -> Path:
+    SRC.write_text(src_html(), encoding="utf-8")
+    return SRC
+
+
+if __name__ == "__main__":
+    # 자리 찾기 셀과 읽기 도구 셀은 06절과 글자까지 같다
+    assert PATH == author_06.PATH
+    assert DEF_READ == author_06.DEF_READ
+    if os.environ.get("AUTHOR07_NB_ONLY") != "1":
+        print("wrote", write_src())
+    if "--src-only" not in sys.argv:
+        path = write_notebook(LAB, "07", SLUG, "experiment", cells())
+        print("wrote", path)

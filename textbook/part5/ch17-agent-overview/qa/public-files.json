@@ -1,0 +1,26 @@
+{
+  "chapter": "ch17-agent-overview",
+  "policy": "명시된 공개 학습 파일만 배포하며 .env, .venv, __pycache__, 집필 도구는 제외합니다.",
+  "files": [
+    "labs/part5/ch17-agent-overview/README.md",
+    "labs/part5/ch17-agent-overview/pyproject.toml",
+    "labs/part5/ch17-agent-overview/uv.lock",
+    "labs/part5/ch17-agent-overview/data/product-trace-evidence.json",
+    "labs/part5/ch17-agent-overview/data/public-trace-extracts.json",
+    "labs/part5/ch17-agent-overview/data/autonomy-diagnostic-example.json",
+    "labs/part5/ch17-agent-overview/data/autonomy-diagnostic-sheet.csv",
+    "labs/part5/ch17-agent-overview/notebooks/01-워크플로우와-에이전트-경계.ipynb",
+    "labs/part5/ch17-agent-overview/notebooks/02-워크플로우가-충분한-조건.ipynb",
+    "labs/part5/ch17-agent-overview/notebooks/03-모델-도구-루프와-정지-조건.ipynb",
+    "labs/part5/ch17-agent-overview/notebooks/04-자율성의-대가.ipynb",
+    "labs/part5/ch17-agent-overview/notebooks/05-제품-트레이스와-자율성-진단.ipynb",
+    "labs/part5/ch17-agent-overview/notebooks/06-Agent-개요-실습.ipynb",
+    "labs/part5/ch17-agent-overview/notebooks/agent_tools.py"
+  ],
+  "excluded": [
+    ".env와 실제 API 키",
+    ".venv와 패키지 캐시",
+    "author_chapter.py 집필 생성 도구",
+    "QA 검토 기록과 실패 진단 파일"
+  ]
+}

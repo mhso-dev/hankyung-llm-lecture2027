@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part5/qa/finalize_evidence.py", line 73, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part5/qa/finalize_evidence.py", line 36, in main
+    assert digest(ROOT / path) == expected, f'Audit hash mismatch: {path}'
+AssertionError: Audit hash mismatch: textbook/part5/ch18-workflow-patterns/_src/01-게이트가-있는-프롬프트-체이닝.html

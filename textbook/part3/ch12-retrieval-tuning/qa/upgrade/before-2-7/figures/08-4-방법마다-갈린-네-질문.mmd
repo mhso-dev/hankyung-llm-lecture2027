@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  root["후보 8개 · 문서 청크 정밀도 자리 5"]:::measure
+  up["함께 올린 질문 둘<br>Q005 0.4에서 0.6<br>Q038 0.6에서 1.0"]:::measure
+  split["리랭커끼리 갈린 질문 둘<br>Q003 리랭커 A 0.8<br>Q003 리랭커 B 0.6<br>Q002 리랭커 A 1.0<br>Q002 리랭커 B 0.8"]:::measure
+  same["세 방법이 같은 값<br>질문 열한 개"]
+  root --> up
+  root --> split
+  root --> same

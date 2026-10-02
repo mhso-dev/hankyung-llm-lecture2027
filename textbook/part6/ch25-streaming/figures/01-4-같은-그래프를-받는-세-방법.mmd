@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  g["노드 둘짜리 그래프<br>같은 입력 topic 배송 문의"]:::flow
+  subgraph r1["invoke"]
+    i["다 끝난 뒤 한 값<br>마지막 values<br>사건과 같음"]:::measure
+  end
+  subgraph r2["stream 기본"]
+    d["모드를 고르지 않음<br>기본 모드 updates<br>사건 둘"]:::measure
+  end
+  subgraph r3["stream 모드 일곱"]
+    m["사건 스물셋<br>모드 이름과<br>자료의 짝"]:::measure
+  end
+  g --> r1
+  g --> r2
+  g --> r3

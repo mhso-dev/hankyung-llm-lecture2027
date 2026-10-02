@@ -1,0 +1,74 @@
+<html><head><meta charset='utf-8'><title>도우미봇 R2 빠른 시작 가이드</title><style>
+@font-face { font-family: 'KR'; src: url('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'); font-weight: 400; }
+@font-face { font-family: 'KR'; src: url('/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc'); font-weight: 700; }
+@font-face { font-family: 'KRS'; src: url('/usr/share/fonts/opentype/noto/NotoSerifCJK-Bold.ttc'); font-weight: 700; }
+@page { size: A4; margin: 24mm 22mm 24mm 22mm;
+  @bottom-center { content: counter(page); font-family: 'KR'; font-size: 9pt; color: #666; } }
+body { font-family: 'KR', sans-serif; font-size: 11pt; line-height: 1.8; color: #111; }
+h1 { font-size: 22pt; margin: 0 0 6pt; line-height: 1.3; }
+h2 { font-size: 15pt; margin: 18pt 0 6pt; border-bottom: 1.5px solid #333; padding-bottom: 3pt; }
+h3 { font-size: 12pt; margin: 12pt 0 4pt; }
+p { margin: 0 0 9pt; text-align: justify; }
+table { border-collapse: collapse; width: 100%; margin: 6pt 0 10pt; font-size: 9.5pt; page-break-inside: auto; }
+th, td { border: 1px solid #555; padding: 3pt 5pt; vertical-align: top; }
+th { background: #e8e8e8; }
+.small { font-size: 8.5pt; color: #444; }
+.box { border: 1px solid #333; padding: 8pt 10pt; margin: 8pt 0; background: #f7f7f7; }
+.cover { page-break-after: always; text-align: center; padding-top: 120pt; }
+.cover .org { font-size: 13pt; color: #444; margin-top: 30pt; }
+.pb { page-break-before: always; }
+ul, ol { margin: 0 0 8pt 0; }
+li { margin-bottom: 2pt; }
+.fn { font-size: 8.5pt; color: #333; border-top: 1px solid #999; margin-top: 10pt; padding-top: 4pt; }
+.right { text-align: right; }
+.center { text-align: center; }
+.toc li { list-style: none; }
+</style></head><body><div class='cover'><h1>도우미봇 R2 빠른 시작 가이드</h1><p class='org'>오로라 로보틱스</p><p>모델명 AR-R2 · 문서번호 QSG-R2-03</p><p class='small'>2026. 2.</p></div>
+<h2>1. 상자 안에 든 것</h2>
+<p>상자를 열면 다음 물품이 들어 있습니다. 빠진 것이 있으면 구매처에 문의하세요.</p>
+<ul><li>도우미봇 R2 본체 1대</li><li>충전 도크 1대와 전원 어댑터(DC 24V, 5A)</li><li>트레이(쟁반) 2개</li><li>빠른 시작 가이드(이 문서)와 보증서</li><li>청소용 극세사 천 1장</li></ul>
+
+<h2>2. 처음 켜기</h2>
+<p>충전 도크를 벽 콘센트에 연결하고 평평한 바닥에 놓습니다. 도크 양옆 50cm, 앞 1m 안에는 물건을 두지 마세요. R2를 도크 위에 올리면 자동으로 충전이 시작되고, 앞면 표시등이 주황색으로 켜집니다.</p>
+<p>처음에는 <b>완전히 충전될 때까지 약 3시간</b> 기다립니다. 표시등이 녹색으로 바뀌면 충전이 끝난 것입니다.</p>
+<p>머리 뒤쪽의 전원 버튼을 3초 동안 누르면 R2가 켜지고 "안녕하세요, R2입니다"라고 인사합니다.</p>
+
+<h2>3. 앱 연결</h2>
+<p>스마트폰에 '오로라 홈' 앱을 설치하고 계정을 만듭니다. 앱에서 '기기 추가'를 누른 뒤 R2 뒷면의 QR 코드를 스캔하면 연결됩니다. R2는 2.4GHz Wi-Fi만 지원하며 5GHz 전용 네트워크에는 연결되지 않습니다.</p>
+<p>연결이 끝나면 앱에서 R2의 이름을 바꿀 수 있습니다. 이름은 한글 2~6자 또는 영문 2~10자로 정합니다.</p>
+
+<h2>4. 공간 지도 만들기</h2>
+<p>앱에서 '지도 만들기'를 누르면 R2가 집 안을 천천히 돌아다니며 지도를 만듭니다. 방문을 모두 열어 두고, 바닥의 전선과 작은 물건은 치워 주세요. 30평 기준으로 약 20분이 걸립니다.</p>
+<p>지도가 완성되면 앱에서 방 이름(거실, 주방, 안방 등)을 붙일 수 있습니다. 이후 "R2, 주방으로 가"라고 말하면 해당 위치로 이동합니다.</p>
+
+<h2>5. 기본 음성 명령</h2>
+<table class=''><thead><tr><th>말하기</th><th>동작</th></tr></thead><tbody><tr><td>"R2, 이리 와"</td><td>말한 사람 위치로 이동</td></tr><tr><td>"R2, 거실로 가"</td><td>지도에 저장된 방으로 이동</td></tr><tr><td>"R2, 따라와"</td><td>사람을 따라 이동 (1m 간격 유지)</td></tr><tr><td>"R2, 물건 가져와"</td><td>트레이에 놓인 물건을 지정 위치로 운반</td></tr><tr><td>"R2, 충전해"</td><td>충전 도크로 복귀</td></tr><tr><td>"R2, 조용히"</td><td>음성 안내 끄기</td></tr><tr><td>"R2, 멈춰"</td><td>즉시 정지</td></tr></tbody></table>
+<p>호출어는 '오로라 홈' 앱에서 'R2' 대신 다른 이름으로 바꿀 수 있습니다. 명령은 R2에서 3m 안에서 보통 목소리로 말하면 인식됩니다.</p>
+
+<h2>6. 물건 운반하기</h2>
+<p>R2의 트레이에는 <b>한 번에 최대 3kg</b>까지 올릴 수 있습니다. 액체는 뚜껑이 있는 용기에 담아 주세요. 뜨거운 음식이나 날카로운 물건은 운반하지 마세요.</p>
+<p>운반 중 사람이나 반려동물이 앞을 막으면 R2는 멈춘 뒤 "잠시만요"라고 말하고 3초 뒤 다시 출발합니다. 세 번 연속 막히면 출발 위치로 돌아갑니다.</p>
+
+<h2>7. 배터리와 충전</h2>
+<p>완전히 충전하면 <b>최대 8시간</b> 사용할 수 있습니다. 배터리가 15% 아래로 내려가면 R2가 스스로 충전 도크로 돌아갑니다. 15%가 되기 전에 충전하려면 "R2, 충전해"라고 말하세요.</p>
+<p>배터리는 리튬이온 방식이며 약 500회 충전 후에는 용량이 처음의 80% 수준으로 줄어듭니다. 배터리 교체는 서비스센터에서만 가능합니다.</p>
+
+<h2>8. 청소와 관리</h2>
+<p>R2의 몸체는 마른 극세사 천으로 닦습니다. 물을 직접 뿌리거나 알코올 성분 세제를 쓰면 센서가 손상될 수 있습니다. 바닥 쪽 라이다 센서 창은 일주일에 한 번 부드러운 붓으로 먼지를 털어 주세요.</p>
+<p>바퀴에 머리카락이 감기면 앱의 '바퀴 점검' 메뉴에서 바퀴를 잠근 뒤 손으로 제거합니다.</p>
+
+<h2>9. 표시등 읽기</h2>
+<table class=''><thead><tr><th>표시등 색</th><th>의미</th><th>해야 할 일</th></tr></thead><tbody><tr><td>녹색 고정</td><td>정상 대기</td><td>없음</td></tr><tr><td>녹색 깜박임</td><td>명령 수행 중</td><td>없음</td></tr><tr><td>주황색 고정</td><td>충전 중</td><td>없음</td></tr><tr><td>주황색 깜박임</td><td>배터리 부족(15% 이하)</td><td>충전 도크로 보내기</td></tr><tr><td>빨간색 깜박임</td><td>오류 발생</td><td>앱에서 오류 코드 확인</td></tr><tr><td>파란색 고정</td><td>Wi-Fi 연결 대기</td><td>앱에서 네트워크 재설정</td></tr><tr><td>보라색 깜박임</td><td>펌웨어 업데이트 중</td><td>전원을 끄지 말 것</td></tr></tbody></table>
+<h2>10. 문제 해결</h2>
+<p><b>R2가 명령을 못 알아들어요.</b> 주변 소음이 크거나 3m 밖에서 말한 경우입니다. 가까이에서 다시 말해 보세요. 마이크 구멍(머리 양옆)이 막히지 않았는지 확인하세요.</p>
+<p><b>R2가 자꾸 같은 자리에서 멈춰요.</b> 바닥에 어두운 색 카펫이나 유리문이 있으면 센서가 절벽이나 장애물로 인식할 수 있습니다. 앱에서 '금지 구역'을 설정하거나 카펫 모드를 켜세요.</p>
+<p><b>충전이 안 돼요.</b> 도크 접점과 R2 바닥의 금속 접점을 마른 천으로 닦으세요. 표시등이 전혀 켜지지 않으면 어댑터가 정품(24V 5A)인지 확인하세요.</p>
+<p><b>지도가 자꾸 지워져요.</b> R2를 손으로 들어 다른 곳에 옮기면 위치를 잃을 수 있습니다. 옮긴 뒤에는 도크에 올려 위치를 다시 잡게 하세요.</p>
+
+<h2>11. 안전 주의사항</h2>
+<p>R2는 실내 전용이며 계단이나 경사 10도 이상의 바닥에서는 사용할 수 없습니다. 어린이가 R2 위에 올라타지 않도록 하세요. R2의 최대 이동 속도는 초당 1m이며, 앱에서 0.5m로 낮출 수 있습니다.</p>
+
+<h2>12. 보증과 서비스</h2>
+<p>제품 보증 기간은 구매일로부터 <b>2년</b>이며, 배터리는 1년입니다. 보증 기간 안에 정상 사용 중 발생한 고장은 무상으로 수리합니다. 사용자 과실(낙하·침수·개조)은 유상입니다.</p>
+<p>서비스센터 1588-0000(평일 9~18시), 홈페이지 support.aurora-robotics.kr에서 방문 수리를 예약할 수 있습니다.</p>
+</body></html>

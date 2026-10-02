@@ -1,0 +1,31 @@
+{
+  "purpose": "한국어 감사 뒤 노트북 코드·출력 셀의 하류 검증용 지문",
+  "algorithm": "SHA-256 of canonical JSON for every non-markdown cell",
+  "notebooks": {
+    "01-Pandas로-표-다루기.ipynb": {
+      "total_cells": 13,
+      "non_markdown_cells": 6,
+      "sha256": "a38764365d5fa0ca75fc5bfb9a542ad0e570bb68f030e99cbf71596fa626c34e"
+    },
+    "02-관계형-테이블과-키.ipynb": {
+      "total_cells": 13,
+      "non_markdown_cells": 6,
+      "sha256": "e34ace7a0c5cd89449e0d4622ec3e712d8f3d9d474d64a6f0c4e4e9f0ea371dd"
+    },
+    "03-SQL로-조회-함수-만들기.ipynb": {
+      "total_cells": 13,
+      "non_markdown_cells": 6,
+      "sha256": "8596174703d7925c1980bf11e3301e6142e373c65960ff4e81fa7973f94805ff"
+    },
+    "04-REST와-페이지네이션.ipynb": {
+      "total_cells": 13,
+      "non_markdown_cells": 6,
+      "sha256": "628f1a7b0c9503c81df9338064f5fdc703e8d78952414638092c8c16233926ac"
+    },
+    "05-문서-파싱과-스크래핑.ipynb": {
+      "total_cells": 13,
+      "non_markdown_cells": 6,
+      "sha256": "df5dc32b8a93221c3047016694b7d66f904848dfaf9f4734de9077de9c40b31d"
+    }
+  }
+}

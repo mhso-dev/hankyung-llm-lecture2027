@@ -1,0 +1,13 @@
+flowchart LR
+  %% classes
+  subgraph WT["작업 폴더"]
+    direction TB
+    APP["app.py<br>주문 2건"]:::tool
+    ENV[".env<br>APP_MODE=demo"]
+  end
+  IDX["색인<br>app.py 주문 2건"]:::tool
+  CMT["커밋<br>feat:<br>주문 요약 추가"]:::tool
+  IGN["상태 표시 !! .env<br>색인에 오르지 않음"]:::measure
+  APP -- "git add<br>app.py" --> IDX
+  IDX -- "git<br>commit" --> CMT
+  ENV -- ".gitignore<br>규칙" --> IGN

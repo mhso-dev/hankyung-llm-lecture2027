@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  mat["재료<br>출처 http://localhost:5173<br>질문 반납 기한<br>스레드 web-1<br>실행마다 접근 토큰 하나"]:::tool
+  start["start_flow<br>사전 요청 07절<br>첫 요청 05절<br>단계마다 기록 한 줄"]:::flow
+  cut["앞 사건 둘만 받고 끊김<br>06절 노트북 2절과 같은 자리"]:::flow
+  resume["resume_flow<br>번호가 있을 때만<br>사전 요청 07절<br>이어 받기 06절<br>단계마다 기록 한 줄"]:::flow
+  judge["판정<br>ended_with_done 06절<br>join_tokens 04절"]:::flow
+  cors["CORS 층 · 앱 19~26행<br>사전 요청에 바로 답함"]
+  app["실습 앱 chat_stream<br>제공 함수 require_token<br>get_resume_index"]:::tool
+  mat --> start
+  start --> cut
+  cut --> resume
+  resume --> judge
+  start -.-> cors
+  resume -.-> cors
+  cors -.-> app

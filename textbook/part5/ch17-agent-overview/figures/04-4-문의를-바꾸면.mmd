@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph arrive["도착 문의"]
+    direction TB
+    a1["(가) 코드 차례<br>주문 조회"]:::tool
+    a2["(가) 모델 요청 0<br>코드 차례 끝"]:::measure
+    a3["(나) 모델 요청 2<br>입력 토큰 합 250<br>모델이 끝을 고름"]:::measure
+    a1 --> a2
+    a2 ~~~ a3
+  end
+  subgraph refund["환불 문의"]
+    direction TB
+    b1["(가) 새로 적은 코드 차례<br>주문 조회 · 환불 규정 확인<br>환불 요청 등록"]:::tool
+    b2["(가) 모델 요청 0<br>사람 확인에서 멈춤"]:::measure
+    b3["(나) 첫 바퀴 입력 토큰 111<br>사람 확인에서 코드가 멈춤"]:::measure
+    b1 --> b2
+    b2 ~~~ b3
+  end
+  same["(나)는 두 문의 모두<br>같은 함수와 머리글<br>바퀴 수는 모델이<br>고른 뒤에 정해짐"]
+  arrive ~~~ same
+  refund ~~~ same

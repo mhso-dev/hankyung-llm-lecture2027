@@ -1,0 +1,282 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fetch 재연결과 오류 이벤트 — Ch 30 · FastAPI로 Agent 서빙</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 서비스화 &amp; 배포 · Ch 30 · FastAPI로 Agent 서빙</p>
+<h1>fetch 재연결과 오류 이벤트</h1><div class="meta"><span>강의 1.5h</span><span>실습 2.75h</span><span>새 용어 4</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1.5h | 실습 2.75h | 코드 Jupyter Notebook | 새 용어 4 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>`fetch` 스트림에서 SSE 블록을 분리할 수 있습니다.</li><li>마지막 ID를 `Last-Event-ID`로 다시 보낼 수 있습니다.</li><li>200 뒤 발생한 실패를 error 이벤트로 판별할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>POST SSE에서는 브라우저가 자동 재연결을 대신하지 않습니다. 어떤 질문과 마지막 위치를 다시 보낼지, 중복 도구 실행을 어떻게 막을지 클라이언트와 서버가 함께 정해야 합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>05절에서 token 이벤트의 id와 done을 확인했습니다. Ch23의 thread 분리와 Ch24의 중복 실행 방지 원칙을 브라우저 경계에 적용합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><p>책을 읽다 연결이 끊겼을 때 마지막 쪽을 기록하면 다음부터 이어갈 수 있습니다. 다만 판본이 바뀌면 같은 쪽이 같은 내용을 뜻하지 않습니다. 이벤트 ID와 실행 ID도 함께 관리해야 합니다.</p><p>`fetch()`는 POST, JSON 본문, Authorization 헤더를 설정합니다. 응답 `body`를 문자열로 바꾸고 버퍼에 누적합니다. 네트워크 청크와 SSE 이벤트 경계는 일치하지 않으므로 `\r?\n\r?\n` 패턴으로 완성 블록만 분리하고 남은 문자열은 다음 읽기와 합칩니다. EOF에 남은 완전한 블록도 한 번 더 해석합니다.</p><p>클라이언트는 처리에 성공한 id를 저장하고 연결이 끊기면 같은 본문과 `Last-Event-ID`를 보냅니다. 서버는 thread 접두사를 확인하고 다음 인덱스부터 전송합니다. 다른 대화의 ID를 받아들이면 데이터가 섞일 수 있습니다. 잘못된 ID 형식도 400으로 거부해야 하며 교육용 코드는 핵심 흐름만 구현합니다.</p><p>안정적인 재연결은 이미 만든 이벤트를 저장하고 이어 보내야 합니다. 이 예제는 결정적 Agent를 다시 실행해 앞부분을 건너뜁니다. 외부 모델은 재실행 결과가 달라질 수 있으므로 운영 복구 방식이 아닙니다. Ch31에서 실행과 이벤트를 저장하면 동일 이벤트를 재생할 수 있습니다.</p><p>스트림은 첫 데이터가 전송되면 HTTP 200이 확정됩니다. 이후 모델이 실패해도 500으로 바꿀 수 없습니다. 서버는 예외를 `event: error`와 안정적인 코드로 보냅니다. 클라이언트는 `response.ok`뿐 아니라 각 이벤트 타입을 확인합니다. 결제나 메일 같은 쓰기 도구가 있다면 재연결 중 다시 실행되지 않도록 작업 ID와 완료 기록으로 멱등성을 확보해야 합니다.</p><h3>코드 읽기와 개념 경계</h3><p>클라이언트는 마지막으로 처리한 SSE 식별자를 <code>Last-Event-ID</code> 헤더에 넣어 이어받을 위치를 알립니다. 예제의 첫 응답에서 <code>resume-1:0</code>을 읽고 다시 요청하면 서버는 다음 식별자인 <code>resume-1:1</code>부터 보냅니다. 이 결과는 서버가 이번 교육용 실행의 조각을 다시 계산해 건너뛴 동작을 보여 주며, 모든 운영 서버가 과거 조각을 영구 보관한다는 뜻은 아닙니다.</p><p>HTTP 헤더를 이미 보낸 뒤 스트림 내부에서 실패하면 상태 코드를 500으로 바꾸기 어렵습니다. 그래서 예제는 HTTP 200 연결 안에 <code>event: error</code>와 안정적인 오류 코드를 보냅니다. 클라이언트는 네트워크 단절, 오류 사건, 정상 <code>done</code>을 서로 다른 종료 상태로 기록해야 하며, 같은 <code>id</code>를 다시 처리해도 부작용이 중복되지 않도록 설계해야 합니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 430" style="width:380px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="브라우저 클라이언트가 마지막 식별자를 저장하고 POST 재요청 헤더에 실어 서버가 다음 이벤트부터 전송하게 합니다."><title>브라우저 클라이언트가 마지막 식별자를 저장하고 POST 재요청 헤더에 실어 서버가 다음 이벤트부터 전송하게 합니다.</title><defs><marker id="06-흐름-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190,85 L190,116" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#06-흐름-arrow)"/><path d="M190,185 L190,216" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#06-흐름-arrow)"/><path d="M190,285 L190,316" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#06-흐름-arrow)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="59.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">마지막 id 저장</text><rect x="30" y="120" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="159.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">fetch 재요청</text><rect x="30" y="220" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="259.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">Last-Event-ID</text><rect x="30" y="320" width="320" height="65" rx="10" fill="#F7EDC7" stroke="#334155" stroke-width="2"/><text x="190.0" y="359.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">다음 이벤트</text></svg></div><p>위쪽의 요청에서 아래쪽의 관찰 결과까지 화살표를 따라 읽습니다. 파란 상자는 데이터, 보라색 상자는 Agent 실행, 초록 상자는 확인할 결과를 나타냅니다.</p><h3>서비스 설계 판단</h3><p>재연결 정책에는 재시도 가능한 오류, 최대 횟수, 대기 간격, 사용자 취소를 적습니다. 네트워크 단절은 재시도할 수 있지만 인증 만료는 새 토큰을 받은 뒤 다시 요청해야 하고 입력 검증 오류는 같은 본문으로 반복해도 해결되지 않습니다. 지수 백오프에 작은 무작위 지연을 더하면 많은 브라우저가 동시에 재연결하는 상황을 줄일 수 있습니다. 클라이언트는 id를 화면에 반영한 뒤 저장해야 합니다. 저장을 먼저 하고 렌더링에 실패하면 재연결 때 표시하지 못한 이벤트를 건너뛸 수 있습니다. 반대로 표시 뒤 저장에 실패하면 같은 이벤트를 다시 받을 수 있으므로 token 결합이 중복에 견디는지도 확인합니다. 쓰기 도구가 포함된 실행은 HTTP 재시도와 도구 작업 재시도를 분리하고, 작업 식별자로 이미 완료된 효과를 조회합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>첫 응답에서 `resume-1:0`을 추출하고 다음 POST의 Last-Event-ID로 보냅니다. 이어진 응답의 첫 ID가 `resume-1:1`인지 확인합니다. 오류 질문은 HTTP 200이지만 error 이벤트를 반환합니다.</p><section class="notebook" data-notebook="06-fetch-재연결과-오류-이벤트" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="06-fetch-재연결과-오류-이벤트.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBmZXRjaCDsnqzsl7DqsrDqs7wg7Jik66WYIOydtOuypO2KuFxuIiwKICAgICJcbiIsCiAgICAiUE9TVCBTU0Xsl5DshJwg7YG065287J207Ja47Yq46rCAIOuniOyngOuniSDsnbTrsqTtirggSUTrpbwg67O06rSA7ZW0IOuLpOyLnCDrs7TrgrTqs6AsIOyKpO2KuOumvCDrj4TspJEg7Jik66WY66W8IOydtOuypO2KuOuhnCDrsJvripQg6rO87KCV7J2EIO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIu2YhOyerCDtj7TrjZTrgpgg7IOB7JyEIO2PtOuNlOyXkOyEnCBgbGFicy9wYXJ0Ny9jaDMwLWZhc3RhcGktc2VydmluZ2DsnYQg7LC+7JWEIOyekeyXhSDtj7TrjZTroZwg7IKs7Jqp7ZWp64uI64ukLiDruYTrsIAg7YKk66W8IOy2nOugpe2VmOyngCDslYrsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAicHJlcC0zMC0wNi0wIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDspIDruYQg7IWA7J20IO2VmOuKlCDsnbxcbiIsCiAgICAiXG4iLAogICAgIuydtCDspIDruYQg7IWA7J2AIGBQYXRoLmN3ZCgpLnJlc29sdmUoKWDroZwg7ZiE7J6sIO2PtOuNlOulvCDsoIjrjIAg6rK966Gc66GcIOydveqzoCwg7ZiE7J6sIO2PtOuNlOyZgCDrtoDrqqgg7Y+0642U7JeQ7IScIGBhZ2VudF9zZXJ2aWNlYOqwgCDsnojripQg7LKrIOychOy5mOulvCBgbmV4dCguLi4sIE5vbmUpYOuhnCDssL7sirXri4jri6QuIOywvuyngCDrqrvtlZjrqbQgYGFzc2VydGDqsIAg7Iuk7ZaJ7J2EIOykkeuLqO2VqeuLiOuLpC4g7LC+7J2AIOuSpCBgb3MuY2hkaXIobGFiKWDsnbQg7J207ZuEIGltcG9ydOyZgCDtjIzsnbwg7KCR6re87J2YIOq4sOykgCDtj7TrjZTrpbwg67CU6r646rOgLCDrp4jsp4Drp4kg7Lac66Cl7J2AIOyLpOygnCDshKDtg53rkJwg7Y+0642UIOydtOumhOydhCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoyOTo0NC4wMjU2MTJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoyOTo0NC4wMjU0NjJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoyOTo0NC4wMzIxODNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjI5OjQ0LjAzMTY5NFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsi6TsirUg7Y+0642UOiBjaDMwLWZhc3RhcGktc2VydmluZ1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJpbXBvcnQgb3NcbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgInN0YXJ0ID0gUGF0aC5jd2QoKS5yZXNvbHZlKClcbiIsCiAgICAibGFiID0gbmV4dCgocCBmb3IgcCBpbiAoc3RhcnQsICpzdGFydC5wYXJlbnRzKVxuIiwKICAgICIgICAgaWYgKHAgLyAnYWdlbnRfc2VydmljZScpLmlzX2RpcigpKSwgTm9uZSlcbiIsCiAgICAiYXNzZXJ0IGxhYiBpcyBub3QgTm9uZSwgJ2FnZW50X3NlcnZpY2XqsIAg7J6I64qUIENoMzAg7Iuk7Iq1IO2PtOuNlOyXkOyEnCDsi6TtlontlZjshLjsmpQuJ1xuIiwKICAgICJvcy5jaGRpcihsYWIpXG4iLAogICAgInByaW50KCfsi6TsirUg7Y+0642UOicsIFBhdGguY3dkKCkubmFtZSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6riw67O4IOyLpO2WiVxuIiwKICAgICJcbiIsCiAgICAi7LKrIOyalOyyreydmCBgaWRg66W8IOydveyWtCDri6TsnYwg7JqU7LKt7J2YIGBMYXN0LUV2ZW50LUlEYCDtl6TrjZTroZwg67O064OF64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNvbmNlcHQtMzAtMDYtYSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDrsJTroZwg64uk7J2MIOy9lOuTnOulvCDsnb3ripQg67Cp67KVXG4iLAogICAgIlxuIiwKICAgICLtgbTrnbzsnbTslrjtirjripQg66eI7KeA66eJ7Jy866GcIOyymOumrO2VnCBTU0Ug7Iud67OE7J6Q66W8IGBMYXN0LUV2ZW50LUlEYCDtl6TrjZTsl5Ag64Sj7Ja0IOydtOyWtOuwm+ydhCDsnITsuZjrpbwg7JWM66a964uI64ukLiDsmIjsoJzsnZgg7LKrIOydkeuLteyXkOyEnCBgcmVzdW1lLTE6MGDsnYQg7J296rOgIOuLpOyLnCDsmpTssq3tlZjrqbQg7ISc67KE64qUIOuLpOydjCDsi53rs4TsnpDsnbggYHJlc3VtZS0xOjFg67aA7YSwIOuztOuDheuLiOuLpC4g7J20IOqysOqzvOuKlCDshJzrsoTqsIAg7J2067KIIOq1kOycoeyaqSDsi6TtlonsnZgg7KGw6rCB7J2EIOuLpOyLnCDqs4TsgrDtlbQg6rG064SI65u0IOuPmeyekeydhCDrs7Tsl6wg7KO866mwLCDrqqjrk6Ag7Jq07JiBIOyEnOuyhOqwgCDqs7zqsbAg7KGw6rCB7J2EIOyYgeq1rCDrs7TqtIDtlZzri6TripQg65y77J2AIOyVhOuLmeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjI5OjQ0LjAzMzY0NloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjI5OjQ0LjAzMzUxN1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjI5OjQ0LjM0Mjg4OVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6Mjk6NDQuMzQyNDQwWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIlsncmVzdW1lLTE6MCcsICdyZXN1bWUtMToxJ11cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IHJlXG4iLAogICAgImZyb20gZmFzdGFwaS50ZXN0Y2xpZW50IGltcG9ydCBUZXN0Q2xpZW50XG4iLAogICAgImZyb20gYWdlbnRfc2VydmljZS5hcHAgaW1wb3J0IGFwcFxuIiwKICAgICJjbGllbnQgPSBUZXN0Q2xpZW50KGFwcClcbiIsCiAgICAiYXV0aCA9IHsnQXV0aG9yaXphdGlvbic6ICdCZWFyZXIgbG9jYWwtZGVtby10b2tlbid9XG4iLAogICAgImJvZHkgPSB7J3F1ZXN0aW9uJzogJ+yerOyXsOqysCDtmZXsnbgg7KeI66y4JywgJ3RocmVhZF9pZCc6ICdyZXN1bWUtMSd9XG4iLAogICAgImZpcnN0ID0gY2xpZW50LnBvc3QoJy92MS9jaGF0L3N0cmVhbScsIGhlYWRlcnM9YXV0aCwganNvbj1ib2R5KVxuIiwKICAgICJpZHMgPSByZS5maW5kYWxsKHInaWQ6IChbXlxcbl0rKScsIGZpcnN0LnRleHQpXG4iLAogICAgInByaW50KGlkc1s6Ml0pXG4iLAogICAgImFzc2VydCBpZHNbMF0gPT0gJ3Jlc3VtZS0xOjAnIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyerOyXsOqysCDsnITsuZgg6rSA7LCwXG4iLAogICAgIlxuIiwKICAgICLrkZAg67KI7Ke4IOyalOyyreydgCDrp4jsp4Drp4nsnLzroZwg7LKY66as7ZWcIElEIOuLpOydjCDthqDtgbDrtoDthLAg7KCE64us7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6Mjk6NDQuMzQzNjg3WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6Mjk6NDQuMzQzNjM0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6Mjk6NDQuMzQ3NTQ1WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoyOTo0NC4zNDcyNDBaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAicmVzdW1lLTE6MVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJyZXN1bWVfaGVhZGVycyA9IHsqKmF1dGgsICdMYXN0LUV2ZW50LUlEJzogaWRzWzBdfVxuIiwKICAgICJyZXN1bWVkID0gY2xpZW50LnBvc3QoJy92MS9jaGF0L3N0cmVhbScsIGhlYWRlcnM9cmVzdW1lX2hlYWRlcnMsIGpzb249Ym9keSlcbiIsCiAgICAicmVzdW1lZF9pZHMgPSByZS5maW5kYWxsKHInaWQ6IChbXlxcbl0rKScsIHJlc3VtZWQudGV4dClcbiIsCiAgICAicHJpbnQocmVzdW1lZF9pZHNbMF0pXG4iLAogICAgImFzc2VydCByZXN1bWVkX2lkc1swXSA9PSAncmVzdW1lLTE6MSciCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TtjKgg7J6s7ZiEXG4iLAogICAgIlxuIiwKICAgICLsiqTtirjrprzsnbQg7J2066+4IDIwMOycvOuhnCDsi5zsnpHtlZwg65KkIEFnZW506rCAIOyLpO2MqO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjI5OjQ0LjM0ODM0N1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjI5OjQ0LjM0ODI5N1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjI5OjQ0LjM1NjMwOFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6Mjk6NDQuMzU1OTM0WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRlcnIiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiQWdlbnQgU1NFIHN0cmVhbSBmYWlsZWRcbiIsCiAgICAgICJUcmFjZWJhY2sgKG1vc3QgcmVjZW50IGNhbGwgbGFzdCk6XG4iLAogICAgICAiICBGaWxlIFwiW+yCrOyaqeyekCDtj7TrjZRdL3dvcmtpbmcvY2xhdWRlL3Byb2plY3RzL+2VnOq1reqyveygnOyLoOusuC9sYWJzL3BhcnQ3L2NoMzAtZmFzdGFwaS1zZXJ2aW5nL2FnZW50X3NlcnZpY2UvYXBwLnB5XCIsIGxpbmUgMTEwLCBpbiBjaGF0X3N0cmVhbVxuIiwKICAgICAgIiAgICBhc3luYyBmb3IgY2h1bmsgaW4gcnVudGltZS5hc3RyZWFtKFxuIiwKICAgICAgIiAgRmlsZSBcIlvsgqzsmqnsnpAg7Y+0642UXS93b3JraW5nL2NsYXVkZS9wcm9qZWN0cy/tlZzqta3qsr3soJzsi6DrrLgvbGFicy9wYXJ0Ny9jaDMwLWZhc3RhcGktc2VydmluZy8udmVudi9saWIvcHl0aG9uMy4xMi9zaXRlLXBhY2thZ2VzL2xhbmdncmFwaC9wcmVnZWwvbWFpbi5weVwiLCBsaW5lIDM0NDAsIGluIGFzdHJlYW1cbiIsCiAgICAgICIgICAgYXN5bmMgZm9yIF8gaW4gcnVubmVyLmF0aWNrKFxuIiwKICAgICAgIiAgRmlsZSBcIlvsgqzsmqnsnpAg7Y+0642UXS93b3JraW5nL2NsYXVkZS9wcm9qZWN0cy/tlZzqta3qsr3soJzsi6DrrLgvbGFicy9wYXJ0Ny9jaDMwLWZhc3RhcGktc2VydmluZy8udmVudi9saWIvcHl0aG9uMy4xMi9zaXRlLXBhY2thZ2VzL2xhbmdncmFwaC9wcmVnZWwvX3J1bm5lci5weVwiLCBsaW5lIDU1NywgaW4gYXRpY2tcbiIsCiAgICAgICIgICAgX3BhbmljX29yX3Byb2NlZWQoXG4iLAogICAgICAiICBGaWxlIFwiW+yCrOyaqeyekCDtj7TrjZRdL3dvcmtpbmcvY2xhdWRlL3Byb2plY3RzL+2VnOq1reqyveygnOyLoOusuC9sYWJzL3BhcnQ3L2NoMzAtZmFzdGFwaS1zZXJ2aW5nLy52ZW52L2xpYi9weXRob24zLjEyL3NpdGUtcGFja2FnZXMvbGFuZ2dyYXBoL3ByZWdlbC9fcnVubmVyLnB5XCIsIGxpbmUgNjg3LCBpbiBfcGFuaWNfb3JfcHJvY2VlZFxuIiwKICAgICAgIiAgICByYWlzZSBleGNcbiIsCiAgICAgICIgIEZpbGUgXCJb7IKs7Jqp7J6QIO2PtOuNlF0vd29ya2luZy9jbGF1ZGUvcHJvamVjdHMv7ZWc6rWt6rK97KCc7Iug66y4L2xhYnMvcGFydDcvY2gzMC1mYXN0YXBpLXNlcnZpbmcvLnZlbnYvbGliL3B5dGhvbjMuMTIvc2l0ZS1wYWNrYWdlcy9sYW5nZ3JhcGgvcHJlZ2VsL19yZXRyeS5weVwiLCBsaW5lIDc0NCwgaW4gYXJ1bl93aXRoX3JldHJ5XG4iLAogICAgICAiICAgIHJldHVybiBhd2FpdCB0YXNrLnByb2MuYWludm9rZSh0YXNrLmlucHV0LCBjb25maWcpXG4iLAogICAgICAiICAgICAgICAgICBeXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXG4iLAogICAgICAiICBGaWxlIFwiW+yCrOyaqeyekCDtj7TrjZRdL3dvcmtpbmcvY2xhdWRlL3Byb2plY3RzL+2VnOq1reqyveygnOyLoOusuC9sYWJzL3BhcnQ3L2NoMzAtZmFzdGFwaS1zZXJ2aW5nLy52ZW52L2xpYi9weXRob24zLjEyL3NpdGUtcGFja2FnZXMvbGFuZ2dyYXBoL19pbnRlcm5hbC9fcnVubmFibGUucHlcIiwgbGluZSA3NTYsIGluIGFpbnZva2VcbiIsCiAgICAgICIgICAgaW5wdXQgPSBhd2FpdCBhc3luY2lvLmNyZWF0ZV90YXNrKFxuIiwKICAgICAgIiAgICAgICAgICAgIF5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXG4iLAogICAgICAiICBGaWxlIFwiW+yCrOyaqeyekCDtj7TrjZRdL3dvcmtpbmcvY2xhdWRlL3Byb2plY3RzL+2VnOq1reqyveygnOyLoOusuC9sYWJzL3BhcnQ3L2NoMzAtZmFzdGFwaS1zZXJ2aW5nLy52ZW52L2xpYi9weXRob24zLjEyL3NpdGUtcGFja2FnZXMvbGFuZ2dyYXBoL19pbnRlcm5hbC9fcnVubmFibGUucHlcIiwgbGluZSA1MjIsIGluIGFpbnZva2VcbiIsCiAgICAgICIgICAgcmV0ID0gYXdhaXQgc2VsZi5hZnVuYygqYXJncywgKiprd2FyZ3MpXG4iLAogICAgICAiICAgICAgICAgIF5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXlxuIiwKICAgICAgIiAgRmlsZSBcIlvsgqzsmqnsnpAg7Y+0642UXS93b3JraW5nL2NsYXVkZS9wcm9qZWN0cy/tlZzqta3qsr3soJzsi6DrrLgvbGFicy9wYXJ0Ny9jaDMwLWZhc3RhcGktc2VydmluZy9hZ2VudF9zZXJ2aWNlL2FnZW50LnB5XCIsIGxpbmUgMjUsIGluIGFuc3dlcl9ub2RlXG4iLAogICAgICAiICAgIGFuc3dlciA9IF9jb21wb3NlX2Fuc3dlcihxdWVzdGlvbilcbiIsCiAgICAgICIgICAgICAgICAgICAgXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXlxuIiwKICAgICAgIiAgRmlsZSBcIlvsgqzsmqnsnpAg7Y+0642UXS93b3JraW5nL2NsYXVkZS9wcm9qZWN0cy/tlZzqta3qsr3soJzsi6DrrLgvbGFicy9wYXJ0Ny9jaDMwLWZhc3RhcGktc2VydmluZy9hZ2VudF9zZXJ2aWNlL2FnZW50LnB5XCIsIGxpbmUgMTksIGluIF9jb21wb3NlX2Fuc3dlclxuIiwKICAgICAgIiAgICByYWlzZSBSdW50aW1lRXJyb3IoXCLqtZDsnKHsmqkg7Iqk7Yq466a8IOyYpOulmFwiKVxuIiwKICAgICAgIlJ1bnRpbWVFcnJvcjog6rWQ7Jyh7JqpIOyKpO2KuOumvCDsmKTrpZhcbiIsCiAgICAgICJEdXJpbmcgdGFzayB3aXRoIG5hbWUgJ2Fuc3dlcicgYW5kIGlkICcxYWE4NTM2MS02MmUxLWY5M2UtMjZmOC04OGJhM2E0YjdmZTknXG4iCiAgICAgXQogICAgfSwKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiMjAwXG4iLAogICAgICAiZXZlbnQ6IGVycm9yXG4iLAogICAgICAiZGF0YToge1wiY29kZVwiOiBcInN0cmVhbV9mYWlsZWRcIiwgXCJtZXNzYWdlXCI6IFwiQWdlbnQgXFx1YzJhNFxcdWQyYjhcXHViOWJjXFx1Yzc3NCBcXHVjOTExXFx1YjJlOFxcdWI0MThcXHVjNWM4XFx1YzJiNVxcdWIyYzhcXHViMmU0XCJ9XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImZhaWxlZCA9IGNsaWVudC5wb3N0KCcvdjEvY2hhdC9zdHJlYW0nLCBoZWFkZXJzPWF1dGgsXG4iLAogICAgIiAgICBqc29uPXsncXVlc3Rpb24nOiAn7Jik66WYJywgJ3RocmVhZF9pZCc6ICdlcnJvci0xJ30pXG4iLAogICAgInByaW50KGZhaWxlZC5zdGF0dXNfY29kZSlcbiIsCiAgICAicHJpbnQoZmFpbGVkLnRleHQuc3RyaXAoKSlcbiIsCiAgICAiYXNzZXJ0IGZhaWxlZC5zdGF0dXNfY29kZSA9PSAyMDAiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEwIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyImOyglVxuIiwKICAgICJcbiIsCiAgICAi7YG065287J207Ja47Yq464qUIEhUVFAg7IOB7YOc66eMIOuztOyngCDslYrqs6AgYGV2ZW50OiBlcnJvcmDsmYAg7Jik66WYIOy9lOuTnOulvCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY29uY2VwdC0zMC0wNi1iIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg64uo6rOE7JeQ7IScIOq1rOu2hO2VoCDrspTsnIRcbiIsCiAgICAiXG4iLAogICAgIkhUVFAg7Zek642U66W8IOydtOuvuCDrs7Trgrgg65KkIOyKpO2KuOumvCDrgrTrtoDsl5DshJwg7Iuk7Yyo7ZWY66m0IOyDge2DnCDsvZTrk5zrpbwgNTAw7Jy866GcIOuwlOq+uOq4sCDslrTroLXsirXri4jri6QuIOq3uOuemOyEnCDsmIjsoJzripQgSFRUUCAyMDAg7Jew6rKwIOyViOyXkCBgZXZlbnQ6IGVycm9yYOyZgCDslYjsoJXsoIHsnbgg7Jik66WYIOy9lOuTnOulvCDrs7Trg4Xri4jri6QuIO2BtOudvOydtOyWuO2KuOuKlCDrhKTtirjsm4ztgawg64uo7KCILCDsmKTrpZgg7IKs6rG0LCDsoJXsg4EgYGRvbmVg7J2EIOyEnOuhnCDri6Trpbgg7KKF66OMIOyDge2DnOuhnCDquLDroZ3tlbTslbwg7ZWY66mwLCDqsJnsnYAgYGlkYOulvCDri6Tsi5wg7LKY66as7ZW064+EIOu2gOyekeyaqeydtCDspJHrs7XrkJjsp4Ag7JWK64+E66GdIOyEpOqzhO2VtOyVvCDtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiY2VsbC0xMSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoyOTo0NC4zNTY5MzFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoyOTo0NC4zNTY4ODhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoyOTo0NC4zNTg0OTlaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjI5OjQ0LjM1ODE5NVoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiVHJ1ZSBUcnVlXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImhhc19lcnJvciA9ICdldmVudDogZXJyb3InIGluIGZhaWxlZC50ZXh0XG4iLAogICAgImhhc19jb2RlID0gJ3N0cmVhbV9mYWlsZWQnIGluIGZhaWxlZC50ZXh0XG4iLAogICAgInByaW50KGhhc19lcnJvciwgaGFzX2NvZGUpXG4iLAogICAgImFzc2VydCBoYXNfZXJyb3IgYW5kIGhhc19jb2RlIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJwYWlyZWQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA1LAogICAiY29kZV9zaGEyNTYiOiAiOWY1ZWViOTRkMTQyYTUyNDBhNGY2ZmYwYjQ5NDdjNDc2YmI4MjgyNmNkOWY2NmNkY2VhMTFmYWRhN2I0MjFhNCIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTExVDAyOjI5OjQ0LjQ3NDYwNiswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiZDNlNzA3ZjdlZDMxNzZhMTFkMTQwYTRhMzhjYmI0ZWZiZWY2ZDcwYmI5YWFjMjgyODE5YmEwN2I2Y2I1ZTVkMCIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>fetch 재연결과 오류 이벤트</h2>
+<p>POST SSE에서 클라이언트가 마지막 이벤트 ID를 보관해 다시 보내고, 스트림 도중 오류를 이벤트로 받는 과정을 확인합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>현재 폴더나 상위 폴더에서 <code>labs/part7/ch30-fastapi-serving</code>을 찾아 작업 폴더로 사용합니다. 비밀 키를 출력하지 않습니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>이 준비 셀은 <code>Path.cwd().resolve()</code>로 현재 폴더를 절대 경로로 읽고, 현재 폴더와 부모 폴더에서 <code>agent_service</code>가 있는 첫 위치를 <code>next(..., None)</code>로 찾습니다. 찾지 못하면 <code>assert</code>가 실행을 중단합니다. 찾은 뒤 <code>os.chdir(lab)</code>이 이후 import와 파일 접근의 기준 폴더를 바꾸고, 마지막 출력은 실제 선택된 폴더 이름을 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import os
+from pathlib import Path
+start = Path.cwd().resolve()
+lab = next((p for p in (start, *start.parents)
+    if (p / &#x27;agent_service&#x27;).is_dir()), None)
+assert lab is not None, &#x27;agent_service가 있는 Ch30 실습 폴더에서 실행하세요.&#x27;
+os.chdir(lab)
+print(&#x27;실습 폴더:&#x27;, Path.cwd().name)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">실습 폴더: ch30-fastapi-serving
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p>첫 요청의 <code>id</code>를 읽어 다음 요청의 <code>Last-Event-ID</code> 헤더로 보냅니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>클라이언트는 마지막으로 처리한 SSE 식별자를 <code>Last-Event-ID</code> 헤더에 넣어 이어받을 위치를 알립니다. 예제의 첫 응답에서 <code>resume-1:0</code>을 읽고 다시 요청하면 서버는 다음 식별자인 <code>resume-1:1</code>부터 보냅니다. 이 결과는 서버가 이번 교육용 실행의 조각을 다시 계산해 건너뛴 동작을 보여 주며, 모든 운영 서버가 과거 조각을 영구 보관한다는 뜻은 아닙니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import re
+from fastapi.testclient import TestClient
+from agent_service.app import app
+client = TestClient(app)
+auth = {&#x27;Authorization&#x27;: &#x27;Bearer local-demo-token&#x27;}
+body = {&#x27;question&#x27;: &#x27;재연결 확인 질문&#x27;, &#x27;thread_id&#x27;: &#x27;resume-1&#x27;}
+first = client.post(&#x27;/v1/chat/stream&#x27;, headers=auth, json=body)
+ids = re.findall(r&#x27;id: ([^\n]+)&#x27;, first.text)
+print(ids[:2])
+assert ids[0] == &#x27;resume-1:0&#x27;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[&#x27;resume-1:0&#x27;, &#x27;resume-1:1&#x27;]
+</pre></div>
+<div class="nb-markdown"><h3>재연결 위치 관찰</h3>
+<p>두 번째 요청은 마지막으로 처리한 ID 다음 토큰부터 전달합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">resume_headers = {**auth, &#x27;Last-Event-ID&#x27;: ids[0]}
+resumed = client.post(&#x27;/v1/chat/stream&#x27;, headers=resume_headers, json=body)
+resumed_ids = re.findall(r&#x27;id: ([^\n]+)&#x27;, resumed.text)
+print(resumed_ids[0])
+assert resumed_ids[0] == &#x27;resume-1:1&#x27;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">resume-1:1
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 재연결 뒤 첫 ID가 `resume-1:1`인지, HTTP 200 뒤 `event: error`가 오는지 실제 출력에서 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before에서는 HTTP 상태만 보고 성공으로 판단합니다. After에서는 `event: error`와 `stream_failed`를 검사합니다. `client/stream.ts`도 CRLF와 LF를 모두 처리하고 EOF 잔여 블록을 확인합니다.</p><section class="notebook" data-notebook="06-fetch-재연결과-오류-이벤트" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>스트림이 이미 200으로 시작한 뒤 Agent가 실패합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">failed = client.post(&#x27;/v1/chat/stream&#x27;, headers=auth,
+    json={&#x27;question&#x27;: &#x27;오류&#x27;, &#x27;thread_id&#x27;: &#x27;error-1&#x27;})
+print(failed.status_code)
+print(failed.text.strip())
+assert failed.status_code == 200</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Agent SSE stream failed
+Traceback (most recent call last):
+  File &quot;[사용자 폴더]/working/claude/projects/한국경제신문/labs/part7/ch30-fastapi-serving/agent_service/app.py&quot;, line 110, in chat_stream
+    async for chunk in runtime.astream(
+  File &quot;[사용자 폴더]/working/claude/projects/한국경제신문/labs/part7/ch30-fastapi-serving/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py&quot;, line 3440, in astream
+    async for _ in runner.atick(
+  File &quot;[사용자 폴더]/working/claude/projects/한국경제신문/labs/part7/ch30-fastapi-serving/.venv/lib/python3.12/site-packages/langgraph/pregel/_runner.py&quot;, line 557, in atick
+    _panic_or_proceed(
+  File &quot;[사용자 폴더]/working/claude/projects/한국경제신문/labs/part7/ch30-fastapi-serving/.venv/lib/python3.12/site-packages/langgraph/pregel/_runner.py&quot;, line 687, in _panic_or_proceed
+    raise exc
+  File &quot;[사용자 폴더]/working/claude/projects/한국경제신문/labs/part7/ch30-fastapi-serving/.venv/lib/python3.12/site-packages/langgraph/pregel/_retry.py&quot;, line 744, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File &quot;[사용자 폴더]/working/claude/projects/한국경제신문/labs/part7/ch30-fastapi-serving/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py&quot;, line 756, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File &quot;[사용자 폴더]/working/claude/projects/한국경제신문/labs/part7/ch30-fastapi-serving/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py&quot;, line 522, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File &quot;[사용자 폴더]/working/claude/projects/한국경제신문/labs/part7/ch30-fastapi-serving/agent_service/agent.py&quot;, line 25, in answer_node
+    answer = _compose_answer(question)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File &quot;[사용자 폴더]/working/claude/projects/한국경제신문/labs/part7/ch30-fastapi-serving/agent_service/agent.py&quot;, line 19, in _compose_answer
+    raise RuntimeError(&quot;교육용 스트림 오류&quot;)
+RuntimeError: 교육용 스트림 오류
+During task with name &#x27;answer&#x27; and id &#x27;1aa85361-62e1-f93e-26f8-88ba3a4b7fe9&#x27;
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">200
+event: error
+data: {&quot;code&quot;: &quot;stream_failed&quot;, &quot;message&quot;: &quot;Agent \uc2a4\ud2b8\ub9bc\uc774 \uc911\ub2e8\ub418\uc5c8\uc2b5\ub2c8\ub2e4&quot;}
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>클라이언트는 HTTP 상태만 보지 않고 <code>event: error</code>와 오류 코드를 확인합니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>HTTP 헤더를 이미 보낸 뒤 스트림 내부에서 실패하면 상태 코드를 500으로 바꾸기 어렵습니다. 그래서 예제는 HTTP 200 연결 안에 <code>event: error</code>와 안정적인 오류 코드를 보냅니다. 클라이언트는 네트워크 단절, 오류 사건, 정상 <code>done</code>을 서로 다른 종료 상태로 기록해야 하며, 같은 <code>id</code>를 다시 처리해도 부작용이 중복되지 않도록 설계해야 합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">has_error = &#x27;event: error&#x27; in failed.text
+has_code = &#x27;stream_failed&#x27; in failed.text
+print(has_error, has_code)
+assert has_error and has_code</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">True True
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>재시도 횟수와 간격에 상한을 둡니다.</li><li>오류 이벤트에 내부 예외 원문을 그대로 담지 않습니다.</li><li>마지막 ID는 사용자와 실행 식별자에 묶어 다른 세션에서 재사용하지 않습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>`fetch` 스트림에서 SSE 블록을 분리할 수 있습니다.</li><li>마지막 ID를 `Last-Event-ID`로 다시 보낼 수 있습니다.</li><li>200 뒤 발생한 실패를 error 이벤트로 판별할 수 있습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 07절에서는 출처, 인증, 시간 상한을 함께 적용합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. 네트워크 청크와 이벤트 경계가 같나요?</summary><p class="quiz-a"><b>해설</b> — 아닙니다. 버퍼에 누적해 빈 줄로 분리합니다.</p></details><details class="quiz"><summary>2. 마지막 ID는 어디에 넣나요?</summary><p class="quiz-a"><b>해설</b> — Last-Event-ID 헤더입니다.</p></details><details class="quiz"><summary>3. 오류인데 200일 수 있는 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 헤더가 이미 전송되었기 때문입니다.</p></details><details class="quiz"><summary>4. 쓰기 도구 재시도에 필요한 성질은 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 멱등성입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://fastapi.tiangolo.com/tutorial/server-sent-events/#sse-with-post">FastAPI SSE POST</a> · 확인 2026-09-11</li><li><a href="https://developer.mozilla.org/docs/Web/API/Fetch_API">MDN Fetch</a> · 확인 2026-09-11</li><li><a href="https://html.spec.whatwg.org/multipage/server-sent-events.html">HTML SSE</a> · 확인 2026-09-11</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="05-POST-SSE-이벤트-설계.html">← POST SSE 이벤트 설계</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="07-인증-CORS-타임아웃.html">인증 CORS 타임아웃 →</a></span></div></div></body></html>

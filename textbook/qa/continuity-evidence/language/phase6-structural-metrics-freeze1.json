@@ -1,0 +1,33 @@
+{
+  "status": "interim_freeze_1",
+  "scope": "Ch1-5, Ch9-12, shared start/index/continuity guide",
+  "source": "textbook/qa/continuity-evidence/changed-prose.json",
+  "source_sha256": "f1221ab957a2200ac06a5c26fd57d9ac2a1890fc9706ac2df04700d88714c579",
+  "protected": "code blocks, inline code, commands, paths, numeric outputs",
+  "before": {
+    "files": 30,
+    "sentences": 1697,
+    "mean_sentence_chars": 48.96,
+    "median_sentence_chars": 44,
+    "sentence_length_cv": 0.6318,
+    "short_sentence_ratio_le_20": 0.0813,
+    "long_sentence_count_ge_100": 69,
+    "rhetorical_not_x_but_y_count": 11,
+    "question_heading_without_question_mark": 0,
+    "question_headings": []
+  },
+  "current": {
+    "files": 30,
+    "sentences": 1762,
+    "mean_sentence_chars": 49.34,
+    "median_sentence_chars": 45.0,
+    "sentence_length_cv": 0.6214,
+    "short_sentence_ratio_le_20": 0.08,
+    "long_sentence_count_ge_100": 71,
+    "rhetorical_not_x_but_y_count": 11,
+    "question_heading_without_question_mark": 0,
+    "question_headings": []
+  },
+  "manual_reading": "No S1+ slop or humanization defect found in this scope; one inaccurate collocation in continuity-guide line 9 was reported to root.",
+  "spell_check": "External commercial bulk spelling service skipped; local full-text proofreading used."
+}

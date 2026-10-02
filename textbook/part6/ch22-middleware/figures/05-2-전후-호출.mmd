@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before — 예산 검사 없음"]
+    direction LR
+    b1["질문 1 → 모델 답"]:::model ~~~ b2["질문 2 → 모델 답"]:::model ~~~ b3["두 호출 합계 104토큰"]:::measure
+  end
+  subgraph AFTER["After — 한도 1토큰"]
+    direction LR
+    a1["질문 1 → 모델 답<br>45토큰 사용"]:::model ~~~ a2["질문 2 → 검사에서 차단<br>45 ≥ 1"]:::fail ~~~ a3["사용량 45토큰"]:::measure
+  end
+  BEFORE ~~~ AFTER

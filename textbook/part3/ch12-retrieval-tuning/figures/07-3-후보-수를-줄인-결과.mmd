@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  quest["질문 Q002 · 정답 부모 E01"]:::tool
+  subgraph wide_case["후보 8개"]
+    direction TB
+    w1["리랭킹 1위<br>E01-P03-C01"]:::measure
+    w2["그 문서 청크의 1차 자리 3"]:::measure
+  end
+  subgraph narrow_case["후보 2개"]
+    direction TB
+    n1["리랭킹 1위<br>E01-P03-C02"]:::measure
+    n2["E01-P03-C01은 후보에 없음"]:::measure
+  end
+  note["리랭커는 받은 후보만<br>점수를 냅니다"]
+  quest --> w1
+  quest --> n1
+  w1 --> w2
+  n1 --> n2
+  w2 --> note
+  n2 --> note

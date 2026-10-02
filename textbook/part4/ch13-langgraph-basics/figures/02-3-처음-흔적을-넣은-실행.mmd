@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph empty["처음 실행 흔적 칸이 빈 목록"]
+    direction TB
+    e1["넣은 값<br>빈 목록"]:::tool
+    e2["나온 실행 흔적<br>normalize 다음<br>make_query"]:::measure
+    e1 ~~~ e2
+  end
+  subgraph seeded["처음 실행 흔적 칸에 input"]
+    direction TB
+    s1["넣은 값<br>input 하나"]:::tool
+    s2["나온 실행 흔적<br>input 다음 normalize<br>다음 make_query"]:::measure
+    s1 ~~~ s2
+  end
+  common["두 실행 모두 같은 그래프와 같은 질문"]
+  empty ~~~ seeded
+  seeded ~~~ common

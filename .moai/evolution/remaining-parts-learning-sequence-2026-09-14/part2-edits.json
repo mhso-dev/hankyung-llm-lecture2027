@@ -1,0 +1,162 @@
+[
+  {
+    "section": "01-계층-지도와-첫-호출",
+    "source": "textbook/part2/ch06-langchain-start/_src/01-계층-지도와-첫-호출.html",
+    "notebook": "labs/part2/ch06-langchain-start/notebooks/01-계층-지도와-첫-호출.ipynb",
+    "first_use_heading": "입력 목록에서 응답 객체까지 한 줄씩 읽기",
+    "markdown_cell": 5,
+    "code_changed": false
+  },
+  {
+    "section": "02-메시지와-제공자-전환",
+    "source": "textbook/part2/ch06-langchain-start/_src/02-메시지와-제공자-전환.html",
+    "notebook": "labs/part2/ch06-langchain-start/notebooks/02-메시지와-제공자-전환.ipynb",
+    "first_use_heading": "역할 이름과 메시지 객체의 관계",
+    "markdown_cell": 9,
+    "code_changed": false
+  },
+  {
+    "section": "03-구조화-출력과-검증",
+    "source": "textbook/part2/ch06-langchain-start/_src/03-구조화-출력과-검증.html",
+    "notebook": "labs/part2/ch06-langchain-start/notebooks/03-구조화-출력과-검증.ipynb",
+    "first_use_heading": "with_structured_output의 준비와 실행 구분",
+    "markdown_cell": 5,
+    "code_changed": false
+  },
+  {
+    "section": "04-스트리밍과-content-blocks",
+    "source": "textbook/part2/ch06-langchain-start/_src/04-스트리밍과-content-blocks.html",
+    "notebook": "labs/part2/ch06-langchain-start/notebooks/04-스트리밍과-content-blocks.ipynb",
+    "first_use_heading": "청크 하나와 최종 응답을 구분해 읽기",
+    "markdown_cell": 5,
+    "code_changed": false
+  },
+  {
+    "section": "05-타임아웃-재시도-폴백",
+    "source": "textbook/part2/ch06-langchain-start/_src/05-타임아웃-재시도-폴백.html",
+    "notebook": "labs/part2/ch06-langchain-start/notebooks/05-타임아웃-재시도-폴백.ipynb",
+    "first_use_heading": "Python 함수를 Runnable로 감싸는 이유",
+    "markdown_cell": 7,
+    "code_changed": false
+  },
+  {
+    "section": "06-토큰-비용-지연-비교",
+    "source": "textbook/part2/ch06-langchain-start/_src/06-토큰-비용-지연-비교.html",
+    "notebook": "labs/part2/ch06-langchain-start/notebooks/06-토큰-비용-지연-비교.ipynb",
+    "first_use_heading": "측정 기록의 값과 상태를 함께 읽기",
+    "markdown_cell": 7,
+    "code_changed": false
+  },
+  {
+    "section": "01-역할별-메시지와-제약",
+    "source": "textbook/part2/ch07-prompt-engineering/_src/01-역할별-메시지와-제약.html",
+    "notebook": "labs/part2/ch07-prompt-engineering/notebooks/01-역할별-메시지와-제약.ipynb",
+    "first_use_heading": "지시의 내용과 지시가 놓인 역할을 따로 비교하기",
+    "markdown_cell": 9,
+    "code_changed": false
+  },
+  {
+    "section": "02-페르소나와-과업-제약",
+    "source": "textbook/part2/ch07-prompt-engineering/_src/02-페르소나와-과업-제약.html",
+    "notebook": "labs/part2/ch07-prompt-engineering/notebooks/02-페르소나와-과업-제약.ipynb",
+    "first_use_heading": "페르소나를 행동으로 바꾸어 읽는 연습",
+    "markdown_cell": 9,
+    "code_changed": false
+  },
+  {
+    "section": "03-Few-shot-예시-선택",
+    "source": "textbook/part2/ch07-prompt-engineering/_src/03-Few-shot-예시-선택.html",
+    "notebook": "labs/part2/ch07-prompt-engineering/notebooks/03-Few-shot-예시-선택.ipynb",
+    "first_use_heading": "예시의 입력과 답에서 각각 무엇을 배우는가",
+    "markdown_cell": 11,
+    "code_changed": false
+  },
+  {
+    "section": "04-ChatPromptTemplate과-MessagesPlaceholder",
+    "source": "textbook/part2/ch07-prompt-engineering/_src/04-ChatPromptTemplate과-MessagesPlaceholder.html",
+    "notebook": "labs/part2/ch07-prompt-engineering/notebooks/04-ChatPromptTemplate과-MessagesPlaceholder.ipynb",
+    "first_use_heading": "템플릿의 invoke와 모델의 invoke는 다른 단계입니다",
+    "markdown_cell": 9,
+    "code_changed": false
+  },
+  {
+    "section": "05-CoT와-ReAct의-경계",
+    "source": "textbook/part2/ch07-prompt-engineering/_src/05-CoT와-ReAct의-경계.html",
+    "notebook": "labs/part2/ch07-prompt-engineering/notebooks/05-CoT와-ReAct의-경계.ipynb",
+    "first_use_heading": "설명 문장과 실제 행동의 차이",
+    "markdown_cell": 11,
+    "code_changed": false
+  },
+  {
+    "section": "06-Self-Consistency와-표본-합의",
+    "source": "textbook/part2/ch07-prompt-engineering/_src/06-Self-Consistency와-표본-합의.html",
+    "notebook": "labs/part2/ch07-prompt-engineering/notebooks/06-Self-Consistency와-표본-합의.ipynb",
+    "first_use_heading": "합의의 분모를 정하고 경계 사례를 계산하기",
+    "markdown_cell": 11,
+    "code_changed": false
+  },
+  {
+    "section": "07-구조화-출력-프롬프트-진단",
+    "source": "textbook/part2/ch07-prompt-engineering/_src/07-구조화-출력-프롬프트-진단.html",
+    "notebook": "labs/part2/ch07-prompt-engineering/notebooks/07-구조화-출력-프롬프트-진단.ipynb",
+    "first_use_heading": "JSON을 읽는 것과 필요한 필드를 검증하는 것",
+    "markdown_cell": 11,
+    "code_changed": false
+  },
+  {
+    "section": "08-프롬프트-버전과-AB-비교",
+    "source": "textbook/part2/ch07-prompt-engineering/_src/08-프롬프트-버전과-AB-비교.html",
+    "notebook": "labs/part2/ch07-prompt-engineering/notebooks/08-프롬프트-버전과-AB-비교.ipynb",
+    "first_use_heading": "파일의 이름과 내용의 지문을 함께 남기기",
+    "markdown_cell": 9,
+    "code_changed": false
+  },
+  {
+    "section": "01-컨텍스트와-토큰-예산",
+    "source": "textbook/part2/ch08-context-engineering/_src/01-컨텍스트와-토큰-예산.html",
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/01-컨텍스트와-토큰-예산.ipynb",
+    "first_use_heading": "입력 예산 계산과 실제 호출 설정",
+    "markdown_cell": 7,
+    "code_changed": false
+  },
+  {
+    "section": "02-Write와-Select",
+    "source": "textbook/part2/ch08-context-engineering/_src/02-Write와-Select.html",
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/02-Write와-Select.ipynb",
+    "first_use_heading": "파일의 기록이 질문의 근거가 되는 과정",
+    "markdown_cell": 13,
+    "code_changed": false
+  },
+  {
+    "section": "03-Compress와-Isolate",
+    "source": "textbook/part2/ch08-context-engineering/_src/03-Compress와-Isolate.html",
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/03-Compress와-Isolate.ipynb",
+    "first_use_heading": "요약할 내용을 고르는 판단과 문자열 조립",
+    "markdown_cell": 7,
+    "code_changed": false
+  },
+  {
+    "section": "04-네-가지-실패-모드",
+    "source": "textbook/part2/ch08-context-engineering/_src/04-네-가지-실패-모드.html",
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/04-네-가지-실패-모드.ipynb",
+    "first_use_heading": "비교 조건 이름과 실제 실패를 구분하기",
+    "markdown_cell": 11,
+    "code_changed": false
+  },
+  {
+    "section": "05-Context-rot-측정",
+    "source": "textbook/part2/ch08-context-engineering/_src/05-Context-rot-측정.html",
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/05-Context-rot-측정.ipynb",
+    "first_use_heading": "반복 관찰을 다른 과제에 적용하기",
+    "markdown_cell": 15,
+    "code_changed": false
+  },
+  {
+    "section": "06-단계적-공개와-설계-비교",
+    "source": "textbook/part2/ch08-context-engineering/_src/06-단계적-공개와-설계-비교.html",
+    "notebook": "labs/part2/ch08-context-engineering/notebooks/06-단계적-공개와-설계-비교.ipynb",
+    "first_use_heading": "문서 목록을 읽는 사람과 답을 만드는 모델",
+    "markdown_cell": 13,
+    "code_changed": false
+  }
+]

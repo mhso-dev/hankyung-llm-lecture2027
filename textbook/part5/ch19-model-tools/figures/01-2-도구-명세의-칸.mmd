@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  obj["도구 객체<br>list_orders_by_status"]
+  conv["convert_to_openai_tool<br>모델 요청에 실을 모양으로"]
+  spec["도구 명세 · 칸 셋<br>name · description<br>parameters"]:::measure
+  props["명세의 인자<br>status · type string"]:::measure
+  req["꼭 채울 인자<br>status"]:::measure
+  nocsv["명세에 csv 글자가 있는가<br>False"]:::measure
+  obj --> conv
+  conv --> spec
+  spec --> props
+  spec --> req
+  spec --> nocsv

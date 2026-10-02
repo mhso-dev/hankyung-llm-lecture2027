@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  gr["같은 그래프 graph<br>같은 체크포인터<br>스레드 customer-a<br>입력 total 0 · amount 3"]:::flow
+  subgraph bf["Before · setup() 없이"]
+    direction TB
+    b1["받은 오류 UndefinedTable<br>표 checkpoints 없음<br>오류 번호 42P01"]:::fail
+    b2["멈춘 뒤에도<br>ch23_lab 안의 표 없음"]:::fail
+    b1 --> b2
+  end
+  subgraph af["After · setup() 뒤"]
+    direction TB
+    a1["표 넷<br>표 만들기 기록 열 줄"]:::measure
+    a2["첫 실행 합계 3<br>둘째 실행 amount 4 · 합계 7"]:::measure
+    a1 --> a2
+  end
+  gr --> bf
+  gr --> af

@@ -1,0 +1,300 @@
+== ch01-development-environment 01 02 03 04 05 06
+pack 01-과정-지도와-학습-규칙
+pack 02-도구-설치와-터미널
+pack 03-Python과-가상환경
+pack 04-첫-스크립트와-디버거
+pack 05-Git과-Docker-준비
+pack 06-개발환경-실습
+exit=0
+== ch02-python 01 02 03 04 05 06 07 08 09 10 11 12 13
+pack 01-변수와-자료형
+pack 02-조건문과-반복문
+pack 03-자료구조
+pack 04-함수
+pack 05-파일과-예외
+pack 06-클래스
+pack 07-모듈과-타입힌트
+pack 08-pytest
+pack 09-데코레이터와-컨텍스트-매니저
+pack 10-Pydantic
+pack 11-패키징과-테스트-격리
+pack 12-async와-await
+pack 13-파이썬-실습
+exit=0
+== ch03-git-github 01 02 03 04 05 06
+pack 01-커밋과-gitignore
+pack 02-GitHub-Flow와-PR-리뷰
+pack 03-병합-충돌-해결
+pack 04-revert-reflog-worktree
+pack 05-시크릿-이력-정리와-예방
+pack 06-Git-실습
+exit=0
+== ch04-data-tools 01 02 03 04 05 06
+pack 01-Pandas로-표-다루기
+pack 02-관계형-테이블과-키
+pack 03-SQL로-조회-함수-만들기
+pack 04-REST와-페이지네이션
+pack 05-문서-파싱과-스크래핑
+pack 06-데이터-도구-실습
+exit=0
+== ch05-llm-principles 01 02 03 04 05 06 07 08 09
+pack 01-토큰화와-한국어-효율
+pack 02-임베딩과-의미-유사도
+pack 03-어텐션-직관
+pack 04-컨텍스트-윈도
+pack 05-컨텍스트-로트
+pack 06-temperature와-샘플링
+pack 07-환각의-구조적-원인
+pack 08-모델-선택-기준
+pack 09-LLM-동작-원리-실습
+exit=0
+== ch06-langchain-start 01 02 03 04 05 06 07
+pack 01-계층-지도와-첫-호출
+pack 02-메시지와-제공자-전환
+pack 03-구조화-출력과-검증
+pack 04-스트리밍과-content-blocks
+pack 05-타임아웃-재시도-폴백
+pack 06-토큰-비용-지연-비교
+pack 07-LangChain-실습
+exit=0
+== ch07-prompt-engineering 01 02 03 04 05 06 07 08 09
+pack 01-역할별-메시지와-제약
+pack 02-페르소나와-과업-제약
+pack 03-Few-shot-예시-선택
+pack 04-ChatPromptTemplate과-MessagesPlaceholder
+pack 05-CoT와-ReAct의-경계
+pack 06-Self-Consistency와-표본-합의
+pack 07-구조화-출력-프롬프트-진단
+pack 08-프롬프트-버전과-AB-비교
+pack 09-프롬프트-엔지니어링-실습
+exit=0
+== ch08-context-engineering 01 02 03 04 05 06 07
+pack 01-컨텍스트와-토큰-예산
+pack 02-Write와-Select
+pack 03-Compress와-Isolate
+pack 04-네-가지-실패-모드
+pack 05-Context-rot-측정
+pack 06-단계적-공개와-설계-비교
+pack 07-컨텍스트-엔지니어링-실습
+exit=0
+== ch09-rag-first-run 01 02 03 04 05 06 07
+pack 01-RAG-지도
+pack 02-로더와-스플리터
+pack 03-임베딩과-벡터스토어
+pack 04-생성과-출처-인용
+pack 05-첫-실패-보기
+pack 06-실험-하네스
+pack 07-RAG-실습
+exit=0
+== ch10-document-processing 01 02 03 04 05 06 07 08 09
+pack 01-문서와-메타데이터
+pack 02-PDF와-표-OCR
+pack 03-DOCX-HTML-CSV
+pack 04-HWP와-HWPX
+pack 05-문자-재귀-토큰-청킹
+pack 06-구조와-시맨틱-청킹
+pack 07-한국어-임베딩과-캐시
+pack 08-인덱싱-비교-실험
+pack 09-문서-처리-실습
+exit=0
+== ch11-evaluation 01 02 03 04 05 06 07
+pack 01-질의셋과-정답-문서-ID
+pack 02-Recall-at-50
+pack 03-Precision-at-5
+pack 04-nDCG-at-5
+pack 05-조건별-평가와-오류-분류
+pack 06-실험-로그와-자동-실행
+pack 07-평가-기초-실습
+exit=0
+== ch12-retrieval-tuning 01 02 03 04 05 06 07 08 09 10 11 12 13
+pack 01-벡터-거리와-정확-검색
+pack 02-pgvector와-HNSW
+pack 03-메타데이터-필터와-iterative-scan
+pack 04-한국어-Kiwi와-BM25
+pack 05-dense와-sparse-비교
+pack 06-RRF-하이브리드-검색
+pack 07-cross-encoder-리랭킹
+pack 08-후보-수와-리랭커-비교
+pack 09-Parent-document-검색
+pack 10-MMR-다양성-선택
+pack 11-질문-재작성과-검색
+pack 12-종합-튜닝과-실험-로그
+pack 13-검색-품질-실습
+exit=0
+== ch13-langgraph-basics 01 02 03 04 05 06 07 08
+pack 01-StateGraph와-노드-엣지
+pack 02-State-갱신
+pack 03-조건부-엣지
+pack 04-add_messages-리듀서
+pack 05-Send-동적-팬아웃
+pack 06-Command-갱신과-이동
+pack 07-RAG-통합과-시각화
+pack 08-LangGraph-실습
+exit=0
+== ch14-rag-patterns 01 02 03 04 05 06 07 08 09 10
+pack 01-대화-히스토리와-질문-재작성
+pack 02-Multi-Query
+pack 03-질의-분해
+pack 04-Step-back
+pack 05-HyDE
+pack 06-CRAG
+pack 07-Self-RAG
+pack 08-RAPTOR-계층-요약
+pack 09-패턴-비교와-선택
+pack 10-RAG-패턴-실습
+exit=0
+== ch15-evaluation-advanced 01 02 03 04 05 06 07 08 09
+pack 01-실패-로그와-평가-대상
+pack 02-4대-RAG-평가자
+pack 03-judge-프롬프트와-편향
+pack 04-제시-라벨과-일치율
+pack 05-로컬-트레이싱과-지연
+pack 06-대화당-비용-백분위수
+pack 07-회귀-스위트
+pack 08-Batch-평가-입력
+pack 09-평가-심화-실습
+exit=0
+== ch16-guardrails 01 02 03 04 05 06 07
+pack 01-입출력-출처-검증
+pack 02-PII-마스킹
+pack 03-히스토리-트리밍과-요약
+pack 04-호출-한도와-비용-상한
+pack 05-재시도-폴백과-감사-로그
+pack 06-문서-프롬프트-인젝션과-통합
+pack 07-가드레일-실습
+exit=0
+== ch17-agent-overview 01 02 03 04 05 06
+pack 01-워크플로우와-에이전트-경계
+pack 02-워크플로우가-충분한-조건
+pack 03-모델-도구-루프와-정지-조건
+pack 04-자율성의-대가
+pack 05-제품-트레이스와-자율성-진단
+pack 06-Agent-개요-실습
+exit=0
+== ch18-workflow-patterns 01 02 03 04 05 06 07
+pack 01-게이트가-있는-프롬프트-체이닝
+pack 02-실패를-처리하는-라우팅
+pack 03-병렬-섹셔닝과-투표
+pack 04-동적-오케스트레이터와-워커
+pack 05-생성자-평가자와-정지-조건
+pack 06-같은-과제로-다섯-패턴-비교
+pack 07-워크플로우-패턴-실습
+exit=0
+== ch19-model-tools 01 02 03 04 05 06 07
+pack 01-tool과-Ch4-함수-재사용
+pack 02-Pydantic-인자와-반환-스키마
+pack 03-좋은-도구-이름과-설명
+pack 04-설명만으로-도구-선택하기
+pack 05-bind_tools와-병렬-호출
+pack 06-오류와-읽기-쓰기-분리
+pack 07-모델과-도구-실습
+exit=0
+== ch20-tool-node 01 02 03 04 05
+pack 01-ToolNode와-tools-condition
+pack 02-도구-오류와-ToolMessage
+pack 03-recursion-limit과-명시적-종료
+pack 04-if-분기와-모델-선택-비교
+pack 05-ToolNode-실습
+exit=0
+== ch21-create-agent 01 02 03 04 05 06 07
+pack 01-create-agent와-ReAct-루프
+pack 02-구조화-출력-두-전략
+pack 03-AgentState와-context-schema
+pack 04-0x에서-1x로-마이그레이션
+pack 05-retriever를-도구로-전환
+pack 06-같은-평가셋으로-RAG-비교
+pack 07-create-agent-실습
+exit=0
+== ch22-middleware 01 02 03 04 05 06 07 08 09
+pack 01-미들웨어와-6개-훅
+pack 02-PII-마스킹-이식
+pack 03-요약-압축과-Compress
+pack 04-호출-한도와-재시도-폴백
+pack 05-커스텀-예산-미들웨어
+pack 06-커스텀-감사-미들웨어
+pack 07-순서와-합성
+pack 08-컨텍스트-분리와-Isolate
+pack 09-Middleware-실습
+exit=0
+== ch23-persistence 01 02 03 04 05 06 07
+pack 01-체크포인터와-스레드
+pack 02-PostgresSaver-준비와-스키마
+pack 03-스레드-재개와-대화-이어가기
+pack 04-내구-실행-모드-비교
+pack 05-pending-writes와-장애-복구
+pack 06-노드-재시작과-멱등성
+pack 07-Persistence-실습
+exit=0
+== ch24-human-in-the-loop 01 02 03 04
+pack 01-interrupt-승인-게이트
+pack 02-Command-resume으로-실행-재개
+pack 03-상태-기록과-다른-분기-재실행
+pack 04-Human-in-the-Loop-실습
+exit=0
+== ch25-streaming 01 02 03 04
+pack 01-일곱-가지-stream-mode
+pack 02-토큰과-중간-진행-스트리밍
+pack 03-TTFT와-total-비교
+pack 04-Streaming-실습
+exit=0
+== ch26-delegation 01 02 03 04 05
+pack 01-Subagent-도구-위임
+pack 02-Handoff-상태-전환
+pack 03-Router-분류와-병렬-실행
+pack 04-호출-수-비용-종료-조건-비교
+pack 05-위임-구조-실습
+exit=0
+== ch27-deepagents 01 02 03 04 05 06 07 08 09
+pack 01-하네스와-일곱-기능
+pack 02-create-deep-agent와-도구
+pack 03-플래닝과-시스템-프롬프트
+pack 04-파일시스템과-중간-결과
+pack 05-컨텍스트-관리와-오프로딩
+pack 06-서브에이전트-위임
+pack 07-출처-검증형-deep-research
+pack 08-통합-실행과-운영-한계
+pack 09-DeepAgents-실습
+exit=0
+== ch28-mcp 01 02 03 04 05 06
+pack 01-MCP-구조와-capability-협상
+pack 02-FastMCP-로컬-서버-제작
+pack 03-stdio와-원격-전송-권한-경계
+pack 04-LangChain-MCP-클라이언트-연동
+pack 05-도구-정의와-첫-호출-토큰
+pack 06-MCP-실습
+exit=0
+== ch29-agent-evaluation 01 02 03 04 05
+pack 01-에이전트-평가-세-전략
+pack 02-궤적-매칭-네-모드
+pack 03-LLM-judge로-궤적-평가
+pack 04-운영-지표와-Ch18-궤적-비교
+pack 05-Agent-평가-실습
+exit=0
+== ch30-fastapi-serving 01 02 03 04 05 06 07 08 09 10
+pack 01-비동기-라우팅과-스키마
+pack 02-의존성으로-Agent-주입
+pack 03-ainvoke-요청-응답
+pack 04-astream과-응답-스트림
+pack 05-POST-SSE-이벤트-설계
+pack 06-fetch-재연결과-오류-이벤트
+pack 07-인증-CORS-타임아웃
+pack 08-OpenAPI와-TS-SDK
+pack 09-실제-Agent-HTTP-통합
+pack 10-FastAPI-서빙-실습
+exit=0
+== ch31-database 01 02 03 04 05 06
+pack 01-SQLAlchemy-비동기-PostgreSQL
+pack 02-트랜잭션과-원자성
+pack 03-Alembic-적용과-롤백
+pack 04-커넥션-풀-고갈과-대응
+pack 05-pgvector-체크포인터-공존과-백업
+pack 06-DB와-상태-영속화-실습
+exit=0
+== ch34-cost-rate-limits 01 02 03 04 05 06
+pack 01-프롬프트-캐시-계측
+pack 02-Batch-API
+pack 03-모델-라우팅
+pack 04-백오프-큐-동시성
+pack 05-예산-가드와-p95
+pack 06-비용과-Rate-Limit-실습
+exit=0

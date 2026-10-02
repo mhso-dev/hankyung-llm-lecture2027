@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="800" height="480" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" role="img" aria-label="질문과 뜻이 가까운 문서를 k개 고르는 검색">
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a9eed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ef4444"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#757575"/></marker>
+</defs>
+<rect width="800" height="480" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="18" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">질문과 뜻이 가까운 문서를 k개 고르는 검색</tspan></text>
+<rect x="40" y="60" width="480" height="380" rx="12" fill="#d3f9d8" fill-opacity="0.35" stroke="#22c55e" stroke-width="1"/>
+<text x="54" y="76.0" font-size="15" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="54" dy="0.0">글의 뜻을 숫자로 나타낸 공간 (그림은 2차원으로 단순화)</tspan></text>
+<circle cx="200" cy="200" r="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="216" y="200.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="216" dy="0.0">D01 휴관일</tspan></text>
+<circle cx="250" cy="250" r="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="266" y="250.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="266" dy="0.0">D02 점심 영업</tspan></text>
+<circle cx="150" cy="300" r="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="166" y="300.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="166" dy="0.0">D03 급여일</tspan></text>
+<circle cx="310" cy="305" r="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="326" y="305.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="326" dy="0.0">추가 문서</tspan></text>
+<circle cx="420" cy="130" r="8" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="434" y="130.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="434" dy="0.0">다른 문서</tspan></text>
+<circle cx="460" cy="380" r="8" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="474" y="380.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="474" dy="0.0">다른 문서</tspan></text>
+<circle cx="90" cy="130" r="8" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="104" y="130.0" font-size="14" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="104" dy="0.0">다른 문서</tspan></text>
+<circle cx="230" cy="230" r="12" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="175" y="222.0" font-size="15" fill="#2563eb" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="175" dy="0.0">질문 ★</tspan></text>
+<circle cx="230" cy="230" r="125" fill="none" stroke="#4a9eed" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="290" y="120.0" font-size="14" fill="#2563eb" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="290" dy="0.0">k=2 범위</tspan></text>
+<rect x="560" y="80" width="210" height="60" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="665.0" y="100.5" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="665.0" dy="0.0">질문도 같은 방식으로</tspan><tspan x="665.0" dy="18.9">숫자 벡터로 바꾸기</tspan></text>
+<polyline points="560,110 345,220" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)" stroke-dasharray="7 5"/>
+<rect x="560" y="170" width="210" height="90" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="665.0" y="196.1" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="665.0" dy="0.0">similarity_search_with_score</tspan><tspan x="665.0" dy="18.9">(query, k=1 또는 2)</tspan><tspan x="665.0" dy="18.9">→ [(Document, 점수)]</tspan></text>
+<rect x="560" y="290" width="210" height="70" rx="10" fill="#ffc9c9" stroke="#ef4444" stroke-width="2"/>
+<text x="665.0" y="315.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="665.0" dy="0.0">k=1: 가장 가까운</tspan><tspan x="665.0" dy="18.9">D01 한 건</tspan></text>
+<rect x="560" y="380" width="210" height="55" rx="10" fill="#fff3bf" stroke="#f59e0b" stroke-width="2"/>
+<text x="665.0" y="398.1" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="665.0" dy="0.0">k=2: D01은 유지되고</tspan><tspan x="665.0" dy="18.9">후보 한 건이 추가된다</tspan></text>
+</svg>

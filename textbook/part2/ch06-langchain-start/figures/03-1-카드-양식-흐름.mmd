@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  S["StudyCard 양식<br>concept · explanation<br>difficulty 1~3"]:::tool
+  G["메시지 목록<br>system · user"]:::tool
+  W["with_structured_output<br>양식 붙이기 · 요청 0번"]:::flow
+  I["invoke<br>요청 1번"]:::flow
+  M["gpt-5.4-mini"]:::model
+  R["StudyCard 객체<br>칸마다 값"]:::measure
+  S --> W --> I
+  G --> I
+  I --> M --> R

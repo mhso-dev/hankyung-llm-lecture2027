@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  docs["교육용 문서 12개<br>01절과 같은 자료"]:::tool
+  vectors["문서 벡터 12개<br>숫자 256개씩"]:::tool
+  table["표 ch12_core_hnsw<br>벡터 칸 vector(256)"]:::tool
+  index["HNSW 색인<br>vector_cosine_ops"]:::tool
+  plan["색인이 있어도 계획기가<br>순차 스캔을 고를 수 있음"]:::measure
+  docs -->|임베딩 요청 1번| vectors
+  vectors -->|INSERT 12줄| table
+  table -->|CREATE INDEX| index
+  index --> plan

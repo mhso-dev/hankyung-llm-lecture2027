@@ -1,0 +1,17 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  lim["01~03절 안전 규칙<br>바깥 호출 한도 10<br>general-purpose 한도 2"]:::tool
+  memo["04절 파일 도구가 적을 곳<br>메모 파일 /reports/notice.md<br>요청 글은 07절 자료"]:::tool
+  appr["08절 사람 승인 approval<br>실행 1 write_file True<br>실행 2 빈 딕셔너리"]:::tool
+  fn["build_memo_agent<br>create_deep_agent에 넘김<br>새 InMemorySaver"]:::flow
+  a1["실행 1 에이전트<br>노드 여덟 · 도구 아홉<br>HumanInTheLoopMiddleware<br>.after_model 있음"]:::measure
+  a2["실행 2 에이전트<br>노드 일곱 · 도구 아홉<br>승인 노드 없음"]:::measure
+  rec["show_run<br>요청 수 sum_usage<br>파일 위치 call_args"]:::flow
+  lim --> fn
+  memo --> fn
+  appr --> fn
+  fn -. 실행 1 .-> a1
+  fn -. 실행 2 .-> a2
+  a1 -- 실행 결과 --> rec
+  a2 -- 실행 결과 --> rec

@@ -1,0 +1,262 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compose와 pgvector 스택 — Ch 32 · Docker와 컨테이너</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 프로덕션 엔지니어링 · Ch 32 · Docker와 컨테이너</p>
+<h1>Compose와 pgvector 스택</h1><div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>Compose 서비스, 네트워크, 볼륨의 역할을 설명할 수 있습니다.</li><li>app과 PostgreSQL 사이의 준비 순서를 healthcheck로 제어할 수 있습니다.</li><li>pgvector 확장과 HNSW 인덱스 생성을 SQL로 확인할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>웹 API 하나만 실행해도 실제 서비스는 데이터베이스, 네트워크, 영속 저장소를 함께 사용합니다. 명령을 각각 기억하면 이름과 포트가 서로 어긋날 수 있습니다. Docker Compose는 여러 컨테이너의 구성을 YAML 파일 하나에 적고 하나의 프로젝트로 관리합니다. Ch31의 데이터베이스 운영 개념을 실제 서비스 구성에 연결하는 단계입니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch31에서는 PostgreSQL, 트랜잭션, 인덱스와 pgvector를 배웁니다. 이 챕터는 Ch31 파일을 복사하지 않고 <code>init.sql</code>에 필요한 최소 스키마를 독립적으로 제공합니다. Ch12에서 사용한 벡터 검색 개념은 <code>vector(3)</code> 열과 HNSW 인덱스로 다시 나타납니다. 3절의 최적화 이미지는 Compose의 app 서비스 빌드 입력이 됩니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>쉬운 예</h3><p>공연 무대에는 배우뿐 아니라 조명, 음향, 출입 순서가 필요합니다. Compose 서비스(service)는 함께 관리할 컨테이너 하나의 설정입니다. 이 실습에는 <code>app</code>과 <code>db</code> 두 서비스가 있습니다. Compose는 프로젝트 전용 기본 네트워크를 만들고 서비스 이름 <code>db</code>를 내부 호스트 이름으로 제공합니다. app은 호스트의 <code>localhost</code>가 아니라 <code>db:5432</code>로 PostgreSQL에 연결합니다. 이름 있는 볼륨(named volume) <code>pgdata</code>는 DB 컨테이너를 다시 만들어도 데이터를 별도로 보관합니다. <code>depends_on.condition: service_healthy</code>는 DB 프로세스가 생성되었다는 사실을 넘어 <code>pg_isready</code> 검사가 성공할 때까지 app 시작을 기다립니다. 초기 SQL은 vector 확장, 3차원 벡터 열, HNSW 인덱스와 한 행의 예제 데이터를 만듭니다.</p><h3>코드 읽기와 개념 경계</h3><p>Compose는 여러 컨테이너의 이미지, 네트워크, 볼륨, 환경 값을 하나의 YAML에 선언합니다. 서비스 이름 <code>db</code>는 Compose 네트워크 안에서 호스트 이름으로 사용되므로 애플리케이션은 로컬호스트가 아니라 <code>db</code>로 PostgreSQL에 연결합니다. <code>depends_on</code>과 healthcheck 조건은 시작 순서를 돕지만 데이터베이스가 모든 업무 요청을 받을 준비가 됐는지는 애플리케이션 재시도와 readiness로 다시 확인합니다.</p><p><code>docker compose down</code>은 컨테이너를 내리지만 기본적으로 이름 있는 볼륨의 데이터는 남깁니다. <code>--volumes</code>를 붙이면 실습 데이터도 제거됩니다. 개발 환경의 편리한 초기화와 운영 데이터 보존은 요구가 반대이므로 같은 종료 명령을 그대로 사용하지 않습니다.</p><h3>도식 읽기</h3><figure><img src="figures/04-compose-pgvector.svg" alt="호스트 요청은 공개한 18332 포트로 app에 들어갑니다. app과 db는 Compose 내부 네트워크에서 서비스 이름으로 통신하고 DB 파일은 pgdata 볼륨에 저장됩니다."><figcaption>호스트 요청은 공개한 18332 포트로 app에 들어갑니다. app과 db는 Compose 내부 네트워크에서 서비스 이름으로 통신하고 DB 파일은 pgdata 볼륨에 저장됩니다.</figcaption></figure>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>먼저 <code>docker compose config --format json</code>으로 실제 컨테이너를 만들기 전에 서비스 이름을 검사합니다. 실패 셀은 스택이 없는 상태에서 <code>/ready</code> 연결이 거부되는지 확인합니다. 수정 셀은 <code>up --build --wait</code>로 두 서비스를 만들고 <code>/ready</code>와 <code>/vector-count</code>를 호출합니다. DB 안에서는 pgvector 0.8.6과 <code>course_vectors_embedding_hnsw</code> 인덱스를 직접 조회합니다. 실습 끝에는 <code>down --volumes</code>로 이 챕터 전용 데이터만 제거합니다.</p><section class="notebook" data-notebook="04-Compose와-pgvector-스택" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="04-Compose와-pgvector-스택.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiAiIyBDb21wb3Nl7JmAIHBndmVjdG9yIOyKpO2DnVxuXG5Eb2NrZXIgRGVza3RvcOydmCDsi6TsirUg7KCE7JqpIOydtOuvuOyngOyZgCDsiqTtg53rp4wg7IKs7Jqp7ZW0IOqysOqzvOulvCDtmZXsnbjtlanri4jri6QuIgogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6ICIjIyDsi6Ttlokg7ZmY6rK9IOykgOu5hFxuXG7snbQg64W47Yq467aBIOyghOyaqSBDb21wb3NlIO2UhOuhnOygne2KuOydmCDquLDsobQg7J6Q7JuQ7J2EIOuovOyggCDsoJXrpqztlanri4jri6QuIgogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogInByZXAtMzItMDQtMCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg7KSA67mEIOyFgOydtCDtlZjripQg7J28XG4iLAogICAgIlxuIiwKICAgICLsnbQg7KSA67mEIOyFgOydgCDtmITsnqwg7Y+0642U7JmAIOu2gOuqqCDtj7TrjZTsl5DshJwgYERvY2tlcmZpbGUuYmFzZWxpbmVg7J20IOyeiOuKlCBDaDMyIOyLpOyKtSDtj7TrjZTrpbwg7LC+7Iq164uI64ukLiBgcnVuKCphcmdzLCBjaGVjaz1UcnVlKWDsnYAg66qo65OgIERvY2tlciDrqoXroLnsnYQg6re4IO2PtOuNlOyXkOyEnCDsi6TtlontlZjqs6Ag7ZGc7KSAIOy2nOugpcK37Jik66WY7JmAIOyiheujjCDsvZTrk5zrpbwgYENvbXBsZXRlZFByb2Nlc3Ng66GcIOuwmO2ZmO2VqeuLiOuLpC4g7Iuk7YyoIOyekOyytOulvCDqtIDssLDtlZjripQg7IWA66eMIGBjaGVjaz1GYWxzZWDrpbwg7KCE64us7ZWY66mwLCDrp4jsp4Drp4nsl5DripQgRG9ja2VyIEVuZ2luZeydtCDsnZHri7XtlZjripTsp4Ag7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MDY6NTUuMzk3NzYyWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MDY6NTUuMzk3NjgyWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MDY6NTUuNTMwNjI5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjowNjo1NS41MzAyODJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiRG9ja2VyIEVuZ2luZSAyOS40LjFcbiIKICAgICBdCiAgICB9LAogICAgewogICAgICJkYXRhIjogewogICAgICAidGV4dC9wbGFpbiI6IFsKICAgICAgICJDb21wbGV0ZWRQcm9jZXNzKGFyZ3M9KCdkb2NrZXInLCAnY29tcG9zZScsICctcCcsICdjaDMyLWNvdXJzZS1zdGFjaycsICdkb3duJywgJy0tdm9sdW1lcycpLCByZXR1cm5jb2RlPTAsIHN0ZG91dD0nJywgc3RkZXJyPSd0aW1lPVwiMjAyNi0wOS0xMVQxMTowNjo1NSswOTowMFwiIGxldmVsPXdhcm5pbmcgbXNnPVwiV2FybmluZzogTm8gcmVzb3VyY2UgZm91bmQgdG8gcmVtb3ZlIGZvciBwcm9qZWN0IFxcXFxcImNoMzItY291cnNlLXN0YWNrXFxcXFwiLlwiXFxuJykiCiAgICAgIF0KICAgICB9LAogICAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAgICJtZXRhZGF0YSI6IHt9LAogICAgICJvdXRwdXRfdHlwZSI6ICJleGVjdXRlX3Jlc3VsdCIKICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIERvY2tlciDrqoXroLnsnYQg7J287KCV7ZWcIO2PtOuNlOyXkOyEnCDsi6TtlontlZjqs6Ag7Iuk7Yyo64+EIOqysOqzvOuhnCDrsJvsirXri4jri6QuXG4iLAogICAgImZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aFxuIiwKICAgICJpbXBvcnQganNvbiwgc3VicHJvY2VzcywgdGltZSwgdXJsbGliLnJlcXVlc3RcbiIsCiAgICAiIyDssZXthLAg7Y+0642U7JmAIG5vdGVib29rcyDtj7TrjZQg7Ja065SU7JeQ7IScIOyLnOyeke2VtOuPhCDsoJzqs7Ug7J6Q66OM66W8IOywvuyKteuLiOuLpC5cbiIsCiAgICAiY2FuZGlkYXRlcyA9IFtwYXJlbnQgLyBcImxhYnMvcGFydDcvY2gzMi1kb2NrZXJcIiBmb3IgcGFyZW50IGluIChQYXRoLmN3ZCgpLCAqUGF0aC5jd2QoKS5wYXJlbnRzKV1cbiIsCiAgICAiY2FuZGlkYXRlcyArPSBbUGF0aC5jd2QoKSwgUGF0aC5jd2QoKS5wYXJlbnRdXG4iLAogICAgIkxBQiA9IG5leHQocGF0aCBmb3IgcGF0aCBpbiBjYW5kaWRhdGVzIGlmIChwYXRoIC8gXCJEb2NrZXJmaWxlLmJhc2VsaW5lXCIpLmlzX2ZpbGUoKSlcbiIsCiAgICAiZGVmIHJ1bigqYXJnczogc3RyLCBjaGVjazogYm9vbCA9IFRydWUpIC0+IHN1YnByb2Nlc3MuQ29tcGxldGVkUHJvY2Vzc1tzdHJdOlxuIiwKICAgICIgICAgcmV0dXJuIHN1YnByb2Nlc3MucnVuKGFyZ3MsIGN3ZD1MQUIsIHRleHQ9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSwgY2hlY2s9Y2hlY2spXG4iLAogICAgInZlcnNpb24gPSBydW4oXCJkb2NrZXJcIiwgXCJ2ZXJzaW9uXCIsIFwiLS1mb3JtYXRcIiwgXCJ7ey5TZXJ2ZXIuVmVyc2lvbn19XCIpXG4iLAogICAgInByaW50KFwiRG9ja2VyIEVuZ2luZVwiLCB2ZXJzaW9uLnN0ZG91dC5zdHJpcCgpKVxuIiwKICAgICJhc3NlcnQgdmVyc2lvbi5zdGRvdXQuc3RyaXAoKVxuIiwKICAgICJydW4oXCJkb2NrZXJcIiwgXCJjb21wb3NlXCIsIFwiLXBcIiwgXCJjaDMyLWNvdXJzZS1zdGFja1wiLCBcImRvd25cIiwgXCItLXZvbHVtZXNcIiwgY2hlY2s9RmFsc2UpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogIiMjIOyEpOyglSDqsoDspp1cblxuQ29tcG9zZSDtjIzsnbzsnYQg7KCV6rec7ZmU7ZW0IGFwcOqzvCBkYiDshJzruYTsiqTqsIAg7J6I64qU7KeAIO2ZleyduO2VqeuLiOuLpC4iCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY29uY2VwdC0zMi0wNC1hIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOuwlOuhnCDri6TsnYwg7L2U65Oc66W8IOydveuKlCDrsKnrspVcbiIsCiAgICAiXG4iLAogICAgIkNvbXBvc2XripQg7Jes65+sIOy7qO2FjOydtOuEiOydmCDsnbTrr7jsp4AsIOuEpO2KuOybjO2BrCwg67O866WoLCDtmZjqsr0g6rCS7J2EIO2VmOuCmOydmCBZQU1M7JeQIOyEoOyWuO2VqeuLiOuLpC4g7ISc67mE7IqkIOydtOumhCBgZGJg64qUIENvbXBvc2Ug64Sk7Yq47JuM7YGsIOyViOyXkOyEnCDtmLjsiqTtirgg7J2066aE7Jy866GcIOyCrOyaqeuQmOuvgOuhnCDslaDtlIzrpqzsvIDsnbTshZjsnYAg66Gc7Lus7Zi47Iqk7Yq46rCAIOyVhOuLiOudvCBgZGJg66GcIFBvc3RncmVTUUzsl5Ag7Jew6rKw7ZWp64uI64ukLiBgZGVwZW5kc19vbmDqs7wgaGVhbHRoY2hlY2sg7KGw6rG07J2AIOyLnOyekSDsiJzshJzrpbwg64+V7KeA66eMIOuNsOydtO2EsOuyoOydtOyKpOqwgCDrqqjrk6Ag7JeF66y0IOyalOyyreydhCDrsJvsnYQg7KSA67mE6rCAIOuQkOuKlOyngOuKlCDslaDtlIzrpqzsvIDsnbTshZgg7J6s7Iuc64+E7JmAIHJlYWRpbmVzc+uhnCDri6Tsi5wg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MDY6NTUuNTMxNjk0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MDY6NTUuNTMxNjEzWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MDY6NTUuNTc5MzEwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjowNjo1NS41Nzg4MzdaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAic2VydmljZXMgWydhcHAnLCAnZGInXVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOy7qO2FjOydtOuEiCDsg53shLEg7KCE7JeQIOq1rOusuOqzvCDshJzruYTsiqQg7J2066aE7J2EIOqygOyCrO2VqeuLiOuLpC5cbiIsCiAgICAiY29uZmlnID0gcnVuKFwiZG9ja2VyXCIsIFwiY29tcG9zZVwiLCBcIi1wXCIsIFwiY2gzMi1jb3Vyc2Utc3RhY2tcIiwgXCJjb25maWdcIiwgXCItLWZvcm1hdFwiLCBcImpzb25cIilcbiIsCiAgICAiZG9jdW1lbnQgPSBqc29uLmxvYWRzKGNvbmZpZy5zdGRvdXQpXG4iLAogICAgInByaW50KFwic2VydmljZXNcIiwgc29ydGVkKGRvY3VtZW50W1wic2VydmljZXNcIl0pKVxuIiwKICAgICJhc3NlcnQgc2V0KGRvY3VtZW50W1wic2VydmljZXNcIl0pID09IHtcImFwcFwiLCBcImRiXCJ9IgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiAiIyMg7Iuk7YyoIOyerO2YhFxuXG7siqTtg53snbQg7JeG7J2EIOuVjCDtmLjsiqTtirjsnZggQVBJIOyjvOyGjOuKlCDsl7DqsrDsnYQg6rGw67aA7ZWp64uI64ukLiIKICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJjZWxsLTA3IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjA2OjU1LjU4MDMxOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjA2OjU1LjU4MDIzN1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjA2OjU1LjU5MDAzNloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MDY6NTUuNTg5NjI4WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiYmVmb3JlIFVSTEVycm9yXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7ISc67mE7IqkIOyLnOyekSDsoIQg7Jew6rKwIOyLpO2MqOulvCDsi6TsoJzroZwg7ZmV7J247ZWp64uI64ukLlxuIiwKICAgICJ0cnk6XG4iLAogICAgIiAgICB1cmxsaWIucmVxdWVzdC51cmxvcGVuKFwiaHR0cDovLzEyNy4wLjAuMToxODMzMi9yZWFkeVwiLCB0aW1lb3V0PTEpXG4iLAogICAgIiAgICBiZWZvcmUgPSBcInVuZXhwZWN0ZWQgc3VjY2Vzc1wiXG4iLAogICAgImV4Y2VwdCBPU0Vycm9yIGFzIGV4YzpcbiIsCiAgICAiICAgIGJlZm9yZSA9IHR5cGUoZXhjKS5fX25hbWVfX1xuIiwKICAgICJwcmludChcImJlZm9yZVwiLCBiZWZvcmUpXG4iLAogICAgImFzc2VydCBiZWZvcmUgIT0gXCJ1bmV4cGVjdGVkIHN1Y2Nlc3NcIiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDgiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiAiIyMg7IiY7KCVXG5cbkRCIGhlYWx0aGNoZWNr6rCAIO2GteqzvO2VnCDrkqQgYXBw7J2EIOyLnOyeke2VmOuPhOuhnSBDb21wb3NlIOyKpO2DneydhCDsi6Ttlontlanri4jri6QuIgogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImNlbGwtMDkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MDY6NTUuNTkwODkxWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MDY6NTUuNTkwODI1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MDc6MDYuMDc4ODQ5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjowNzowNi4wNzgzMTVaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIntcInN0YXR1c1wiOlwicmVhZHlcIn0ge1wiY291bnRcIjoxfVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIC0td2FpdOuKlCDrkZAg7ISc67mE7Iqk6rCAIGhlYWx0aHnqsIAg65CgIOuVjOq5jOyngCDquLDri6Trpr3ri4jri6QuXG4iLAogICAgInJ1bihcImRvY2tlclwiLCBcImNvbXBvc2VcIiwgXCItcFwiLCBcImNoMzItY291cnNlLXN0YWNrXCIsIFwidXBcIiwgXCItLWJ1aWxkXCIsIFwiLS13YWl0XCIpXG4iLAogICAgInJlYWR5ID0gdXJsbGliLnJlcXVlc3QudXJsb3BlbihcImh0dHA6Ly8xMjcuMC4wLjE6MTgzMzIvcmVhZHlcIikucmVhZCgpLmRlY29kZSgpXG4iLAogICAgImNvdW50ID0gdXJsbGliLnJlcXVlc3QudXJsb3BlbihcImh0dHA6Ly8xMjcuMC4wLjE6MTgzMzIvdmVjdG9yLWNvdW50XCIpLnJlYWQoKS5kZWNvZGUoKVxuIiwKICAgICJwcmludChyZWFkeSwgY291bnQpXG4iLAogICAgImFzc2VydCAnXCJyZWFkeVwiJyBpbiByZWFkeSBhbmQgJ1wiY291bnRcIjoxJyBpbiBjb3VudCIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiAiIyMgcGd2ZWN0b3LsmYAg7J24642x7IqkIO2ZleyduFxuXG7rjbDsnbTthLDrsqDsnbTsiqQg7JWI7JeQ7IScIO2ZleyepSDrsoTsoITqs7wgSE5TVyDsnbjrjbHsiqTrpbwg7KeB7KCRIOyhsO2ajO2VqeuLiOuLpC4iCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY29uY2VwdC0zMi0wNC1iIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg64uo6rOE7JeQ7IScIOq1rOu2hO2VoCDrspTsnIRcbiIsCiAgICAiXG4iLAogICAgImBkb2NrZXIgY29tcG9zZSBkb3duYOydgCDsu6jthYzsnbTrhIjrpbwg64K066as7KeA66eMIOq4sOuzuOyggeycvOuhnCDsnbTrpoQg7J6I64qUIOuzvOulqOydmCDrjbDsnbTthLDripQg64Ko6rmB64uI64ukLiBgLS12b2x1bWVzYOulvCDrtpnsnbTrqbQg7Iuk7Iq1IOuNsOydtO2EsOuPhCDsoJzqsbDrkKnri4jri6QuIOqwnOuwnCDtmZjqsr3snZgg7Y6466as7ZWcIOy0iOq4sO2ZlOyZgCDsmrTsmIEg642w7J207YSwIOuztOyhtOydgCDsmpTqtazqsIAg67CY64yA7J2066+A66GcIOqwmeydgCDsooXro4wg66qF66C57J2EIOq3uOuMgOuhnCDsgqzsmqntlZjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MDc6MDYuMDc5ODcxWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MDc6MDYuMDc5Nzg2WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MDc6MDYuOTE3OTM4WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjowNzowNi45MTc1NzZaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIjAuOC42XG4iLAogICAgICAiY291cnNlX3ZlY3RvcnNfZW1iZWRkaW5nX2huc3dcbiIKICAgICBdCiAgICB9LAogICAgewogICAgICJkYXRhIjogewogICAgICAidGV4dC9wbGFpbiI6IFsKICAgICAgICJDb21wbGV0ZWRQcm9jZXNzKGFyZ3M9KCdkb2NrZXInLCAnY29tcG9zZScsICctcCcsICdjaDMyLWNvdXJzZS1zdGFjaycsICdkb3duJywgJy0tdm9sdW1lcycpLCByZXR1cm5jb2RlPTAsIHN0ZG91dD0nJywgc3RkZXJyPScgQ29udGFpbmVyIGNoMzItY291cnNlLXN0YWNrLWFwcC0xIFN0b3BwaW5nIFxcbiBDb250YWluZXIgY2gzMi1jb3Vyc2Utc3RhY2stYXBwLTEgU3RvcHBlZCBcXG4gQ29udGFpbmVyIGNoMzItY291cnNlLXN0YWNrLWFwcC0xIFJlbW92aW5nIFxcbiBDb250YWluZXIgY2gzMi1jb3Vyc2Utc3RhY2stYXBwLTEgUmVtb3ZlZCBcXG4gQ29udGFpbmVyIGNoMzItY291cnNlLXN0YWNrLWRiLTEgU3RvcHBpbmcgXFxuIENvbnRhaW5lciBjaDMyLWNvdXJzZS1zdGFjay1kYi0xIFN0b3BwZWQgXFxuIENvbnRhaW5lciBjaDMyLWNvdXJzZS1zdGFjay1kYi0xIFJlbW92aW5nIFxcbiBDb250YWluZXIgY2gzMi1jb3Vyc2Utc3RhY2stZGItMSBSZW1vdmVkIFxcbiBWb2x1bWUgY2gzMi1jb3Vyc2Utc3RhY2tfcGdkYXRhIFJlbW92aW5nIFxcbiBOZXR3b3JrIGNoMzItY291cnNlLXN0YWNrX2RlZmF1bHQgUmVtb3ZpbmcgXFxuIFZvbHVtZSBjaDMyLWNvdXJzZS1zdGFja19wZ2RhdGEgUmVtb3ZlZCBcXG4gTmV0d29yayBjaDMyLWNvdXJzZS1zdGFja19kZWZhdWx0IFJlbW92ZWQgXFxuJykiCiAgICAgIF0KICAgICB9LAogICAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAgICJtZXRhZGF0YSI6IHt9LAogICAgICJvdXRwdXRfdHlwZSI6ICJleGVjdXRlX3Jlc3VsdCIKICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIHBzcWwg7Lac66Cl7Jy866GcIO2ZleyepeqzvCDrsqHthLAg7J24642x7IqkIOyDneyEseydhCDqsoDspp3tlanri4jri6QuXG4iLAogICAgInNxbCA9IFwiU0VMRUNUIGV4dHZlcnNpb24gRlJPTSBwZ19leHRlbnNpb24gV0hFUkUgZXh0bmFtZT0ndmVjdG9yJzsgU0VMRUNUIGluZGV4bmFtZSBGUk9NIHBnX2luZGV4ZXMgV0hFUkUgaW5kZXhuYW1lIExJS0UgJyVobnN3JztcIlxuIiwKICAgICJkYiA9IHJ1bihcImRvY2tlclwiLCBcImNvbXBvc2VcIiwgXCItcFwiLCBcImNoMzItY291cnNlLXN0YWNrXCIsIFwiZXhlY1wiLCBcIi1UXCIsIFwiZGJcIiwgXCJwc3FsXCIsIFwiLVVcIiwgXCJjb3Vyc2VcIiwgXCItZFwiLCBcImNvdXJzZVwiLCBcIi1BdGNcIiwgc3FsKVxuIiwKICAgICJwcmludChkYi5zdGRvdXQuc3RyaXAoKSlcbiIsCiAgICAiYXNzZXJ0IFwiMC44LjZcIiBpbiBkYi5zdGRvdXQgYW5kIFwiaG5zd1wiIGluIGRiLnN0ZG91dFxuIiwKICAgICJydW4oXCJkb2NrZXJcIiwgXCJjb21wb3NlXCIsIFwiLXBcIiwgXCJjaDMyLWNvdXJzZS1zdGFja1wiLCBcImRvd25cIiwgXCItLXZvbHVtZXNcIikiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogInBhaXJlZCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDUsCiAgICJjb2RlX3NoYTI1NiI6ICI0ZGVjY2RkNWU3OTFlYzdmYzc5NGZjNjUwMmI0ZjZkMzc4NGFiNTQ0NWRmYjZkNmVlZWUxYzFhY2M2ZTUwYTJkIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDI6MDc6MDcuMDMyMTY1KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICI4YTg3NTVhMTY5OGE1Y2FjNDVhNWFmZDc1YmNiZWYxMGQzNGE0ZTk2MzIwMjRhMThlZDljNGNlYzNmYTY5ODA0IiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>Compose와 pgvector 스택</h2>
+<p>Docker Desktop의 실습 전용 이미지와 스택만 사용해 결과를 확인합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>이 노트북 전용 Compose 프로젝트의 기존 자원을 먼저 정리합니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>이 준비 셀은 현재 폴더와 부모 폴더에서 <code>Dockerfile.baseline</code>이 있는 Ch32 실습 폴더를 찾습니다. <code>run(*args, check=True)</code>은 모든 Docker 명령을 그 폴더에서 실행하고 표준 출력·오류와 종료 코드를 <code>CompletedProcess</code>로 반환합니다. 실패 자체를 관찰하는 셀만 <code>check=False</code>를 전달하며, 마지막에는 Docker Engine이 응답하는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># Docker 명령을 일정한 폴더에서 실행하고 실패도 결과로 받습니다.
+from pathlib import Path
+import json, subprocess, time, urllib.request
+# 챕터 폴더와 notebooks 폴더 어디에서 시작해도 제공 자료를 찾습니다.
+candidates = [parent / &quot;labs/part7/ch32-docker&quot; for parent in (Path.cwd(), *Path.cwd().parents)]
+candidates += [Path.cwd(), Path.cwd().parent]
+LAB = next(path for path in candidates if (path / &quot;Dockerfile.baseline&quot;).is_file())
+def run(*args: str, check: bool = True) -&gt; subprocess.CompletedProcess[str]:
+    return subprocess.run(args, cwd=LAB, text=True, capture_output=True, check=check)
+version = run(&quot;docker&quot;, &quot;version&quot;, &quot;--format&quot;, &quot;{{.Server.Version}}&quot;)
+print(&quot;Docker Engine&quot;, version.stdout.strip())
+assert version.stdout.strip()
+run(&quot;docker&quot;, &quot;compose&quot;, &quot;-p&quot;, &quot;ch32-course-stack&quot;, &quot;down&quot;, &quot;--volumes&quot;, check=False)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Docker Engine 29.4.1
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">CompletedProcess(args=(&#x27;docker&#x27;, &#x27;compose&#x27;, &#x27;-p&#x27;, &#x27;ch32-course-stack&#x27;, &#x27;down&#x27;, &#x27;--volumes&#x27;), returncode=0, stdout=&#x27;&#x27;, stderr=&#x27;time=&quot;2026-09-11T11:06:55+09:00&quot; level=warning msg=&quot;Warning: No resource found to remove for project \\&quot;ch32-course-stack\\&quot;.&quot;\n&#x27;)</pre></div>
+<div class="nb-markdown"><h3>설정 검증</h3>
+<p>Compose 파일을 정규화해 app과 db 서비스가 있는지 확인합니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>Compose는 여러 컨테이너의 이미지, 네트워크, 볼륨, 환경 값을 하나의 YAML에 선언합니다. 서비스 이름 <code>db</code>는 Compose 네트워크 안에서 호스트 이름으로 사용되므로 애플리케이션은 로컬호스트가 아니라 <code>db</code>로 PostgreSQL에 연결합니다. <code>depends_on</code>과 healthcheck 조건은 시작 순서를 돕지만 데이터베이스가 모든 업무 요청을 받을 준비가 됐는지는 애플리케이션 재시도와 readiness로 다시 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 컨테이너 생성 전에 구문과 서비스 이름을 검사합니다.
+config = run(&quot;docker&quot;, &quot;compose&quot;, &quot;-p&quot;, &quot;ch32-course-stack&quot;, &quot;config&quot;, &quot;--format&quot;, &quot;json&quot;)
+document = json.loads(config.stdout)
+print(&quot;services&quot;, sorted(document[&quot;services&quot;]))
+assert set(document[&quot;services&quot;]) == {&quot;app&quot;, &quot;db&quot;}</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">services [&#x27;app&#x27;, &#x27;db&#x27;]
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 명령의 종료 코드와 실제 출력이 본문의 설명과 같은지 확인합니다. 실습 전용 이름을 사용했으므로 다른 Docker 자원을 변경하지 않습니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>실제 실행에서 db가 먼저 healthy가 되었고 app도 이어서 healthy가 되었습니다. <code>/ready</code>는 <code>status=ready</code>, <code>/vector-count</code>는 1을 반환했습니다. SQL 조회에서는 pgvector 0.8.6과 기본 키, HNSW 인덱스가 확인됐습니다. 이 구성은 시작 순서를 안정화하지만 실행 중 DB 연결이 끊겼을 때 app이 자동으로 모든 요청을 복구한다는 뜻은 아닙니다. 연결 재시도, 트랜잭션 경계, 마이그레이션 동시 실행은 Ch31의 운영 설계와 함께 결정해야 합니다.</p><section class="notebook" data-notebook="04-Compose와-pgvector-스택" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>스택이 없을 때 호스트의 API 주소는 연결을 거부합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 서비스 시작 전 연결 실패를 실제로 확인합니다.
+try:
+    urllib.request.urlopen(&quot;http://127.0.0.1:18332/ready&quot;, timeout=1)
+    before = &quot;unexpected success&quot;
+except OSError as exc:
+    before = type(exc).__name__
+print(&quot;before&quot;, before)
+assert before != &quot;unexpected success&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">before URLError
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>DB healthcheck가 통과한 뒤 app을 시작하도록 Compose 스택을 실행합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># --wait는 두 서비스가 healthy가 될 때까지 기다립니다.
+run(&quot;docker&quot;, &quot;compose&quot;, &quot;-p&quot;, &quot;ch32-course-stack&quot;, &quot;up&quot;, &quot;--build&quot;, &quot;--wait&quot;)
+ready = urllib.request.urlopen(&quot;http://127.0.0.1:18332/ready&quot;).read().decode()
+count = urllib.request.urlopen(&quot;http://127.0.0.1:18332/vector-count&quot;).read().decode()
+print(ready, count)
+assert &#x27;&quot;ready&quot;&#x27; in ready and &#x27;&quot;count&quot;:1&#x27; in count</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&quot;status&quot;:&quot;ready&quot;} {&quot;count&quot;:1}
+</pre></div>
+<div class="nb-markdown"><h3>pgvector와 인덱스 확인</h3>
+<p>데이터베이스 안에서 확장 버전과 HNSW 인덱스를 직접 조회합니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p><code>docker compose down</code>은 컨테이너를 내리지만 기본적으로 이름 있는 볼륨의 데이터는 남깁니다. <code>--volumes</code>를 붙이면 실습 데이터도 제거됩니다. 개발 환경의 편리한 초기화와 운영 데이터 보존은 요구가 반대이므로 같은 종료 명령을 그대로 사용하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># psql 출력으로 확장과 벡터 인덱스 생성을 검증합니다.
+sql = &quot;SELECT extversion FROM pg_extension WHERE extname=&#x27;vector&#x27;; SELECT indexname FROM pg_indexes WHERE indexname LIKE &#x27;%hnsw&#x27;;&quot;
+db = run(&quot;docker&quot;, &quot;compose&quot;, &quot;-p&quot;, &quot;ch32-course-stack&quot;, &quot;exec&quot;, &quot;-T&quot;, &quot;db&quot;, &quot;psql&quot;, &quot;-U&quot;, &quot;course&quot;, &quot;-d&quot;, &quot;course&quot;, &quot;-Atc&quot;, sql)
+print(db.stdout.strip())
+assert &quot;0.8.6&quot; in db.stdout and &quot;hnsw&quot; in db.stdout
+run(&quot;docker&quot;, &quot;compose&quot;, &quot;-p&quot;, &quot;ch32-course-stack&quot;, &quot;down&quot;, &quot;--volumes&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">0.8.6
+course_vectors_embedding_hnsw
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">CompletedProcess(args=(&#x27;docker&#x27;, &#x27;compose&#x27;, &#x27;-p&#x27;, &#x27;ch32-course-stack&#x27;, &#x27;down&#x27;, &#x27;--volumes&#x27;), returncode=0, stdout=&#x27;&#x27;, stderr=&#x27; Container ch32-course-stack-app-1 Stopping \n Container ch32-course-stack-app-1 Stopped \n Container ch32-course-stack-app-1 Removing \n Container ch32-course-stack-app-1 Removed \n Container ch32-course-stack-db-1 Stopping \n Container ch32-course-stack-db-1 Stopped \n Container ch32-course-stack-db-1 Removing \n Container ch32-course-stack-db-1 Removed \n Volume ch32-course-stack_pgdata Removing \n Network ch32-course-stack_default Removing \n Volume ch32-course-stack_pgdata Removed \n Network ch32-course-stack_default Removed \n&#x27;)</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>호스트 포트는 <code>127.0.0.1:18332</code>로 제한했습니다. DB 포트는 호스트에 공개하지 않아 app을 통해서만 접근합니다.</li><li>초기화 SQL은 새 볼륨을 처음 만들 때 실행됩니다. 이미 데이터가 있는 볼륨의 스키마 변경은 Alembic 같은 마이그레이션 도구로 관리합니다.</li><li><code>down --volumes</code>는 이 실습 데이터까지 삭제합니다. 운영 데이터가 있는 프로젝트에서는 실행 전에 프로젝트명과 볼륨 대상을 반드시 확인합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>Compose는 app, db, 네트워크와 볼륨을 한 프로젝트로 관리합니다.</li><li>service_healthy 조건은 DB 준비 검사가 성공한 뒤 app을 시작하게 합니다.</li><li>실제 스택에서 pgvector 0.8.6, HNSW 인덱스와 한 개의 벡터 행을 확인했습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 5절에서는 같은 스택의 환경변수, 시크릿, 상태 검사와 로그를 운영자가 읽을 수 있는 신호로 정리합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제 1</summary><p class="quiz-q">app의 DB_HOST가 localhost가 아니라 db인 이유는 무엇인가요?</p><p class="quiz-a"><strong>정답과 해설</strong> — Compose 내부 네트워크에서 서비스 이름이 다른 컨테이너의 호스트 이름으로 해석되기 때문입니다.</p></details><details class="quiz"><summary>문제 2</summary><p class="quiz-q">service_started와 service_healthy의 차이는 무엇인가요?</p><p class="quiz-a"><strong>정답과 해설</strong> — started는 컨테이너 시작만 확인하고, healthy는 정의한 상태 검사가 성공할 때까지 기다립니다.</p></details><details class="quiz"><summary>문제 3</summary><p class="quiz-q">pgdata 볼륨은 무엇을 분리하나요?</p><p class="quiz-a"><strong>정답과 해설</strong> — DB 컨테이너의 수명과 PostgreSQL 데이터 파일의 수명을 분리합니다.</p></details><details class="quiz"><summary>문제 4</summary><p class="quiz-q">기존 볼륨에서 init.sql을 변경하면 자동 적용된다고 볼 수 있나요?</p><p class="quiz-a"><strong>정답과 해설</strong> — 그렇지 않습니다. 초기화 스크립트는 새 데이터 디렉터리에서 실행되므로 기존 스키마는 마이그레이션으로 변경합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.docker.com/build/concepts/dockerfile/">Dockerfile overview</a> · 확인 2026-09-11 · Docker Engine 29.4.1</li><li><a href="https://docs.docker.com/build/building/multi-stage/">Multi-stage builds</a> · 확인 2026-09-11</li><li><a href="https://docs.docker.com/build/cache/">Docker build cache</a> · 확인 2026-09-11</li><li><a href="https://docs.astral.sh/uv/guides/integration/docker/">Using uv in Docker</a> · 확인 2026-09-11 · uv 0.12.13</li><li><a href="https://docs.docker.com/compose/how-tos/startup-order/">Compose startup order</a> · 확인 2026-09-11 · Compose 5.1.3</li><li><a href="https://docs.docker.com/compose/how-tos/use-secrets/">Manage secrets in Compose</a> · 확인 2026-09-11</li><li><a href="https://github.com/pgvector/pgvector">pgvector 공식 저장소</a> · 확인 2026-09-11 · pgvector 0.8.6</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="03-빌드-캐시와-이미지-크기.html">← 빌드 캐시와 이미지 크기</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="05-환경변수-시크릿-헬스체크-로그.html">환경변수 시크릿 헬스체크 로그 →</a></span></div></div></body></html>

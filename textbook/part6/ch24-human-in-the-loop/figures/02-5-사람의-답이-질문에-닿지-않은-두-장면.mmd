@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  cm["두 장면 같음<br>노드 ask_once<br>사람의 답 approve"]
+  subgraph P["체크포인터 없이 컴파일"]
+    direction TB
+    p1["첫 실행은 멈춤 표시 하나"]:::measure
+    p2["답을 넘기자 받은 오류<br>RuntimeError"]:::measure
+    p1 --> p2
+  end
+  subgraph O["멈춘 적 없는 스레드 other"]
+    direction TB
+    o1["답을 넘기자 받은 오류<br>KeyError order_key"]:::measure
+    o2["스레드 other 칸 값 없음<br>다음 노드 ask_once"]:::measure
+    o1 --> o2
+  end
+  cm --> P
+  cm --> O

@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph left["비용 상한 0.01 · 노트북 7절"]
+    direction TB
+    l0["질문 셋"]:::tool
+    l1["보낸 요청 둘<br>셋째 질문에서<br>호출 한도로 멈춤"]:::measure
+    l0 --> l1
+  end
+  subgraph right["비용 상한 0.003 · 노트북 9절"]
+    direction TB
+    r0["질문 셋"]:::tool
+    r1["보낸 요청 하나<br>둘째 질문에서<br>비용 상한으로 멈춤"]:::measure
+    r0 --> r1
+  end
+  same["두 칸 모두 호출 한도 둘<br>요청 하나 예상 비용 0.002"]
+  left ~~~ same
+  right ~~~ same

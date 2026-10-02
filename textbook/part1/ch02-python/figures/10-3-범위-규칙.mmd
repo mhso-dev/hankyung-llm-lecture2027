@@ -1,0 +1,7 @@
+flowchart TB
+  %% classes
+  rule["count: int =<br>Field(ge=1, le=10)"]:::flow
+  rule --> in10["count=10<br>규칙의 끝 값"]:::tool
+  rule --> in11["count=11<br>값 바꿔 보기"]:::tool
+  in10 --> ok["인스턴스:<br>name='연필' count=10"]:::tool
+  in11 --> ng["문제 필드: ('count',)<br>오류 종류: less_than_equal<br>받은 값: 11"]:::measure

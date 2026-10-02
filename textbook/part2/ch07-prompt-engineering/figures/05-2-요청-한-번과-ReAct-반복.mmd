@@ -1,0 +1,20 @@
+flowchart LR
+  %% classes
+  subgraph NOW["이 노트북 · 조건마다 요청 1번"]
+    direction TB
+    N1["메시지 목록<br>system · developer · user"]:::tool
+    N2["gpt-5.4-mini"]:::model
+    N3["답 글 · 추론 토큰 0<br>도구 호출 목록 []"]:::measure
+    N1 --> N2
+    N2 --> N3
+  end
+  subgraph REACT["ReAct 반복 · 이번에 실행하지 않음"]
+    direction TB
+    R1["모델이<br>다음 행동 고르기"]
+    R2["프로그램이<br>도구 실행"]
+    R3["관찰 결과를<br>다음 요청에 넣기"]
+    R1 --> R2
+    R2 --> R3
+    R3 -.-> R1
+  end
+  NOW ~~~ REACT

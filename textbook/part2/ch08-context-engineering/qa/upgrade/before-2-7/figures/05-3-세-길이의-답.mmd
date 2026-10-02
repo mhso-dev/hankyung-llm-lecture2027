@@ -1,0 +1,14 @@
+flowchart LR
+  %% classes
+  subgraph IN["보낸 목록 · 휴관 기록은 가운데"]
+    direction TB
+    l10["무관한 기록 10개<br>실제 입력 470"]:::tool
+    l100["무관한 기록 100개<br>실제 입력 3350"]:::tool
+    l1000["무관한 기록 1000개<br>실제 입력 32150"]:::tool
+    l10 ~~~ l100
+    l100 ~~~ l1000
+  end
+  mdl["gpt-5.4-mini<br>출력 상한 120"]:::model
+  out["세 답 글자까지 같음<br>빠진 지킬 말 없음<br>출처 표시 수 1<br>E02 p.5 표시 없음"]:::measure
+  IN --> mdl
+  mdl --> out

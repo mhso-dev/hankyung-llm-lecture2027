@@ -1,0 +1,21 @@
+WARN `--no-project` was provided, but no project was found
+/Users/mhso/working/claude/projects/한국경제신문/labs/part3/ch11-evaluation/.venv/bin/python: No module named ipykernel_launcher
+FAIL 06-실험-로그와-자동-실행.ipynb: RuntimeError; see .failure.json
+Traceback (most recent call last):
+  File "/Users/mhso/working/claude/projects/한국경제신문/textbook/_notebook/execute.py", line 136, in <module>
+    execute(notebook.resolve(), args.cwd.resolve(), args.kernel_python)
+  File "/Users/mhso/working/claude/projects/한국경제신문/textbook/_notebook/execute.py", line 103, in execute
+    raise RuntimeError(f'Notebook execution failed: {path.name}') from None
+RuntimeError: Notebook execution failed: 06-실험-로그와-자동-실행.ipynb
+Exception ignored in atexit callback: <bound method run_sync.<locals>.wrapped of <nbclient.client.NotebookClient object at 0x101ad4bf0>>
+Traceback (most recent call last):
+  File "/Users/mhso/.cache/uv/archive-v0/rFBX_ZYF6KxtEOzw7RORV/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mhso/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/mhso/.cache/uv/archive-v0/rFBX_ZYF6KxtEOzw7RORV/lib/python3.12/site-packages/nbclient/client.py", line 504, in _async_cleanup_kernel
+    assert self.km is not None
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError: 

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 350" width="900" height="350" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title desc">
+<title id="title">파일이 달라도 본문과 출처를 같은 두 칸에 담는다</title>
+<desc id="desc">PDF 원본이 로더를 거쳐 본문과 출처 메타데이터를 가진 Document 객체로 변환되는 흐름</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a9eed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ef4444"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#757575"/></marker>
+</defs>
+<rect width="900" height="350" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="18" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">파일이 달라도 본문과 출처를 같은 두 칸에 담는다</tspan></text>
+<rect x="40" y="120" width="150" height="80" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="115.0" y="149.9" font-size="15" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="115.0" dy="0.0">원본 파일</tspan><tspan x="115.0" dy="20.2">PDF · DOCX · HTML</tspan></text>
+<polyline points="190,160 265,160" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="208.2" y="137.5" width="38.6" height="21.0" fill="#ffffff" fill-opacity="0.94" rx="4"/>
+<text x="227.5" y="148.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="227.5" dy="0.0">읽기</tspan></text>
+<rect x="265" y="120" width="150" height="80" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="340.0" y="149.2" font-size="16" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="340.0" dy="0.0">형식별 로더</tspan><tspan x="340.0" dy="21.6">load()</tspan></text>
+<polyline points="415,160 500,160" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="438.2" y="137.5" width="38.6" height="21.0" fill="#ffffff" fill-opacity="0.94" rx="4"/>
+<text x="457.5" y="148.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="457.5" dy="0.0">변환</tspan></text>
+<rect x="500" y="75" width="360" height="180" rx="12" fill="#d3f9d8" fill-opacity="0.35" stroke="#22c55e" stroke-width="1"/>
+<text x="514" y="93.0" font-size="15" fill="#166534" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="514" dy="0.0">Document의 같은 두 칸</tspan></text>
+<rect x="530" y="125" width="135" height="80" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="597.5" y="155.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="597.5" dy="0.0">page_content</tspan><tspan x="597.5" dy="18.9">본문 문자열</tspan></text>
+<rect x="695" y="125" width="135" height="80" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="762.5" y="155.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="762.5" dy="0.0">metadata</tspan><tspan x="762.5" dy="18.9">출처 · 쪽 · 형식</tspan></text>
+<text x="450" y="300.0" font-size="15" fill="#595959" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450" dy="0.0">이후 코드는 원본 형식 대신 page_content와 metadata를 사용합니다.</tspan></text>
+</svg>

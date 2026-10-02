@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q1["질문 칸<br>대출 기간은 며칠인가요?"]:::tool
+  r1["search_docs가 낸<br>점수 칸 7.64"]:::measure
+  g1["설정 칸에 넣은<br>기준값 5.0"]:::tool
+  r2["route의 판단 이유 칸<br>자료가 넉넉함"]:::measure
+  m1["모델 gpt-5.4-mini"]:::model
+  r3["메시지 칸의<br>메시지 수 둘"]:::measure
+  q1 --> r1
+  r1 --> r2
+  g1 --> r2
+  r2 --> m1
+  m1 --> r3

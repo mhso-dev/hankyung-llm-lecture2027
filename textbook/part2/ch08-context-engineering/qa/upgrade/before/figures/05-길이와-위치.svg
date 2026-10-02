@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 430" width="800" height="430" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif" role="img" aria-label="입력 길이에 따른 정답 확인 결과를 비교합니다">
+<title>입력 길이에 따른 정답 확인 결과를 비교합니다</title>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+</defs>
+<rect width="800" height="430" fill="#ffffff"/>
+<text x="20" y="32.0" font-size="20" fill="#1e293b" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">입력 길이에 따른 정답 확인 결과를 비교합니다</tspan></text>
+<text x="400" y="45.0" font-size="20" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="400" dy="0.0">질문·정답 근거·모델·중앙 배치는 동일</tspan></text>
+<rect x="40" y="85" width="220" height="100" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="150.0" y="122.2" font-size="19" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="150.0" dy="0.0">짧은 입력</tspan><tspan x="150.0" dy="25.7">주변 문장 없음</tspan></text>
+<rect x="290" y="85" width="220" height="100" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="400.0" y="122.2" font-size="19" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="400.0" dy="0.0">중간 입력</tspan><tspan x="400.0" dy="25.7">근거 앞뒤 각 120회</tspan></text>
+<rect x="540" y="85" width="220" height="100" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="650.0" y="122.2" font-size="19" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="650.0" dy="0.0">긴 입력</tspan><tspan x="650.0" dy="25.7">근거 앞뒤 각 1,200회</tspan></text>
+<polyline points="150,185 150,220 300,260" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#m-blue)"/>
+<polyline points="400,185 400,260" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#m-blue)"/>
+<polyline points="650,185 650,220 500,260" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#m-blue)"/>
+<rect x="190" y="260" width="420" height="90" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="400.0" y="292.9" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="400.0" dy="0.0">각 길이를 3회씩 호출</tspan><tspan x="400.0" dy="24.3">입력 토큰·실제 답·정답 확인 결과 기록</tspan></text>
+<text x="400" y="390.0" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="400" dy="0.0">입력이 길어졌을 때 정답 확인 결과도 달라졌는지 비교</tspan></text>
+</svg>

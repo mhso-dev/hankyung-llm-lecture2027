@@ -1,0 +1,125 @@
+
+===== textbook/part4/ch13-langgraph-basics/figures/01-흐름.caption.md =====
+입력한 question의 앞뒤 공백을 normalize에서 제거한 뒤 make_query에서 검색어를 만듭니다. 맨 아래 query와 trace를 읽어 변환 결과와 두 함수의 실행 순서를 확인합니다.
+
+초록은 자료, 파랑은 코드로 정한 처리, 보라는 모델 계산, 노랑은 측정·평가, 빨강은 오류·격리를 나타냅니다.
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/02-흐름.caption.md =====
+노드가 반환한 값 중 query는 새 문자열로 교체하고 log는 리듀서의 규칙에 따라 기록을 누적합니다. 아래 상태를 읽을 때 두 키가 서로 다른 방식으로 갱신되는지 확인합니다.
+
+초록은 자료, 파랑은 코드로 정한 처리, 보라는 모델 계산, 노랑은 측정·평가, 빨강은 오류·격리를 나타냅니다.
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/03-흐름.caption.md =====
+검색 점수를 임계값과 비교한 결과에 따라 답변 경로 또는 보완 경로를 선택합니다. 나란한 두 상자 중 어느 경로를 실행했는지는 맨 아래 실행 기록으로 확인합니다.
+
+초록은 자료, 파랑은 코드로 정한 처리, 보라는 모델 계산, 노랑은 측정·평가, 빨강은 오류·격리를 나타냅니다.
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/04-흐름.caption.md =====
+add_messages는 새로 받은 메시지의 ID를 기존 목록과 대조합니다. 같은 ID이면 내용을 갱신하고, 새 ID이면 메시지를 추가하므로 목록의 개수와 내용이 서로 다르게 바뀔 수 있습니다.
+
+초록은 자료, 파랑은 코드로 정한 처리, 보라는 모델 계산, 노랑은 측정·평가, 빨강은 오류·격리를 나타냅니다.
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/05-흐름.caption.md =====
+Send는 문서마다 inspect_document 작업을 만듭니다. 문서가 3건이면 나란한 세 상자에서 길이를 검사하고 결과를 results에 모읍니다. 입력을 1건으로 바꾸면 검사 작업과 결과도 하나가 됩니다.
+
+초록은 자료, 파랑은 코드로 정한 처리, 보라는 모델 계산, 노랑은 측정·평가, 빨강은 오류·격리를 나타냅니다.
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/06-흐름.caption.md =====
+Command는 상태에 반영할 update와 다음 노드를 가리키는 goto를 함께 반환합니다. 아래 두 상자는 반환값의 두 역할을 구분한 것이며, 맨 아래에서 바뀐 상태와 실제 이동 경로를 확인합니다.
+
+초록은 자료, 파랑은 코드로 정한 처리, 보라는 모델 계산, 노랑은 측정·평가, 빨강은 오류·격리를 나타냅니다.
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/07-흐름.caption.md =====
+제공 문서를 임베딩 검색과 BM25로 검색하고 RRF로 후보를 합친 뒤 CrossEncoder로 재정렬합니다. 선택한 본문과 출처를 모델에 전달해 답변을 생성합니다. 이 그림의 처리 단계와 실제 그래프 노드 이름은 노트북의 Mermaid 출력으로 대조합니다.
+
+초록은 자료, 파랑은 코드로 정한 처리, 보라는 모델 계산, 노랑은 측정·평가, 빨강은 오류·격리를 나타냅니다.
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/01-흐름.svg =====
+question 입력
+normalize
+앞뒤 공백 제거
+make_query
+검색어 작성
+query · trace 확인
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/02-흐름.svg =====
+기존 State
+query · log
+노드 반환값
+바꿀 키만 포함
+query
+새 값으로 교체
+log
+기록 누적
+갱신된 State 비교
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/03-흐름.svg =====
+검색 점수
+임계값과 비교
+조건 함수 실행
+기준 이상
+답변 경로
+기준 미만
+보완 경로
+선택된 경로 확인
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/04-흐름.svg =====
+기존 메시지 목록
+새 메시지의 ID
+add_messages
+같은 ID
+메시지 갱신
+새 ID
+목록에 추가
+ID별 내용·개수 확인
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/05-흐름.svg =====
+documents
+문서 3건 또는 1건
+Send
+문서별 작업 생성
+문서 1
+길이 검사
+문서 2
+길이 검사
+문서 3
+길이 검사
+results 리듀서
+검사 결과 병합
+문서 수·결과 개수 확인
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/06-흐름.svg =====
+현재 상태 읽기
+파이썬 조건 판정
+Command 반환
+update와 goto
+update
+상태에 반영
+goto
+다음 노드
+상태·실행 경로 확인
+
+
+===== textbook/part4/ch13-langgraph-basics/figures/07-흐름.svg =====
+제공 문서·질문
+임베딩 · BM25
+각각 검색
+RRF
+후보 순위 병합
+CrossEncoder
+후보 재정렬
+본문·출처 선택
+선택한 근거로 생성
+답변·출처·경로 기록

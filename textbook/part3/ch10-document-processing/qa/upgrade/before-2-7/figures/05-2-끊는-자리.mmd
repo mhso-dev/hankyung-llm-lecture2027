@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph CHAR["문자 방식 · 줄을 경계로 씀"]
+    direction LR
+    c1["E01 2쪽 글<br>905자"]:::tool
+    c2["줄 끝에서 끊음<br>목표 200자"]:::flow
+    c3["문서 청크 3에<br>지킬 말 두 개가 함께"]:::measure
+    c1 --> c2
+    c2 --> c3
+  end
+  subgraph REC["재귀 방식 · 문장 끝을 먼저 찾음"]
+    direction LR
+    r1["같은 글<br>905자"]:::tool
+    r2["문장 끝에서 끊음<br>목표 200자"]:::flow
+    r3["문서 청크 2와 3으로<br>지킬 말이 갈라짐"]:::measure
+    r1 --> r2
+    r2 --> r3
+  end
+  note1["지킬 말 두 개는 사람이 고른 말입니다"]
+  CHAR ~~~ REC
+  REC ~~~ note1

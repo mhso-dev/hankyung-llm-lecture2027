@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  txt["지시 글과 기획 요청 글"]:::tool
+  sdk["client.responses.create<br>temperature 0 · 추론 none"]
+  llm["gpt-5.4-mini-2026-03-17"]:::model
+  reply["output_text<br>JSON 글 한 줄"]:::measure
+  plan["json.loads로 읽은 딕셔너리<br>칸 셋 제목 독자 절차"]:::measure
+  add["add_record<br>usage에서 토큰 수를 꺼냄"]:::flow
+  row["기록 한 줄<br>단계 기획 · 입력 토큰 108"]:::measure
+  txt --> sdk
+  sdk --> llm
+  llm --> reply
+  reply --> plan
+  llm --> add
+  add --> row

@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  subgraph A["A — 먼저 등록 · 바깥"]
+    direction TB
+    ab["A before_model"]:::flow
+    subgraph B["B — 나중 등록 · 안쪽"]
+      direction TB
+      bb["B before_model"]:::flow
+      M["모델 호출"]:::model
+      ba["B after_model"]:::flow
+    end
+    aa["A after_model"]:::flow
+  end
+  ab --> bb --> M --> ba --> aa

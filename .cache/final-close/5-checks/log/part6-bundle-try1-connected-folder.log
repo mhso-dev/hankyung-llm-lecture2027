@@ -1,0 +1,23 @@
+start 2026-10-01T01:08:55Z root_free=1173M sessions_free= 735M
+[keep_run] 지우지 않는 임시 폴더: /sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/.cache/final-close/5-checks/work/part6/part6-bundle-rthu22li
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/.cache/final-close/5-checks/tools/keep_run.py", line 55, in <module>
+    runpy.run_path(script, run_name='__main__')
+  File "/usr/lib/python3.10/runpy.py", line 289, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib/python3.10/runpy.py", line 96, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "textbook/part6/qa/check_bundle_execution.py", line 57, in <module>
+    main()
+  File "textbook/part6/qa/check_bundle_execution.py", line 36, in main
+    command(['uv', 'sync', '--locked'], lab)
+  File "textbook/part6/qa/check_bundle_execution.py", line 18, in command
+    raise RuntimeError(result.stdout[-2000:] + result.stderr[-2000:])
+RuntimeError: Using CPython 3.12.13
+Creating virtual environment at: .venv
+Resolved 81 packages in 0.96ms
+error: Failed to install: ipykernel-7.3.0-py3-none-any.whl (ipykernel==7.3.0)
+  Caused by: failed to remove directory `/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/.cache/final-close/5-checks/work/part6/part6-bundle-rthu22li/part6-practice/labs/part6/ch24-human-in-the-loop/.venv/lib/python3.12/site-packages/ipykernel-7.3.0.data`: Operation not permitted (os error 1)
+

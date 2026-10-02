@@ -1,0 +1,105 @@
+<!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 10 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul><li>주문 두 줄을 <code>with open()</code> 블록으로 UTF-8 파일에 쓰고 다시 읽어, 줄 목록과 주문 튜플로 바꿀 수 있습니다.</li><li>없는 파일과 숫자가 아닌 수량에서 나는 오류를 <code>try</code>와 <code>except</code>로 받아 메시지를 읽을 수 있습니다.</li><li>모든 오류를 받는 <code>except Exception</code>이 두 문제를 감추는 이유를 출력으로 설명하고, 파일 없음만 받도록 고칠 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>1~4절의 값은 모두 변수에 저장했습니다. 변수의 값은 커널을 다시 시작하면 사라집니다. 그래서 절마다 준비 셀에서 주문 금액을 다시 저장했습니다. 주문을 다음 실행에도 쓰려면 파일에 써 두어야 합니다.</p>
+<p>파일을 읽을 때는 코드 밖의 사정 때문에 오류가 나기도 합니다. 파일이 없을 수도 있고, 사람이 수량 칸에 글자를 적었을 수도 있습니다. 예외 처리는 이런 오류가 났을 때 실행할 줄을 미리 정해 둡니다.</p>
+<p>흔한 실수는 모든 오류를 한꺼번에 받아 빈 결과로 바꾸는 것입니다. 오류 메시지가 사라지므로 무엇이 잘못됐는지 알 수 없습니다. 1~4절처럼 <b>실행이 멈추지 않아도 결과는 틀릴 수 있습니다.</b></p>
+<p><strong>이 절의 질문</strong> — 없는 파일만 빈 목록으로 처리하고 다른 오류는 드러내려면, except 줄에 무엇을 적어야 할까요?</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>Ch 1과 1~4절에서 배운 것 가운데 이 절이 이어 쓰는 것을 표로 모았습니다.</p>
+<table><thead><tr><th>앞 절</th><th>배운 것</th><th>이 절에서 이어 쓰는 곳</th></tr></thead><tbody>
+<tr><td>Ch 1 2절</td><td>현재 작업 폴더, 터미널의 <code>cd</code></td><td>준비 셀이 임시 폴더로 작업 위치를 옮김, 파일 이름만으로 파일 찾기</td></tr>
+<tr><td>Ch 1 4절</td><td>여러 줄 글 <code>"""…"""</code></td><td>주문 두 줄을 적은 글 <code>order_text</code></td></tr>
+<tr><td>1절</td><td><code>int()</code>로 숫자 모양 문자열 바꾸기, 문자열 "2" × 3 = 222인 Before</td><td>함수 <code>parse_order()</code>의 <code>int(count_text)</code></td></tr>
+<tr><td>1절</td><td>숫자 모양이 아닌 문자열을 <code>int()</code>에 넣는 장면을 5절로 미룸</td><td>8번 소제목의 줄 「연필,많이」와 <code>ValueError</code></td></tr>
+<tr><td>2·3절</td><td>원리 더 알아보기에서 본 <code>IndexError</code>·<code>TypeError</code>, 문법은 5절로 미룸</td><td>7번 소제목의 <code>try</code>와 <code>except</code></td></tr>
+<tr><td>3절</td><td>튜플, 풀어 담기, 빈 목록과 <code>for</code>·<code>append()</code>, 연산자 <code>==</code></td><td>(상품 이름, 수량) 튜플, 주문 목록 모으기, Before의 두 결과 비교</td></tr>
+<tr><td>4절</td><td><code>def</code>·<code>return</code>, 정의 셀과 호출 셀 나누기, 기본값이 있는 매개변수 <code>quantity=1</code></td><td>함수 <code>read_items()</code>·<code>parse_order()</code>·<code>load_orders()</code>, 키워드 인자 <code>encoding="utf-8"</code></td></tr>
+</tbody></table>
+<p>이 절의 새 문법은 <code>with open()</code> 블록, 키워드 인자, <code>try</code>와 <code>except</code>입니다. 4절이 「5절에서 배웁니다」라고 미룬 오류 받기를 여기서 배웁니다.</p>
+<p>주문 데이터는 파일 한 줄에 「상품 이름,수량」을 적은 두 줄입니다. 연필 3개와 노트 2개입니다. 한 줄을 쉼표에서 나누는 연습에 맞춰, 4절까지의 주문 딕셔너리 대신 짧은 두 줄을 씁니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유로 시작하기</h3>
+<p>가게 직원이 아침마다 주문서 봉투를 열어 주문을 셉니다. 봉투가 비어 있으면 「오늘 주문 0건」이라고 적으면 됩니다. 그런데 주문서의 수량 칸이 잉크로 번져 읽을 수 없을 때도 0건이라고 적으면, 주문이 있었다는 사실이 사라집니다.</p>
+<p>무엇이든 받아 넣는 큰 통 하나를 쓰면 빈 봉투와 번진 주문서가 섞입니다. 빈 봉투만 받는 작은 받침을 쓰면, 번진 주문서는 받침에 들어가지 않고 눈에 띕니다. except 줄에 적는 오류 이름이 이 받침의 크기에 해당합니다.</p>
+{{img:05-5-봉투-받침|왼쪽에는 큰 회색 통 하나에 빈 봉투와 잉크가 번진 종이가 함께 들어 있고, 오른쪽에는 작은 연두색 받침에 빈 봉투 하나만 있으며 손이 잉크가 번진 종이를 받침 밖 위로 들어 올린 삽화|둘 다 받는 큰 통은 except Exception(Before), 빈 봉투만 받는 작은 받침은 except FileNotFoundError(After)에 해당합니다.}}
+<p><strong>그림 읽기</strong> — 가운데 세로줄 왼쪽의 큰 회색 통에는 빈 봉투와 잉크가 번진 종이가 함께 들어 있습니다. 큰 통은 <code>except Exception</code>, 빈 봉투는 파일 없음, 번진 종이는 수량이 잘못된 줄입니다. 두 문제가 한 통에 섞여 무엇이 들었는지 구분하기 어렵습니다.</p>
+<p>세로줄 오른쪽의 작은 연두색 받침에는 빈 봉투만 들어 있습니다. 작은 받침은 <code>except FileNotFoundError</code>입니다. 번진 종이는 손이 받침 밖으로 들어 올렸습니다. 받지 않은 오류가 함수 밖으로 나와 보이는 모습입니다.</p>
+<h3>이 절에서 쓰는 말</h3>
+<table><thead><tr><th>용어</th><th>뜻</th><th>이 절에서 보이는 모습</th></tr></thead><tbody>
+<tr><td>파일(file)</td><td>글이나 값을 이름을 붙여 컴퓨터에 저장해 둔 것. 커널을 다시 시작해도 남음</td><td><code>orders.txt</code>, <code>bad_orders.txt</code></td></tr>
+<tr><td>모드(mode)</td><td>파일을 여는 목적을 적는 글자. "w"는 쓰기, "r"은 읽기</td><td><code>open("orders.txt", "w", encoding="utf-8")</code></td></tr>
+<tr><td>문자 인코딩(character encoding)</td><td>글자를 파일에 저장할 숫자로 바꾸는 규칙</td><td><code>encoding="utf-8"</code></td></tr>
+<tr><td>키워드 인자(keyword argument)</td><td>매개변수 이름과 값을 등호로 이어 넣는 인자. 순서가 아니라 이름으로 들어감</td><td><code>encoding="utf-8"</code>, <code>prefix="ch02-05-"</code></td></tr>
+<tr><td>with 블록</td><td>파일을 열어 둔 채 들여 쓴 줄을 실행하고, 블록이 끝나면 파일을 닫는 문장</td><td><code>with open(...) as file:</code></td></tr>
+<tr><td>예외(exception)</td><td>실행 중에 문제가 생겼을 때 Python이 만드는 오류 값</td><td><code>FileNotFoundError</code>, <code>ValueError</code></td></tr>
+<tr><td>try 블록과 except 블록</td><td>오류가 날 수 있는 줄과, 이름이 맞는 오류가 났을 때 실행할 줄</td><td><code>except FileNotFoundError as error:</code></td></tr>
+<tr><td>오류 FileNotFoundError</td><td>요청한 파일이 없을 때 나는 오류</td><td><code>[Errno 2] No such file or directory: 'missing.txt'</code></td></tr>
+<tr><td>오류 ValueError</td><td>자료형은 맞지만 값의 모양이 맞지 않을 때 나는 오류</td><td><code>invalid literal for int() with base 10: '많이'</code></td></tr>
+<tr><td>오류 이름 Exception</td><td>거의 모든 오류를 묶어 부르는 이름</td><td>Before 함수의 <code>except Exception:</code></td></tr>
+</tbody></table>
+<h3>파일 쓰기와 읽기</h3>
+<p>내장 함수 <code>open()</code>은 파일 이름과 모드를 받아 파일을 엽니다. 쓰기 모드 "w"는 파일이 없으면 새로 만들고, 있으면 내용을 지우고 새로 씁니다. 읽기 모드 "r"은 파일 내용을 바꾸지 않습니다.</p>
+<p>예약어 <code>with</code>로 시작하는 블록은 파일을 열어 둔 채 들여 쓴 줄을 실행합니다. 블록이 끝나면 파일을 닫습니다. 노트북에서 블록 밖의 줄이 읽은 <code>file.closed</code> 값은 True였습니다.</p>
+<p>인자 <code>encoding="utf-8"</code>은 매개변수 이름과 값을 등호로 이어 넣었습니다. 이런 인자를 키워드 인자라고 합니다. 4절 정의 줄의 <code>quantity=1</code>은 기본값을 정하는 자리이고, 호출 괄호 안의 <code>encoding="utf-8"</code>은 값을 이름으로 넣는 자리입니다. 등호 모양은 같지만 적는 곳이 다릅니다. 함수 <code>open()</code>의 정의에 기본값이 있는 매개변수 encoding이 있어서, 호출할 때 이름으로 값을 넣었습니다.</p>
+<p>Python 문서는 인코딩을 적지 않으면 컴퓨터 환경에 따라 기본 인코딩이 달라진다고 설명합니다. 그래서 쓸 때와 읽을 때 모두 UTF-8을 적었습니다. 인코딩을 빼고 쓰는 경우는 이번에 실행하지 않았습니다.</p>
+{{mermaid:05-1-파일-쓰고-읽기|글 order_text를 쓰기 모드 w로 연 파일에 써서 10글자가 저장되고, 같은 파일을 읽기 모드 r로 열어 10글자를 읽은 뒤 블록이 끝나 파일이 닫히고, splitlines로 줄 목록 두 개를 얻는 흐름도|파일 쓰고 읽기. 쓰기 블록이 10글자를 쓰고, 읽기 블록이 같은 10글자를 읽은 뒤 파일이 닫힙니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 읽습니다. 초록 상자는 글과 파일, 파란 상자는 우리가 적은 with 블록, 노란 상자는 출력입니다. 쓰기 블록이 글 10글자를 파일 orders.txt에 쓰고, 읽기 블록이 같은 10글자를 읽습니다.</p>
+<p>읽기 블록이 끝난 뒤의 노란 상자는 출력 「파일이 닫혔는가: True」입니다. 맨 아래 노란 상자는 함수 <code>read_items()</code>가 같은 글을 줄마다 나눈 목록 ['연필,3', '노트,2']입니다.</p>
+<h3>예외와 try, except</h3>
+<p>예외는 실행 중에 문제가 생겼을 때 Python이 만드는 오류 값입니다. 오류가 나면 셀은 오류 메시지를 보이고 그 줄에서 멈춥니다. 2절의 <code>IndexError</code>와 3절의 <code>TypeError</code>도 이런 예외였습니다.</p>
+<p>예약어 <code>try</code> 아래에는 오류가 날 수 있는 줄을 들여 씁니다. 줄 <code>except 오류이름:</code> 아래에는 그 이름의 오류가 났을 때 실행할 줄을 들여 씁니다. try 블록에서 오류가 나면 남은 줄은 건너뛰고 except 블록으로 넘어갑니다.</p>
+<p>줄 끝의 <code>as error</code>는 받은 오류에 이름 error를 붙입니다. 이 이름을 출력하면 오류 메시지가 나옵니다. 노트북에서 없는 파일을 읽은 셀의 메시지는 <code>[Errno 2] No such file or directory: 'missing.txt'</code>였습니다.</p>
+{{mermaid:05-3-try-except-차례|try 블록에서 read_items('missing.txt')가 FileNotFoundError를 내고, 읽은 줄 목록 출력은 건너뛰며, except FileNotFoundError as error 블록이 오류 메시지를 출력한 뒤 셀의 마지막 줄까지 실행되는 흐름도|try와 except의 실행 차례. missing.txt를 읽다 난 FileNotFoundError를 except 블록이 받아, 셀이 마지막 줄까지 실행됩니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 읽습니다. 파란 상자 try 블록이 missing.txt를 읽다가 노란 상자의 FileNotFoundError가 납니다. 노란색은 except 블록이 받아 메시지로 남길 오류라는 뜻입니다. 점선 화살표 끝의 회색 상자는 건너뛴 출력 줄입니다.</p>
+<p>실선 화살표는 파란 except 블록으로 이어집니다. except 블록이 오류 메시지를 출력하고, 맨 아래 노란 상자인 셀의 마지막 줄까지 실행됩니다.</p>
+<h3>except 줄의 오류 이름</h3>
+<p>except 줄은 적은 이름의 오류만 받습니다. 노트북 8번 소제목은 수량 「많이」에서 난 오류를 <code>except ValueError</code>로 받았습니다. 이름이 다른 오류는 그 except 블록이 받지 않고, 함수를 부른 곳으로 나갑니다.</p>
+<p>오류 이름 <code>Exception</code>은 거의 모든 오류를 묶어 부르는 이름입니다. 그래서 <code>except Exception</code>은 파일 없음과 값 오류를 모두 받습니다. 받은 뒤 빈 목록으로 바꾸면 두 문제가 같은 결과가 되어 원인이 사라집니다.</p>
+<p>오류 이름 없이 <code>except:</code>만 적는 방법도 있지만 이 교재는 쓰지 않습니다. 무엇을 받는지 줄에 드러나지 않기 때문입니다. 이 모양은 이번에 실행하지 않았습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>노트북은 빈 임시 폴더로 작업 위치를 옮기고 시작합니다. 주문 두 줄을 orders.txt에 써서 쓴 글자 수 10을 봅니다. 같은 파일을 읽어 읽은 글자 수 10과 파일이 닫혔는가 True를 봅니다.</p>
+<p>함수 <code>read_items()</code>는 줄 목록 ['연필,3', '노트,2']를 반환합니다. 함수 <code>parse_order()</code>로 줄마다 나눈 주문 목록은 [('연필', 3), ('노트', 2)]입니다. 파일의 수량 하나만 5로 바꿔 다시 쓰면, 첫 주문만 ('연필', 5)로 바뀌고 줄 수는 2 그대로입니다.</p>
+<p>마지막 두 셀은 오류를 받습니다. 없는 파일 missing.txt에서는 FileNotFoundError, 줄 「연필,많이」에서는 ValueError가 났습니다. 모델을 부르지 않으므로 API 키가 필요 없습니다. 준비 셀이 출력하는 작업 폴더 경로만 실행할 때마다 달라집니다.</p>
+<p>강의 시간에는 2~5번과 7~10번 소제목을 설명합니다. 6번(값 바꿔 보기)의 비교는 실습 시간에 읽습니다. 강의에서도 6번의 코드 셀 두 개는 실행해 둡니다. 10번 After가 6번에서 바꾼 파일을 읽기 때문입니다.</p>
+{{notebook:05-파일과-예외|example}}
+<p class="look"><b>확인할 점</b> — 쓴 글자 수와 읽은 글자 수가 모두 10인지 봅니다. 주문 목록의 수량 3에 따옴표가 없는지 확인합니다. 오류를 받은 두 셀에서 try 블록의 출력 줄이 나오지 않았는지, 셀이 끝까지 실행됐는지 확인합니다.</p>
+<h3>줄 하나가 주문 튜플이 되는 차례</h3>
+<p>주문 목록을 만든 셀에서 줄 하나가 함수 <code>parse_order()</code>를 거치는 차례를 한 그림으로 모았습니다.</p>
+{{mermaid:05-2-줄을-주문으로|줄 목록의 줄 '연필,3'을 split으로 나눠 name '연필'과 count_text '3'에 풀어 담고, int로 정수 3으로 바꿔 튜플 ('연필', 3)을 반환한 뒤 append로 모은 주문 목록 [('연필', 3), ('노트', 2)]가 출력되는 흐름도|줄 하나가 주문 튜플이 되는 차례. 줄 '연필,3'이 튜플 ('연필', 3)이 되어 주문 목록에 모입니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 읽습니다. 맨 위 초록 상자는 파일에서 읽은 줄 목록입니다. 파란 상자 네 개는 함수 안의 차례로, 쉼표에서 나누고 이름 두 개에 담고 정수로 바꿔 튜플을 반환합니다.</p>
+<p>나눈 값 '3'과 정수 3은 노트북에 출력하지 않은 중간 값입니다. 맨 아래 노란 상자의 출력 ('연필', 3)에서 수량에 따옴표가 없는 것으로 정수가 된 것을 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>주문 파일을 읽어 주문 목록을 반환하는 함수를 만듭니다. 파일이 없으면 주문 0건으로 보고 빈 목록을 반환하려고 합니다. 준비로 수량 자리에 「많이」가 든 파일 bad_orders.txt를 만들었습니다. 그 줄 목록은 ['연필,많이', '노트,2']입니다.</p>
+<p>Before 함수 <code>load_orders_before()</code>는 except 줄에 <code>Exception</code>을 적었습니다. 두 파일 missing.txt와 bad_orders.txt를 읽자 주문 목록이 모두 []였습니다. 두 결과가 같은가는 True였습니다. 오류 메시지는 없었지만 원인이 다른 두 문제를 구분할 수 없습니다. 파일 bad_orders.txt의 정상 줄 「노트,2」도 함께 사라졌습니다.</p>
+<p>After 함수 <code>load_orders()</code>는 except 줄의 오류 이름 하나만 <code>FileNotFoundError</code>로 바꿨습니다. 없는 파일의 결과는 Before처럼 []입니다. 정상 파일 orders.txt의 결과는 [('연필', 5), ('노트', 2)]입니다.</p>
+<p>After 함수로 bad_orders.txt를 읽자 ValueError가 함수 밖으로 나왔습니다. 호출한 셀의 <code>except ValueError</code>가 받은 메시지는 invalid literal for int() with base 10: '많이'입니다. 실제 프로그램에서는 이 오류를 받지 않고 멈추게 두어 파일을 고칩니다. 노트북은 끝까지 실행하려고 이 셀에서만 받았습니다.</p>
+{{mermaid:05-4-before-after-비교|Before는 missing.txt의 FileNotFoundError와 bad_orders.txt의 ValueError가 모두 except Exception에 받혀 두 주문 목록이 빈 목록으로 같아지고, After는 missing.txt만 except FileNotFoundError에 받혀 빈 목록이 되고 bad_orders.txt의 ValueError는 함수 밖에서 오류 메시지로 보이는 비교 그림|except 줄에 Exception을 적은 Before는 두 문제가 같은 빈 목록이 되고, FileNotFoundError만 적은 After는 수량 오류가 함수 밖으로 나옵니다.}}
+<p><strong>도식 읽기</strong> — 위 칸이 Before, 아래 칸이 After이고, 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 초록 상자는 읽은 파일과 거기서 난 오류, 파란 상자는 except 줄입니다.</p>
+<p>Before 칸에서는 두 파일의 화살표가 except Exception 하나로 모입니다. 그리고 빨간 상자(두 결과가 같은가 True)로 이어집니다. After 칸에서는 missing.txt만 except FileNotFoundError를 거쳐 노란 상자 []로 갑니다. 파일 bad_orders.txt의 화살표는 except 줄을 거치지 않고 노란 상자의 오류 메시지로 갑니다.</p>
+{{notebook:05-파일과-예외|failure}}
+<h3>확인한 범위</h3>
+<p>이번에 확인한 오류는 파일 없음과 정수로 바꿀 수 없는 수량 두 가지입니다. 인코딩이 다른 파일을 읽는 경우는 이번에 실행하지 않았습니다. 내용을 이어 붙이는 모드 "a"와 큰 파일을 줄 단위로 읽는 방법도 실행하지 않았습니다.</p>
+<p>try 없이 오류가 나서 셀이 멈추는 장면은, 노트북을 끝까지 실행하려고 실행하지 않았습니다. 딕셔너리에서 없는 키를 대괄호로 읽는 <code>KeyError</code>도 이번에 실행하지 않았습니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul><li>쓰기 모드 "w"는 있던 내용을 지우고 씁니다. 노트북에서 수량을 바꿔 다시 쓴 뒤에도 줄 수는 4가 아니라 2였습니다.</li>
+<li>파일은 with 블록으로 엽니다. 닫는 줄을 적지 않아도 블록이 끝나면 닫혀, 노트북의 <code>file.closed</code>가 True였습니다.</li>
+<li>쓸 때와 읽을 때 모두 <code>encoding="utf-8"</code>을 적습니다. 노트북에서 한글 「연필」이 그대로 읽혔습니다.</li>
+<li>파일에서 읽은 수량은 문자열입니다. 계산하기 전에 <code>int()</code>로 정수로 바꿉니다.</li>
+<li>except 줄에는 받을 오류 이름을 적습니다. 모든 오류를 받아 빈 결과로 바꾸면, Before처럼 원인이 다른 문제가 같은 결과가 됩니다.</li>
+<li>노트북의 파일은 준비 셀이 만든 임시 폴더에 생깁니다. 실습 폴더에서 orders.txt를 찾아도 없습니다.</li>
+<li>준비 셀은 실행할 때마다 새 임시 폴더를 만들고, 앞의 폴더는 지우지 않습니다. 그래서 커널을 다시 시작해 첫 셀부터 실행하면 앞에서 만든 orders.txt는 새 작업 폴더에 보이지 않습니다. 파일은 앞 실행의 준비 셀이 출력한 작업 폴더에 남아 있습니다. 그 폴더를 열어 보는 장면은 이번에 실행하지 않았습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>파일은 <code>with open(파일 이름, 모드, encoding="utf-8") as file:</code>로 열고, 블록이 끝나면 닫힙니다. 쓰기 모드로 10글자를 쓰고, 읽기 모드로 같은 10글자를 읽었습니다.</li><li>읽은 줄을 <code>split(",")</code>으로 나누고 <code>int()</code>로 바꿔 [('연필', 3), ('노트', 2)]를 만들었습니다. try 블록에서 오류가 나면 이름이 맞는 except 블록이 실행됩니다.</li><li>except 줄에 <code>Exception</code>을 적자 파일 없음과 수량 오류가 같은 빈 목록이 됐습니다. 오류 이름을 <code>FileNotFoundError</code>로 좁히자 수량 오류의 메시지가 함수 밖까지 나왔습니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 6절에서는 상품 이름과 수량처럼 함께 다니는 값과 그 값을 다루는 함수를 클래스로 묶습니다. 파일을 닫아 주는 with 블록의 원리는 확장 경로(B)의 9절 컨텍스트 매니저에서 다시 봅니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary>
+<p class="quiz-q">1. 파일에 주문 두 줄을 쓴 셀에서 쓴 글자 수는 왜 10이었나요? · 기초</p><p class="quiz-a"><b>해설</b> — 「연필,3」은 4글자이고 줄바꿈도 한 글자로 셉니다. 한 줄에 5글자씩 두 줄이라 10글자입니다. 메서드 <code>write()</code>가 쓴 글자 수 10을 반환했습니다.</p>
+<p class="quiz-q">2. 읽기 셀에는 파일을 닫는 줄이 없었습니다. 블록 밖에서 읽은 <code>file.closed</code>가 True였던 이유는 무엇인가요? · 기초</p><p class="quiz-a"><b>해설</b> — with 블록이 끝날 때 파일을 닫기 때문입니다. 블록 밖의 줄이 실행될 때 파일은 이미 닫혀 있었습니다.</p>
+<p class="quiz-q">3. 인자 <code>encoding="utf-8"</code>처럼 넣는 인자를 무엇이라 하나요? 4절 정의 줄의 <code>quantity=1</code>과 무엇이 다른가요? · 기초</p><p class="quiz-a"><b>해설</b> — 키워드 인자입니다. 호출할 때 매개변수 이름으로 값을 넣습니다. 4절의 <code>quantity=1</code>은 정의 줄에서 기본값을 정한 것입니다.</p>
+<p class="quiz-q">4. 없는 파일을 읽은 셀에서 「읽은 줄 목록」 줄이 출력되지 않았는데도 셀의 마지막 줄은 출력됐습니다. 이유를 쓰세요. · 적용</p><p class="quiz-a"><b>해설</b> — try 블록의 <code>read_items()</code> 호출에서 FileNotFoundError가 나서 그 아래 출력 줄을 건너뛰었습니다. except FileNotFoundError 블록이 오류를 받았으므로 셀은 멈추지 않고 마지막 줄까지 실행됐습니다.</p>
+<p class="quiz-q">5. 함수 <code>parse_order()</code>에 줄 「연필,많이」를 넣으면 어느 줄에서 어떤 오류가 나나요? · 적용</p><p class="quiz-a"><b>해설</b> — 수량 글자를 정수로 바꾸는 <code>int()</code> 줄에서 ValueError가 납니다. 메시지는 invalid literal for int() with base 10: '많이'였습니다. 함수 안에서 난 오류를 함수를 부른 셀의 except ValueError가 받았습니다.</p>
+<p class="quiz-q">6. Before에서 두 결과가 같은가가 True였던 이유는 무엇이고, After는 어떻게 고쳤나요? · 분석</p><p class="quiz-a"><b>해설</b> — except Exception이 두 오류를 모두 받아 빈 목록으로 바꿨기 때문입니다. 두 오류는 FileNotFoundError와 ValueError입니다. After 함수는 except 줄의 오류 이름만 FileNotFoundError로 바꿨습니다. 그래서 없는 파일만 빈 목록이 되고, 수량 오류는 함수 밖으로 나와 메시지가 보였습니다.</p>
+</details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3.12/tutorial/inputoutput.html#reading-and-writing-files">Python 3.12 자습서 7.2: 파일 읽고 쓰기</a> · 확인 2026-09-16 · 기준 Python 3.12</li><li><a href="https://docs.python.org/3.12/tutorial/errors.html#handling-exceptions">Python 3.12 자습서 8.3: 예외 처리하기</a> · 확인 2026-09-16 · 기준 Python 3.12</li><li><a href="https://docs.python.org/3.12/library/functions.html#open">Python 3.12 내장 함수: open()</a> · 확인 2026-09-16 · 기준 Python 3.12</li><li><a href="https://docs.python.org/3.12/library/exceptions.html#FileNotFoundError">Python 3.12 내장 예외: FileNotFoundError</a> · 확인 2026-09-16 · 기준 Python 3.12</li><li><a href="https://docs.python.org/3.12/glossary.html#term-argument">Python 3.12 용어집: 인자(argument)와 키워드 인자</a> · 확인 2026-09-16 · 기준 Python 3.12</li></ul>

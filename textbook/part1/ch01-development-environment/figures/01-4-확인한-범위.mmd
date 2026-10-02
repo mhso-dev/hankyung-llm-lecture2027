@@ -1,0 +1,11 @@
+flowchart LR
+  %% classes
+  subgraph DONE["이번에 실행해 확인함"]
+    direction TB
+    d1["3000 × 2 = 6000"]:::measure ~~~ d2["3000 × 3 = 9000"]:::measure ~~~ d3["틀린 예상 5000<br>비교 False"]:::measure
+  end
+  subgraph NOT["이번에 실행하지 않음"]
+    direction TB
+    n1["할인·배송비 계산"] ~~~ n2["검사 줄 assert가<br>실행을 멈추는 장면"]
+  end
+  DONE ~~~ NOT

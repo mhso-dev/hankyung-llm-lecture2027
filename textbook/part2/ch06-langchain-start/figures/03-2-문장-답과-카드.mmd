@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph TEXT["2절 · 일반 호출 invoke"]
+    direction LR
+    t1["메시지 목록<br>AIMessage 학습 카드 요청"]:::tool
+    t2["gpt-5.4-mini"]:::model
+    t3["AIMessage 답 글 한 덩어리<br>난이도 1이 글 속에 섞임"]:::measure
+    t1 --> t2 --> t3
+  end
+  subgraph CARD["6절 · 구조화 호출 invoke"]
+    direction LR
+    c1["같은 메시지 목록<br>+ StudyCard 양식"]:::tool
+    c2["gpt-5.4-mini"]:::model
+    c3["StudyCard 객체<br>card.difficulty 1 · int"]:::measure
+    c1 --> c2 --> c3
+  end
+  TEXT --> CARD

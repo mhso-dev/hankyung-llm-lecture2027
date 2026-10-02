@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  L["긴 system 지시<br>지금 시각 + 규칙 문장 80번"]:::tool
+  M["gpt-5.4-mini<br>두 번 연달아"]:::model
+  F["첫 요청 · 입력 1958토큰<br>캐시 입력 0<br>0.001635달러"]:::measure
+  S["둘째 요청 · 입력 1958토큰<br>캐시 입력 1792<br>0.0004254달러"]:::measure
+  E["estimate_cost<br>캐시 요금 자리에 입력 요금"]:::flow
+  N["할인 없이 계산한 비용<br>0.001635달러"]:::measure
+  L --> M
+  M --> F
+  M --> S
+  S --> E --> N

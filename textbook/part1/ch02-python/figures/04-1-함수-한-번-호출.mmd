@@ -1,0 +1,8 @@
+flowchart TD
+  %% classes
+  A["인자<br>order_amount → 78000<br>discount_rate → 0.1"]:::tool
+  B["매개변수에 담기<br>amount = 78000<br>discount_rate = 0.1"]:::flow
+  C["본문 실행<br>discount = 7800.0<br>round(78000 - 7800.0)"]:::flow
+  D["return payment<br>70200을 반환"]:::flow
+  E["payment = 70200<br>출력 결제 금액: 70200"]:::measure
+  A --> B --> C --> D --> E

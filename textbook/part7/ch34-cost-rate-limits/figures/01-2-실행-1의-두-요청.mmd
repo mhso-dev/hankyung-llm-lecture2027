@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q1["첫 요청<br>번호 · 정책 · 문의 1"]:::tool
+  m1["gpt-5.4-mini<br>temperature=0<br>reasoning_effort none"]:::model
+  r1["캐시 입력 토큰 수 0"]:::measure
+  q2["둘째 요청<br>번호 · 정책 · 문의 2"]:::tool
+  m2["gpt-5.4-mini"]:::model
+  r2["캐시 입력 0보다 큼<br>128로 나눈 나머지 0"]:::measure
+  q1 --> m1
+  m1 --> r1
+  r1 --> q2
+  q2 --> m2
+  m2 --> r2

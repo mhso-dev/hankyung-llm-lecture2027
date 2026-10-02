@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  sv["권한 연습 서버 HTTP<br>도구 lookup_policy<br>update_policy"]:::tool
+  subgraph n0["접근 토큰 없음"]
+    x1["연결에서<br>MCPError<br>직접 보낸 요청<br>상태 코드 401"]:::measure
+  end
+  subgraph n1["읽기 토큰 read"]
+    y1["받은 도구<br>lookup_policy 하나<br>update_policy는<br>Unknown tool"]:::measure
+  end
+  subgraph n2["관리 토큰 read admin"]
+    z1["받은 도구 둘<br>update_policy<br>결과 규정을<br>바꿨습니다"]:::measure
+  end
+  sv --> n0
+  sv --> n1
+  sv --> n2

@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  inv["agent.invoke 한 번<br>상태와 context를 따로 넘김"]:::flow
+  subgraph st["상태 · 결과에 남음"]
+    direction TB
+    s1["입력 상태<br>질문 하나 · ticket_no Q-017"]:::tool
+    s2["상태 칸 넷<br>messages · jump_to<br>structured_response<br>ticket_no"]:::measure
+    s3["결과 딕셔너리의 키<br>messages · ticket_no<br>ticket_no 값 Q-017"]:::measure
+    s1 --> s2
+    s2 --> s3
+  end
+  subgraph cx["실행 정보 · 결과에 남지 않음"]
+    direction TB
+    c1["context<br>member_id M-0317<br>overdue_days 0"]:::tool
+    c2["도구 실행 노드가<br>runtime.context에 담아<br>도구에 넣어 줌"]
+    c3["도구 메시지<br>이용자 M-0317 연체가 없어<br>새 대출을 할 수 있습니다"]:::measure
+    c1 --> c2
+    c2 --> c3
+  end
+  inv --> st
+  inv --> cx

@@ -1,0 +1,14 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  outer["바깥 호출 한도 3"]:::tool
+  helper["general-purpose 명세<br>호출 한도 2"]:::tool
+  by_resp["응답으로 센 요청 수 2<br>sum_usage"]:::measure
+  by_hook["기록 훅이 센 요청 수 2"]:::measure
+  rule["셈<br>도구를 요청한 응답 수 1 더하기 1"]
+  sub_note["서브에이전트 요청은<br>두 셈 모두에 없음"]
+  outer ~~~ by_resp
+  helper ~~~ by_hook
+  by_resp --> rule
+  by_hook --> rule
+  rule ~~~ sub_note

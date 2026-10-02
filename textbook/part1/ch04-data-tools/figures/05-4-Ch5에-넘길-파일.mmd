@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  REC["원래 페이지 기록<br>빈 칸 []"]:::measure
+  ADD["text 칸 더하기<br>제목 + 줄바꿈 + 요약"]:::flow
+  FILE["data/article-text.json<br>schema_version · source<br>record 칸 다섯 개"]:::tool
+  CH5["Ch 5 01절 노트북<br>record의 text로 토큰 수 세기"]
+  REC --> ADD
+  ADD -- "json.dumps() · write()" --> FILE
+  FILE -. "다음 챕터에서 읽음" .-> CH5

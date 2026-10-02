@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  ag["평가받는 에이전트<br>도구 둘 · 호출 한도 4<br>실행 한도 20"]:::flow
+  am["gpt-5.4-mini<br>에이전트 요청 3번"]:::model
+  tr["에이전트 궤적<br>search_documents<br>check_source<br>답 · 메시지 여섯"]:::measure
+  mo["모드 넷<br>search_documents 인자만<br>ignore · 기준 궤적과 견줌"]:::flow
+  mr["네 모드 모두 True"]:::measure
+  jd["평가 모델 gpt-5.4-mini<br>판정 머리글 · 요청 1번"]:::model
+  jr["칸 score True"]:::measure
+  ag --> am
+  am --> tr
+  tr --> mo
+  tr --> jd
+  mo --> mr
+  jd --> jr

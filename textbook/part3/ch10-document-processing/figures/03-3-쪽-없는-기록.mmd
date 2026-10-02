@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  p1["01·02절 다섯 칸 기록<br>page 칸 있음"]:::tool
+  p2["make_source_mark()<br>page 칸을 읽음"]:::flow
+  p3["[E01 p.2]"]:::measure
+  q1["03절 네 칸 기록<br>CSV만 row 칸 하나 더"]:::tool
+  q2["make_unit_mark()<br>file_type과 row 칸을 읽음"]:::flow
+  q3["[sample docx]<br>[sample csv row.2]"]:::measure
+  p1 --> p2
+  p2 --> p3
+  q1 --> q2
+  q2 --> q3

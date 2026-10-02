@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  r1["요청 GET /health"]:::tool
+  r2["요청 GET /v1/chat<br>요청 POST /health"]:::tool
+  app["앱 객체 demo_app<br>이어 둔 짝 GET /health"]:::flow
+  fn["처리 함수 health<br>async def"]:::flow
+  ok["200<br>본문 status ok"]:::measure
+  lib["처리 함수를 부르지 않고<br>라이브러리가 답함"]
+  no["404 Not Found<br>405 받는 방식 GET"]:::measure
+  r1 --> app
+  r2 --> app
+  app --> fn --> ok
+  app -.-> lib --> no

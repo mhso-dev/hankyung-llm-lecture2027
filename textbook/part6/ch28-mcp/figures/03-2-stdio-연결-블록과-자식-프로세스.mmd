@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  cfg["stdio_config 설정 한 벌<br>keep_alive False"]:::flow
+  blk["async with Client 블록"]:::flow
+  ins["블록 안<br>받은 도구 lookup_policy<br>자식 프로세스 수 1"]:::measure
+  out["블록을 벗어난 뒤<br>자식 프로세스 수 0"]:::measure
+  row["call_tool_row<br>topic 대출"]:::flow
+  res["01절과 같은 결과 글<br>부른 뒤 자식 프로세스 수 0"]:::measure
+  cfg --> blk --> ins --> out
+  cfg -.-> row --> res

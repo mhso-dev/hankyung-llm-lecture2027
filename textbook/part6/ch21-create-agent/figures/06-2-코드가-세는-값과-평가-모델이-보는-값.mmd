@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  r["두 흐름의 결과<br>메시지 칸<br>모델에게 준 문서 글<br>답 글"]:::tool
+  subgraph cd["코드가 셈 · 결론에 씀"]
+    direction TB
+    c1["모델 요청 수<br>도구 메시지 수<br>agent_row · sum_usage"]:::flow
+    c2["입력 토큰<br>sum_usage"]:::flow
+    c3["정답 문서 자리<br>doc_ids_in<br>find_gold_rank"]:::flow
+    c1 ~~~ c2
+    c2 ~~~ c3
+  end
+  subgraph jd["평가 모델이 판정 · 따로 읽음"]
+    direction TB
+    j1["근거 충실도<br>rag-judge-v1.0.0<br>답과 근거 문서를 견줌"]:::model
+  end
+  r --> cd
+  r --> jd

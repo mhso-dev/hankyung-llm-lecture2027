@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q["사실이 둘 섞인 질문<br>토요일 자료실 폐관 시각은<br>그리고 분실한 카드 사용을 막으려면"]:::tool
+  p["우리가 적은<br>나누기 머리글"]:::flow
+  m["답 모델 gpt-5.4-mini"]:::model
+  v["하위 질문 두 줄"]:::measure
+  s["우리가 적은<br>하위 질문마다 거리 검색"]:::flow
+  g["근거 문서<br>FAC-003과 ACC-003"]:::measure
+  q --> p
+  p --> m
+  m --> v
+  v --> s
+  s --> g

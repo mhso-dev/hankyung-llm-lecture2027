@@ -1,0 +1,9 @@
+flowchart TD
+  %% classes
+  L["order_amounts<br>[18000, 42000,<br>65000, 27000]"]:::tool
+  C1["calculate_payment<br>(18000, 0.1)<br>반환 16200 → append"]:::flow
+  C2["calculate_payment<br>(42000, 0.1)<br>반환 37800 → append"]:::flow
+  C3["calculate_payment<br>(65000, 0.1)<br>반환 58500 → append"]:::flow
+  C4["calculate_payment<br>(27000, 0.1)<br>반환 24300 → append"]:::flow
+  P["출력 payments<br>[16200, 37800,<br>58500, 24300]"]:::measure
+  L --> C1 --> C2 --> C3 --> C4 --> P

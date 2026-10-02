@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  h["앞 차례 기록 두 줄<br>손으로 적음 · 사용량 None"]:::tool
+  subgraph A[문의 한 줄]
+    direction TB
+    a1["바깥 목록 네 줄<br>안쪽 목록 두 줄<br>새 메시지만 세면 요청 3"]:::measure
+  end
+  subgraph B[앞 차례 기록 + 문의]
+    direction TB
+    b1["바깥 목록 여섯 줄<br>안쪽 목록 두 줄<br>안쪽에 토요일 글 없음<br>새 메시지만 세면 요청 3"]:::measure
+  end
+  c["두 실행 같음<br>같은 문의 · 한 번 맡김<br>중앙 2 + 전문 1"]
+  h --> B
+  A ~~~ c
+  B ~~~ c

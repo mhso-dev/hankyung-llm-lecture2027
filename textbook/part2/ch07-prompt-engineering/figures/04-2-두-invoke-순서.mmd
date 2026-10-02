@@ -1,0 +1,11 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant NB as 노트북
+  participant PT as 틀 prompt
+  participant SV as OpenAI 서버
+  NB->>PT: prompt.invoke · inquiry 채우기
+  PT-->>NB: ChatPromptValue
+  Note over NB,PT: to_messages · 메시지 3개 · 요청 0번
+  NB->>SV: model.invoke · 요청 1번
+  SV-->>NB: AIMessage · 답과 사용량
+  Note over NB,SV: 5절 출력 · 입력 토큰 수 134

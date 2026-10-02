@@ -1,0 +1,11 @@
+flowchart TD
+  %% classes
+  P0["위치 0 · 18000<br>처리한 금액"]:::tool
+  P1["위치 1 · -1<br>continue로 건너뜀"]:::flow
+  P2["위치 2 · 42000<br>처리한 금액"]:::tool
+  P3["위치 3 · 0<br>break로 반복 끝"]:::flow
+  P4["위치 4 · 65000<br>읽지 않음"]
+  R["반복 뒤<br>위치 번호 4"]:::measure
+  P0 --> P1 --> P2 --> P3
+  P3 --> R
+  P3 -. "읽지 않음" .-> P4

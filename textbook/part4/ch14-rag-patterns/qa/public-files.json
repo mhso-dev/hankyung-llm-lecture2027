@@ -1,0 +1,28 @@
+{
+  "chapter": "ch14-rag-patterns",
+  "public_lab_files": [
+    "labs/part4/ch14-rag-patterns/README.md",
+    "labs/part4/ch14-rag-patterns/pyproject.toml",
+    "labs/part4/ch14-rag-patterns/uv.lock",
+    "labs/part4/ch14-rag-patterns/data/documents.json",
+    "labs/part4/ch14-rag-patterns/data/queries.json",
+    "labs/part4/ch14-rag-patterns/notebooks/01-대화-히스토리와-질문-재작성.ipynb",
+    "labs/part4/ch14-rag-patterns/notebooks/02-Multi-Query.ipynb",
+    "labs/part4/ch14-rag-patterns/notebooks/03-질의-분해.ipynb",
+    "labs/part4/ch14-rag-patterns/notebooks/04-Step-back.ipynb",
+    "labs/part4/ch14-rag-patterns/notebooks/05-HyDE.ipynb",
+    "labs/part4/ch14-rag-patterns/notebooks/06-CRAG.ipynb",
+    "labs/part4/ch14-rag-patterns/notebooks/07-Self-RAG.ipynb",
+    "labs/part4/ch14-rag-patterns/notebooks/08-RAPTOR-계층-요약.ipynb",
+    "labs/part4/ch14-rag-patterns/notebooks/09-패턴-비교와-선택.ipynb",
+    "labs/part4/ch14-rag-patterns/notebooks/10-RAG-패턴-실습.ipynb",
+    "labs/part4/ch14-rag-patterns/notebooks/rag_tools.py",
+    "labs/part4/ch14-rag-patterns/runs/pattern-comparison.json"
+  ],
+  "excluded": [
+    ".env",
+    ".venv",
+    "*.failure.json",
+    "_make_notebooks.py"
+  ]
+}

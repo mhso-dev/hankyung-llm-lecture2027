@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  cnt["8절 셈<br>A 2 · B 1 · 그 밖 0"]:::measure
+  chg["바꾼 값<br>필요한 표 수 3"]:::tool
+  d2["decide_vote<br>필요한 표 수 2"]:::flow
+  d3["decide_vote<br>필요한 표 수 3"]:::flow
+  r2["결과 A"]:::measure
+  r3["결과 정하지 못함<br>모델 요청 없음"]:::measure
+  cnt --> d2
+  cnt --> d3
+  chg --> d3
+  d2 --> r2
+  d3 --> r3

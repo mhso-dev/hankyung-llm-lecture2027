@@ -1,0 +1,8 @@
+flowchart TB
+  %% classes
+  P1["작성자 git push<br>! [rejected] (fetch first)<br>종료 코드: 1"]:::fail
+  F1["git fetch, git branch -vv<br>ahead 1, behind 1"]:::measure
+  M1["git merge origin/main<br>Merge made by<br>the 'ort' strategy."]:::flow
+  P2["작성자 git push<br>main -> main"]:::flow
+  R1["리뷰어 git pull<br>Fast-forward"]:::flow
+  P1 --> F1 --> M1 --> P2 --> R1

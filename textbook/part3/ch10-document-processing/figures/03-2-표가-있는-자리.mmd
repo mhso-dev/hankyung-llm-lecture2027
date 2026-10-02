@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  d1["sample.docx"]:::tool
+  d2["문단 목록<br>문단 2개"]:::flow
+  d3["표 목록<br>표 1개 · 2행"]:::flow
+  h1n["sample.html"]:::tool
+  h2["table 태그 찾기<br>0개"]:::flow
+  c1["sample.csv"]:::tool
+  c2["파일 전체가 표<br>칸 이름 줄 1 · 행 2"]:::flow
+  d1 --> d2
+  d1 --> d3
+  h1n --> h2
+  c1 --> c2

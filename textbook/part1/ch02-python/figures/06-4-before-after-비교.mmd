@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 클래스 본문의 items = []"]
+    direction LR
+    b1["민지 주문<br>add('노트')"]:::flow --> bl["클래스에 저장된<br>목록 하나<br>['노트', '연필']"]:::tool
+    b2["준호 주문<br>add('연필')"]:::flow --> bl
+    bl --> br["같은 목록인가 True<br>준호 주문<br>['노트', '연필']"]:::fail
+  end
+  subgraph AFTER["After · 초기화 메서드 안의 self.items = []"]
+    direction LR
+    a1["민지 주문<br>add('노트')"]:::flow --> al1["민지 인스턴스의<br>새 목록 ['노트']"]:::tool
+    a2["준호 주문<br>add('연필')"]:::flow --> al2["준호 인스턴스의<br>새 목록 ['연필']"]:::tool
+    al1 --> ar["같은 목록인가 False<br>준호 주문<br>['연필']"]:::measure
+    al2 --> ar
+  end
+  BEFORE ~~~ AFTER

@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  question["질문 C01<br>정답 문서 LIB-001"]:::tool
+  cosine["코사인 거리 상위 3개<br>LIB-004 · LIB-001 · LIB-003"]:::measure
+  euclid["L2 거리 상위 3개<br>LIB-004 · LIB-001 · LIB-003"]:::measure
+  same["두 자 모두 정답 자리 2<br>자리 3 재현율 1.0"]:::measure
+  other["질문 C02는 정답 자리 7<br>자리 3 재현율 0.0"]:::measure
+  question --> cosine
+  question --> euclid
+  cosine --> same
+  euclid --> same
+  same --> other

@@ -1,0 +1,76 @@
+{
+  "chapter": "ch20-tool-node",
+  "audit_date": "2026-09-10",
+  "genre": "산문",
+  "status": "corrected",
+  "accepted": true,
+  "original_snapshot_manifest_sha256": "01ea11ff8d6563ea5a814c446c8fd35494a1316f82a8c8c0eb28db96b6ec4a83",
+  "spell_check": {
+    "external_service_used": false,
+    "reason": "비상업·저빈도 공개 검사기에 상업 교재 원고를 대량 전송하지 않음",
+    "manual_contextual_check": "pass"
+  },
+  "humanize_gate": {
+    "overall": "WARN",
+    "change_rate_percent": 10.0,
+    "p0_character_rate": "PASS",
+    "p1_target": "PASS",
+    "p2_parallelism": "PASS",
+    "p3_invariants": "WARN",
+    "p3_adjudication": "call_bad_1 중복 1회 감소이며 실행 확인과 실제 결과 문단에는 보존됨",
+    "p4_sentence_touch_rate": "68/497 (13.7%)",
+    "p5_rhythm": "REPORT; 전문 정독에서 과도한 단문화 없음"
+  },
+  "final_review": {
+    "meaning_preservation_15": "pass",
+    "residual_s1": 0,
+    "overediting": "none",
+    "decision": "corrected",
+    "accepted": true
+  },
+  "notebook_code_output_sha256": {
+    "01-ToolNode와-tools-condition.ipynb": "4e309b8e279c98ddacd5ce1d72fd8cbb1076d82ebc23f1e8803c04f276207075",
+    "02-도구-오류와-ToolMessage.ipynb": "ad7abccb4110b4eb112ebabe61256fa385a559a3b5457511d147c5c8d233121a",
+    "03-recursion-limit과-명시적-종료.ipynb": "827e90545ced117c58086e726b2fb20ea91dd0766ef565519f43e613756f6c77",
+    "04-if-분기와-모델-선택-비교.ipynb": "d1adef54768a7c9236ad6aaff6cc6dafb29f3d4d07579e5d6080bd51f989b326"
+  },
+  "source_sha256": {
+    "textbook/part5/ch20-tool-node/_src/01-ToolNode와-tools-condition.html": "93823440ee71f3c4f9536f63825da0354816addb77ced249925029b8f1293737",
+    "textbook/part5/ch20-tool-node/_src/02-도구-오류와-ToolMessage.html": "b9a5b7f3ec6ca30e0e27331227d7653c7bb0f2d408632a254c9002c6533980b5",
+    "textbook/part5/ch20-tool-node/_src/03-recursion-limit과-명시적-종료.html": "ca6f5b974f9b202fe16a23f2b69bb9c1ac30bbe4a4d768eb46c00702249547bb",
+    "textbook/part5/ch20-tool-node/_src/04-if-분기와-모델-선택-비교.html": "086c85dc8e1719352e569ed0dcc047ccbb929a785e2c27383750ff6376e4431f",
+    "textbook/part5/ch20-tool-node/chapter.json": "b15774922c2b932c5e674156520c5c03d00462d4d924866774ad62b5d913d74e",
+    "textbook/part5/ch20-tool-node/figures/01-흐름.caption.md": "12e14d43546fbd883178184810e70c712e09ba86e1b3f7c015f5a47c583258ae",
+    "textbook/part5/ch20-tool-node/figures/01-흐름.excalidraw": "e8664bebecc3d3a8606e1c5a5fbf93bbb750cfcb9edb0165c836337ef3d6e77e",
+    "textbook/part5/ch20-tool-node/figures/01-흐름.svg": "f51862cda45e5f3e88bc6ecd551b4547f53b25e6ea1225ce2085064caf928d51",
+    "textbook/part5/ch20-tool-node/figures/02-흐름.caption.md": "d083c45bbd884ec53d0f29e3b074f2ce186c4d1d1d59e8d6ecb8e386b62f52e9",
+    "textbook/part5/ch20-tool-node/figures/02-흐름.excalidraw": "2e316abbdf01aaa33f114f7719ed2957b618fb73b9fb4bd7c2f959431fbe709b",
+    "textbook/part5/ch20-tool-node/figures/02-흐름.svg": "e9b6754a16d7cfc5d6a3ede52ff9d1b927a1a496b780c64f7134822854b38ebd",
+    "textbook/part5/ch20-tool-node/figures/03-흐름.caption.md": "a23e341e532820dcf346f698aa3ea36b1f7eb7650eceb52d32e39c48afd60323",
+    "textbook/part5/ch20-tool-node/figures/03-흐름.excalidraw": "c5a0f03834853b4bb12552902b1c4e15f10fcaaa4576b3f7cc29d4011ca17ce3",
+    "textbook/part5/ch20-tool-node/figures/03-흐름.svg": "5b9cac834fefe0c615d3e2e0ad78928d1873dfbaf6877bc30189640d362df6a8",
+    "textbook/part5/ch20-tool-node/figures/04-흐름.caption.md": "62918e43dfe19caabc63e84238d8b2d844e15f7a7aeb378f69cbbca107a36d92",
+    "textbook/part5/ch20-tool-node/figures/04-흐름.excalidraw": "3f083543fbf162959be555e41ebc4b2d94d1245b171cee5b3b60e843b5460d53",
+    "textbook/part5/ch20-tool-node/figures/04-흐름.svg": "2e9c7a1af84bbaf0c44ae56cf13b310339b388cb53693ff641ab45f305b0fc09",
+    "textbook/part5/ch20-tool-node/figures/_gen_figures.py": "4bd06a700765dae6147a494c93e3b9c49133cc8d8bbaaab5b71c44f0363d5725",
+    "labs/part5/ch20-tool-node/README.md": "cea28211feff549a7e3d68822a8c2cd5d20822f61333d8374d9c4385baf7e0a8",
+    "labs/part5/ch20-tool-node/notebooks/01-ToolNode와-tools-condition.ipynb": "7d3ff8a7264fdf9150f9f9b1ded979b5b3362595220632e92451566fdf397fae",
+    "labs/part5/ch20-tool-node/notebooks/02-도구-오류와-ToolMessage.ipynb": "5f2b10e28d060d0accd8b39831fc34006c593795a18cb294313340c85db21f8e",
+    "labs/part5/ch20-tool-node/notebooks/03-recursion-limit과-명시적-종료.ipynb": "5000d08bd6886c5b74da39242231d310a34353f2d246bf7359c631534f7ff5e8",
+    "labs/part5/ch20-tool-node/notebooks/04-if-분기와-모델-선택-비교.ipynb": "75d84d37d761a97081434633902966aa282b558bcf647aed8460ff20631c8749"
+  },
+  "built_sha256": {
+    "textbook/part5/ch20-tool-node/index.html": "628a5471177c627d6668549022805f2fbe175e1e4f8e7bb572cb9ac5f95bbbad",
+    "textbook/part5/ch20-tool-node/01-ToolNode와-tools-condition.html": "be55edd3c1d34029b6a412cdaeb5f3a4a75af770f80ee3d3c1560d23a3bc7b0a",
+    "textbook/part5/ch20-tool-node/02-도구-오류와-ToolMessage.html": "513434d0808bea95b4f2e6ee58b899addcf5147c6e93acd0aac66156c9f45183",
+    "textbook/part5/ch20-tool-node/03-recursion-limit과-명시적-종료.html": "e39749e4b3fd3e96ef9269c1d6ed1fd7c03553564df9eb828055e24ef3f90d47",
+    "textbook/part5/ch20-tool-node/04-if-분기와-모델-선택-비교.html": "45d1c4af7170444b5503028be186ed550aca130debfd1cca64f8ec939cca2ba2"
+  },
+  "verification": {
+    "build": "pass: 5 html files",
+    "notebook_verify": "pass: 4 sections / 32 code cells / max 23 lines",
+    "json_parse": "pass: chapter and 4 notebooks",
+    "raw_backticks_in_reviewed_prose": 0,
+    "forbidden_phrase_hits": 0
+  }
+}

@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph BF["Before · 기준 임시 폴더"]
+    direction LR
+    b1["data/message.txt"]:::tool --> b2["파일 있음 False"]:::fail
+  end
+  subgraph AF["After · 기준 practice"]
+    direction LR
+    a1["data/message.txt"]:::tool --> a2["파일 있음 True<br>읽은 내용 안녕, 터미널!"]:::measure
+  end
+  subgraph VC["값 바꿔 보기 · 기준 임시 폴더"]
+    direction LR
+    c1["practice/data/message.txt"]:::tool --> c2["파일 있음 True"]:::measure --> c3["After와 같은 위치<br>True"]:::measure
+  end
+  BF -- "기준 폴더만 고침" --> AF
+  AF -- "기준은 두고 경로를 고침" --> VC

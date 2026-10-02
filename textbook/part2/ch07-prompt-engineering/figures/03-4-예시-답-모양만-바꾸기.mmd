@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  K["그대로 둔 것<br>출력 형식 한 줄씩 세 줄<br>예시 문의 · 고객 문의"]:::tool
+  subgraph THREE["예시 답 세 줄"]
+    t1["답 3줄 · 123자<br>입력 225 · 출력 77토큰"]:::measure
+  end
+  subgraph ONE["예시 답 한 줄 · 슬래시로 이음"]
+    o1["답 1줄 · 123자<br>입력 225 · 출력 75토큰"]:::measure
+  end
+  C["원문 읽기<br>세 부분을 슬래시로 이은 한 줄"]:::measure
+  G["앞선 새 커널 실행은 2줄<br>늘 1줄이라고 하지 않음"]
+  K --> THREE
+  K --> ONE
+  ONE --> C
+  C ~~~ G

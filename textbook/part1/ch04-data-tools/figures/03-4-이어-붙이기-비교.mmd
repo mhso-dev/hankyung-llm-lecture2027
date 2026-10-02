@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · f-string으로 SQL에 이어 붙이기"]
+    direction LR
+    b1["입력<br>C001' OR '1'='1"]:::tool
+    b2["만든 SQL 조건<br>customer_id = 'C001'<br>OR '1'='1'"]:::flow
+    b3["찾은 주문 3건<br>O102 이두리 포함"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph AFTER["After · 자리표시자로 값만 넘기기"]
+    direction LR
+    a1["같은 입력"]:::tool
+    a2["SQL 조건<br>customer_id = ?<br>값 목록에 입력 글"]:::flow
+    a3["찾은 주문 0건<br>빈 목록"]:::measure
+    a1 --> a2 --> a3
+  end
+  BEFORE --> AFTER

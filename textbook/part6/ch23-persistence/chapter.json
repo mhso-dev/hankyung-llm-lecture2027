@@ -1,0 +1,54 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 개발",
+  "chapter": "ch23-persistence",
+  "title": "Persistence와 Durable Execution",
+  "hours": "총 16h · 강의 6h · 실습 10h",
+  "objectives": [
+    "메모리 체크포인터를 붙인 그래프를 스레드 이름(thread_id)으로 나눠 실행하고, get_state·get_state_history로 저장된 체크포인트를 읽을 수 있습니다.",
+    "PostgreSQL 체크포인터의 표 만들기 setup()을 부르기 전과 뒤에 같은 입력으로 실행해, 받은 오류와 생긴 표를 견줄 수 있습니다.",
+    "SQLite 체크포인터로 대화를 파일에 저장하고, 연결을 닫은 뒤 새 연결·새 그래프로 같은 스레드의 대화를 이어 갈 수 있습니다.",
+    "저장 시점 exit·async·sync로 실행하다 자식 프로세스를 강제로 끝낸 뒤, 파일에 남은 체크포인트와 다시 실행한 노드를 견줄 수 있습니다.",
+    "같은 단계의 두 노드 가운데 하나만 실패했을 때 표 writes에 남은 쓰기를 읽고, invoke(None, config)로 이어 가며 다시 실행된 노드를 셀 수 있습니다.",
+    "끊긴 노드가 처음부터 다시 실행되는 것을 결제 기록 파일로 확인하고, 멱등 키로 이미 적힌 키를 건너뛰어 기록을 한 번만 남길 수 있습니다.",
+    "실습에서 SQLite 체크포인터를 붙인 대출 처리 그래프를 실패 흉내로 멈췄다가 새 연결로 이어 가고, 쓰기 방식 하나를 바꿔 대출 기록 파일의 줄 수를 견줄 수 있습니다."
+  ],
+  "lab_path": "labs/part6/ch23-persistence",
+  "sections": [
+    {
+      "slug": "01-체크포인터와-스레드",
+      "title": "체크포인터와 스레드",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-PostgresSaver-준비와-스키마",
+      "title": "PostgresSaver 준비와 스키마",
+      "format": "paired"
+    },
+    {
+      "slug": "03-스레드-재개와-대화-이어가기",
+      "title": "스레드 재개와 대화 이어가기",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-내구-실행-모드-비교",
+      "title": "내구 실행 모드 비교",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-pending-writes와-장애-복구",
+      "title": "pending writes와 장애 복구",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-노드-재시작과-멱등성",
+      "title": "노드 재시작과 멱등성",
+      "format": "paired"
+    },
+    {
+      "slug": "07-Persistence-실습",
+      "title": "Persistence 실습: 멈춘 대출 처리를 이어 가고 기록은 한 번만 남기기",
+      "format": "experiment"
+    }
+  ]
+}

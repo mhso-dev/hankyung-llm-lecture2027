@@ -1,0 +1,44 @@
+[
+  {
+    "target": "ch01-development-environment",
+    "checks": 12,
+    "passed": 12,
+    "report": "textbook/_notebook/checks/ch01-development-environment/visual-results.json"
+  },
+  {
+    "target": "ch02-python",
+    "checks": 26,
+    "passed": 26,
+    "report": "textbook/_notebook/checks/ch02-python/visual-results.json"
+  },
+  {
+    "target": "ch03-git-github",
+    "checks": 12,
+    "passed": 12,
+    "report": "textbook/_notebook/checks/ch03-git-github/visual-results.json"
+  },
+  {
+    "target": "ch04-data-tools",
+    "checks": 12,
+    "passed": 12,
+    "report": "textbook/_notebook/checks/ch04-data-tools/visual-results.json"
+  },
+  {
+    "target": "ch05-llm-principles",
+    "checks": 18,
+    "passed": 18,
+    "report": "textbook/_notebook/checks/ch05-llm-principles/visual-results.json"
+  },
+  {
+    "target": "part1",
+    "checks": 2,
+    "passed": 2,
+    "report": "textbook/_notebook/checks/part1/visual-results.json"
+  },
+  {
+    "target": "textbook",
+    "checks": 2,
+    "passed": 2,
+    "report": "textbook/_notebook/checks/textbook/visual-results.json"
+  }
+]

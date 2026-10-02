@@ -1,0 +1,18 @@
+flowchart TB
+  %% classes
+  same["두 판 같음<br>판 20260911_01에서 시작<br>줄 셋이 든 표<br>둘째 판 20260929_02<br>칸 owner 더하기"]
+  subgraph bf["Before · 기본값 없음"]
+    direction TB
+    b1["nullable=False만"]:::flow
+    b2["받은 오류 IntegrityError<br>23502"]:::measure
+    b3["판 번호 20260911_01<br>칸 id · question"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph af["After · 서버 기본값"]
+    direction TB
+    a1["nullable=False<br>server_default=미정"]:::flow
+    a2["받은 오류 None<br>판 번호 20260929_02<br>세 줄 owner 미정"]:::measure
+    a1 --> a2
+  end
+  same --> bf
+  same --> af

@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  cm["두 모양 같음<br>답 차례<br>maybe · yes · approve<br>질문 값과 마지막 결과가 같음"]
+  subgraph E["조건부 엣지 모양 · ask_once"]
+    direction TB
+    e1["interrupt를 한 번 부르고<br>노드를 마침<br>조건부 엣지로 되돌아감"]:::flow
+    e2["interrupt 부른 횟수 누적<br>하나 · 셋 · 다섯 · 여섯"]:::measure
+    e3["체크포인트<br>둘 · 셋 · 넷 · 다섯"]:::measure
+    e1 --> e2
+    e2 ~~~ e3
+  end
+  subgraph L["while True 모양 · ask_in_loop · 권하지 않음"]
+    direction TB
+    l1["노드 안 반복문에서<br>interrupt를 되풀이해 부름"]:::flow
+    l2["interrupt 부른 횟수 누적<br>하나 · 셋 · 여섯 · 아홉"]:::measure
+    l3["체크포인트<br>둘 · 둘 · 둘 · 셋"]:::measure
+    l1 --> l2
+    l2 ~~~ l3
+  end
+  cm --> E
+  cm --> L

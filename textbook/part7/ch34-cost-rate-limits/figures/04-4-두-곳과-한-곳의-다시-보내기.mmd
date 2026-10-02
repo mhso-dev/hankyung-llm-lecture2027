@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  same["두 칸 공통<br>같은 연습용 서버<br>같은 문의 글<br>with_retry 시도 세 번까지"]
+  subgraph before["Before · 두 곳에 겹침"]
+    direction TB
+    b1["default_model<br>안에서 두 번 더 보냄"]:::tool
+    b2["서버가 받은 요청 아홉 번<br>3 × 3"]:::fail
+    b1 --> b2
+  end
+  subgraph after["After · 한 곳에만"]
+    direction TB
+    a1["zero_model<br>max_retries 0"]:::tool
+    a2["서버가 받은 요청 세 번<br>1 × 3"]:::measure
+    a1 --> a2
+  end
+  same --> before
+  same --> after

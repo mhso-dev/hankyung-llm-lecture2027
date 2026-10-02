@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph LOAN["current_topic = loan"]
+    direction LR
+    a1["대출 메시지 3개"]:::flow --> a2["모델 입력 3개"]:::model
+  end
+  subgraph HR["current_topic = hr"]
+    direction LR
+    b1["인사 메시지 2개"] --> b2["모델 입력 2개"]:::model
+  end
+  LOAN ~~~ HR

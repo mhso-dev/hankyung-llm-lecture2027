@@ -1,0 +1,51 @@
+{
+  "snapshot": "ch16-labs-after-2026-09-10.txt",
+  "sha256": "c0aeb90c39796dea9026b936f091e3212bcb865b2e1a40b3e0778b491349ba4b",
+  "files": 7,
+  "prose_characters": 3272,
+  "items": [
+    {
+      "path": "labs/part4/ch16-guardrails/README.md",
+      "source_sha256": "516525849e1fac23f0a3de7b3cf18eb4652db2a6f5673aac6204f8bf620850fe",
+      "prose_characters": 678,
+      "kind": "readme"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/01-입출력-출처-검증.ipynb",
+      "source_sha256": "31a4814ce7a4c7f3e4570e471ee58241e23d247fbba43b824c43f2236bc24586",
+      "prose_characters": 422,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/02-PII-마스킹.ipynb",
+      "source_sha256": "0c9d082f318f9e6cb71bde91949f8cde12aff2999e8f5916cbfe58468c0c32e5",
+      "prose_characters": 405,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/03-히스토리-트리밍과-요약.ipynb",
+      "source_sha256": "67ba093931d8f53cf7fcf8f5e471b74d20a5cd4b3100da8cdd2aefd707f3ce4c",
+      "prose_characters": 393,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/04-호출-한도와-비용-상한.ipynb",
+      "source_sha256": "689cbc0db9f4a6fe00a31a7b72019b7be16bf6bafd38fd2a0190fa71759d6ddb",
+      "prose_characters": 383,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/05-재시도-폴백과-감사-로그.ipynb",
+      "source_sha256": "1898c8d210ec2d1ec98bbb602d378b35206e43a23049e997bf10cc68bf9bf7bf",
+      "prose_characters": 447,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part4/ch16-guardrails/notebooks/06-문서-프롬프트-인젝션과-통합.ipynb",
+      "source_sha256": "27d0558ed759739045763fbeb61cf8633a795869b8d84070dd09e372a6b26380",
+      "prose_characters": 544,
+      "kind": "notebook_markdown"
+    }
+  ],
+  "note": "Read-only extraction. Notebook code cells, outputs, metadata, and fenced README code blocks are excluded."
+}

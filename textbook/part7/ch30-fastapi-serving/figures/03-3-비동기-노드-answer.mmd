@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  fn["노드 함수 answer_node<br>정의 줄 async def"]:::tool
+  ad["graph.add_node<br>이름 answer로 더함"]:::tool
+  ck["answer_node가<br>비동기 함수인가 True"]:::measure
+  lb["소스 확인<br>동기로 부를 함수 자리를<br>비워 둠"]
+  fn --> ad
+  fn --> ck
+  ad -.-> lb

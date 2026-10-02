@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  R["같은 값 규칙 과업 명세<br>입력 191 · 169"]:::tool
+  subgraph T["텀블러 문의 · 7·9·10절"]
+    direction TB
+    T1["category 교환<br>세 층 모두 지남"]:::measure
+    T2["원문: 다음 행동 값도<br>고객에게 하는 말"]:::measure
+    T1 --> T2
+  end
+  subgraph F["글꼴 문의 · 11절"]
+    direction TB
+    F1["category 배송<br>세 층 모두 지남"]:::measure
+    F2["원문: 배송 문의가 아니라면서<br>분류는 배송 · 내용 오류"]:::measure
+    F1 --> F2
+  end
+  R --> T
+  R --> F

@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  q["같은 질문 · 같은 상태<br>ticket_no Q-017<br>바꾼 것은 실행 정보의<br>overdue_days 하나"]:::tool
+  subgraph r0["overdue_days 0"]
+    direction TB
+    a1["도구 메시지<br>이용자 M-0317 연체가 없어<br>새 대출을 할 수 있습니다<br>입력 토큰 426"]:::measure
+  end
+  subgraph r3["바꾼 값 · overdue_days 3"]
+    direction TB
+    b1["도구 메시지<br>이용자 M-0317 연체 3일<br>연체한 일수만큼<br>새 대출이 제한됩니다<br>입력 토큰 434"]:::measure
+  end
+  same["두 실행 공통<br>메시지 넷 · 모델 요청 두 번<br>도구 메시지 하나<br>호출 ID 짝 True<br>결과 키 messages · ticket_no"]
+  q --> r0
+  q --> r3
+  r0 ~~~ same
+  r3 ~~~ same

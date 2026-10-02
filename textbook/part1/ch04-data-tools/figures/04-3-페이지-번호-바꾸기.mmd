@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  P1["params page=1"]:::tool
+  R1["200 · 주문 2건<br>next_page 2"]:::measure
+  P2["params page=2"]:::tool
+  R2["200 · 주문 O103<br>next_page None"]:::measure
+  P3["params page=3"]:::tool
+  R3["404 Not Found<br>raise_for_status()가<br>HTTPStatusError"]:::measure
+  P1 --> R1
+  R1 -. "다음 요청의 page" .-> P2
+  P2 --> R2
+  P3 --> R3

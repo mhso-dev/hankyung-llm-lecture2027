@@ -1,0 +1,13 @@
+flowchart TD
+  %% classes
+  R["첫 줄 ..F<br>통과 점 2개와 실패 F 1개"]:::fail
+  H["실패한 테스트 함수<br>test_read_unit_price"]:::flow
+  L["> 표시가 붙은 줄<br>assert unit_price == 39000"]:::flow
+  E["E 줄 AssertionError<br>assert '39000' == 39000<br>왼쪽 실제값 · 오른쪽 기대값"]:::fail
+  W["멈춘 곳<br>test_unit_price.py:6"]:::tool
+  S["요약 줄 1 failed, 2 passed<br>종료 코드: 1"]:::fail
+  R --> H
+  H --> L
+  L --> E
+  E --> W
+  W --> S

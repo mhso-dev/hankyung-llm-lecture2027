@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph s18["Ch 18 기록 다섯 줄"]
+    direction TB
+    a1["요청 수<br>2 · 2 · 3 · 5 · 2번<br>흐름마다 다름"]:::measure
+    a2["상태 ok 다섯 줄<br>품질 만점 네 줄"]:::measure
+    a3["도구 요청 수<br>기록에 없음 · None"]
+    a1 ~~~ a2 ~~~ a3
+  end
+  subgraph s21["Ch 21 기록 세 줄"]
+    direction TB
+    b1["요청 수 2번씩<br>도구 요청 1 + 1<br>세 줄 모두 True"]:::measure
+    b2["평가 모델 판정<br>참 세 줄"]:::measure
+    b3["검색 기록 하나씩<br>도구 요청 수와 같음"]:::measure
+    b1 ~~~ b2 ~~~ b3
+  end
+  s18 ~~~ s21

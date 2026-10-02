@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph one["거리 기준값 0.65"]
+    direction TB
+    o1["첫 자리 거리 0.74"]:::measure
+    o2["다시 검색 한 번"]:::measure
+    o3["정답 문서 FAC-002가<br>첫 자리"]:::measure
+    o1 ~~~ o2
+    o2 ~~~ o3
+  end
+  subgraph two["거리 기준값 0.8"]
+    direction TB
+    t1["첫 자리 거리 0.74"]:::measure
+    t2["다시 검색하지 않음"]:::measure
+    t3["정답 문서는<br>자리 셋 그대로"]:::measure
+    t1 ~~~ t2
+    t2 ~~~ t3
+  end
+  same["두 실행 모두<br>같은 물음 하나와<br>같은 첫 검색 결과"]
+  one ~~~ two
+  two ~~~ same

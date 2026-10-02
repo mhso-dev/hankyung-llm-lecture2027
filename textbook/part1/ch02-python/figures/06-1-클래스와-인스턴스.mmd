@@ -1,0 +1,11 @@
+flowchart TD
+  %% classes
+  C["class OrderLine<br>초기화 메서드가<br>name과 count를 저장"]:::flow
+  P["인스턴스 pencil<br>OrderLine('연필', 3)"]:::tool
+  N["인스턴스 note<br>OrderLine('노트', 2)"]:::tool
+  PO["pencil 상품 이름: 연필<br>pencil 수량: 3"]:::measure
+  NO["note 상품 이름: 노트<br>note 수량: 2"]:::measure
+  C --> P
+  C --> N
+  P --> PO
+  N --> NO

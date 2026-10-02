@@ -1,0 +1,39 @@
+[dx] write redirected: course-delivery-results.json
+{
+  "html_pages": 288,
+  "local_links": 5303,
+  "missing_links": [],
+  "notebooks": 246,
+  "code_cells": 5325,
+  "quiz_questions": 1070,
+  "svg_figures": 1138,
+  "excalidraw_sources": 214,
+  "scanned_public_items": 948,
+  "exposed_credentials": [],
+  "archives": [
+    {
+      "file": "part1-practice.zip",
+      "entries": 69,
+      "notebooks": 40,
+      "sha256": "b82d8fc12f7c7df198462e41e704c30888e20ebb27677be53d65251acaa4002d"
+    },
+    {
+      "file": "part2-practice.zip",
+      "entries": 40,
+      "notebooks": 23,
+      "sha256": "7f894a76e30b4458857775b1c86a9b8eac001a759b35faf16078947ff250d76b"
+    },
+    {
+      "file": "part3-practice.zip",
+      "entries": 96,
+      "notebooks": 36,
+      "sha256": "c6dea7c1722e7f7b7cffb4dd2799aa6e083dc93927de1858c27782d077aac5a5"
+    },
+    {
+      "file": "llm-practice.zip",
+      "entries": 455,
+      "notebooks": 214,
+      "sha256": "f2d2008a77fafdcc41bf46e4efddde9f65a48452f6173513661ef4a390430aad"
+    }
+  ]
+}

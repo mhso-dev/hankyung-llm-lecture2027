@@ -1,0 +1,41 @@
+{
+  "part": 5,
+  "part_title": "Part 5 · Agent 입문 — 프레임워크 없이 먼저",
+  "chapter": "ch17-agent-overview",
+  "title": "Agent 개요",
+  "hours": "총 8h · 강의 5h · 실습 3h",
+  "objectives": [
+    "워크플로우와 에이전트를 다음 단계의 결정 주체로 구분할 수 있습니다.",
+    "대부분의 문제에서 워크플로우를 먼저 선택할 근거를 설명할 수 있습니다.",
+    "모델·도구·루프와 완료·단계·예산·사람 확인 정지 조건을 설명할 수 있습니다.",
+    "공식 공개 제품 추적 단서를 읽고 자기 프로젝트의 자율성 진단표를 작성할 수 있습니다."
+  ],
+  "lab_path": "labs/part5/ch17-agent-overview",
+  "sections": [
+    {
+      "slug": "01-워크플로우와-에이전트-경계",
+      "title": "워크플로우와 에이전트 경계",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-워크플로우가-충분한-조건",
+      "title": "워크플로우가 충분한 조건",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-모델-도구-루프와-정지-조건",
+      "title": "모델 도구 루프와 정지 조건",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-자율성의-대가",
+      "title": "자율성의 대가",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-제품-트레이스와-자율성-진단",
+      "title": "제품 트레이스와 자율성 진단",
+      "format": "experiment"
+    }
+  ]
+}

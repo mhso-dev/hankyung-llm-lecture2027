@@ -1,0 +1,105 @@
+{
+  "snapshot": "ch09-ch10-labs-final-2026-09-09.txt",
+  "sha256": "5f21523f0078538c65c9f2b862b76017aa3fd218fc0e00d2d5a6f0045e1ab224",
+  "files": 16,
+  "prose_characters": 18497,
+  "items": [
+    {
+      "path": "labs/part3/ch09-rag-first-run/README.md",
+      "source_sha256": "654f6b8b3b2c7c229dd7670d28e888fb4222be80f27780e8ad39010aaf238cb9",
+      "prose_characters": 392,
+      "kind": "readme"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/01-RAG-지도.ipynb",
+      "source_sha256": "c3590691e025b187e2180ed763d8aea23970e678589946856035bb018794eed4",
+      "prose_characters": 1889,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/02-로더와-스플리터.ipynb",
+      "source_sha256": "0939d0feefc5dd11347a7aa750749aa2b6622550f0646dca46757636561a3ffa",
+      "prose_characters": 995,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/03-임베딩과-벡터스토어.ipynb",
+      "source_sha256": "2a71ff92389702b29eaba26d07a4640116d5b0eb87bd2a91188c802c0022cc26",
+      "prose_characters": 1077,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/04-생성과-출처-인용.ipynb",
+      "source_sha256": "be1bac0978c7e04c9ab82cbe6b5be1e2366ee0c8bd12b7b12a0c83ef8e014a51",
+      "prose_characters": 1408,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/05-첫-실패-보기.ipynb",
+      "source_sha256": "fa503ee47ad8ed73b582a80b3ffc942c630986d90819e5a2f6b7cf3ac87ef519",
+      "prose_characters": 1307,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch09-rag-first-run/notebooks/06-실험-하네스.ipynb",
+      "source_sha256": "b99ec12e2b50fe14cb0c1be89d2694558336226aa5cf3d69b05cf7e0baf2a549",
+      "prose_characters": 1372,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/README.md",
+      "source_sha256": "1524ab76661975c8874eec1d2af271993809c37ca6be9f27e579689f745c9083",
+      "prose_characters": 903,
+      "kind": "readme"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/01-문서와-메타데이터.ipynb",
+      "source_sha256": "b22d3ee211654c6212245f8db0b784cdaaa5bb0af98e36a410cc2feabd830904",
+      "prose_characters": 1052,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/02-PDF와-표-OCR.ipynb",
+      "source_sha256": "097ee2acbb33d8211f039e319da81abbd548e86966f2c77b20e891a9ab470c20",
+      "prose_characters": 1178,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/03-DOCX-HTML-CSV.ipynb",
+      "source_sha256": "de69dda92a3d529d4c4610c9f08097e9e61d988df622f9247db138b4b7aa925a",
+      "prose_characters": 1245,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/04-HWP와-HWPX.ipynb",
+      "source_sha256": "57a6fe6476b7f3541d37fdbd243692e9088647419cfa5e2b740c33b78c142c97",
+      "prose_characters": 1227,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/05-문자-재귀-토큰-청킹.ipynb",
+      "source_sha256": "be9ea70eb348f1cfaee1e40207d1ababf41154999fa42b40da6dac0eb0290ade",
+      "prose_characters": 1102,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/06-구조와-시맨틱-청킹.ipynb",
+      "source_sha256": "3e22ec02c8e921555f2ccd97629e13c4c227a2a3c3223324495217fcc5e59b7e",
+      "prose_characters": 1140,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/07-한국어-임베딩과-캐시.ipynb",
+      "source_sha256": "af036eebee64d61ff4b436370c650262f5cbfe449e09124f94e5475949ffb0c7",
+      "prose_characters": 958,
+      "kind": "notebook_markdown"
+    },
+    {
+      "path": "labs/part3/ch10-document-processing/notebooks/08-인덱싱-비교-실험.ipynb",
+      "source_sha256": "b15efdc0457136548141ac622cce7556c9593e84922cd8dc8957e1a206895a14",
+      "prose_characters": 1252,
+      "kind": "notebook_markdown"
+    }
+  ],
+  "note": "Read-only extraction. Notebook code cells, outputs, metadata, and fenced README code blocks are excluded."
+}

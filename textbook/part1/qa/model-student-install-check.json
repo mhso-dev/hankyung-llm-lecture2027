@@ -1,0 +1,19 @@
+{
+  "date": "2026-09-09",
+  "chapter": "ch05-llm-principles",
+  "command": [
+    "uv",
+    "run",
+    "--locked",
+    "python",
+    "-c",
+    "import ipykernel,transformers,torch,sentence_transformers; print(\"student kernel imports PASS\"); print(ipykernel.__version__, transformers.__version__, torch.__version__, sentence_transformers.__version__)"
+  ],
+  "setup": "Fresh directory containing only pyproject.toml and uv.lock; no --with overrides.",
+  "exit_code": 0,
+  "stdout": "student kernel imports PASS\n7.3.0 4.56.2 2.8.0 5.1.1\n",
+  "verified_files": {
+    "pyproject.toml": "a462cb12a84bff3b892432e56df627237fd67509625cece890432a56dc3073ed",
+    "uv.lock": "66286cb0be6c2dbe3f7903442fff685ee82e3c147972d9b0d592cf5719aa49c1"
+  }
+}

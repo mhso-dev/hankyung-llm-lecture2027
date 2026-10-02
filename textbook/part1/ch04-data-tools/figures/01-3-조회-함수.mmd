@@ -1,0 +1,11 @@
+flowchart LR
+  %% classes
+  IN1["입력<br>orders.csv · paid"]:::tool
+  IN2["값 바꿔 보기<br>orders.csv · pending"]:::tool
+  FN["fetch_orders()<br>읽기 → 마스크<br>→ loc → to_dict"]:::flow
+  OUT1["딕셔너리 2개<br>O101 · O103"]:::measure
+  OUT2["딕셔너리 1개<br>O102"]:::measure
+  IN1 --> FN
+  IN2 -.-> FN
+  FN --> OUT1
+  FN -.-> OUT2

@@ -1,0 +1,19 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant S as 조립 함수<br>serve_inquiry
+  participant M as 모델 gpt-5.4-mini
+  participant T as 도구 흉내 run_tool
+  S->>M: 바퀴 1 요청 글
+  M-->>S: 주문 조회
+  Note over M: 입력 토큰 116
+  S->>T: 주문 조회
+  T-->>S: 받은 지 5일
+  S->>M: 바퀴 2 요청 글
+  M-->>S: 환불 규정 확인
+  Note over M: 입력 토큰 138
+  S->>T: 환불 규정 확인
+  T-->>S: 7일 안이면 환불할 수 있음
+  S->>M: 바퀴 3 요청 글
+  M-->>S: 환불 요청 등록
+  Note over M: 입력 토큰 160
+  Note over S: 멈춤 · 사람 확인<br>고른 쪽 코드 · 등록은 부르지 않음<br>모델 요청 3 · 입력 토큰 합 414

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  src["E01 2쪽의 표<br>머리글 구역 · 평일<br>주말 · 비고"]:::tool
+  plain["기본 읽기 한 줄"]:::flow
+  plainout["종합자료실 줄의 값 3개<br>머리글 줄의 값 4개<br>어느 칸이 비었는지 모름"]:::measure
+  tab["표 읽기 한 행"]:::flow
+  tabout["칸 4개<br>마지막 칸은 빈 글"]:::measure
+  rowtext["make_row_text()<br>칸마다 머리글을 붙임"]:::flow
+  docs["행 Document 6개<br>출처 표시 E01 p.2"]:::measure
+  src --> plain
+  plain --> plainout
+  src --> tab
+  tab --> tabout
+  tabout --> rowtext
+  rowtext --> docs

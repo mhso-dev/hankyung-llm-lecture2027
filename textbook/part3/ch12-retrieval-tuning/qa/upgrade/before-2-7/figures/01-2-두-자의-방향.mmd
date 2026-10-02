@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph cosine["코사인 자"]
+    direction TB
+    cos_one["코사인 유사도<br>클수록 가깝다"]:::flow
+    cos_two["코사인 거리<br>유사도를 1에서 뺀 값"]:::flow
+  end
+  subgraph euclid["L2 자"]
+    direction TB
+    l2_one["같은 자리 숫자의 차<br>제곱해서 모두 더함"]:::flow
+    l2_two["L2 거리<br>작을수록 가깝다"]:::flow
+  end
+  cos_one --> cos_two
+  l2_one --> l2_two
+  cos_two --> same["문서 벡터 길이가 1.0<br>두 자의 순위가 같았음"]:::measure
+  l2_two --> same

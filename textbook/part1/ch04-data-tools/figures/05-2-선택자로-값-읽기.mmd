@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  SOUP["요소 트리 soup"]:::tool
+  ART["article 요소<br>data-id 속성 A10"]:::tool
+  TITLE["제목<br>골목상권 매출 회복"]:::measure
+  SUM["요약<br>주말 방문객 증가로<br>음식점 매출이 늘었습니다."]:::measure
+  TIME["time 요소"]:::tool
+  SHOW["화면 글<br>2026년 9월 1일"]:::measure
+  ATTR["datetime 속성<br>2026-09-01"]:::measure
+  SOUP -- "select_one('article')" --> ART
+  ART -- "select_one('h1')<br>get_text()" --> TITLE
+  ART -- "select_one('.summary')<br>get_text()" --> SUM
+  ART -- "select_one('time')" --> TIME
+  TIME -- "get_text()" --> SHOW
+  TIME -- "['datetime']" --> ATTR

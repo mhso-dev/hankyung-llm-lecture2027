@@ -1,0 +1,27 @@
+flowchart LR
+  %% classes
+  subgraph A["(가) 규칙 갈래 그래프"]
+    direction TB
+    r1(["가상 시작점 START"])
+    r2["요청 노드 request<br>규칙이 요청을 만듦"]:::flow
+    r3["도구 실행 노드<br>tools"]
+    r4["답 노드 answer<br>도구를 모르는 모델"]:::model
+    r5(["가상 끝점 END"])
+    r1 -.->|주제어 있음| r2
+    r1 -.->|주제어 없음| r4
+    r2 --> r3
+    r3 --> r4
+    r4 --> r5
+  end
+  subgraph B["(나) 모델 선택 그래프 · 01절"]
+    direction TB
+    m1(["가상 시작점 START"])
+    m2["모델 노드 model<br>도구를 아는 모델"]:::model
+    m3["도구 실행 노드<br>tools"]
+    m4(["가상 끝점 END"])
+    m1 --> m2
+    m2 -.->|요청 있음| m3
+    m2 -.->|요청 없음| m4
+    m3 -->|되돌아가는<br>엣지| m2
+  end
+  A ~~~ B

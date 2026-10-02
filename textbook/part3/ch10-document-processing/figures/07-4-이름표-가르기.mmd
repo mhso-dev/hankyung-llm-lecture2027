@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph SAME["같은 이름표를 다시 쓸 때"]
+    direction LR
+    b1["차원 수 256 모델"]:::model
+    b2["가르는 이름<br>기본 설정 그대로"]:::flow
+    b3["돌아온 숫자 개수 1536<br>기대한 개수 256"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph SPLIT["이름표를 가를 때"]
+    direction LR
+    a1["차원 수 256 모델"]:::model
+    a2["가르는 이름<br>차원 수를 넣음"]:::flow
+    a3["돌아온 숫자 개수 256<br>저장 파일 8개"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  note1["두 칸 모두 같은 글 185자를 보냈습니다"]
+  SAME ~~~ SPLIT
+  SPLIT ~~~ note1

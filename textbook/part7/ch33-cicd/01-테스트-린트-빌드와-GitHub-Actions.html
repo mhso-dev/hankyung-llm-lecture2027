@@ -1,0 +1,266 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>테스트·린트·빌드와 GitHub Actions — Ch 33 · CI/CD와 배포 운영</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 프로덕션 엔지니어링 · Ch 33 · CI/CD와 배포 운영</p>
+<h1>테스트·린트·빌드와 GitHub Actions</h1><div class="meta"><span>강의 1h</span><span>실습 2.2h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2.2h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>pytest·Ruff·wheel 빌드가 서로 다른 결함을 찾는 이유를 설명할 수 있습니다.</li><li>별도 프로세스의 종료 코드로 단계의 성공과 실패를 판정할 수 있습니다.</li><li>검증한 wheel을 다음 배포 단계가 사용하는 산출물로 구분할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>서비스 코드를 작성한 뒤에도 변경은 계속됩니다. 작은 수정이 기존 기능, 평가 점수, 이미지 내용, 운영 지표에 영향을 줄 수 있습니다. 사람이 매번 같은 명령을 기억해서 실행하면 확인 순서가 빠지거나 서로 다른 환경에서 다른 결과를 얻게 됩니다. 테스트·린트·빌드와 GitHub Actions는 변경을 일정한 순서로 확인하고, 기준을 만족한 결과만 다음 단계로 보내는 방법입니다.</p>
+<p>이 장의 실습은 외부 저장소와 클라우드 계정 없이 로컬에서 실행됩니다. 학생은 명령의 출력과 프로세스 종료 코드를 직접 확인합니다. 실제 GitHub Actions와 클라우드 배포에서는 같은 명령을 원격 실행 환경과 배포 권한에 연결합니다. 로컬 성공은 원격 배포 성공을 보장하지 않으므로, 확인한 범위를 명확히 구분합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>Ch2에서 pytest와 패키징을, Ch3에서 PR 검토 흐름을, Ch32에서 Docker 이미지를 만들었습니다. 이 절은 이미 배운 검사를 사람이 기억해서 실행하는 대신, 같은 명령과 순서를 워크플로 파일에 기록하는 방법으로 연결합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>단계마다 다른 검사를 수행하는 생산선</h3><p>제품 생산선에서 치수 검사, 표면 검사, 포장 검사는 서로 다른 결함을 찾습니다. 코드도 pytest가 동작을, Ruff가 정적 규칙을, wheel 빌드가 배포 파일 생성을 확인합니다. 어느 단계든 종료 코드가 0이 아니면 다음 단계로 보내지 않습니다.</p>
+<h3>정의</h3><p>GitHub Actions의 워크플로(workflow)는 저장소의 이벤트에 반응해 하나 이상의 작업(job)을 실행하는 YAML 파일입니다. 각 작업은 실행기(runner)에서 단계(step)를 순서대로 수행합니다. 이 실습의 워크플로는 PR과 main 브랜치 push를 시작 조건으로 삼고, 테스트와 린트와 평가 회귀를 같은 Python 3.12 환경에서 실행합니다. 테스트는 관찰 가능한 동작을 확인하고, 린트는 실행 전에 찾을 수 있는 코드 문제를 검사하며, 빌드는 배포할 파일을 만듭니다. 세 검사는 목적이 다르므로 하나의 성공으로 다른 검사를 대신하지 않습니다.</p>
+<p>연속 통합(Continuous Integration, CI)은 저장소 변경을 자주 합치면서 자동 검사로 오류를 이르게 찾는 방식입니다. 연속 전달 또는 연속 배포(Continuous Delivery/Deployment, CD)는 검사를 통과한 결과물을 배포 가능한 상태로 만들거나 실제 환경에 반영하는 과정입니다. 파이프라인(pipeline)은 이 단계와 의존 관계를 기록한 실행 순서입니다. 아티팩트(artifact)는 빌드가 만든 패키지, 이미지, 평가 보고서처럼 다음 단계가 사용하는 결과물입니다.</p>
+<h3>코드 읽기와 개념 경계</h3><p>CI의 한 단계는 명령의 화면 문구보다 종료 코드로 성공과 실패를 판단합니다. pytest, Ruff, wheel 빌드는 각각 동작, 정적 규칙, 배포 산출물을 검사하며 서로 대신하지 않습니다. <code>subprocess.run</code>의 <code>returncode</code>가 0이면 성공이고 0이 아니면 실패입니다. 노트북은 일부러 실패하는 임시 테스트와 수정한 테스트를 같은 방식으로 실행해 이 계약을 확인합니다.</p><p>로컬에서 세 명령이 통과해도 CI 환경의 Python 버전, 잠금 파일, 운영체제가 다르면 결과가 달라질 수 있습니다. 워크플로에는 실행 환경과 설치 명령을 고정하고, 빌드한 wheel을 다음 배포 단계가 같은 산출물로 사용하도록 보관합니다. 테스트를 배포 때 다시 다른 소스에서 만들면 검증 대상과 배포 대상이 어긋납니다.</p><h3>도식 읽기</h3><figure><img src="figures/01-흐름.svg" alt="테스트·린트·빌드와 GitHub Actions 단계 도식"><figcaption>테스트 입력에서 pytest·Ruff·wheel 빌드를 차례로 지나 종료 코드로 진행 여부를 결정하는 순서입니다. 각 초록 상자는 앞 단계가 실제로 성공했을 때만 도달합니다.</figcaption></figure>
+<p>세 검사의 결과를 한 문구로 합치지 않고 단계별 종료 코드와 산출물 이름을 남깁니다. 어느 단계에서 멈췄는지 알아야 수정할 파일과 다시 실행할 범위를 정할 수 있습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>먼저 제공된 테스트 스위트와 Ruff 검사를 별도 프로세스로 실행합니다. 이어서 임시 폴더에 실패하는 테스트를 만들고 pytest의 실제 종료 코드를 관찰합니다. 같은 테스트의 기대값만 수정해 성공 종료 코드와 비교합니다. GitHub에 PR을 만들지는 않지만, `.github/workflows/ci.yml`에는 같은 명령이 들어 있습니다.</p><section class="notebook" data-notebook="01-테스트-린트-빌드와-GitHub-Actions" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="01-테스트-린트-빌드와-GitHub-Actions.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDthYzsiqTtirjCt+umsO2KuMK367mM65Oc7JmAIEdpdEh1YiBBY3Rpb25zXG4iLAogICAgIlxuIiwKICAgICLqsJnsnYAg6rKA7KadIOuqheugueydhCDroZzsu6zqs7wgQ0nsl5DshJwg7Iuk7ZaJ7ZWY6rOgIOyiheujjCDsvZTrk5zrpbwg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogInByZXAtMzMtMDEtMCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg7KSA67mEIOyFgOydtCDtlZjripQg7J28XG4iLAogICAgIlxuIiwKICAgICLssqsg7IWA7J2YIGBQYXRoYCDtg5Dsg4nsnYAg7Ja064qQIOyDgeychCDtj7TrjZTsl5DshJwg7Je07Ja064+EIENoMzPsnZggYHB5cHJvamVjdC50b21sYOydhCDquLDspIDsnLzroZwg7Iuk7Iq1IO2PtOuNlOulvCDssL7sirXri4jri6QuIOuSpOydmCBgc3VicHJvY2Vzcy5ydW4oLi4uLCBjd2Q9bGFiLCBjYXB0dXJlX291dHB1dD1UcnVlKWDsnYAg66qF66C57J2EIOuzhOuPhCDtlITroZzshLjsiqTroZwg7Iuk7ZaJ7ZWY6rOgIO2ZlOuptCDrrLjqtazsmYAg7KKF66OMIOy9lOuTnOulvCDtlajqu5gg67CY7ZmY7ZWp64uI64ukLiDsnbQg67O07KGwIOy9lOuTnOuKlCBDSeulvCDtnYnrgrQg64K064qUIOqzte2GtSDsi6Ttlokg6rK96rOE7J2066mwLCDqsIEg7KCI7J2YIO2MkOygleydgCDri6TsnYwg7IWA7JeQ7IScIO2VtOuLuSDrqoXroLnsnZgg7Iuk7KCcIOuwmO2ZmOqwkuydhCDsnb3slrQg6rKw7KCV7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MTk6MjMuMjM5ODE5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MTk6MjMuMjM5NzYxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MTk6MjMuMjQyNzQ2WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoxOToyMy4yNDIzOTZaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiMy4xMi4xMyBUcnVlXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aFxuIiwKICAgICJpbXBvcnQgc3VicHJvY2Vzcywgc3lzXG4iLAogICAgImxhYiA9IG5leHQoKHAgZm9yIHAgaW4gW1BhdGguY3dkKCksICpQYXRoLmN3ZCgpLnBhcmVudHNdIGlmIHAubmFtZSA9PSBcImNoMzMtY2ljZFwiIGFuZCAocCAvIFwicHlwcm9qZWN0LnRvbWxcIikuaXNfZmlsZSgpKSwgUGF0aChcImxhYnMvcGFydDcvY2gzMy1jaWNkXCIpKS5yZXNvbHZlKClcbiIsCiAgICAicHJpbnQoc3lzLnZlcnNpb24uc3BsaXQoKVswXSwgbGFiLmV4aXN0cygpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNvbmNlcHQtMzMtMDEtYSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDrsJTroZwg64uk7J2MIOy9lOuTnOulvCDsnb3ripQg67Cp67KVXG4iLAogICAgIlxuIiwKICAgICJDSeydmCDtlZwg64uo6rOE64qUIOuqheugueydmCDtmZTrqbQg66y46rWs67O064ukIOyiheujjCDsvZTrk5zroZwg7ISx6rO16rO8IOyLpO2MqOulvCDtjJDri6jtlanri4jri6QuIHB5dGVzdCwgUnVmZiwgd2hlZWwg67mM65Oc64qUIOqwgeqwgSDrj5nsnpEsIOygleyggSDqt5zsuZksIOuwsO2PrCDsgrDstpzrrLzsnYQg6rKA7IKs7ZWY66mwIOyEnOuhnCDrjIDsi6DtlZjsp4Ag7JWK7Iq164uI64ukLiBgc3VicHJvY2Vzcy5ydW5g7J2YIGByZXR1cm5jb2RlYOqwgCAw7J2066m0IOyEseqzteydtOqzoCAw7J20IOyVhOuLiOuptCDsi6TtjKjsnoXri4jri6QuIOuFuO2KuOu2geydgCDsnbzrtoDrn6wg7Iuk7Yyo7ZWY64qUIOyehOyLnCDthYzsiqTtirjsmYAg7IiY7KCV7ZWcIO2FjOyKpO2KuOulvCDqsJnsnYAg67Cp7Iud7Jy866GcIOyLpO2Wie2VtCDsnbQg6rOE7JW97J2EIO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTAzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjE5OjIzLjI0MzQ4OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjE5OjIzLjI0MzQxNVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjE5OjIzLjQyNTM3N1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MTk6MjMuNDI0OTQyWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIi4uLi4uICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBbMTAwJV1cbiIsCiAgICAgICI1IHBhc3NlZCBpbiAwLjA3c1xuIiwKICAgICAgImV4aXRfY29kZT0gMFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJyZXN1bHQgPSBzdWJwcm9jZXNzLnJ1bihbc3lzLmV4ZWN1dGFibGUsIFwiLW1cIiwgXCJweXRlc3RcIiwgXCItcVwiXSwgY3dkPWxhYiwgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlKVxuIiwKICAgICJwcmludChyZXN1bHQuc3Rkb3V0LnN0cmlwKCkpXG4iLAogICAgInByaW50KFwiZXhpdF9jb2RlPVwiLCByZXN1bHQucmV0dXJuY29kZSlcbiIsCiAgICAiYXNzZXJ0IHJlc3VsdC5yZXR1cm5jb2RlID09IDAiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjE5OjIzLjQyNjMxOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjE5OjIzLjQyNjIzNloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjE5OjIzLjQ2Njk4MFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MTk6MjMuNDY2NjA4WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIkFsbCBjaGVja3MgcGFzc2VkIVxuIiwKICAgICAgImV4aXRfY29kZT0gMFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJyZXN1bHQgPSBzdWJwcm9jZXNzLnJ1bihbXCJydWZmXCIsIFwiY2hlY2tcIiwgXCJjaWNkX2RlbW8ucHlcIiwgXCJ0ZXN0c1wiXSwgY3dkPWxhYiwgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlKVxuIiwKICAgICJwcmludChyZXN1bHQuc3Rkb3V0LnN0cmlwKCkgb3IgXCJydWZmOiBQQVNTXCIpXG4iLAogICAgInByaW50KFwiZXhpdF9jb2RlPVwiLCByZXN1bHQucmV0dXJuY29kZSlcbiIsCiAgICAiYXNzZXJ0IHJlc3VsdC5yZXR1cm5jb2RlID09IDAiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLWJ1aWxkIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjE5OjIzLjQ2Nzg3NloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjE5OjIzLjQ2NzgwNFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjE5OjI0LjI2MDQ0MVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MTk6MjQuMjYwMDE4WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIndoZWVscz0gWydjaDMzX2NpY2RfbGFiLTAuMS4wLXB5My1ub25lLWFueS53aGwnXSBleGl0X2NvZGU9IDBcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IHRlbXBmaWxlXG4iLAogICAgIndpdGggdGVtcGZpbGUuVGVtcG9yYXJ5RGlyZWN0b3J5KCkgYXMgb3V0OlxuIiwKICAgICIgICAgcmVzdWx0ID0gc3VicHJvY2Vzcy5ydW4oW3N5cy5leGVjdXRhYmxlLCBcIi1tXCIsIFwiYnVpbGRcIiwgXCItLXdoZWVsXCIsIFwiLS1vdXRkaXJcIiwgb3V0XSwgY3dkPWxhYiwgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlKVxuIiwKICAgICIgICAgd2hlZWxzID0gW3AubmFtZSBmb3IgcCBpbiBQYXRoKG91dCkuZ2xvYihcIioud2hsXCIpXVxuIiwKICAgICIgICAgcHJpbnQoXCJ3aGVlbHM9XCIsIHdoZWVscywgXCJleGl0X2NvZGU9XCIsIHJlc3VsdC5yZXR1cm5jb2RlKVxuIiwKICAgICIgICAgYXNzZXJ0IHJlc3VsdC5yZXR1cm5jb2RlID09IDAgYW5kIGxlbih3aGVlbHMpID09IDEiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TtjKgg7J6s7ZiEXG4iLAogICAgIlxuIiwKICAgICLsnoTsi5wg7KCA7J6l7IaM7JeQ7IScIOyLpO2MqO2VmOuKlCDthYzsiqTtirjrpbwg7LaU6rCA7ZWp64uI64ukLiDsi6TsoJwgcHl0ZXN0IO2UhOuhnOyEuOyKpOqwgCAw7J20IOyVhOuLjCDsooXro4wg7L2U65Oc66W8IOuwmO2ZmO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjE5OjI0LjI2MTMxOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjE5OjI0LjI2MTI0OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjE5OjI0LjM2NDQ4OFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MTk6MjQuMzY0MDI4WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiMSBmYWlsZWQgaW4gMC4wMXNcbiIsCiAgICAgICJleGl0X2NvZGU9IDFcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IHRlbXBmaWxlXG4iLAogICAgIndpdGggdGVtcGZpbGUuVGVtcG9yYXJ5RGlyZWN0b3J5KCkgYXMgdGVtcDpcbiIsCiAgICAiICAgIHAgPSBQYXRoKHRlbXApIC8gXCJ0ZXN0X3JlZ3Jlc3Npb24ucHlcIlxuIiwKICAgICIgICAgcC53cml0ZV90ZXh0KFwiZGVmIHRlc3RfcmVncmVzc2lvbigpOlxcbiAgICBhc3NlcnQgMiArIDIgPT0gNVxcblwiKVxuIiwKICAgICIgICAgZmFpbGVkID0gc3VicHJvY2Vzcy5ydW4oW3N5cy5leGVjdXRhYmxlLCBcIi1tXCIsIFwicHl0ZXN0XCIsIFwiLXFcIiwgc3RyKHApXSwgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlKVxuIiwKICAgICIgICAgcHJpbnQoZmFpbGVkLnN0ZG91dC5zdHJpcCgpLnNwbGl0bGluZXMoKVstMV0pXG4iLAogICAgIiAgICBwcmludChcImV4aXRfY29kZT1cIiwgZmFpbGVkLnJldHVybmNvZGUpXG4iLAogICAgIiAgICBhc3NlcnQgZmFpbGVkLnJldHVybmNvZGUgIT0gMCIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7IiY7KCVXG4iLAogICAgIlxuIiwKICAgICLqsJnsnYAg7YWM7Iqk7Yq47J2YIOq4sOuMgOqwkuydhCDqs6DsuZjrqbQg7ZSE66Gc7IS47Iqk6rCAIOyiheujjCDsvZTrk5wgMOydhCDrsJjtmZjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY29uY2VwdC0zMy0wMS1iIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg64uo6rOE7JeQ7IScIOq1rOu2hO2VoCDrspTsnIRcbiIsCiAgICAiXG4iLAogICAgIuuhnOy7rOyXkOyEnCDshLgg66qF66C57J20IO2GteqzvO2VtOuPhCBDSSDtmZjqsr3snZggUHl0aG9uIOuyhOyghCwg7J6g6riIIO2MjOydvCwg7Jq07JiB7LK07KCc6rCAIOuLpOultOuptCDqsrDqs7zqsIAg64us65287KeIIOyImCDsnojsirXri4jri6QuIOybjO2BrO2UjOuhnOyXkOuKlCDsi6Ttlokg7ZmY6rK96rO8IOyEpOy5mCDrqoXroLnsnYQg6rOg7KCV7ZWY6rOgLCDruYzrk5ztlZwgd2hlZWzsnYQg64uk7J2MIOuwsO2PrCDri6jqs4TqsIAg6rCZ7J2AIOyCsOy2nOusvOuhnCDsgqzsmqntlZjrj4TroZ0g67O06rSA7ZWp64uI64ukLiDthYzsiqTtirjrpbwg67Cw7Y+sIOuVjCDri6Tsi5wg64uk66W4IOyGjOyKpOyXkOyEnCDrp4zrk6TrqbQg6rKA7KadIOuMgOyDgeqzvCDrsLDtj6wg64yA7IOB7J20IOyWtOq4i+uCqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDYsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjE5OjI0LjM2NTQyM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjE5OjI0LjM2NTMyOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjE5OjI0LjQ2MDQxOFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MTk6MjQuNDU5OTIyWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICIxIHBhc3NlZCBpbiAwLjAwc1xuIiwKICAgICAgImV4aXRfY29kZT0gMFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJ3aXRoIHRlbXBmaWxlLlRlbXBvcmFyeURpcmVjdG9yeSgpIGFzIHRlbXA6XG4iLAogICAgIiAgICBwID0gUGF0aCh0ZW1wKSAvIFwidGVzdF9yZWdyZXNzaW9uLnB5XCJcbiIsCiAgICAiICAgIHAud3JpdGVfdGV4dChcImRlZiB0ZXN0X3JlZ3Jlc3Npb24oKTpcXG4gICAgYXNzZXJ0IDIgKyAyID09IDRcXG5cIilcbiIsCiAgICAiICAgIHBhc3NlZCA9IHN1YnByb2Nlc3MucnVuKFtzeXMuZXhlY3V0YWJsZSwgXCItbVwiLCBcInB5dGVzdFwiLCBcIi1xXCIsIHN0cihwKV0sIHRleHQ9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSlcbiIsCiAgICAiICAgIHByaW50KHBhc3NlZC5zdGRvdXQuc3RyaXAoKS5zcGxpdGxpbmVzKClbLTFdKVxuIiwKICAgICIgICAgcHJpbnQoXCJleGl0X2NvZGU9XCIsIHBhc3NlZC5yZXR1cm5jb2RlKVxuIiwKICAgICIgICAgYXNzZXJ0IHBhc3NlZC5yZXR1cm5jb2RlID09IDAiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogInBhaXJlZCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDYsCiAgICJjb2RlX3NoYTI1NiI6ICJhMzA4ODk5YjM3NTZjOWQ1ZmY2Mjc5YzI3N2JkOGNjZWMyMmY5MzY2YzRmZDExMmRkY2EyYjkzOGFiYjUzNjk3IiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDI6MTk6MjQuNTc1OTczKzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICI1MmE1MDVkZDIwOTQ5NzYwZjRmZTJjYzdjMjYyM2RkNjZiNDZjYTVhZGYzOGU0MmVjNWZlMjAyMzhlMzFkOWEzIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>테스트·린트·빌드와 GitHub Actions</h2>
+<p>같은 검증 명령을 로컬과 CI에서 실행하고 종료 코드를 확인합니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>첫 셀의 <code>Path</code> 탐색은 어느 상위 폴더에서 열어도 Ch33의 <code>pyproject.toml</code>을 기준으로 실습 폴더를 찾습니다. 뒤의 <code>subprocess.run(..., cwd=lab, capture_output=True)</code>은 명령을 별도 프로세스로 실행하고 화면 문구와 종료 코드를 함께 반환합니다. 이 보조 코드는 CI를 흉내 내는 공통 실행 경계이며, 각 절의 판정은 다음 셀에서 해당 명령의 실제 반환값을 읽어 결정합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">from pathlib import Path
+import subprocess, sys
+lab = next((p for p in [Path.cwd(), *Path.cwd().parents] if p.name == &quot;ch33-cicd&quot; and (p / &quot;pyproject.toml&quot;).is_file()), Path(&quot;labs/part7/ch33-cicd&quot;)).resolve()
+print(sys.version.split()[0], lab.exists())</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">3.12.13 True
+</pre></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>CI의 한 단계는 명령의 화면 문구보다 종료 코드로 성공과 실패를 판단합니다. pytest, Ruff, wheel 빌드는 각각 동작, 정적 규칙, 배포 산출물을 검사하며 서로 대신하지 않습니다. <code>subprocess.run</code>의 <code>returncode</code>가 0이면 성공이고 0이 아니면 실패입니다. 노트북은 일부러 실패하는 임시 테스트와 수정한 테스트를 같은 방식으로 실행해 이 계약을 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">result = subprocess.run([sys.executable, &quot;-m&quot;, &quot;pytest&quot;, &quot;-q&quot;], cwd=lab, text=True, capture_output=True)
+print(result.stdout.strip())
+print(&quot;exit_code=&quot;, result.returncode)
+assert result.returncode == 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">.....                                                                    [100%]
+5 passed in 0.07s
+exit_code= 0
+</pre></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">result = subprocess.run([&quot;ruff&quot;, &quot;check&quot;, &quot;cicd_demo.py&quot;, &quot;tests&quot;], cwd=lab, text=True, capture_output=True)
+print(result.stdout.strip() or &quot;ruff: PASS&quot;)
+print(&quot;exit_code=&quot;, result.returncode)
+assert result.returncode == 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">All checks passed!
+exit_code= 0
+</pre></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import tempfile
+with tempfile.TemporaryDirectory() as out:
+    result = subprocess.run([sys.executable, &quot;-m&quot;, &quot;build&quot;, &quot;--wheel&quot;, &quot;--outdir&quot;, out], cwd=lab, text=True, capture_output=True)
+    wheels = [p.name for p in Path(out).glob(&quot;*.whl&quot;)]
+    print(&quot;wheels=&quot;, wheels, &quot;exit_code=&quot;, result.returncode)
+    assert result.returncode == 0 and len(wheels) == 1</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">wheels= [&#x27;ch33_cicd_lab-0.1.0-py3-none-any.whl&#x27;] exit_code= 0
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — pytest와 Ruff의 종료 코드 0, 생성된 wheel 한 개를 확인합니다. 임시 실패 테스트는 0이 아닌 코드를, 수정본은 0을 반환하는지 비교합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>실패 테스트는 `2 + 2 == 5`라는 잘못된 기대값 때문에 실제로 실패합니다. pytest는 실패 개수와 함께 종료 코드 1을 반환하고, CI 실행기는 이를 작업 실패로 처리할 수 있습니다. 수정본은 기대값을 4로 고정하며 종료 코드 0을 반환합니다. 이 비교는 테스트 실패를 출력 문자열로 흉내 내지 않고 별도 프로세스의 상태로 확인합니다.</p><section class="notebook" data-notebook="01-테스트-린트-빌드와-GitHub-Actions" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>임시 저장소에서 실패하는 테스트를 추가합니다. 실제 pytest 프로세스가 0이 아닌 종료 코드를 반환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import tempfile
+with tempfile.TemporaryDirectory() as temp:
+    p = Path(temp) / &quot;test_regression.py&quot;
+    p.write_text(&quot;def test_regression():\n    assert 2 + 2 == 5\n&quot;)
+    failed = subprocess.run([sys.executable, &quot;-m&quot;, &quot;pytest&quot;, &quot;-q&quot;, str(p)], text=True, capture_output=True)
+    print(failed.stdout.strip().splitlines()[-1])
+    print(&quot;exit_code=&quot;, failed.returncode)
+    assert failed.returncode != 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">1 failed in 0.01s
+exit_code= 1
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>같은 테스트의 기대값을 고치면 프로세스가 종료 코드 0을 반환합니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>로컬에서 세 명령이 통과해도 CI 환경의 Python 버전, 잠금 파일, 운영체제가 다르면 결과가 달라질 수 있습니다. 워크플로에는 실행 환경과 설치 명령을 고정하고, 빌드한 wheel을 다음 배포 단계가 같은 산출물로 사용하도록 보관합니다. 테스트를 배포 때 다시 다른 소스에서 만들면 검증 대상과 배포 대상이 어긋납니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">with tempfile.TemporaryDirectory() as temp:
+    p = Path(temp) / &quot;test_regression.py&quot;
+    p.write_text(&quot;def test_regression():\n    assert 2 + 2 == 4\n&quot;)
+    passed = subprocess.run([sys.executable, &quot;-m&quot;, &quot;pytest&quot;, &quot;-q&quot;, str(p)], text=True, capture_output=True)
+    print(passed.stdout.strip().splitlines()[-1])
+    print(&quot;exit_code=&quot;, passed.returncode)
+    assert passed.returncode == 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">1 passed in 0.00s
+exit_code= 0
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>Actions 버전 태그는 편리하지만 공급망 정책이 엄격한 저장소에서는 검토한 커밋 SHA로 고정합니다.</li><li>로컬에 설치된 도구와 원격 실행기의 버전이 다르면 결과가 달라질 수 있으므로 pyproject와 lock 파일을 함께 커밋합니다.</li><li>빌드 성공은 서비스의 답변 품질을 뜻하지 않습니다. 평가 회귀는 다음 절에서 별도 단계로 연결합니다.</li></ul>
+<p>자동화가 모든 위험을 판단하는 것은 아닙니다. 측정 기준이 빠져 있으면 파이프라인은 빠진 기준을 검사하지 못합니다. 외부 서비스 장애, 권한 오류, 실제 사용자 트래픽의 변화도 로컬 실습만으로 알 수 없습니다. 팀은 자동 검사가 판단할 항목과 사람이 승인할 항목을 배포 정책에 함께 기록해야 합니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>CI는 변경마다 같은 검사를 같은 순서로 실행합니다.</li><li>프로세스 종료 코드가 자동화의 통과와 중단을 결정합니다.</li><li>테스트·린트·빌드는 서로 다른 문제를 확인합니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 이 장에서 만든 상태 검사와 중단 조건은 Ch38 Hooks에서 작업 전후에 자동으로 실행하는 검사의 원형이 됩니다. 최종 프로젝트에서는 실제 저장소 권한과 배포 환경을 연결한 뒤 같은 원칙으로 확장합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>워크플로와 작업의 관계를 설명해 보세요.</summary><p class="quiz-a">워크플로는 이벤트와 전체 자동화 흐름을 정의하고, 작업은 한 실행기에서 수행할 단계의 묶음입니다.</p></details><details class="quiz"><summary>린트가 통과하면 테스트를 생략해도 되나요?</summary><p class="quiz-a">생략할 수 없습니다. 린트는 정적 문제를 찾고 테스트는 실행 결과를 확인하므로 목적이 다릅니다.</p></details><details class="quiz"><summary>실패를 CI가 인식하려면 무엇이 필요하나요?</summary><p class="quiz-a">검사 프로세스가 0이 아닌 종료 코드를 반환해야 합니다.</p></details><details class="quiz"><summary>이 실습에서 실제 GitHub PR을 생성했나요?</summary><p class="quiz-a">생성하지 않았습니다. 로컬 실행과 워크플로 파일의 구조만 검증했습니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.github.com/en/actions/get-started/continuous-integration">GitHub Docs, Continuous integration</a> · 확인 2026-09-11</li><li><a href="https://docs.github.com/en/actions/tutorials/build-and-test-code/python">GitHub Docs, Building and testing Python</a> · 확인 2026-09-11</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span>&nbsp;</span><span><a href="index.html">챕터 목차</a></span><span><a href="02-평가-회귀를-CI에-연결하기.html">평가 회귀를 CI에 연결하기 →</a></span></div></div></body></html>

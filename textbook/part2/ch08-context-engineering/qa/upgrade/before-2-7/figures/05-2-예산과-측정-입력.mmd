@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  budget["01절 수업 예산 600<br>입력 가용분 440"]:::tool
+  zero["무관한 기록 0개<br>추정 136 · 예산 안"]:::measure
+  meas["측정 입력 10 · 100 · 1000개<br>추정 456 · 3336 · 32136<br>일부러 예산을 넘김"]:::measure
+  win["컨텍스트 윈도 400,000<br>안에 드는가 True"]:::measure
+  cost["요청 전 비용 상한<br>세 요청 0.028566달러"]:::measure
+  budget --> zero
+  budget --> meas
+  meas --> win
+  meas --> cost

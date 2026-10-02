@@ -1,0 +1,12 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant NB as 노트북 코드
+  participant MO as 모델 객체 ChatOpenAI
+  participant SV as OpenAI 서버 gpt-5.4-mini
+  NB->>MO: init_chat_model로 만들기
+  Note over NB,MO: 요청 0번 · max_tokens None
+  NB->>MO: invoke(messages) system과 user 2개
+  MO->>SV: 요청 1번
+  SV-->>MO: 답 글자와 사용량
+  MO-->>NB: AIMessage 응답 객체
+  Note over NB,MO: 입력 36 · 출력 41토큰 · stop

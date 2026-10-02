@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  cm["두 노드 같음<br>주문 키 order-2401<br>사람의 답 reject<br>노드가 두 번 시작"]
+  subgraph bf["Before · charge_then_ask"]
+    direction TB
+    b1["적고 나서 멈춤<br>이어 갈 때 다시 적음"]:::flow
+    b2["거절인데<br>같은 키 두 줄"]:::fail
+    b1 --> b2
+  end
+  subgraph af["After · ask_then_charge"]
+    direction TB
+    a1["묻고 나서<br>approve일 때만 적음"]:::flow
+    a2["기록 파일 없음"]:::measure
+    a1 --> a2
+  end
+  cm --> bf
+  cm --> af

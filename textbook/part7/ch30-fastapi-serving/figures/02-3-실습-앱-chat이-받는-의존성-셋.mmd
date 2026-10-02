@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  req["요청 POST /v1/chat<br>질문과 thread_id"]:::tool
+  subgraph deps["라이브러리가 요청마다 부르는 제공 함수 셋"]
+    direction TB
+    ag["get_agent<br>두 번 받아도 같은 그래프"]:::tool
+    tk["require_token<br>요청 머리의 접근 토큰 검사"]:::tool
+    tm["get_timeout<br>내놓는 값 2.0"]:::tool
+    ag ~~~ tk ~~~ tm
+  end
+  body["처리 함수 chat 몸통<br>2.0초 안에서 그래프를 부름"]:::tool
+  ok["접근 토큰 있음<br>200 answer thread_id"]:::measure
+  no["접근 토큰 없음<br>401"]:::measure
+  req --> deps --> body --> ok
+  deps -.-> no

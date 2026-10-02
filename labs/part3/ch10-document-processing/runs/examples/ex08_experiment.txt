@@ -1,0 +1,13 @@
+corpus_preflight=required:100,available:18,ready:False
+baseline=18 digital PDFs; scanned variants excluded; no duplicated documents
+cost_preflight_small_usd=0.003681
+cost_preflight_large_usd=0.023928
+pricing_assumption_usd_per_million_tokens=small:0.02,large:0.13 (verify before API run)
+cost_scope=all 3 chunk sets x 2 candidates plus 3 query passes per candidate
+runs=6 backend=educational-feature-hash
+recursive x text-embedding-3-small: chunks=137 first=0/137 second=137/0 metrics={}
+recursive x text-embedding-3-large: chunks=137 first=0/137 second=137/0 metrics={}
+token x text-embedding-3-small: chunks=211 first=35/176 second=211/0 metrics={}
+token x text-embedding-3-large: chunks=211 first=35/176 second=211/0 metrics={}
+structural x text-embedding-3-small: chunks=136 first=96/40 second=136/0 metrics={}
+structural x text-embedding-3-large: chunks=136 first=96/40 second=136/0 metrics={}

@@ -1,0 +1,97 @@
+<!--meta: 강의 1h | 실습 2h | 코드 01-문서와-메타데이터.ipynb | 새 용어 4 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 저장소에서 제공된 PDF 경로를 찾고 <code>Path</code> 객체의 파일명·이름·확장자를 확인할 수 있습니다.</li>
+<li>이 절을 마치면 딕셔너리의 원본 값을 <code>doc_id</code>·<code>source</code>·<code>page</code> 등 공통 메타데이터로 바꿀 수 있습니다.</li>
+<li>이 절을 마치면 쪽 번호 하나를 바꾼 새 메타데이터를 만들고 원본과 결과를 비교할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>왜 지금 이것인가</h2>
+<p>Ch 9에서는 PDF 한 쪽을 <code>Document</code> 하나로 바꾸고 바로 청크로 나눴습니다. 그 과정은 RAG의 전체 흐름을 확인하기 위한 최소 구현이었습니다. 실제 조직의 문서 폴더에는 PDF만 있지 않습니다. 같은 규정이 PDF, DOCX, HTML로 배포되고, 표 데이터는 CSV로 내려오며, 결재 문서는 HWP 또는 HWPX로 남습니다. 파일마다 읽는 방법은 달라도 이후의 청킹·임베딩·검색 단계는 한 가지 입력 구조를 기대합니다. 따라서 이번 챕터의 첫 과제는 여러 형식을 <strong>일관된 문서 계약</strong>으로 맞추는 것입니다.</p>
+<p>이 절에서는 파서 성능을 비교하기 전에 입력 문서의 목록과 메타데이터부터 고정합니다. 문서 수, 형식, 원본 경로, 식별자가 기록되지 않으면 파서를 바꾼 뒤 무엇이 빠졌는지 판단할 수 없습니다. Ch 11에서 검색 결과를 정답 문서 ID와 비교하려면 <code>doc_id</code>도 처음부터 안정적이어야 합니다. 측정이 튜닝보다 먼저라는 과정 원칙은 문서 처리에도 그대로 적용됩니다. 먼저 입력과 산출물을 셀 수 있게 만들고, 다음 절부터 형식별 파서를 붙입니다.</p>
+<p>현재 기본 실습 자료는 <code>labs/data/rag-corpus/</code>의 합성 PDF 21건입니다. 텍스트를 추출할 수 있는 PDF가 18건이고, 텍스트 레이어가 없는 스캔 PDF가 3건입니다. 커리큘럼의 최종 실습은 자기 도메인 문서 100건을 요구하지만, 이 저장소에는 아직 100건 묶음이 없습니다. 그러므로 이번 챕터의 예제는 21건으로 처리 계약을 검증하고, 100건 비교는 자료가 준비된 뒤 같은 명령에 입력 경로만 바꾸도록 설계합니다.</p>
+
+<h2 id="b3"><span class="no">3</span>선수 지식 되짚기</h2>
+<ul>
+<li><strong>문자열과 정수</strong> — 따옴표로 감싼 값은 문자열이고, <code>int()</code>는 숫자 문자열을 정수로 바꿉니다.</li>
+<li><strong>목록과 딕셔너리</strong> — 목록은 여러 값을 순서대로, 딕셔너리는 키와 값을 한 쌍으로 저장합니다.</li>
+<li><strong>파일 경로</strong> — <code>Path</code> 객체로 폴더와 파일 경로를 연결하고 <code>is_file()</code>로 실제 파일을 확인합니다. 앞 장의 모듈이나 함수를 불러오지 않습니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유 — 접수대에서 만드는 표준 봉투</h3>
+<p>한 기관의 접수대에 종이 신청서, 이메일 인쇄물, 엑셀 목록이 함께 들어온다고 생각해 보세요. 담당자는 원본을 그대로 창고에 보관하고, 처리 부서에는 같은 모양의 봉투로 전달합니다. 봉투 앞면에는 접수 번호, 원본 종류, 접수 시각, 담당 부서를 적습니다. 처리 부서는 봉투 안의 본문을 읽으면 되고, 원본 형식에 따라 접수 방법이 달랐다는 사실까지 알 필요는 없습니다. 로더가 하는 일도 이와 같습니다. 파일별 파서는 다르지만, 청킹 단계에 넘기는 결과는 같은 <code>Document</code> 구조여야 합니다.</p>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>문서 객체 (Document)</dt>
+<dd>추출한 본문과 부가 정보를 한 단위로 묶은 객체입니다. LangChain의 <code>Document</code>는 <code>page_content</code>와 <code>metadata</code>를 가집니다. 이후 청킹·임베딩·검색은 원본 파일 대신 이 객체를 받습니다.</dd>
+<dt>파서 (parser)</dt>
+<dd>파일의 내부 구조를 해석하여 텍스트, 표, 이미지 위치 같은 내용을 추출하는 프로그램입니다. 같은 PDF라도 파서에 따라 읽기 순서와 표 표현이 달라질 수 있습니다.</dd>
+<dt>메타데이터 (metadata)</dt>
+<dd>본문을 설명하는 부가 정보입니다. 문서 ID, 원본 파일명, 쪽 번호, 형식, 수정 시각처럼 검색 필터와 출처 표기에 필요한 값을 담습니다.</dd>
+<dt>출처 계보 (provenance)</dt>
+<dd>산출물이 어느 원본에서 어떤 처리 과정을 거쳐 만들어졌는지 추적할 수 있는 기록입니다. <code>source</code>, <code>parser</code>, <code>page</code>를 함께 남기면 검색된 청크를 원본까지 거슬러 확인할 수 있습니다.</dd>
+</dl>
+
+<h3>도식 — 원본은 여러 가지, 산출물 계약은 한 가지</h3>
+<figure>
+{{svg:01-문서-계약}}
+<figcaption>PDF·DOCX·HTML·CSV·HWPX는 서로 다른 파서를 거치지만, 모두 본문과 메타데이터를 가진 <code>Document</code> 목록으로 합쳐집니다. 청킹 단계는 원본 형식 대신 이 공통 계약만 봅니다.</figcaption>
+</figure>
+<p>공통 계약을 만들 때는 본문보다 메타데이터를 먼저 설계하는 편이 안전합니다. 본문은 나중에 파서를 바꾸어 다시 만들 수 있지만, 안정적인 <code>doc_id</code>가 없으면 이전 색인과 새 색인의 결과를 비교하기 어렵습니다. 파일명이 바뀔 수 있는 환경에서는 업무 시스템의 문서 번호를 사용하고, 그런 번호가 없으면 정규화한 상대 경로나 내용 해시를 조합합니다. 이 챕터의 합성 문서는 파일명 앞의 <code>E01</code>, <code>M03</code>, <code>H06</code>을 문서 ID로 사용합니다.</p>
+<p>메타데이터는 세 부류로 나누어 생각할 수 있습니다. 첫째, 원본에서 직접 읽은 값입니다. 제목, 작성자, 수정 시각이 여기에 해당합니다. 둘째, 파일 시스템에서 얻은 값입니다. 상대 경로, 확장자, 파일 크기입니다. 셋째, 처리 과정이 만든 값입니다. 사용한 파서 이름, 처리 시각, OCR 적용 여부, 청크 번호입니다. 이 세 부류를 구분해 두면 잘못된 값의 책임 지점을 찾기 쉽습니다. 예를 들어 PDF 안의 제목과 파일명이 다르면 어느 값을 우선할지 정책으로 결정할 수 있습니다.</p>
+<table>
+<tr><th>필드</th><th>예시</th><th>사용 지점</th><th>주의할 점</th></tr>
+<tr><td><code>doc_id</code></td><td><code>M03</code></td><td>Ch 11 정답 문서 비교</td><td>재처리해도 바뀌지 않아야 합니다.</td></tr>
+<tr><td><code>source</code></td><td><code>M03.pdf</code></td><td>출처 표시와 오류 조사</td><td>현재 기준선은 파일명만 저장합니다. 중복 파일명이 있는 운영 환경에서는 별도 상대 경로 필드가 필요합니다.</td></tr>
+<tr><td><code>page</code></td><td><code>4</code></td><td>쪽 단위 출처 표기</td><td>0부터 시작하는지 1부터 시작하는지 고정합니다.</td></tr>
+<tr><td><code>file_type</code></td><td><code>pdf</code></td><td>형식별 실패 집계</td><td>확장자만 믿지 않고 실제 처리 결과와 함께 봅니다.</td></tr>
+<tr><td><code>parser</code></td><td><code>pypdf</code></td><td>파서 비교와 재현</td><td>가능하면 버전도 실행 환경에 고정합니다.</td></tr>
+</table>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>프로젝트 저장소 안에서 노트북을 열고 위에서 아래로 실행합니다. 별도 패키지나 API 키는 필요하지 않습니다. 먼저 Python 버전과 제공된 <code>E02.pdf</code> 위치를 확인하고, <code>Path</code> 객체의 속성을 관찰합니다. 이어서 메타데이터 딕셔너리를 만든 뒤 쪽 번호를 2에서 3으로 바꾸어 원본과 새 결과를 비교합니다. 이번 절은 <code>metadata</code> 딕셔너리까지만 만들며, 본문인 <code>page_content</code>와 실제 <code>Document</code> 객체는 02~04절의 파일 로딩 결과를 바탕으로 후속 단계에서 구성합니다.</p>
+{{notebook:01-문서와-메타데이터|example}}
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>정상적인 값 변경을 먼저 확인한 다음 오류 경계를 연습합니다. Before 셀은 쪽 번호 <code>0</code>을 저장하려다 <code>ValueError</code>를 포착합니다. After 셀은 같은 원인을 해결하기 위해 번호를 <code>1</code>로 수정하고, 새 메타데이터의 값도 다시 검증합니다.</p>
+{{notebook:01-문서와-메타데이터|failure}}
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>식별자와 제목을 구분합니다.</strong> 제목은 사람이 읽기 위한 값이라 수정될 수 있습니다. <code>doc_id</code>는 비교와 갱신을 위한 값이므로 변경에 강해야 합니다.</li>
+<li><strong>쪽 번호의 기준을 통일합니다.</strong> 일부 라이브러리는 첫 쪽을 0으로 반환합니다. 교재와 최종 출처 표시는 사람이 보는 쪽 번호인 1부터 시작하도록 변환합니다.</li>
+<li><strong>원본을 보존합니다.</strong> 추출 텍스트만 남기면 파서 오류를 다시 확인할 수 없습니다. 원본 파일과 처리 산출물의 관계를 메타데이터로 유지합니다.</li>
+<li><strong>민감한 경로와 문서 속성을 걸러냅니다.</strong> 작성자 계정, 내부 서버 경로, 임시 폴더 이름은 검색 품질에 필요하지 않다면 배포용 메타데이터에서 제외합니다.</li>
+<li><strong>재처리 조건을 기록합니다.</strong> 파일 수정 시각이나 내용 해시를 보관하면 바뀐 문서만 다시 파싱하고 임베딩할 수 있습니다. 캐싱과 재임베딩 비용은 이 챕터 후반 절에서 다룹니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul>
+<li><code>Path</code>의 <code>name</code>·<code>stem</code>·<code>suffix</code> 속성으로 실제 파일 경로에서 메타데이터 값을 얻습니다.</li>
+<li><code>doc_id</code>·<code>source</code>·<code>page</code>·<code>file_type</code>·<code>parser</code>를 딕셔너리의 공통 키로 저장합니다.</li>
+<li>딕셔너리를 펼쳐 새 값을 덮어쓰면 원본을 보존하면서 변경 전후를 비교할 수 있습니다.</li>
+</ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 이 절의 입력 목록과 공통 메타데이터는 02~04절의 모든 로더가 따라야 하는 계약입니다. Ch 11에서는 <code>doc_id</code>를 정답표와 비교하고, Ch 12에서는 <code>file_type</code>과 <code>parser</code>를 실패 유형별 집계에 사용합니다. 다음 02절에서는 같은 PDF를 서로 다른 방식으로 읽어 표와 스캔본에서 계약이 어떻게 흔들리는지 확인합니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. [하] 여러 파일 형식의 로더가 같은 <code>Document</code> 구조를 반환해야 하는 이유는 무엇입니까?</p>
+<p class="quiz-a">청킹·임베딩·검색 단계가 원본 형식마다 별도 코드를 가질 필요 없이 하나의 입력 계약만 처리할 수 있기 때문입니다. 형식별 차이는 로더 안에서 흡수하고, 본문과 메타데이터 구조는 통일합니다.</p>
+<p class="quiz-q">2. [중] <code>doc_id</code>와 문서 제목을 같은 값으로 사용했을 때 생길 수 있는 문제를 설명하세요.</p>
+<p class="quiz-a">제목은 사람이 수정하거나 여러 문서에서 중복할 수 있습니다. 제목이 바뀌면 같은 문서를 새 문서로 인식하고, 제목이 중복되면 서로 다른 문서의 청크가 하나로 집계됩니다. 안정적인 업무 ID나 상대 경로·내용 해시 조합을 사용해야 합니다.</p>
+<p class="quiz-q">3. [중] <code>source = Path("E02.pdf")</code>일 때 <code>source.name</code>, <code>source.stem</code>, <code>source.suffix</code>는 각각 무엇입니까?</p>
+<p class="quiz-a"><code>name</code>은 <code>E02.pdf</code>, <code>stem</code>은 <code>E02</code>, <code>suffix</code>는 <code>.pdf</code>입니다.</p>
+<p class="quiz-q">4. [상] 파서를 교체한 뒤 검색 품질이 달라졌습니다. 원인을 재현하려면 어떤 메타데이터가 필요합니까?</p>
+<p class="quiz-a">최소한 원본을 가리키는 <code>doc_id</code>와 <code>source</code>, 쪽 번호, 파일 형식, 파서 이름과 버전, 처리 시각 또는 설정 식별자가 필요합니다. 이 정보로 같은 원본을 같은 조건에서 다시 처리하고 이전 산출물과 비교할 수 있습니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul>
+<li>LangChain 공식 API 「Document」 — <a href="https://reference.langchain.com/python/langchain-core/documents">reference.langchain.com/python/langchain-core/documents</a> · 확인 2026-09-08 · <code>page_content</code>와 <code>metadata</code> 구조 참고.</li>
+<li>Python 공식 문서 「pathlib — Object-oriented filesystem paths」 — <a href="https://docs.python.org/3/library/pathlib.html">docs.python.org/3/library/pathlib.html</a> · 확인 2026-09-08 · 상대 경로와 확장자 처리 참고.</li>
+<li>실습 문서 세트 README — <code>labs/data/rag-corpus/README.md</code> · 텍스트 PDF 18건, 스캔 변형본 3건, 질의셋 구성 참고.</li>
+<li>기준 버전: Python 3.12 · LangChain 1.4 · uv. 실습 파일의 잠금 파일을 최종 기준으로 사용합니다.</li>
+</ul>

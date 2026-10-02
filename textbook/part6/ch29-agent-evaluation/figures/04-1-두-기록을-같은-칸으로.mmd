@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  r18["Ch 18 06절 노트북<br>저장된 비교 표 다섯 줄<br>calls · tokens · latency_s<br>quality/5 · status"]:::tool
+  r21["Ch 21 06절 비교 기록 파일<br>질문 세 줄 · 칸 열둘<br>model_calls · tool_calls<br>agent_latency_s 등"]:::tool
+  f18["ch18_row<br>도구 요청 수는 None<br>점수는 품질 ÷ 5"]:::flow
+  f21["ch21_row<br>점수는 평가 모델 판정<br>참이면 1.0"]:::flow
+  rows["공통 칸 표 여덟 줄<br>이름 · 요청 수 · 도구 요청 수<br>토큰 수 · 걸린 초 · 점수"]:::measure
+  r18 --> f18
+  r21 --> f21
+  f18 --> rows
+  f21 --> rows

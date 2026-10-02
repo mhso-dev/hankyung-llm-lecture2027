@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  s0["가상 시작점 START"]
+  n1["normalize<br>질문 칸을 다듬음"]:::flow
+  n2["search_docs<br>보고 자리 칸과 점수 칸"]:::flow
+  n3["route<br>판단 이유 칸과 다음 노드"]:::flow
+  n4["make_reply<br>모델을 부르는 노드"]:::flow
+  n5["ask_more<br>적어 둔 안내 글"]:::flow
+  e0["가상 끝점 END"]
+  s0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 -.-> n4
+  n3 -.-> n5
+  n4 --> e0
+  n5 --> e0

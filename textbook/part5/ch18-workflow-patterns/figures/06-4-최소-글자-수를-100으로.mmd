@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph old["9절 검사 값 120~180자"]
+    direction TB
+    o1["grade_notice"]:::flow
+    o2["나눠 쓰기 104자<br>120자보다 짧아 품질 4"]:::measure
+    o1 --> o2
+  end
+  subgraph new["10절 검사 값 100~180자"]
+    direction TB
+    n1["grade_notice"]:::flow
+    n2["다섯 흐름 모두<br>품질 5"]:::measure
+    n1 --> n2
+  end
+  same["두 칸 모두 같은 안내문 다섯<br>요청 수 · 토큰 수 · 걸린 초<br>다시 보내지 않아 그대로"]
+  old ~~~ same
+  new ~~~ same

@@ -1,0 +1,5 @@
+flowchart LR
+  %% classes
+  q1["올려서 다른 사람이<br>받은 커밋이 틀림"] --> t1["git revert HEAD<br>취소 커밋을 더함"]:::flow
+  q2["하던 작업을 둔 채<br>급한 수정이 필요함"] --> t2["git worktree add<br>작업 폴더를 하나 더"]:::flow
+  q3["reset 뒤 커밋이<br>보이지 않음"] --> t3["git reflog<br>HEAD@{1}에 이름 붙이기"]:::flow

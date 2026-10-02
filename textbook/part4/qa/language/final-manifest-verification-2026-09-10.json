@@ -1,0 +1,128 @@
+{
+  "date": "2026-09-10",
+  "scope": "Part 4 final language-audit sources",
+  "manifests": [
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch13-source-final-2026-09-10.manifest.json",
+      "snapshot_sha256": "70bb79239a93bdaaf81b7c19b5ce3f3a7b26bf89a1f94231572d18af5bb1838f",
+      "snapshot_matches": true,
+      "source_items": 7,
+      "source_mismatches": [],
+      "status": "match"
+    },
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch13-labs-final3-2026-09-10.manifest.json",
+      "snapshot_sha256": "1091f31626ba753020efb2fc8700e526a81d2b6615195a1256295e5b0aa9e5bf",
+      "snapshot_matches": true,
+      "source_items": 8,
+      "source_mismatches": [],
+      "status": "match"
+    },
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch13-figures-final2-2026-09-10.manifest.json",
+      "snapshot_sha256": "d7e92a38d761aeef057f15ffe3efb5b43b79b364f5713c3eec2faed93b3b4761",
+      "snapshot_matches": true,
+      "source_items": 14,
+      "source_mismatches": [],
+      "status": "match"
+    },
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch14-source-final-2026-09-10.manifest.json",
+      "snapshot_sha256": "b8b8fb0cdc21e50376fb37231affbdd973f6c74001ff1bc3d92cb3ad05c9bdef",
+      "snapshot_matches": true,
+      "source_items": 9,
+      "source_mismatches": [],
+      "status": "match"
+    },
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch14-labs-final-2026-09-10.manifest.json",
+      "snapshot_sha256": "9b814a0a5b246326c0a1af33860850adfbbc791a572ae21185912512647c50f7",
+      "snapshot_matches": true,
+      "source_items": 10,
+      "source_mismatches": [],
+      "status": "match"
+    },
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch14-figures-final-2026-09-10.manifest.json",
+      "snapshot_sha256": "3cf92ba74686bd50e030db05b2f029d5fb5d5fe756985bb5cb010462165b978b",
+      "snapshot_matches": true,
+      "source_items": 18,
+      "source_mismatches": [],
+      "status": "match"
+    },
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch15-source-final2-2026-09-10.manifest.json",
+      "snapshot_sha256": "af78797383476df19e3101842712fb202f86cbcdff9aa4cb2ee8d2f6760caf15",
+      "snapshot_matches": true,
+      "source_items": 8,
+      "source_mismatches": [],
+      "status": "match"
+    },
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch15-labs-final2-2026-09-10.manifest.json",
+      "snapshot_sha256": "9092a41164b891e7bcd6ab72f2ac03081e9f18bcb697cb357aa11b9ce6e2496e",
+      "snapshot_matches": true,
+      "source_items": 9,
+      "source_mismatches": [],
+      "status": "match"
+    },
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch15-figures-final2-2026-09-10.manifest.json",
+      "snapshot_sha256": "d6dd3bc175f5b363dc588ce6ac1f762b2f99636d8faaf1c69c77a12a16929043",
+      "snapshot_matches": true,
+      "source_items": 16,
+      "source_mismatches": [],
+      "status": "match"
+    },
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch16-source-final2-2026-09-10.manifest.json",
+      "snapshot_sha256": "de298ab1ba9e5edd159c15ffbb2e153db0cdca292b37c55a71602f88cbd75da6",
+      "snapshot_matches": true,
+      "source_items": 6,
+      "source_mismatches": [],
+      "status": "match"
+    },
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch16-labs-final-2026-09-10.manifest.json",
+      "snapshot_sha256": "7f860f088e3c9a171a97af95a64392d59353ddf89a65e1142f9af36dd9d2f057",
+      "snapshot_matches": true,
+      "source_items": 7,
+      "source_mismatches": [],
+      "status": "match"
+    },
+    {
+      "manifest": "textbook/part4/qa/language/snapshots/ch16-figures-final2-2026-09-10.manifest.json",
+      "snapshot_sha256": "8bd0944c5275817f880c0ba33bc70c4de66fe101e0c232c7b24cb9156d3df446",
+      "snapshot_matches": true,
+      "source_items": 12,
+      "source_mismatches": [],
+      "status": "match"
+    }
+  ],
+  "guides": [
+    {
+      "path": "labs/part4/continuity-guide.md",
+      "expected_sha256": "6e934210c1efa8c33b2451420d9a76c009799d3dd1955403ec23130c6f16e3f2",
+      "actual_sha256": "6e934210c1efa8c33b2451420d9a76c009799d3dd1955403ec23130c6f16e3f2",
+      "status": "match"
+    },
+    {
+      "path": "textbook/part4/practice-start.md",
+      "expected_sha256": "7f4a3c1bb7fee13c4a3549e2a2a94dafcbaf7c0ba77315e57267e2ec50f12d89",
+      "actual_sha256": "7f4a3c1bb7fee13c4a3549e2a2a94dafcbaf7c0ba77315e57267e2ec50f12d89",
+      "status": "match"
+    },
+    {
+      "path": "textbook/part4/_build_index.py",
+      "expected_sha256": "6d88819991c397e06b889806454f9e474432ab585a0f110edb1a18093822ebfe",
+      "actual_sha256": "6d88819991c397e06b889806454f9e474432ab585a0f110edb1a18093822ebfe",
+      "status": "match"
+    }
+  ],
+  "summary": {
+    "manifests": 12,
+    "source_items": 124,
+    "mismatches": 0,
+    "status": "match"
+  }
+}

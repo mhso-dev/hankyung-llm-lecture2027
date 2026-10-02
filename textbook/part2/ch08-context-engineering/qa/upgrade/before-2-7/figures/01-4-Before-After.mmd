@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 입력을 먼저 채우고 남은 칸을 답에 줌"]
+    direction LR
+    b1["긴 목록 추정 570<br>600 - 570 = 30"]:::flow
+    b2["gpt-5.4-mini<br>출력 상한 30"]:::model
+    b3["출력 30 · length<br>답이 중간에 끊김<br>실제 합계 614"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 예약분 120과 여유분 40을 먼저 뗌"]
+    direction LR
+    a1["입력 가용분 440에<br>드는 3절 목록을 고름"]:::flow
+    a2["gpt-5.4-mini<br>출력 상한 120"]:::model
+    a3["출력 52 · stop<br>두 문장 답<br>실제 합계 253"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  BEFORE ~~~ AFTER

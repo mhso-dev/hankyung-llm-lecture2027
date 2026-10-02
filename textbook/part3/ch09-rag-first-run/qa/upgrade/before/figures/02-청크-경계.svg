@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" width="800" height="440" font-family="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" role="img" aria-label="PDF 한 쪽을 작은 청크로 나누고 이웃 청크의 글을 겹치기">
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a9eed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ef4444"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#757575"/></marker>
+</defs>
+<rect width="800" height="440" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="18" fill="#1e1e1e" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">PDF 한 쪽을 작은 청크로 나누고 이웃 청크의 글을 겹치기</tspan></text>
+<rect x="40" y="60" width="720" height="50" rx="10" fill="#b2f2bb" stroke="#22c55e" stroke-width="2"/>
+<text x="400.0" y="85.0" font-size="15" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="400.0" dy="0.0">E01 p.2 Document   출처 정보: {doc_id: E01, page: 2}</tspan></text>
+<polyline points="200,110 200,160" fill="none" stroke="#4a9eed" stroke-width="2" marker-end="url(#m-blue)"/>
+<text x="215" y="135.0" font-size="14" fill="#2563eb" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="215" dy="0.0">RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)</tspan></text>
+<rect x="40" y="165" width="340" height="68" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="210.0" y="189.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="210.0" dy="0.0">청크 #0 (최대 500자)</tspan><tspan x="210.0" dy="18.9">PDF 본문 앞부분…</tspan></text>
+<rect x="330" y="245" width="340" height="68" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="500.0" y="269.6" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="500.0" dy="0.0">청크 #1</tspan><tspan x="500.0" dy="18.9">앞 청크의 끝 50자 + 다음 본문…</tspan></text>
+<rect x="640" y="245" width="120" height="68" rx="10" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2"/>
+<text x="700.0" y="279.0" font-size="14" fill="#1e1e1e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="700.0" dy="0.0">다음 청크…</tspan></text>
+<rect x="330" y="160" width="50" height="150" rx="12" fill="#fff8dc" fill-opacity="0.35" stroke="#f59e0b" stroke-width="1"/>
+<text x="355" y="325.0" font-size="14" fill="#92400e" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="355" dy="0.0">겹침 50자</tspan></text>
+<text x="40" y="360.0" font-size="15" fill="#15803d" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="40" dy="0.0">모든 청크에 출처 정보가 복사된다 → {doc_id: E01, page: 2}</tspan></text>
+<text x="40" y="390.0" font-size="14" fill="#757575" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="40" dy="0.0">경계 근처의 글자는 겹쳐 남을 수 있습니다. 겹침이 0이면 단어나 문장이 경계에서 잘릴 수 있습니다.</tspan></text>
+<text x="40" y="415.0" font-size="14" fill="#757575" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="40" dy="0.0">500은 토큰 수가 아니라 글자 수다. 이 실습은 실제 청크 길이를 출력해 확인한다.</tspan></text>
+</svg>

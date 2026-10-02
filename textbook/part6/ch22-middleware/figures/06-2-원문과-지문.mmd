@@ -1,0 +1,6 @@
+flowchart LR
+  %% classes
+  q["질문 원문<br>이메일 포함"]:::fail --> f["fingerprint()<br>SHA-256 앞 10글자"]:::flow
+  q --> n["len()<br>글자 수"]:::flow
+  f --> r["기록: 36bbd90c50"]:::measure
+  n --> c["기록: 46"]:::measure

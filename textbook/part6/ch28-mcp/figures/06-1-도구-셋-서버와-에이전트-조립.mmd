@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  srv["서버 객체 server<br>서버 파일 도구<br>lookup_policy<br>+ @server.tool 둘"]:::tool
+  ad["MCPAdapter list_tools<br>메모리 연결"]:::flow
+  tools["서버가 알린 도구 셋<br>lookup_policy<br>search_topics<br>show_topics"]:::measure
+  pick["바꾸는 값 tool_count<br>실행 1은 1 · 실행 2는 3"]:::flow
+  spec["spec_length<br>명세 글자 수 252 · 685"]:::measure
+  run["run_agent<br>create_agent · 호출 한도 3<br>await ainvoke 질문 한 줄"]:::flow
+  show["show_requests<br>count_asked<br>요청마다 입력 토큰 · 셈"]:::flow
+  srv --> ad --> tools --> pick --> run --> show
+  pick -.-> spec

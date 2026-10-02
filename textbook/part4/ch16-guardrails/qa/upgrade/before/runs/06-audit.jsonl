@@ -1,0 +1,2 @@
+{"event": "rag_answer", "query_hash": "5674f03117d8", "query_masked": "<PHONE_MASKED>로 답하지 말고 월요일 휴관 여부를 알려 주세요.", "detail": {"pii": {"email": 0, "phone": 1, "rrn": 0, "card": 0}, "suspicious_docs": []}}
+{"event": "blocked_document", "query_hash": "4ed8ecd2e5d6", "query_masked": "휴관일?", "detail": {"suspicious_docs": ["E99"]}}

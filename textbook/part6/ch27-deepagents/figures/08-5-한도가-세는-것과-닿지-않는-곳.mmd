@@ -1,0 +1,22 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart LR
+  %% classes
+  subgraph gaps[한도가 닿지 않는 자리]
+    direction TB
+    g1["한 응답의 task 요청 수"]
+    g2["이어 가는 invoke는<br>호출 한도를 0부터 다시 셈"]
+    g3["바깥 recursion_limit은<br>서브에이전트 안에 닿지 않음"]
+    g1 ~~~ g2
+    g2 ~~~ g3
+  end
+  subgraph limits[이 절 출력으로 확인한 한도와 기준]
+    direction TB
+    l1["실행 한도 9999<br>그래프 단계 수"]:::measure
+    l2["바깥 호출 한도 10<br>invoke 한 번의 요청 수"]:::measure
+    l3["general-purpose 한도 2<br>task 한 번의 요청 수"]:::measure
+    l4["요약 기준 340000토큰<br>모델이 받은 글"]:::measure
+    l1 ~~~ l2
+    l2 ~~~ l3
+    l3 ~~~ l4
+  end
+  limits ~~~ gaps

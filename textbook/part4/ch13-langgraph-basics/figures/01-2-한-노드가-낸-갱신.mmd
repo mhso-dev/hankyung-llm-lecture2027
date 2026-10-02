@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  before["노드에 들어간 상태<br>칸 세 개"]:::tool
+  node["노드 normalize"]:::flow
+  upd["낸 갱신<br>질문 칸과 실행 흔적 칸"]:::measure
+  keep["갱신에 없는 검색어 칸"]:::tool
+  after["합친 상태<br>실행 흔적 normalize"]:::measure
+  before --> node
+  node --> upd
+  upd --> after
+  before --> keep
+  keep --> after

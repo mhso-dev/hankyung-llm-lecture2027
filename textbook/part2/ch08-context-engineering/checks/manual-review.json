@@ -1,0 +1,367 @@
+{
+  "review_date": "2026-09-08",
+  "reviewer": "집필 세션의 모델 응답 정독 검토",
+  "criterion": "정답 사실과 출처를 제시하고, 같은 응답 안에 사실을 부정하는 모순이나 부당한 거부가 없어야 합니다.",
+  "records": [
+    {
+      "experiment": "context_failures",
+      "condition": "clean",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다. 공휴일이 월요일인 경우에는 화요일도 휴관합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "clean",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다. 공휴일이 월요일이면 화요일도 휴관합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "clean",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 **매주 월요일**입니다. 공휴일이 월요일인 경우에는 **화요일도 휴관**합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "poisoning",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 **매주 월요일**입니다. 공휴일이 월요일이면 화요일도 휴관합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "poisoning",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 **매주 월요일**입니다. 공휴일이 월요일이면 **화요일도 휴관**합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "poisoning",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 **매주 월요일**입니다. 공휴일이 월요일이면 **화요일도 휴관**합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "distraction",
+      "repetition": 1,
+      "manual_pass": false,
+      "note": "정보가 없다는 말과 월요일이라는 결론이 한 응답에 함께 있습니다.",
+      "response": "제공된 문서에는 미르시립도서관의 정기 휴관일에 대한 정보가 없습니다. 다만 문서에 따르면 “매주 월요일은 정기 휴관일입니다.”라고 되어 있습니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "distraction",
+      "repetition": 2,
+      "manual_pass": false,
+      "note": "정보가 없다는 말과 출처에 휴관일이 있다는 말이 상충합니다.",
+      "response": "제공된 문서에는 미르시립도서관의 정기 휴관일 정보가 없습니다. 다만 문서에 따르면 매주 월요일은 정기 휴관일입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "distraction",
+      "repetition": 3,
+      "manual_pass": false,
+      "note": "정답 근거가 있지만 정보가 없다고 답변을 거부했습니다.",
+      "response": "제공된 문서에는 미르시립도서관의 정기 휴관일에 대한 내용이 없습니다. 따라서 확인할 수 없습니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "confusion",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다. 공휴일이 월요일이면 화요일도 휴관합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "confusion",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "제공된 문서에 따르면, 미르시립도서관의 정기 휴관일은 **매주 월요일**입니다. 공휴일이 월요일이면 **화요일도 휴관**합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "confusion",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "매주 월요일입니다. 공휴일이 월요일이면 화요일도 휴관합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "clash",
+      "repetition": 1,
+      "manual_pass": false,
+      "note": "합성 부록의 수요일을 정기 휴관일로 답하면서 원문 E01 p.2를 출처로 표시했습니다.",
+      "response": "미르시립도서관의 정기 휴관일은 **매주 수요일**입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "clash",
+      "repetition": 2,
+      "manual_pass": false,
+      "note": "합성 부록의 수요일을 정기 휴관일로 답하면서 원문 E01 p.2를 출처로 표시했습니다.",
+      "response": "미르시립도서관의 정기 휴관일은 **매주 수요일**입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_failures",
+      "condition": "clash",
+      "repetition": 3,
+      "manual_pass": false,
+      "note": "합성 부록의 수요일을 정기 휴관일로 답하면서 원문 E01 p.2를 출처로 표시했습니다.",
+      "response": "미르시립도서관의 정기 휴관일은 **매주 수요일**입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "short:start",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일에도 휴관합니다 [E01 p.2]."
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "short:start",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일에도 휴관합니다 [E01 p.2]."
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "short:start",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일에도 휴관합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "short:middle",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "short:middle",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일도 휴관합니다 [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "short:middle",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일도 휴관합니다 [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "short:end",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "short:end",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일에도 휴관합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "short:end",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일에도 휴관합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "medium:start",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일에도 휴관합니다 [E01 p.2]."
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "medium:start",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다 [E01 p.2]."
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "medium:start",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일에도 휴관합니다 [E01 p.2]."
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "medium:middle",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "medium:middle",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "medium:middle",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "medium:end",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일인 경우 다음 날 화요일도 휴관합니다 [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "medium:end",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일인 경우 다음 날 화요일에도 휴관합니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "medium:end",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일인 경우 다음 날 화요일에도 휴관합니다 [E01 p.2]."
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "long:start",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일에도 휴관합니다 [E01 p.2]."
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "long:start",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일에도 휴관합니다 [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "long:start",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일도 휴관합니다 [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "long:middle",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일에도 휴관합니다 [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "long:middle",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일에도 휴관합니다 [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "long:middle",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "long:end",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "long:end",
+      "repetition": 2,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일이며, 공휴일이 월요일이면 다음 날 화요일도 휴관합니다 [E01 p.2]"
+    },
+    {
+      "experiment": "context_rot",
+      "condition": "long:end",
+      "repetition": 3,
+      "manual_pass": true,
+      "note": "질문에 대한 사실과 출처가 일치합니다.",
+      "response": "미르시립도서관의 정기 휴관일은 매주 월요일입니다. [E01 p.2]"
+    },
+    {
+      "experiment": "context_design_compare",
+      "condition": "full",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "7권·14일·예약 없음·1회 7일 연장·반납 예정일 전 신청·출처를 모두 확인했습니다.",
+      "response": "회원 한 사람이 한 번에 일반 도서 7권까지 빌릴 수 있고, 대출 기간은 14일입니다. 대출 기간은 다른 이용자의 예약이 없는 경우에 한해 1회 7일 연장할 수 있으며, 반납 예정일 전에 앱, 홈페이지, 전화로 신청해야 합니다. [E01 p.3]"
+    },
+    {
+      "experiment": "context_design_compare",
+      "condition": "selected",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "7권·14일·예약 없음·1회 7일 연장·반납 예정일 전 신청·출처를 모두 확인했습니다.",
+      "response": "일반 도서는 한 번에 **7권까지** 빌릴 수 있고, 대출 기간은 **14일**입니다.  \n연장은 **다른 이용자의 예약이 없는 경우에 한해 1회, 7일 연장**할 수 있으며, **반납 예정일 전에 앱·홈페이지·전화(032-000-1998)로 신청**해야 합니다. [E01 p.3]"
+    },
+    {
+      "experiment": "context_design_compare",
+      "condition": "compressed",
+      "repetition": 1,
+      "manual_pass": true,
+      "note": "7권·14일·예약 없음·1회 7일 연장·반납 예정일 전 신청·출처를 모두 확인했습니다.",
+      "response": "도서는 1인 기준 최대 7권까지 14일 동안 대출할 수 있습니다. 다른 이용자의 예약이 없고 반납 예정일 전에 신청하면 1회에 한해 7일 연장할 수 있습니다. [E01 p.3]"
+    }
+  ]
+}

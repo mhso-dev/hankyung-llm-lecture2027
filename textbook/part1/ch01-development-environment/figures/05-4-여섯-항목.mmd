@@ -1,0 +1,11 @@
+flowchart TD
+  %% classes
+  R["준비 상태 여섯 줄"]:::flow
+  A["Python 3.12 True<br>uv 응답 True<br>가상환경 True<br>Git 응답 True"]:::measure
+  B["Docker 클라이언트 False<br>Docker 서버 False"]:::fail
+  N1["Ch 2 Python 학습 시작"]:::flow
+  N2["Docker 실습 전에 설치하고<br>클라이언트·서버 다시 확인"]:::flow
+  R --> A
+  R --> B
+  A --> N1
+  B --> N2

@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph plain["자료형 vector"]
+    direction TB
+    v_col["칸 vector(2001)"]:::tool
+    v_result["HNSW 색인을 만들지 못함<br>2000차원까지라는 알림"]:::measure
+  end
+  subgraph half["자료형 halfvec"]
+    direction TB
+    h_col["칸 halfvec(2001)"]:::tool
+    h_result["HNSW 색인을<br>만들었습니다"]:::measure
+  end
+  v_col --> v_result
+  h_col --> h_result
+  v_result --> here["이 챕터가 쓰는 숫자 256개는 한도 안"]
+  h_result --> here

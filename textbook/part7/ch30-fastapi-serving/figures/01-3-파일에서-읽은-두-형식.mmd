@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  file["실습 폴더 파일<br>agent_service/schemas.py"]:::tool
+  rp["runpy.run_path<br>파일이 만든 이름을 받음"]:::flow
+  subgraph two["받은 양식 클래스 둘"]
+    direction TB
+    rq["입력 형식 ChatRequest<br>꼭 있어야 하는 칸<br>question thread_id<br>question은 한 글자 이상<br>500글자 이하<br>thread_id는 정규식 규칙"]:::measure
+    rs["응답 형식 ChatResponse<br>칸 answer thread_id"]:::measure
+    rq ~~~ rs
+  end
+  file --> rp --> two

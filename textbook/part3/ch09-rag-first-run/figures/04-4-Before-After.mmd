@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 출처에 source 값"]
+    direction LR
+    b1["기록 출처<br>E01.pdf 세 개"]:::tool
+    b2["gpt-5.4-mini"]:::model
+    b3["문장마다 E01.pdf<br>같은 기록 3개 모두<br>쪽을 가려낼 수 없음"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 출처에 doc_id와 page"]
+    direction LR
+    a1["기록 출처<br>E01 p.2 · p.1 · p.3"]:::tool
+    a2["gpt-5.4-mini"]:::model
+    a3["답 끝에 E01 p.2 · E01 p.3<br>같은 기록 2개<br>표지 E01 p.1 빠짐"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  note["두 답 모두<br>월요일 · 7권 있음<br>빠진 지킬 말 []"]
+  BEFORE ~~~ AFTER
+  AFTER ~~~ note

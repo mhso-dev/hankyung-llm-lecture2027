@@ -1,0 +1,20 @@
+%%{init: {"sequence": {"messageAlign": "left", "actorMargin": 30}}}%%
+sequenceDiagram
+  participant P as 노트북 코드<br>agent.invoke
+  box Lavender
+  participant M as 모델 노드<br>gpt-5.4-mini
+  end
+  participant T as 도구 실행 노드<br>search_documents
+  box Lavender
+  participant E as 임베딩 모델<br>text-embedding<br>-3-small
+  end
+  P->>M: C05 질문 하나
+  Note over M: 요청 1<br>도구 호출 요청<br>search_documents<br>인자 query
+  M->>T: model_to_tools
+  T->>E: search_hits
+  E-->>T: 임베딩 요청 1번
+  Note over T: 도구 메시지<br>success · 문서 세 줄<br>FAC-003<br>LIB-002<br>ACC-004
+  T->>M: tools_to_model
+  Note over M: 요청 2<br>도구 호출 요청 0건
+  M-->>P: END
+  Note over P,M: 메시지 넷<br>모델 요청 두 번<br>임베딩 요청 한 번<br>호출 ID 짝 True

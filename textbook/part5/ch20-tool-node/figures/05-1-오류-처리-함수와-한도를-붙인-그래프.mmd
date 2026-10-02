@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  q["첫 상태<br>대출 문의 하나"]:::tool
+  cfg["설정 딕셔너리 · 03절<br>recursion_limit 10"]:::tool
+  subgraph G["01절 그래프 모양"]
+    direction TB
+    s(["가상 시작점 START"])
+    m["모델 노드 model<br>도구를 알려 준 모델"]:::model
+    t["도구 실행 노드 tools<br>ToolNode"]
+    h[["오류 처리 함수 · 02절<br>handle_policy_error<br>이번 흐름에서 쓰이지 않음"]]:::flow
+    e(["가상 끝점 END"])
+    s --> m
+    m -.->|요청 있음 · 이름표 tools| t
+    t -->|되돌아가는<br>엣지| m
+    m -.->|요청 없음 · 명시적 종료| e
+    t ---|오류 처리 인자| h
+  end
+  q -->|invoke 첫째 인자| G
+  cfg -->|invoke 둘째 인자| G

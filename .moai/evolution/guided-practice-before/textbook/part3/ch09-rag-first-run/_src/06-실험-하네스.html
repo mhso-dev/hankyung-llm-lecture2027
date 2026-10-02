@@ -1,0 +1,108 @@
+<!--meta: 강의 1h | 실습 1h | 코드 06-실험-하네스.ipynb | 새 용어 5 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 중첩 딕셔너리에서 점으로 구분한 설정값 하나를 덮어쓸 수 있습니다.</li>
+<li>이 절을 마치면 색인 설정의 SHA-256 해시로 벡터스토어 캐시를 재사용할지 판단할 수 있습니다.</li>
+<li>이 절을 마치면 설정과 검색 결과를 JSONL 한 행에 추가하고 다시 읽을 수 있으며, 전체 말뭉치 확장에서 YAML·상세 로그·지표가 더해지는 이유를 설명할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>왜 지금 이것인가</h2>
+<p>05절까지 노트북에서 설정값을 직접 바꾸고 결과를 화면으로 확인했습니다. 몇 번은 기억할 수 있지만 Ch 12는 5일 동안 "가설 → 설정 변경 → 평가 실행 → 표에 한 줄"을 30번 이상 반복합니다. 커리큘럼은 이 절의 이유를 한 문장으로 적어 두었습니다. "이게 없으면 Chapter 12에서 5일 동안 실험을 세 번밖에 못 돌립니다."(커리큘럼 원문)</p>
+<p>하네스가 하는 일은 세 가지뿐입니다. <strong>설정을 한 곳에 모은다. 실행한다. 한 줄 기록한다.</strong> 지표는 아직 없습니다. Ch 11이 지표를 만들면 하네스의 빈칸에 들어옵니다. 순서가 중요합니다. 지표 없이 튜닝하면 "느낌으로 좋아졌다"가 되고, 하네스 없이 지표만 있으면 실험을 실행할 때마다 손으로 표를 채우게 됩니다.</p>
+
+<h2 id="b3"><span class="no">3</span>선수 지식 되짚기</h2>
+<ul>
+<li><strong>Ch 2 파일·예외·딕셔너리</strong> — 기본 노트북은 중첩 딕셔너리에서 <code>retrieval.k</code>와 <code>split.chunk_size</code>를 바꾸고 JSONL 한 행을 씁니다. YAML과 <code>--set</code>은 전체 말뭉치 선택 확장에서 사용합니다.</li>
+<li><strong>Ch 2 단언문과 예외</strong> — 기본 노트북은 청크 설정을 바꾼 뒤 기존 색인 해시를 그대로 사용할 수 있다는 잘못된 가정을 검사합니다. 선택 확장에서는 설정·해시·질의셋 필터를 <code>tests/test_harness.py</code>로 별도 검증합니다.</li>
+<li><strong>03절의 벡터스토어</strong> — 기본 노트북은 메모리 객체를 설정 해시 키로 캐시에 보관합니다. 디스크 <code>dump()/load()</code>는 전체 말뭉치 선택 확장에서 사용합니다.</li>
+<li><strong>04절의 검색 결과</strong> — 기본 JSONL 행의 <code>retrieved</code>에 문서 ID를 기록합니다. 생성 토큰과 출처 후보는 전체 말뭉치 확장에서 추가합니다.</li>
+<li><strong>05절의 두 프롬프트</strong> — <code>strict</code>·<code>helpful</code>은 전체 말뭉치 확장에서 설정값으로 옮깁니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+
+<h3>비유 — 실험 노트</h3>
+<p>설정을 바꿀 때마다 한 줄이 쌓이는 실험 노트가 없으면, 5일이 지나도 무엇을 해 봤는지 모릅니다. 화학 실험실에서 시약의 양을 바꿔 가며 반응을 볼 때, 연구자는 매번 노트에 한 줄을 씁니다. 날짜, 조건, 결과. 노트가 없으면 "어제 그 조건이 무엇이었더라"를 찾는 데 하루가 걸립니다. 하네스는 그 노트를 자동으로 쓰는 장치입니다. 설정 다이얼을 돌리고(YAML) 실행하면(한 명령) 노트에 한 줄이 생깁니다(JSONL).</p>
+<figure>
+{{img:06-실험-노트|메모가 어지럽게 흩어진 책상과, 다이얼을 돌리며 노트에 행을 한 줄씩 추가하는 정돈된 책상의 대비.}}
+<figcaption>왼쪽은 메모가 흩어진 책상, 오른쪽은 설정 다이얼을 조정할 때마다 노트에 한 줄을 더하는 연구자입니다. 하네스가 자동으로 하는 일이 오른쪽입니다.<span class="gaze">보는 순서 — ① 왼쪽의 흩어진 메모 → ② 오른쪽 손의 다이얼(설정 변경) → ③ 노트의 한 줄 행에서 다이얼로 이어지는 순환 화살표.</span></figcaption>
+</figure>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>실험 하네스 (experiment harness)</dt>
+<dd>설정을 입력받아 파이프라인을 실행하고 결과를 정해진 형식으로 기록하는 실행기입니다. 기본 노트북은 이 역할을 셀 단위로 보여 주며, 전체 말뭉치 선택 확장은 실행기를 <code>rag.py</code>와 분리합니다.</dd>
+<dt>설정 파일 (config.yaml)</dt>
+<dd>전체 말뭉치 선택 확장에서 바꿀 수 있는 값을 모아 둔 파일입니다. 기본 노트북은 같은 구조를 파이썬 딕셔너리로 먼저 확인합니다.</dd>
+<dt>실행 (run) · run_id</dt>
+<dd>설정 하나로 질의셋을 한 번 실행하는 단위입니다. 기본 노트북은 <code>name=k2</code>인 한 행을 기록하고, 선택 확장은 시각과 이름을 합친 <code>run_id</code>로 요약과 상세 파일을 구분합니다.</dd>
+<dt>설정 해시 (config hash) · 캐시</dt>
+<dd>색인 결과를 좌우하는 설정(문서·청크·임베딩)만 골라 짧은 문자열로 만든 것입니다. 같은 해시면 색인을 다시 만들지 않고 저장된 것을 씁니다. <code>k</code>나 프롬프트를 바꾸어도 이미 만든 같은 색인을 재사용하면 문서 청크의 재임베딩 비용은 0입니다. 질문 임베딩과 생성 호출 비용은 별도로 발생합니다.</dd>
+<dt>JSON Lines (JSONL)</dt>
+<dd>한 줄에 JSON 객체 하나를 두는 파일 형식입니다. 줄을 덧붙이기만 하면 되고, 한 줄이 깨져도 나머지는 읽힙니다. <code>queries.jsonl</code>과 <code>runs.jsonl</code>이 이 형식입니다.</dd>
+</dl>
+
+<h3>도식 — 루프</h3>
+<figure>
+{{svg:06-하네스-루프}}
+<figcaption>설정 → 실행 → 한 줄 기록 → 읽고 다음 설정. 노란 상자가 기록이고, 점선 <code>metrics</code> 칸은 Ch 11이 채웁니다.</figcaption>
+</figure>
+
+<h3>기본 노트북과 선택 확장</h3>
+<p>기본 노트북은 중첩 딕셔너리의 설정을 바꾸고, 색인 설정의 SHA-256 해시로 캐시 재사용 여부를 판단하며, 실행 결과를 JSONL 한 행에 추가한 뒤 다시 읽습니다. 전체 말뭉치 선택 확장은 이 값을 <code>config.yaml</code>에 모으고 <code>corpus</code>·<code>split</code>·<code>embedding</code>·<code>retrieval</code>·<code>generation</code> 설정을 한 명령으로 바꿀 수 있게 합니다.</p>
+
+<h3>설정 덮어쓰기와 해시</h3>
+<p>기본 노트북의 <code>override()</code>는 점으로 구분한 키의 값을 바꾸고, <code>index_key()</code>는 <code>split</code>과 <code>embedding</code> 설정을 해시합니다. 문서는 이 예제에서 고정되어 있습니다. 다음 설명은 문서 범위와 YAML 입력까지 관리하는 전체 말뭉치 선택 확장에 해당합니다.</p>
+<p><code>load_config()</code>의 마지막 줄이 요점입니다. <code>--set split.chunk_size=1000</code>에서 <code>"1000"</code>은 문자열로 들어오는데, <code>yaml.safe_load("1000")</code>이 정수 1000으로 바꿔 줍니다. <code>"[easy]"</code>는 리스트가 됩니다. 이 한 줄이 없으면 <code>chunk_size="1000"</code>이 스플리터에 들어가 오류가 납니다. <code>index_key()</code>는 설정 딕셔너리 중 색인에 영향을 주는 세 덩어리만 골라 해시합니다. <code>retrieval.k</code>나 <code>generation.prompt</code>는 넣지 않습니다. 그래서 k만 바꾼 실험은 캐시를 그대로 씁니다.</p>
+
+<h3>기록 한 행</h3>
+<p>기본 노트북의 한 행에는 <strong>설정 이름</strong>, <strong>설정 해시</strong>, <strong>캐시 적중 여부</strong>, <strong>검색 문서 ID</strong>가 들어갑니다. 임시 JSONL 파일에 실제로 한 행을 추가하고 다시 읽습니다. 전체 말뭉치 선택 확장은 규모·토큰·비용을 더해 <code>runs.jsonl</code>에 저장하고 질문별 상세를 별도 파일로 남깁니다. 확장의 <code>metrics</code>는 아직 비어 있으며 Ch 11에서 채웁니다.</p>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p><code>retrieval.k</code>와 <code>split.chunk_size</code>를 각각 덮어쓰고 색인 설정 해시를 비교합니다. 실제 OpenAI 임베딩 색인을 해시 키로 한 번 저장한 뒤 <code>k=2</code> 설정이 같은 객체를 재사용하는지 확인합니다. 마지막에는 설정과 검색 결과를 JSONL 한 행에 추가하고 다시 읽습니다.</p>
+{{notebook:06-실험-하네스|example}}
+<p class="look"><b>확인할 점</b> — 기준 설정과 <code>k=2</code> 설정의 해시는 <code>d853036bf1</code>로 같고, 청크 크기 1,000 설정은 <code>8e0526f064</code>로 다릅니다. <code>k=2</code>는 캐시의 같은 벡터스토어 객체를 재사용합니다. JSONL에서 다시 읽은 행에는 <code>config_sha</code>·<code>cache_hit</code>·<code>retrieved</code>가 남습니다. 해시는 노트북의 직렬화 규칙이나 설정이 바뀌면 달라질 수 있습니다(2026-09-08, <code>text-embedding-3-small</code>).</p>
+<details><summary>2026-09-07 전체 말뭉치 실험 기록</summary><p>이전 스크립트 실험은 176개의 청크와 8개 질문으로 기준선·청크 1,000·k=8·친절한 프롬프트를 비교했습니다. 청크 1,000은 107개의 청크를 만들었고, k=8은 기준선보다 입력 토큰이 약 1.8배였습니다. 이 값은 현재 노트북의 작은 예제 출력이 아니라 보관된 전체 말뭉치 실행의 역사적 결과입니다. 원본 표와 해설은 <code>qa/notebook-before/06-실험-하네스.html</code>에 보관했습니다.</p></details>
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before에서 청크 설정이 바뀐 실험에 기존 색인을 연결한 잘못된 캐시 재사용을 확인합니다. After에서 변경된 설정으로 문서를 다시 나누고 실제 임베딩 색인을 새 해시에 저장합니다.</p>
+{{notebook:06-실험-하네스|failure}}
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>비용 추정의 정확도.</strong> 생성 토큰은 응답 메타데이터에서 정확히 오지만, 임베딩 토큰은 <code>OpenAIEmbeddings</code>가 알려 주지 않아 글자 수 ÷ 1.2로 어림했습니다(02절 실측 498자 = 431개의 토큰). 이 추정치가 실제 청구액과 얼마나 다른지는 확인하지 않았습니다. 정확한 값이 필요하면 <code>tiktoken</code>으로 세어 넣으면 됩니다.</li>
+<li><strong>요금은 바뀝니다.</strong> <code>prices</code> 칸의 값은 2026-09-07 확인값이며 확인 날짜를 주석에 적어 두었습니다. 요금표 URL을 함께 적어 두면 나중에 갱신할 때 어디를 볼지 압니다.</li>
+<li><strong>지연 시간은 평균만으로 부족합니다.</strong> 전체 말뭉치 선택 확장은 <code>latency_mean_s</code>만 기록하지만 Ch 15는 p50/p95/p99를 요구합니다. 상세 파일에 질문별 지연을 추가하는 작업은 B트랙 과제입니다.</li>
+<li><strong>동시 실행과 로그 경쟁.</strong> <code>runs.jsonl</code>에 덧붙이기(<code>"a"</code> 모드)는 한 프로세스일 때 안전합니다. Ch 12에서 실험을 병렬로 실행하면 줄이 섞일 수 있습니다. 병렬 실행 시에는 실행마다 파일을 따로 쓰고 나중에 합칩니다.</li>
+<li><strong><code>.cache/</code>와 <code>runs/</code>는 git에 넣지 않습니다.</strong> 색인 파일은 수 MB이고 실행 로그는 개인 실험 기록입니다. 프로젝트 <code>.gitignore</code>에 <code>.cache/</code>가 들어 있습니다. 다만 Ch 12의 실험 로그 30건은 중간 프로젝트 리포트의 근거이므로 Ch 12에서는 <code>runs.jsonl</code>만 따로 보관합니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul>
+<li>기본 노트북은 설정 덮어쓰기 → 색인 설정 해시 → 캐시 판단 → JSONL 한 행 기록의 순서로 하네스 원리를 확인합니다.</li>
+<li><code>k</code>만 바꾸면 색인 해시가 같아 기존 벡터스토어를 재사용하고, 청크 크기를 바꾸면 해시가 달라 새 색인이 필요합니다.</li>
+<li>기본 JSONL 행에는 설정 해시·캐시 적중 여부·검색 문서 ID가 있습니다. 전체 말뭉치 확장은 여기에 규모·비용을 더하고, Ch 11은 품질 지표를 추가합니다.</li>
+</ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — Ch 10의 현재 노트북은 원문 하나로 청킹 3종과 임베딩 2종을 비교합니다. 커리큘럼의 "문서 100건 × 3 청킹 × 2 임베딩"은 자료 확보 후 진행할 전체 말뭉치 확장 목표이며, 기존 하네스의 <code>--set</code>으로 조합을 바꿀 수 있습니다. Ch 11은 상세 파일의 <code>gold_doc_id</code>와 <code>retrieved</code>를 비교하는 Recall@k·Precision@k 함수를 만들어 <code>metrics</code> 칸에 넣습니다. Ch 12는 이 루프를 5일 동안 30번 이상 실행하고, 그 <code>runs.jsonl</code>이 중간 프로젝트 평가 리포트의 뼈대가 됩니다. Ch 15는 여기에 judge 점수와 p95 지연을 더합니다. 이 챕터는 여기서 마무리됩니다. 다음은 Ch 10 문서 처리입니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. 기본 노트북에서 <code>retrieval.k</code>를 1에서 2로 바꾸어도 색인을 다시 만들지 않는 이유는 무엇입니까?</p>
+<p class="quiz-a"><code>index_key()</code>가 <code>split</code>과 <code>embedding</code>만 해시하므로 <code>retrieval.k</code>가 바뀌어도 해시가 같습니다. 기본 노트북은 같은 해시 키의 메모리 벡터스토어를 재사용합니다.</p>
+<p class="quiz-q">2. 전체 말뭉치 선택 확장에서 청크 1,000과 k=8은 비용 구조가 어떻게 다릅니까?</p>
+<p class="quiz-a">청크 1000은 색인을 다시 만들어야 하고(임베딩 비용·시간) 이 실행에서는 청크 하나가 길어져 입력 토큰이 약 1.6배가 되었습니다. k=8은 색인은 그대로이고 입력 토큰만 약 1.8배가 되었습니다. 어느 쪽이 답을 더 잘 맞히는지는 지표가 있어야 알 수 있습니다.</p>
+<p class="quiz-q">3. 전체 말뭉치 선택 확장의 Q008에서 기준선은 E02 2쪽을 가져왔는데도 "찾을 수 없습니다"였습니다. 쪽 단위 로그만 보면 생성 실패로 보입니다. 실제 원인은 무엇이고, 어떻게 알 수 있었습니까?</p>
+<p class="quiz-a">검색 실패입니다. 가져온 것은 2쪽의 첫 청크(#9, 환영 인사)였고 급여일이 있는 청크(#10)는 5위였습니다. 로그에 <code>chunk_id</code>를 함께 적어야 드러납니다. 기록 단위는 검색 단위(청크)와 같아야 하고, 검색 지표(정답 청크가 k개 안에 있었나)와 생성 지표(답이 맞았나)를 나눠 기록해야 합니다.</p>
+<p class="quiz-q">4. 전체 말뭉치 선택 확장의 <code>runs.jsonl</code> 한 줄에 아직 없는 것과, 그것을 채우는 챕터를 쓰세요.</p>
+<p class="quiz-a">품질 지표(<code>metrics: {}</code>)와 지연의 분포(p95 등)입니다. 검색·생성 지표는 Ch 11, judge 점수와 p50/p95/p99는 Ch 15가 채웁니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul>
+<li>커리큘럼 v6 Ch 9 — "설정을 YAML 한 곳에 모으고, 설정 바꾸기 → 실행 → 결과 한 줄 기록이 한 명령으로 되게." 이 절의 요구 사양.</li>
+<li>커리큘럼 v6 Ch 11·12 — 실험 로그 포맷(설정·지표·날짜 한 행), Day 1~5 루프, 실험 로그 30건. 이 하네스가 이어지는 곳.</li>
+<li>PyYAML 6 — <code>yaml.safe_load</code>. Python 표준 라이브러리 <code>hashlib</code>·<code>json</code>·<code>argparse</code>.</li>
+<li>OpenAI API 요금 — <a href="https://developers.openai.com/api/docs/pricing">developers.openai.com/api/docs/pricing</a> · 확인 2026-09-07 · <code>config.yaml</code>의 <code>prices</code> 출처.</li>
+<li>기준 버전: Python 3.12.13 · uv 0.12.3 · langchain 1.4.0.</li>
+</ul>

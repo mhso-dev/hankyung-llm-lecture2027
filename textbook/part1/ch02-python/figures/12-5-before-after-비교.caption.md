@@ -1,0 +1,4 @@
+- 설명 대상 문장: Before와 달라진 곳은 lookup_stock을 부르는 한 줄입니다. Before는 0.3초, After는 0.2초가 걸렸습니다.
+- 캡션: 동기 함수를 부르는 줄만 바꾼 결과. 바로 부른 Before는 연필이 끝난 뒤 노트가 시작해 0.3초, to_thread()로 부른 After는 노트가 먼저 시작해 0.2초입니다.
+- 읽는 법: 위 칸이 Before, 아래 칸이 After이고, 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 파란 상자는 lookup_stock을 부르는 줄, 초록 상자는 같은 동기 함수 lookup_stock입니다. Before의 초록 상자는 이벤트 루프도 멈추게 해 빨간 상자(끝 연필 → 시작 노트, 0.3)로, After의 초록 상자는 다른 스레드에서 멈춰 노란 상자(시작 노트 → 끝 연필, 0.2)로 이어집니다.
+- alt: Before 칸은 파란 상자 stock_text = lookup_stock(...)이 초록 상자 동기 함수 lookup_stock time.sleep(0.2) 동안 이벤트 루프도 멈춤을 지나 빨간 상자 끝 연필 → 시작 노트 걸린 시간(초): 0.3으로 이어지고, After 칸은 파란 상자 stock_text = await asyncio.to_thread(lookup_stock, ...)가 초록 상자 동기 함수 lookup_stock time.sleep(0.2)은 다른 스레드에서 멈춤을 지나 노란 상자 시작 노트 → 끝 연필 걸린 시간(초): 0.2로 이어지는 비교 그림

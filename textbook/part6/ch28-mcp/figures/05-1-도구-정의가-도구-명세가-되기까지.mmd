@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  srv["서버 파일 course_server.py<br>도구 정의 lookup_policy"]:::tool
+  ad["MCPAdapter list_tools<br>stdio 연결"]:::flow
+  st["StructuredTool<br>입력 형식 dict"]:::measure
+  cv["convert_to_openai_tool"]:::flow
+  sp["도구 명세 type function<br>칸 name · description<br>칸 parameters<br>= 입력 형식 True"]:::measure
+  ln["spec_length<br>명세 글자 수 252"]:::measure
+  bd["bind_tools<br>요청에 실을 도구 칸<br>명세와 같음 True"]:::measure
+  srv --> ad --> st --> cv --> sp
+  sp -.-> ln
+  sp -.-> bd

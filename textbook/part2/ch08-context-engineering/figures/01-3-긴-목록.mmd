@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph S3["3절 목록 · 이번 컨텍스트"]
+    direction LR
+    s1["근거 문단 + 질문<br>소개 문단은 없음"]:::tool
+    s2["추정 입력 187<br>입력 가용분 440 안 True"]:::measure
+    s1 --> s2
+  end
+  subgraph S7["7절 긴 목록 · 값 바꿔 보기"]
+    direction LR
+    l1["소개 문단 + 근거 문단<br>+ 구역 표 + 질문"]:::tool
+    l2["추정 입력 570<br>False · 130 넘침"]:::measure
+    l3["요청은<br>보내지 않음"]
+    l1 --> l2
+    l2 --> l3
+  end
+  S3 ~~~ S7

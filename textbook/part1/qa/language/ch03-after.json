@@ -1,0 +1,22 @@
+{
+  "audit_date": "2026-09-09",
+  "snapshot_context": "Captured after the chapter author completed the separately owned code revision and fresh-kernel execution. This reviewer made no code or output edit.",
+  "hash_method": "UTF-8 SHA-256 of JSON.stringify() over the ordered code-cell source arrays, output arrays, and Markdown-cell source arrays; source and README hashes are raw UTF-8 bytes.",
+  "invariants": {
+    "notebooks": {
+      "01-커밋과-gitignore.ipynb": {"code_cells": 6, "markdown_cells": 6, "code_sha256": "3bef49a9750a6787ab44b12a97b10f14edefc207d31490c9fc136592c561b0ab", "outputs_sha256": "4fd672ad99747830c61c0118a0f75a5fae49ab2ddcaec3005ad253a08c7e6691", "markdown_sha256": "d56f34c48a73c7952a0ecffeb3bd94eb40d92e2a43857460431a2bcf063768a8"},
+      "02-GitHub-Flow와-PR-리뷰.ipynb": {"code_cells": 6, "markdown_cells": 6, "code_sha256": "13a376b48d8a7b64a480d38a9d2693ac2311a0b5178819c036acb8b6d31d721f", "outputs_sha256": "24311ca220484a926d8cc2f490fe546b6a69f9e16bb9d9c3fbd542885408245b", "markdown_sha256": "fd4e46e9b056fe6d6353b461b6fab83454e80aa602b2c711298c87a8278617c1"},
+      "03-병합-충돌-해결.ipynb": {"code_cells": 6, "markdown_cells": 6, "code_sha256": "dac76d509b1baf55743514e6324551df0bcf918d00d5ad0beb92ba941cc4792a", "outputs_sha256": "fd6b466acab51c9d7b6755edfc2a5f4a2cfe13bfbb1eeb11ab843b3456eaf4e7", "markdown_sha256": "dc009a5c925b3da756832dfd12fc88598bf1fb9906da216380c75c51b8e93595"},
+      "04-revert-reflog-worktree.ipynb": {"code_cells": 6, "markdown_cells": 6, "code_sha256": "19f8aa0f913122eab9b6def0fbd2357382b1a5a96516a50ecdfee54a9ff7752b", "outputs_sha256": "fa32a1fed9891c5f07dbf18db519887375b81a23a6ee25aa8f5e2df17d7920ae", "markdown_sha256": "9524eb5f9469cd6105b782b8d41e61657dcfe0745e7c6fb7dcd4205636411ed2"},
+      "05-시크릿-이력-정리와-예방.ipynb": {"code_cells": 6, "markdown_cells": 6, "code_sha256": "439b15f9f550649bfa11acd552cb7af73c210630c6ff65f57e99d8dcb3fd17e8", "outputs_sha256": "1c4a83e4b2369c7649ccac31d51453f66d52a1eab94085810fee7cc9329072e8", "markdown_sha256": "cb5a1fa6a157f8e34f1f0d02ccbe70861fd88819697dc662f9ac764f0b52b3dc"}
+    },
+    "source_html_sha256": {
+      "01-커밋과-gitignore.html": "fb83a48a570781432c20090003eaac3377ede5c48fe6f4e487c2baec0fe00afa",
+      "02-GitHub-Flow와-PR-리뷰.html": "6fa23ad9e4d072bf86ee5f83fb7f829cd45fbcfb8372da1b7cf4f539aae1485a",
+      "03-병합-충돌-해결.html": "722d9d2e1af722c9b0e05041f9066232d83cf2ff73d43304b9a7abc933de9d8b",
+      "04-revert-reflog-worktree.html": "04c2ffec89ccf78e5a455d9f98b8edc18df171c94d34bb7c393a8c71e0a617a2",
+      "05-시크릿-이력-정리와-예방.html": "13697b3de7a3e80327fe8ad5070a8ec8f590d84915817d5bf588b1df6932203f"
+    },
+    "readme_sha256": "078e1800d9de20b61307b681ddb5eb082cf21b749ad91c7e7242796e6db455e3"
+  }
+}

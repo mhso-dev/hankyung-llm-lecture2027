@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  quest["개발 질문 15개 · 문서 청크 175개"]:::tool
+  first["1차 검색<br>후보 문서 청크 8개"]:::flow
+  chunkpass["문서 청크 5개 넘기기"]:::flow
+  parent["부모 문서 ID로 바꾸고<br>중복 빼기"]:::flow
+  parentpass["부모 문서 2건 넘기기"]:::flow
+  chunkcost["입력 가용분 3400 안에 든 질문 15"]:::measure
+  parentcost["조각 수 약 4200<br>입력 가용분 3400 안에 든 질문 6"]:::measure
+  quest --> first
+  first --> chunkpass
+  first --> parent
+  parent --> parentpass
+  chunkpass --> chunkcost
+  parentpass --> parentcost

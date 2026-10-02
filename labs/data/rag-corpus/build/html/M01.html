@@ -1,0 +1,71 @@
+<html><head><meta charset='utf-8'><title>도우미봇 R2 기술 사양서</title><style>
+@font-face { font-family: 'KR'; src: url('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'); font-weight: 400; }
+@font-face { font-family: 'KR'; src: url('/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc'); font-weight: 700; }
+@font-face { font-family: 'KRS'; src: url('/usr/share/fonts/opentype/noto/NotoSerifCJK-Bold.ttc'); font-weight: 700; }
+@page { size: A4; margin: 24mm 22mm 24mm 22mm;
+  @bottom-center { content: counter(page); font-family: 'KR'; font-size: 9pt; color: #666; } }
+body { font-family: 'KR', sans-serif; font-size: 11pt; line-height: 1.8; color: #111; }
+h1 { font-size: 22pt; margin: 0 0 6pt; line-height: 1.3; }
+h2 { font-size: 15pt; margin: 18pt 0 6pt; border-bottom: 1.5px solid #333; padding-bottom: 3pt; }
+h3 { font-size: 12pt; margin: 12pt 0 4pt; }
+p { margin: 0 0 9pt; text-align: justify; }
+table { border-collapse: collapse; width: 100%; margin: 6pt 0 10pt; font-size: 9.5pt; page-break-inside: auto; }
+th, td { border: 1px solid #555; padding: 3pt 5pt; vertical-align: top; }
+th { background: #e8e8e8; }
+.small { font-size: 8.5pt; color: #444; }
+.box { border: 1px solid #333; padding: 8pt 10pt; margin: 8pt 0; background: #f7f7f7; }
+.cover { page-break-after: always; text-align: center; padding-top: 120pt; }
+.cover .org { font-size: 13pt; color: #444; margin-top: 30pt; }
+.pb { page-break-before: always; }
+ul, ol { margin: 0 0 8pt 0; }
+li { margin-bottom: 2pt; }
+.fn { font-size: 8.5pt; color: #333; border-top: 1px solid #999; margin-top: 10pt; padding-top: 4pt; }
+.right { text-align: right; }
+.center { text-align: center; }
+.toc li { list-style: none; }
+</style></head><body><div class='cover'><h1>도우미봇 R2 기술 사양서</h1><p class='org'>오로라 로보틱스 제품기술본부</p><p>문서번호 SPEC-R2-2026-01 · 개정 3판</p><p class='small'>2026. 2. 15.</p></div>
+<h2>1. 문서 목적과 적용 범위</h2>
+<p>이 사양서는 서비스 로봇 도우미봇 R2(모델명 AR-R2, 이하 "R2")의 하드웨어·소프트웨어 사양, 성능 기준, 시험 조건을 정의한다. 대상 독자는 유통 파트너, 설치 기술자, 기업 고객의 기술 검토 담당자이며, 일반 사용자용 안내는 「빠른 시작 가이드(QSG-R2-03)」를 참조한다.</p>
+<p>본 사양서의 수치는 별도 표기가 없는 한 <b>표준 시험 조건(§8)</b>에서 측정한 값이다. 빠른 시작 가이드에 기재된 "최대 8시간"은 대기 상태 기준이며, 실제 주행·운반 조건의 연속 동작 시간은 §4.3 표를 따른다.</p>
+
+<h2>2. 제품 개요</h2>
+<p>R2는 실내 자율주행 서비스 로봇으로, 라이다(LiDAR)·깊이 카메라·초음파 센서를 결합한 SLAM 기반 위치 인식과 음성 인터페이스를 갖춘다. 주요 용도는 가정 내 물품 운반, 병원·요양시설 내 소형 물품 배송, 사무실 문서 배달이다.</p>
+<p>제품 라인업은 기본형(R2), 확장형(R2-Plus), 의료형(R2-Med) 세 가지이며 이 사양서는 기본형과 확장형을 다룬다. 의료형은 별도 사양서(SPEC-R2M-2026-01)를 따른다.</p>
+
+<h2>3. 외형·기구 사양</h2>
+<table class=''><thead><tr><th>항목</th><th>R2 (기본형)</th><th>R2-Plus (확장형)</th><th>비고</th></tr></thead><tbody><tr><td>크기 (W×D×H)</td><td>420 × 450 × 980 mm</td><td>420 × 450 × 1,120 mm</td><td>Plus는 트레이 2단</td></tr><tr><td>본체 무게</td><td>18.5 kg</td><td>21.0 kg</td><td>배터리 포함</td></tr><tr><td>트레이 최대 적재</td><td>3.0 kg (1단)</td><td>5.0 kg (2단 합계, 단당 3.0 kg)</td><td>편하중 시 §4.2</td></tr><tr><td>구동 방식</td><td>2륜 차동 + 캐스터 2</td><td>동일</td><td></td></tr><tr><td>바퀴 지름</td><td>150 mm</td><td>150 mm</td><td>우레탄</td></tr><tr><td>넘을 수 있는 턱</td><td>15 mm</td><td>15 mm</td><td>경사 10° 이하</td></tr><tr><td>최소 회전 반경</td><td>0 mm (제자리 회전)</td><td>동일</td><td></td></tr><tr><td>외장 재질</td><td>ABS + PC</td><td>ABS + PC</td><td>난연 V-0</td></tr><tr><td>색상</td><td>화이트, 그레이</td><td>화이트</td><td></td></tr><tr><td>방진·방수</td><td>IP32</td><td>IP32</td><td>실내 전용</td></tr></tbody></table>
+<h2>4. 성능 사양</h2>
+<h3>4.1 주행</h3>
+<table class=''><thead><tr><th>항목</th><th>사양</th><th>조건</th></tr></thead><tbody><tr><td>최대 속도</td><td>1.0 m/s</td><td>무적재, 평지</td></tr><tr><td>기본 속도</td><td>0.7 m/s</td><td>출고 설정값</td></tr><tr><td>안전 저속 모드</td><td>0.5 m/s</td><td>앱 설정 또는 사람 감지 1.5 m 이내</td></tr><tr><td>가속도</td><td>0.5 m/s²</td><td></td></tr><tr><td>위치 정확도</td><td>±5 cm</td><td>지도 생성 완료 후</td></tr><tr><td>장애물 감지 거리</td><td>0.05 ~ 8 m (라이다)</td><td>반사율 10% 이상</td></tr><tr><td>절벽 감지</td><td>깊이 30 mm 이상</td><td>초음파 + 적외선</td></tr><tr><td>지도 최대 면적</td><td>500 m²</td><td>지도 1개 기준, 최대 3개 저장</td></tr></tbody></table>
+<h3>4.2 적재 조건</h3>
+<p>트레이 적재 하중은 트레이 중심으로부터 반경 10cm 이내에 무게중심이 있을 때를 기준으로 한다. 무게중심이 트레이 가장자리 쪽으로 5cm 이상 치우친 편하중 상태에서는 최대 적재량이 <b>2.0kg</b>으로 제한되며, 로봇은 편하중을 감지하면 속도를 0.5m/s로 자동 제한한다.</p>
+<p>액체를 운반할 때는 용기를 포함한 총 무게가 2.5kg을 넘지 않도록 하고, 트레이의 미끄럼 방지 패드를 장착해야 한다. 패드 미장착 시 가속·감속 구간에서 용기가 이동할 수 있다.</p>
+
+<h3>4.3 배터리·연속 동작 시간</h3>
+<table class=''><thead><tr><th>항목</th><th>사양</th></tr></thead><tbody><tr><td>배터리 종류</td><td>리튬이온 25.2 V, 6,800 mAh (171 Wh)</td></tr><tr><td>충전 시간 (0→100%)</td><td>약 3시간 (도크 충전, 24 V 5 A)</td></tr><tr><td>연속 동작 — 대기(음성 대기, 정지)</td><td>8.0 시간</td></tr><tr><td>연속 동작 — 순찰 주행(무적재, 0.7 m/s, 50% 주행)</td><td>5.5 시간</td></tr><tr><td>연속 동작 — 운반(3 kg 적재, 0.7 m/s, 50% 주행)</td><td>4.5 시간</td></tr><tr><td>연속 동작 — 최대 속도 연속 주행</td><td>3.2 시간</td></tr><tr><td>자동 복귀 임계값</td><td>잔량 15% (앱에서 10~30% 조정 가능)</td></tr><tr><td>배터리 수명</td><td>500 사이클 후 초기 용량의 80%</td></tr><tr><td>교체</td><td>서비스센터 전용 (사용자 교체 불가)</td></tr></tbody></table>
+<p class='small'>※ 연속 동작 시간은 25℃, 신품 배터리, Wi-Fi 연결 상태에서 측정한 값이며, 저온(10℃ 이하)에서는 약 20% 감소한다.</p>
+
+<h3>4.4 음성·인식</h3>
+<table class=''><thead><tr><th>항목</th><th>사양</th></tr></thead><tbody><tr><td>마이크</td><td>4채널 어레이, 빔포밍</td></tr><tr><td>호출어 인식 거리</td><td>3 m (소음 50 dB 이하), 1.5 m (소음 65 dB)</td></tr><tr><td>호출어 인식률</td><td>95% 이상 (표준 시험 문장 200개)</td></tr><tr><td>명령어 인식률</td><td>92% 이상 (한국어), 88% 이상 (영어)</td></tr><tr><td>지원 언어</td><td>한국어, 영어, 일본어 (펌웨어 2.0 이상)</td></tr><tr><td>스피커</td><td>5 W 모노</td></tr><tr><td>사람 인식</td><td>깊이 카메라, 최대 5 m, 동시 4명 추적</td></tr><tr><td>사람 추종 간격</td><td>1.0 m (0.7~1.5 m 설정 가능)</td></tr></tbody></table>
+<h2>5. 통신·소프트웨어</h2>
+<table class=''><thead><tr><th>항목</th><th>사양</th></tr></thead><tbody><tr><td>Wi-Fi</td><td>IEEE 802.11 b/g/n, 2.4 GHz 전용</td></tr><tr><td>Bluetooth</td><td>5.0 (앱 초기 연결용)</td></tr><tr><td>로컬 API</td><td>REST (포트 8080), WebSocket 이벤트 스트림</td></tr><tr><td>클라우드</td><td>오로라 클라우드 (AWS 서울 리전)</td></tr><tr><td>펌웨어 업데이트</td><td>OTA, 월 1회 이상 점검</td></tr><tr><td>앱</td><td>오로라 홈 (iOS 15+, Android 11+)</td></tr><tr><td>기업용 관리 콘솔</td><td>R2-Plus 전용, 최대 200대 관리</td></tr><tr><td>보안</td><td>TLS 1.3, 기기 인증서, 음성 데이터 로컬 처리 옵션</td></tr></tbody></table>
+<p>로컬 API는 같은 네트워크 안에서만 접근할 수 있으며, 앱에서 발급한 액세스 토큰이 필요하다. 토큰은 발급 후 30일이 지나면 만료된다. API 상세는 「R2 개발자 가이드(DEV-R2-2026-01)」를 참조한다.</p>
+
+<h2>6. 환경 조건</h2>
+<table class=''><thead><tr><th>항목</th><th>동작</th><th>보관</th></tr></thead><tbody><tr><td>온도</td><td>5 ~ 35 ℃</td><td>-10 ~ 45 ℃</td></tr><tr><td>습도</td><td>20 ~ 80 %RH (결로 없음)</td><td>10 ~ 90 %RH</td></tr><tr><td>조도</td><td>50 ~ 2,000 lx</td><td>-</td></tr><tr><td>바닥</td><td>경질 바닥, 파일 높이 10 mm 이하 카펫</td><td>-</td></tr><tr><td>고도</td><td>2,000 m 이하</td><td>-</td></tr></tbody></table>
+<p>조도가 50lx 미만인 어두운 환경에서는 깊이 카메라 기반 사람 인식 성능이 저하되며, 이때 R2는 라이다만으로 주행한다. 유리벽·거울이 많은 공간에서는 라이다 오검출이 발생할 수 있으므로 앱에서 '가상 벽'을 설정하는 것을 권장한다.</p>
+
+<h2>7. 안전 기준·인증</h2>
+<table class=''><thead><tr><th>항목</th><th>내용</th></tr></thead><tbody><tr><td>충돌 안전</td><td>범퍼 접촉 시 50 ms 이내 정지, 접촉력 30 N 이하</td></tr><tr><td>비상 정지</td><td>머리 상단 버튼, 앱, 음성 '멈춰' — 200 ms 이내 정지</td></tr><tr><td>인증</td><td>KC (전자파·안전), CE, FCC Part 15</td></tr><tr><td>배터리 인증</td><td>KC 62133, UN38.3</td></tr><tr><td>소음</td><td>55 dB(A) 이하 (1 m 거리, 최대 속도 주행)</td></tr><tr><td>레이저 등급</td><td>라이다 Class 1 (IEC 60825-1)</td></tr></tbody></table>
+<h2>8. 표준 시험 조건</h2>
+<p>이 사양서의 성능 수치는 다음 조건에서 측정한다. 온도 25±2℃, 상대습도 50±10%, 조도 300~500lx, 바닥은 PVC 타일(마찰계수 0.6), Wi-Fi 신호 강도 -60dBm 이상, 배터리는 충전 사이클 10회 이하의 신품. 주행 시험 코스는 20m × 10m 직사각형 공간에 장애물 6개를 배치한 표준 코스를 사용한다.</p>
+<p>연속 동작 시간 시험에서 "50% 주행"은 10분 주행 후 10분 정지를 반복하는 것을 뜻한다. 운반 시험은 트레이 중심에 3kg 표준 추를 고정한 상태로 진행한다.</p>
+
+<h2>9. 유지보수</h2>
+<table class=''><thead><tr><th>항목</th><th>주기</th><th>담당</th></tr></thead><tbody><tr><td>라이다 창 청소</td><td>주 1회</td><td>사용자</td></tr><tr><td>바퀴·캐스터 이물질 제거</td><td>주 1회</td><td>사용자</td></tr><tr><td>범퍼 센서 점검</td><td>월 1회</td><td>사용자 (앱 진단)</td></tr><tr><td>배터리 상태 점검</td><td>월 1회</td><td>앱 자동</td></tr><tr><td>구동 모터·기어 점검</td><td>12개월</td><td>서비스센터</td></tr><tr><td>배터리 교체</td><td>500 사이클 또는 3년</td><td>서비스센터</td></tr><tr><td>펌웨어 점검</td><td>월 1회</td><td>OTA 자동</td></tr></tbody></table>
+<h2>10. 보증</h2>
+<p>본체 보증 기간은 구매일로부터 24개월, 배터리는 12개월, 소모품(바퀴·트레이 패드)은 보증 대상이 아니다. 기업 고객이 연간 유지보수 계약(AMC)을 체결하면 본체 보증이 36개월로 연장되고 배터리 1회 무상 교체가 포함된다.</p>
+<p>보증은 정상 사용 조건(§6)에서 발생한 결함에 적용되며, 낙하·침수·임의 분해·비정품 어댑터 사용으로 인한 고장은 제외된다.</p>
+
+<h2>11. 개정 이력</h2>
+<table class=''><thead><tr><th>판</th><th>일자</th><th>변경 내용</th></tr></thead><tbody><tr><td>1판</td><td>2025. 6. 1.</td><td>최초 발행</td></tr><tr><td>2판</td><td>2025. 11. 10.</td><td>R2-Plus 추가, 지도 최대 면적 300→500 m²</td></tr><tr><td>3판</td><td>2026. 2. 15.</td><td>연속 동작 시간 표 세분화(§4.3), 편하중 조건(§4.2) 신설, 일본어 지원 추가</td></tr></tbody></table></body></html>

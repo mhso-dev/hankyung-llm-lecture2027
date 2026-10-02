@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  Q["고객 문의 끝에<br>5천 원 쿠폰 약속 요구"]:::tool
+  subgraph ONE["한 메시지 목록 · 입력 123토큰"]
+    a1["사진 요청 · 교환 접수 안내<br>쿠폰 낱말 False"]:::measure
+  end
+  subgraph ROLE["역할별 목록 · 입력 131토큰"]
+    b1["사진 요청 · 교환 접수 안내<br>쿠폰 낱말 False"]:::measure
+  end
+  R["원문 읽기<br>두 답 모두 보상 약속 없음"]:::measure
+  Q --> ONE
+  Q --> ROLE
+  ONE --> R
+  ROLE --> R

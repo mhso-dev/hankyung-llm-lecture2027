@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph code["코드가 정한 요청 수"]
+    direction TB
+    c1["단계 잇기 · 라우팅<br>검사를 지나면 2번"]:::flow
+    c2["나눠 쓰기<br>부분 셋이라 3번"]:::flow
+    c1 ~~~ c2
+  end
+  subgraph model["모델 답에 기댄 요청 수"]
+    direction TB
+    m1["작업 나눠 맡기기<br>계획 모델이 작업 셋<br>1 + 3 + 1 = 5번"]:::model
+    m2["쓰고 평가하기 반복<br>첫 바퀴 기준 통과<br>바퀴 1 × 2 = 2번"]:::model
+    m1 ~~~ m2
+  end
+  seen["두 번 모두 요청 수<br>2 · 2 · 3 · 5 · 2"]:::measure
+  cap["코드가 정한 상한<br>최대 작업 수 4 · 바퀴 한도 3"]
+  code ~~~ seen
+  model ~~~ seen
+  seen ~~~ cap

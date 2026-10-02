@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  cm["두 도구 같음<br>이름 lookup_policy · 몸통<br>넣은 값 topic 3"]
+  subgraph bf["Before · 힌트 없는 자료실"]
+    direction TB
+    b1["def lookup_policy topic<br>힌트 · 독스트링 없음"]:::flow
+    b2["입력 형식 topic 칸 비어 있음<br>도구 설명 None"]:::measure
+    b3["몸통까지 들어감<br>몸통에 들어온 값 3<br>Error calling tool<br>lookup_policy: 3"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph af["After · 힌트 있는 자료실"]
+    direction TB
+    a1["def lookup_policy<br>topic: str · 독스트링"]:::flow
+    a2["입력 형식 topic 칸<br>type string · 설명 있음"]:::measure
+    a3["몸통 전에 거절<br>몸통에 들어온 값 없음<br>Input should be<br>a valid string"]:::measure
+    a1 --> a2 --> a3
+  end
+  cm --> bf
+  cm --> af

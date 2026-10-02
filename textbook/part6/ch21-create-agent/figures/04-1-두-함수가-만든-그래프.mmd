@@ -1,0 +1,23 @@
+flowchart TB
+  %% classes
+  subgraph og["옛 함수 create_react_agent · 인자 prompt"]
+    direction TB
+    oa["agent"]
+    ot["tools"]
+    oe(["__end__"])
+    os["받은 경고 하나<br>고정 엣지 둘<br>시작점 엣지 포함"]:::measure
+    oa -.->|should_continue| ot
+    oa -.->|should_continue| oe
+    ot -->|고정 엣지 · 실선| oa
+  end
+  subgraph ng["새 함수 create_agent · 인자 system_prompt"]
+    direction TB
+    nm["model"]
+    nt["tools"]
+    ne(["__end__"])
+    ns["받은 경고 없음<br>고정 엣지 하나<br>시작점 엣지"]:::measure
+    nm -.->|model_to_tools| nt
+    nm -.->|model_to_tools| ne
+    nt -.->|tools_to_model · 점선| nm
+  end
+  og ~~~ ng

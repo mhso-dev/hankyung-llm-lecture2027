@@ -1,0 +1,60 @@
+{
+  "part": 7,
+  "part_title": "Part 7 · 서비스화 & 배포",
+  "chapter": "ch30-fastapi-serving",
+  "title": "FastAPI로 Agent 서빙",
+  "hours": "총 32h · 강의 10h · 실습 22h",
+  "objectives": [
+    "비동기 FastAPI 라우트에서 Agent의 ainvoke와 astream을 호출합니다.",
+    "POST SSE의 이벤트, 재연결, 스트림 오류를 클라이언트와 함께 설계합니다.",
+    "인증·CORS·타임아웃을 적용하고 OpenAPI에서 TypeScript SDK를 생성합니다."
+  ],
+  "lab_path": "labs/part7/ch30-fastapi-serving",
+  "sections": [
+    {
+      "slug": "01-비동기-라우팅과-스키마",
+      "title": "비동기 라우팅과 스키마",
+      "format": "paired"
+    },
+    {
+      "slug": "02-의존성으로-Agent-주입",
+      "title": "의존성으로 Agent 주입",
+      "format": "paired"
+    },
+    {
+      "slug": "03-ainvoke-요청-응답",
+      "title": "ainvoke 요청 응답",
+      "format": "paired"
+    },
+    {
+      "slug": "04-astream과-응답-스트림",
+      "title": "astream과 응답 스트림",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-POST-SSE-이벤트-설계",
+      "title": "POST SSE 이벤트 설계",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-fetch-재연결과-오류-이벤트",
+      "title": "fetch 재연결과 오류 이벤트",
+      "format": "paired"
+    },
+    {
+      "slug": "07-인증-CORS-타임아웃",
+      "title": "인증 CORS 타임아웃",
+      "format": "paired"
+    },
+    {
+      "slug": "08-OpenAPI와-TS-SDK",
+      "title": "OpenAPI와 TS SDK",
+      "format": "experiment"
+    },
+    {
+      "slug": "09-실제-Agent-HTTP-통합",
+      "title": "실제 Agent HTTP 통합",
+      "format": "experiment"
+    }
+  ]
+}

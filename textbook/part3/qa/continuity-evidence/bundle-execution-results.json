@@ -1,0 +1,54 @@
+{
+  "archive_sha256": "c6dea7c1722e7f7b7cffb4dd2799aa6e083dc93927de1858c27782d077aac5a5",
+  "source": "part3-practice.zip",
+  "data_or_student_module_fallback": false,
+  "verification_runner": "textbook/_notebook/execute.py (outside ZIP, verification only)",
+  "notebooks": [
+    {
+      "notebook": "labs/part3/ch09-rag-first-run/notebooks/06-실험-하네스.ipynb",
+      "working_directory": "extracted notebook directory",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 28,
+        "code_sha256": "8c9bb27cf8ef96e07430ba51374123678e63b796fdb3585ce424e4a865cfead7",
+        "executed_at": "2026-10-01T01:15:37.295310+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "79040ac557b8729992b8240ed69a6cea7cc7e438de88db48c3ce89c7780bf40b",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "notebook": "labs/part3/ch10-document-processing/notebooks/08-인덱싱-비교-실험.ipynb",
+      "working_directory": "extracted notebook directory",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 28,
+        "code_sha256": "f24b1f08c2b66d99e208efc45825b151bc68d6ff674db3edfc2533b816479919",
+        "executed_at": "2026-10-01T01:15:48.737619+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "a6fceaade42c486d90c04f73af0f651e45c3cf1d402135bdf852dab116620751",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "notebook": "labs/part3/ch11-evaluation/notebooks/06-실험-로그와-자동-실행.ipynb",
+      "working_directory": "extracted notebook directory",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 31,
+        "code_sha256": "ed27e56e18ada0022961fe9092329119b4bed0044829fadef1aadf17d66a97a9",
+        "executed_at": "2026-10-01T01:15:56.118158+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "2c75441916420eb122516c220a17d50502437dde6a057a18ab5a83f85b09a778",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    }
+  ],
+  "temporary_extraction": "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/tmp/fc5-part3/hankyung-continuity-wbcb4mjo/part3-practice",
+  "credentials_written": false,
+  "reused_verified_upstream_runs": false,
+  "upstream_execution_inputs_unchanged": false
+}

@@ -1,0 +1,705 @@
+[
+  {
+    "name": "01-concept",
+    "w": 900,
+    "h": 390,
+    "title": "변수 이름에서 계산 결과까지",
+    "caption": "변수 이름이 자료형이 있는 값을 가리키고, quantity 2와 unit_price 39000.0이 주문 금액 78000원을 만드는 흐름입니다.",
+    "elements": [
+      {
+        "kind": "text",
+        "id": "zone",
+        "x": 20,
+        "y": 72,
+        "label": "서로 다른 이름이 값과 자료형을 가리킵니다",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "product",
+        "x": 25,
+        "y": 100,
+        "w": 195,
+        "h": 82,
+        "label": "product_name\n\"무선 키보드\" · str",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "quantity",
+        "x": 245,
+        "y": 100,
+        "w": 195,
+        "h": 82,
+        "label": "quantity\n2 · int",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "price",
+        "x": 465,
+        "y": 100,
+        "w": 195,
+        "h": 82,
+        "label": "unit_price\n39000.0 · float",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "member",
+        "x": 685,
+        "y": 100,
+        "w": 190,
+        "h": 82,
+        "label": "is_member\nTrue · bool",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "formula",
+        "x": 450,
+        "y": 235,
+        "label": "quantity × unit_price",
+        "fs": 16,
+        "color": "#92400e",
+        "anchor": "middle",
+        "weight": "bold"
+      },
+      {
+        "kind": "arrow",
+        "id": "q_to_total",
+        "points": [
+          [
+            342,
+            182
+          ],
+          [
+            342,
+            250
+          ],
+          [
+            410,
+            285
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "p_to_total",
+        "points": [
+          [
+            562,
+            182
+          ],
+          [
+            562,
+            250
+          ],
+          [
+            490,
+            285
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "total",
+        "x": 335,
+        "y": 285,
+        "w": 230,
+        "h": 72,
+        "label": "order_total\n78000.0 → 78000원",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      }
+    ]
+  },
+  {
+    "name": "02-concept",
+    "w": 900,
+    "h": 500,
+    "title": "조건 선택과 반복 종료",
+    "caption": "주문 금액을 조건과 비교해 배송비 한 경로를 선택하고, 반복 중 0을 만나면 처리를 끝내는 흐름입니다.",
+    "elements": [
+      {
+        "kind": "text",
+        "id": "if_zone",
+        "x": 20,
+        "y": 72,
+        "label": "조건문: 참인 경로 하나를 선택합니다",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "amount",
+        "x": 25,
+        "y": 100,
+        "w": 205,
+        "h": 78,
+        "label": "주문 금액\n18000원",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "amount_to_if",
+        "points": [
+          [
+            230,
+            139
+          ],
+          [
+            315,
+            139
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "conditions",
+        "x": 315,
+        "y": 90,
+        "w": 270,
+        "h": 98,
+        "label": "18000 >= 50000 → 거짓\n18000 >= 30000 → 거짓",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "if_to_fee",
+        "points": [
+          [
+            585,
+            139
+          ],
+          [
+            675,
+            139
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "else",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "fee",
+        "x": 675,
+        "y": 100,
+        "w": 200,
+        "h": 78,
+        "label": "배송비\n3000원",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "loop_zone",
+        "x": 20,
+        "y": 255,
+        "label": "반복문: 입력을 차례로 확인합니다",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "sequence",
+        "x": 25,
+        "y": 290,
+        "w": 255,
+        "h": 105,
+        "label": "18000, -1, 42000,\n0, 65000",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "sequence_to_control",
+        "points": [
+          [
+            280,
+            342
+          ],
+          [
+            335,
+            342
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "control",
+        "x": 335,
+        "y": 282,
+        "w": 235,
+        "h": 120,
+        "label": "-1이면 continue\n0이면 break",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "control_to_result",
+        "points": [
+          [
+            570,
+            342
+          ],
+          [
+            650,
+            342
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "0 뒤는 중단",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "processed",
+        "x": 650,
+        "y": 290,
+        "w": 225,
+        "h": 105,
+        "label": "처리한 주문\n[18000, 42000]",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      }
+    ]
+  },
+  {
+    "name": "03-concept",
+    "w": 900,
+    "h": 660,
+    "title": "주문 정보를 담는 네 자료구조",
+    "caption": "상품 세 개를 목록으로 유지하고 집합으로 고유 상품 두 개를 얻으며, copy로 백업 목록을 분리하는 흐름입니다.",
+    "elements": [
+      {
+        "kind": "text",
+        "id": "top_zone",
+        "x": 20,
+        "y": 72,
+        "label": "독립된 저장 예와 실제 조회 결과",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "items",
+        "x": 25,
+        "y": 100,
+        "w": 245,
+        "h": 88,
+        "label": "목록 items\n[키보드, 마우스, 키보드]\n길이 3",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "to_set",
+        "points": [
+          [
+            270,
+            144
+          ],
+          [
+            325,
+            144
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "set(items)",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "unique",
+        "x": 325,
+        "y": 100,
+        "w": 245,
+        "h": 88,
+        "label": "집합 unique_items\n{키보드, 마우스}\n길이 2",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "tuple",
+        "x": 625,
+        "y": 100,
+        "w": 250,
+        "h": 88,
+        "label": "튜플 delivery_point\n(37.5665, 126.9780)",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "dict",
+        "x": 25,
+        "y": 245,
+        "w": 260,
+        "h": 88,
+        "label": "딕셔너리 order\nid: A102\namount: 78000",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "copy_zone",
+        "x": 20,
+        "y": 395,
+        "label": "목록 복사 뒤 cart만 변경합니다",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "cart_initial",
+        "x": 335,
+        "y": 420,
+        "w": 230,
+        "h": 80,
+        "label": "처음 cart\n[키보드, 마우스]",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "copy",
+        "points": [
+          [
+            410,
+            500
+          ],
+          [
+            410,
+            520
+          ],
+          [
+            205,
+            545
+          ]
+        ],
+        "color": "#2563eb",
+        "label": ".copy()",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "backup",
+        "x": 25,
+        "y": 545,
+        "w": 360,
+        "h": 90,
+        "label": "backup\n[키보드, 마우스]\n변경 없이 유지",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "append",
+        "points": [
+          [
+            490,
+            500
+          ],
+          [
+            490,
+            520
+          ],
+          [
+            695,
+            545
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "cart.append(\"헤드셋\")",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "cart_final",
+        "x": 515,
+        "y": 545,
+        "w": 360,
+        "h": 90,
+        "label": "변경 뒤 cart\n[키보드, 마우스, 헤드셋]\ncart is backup → False",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "note",
+        "x": 325,
+        "y": 365,
+        "label": "튜플과 딕셔너리는 목록에서 변환된 결과가 아니라 각각 만든 값입니다.",
+        "fs": 14,
+        "color": "#4b5563",
+        "anchor": "start",
+        "weight": "normal"
+      }
+    ]
+  },
+  {
+    "name": "04-concept",
+    "w": 900,
+    "h": 600,
+    "title": "함수의 입력과 반환, 호출별 목록",
+    "caption": "78000원과 할인율 0.1을 함수에 전달해 70200원을 반환하고, None 기본값으로 호출별 태그 목록을 분리합니다.",
+    "elements": [
+      {
+        "kind": "text",
+        "id": "calc_zone",
+        "x": 20,
+        "y": 72,
+        "label": "함수 호출과 반환",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "args",
+        "x": 25,
+        "y": 100,
+        "w": 220,
+        "h": 82,
+        "label": "인자\n78000, 0.1",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "args_to_fn",
+        "points": [
+          [
+            245,
+            141
+          ],
+          [
+            335,
+            141
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "fn",
+        "x": 335,
+        "y": 100,
+        "w": 230,
+        "h": 82,
+        "label": "calculate_payment()\n할인액 계산",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "fn_to_result",
+        "points": [
+          [
+            565,
+            141
+          ],
+          [
+            655,
+            141
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "return",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "payment",
+        "x": 655,
+        "y": 100,
+        "w": 220,
+        "h": 82,
+        "label": "반환값\n70200",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "scope_zone",
+        "x": 20,
+        "y": 240,
+        "label": "변수 범위",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "scope",
+        "x": 180,
+        "y": 268,
+        "w": 540,
+        "h": 86,
+        "label": "함수 밖 label = \"주문\"\n함수 안 label = \"주문번호 A102\" · 호출 뒤 바깥 값은 \"주문\"",
+        "fill": "#fef3c7",
+        "stroke": "#d97706",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "text",
+        "id": "default_zone",
+        "x": 20,
+        "y": 410,
+        "label": "기본 목록과 None 방식 비교",
+        "fs": 16,
+        "color": "#111827",
+        "anchor": "start",
+        "weight": "bold"
+      },
+      {
+        "kind": "box",
+        "id": "shared",
+        "x": 25,
+        "y": 440,
+        "w": 250,
+        "h": 105,
+        "label": "기본 목록 []\n두 호출이 같은 객체 공유\n[신규, 배송]",
+        "fill": "#fee2e2",
+        "stroke": "#dc2626",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "none",
+        "x": 335,
+        "y": 440,
+        "w": 235,
+        "h": 105,
+        "label": "기본값 None\n호출마다 새 목록 생성",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "none_to_lists",
+        "points": [
+          [
+            570,
+            492
+          ],
+          [
+            635,
+            492
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "separate",
+        "x": 635,
+        "y": 440,
+        "w": 240,
+        "h": 105,
+        "label": "서로 다른 객체\n[신규] / [배송]",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 17,
+        "dashed": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  u["사용량이 든<br>스트림 청크"]:::measure
+  d["사용량 딕셔너리<br>입력 · 캐시 입력 · 출력<br>토큰 수"]:::measure
+  p["요금표 2026-09-17<br>mini 요금 세 가지"]:::tool
+  c["함수 estimate_cost<br>도구 파일에서 가져옴"]:::flow
+  r["예상 비용 달러<br>청구 금액이 아님<br>출력 토큰 따라 달라짐"]:::measure
+  u --> d
+  d --> c
+  p --> c
+  c --> r

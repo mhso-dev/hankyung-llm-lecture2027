@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 첫 페이지만 읽는 함수"]
+    direction LR
+    b1["page=1 요청<br>next_page 2"]:::tool
+    b2["fetch_orders_before()<br>다음 페이지 번호를<br>쓰지 않고 반환"]:::flow
+    b3["주문 2건<br>합계 50000"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph AFTER["After · 다음 페이지 번호가 없을 때까지"]
+    direction LR
+    a1["page=1 요청<br>next_page 2<br>page=2 요청<br>next_page None"]:::tool
+    a2["fetch_all_orders()<br>while 반복을 끝내고<br>모은 목록 반환"]:::flow
+    a3["주문 3건<br>합계 77000"]:::measure
+    a1 --> a2 --> a3
+  end
+  BEFORE --> AFTER

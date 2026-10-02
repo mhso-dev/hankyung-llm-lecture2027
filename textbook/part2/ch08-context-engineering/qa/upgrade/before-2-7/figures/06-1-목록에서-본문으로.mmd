@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  docs["문서 세 개<br>E01 p.2 · p.3 · p.5"]:::tool
+  cat["목록 세 줄<br>출처 · 제목 · 한 줄 설명"]:::tool
+  pick["출처 하나 고르기<br>selected_source E01 p.3"]:::flow
+  opn["open_document<br>그 출처의 본문만 엶"]:::flow
+  rest["나머지 두 문서 본문<br>열지 않음"]
+  body["고른 입력<br>추정 217"]:::measure
+  mdl["gpt-5.4-mini<br>출력 상한 120"]:::model
+  docs --> cat
+  cat --> pick
+  pick --> opn
+  opn --> body
+  opn -.-> rest
+  body --> mdl

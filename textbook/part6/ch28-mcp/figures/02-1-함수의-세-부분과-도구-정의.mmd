@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  fn["우리가 쓴 함수 lookup_policy<br>매개변수 topic: str<br>독스트링 한 줄"]:::flow
+  deco["데코레이터 줄 @after.tool<br>서버 after에 도구로 붙임"]:::flow
+  srv["서버 객체 after<br>힌트 있는 자료실"]:::tool
+  subgraph tdef["클라이언트가 받은 도구 정의"]
+    direction TB
+    tname["도구 이름<br>lookup_policy"]:::measure
+    tdesc["도구 설명<br>독스트링 글"]:::measure
+    tin["입력 형식<br>topic 칸 type string"]:::measure
+    tname ~~~ tdesc ~~~ tin
+  end
+  fn --> deco --> srv --> tdef

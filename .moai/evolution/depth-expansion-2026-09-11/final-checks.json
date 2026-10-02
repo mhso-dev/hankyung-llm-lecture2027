@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "html_sections": 6,
+  "html_code_cells": 53,
+  "maximum_cell_lines": 22,
+  "visual_cases": 14,
+  "visual_all_passed": true,
+  "fresh_execution": {
+    "allow_errors": false,
+    "code_cells": 14,
+    "code_sha256": "214eb731ee165e73d86ce1ee1492e19ce28090d7eb69c678f964a81d231ceb13",
+    "executed_at": "2026-09-11T04:36:59.824692+00:00",
+    "fresh_kernel": true,
+    "outputs_sha256": "04ff575414daedc59a2bc218fa439852f20d42ca0bbdd5867389cd8d20822066",
+    "python_version": "3.12.13",
+    "status": "passed"
+  },
+  "archives": [
+    {
+      "file": "textbook/downloads/part2-practice.zip",
+      "sha256": "58479127953a01d007071cfc67f9bacc4622cdd46666f49201c04b136f12440e",
+      "updated_notebook_matches": true
+    },
+    {
+      "file": "textbook/downloads/llm-practice.zip",
+      "sha256": "6afe3ae209ed15006d7ecb9327df7668ae63d0f43ec1776766a6fc8185887cf4",
+      "updated_notebook_matches": true
+    }
+  ]
+}

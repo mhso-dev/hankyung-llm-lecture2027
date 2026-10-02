@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  queries["개발 분할 앞 네 문항<br>Q001 Q002 Q003 Q004"]:::tool
+  store["색인 쪽 90개"]:::tool
+  searchfn["search<br>질문마다 한 번"]:::flow
+  ranks["질문별 고유 문서 목록<br>정답 문서 자리"]:::measure
+  rowsfn["score_rows_at<br>재현율 정밀도 nDCG"]:::flow
+  meanfn["group_mean<br>질문 평균"]:::flow
+  record["run_once<br>기록 한 줄"]:::flow
+  out1["실행 1<br>자르는 자리 5"]:::measure
+  out2["실행 2<br>자르는 자리 1"]:::measure
+  queries --> searchfn
+  store --> searchfn
+  searchfn --> ranks
+  ranks --> rowsfn
+  rowsfn --> meanfn
+  meanfn --> record
+  record --> out1
+  record --> out2

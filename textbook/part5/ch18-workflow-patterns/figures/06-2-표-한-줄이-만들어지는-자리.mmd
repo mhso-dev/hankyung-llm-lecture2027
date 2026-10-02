@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  flow["흐름 함수 하나<br>도구 파일에서 가져옴"]:::flow
+  clock["time.perf_counter<br>흐름 앞뒤 시각의 차"]
+  rec["기록 목록<br>요청 한 번에 한 줄"]:::tool
+  res["흐름 결과<br>상태 · 안내문"]:::tool
+  tot["total_tokens<br>입력 + 출력 토큰"]:::flow
+  grd["grade_notice<br>check_draft 다섯 항목"]:::flow
+  row["make_row 표 한 줄<br>손 확인 토큰 수 380<br>걸린 초 1.235 · 상태 ok"]:::measure
+  flow --> rec
+  flow --> res
+  rec --> tot
+  res --> grd
+  tot --> row
+  grd --> row
+  clock --> row

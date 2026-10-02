@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  same["두 칸 공통<br>02절 문의 글 다섯<br>After 호출 객체<br>문의마다 요청 세 번"]
+  subgraph none["설정 없음"]
+    direction TB
+    n1["batch 설정 없음"]:::tool
+    n2["한꺼번에 처리 중이던<br>문의 다섯<br>서버가 받은 요청 열다섯 번"]:::measure
+    n1 --> n2
+  end
+  subgraph two["값 바꿔 보기"]
+    direction TB
+    t1["max_concurrency 2"]:::flow
+    t2["한꺼번에 처리 중이던<br>문의 둘<br>서버가 받은 요청 열다섯 번"]:::measure
+    t3["기다린 문의는<br>일꾼 모음의 대기열에<br>설치판 소스로 확인"]
+    t1 --> t2
+    t2 --> t3
+  end
+  same --> none
+  same --> two

@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph wide[자리 수 5로 실행한 칸]
+    direction TB
+    w1["Ch 10 실행마다 남은 항목 5개"]:::measure
+    w2["Ch 9 실행은 남은 항목 2개"]:::measure
+    w1 ~~~ w2
+  end
+  subgraph narrow[자리 수 2로 실행한 칸]
+    direction TB
+    n1["Ch 10 실행마다 남은 항목 2개"]:::measure
+    n2["Ch 9 실행은 남은 항목 2개"]:::measure
+    n1 ~~~ n2
+  end
+  common["두 칸 모두에 해당<br>Ch 10 실행 nDCG 1.0"]
+  wide --> common
+  narrow --> common

@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 크기 380자 · 겹침 50자"]
+    direction LR
+    b1["넘길 줄 56자<br>… 그 다음 날인"]:::tool
+    b2["뒤 문서 청크 351자<br>화요일에도<br>휴관합니다. 줄로 시작"]:::tool
+    b3["세 말이 모두 든<br>문서 청크 없음<br>351자: 월요일 ·<br>법정 공휴일 빠짐"]:::fail
+    b1 -->|50자 안에<br>안 듦| b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 크기 380자 · 겹침 100자"]
+    direction LR
+    a1["넘길 줄 56자<br>… 그 다음 날인"]:::tool
+    a2["뒤 문서 청크 369자<br>56자 줄과 화요일 줄<br>함께 담음"]:::tool
+    a3["369자<br>빠진 지킬 말 []"]:::measure
+    a1 -->|100자 안에<br>듦| a2
+    a2 --> a3
+  end
+  note["두 설정 모두<br>앞 문서 청크 370자에 화요일 빠짐<br>문서 청크 수 11"]
+  BEFORE ~~~ AFTER
+  AFTER ~~~ note

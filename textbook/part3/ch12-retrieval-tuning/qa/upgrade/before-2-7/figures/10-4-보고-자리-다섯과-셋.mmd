@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  root["질문 Q085 · 비중 1.0과 0.2"]:::flow
+  subgraph three["보고 자리 3"]
+    t1["비중 1.0 · 고유 부모 수 1<br>정밀도 1.0"]:::measure
+    t2["비중 0.2 · 고유 부모 수 3<br>정밀도 0.33"]:::measure
+  end
+  subgraph five["보고 자리 5"]
+    f1["비중 1.0 · 고유 부모 수 1<br>정밀도 1.0"]:::measure
+    f2["비중 0.2 · 고유 부모 수 3<br>정밀도 0.6"]:::measure
+  end
+  root --> f1
+  f1 ~~~ f2
+  root --> t1
+  t1 ~~~ t2

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  subgraph RETRY["재시도 — 같은 모델을 다시"]
+    direction LR
+    r1["모델 호출"]:::model --> r2["실패"]:::fail --> r3["잠시 기다림"]:::flow --> r4["같은 모델 다시 호출"]:::model
+  end
+  subgraph FALLBACK["폴백 — 다른 모델로"]
+    direction LR
+    f1["첫 모델 호출"]:::model --> f2["실패"]:::fail --> f3["예비 모델 호출"]:::model
+  end
+  subgraph LIMIT["호출 한도 — 실행 멈춤"]
+    direction LR
+    l1["호출 횟수 세기"]:::measure --> l2["한도 도달"]:::fail --> l3["안내 메시지로 끝냄"]:::flow
+  end
+  RETRY ~~~ FALLBACK ~~~ LIMIT

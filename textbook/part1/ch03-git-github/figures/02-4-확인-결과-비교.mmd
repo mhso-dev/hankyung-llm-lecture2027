@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 기능 브랜치의 첫 함수"]
+    direction LR
+    b1["summary.py<br>글에 count를 그대로 넣음"]:::tool
+    b2["확인 파일 실행<br>보통 값 3, 빈 글자"]:::flow
+    b3["빈 값: 주문 건<br>오류 없이 틀린 글"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph AFTER["After · 병합한 main"]
+    direction LR
+    a1["summary.py<br>number = int(count)"]:::tool
+    a2["같은 확인 파일 실행<br>보통 값 3, 빈 글자"]:::flow
+    a3["입력 오류: invalid literal<br>for int() with base 10"]:::measure
+    a1 --> a2 --> a3
+  end
+  BEFORE -- "fix 커밋, fetch, merge --no-ff" --> AFTER

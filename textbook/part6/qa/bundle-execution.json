@@ -1,0 +1,39 @@
+{
+  "archive": "part6-practice.zip",
+  "archive_sha256": "5a1736be9221690a7c72af138da51a3f4ea96b54deefb2ba5d201ca390238aed",
+  "lessons": [
+    {
+      "notebook": "labs/part6/ch24-human-in-the-loop/notebooks/01-interrupt-승인-게이트.ipynb",
+      "code_sha256": "7187f7a39f3fbd146120412daf4d9675ecf132703117570348b3b570744595ab",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 28,
+        "code_sha256": "7187f7a39f3fbd146120412daf4d9675ecf132703117570348b3b570744595ab",
+        "executed_at": "2026-10-01T01:09:29.576259+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "fbaaa8908bd18c3b40364f4e558903e8eafe43b0a9e34eaaa0ca401323f09970",
+        "python_version": "3.12.13",
+        "status": "passed"
+      },
+      "ran_from_notebooks_folder": true,
+      "output": "PASS 01-interrupt-승인-게이트.ipynb: 28 cells"
+    },
+    {
+      "notebook": "labs/part6/ch28-mcp/notebooks/01-MCP-구조와-capability-협상.ipynb",
+      "code_sha256": "2407c4c571382b4f55de5aae1c30de28f4810518cc62e29fb6526524b5ca7b21",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 25,
+        "code_sha256": "2407c4c571382b4f55de5aae1c30de28f4810518cc62e29fb6526524b5ca7b21",
+        "executed_at": "2026-10-01T01:09:34.246324+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "1dee52fb83470df5a7e861ac92fd304531be327a67456536d0c9f8fbb8a3d2c5",
+        "python_version": "3.12.13",
+        "status": "passed"
+      },
+      "ran_from_notebooks_folder": true,
+      "output": "PASS 01-MCP-구조와-capability-협상.ipynb: 25 cells"
+    }
+  ],
+  "scope": "Two representative offline notebooks; no API key copied. Canonical notebooks separately contain full fresh-kernel evidence."
+}

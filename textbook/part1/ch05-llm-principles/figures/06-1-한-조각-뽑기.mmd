@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  INPUT["입력 56조각<br>사용자 메시지 하나"]:::tool
+  MODEL["언어 모델<br>Qwen2.5-0.5B-Instruct"]:::model
+  SCORES["다음 조각<br>후보 점수"]
+  PROBS["후보 확률"]
+  KEPT["남은 후보"]
+  PIECE["뽑은 조각 하나<br>끝 표시나 32조각이면 멈춤"]:::measure
+  INPUT --> MODEL
+  MODEL --> SCORES
+  SCORES -- "반복 벌점 1.1 · temperature로 나누기" --> PROBS
+  PROBS -- "top_k 20 · top_p 0.9" --> KEPT
+  KEPT -- "시드로 뽑기" --> PIECE
+  PIECE -- "입력 뒤에 붙여 다시" --> MODEL

@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  quest["질문 Q002 · 정답 부모 E01"]:::tool
+  corpus["문서 청크 175개"]:::tool
+  stage["1차 검색<br>두 순위를 합친 차례"]:::flow
+  cands["후보 8개<br>E01 6개 · E02 2개"]:::measure
+  outside["후보 밖 문서 청크 167개"]
+  reranker["리랭커<br>질문과 후보 본문을 함께 읽기"]:::model
+  ranked["리랭킹 차례<br>1위 E01-P03-C01"]:::measure
+  quest --> stage
+  corpus --> stage
+  stage --> cands
+  stage --> outside
+  cands --> reranker
+  reranker --> ranked

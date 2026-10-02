@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  tool["StructuredTool<br>lookup_policy"]:::measure
+  subgraph outside["블록 밖에서 부르기"]
+    direction TB
+    inv["invoke<br>NotImplementedError"]:::measure
+    ain["await ainvoke<br>부른 뒤 자식 프로세스 0"]:::measure
+    inv ~~~ ain
+  end
+  subgraph inside["async with adapter 블록 안"]
+    direction TB
+    b1["부르기 전 자식 프로세스 1<br>부른 뒤 1<br>같은 프로세스 True"]:::measure
+    b2["블록을 벗어난 뒤<br>자식 프로세스 0"]:::measure
+    b1 --> b2
+  end
+  tool -.-> outside
+  tool -.-> inside

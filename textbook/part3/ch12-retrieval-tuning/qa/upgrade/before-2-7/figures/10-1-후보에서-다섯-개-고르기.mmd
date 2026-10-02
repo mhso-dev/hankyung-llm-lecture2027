@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  data["개발 질문 15개 · 문서 청크 175개"]:::tool
+  first["1차 검색<br>후보 문서 청크 8개"]:::flow
+  score["후보마다 MMR 점수<br>유사도 − 닮은 정도"]:::flow
+  pick["점수가 큰 후보부터<br>문서 청크 5개 고르기"]:::flow
+  uniq["고유 부모 수"]:::measure
+  prec["문서 청크 정밀도 자리 5"]:::measure
+  rec["부모 문서 재현율 자리 3"]:::measure
+  data --> first
+  first --> score
+  score --> pick
+  pick --> uniq
+  pick --> prec
+  pick --> rec

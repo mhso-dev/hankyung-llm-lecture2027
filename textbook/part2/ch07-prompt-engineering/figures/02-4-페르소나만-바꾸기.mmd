@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  K["그대로 둔 것<br>과업 명세 · 고객 문의"]:::tool
+  subgraph KIND["친절한 고객 상담원"]
+    k1["출력 88토큰 · 152자<br>3줄 · A-1042 True"]:::measure
+  end
+  subgraph PLAIN["말수가 적고 사무적인 상담원"]
+    p1["출력 69토큰 · 116자<br>3줄 · A-1042 True"]:::measure
+  end
+  C["원문 읽기<br>길이·낱말만 조금 달라짐<br>세 줄 모양은 그대로"]:::measure
+  K --> KIND
+  K --> PLAIN
+  KIND --> C
+  PLAIN --> C

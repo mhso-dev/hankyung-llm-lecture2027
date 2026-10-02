@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  root["질문 평균 재현율<br>자리 1 · 자리 2 · 자리 3 차례"]:::measure
+  m1["벡터 거리<br>0.75 · 0.875 · 0.875"]:::measure
+  m2["낱말 겹침<br>0.875 · 0.875 · 1.0"]:::measure
+  m3["순위 합치기<br>0.75 · 0.875 · 1.0"]:::measure
+  note["세 방법 모두 자리 2에서 0.875"]
+  root --> m1
+  root --> m2
+  root --> m3
+  m1 --> note
+  m2 --> note
+  m3 --> note

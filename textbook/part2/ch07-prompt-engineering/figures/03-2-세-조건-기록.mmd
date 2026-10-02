@@ -1,0 +1,22 @@
+flowchart TB
+  %% classes
+  subgraph ZERO["예시 없음 · 과업 명세만"]
+    direction LR
+    z1["입력 134토큰<br>출력 80토큰"]:::measure
+    z2["139자 · 3줄<br>분류: 파손 교환 문의"]:::measure
+    z1 ~~~ z2
+  end
+  subgraph REL["관련 예시 · 셔츠 단추 B-203"]
+    direction LR
+    r1["입력 225토큰<br>출력 77토큰"]:::measure
+    r2["123자 · 3줄<br>분류: 교환 요청(파손)"]:::measure
+    r1 ~~~ r2
+  end
+  subgraph UNREL["관련 없는 예시 · 뉴스레터 글꼴"]
+    direction LR
+    u1["입력 211토큰<br>출력 74토큰"]:::measure
+    u2["131자 · 3줄<br>분류: 교환 문의"]:::measure
+    u1 ~~~ u2
+  end
+  n1["예시가 더한 입력<br>관련 예시 91토큰<br>관련 없는 예시 77토큰"]:::measure
+  ZERO ~~~ REL ~~~ UNREL ~~~ n1

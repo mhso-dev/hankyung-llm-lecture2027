@@ -1,0 +1,35 @@
+
+<h2><span class="no">Ch 9</span>챕터 개요</h2>
+<p>이 챕터에서는 <strong>이틀 안에 실행되는 RAG를 완성합니다.</strong> 텍스트 로더 → 스플리터 → 임베딩 → 벡터스토어 → top-k 검색 → 출처 인용까지 일반 파이썬 함수 다섯 개로 완주하고, 같은 시간에 실험 하네스(설정 YAML → 실행 → 한 줄 기록)를 만듭니다. 품질은 아직 측정하지도, 높이지도 않습니다. 첫 실패를 일부러 보고, 그 결과가 Ch 11(측정)·Ch 12(튜닝)·Ch 16(가드레일)의 동기가 되는 지점까지 다룹니다.</p>
+<div class="callout blue"><b>커리큘럼 두 규칙</b>① 이 챕터에 에이전트는 없습니다 — 검색 횟수·k·프롬프트·폴백은 전부 학생이 코드에 적고, 모델은 답 문장만 만듭니다. ② 측정이 튜닝보다 먼저입니다 — 하네스의 <code>metrics</code> 칸은 비어 있고 Ch 11이 채웁니다.</div>
+<h2><span class="no">목표</span>챕터를 마치면</h2>
+<div class="goal"><ul>
+<li><code>labs/data/rag-corpus/</code>의 PDF 18건을 청크 176개로 색인하고, 질문 하나에 출처가 붙은 답을 받을 수 있습니다.</li>
+<li>검색 결과 (청크, 점수)를 읽고 "검색이 틀렸나, 생성이 틀렸나"를 가릴 수 있습니다.</li>
+<li>같은 출력 "문서에서 찾을 수 없습니다"가 두 가지 원인에서 나온다는 것을 설명하고, 정답 문서 ID가 왜 필요한지 말할 수 있습니다.</li>
+<li><code>--set</code> 한 줄로 설정을 바꿔 실행하고 <code>runs.jsonl</code>에 한 줄이 남는 하네스를 사용할 수 있습니다.</li>
+</ul></div>
+<h2><span class="no">절</span>구성 — 16h (강의 6 · 실습 10)</h2>
+<div class="tw"><table>
+<tr><th>절</th><th>개념</th><th>강의</th><th>실습</th><th>코드</th><th>도식·삽화</th></tr>
+<tr><td><a href="01-RAG-지도.html">01 RAG 지도</a></td><td>Select의 자동화, 색인·질의 두 흐름, 학생/모델 경계, 문서 세트</td><td>1h</td><td>1h</td><td>—</td><td>파이프라인 도식 · 오픈북 삽화</td></tr>
+<tr><td><a href="02-로더와-스플리터.html">02 로더와 스플리터</a></td><td>Document, 쪽 단위 로더, RecursiveCharacterTextSplitter, 겹침, 글자 vs 토큰</td><td>1h</td><td>2h</td><td><code>load_pdfs</code> <code>split_docs</code></td><td>청크 경계 도식</td></tr>
+<tr><td><a href="03-임베딩과-벡터스토어.html">03 임베딩·벡터스토어·top-k</a></td><td>임베딩, 코사인 유사도, InMemoryVectorStore, dump/load, 점수 읽기</td><td>1h</td><td>2h</td><td><code>build_index</code> <code>search</code></td><td>벡터 검색 도식</td></tr>
+<tr><td><a href="04-생성과-출처-인용.html">04 생성과 출처 인용</a></td><td>컨텍스트 조립, 시스템 프롬프트, 출처 태그, Answer, 첫 완주</td><td>1h</td><td>2h</td><td><code>format_context</code> <code>generate</code> <code>answer</code></td><td>—</td></tr>
+<tr><td><a href="05-첫-실패-보기.html">05 첫 실패를 일부러 보기</a></td><td>환각의 조건, 거부, unanswerable, 확률적 실패, 같은 출력·다른 원인</td><td>1h</td><td>2h</td><td><code>examples/ex05_failure.py</code> <code>prompts.py</code></td><td>실패 경로 도식 · 안내원 삽화</td></tr>
+<tr><td><a href="06-실험-하네스.html">06 실험 하네스</a></td><td>config.yaml, --set, 설정 해시 캐시, runs.jsonl 한 줄, 눈으로 비교의 한계</td><td>1h</td><td>1h</td><td><code>harness.py</code> <code>config.yaml</code></td><td>하네스 루프 도식 · 실험 노트 삽화</td></tr>
+</table></div>
+<h2><span class="no">준비</span>실습 환경</h2>
+<pre><code class="language-bash">{{code:examples/ex01_setup.sh}}</code></pre>
+<p><code>OPENAI_API_KEY</code>는 프로젝트 루트 <code>.env</code>에 둡니다. 임베딩 모델은 <span class="tbd">[[미정: 임베딩 모델]]</span> 확정 전까지 <code>text-embedding-3-small</code>, 생성 모델은 <code>gpt-5.4-mini</code>입니다. 챕터 전체 실행 비용은 미화 0.2달러 미만입니다.</p>
+<h2><span class="no">연결</span>이 챕터가 만든 것 · 다음 챕터로 넘기는 것</h2>
+<div class="tw"><table>
+<tr><th>만든 것</th><th>어디에서 다시 쓰이는가</th></tr>
+<tr><td><code>rag.py</code> — <code>load_pdfs</code>·<code>split_docs</code>·<code>build_index</code>·<code>search</code>·<code>format_context</code>·<code>generate</code>·<code>answer</code></td><td>Ch 10(로더·청킹 교체) · Ch 12(<code>search</code> 내부를 하이브리드·리랭킹으로) · Ch 13(각 함수가 그래프 노드로)</td></tr>
+<tr><td><code>Document.metadata</code>의 <code>doc_id</code>·<code>page</code>·<code>chunk_id</code></td><td>Ch 11(정답 문서 ID 비교) · Ch 12(pgvector 컬럼·메타데이터 필터)</td></tr>
+<tr><td>출처 태그 형식 <code>[doc_id p.페이지]</code></td><td>Ch 11("무엇을 맞다고 볼지" 합의) · Ch 16(출력 검증) · 중간 프로젝트 요건</td></tr>
+<tr><td><code>harness.py</code> + <code>config.yaml</code> + <code>runs/runs.jsonl</code>(<code>metrics: {}</code>)</td><td>Ch 10 실습(3 청킹 × 2 임베딩) · Ch 11(지표 함수가 <code>metrics</code>를 채움) · Ch 12(실험 로그 30건) · Ch 15(judge·p95)</td></tr>
+<tr><td><code>prompts.py</code>의 <code>strict</code>·<code>helpful</code></td><td>Ch 16(프롬프트 규칙의 한계 → 가드레일) · Ch 22(Middleware)</td></tr>
+<tr><td>실패 사례 — 검색 실패, 확률적 환각, 부칙 누락 오답, 문서 속 지시문</td><td>Ch 11·12·15·16의 첫 문장</td></tr>
+</table></div>
+<p>새 용어(챕터 전체 30개 이내): RAG, 색인, 청크, 벡터스토어, top-k, 출처 인용, Document, 로더, 스플리터, chunk_size·chunk_overlap, separators, 임베딩, 코사인 유사도, 질문 임베딩, dump/load, 컨텍스트 조립, 시스템 프롬프트, usage_metadata, 환각, 거부, unanswerable, 확률적 실패, 실험 하네스, 설정 파일, run_id, 설정 해시, JSONL.</p>

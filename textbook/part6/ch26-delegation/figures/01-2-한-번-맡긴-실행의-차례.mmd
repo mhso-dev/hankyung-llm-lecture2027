@@ -1,0 +1,19 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  box Lavender
+  participant S as 중앙 에이전트<br>supervisor
+  end
+  participant T as 도구 함수<br>ask_loan_desk
+  box Lavender
+  participant D as 전문 에이전트<br>loan_desk
+  end
+  Note over S: 문의 글 한 줄 · 실행 한도 10
+  Note over S: 요청 1<br>도구 요청 하나
+  S->>T: 인자 question
+  T->>D: 넘긴 글 한 줄로 invoke
+  Note over D: 요청 2<br>도구 요청 없음
+  D-->>T: 안쪽 목록 두 줄
+  Note over T: 기록 목록에 붙임
+  T-->>S: 담당의 마지막 답 글
+  Note over S: 요청 3<br>도구 요청 없음
+  Note over S: 바깥 목록 네 줄

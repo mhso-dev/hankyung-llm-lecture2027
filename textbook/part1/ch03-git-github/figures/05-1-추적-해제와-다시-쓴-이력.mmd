@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 추적만 멈춘 이력"]
+    direction LR
+    b1["feat: 할인율 설정 추가<br>.env.local 들어 있음"]:::tool
+    b2["chore: 로컬 설정 파일<br>추적 제외"]:::tool
+    b3["git log -S 더미 키<br>커밋 두 줄이 걸림"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph AFTER["After · git filter-repo로 다시 쓴 이력"]
+    direction LR
+    a1["feat: 할인율 설정 추가<br>config.txt만 남음"]:::tool
+    a2["chore: 로컬 설정 파일<br>추적 제외"]:::tool
+    a3["git log -S 더미 키<br>빈 출력"]:::measure
+    a1 --> a2 --> a3
+  end
+  BEFORE --> AFTER

@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  q["실행 1 이번 실행<br>문의 글 한 줄 · 호출 한도 2"]:::tool
+  a["중앙 에이전트 요청 1<br>도구 요청 하나 · loan_desk"]:::model
+  b["loan_desk 전문 에이전트<br>요청 1 · 안쪽 목록 두 줄"]:::model
+  c["중앙 에이전트 요청 2<br>도구 요청 없는 최종 답"]:::model
+  o["모델 요청 수 3<br>중앙 2 + 전문 1<br>완료 조건 True"]:::measure
+  q --> a
+  a --> b
+  b --> c
+  c --> o

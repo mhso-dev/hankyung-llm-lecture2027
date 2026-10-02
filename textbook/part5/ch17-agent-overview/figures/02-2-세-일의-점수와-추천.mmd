@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  works["01절에서 만든 사례 셋<br>예인 답 다섯 · 하나 · 셋"]:::tool
+  score["workflow_score<br>예인 답의 가중치를 더함"]:::flow
+  pts["점수<br>환불 절차 6<br>장애 원인 조사 1<br>문의 종류 가르기 4"]:::measure
+  rec["recommend<br>기준값 4와 견줌"]:::flow
+  ok["워크플로우로 충분<br>환불 절차<br>문의 종류 가르기"]:::measure
+  no["모델이 고르는 단계 검토<br>장애 원인 조사"]:::measure
+  works --> score
+  score --> pts
+  pts --> rec
+  rec -.->|이상이면| ok
+  rec -.->|작으면| no

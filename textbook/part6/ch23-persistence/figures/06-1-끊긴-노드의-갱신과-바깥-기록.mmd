@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  r["노드 receive_order<br>마침"]:::flow
+  cp["체크포인트 셋 저장<br>다음 노드 charge"]:::measure
+  subgraph ch["노드 charge 안"]
+    direction TB
+    w["결제 기록 파일에<br>order-2306 한 줄 적음"]:::flow
+    k["신호 파일을 만들고 쉼<br>이 사이에 강제 종료"]:::flow
+    w --> k
+  end
+  rf["결제 기록 파일<br>키 한 줄이 남음"]:::measure
+  ns["칸 notes<br>주문 받음만 남음"]:::measure
+  r --> cp
+  cp --> ch
+  ch -.->|체크포인트 밖| rf
+  ch -.->|노드가 끝나지 않음| ns

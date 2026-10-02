@@ -1,0 +1,75 @@
+{
+  "generated_at": "2026-09-10T03:01:12+09:00",
+  "scope": "Ch1-Ch12 final Korean and semantic review evidence",
+  "verdict": "ACCEPT",
+  "changed_prose_files": 52,
+  "changed_prose_hash_mismatches": 0,
+  "external_spell_service": "skipped_commercial_bulk_processing_prohibited",
+  "local_spell_and_contextual_review": "completed",
+  "files": [
+    {
+      "path": "textbook/qa/continuity-evidence/changed-prose.json",
+      "sha256": "f0c4f129fbfc6563e34a5805e3d19db6a7295e6e262d45ff3ddcd298255a223a"
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/language/phase6-structural-metrics-final.json",
+      "sha256": "5f6dc78d40cf833f1efad4239c81ec374ee75d78402356c93c0f49e645152cea"
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/language/initial-semantic-readonly-review.md",
+      "sha256": "519d591491e43eb178b0c350f7959084f10725d4d3e2eec1bff6599d7ef27025"
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/language/final-semantic-review.md",
+      "sha256": "56c91c3a7c1b64e391c9526d1d3be3eac028f911cea9f42bfe47aead2d1836d7"
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/independent-final-review.md",
+      "sha256": "39c4c0586859a6bc45de0d46e5822723a267489af48bf2c0909091daff36658b"
+    },
+    {
+      "path": "textbook/qa/chapter-continuity-review.md",
+      "sha256": "a91b7b0009bbe0185c936b906c8ef2682bca6912fbf660245739b5d3300b8e83"
+    },
+    {
+      "path": "textbook/qa/chapter-continuity-verification.md",
+      "sha256": "a1593a8476303b8dc2ab70f141dc6233ae59dfce771ae150cd0e9459ca0a9156"
+    },
+    {
+      "path": ".moai/context.md",
+      "sha256": "ffdd0d9f7882e96f1640499f429463e6daa683b18a25d4621ce075f6245182f9"
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/course-static-results.json",
+      "sha256": "26829c0a1d832e8b61373825b8451529968b587803446d9a0255a3d8a5294a31"
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/course-delivery-results.json",
+      "sha256": "8d6308508b36a653fb48bf82c79c2e94581c6af392694086991e76dfe8244604"
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/bundle-execution-results.json",
+      "sha256": "a8c2a3de5fbd90bf7d88278b7d2d0ba497228b321ac50d4a67681f10644dac8f"
+    },
+    {
+      "path": "textbook/qa/continuity-evidence/global-visual-results.json",
+      "sha256": "2d0a8ca6e3aa14c0dea7608fe347fea85f3ca1f728dfa33166c3f1769bd2b200"
+    },
+    {
+      "path": "textbook/downloads/part1-practice.zip",
+      "sha256": "de9cc84278e5e3442adba8a03b9d7f393db2719d0212d9bb601f2587ac7c2c90"
+    },
+    {
+      "path": "textbook/downloads/part2-practice.zip",
+      "sha256": "000c18552c8e061d326ba83627ceff8fcbcb89c0693b12372ec15b57ef66da08"
+    },
+    {
+      "path": "textbook/downloads/part3-practice.zip",
+      "sha256": "4d36a48004cad7af879537bc3454b793d7a0783499f180464785567ea21d38b0"
+    },
+    {
+      "path": "textbook/downloads/llm-practice.zip",
+      "sha256": "a750de3e00a8bf7878f391eda12bb79322f982f7eba20251751352630633fd95"
+    }
+  ]
+}

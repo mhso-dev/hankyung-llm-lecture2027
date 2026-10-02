@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif" role="img" aria-label="외부 저장과 컨텍스트 선택은 서로 다른 단계입니다">
+<title>외부 저장과 컨텍스트 선택은 서로 다른 단계입니다</title>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+</defs>
+<rect width="800" height="400" fill="#ffffff"/>
+<text x="20" y="32.0" font-size="20" fill="#1e293b" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">외부 저장과 컨텍스트 선택은 서로 다른 단계입니다</tspan></text>
+<rect x="35" y="145" width="120" height="80" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="95.0" y="172.8" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="95.0" dy="0.0">Write</tspan><tspan x="95.0" dy="24.3">기록</tspan></text>
+<polyline points="155,185 190,185" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#m-blue)"/>
+<rect x="190" y="130" width="155" height="110" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="267.5" y="172.8" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="267.5" dy="0.0">외부 저장소</tspan><tspan x="267.5" dy="24.3">대화 기록·문서</tspan></text>
+<polyline points="345,185 390,185" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#m-blue)"/>
+<rect x="390" y="145" width="135" height="80" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="457.5" y="174.2" font-size="16" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="457.5" dy="0.0">Select</tspan><tspan x="457.5" dy="21.6">관련 기록 선택</tspan></text>
+<polyline points="525,185 555,185" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#m-blue)"/>
+<rect x="555" y="145" width="105" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="607.5" y="172.8" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="607.5" dy="0.0">메시지</tspan><tspan x="607.5" dy="24.3">본문</tspan></text>
+<polyline points="660,185 680,185" fill="none" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#m-purple)"/>
+<rect x="680" y="145" width="85" height="80" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+<text x="722.5" y="185.0" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="722.5" dy="0.0">LLM</tspan></text>
+<text x="190" y="300.0" font-size="20" fill="#b91c1c" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="190" dy="0.0">저장만으로 모델에 전달되지는 않습니다</tspan></text>
+<text x="190" y="335.0" font-size="16" fill="#1e293b" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="190" dy="0.0">Select를 실행해야 저장된 내용이 모델 입력에 포함됩니다.</tspan></text>
+</svg>

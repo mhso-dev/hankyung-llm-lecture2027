@@ -1,0 +1,28 @@
+{
+  "reviewed_at": "2026-09-11",
+  "chapters": ["ch21-create-agent", "ch29-agent-evaluation"],
+  "genre": "산문",
+  "ai_slop_review": "corrected",
+  "spell_check": {
+    "external_transmission": false,
+    "reason": "korean-spell-check SKILL.md의 상업적 대량 처리 사용 금지에 따라 로컬 검토로 대체"
+  },
+  "phase6": {
+    "status": "corrected",
+    "meaning_preservation": "pass",
+    "code_output_figure_edits": false
+  },
+  "verification": {
+    "notebook_output_hashes": "notebook-output-after.sha256",
+    "prose_hashes": "prose-after.sha256",
+    "ch21_visual_screens": 14,
+    "ch29_visual_screens": 10,
+    "visual_passed": true,
+    "notebook_change": "Ch29-03 reference-aware judge prompt changed and was freshly executed. Ch21-06 now resolves project-relative files from ROOT and Ch29-04 was then freshly re-executed against the resulting JSON."
+  },
+  "technical_corrections": [
+    "Ch21-03 structured_response 조건 명시",
+    "Ch21-06 3/3 대 2/3 LLM judge 관찰 범위 명시",
+    "Ch29-03 reference prompt와 고정 예시의 범위 명시"
+  ]
+}

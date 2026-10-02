@@ -1,0 +1,14 @@
+sequenceDiagram
+  participant S as 노트북 셀의 with 문
+  participant M as 관리자 open_order_file
+  participant F as 파일 orders.txt
+  S->>M: with open_order_file("orders.txt")
+  M->>F: open()
+  Note over M: 파일을 열었습니다
+  M-->>S: yield order_file<br>(yield 줄에서 멈춤)
+  S->>F: read()
+  Note over S: 읽은 줄 ['연필,3', '노트,2']<br>블록 안에서 닫혔나요? False
+  S->>M: 블록 끝 · yield 다음 줄부터
+  M->>F: close()
+  Note over M: 파일을 닫았습니다
+  Note over S: 블록 밖에서 닫혔나요? True

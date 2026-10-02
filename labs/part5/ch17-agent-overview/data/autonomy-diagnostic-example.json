@@ -1,0 +1,13 @@
+{
+  "project": "중간 프로젝트 규정 RAG",
+  "goal": "승인된 규정 문서에서 답과 출처를 반환",
+  "path_predefined": "yes",
+  "unknown_steps_required": "no",
+  "model_decides_next_action": "no",
+  "write_side_effect": "no",
+  "stop_conditions": "검색 결과 없음, 출처 검증 실패, 답변 반환",
+  "evidence": "retrieve → generate → citation_validate 순서가 모든 질문에 동일",
+  "recommended_architecture": "워크플로우 유지",
+  "reason": "경로가 고정되어 있으며 자율적 재검색의 품질 이득을 아직 측정하지 않았습니다.",
+  "next_measurement": "Ch 20에서 고정 분기와 모델 분기의 호출 수·비용·결과 편차 비교"
+}

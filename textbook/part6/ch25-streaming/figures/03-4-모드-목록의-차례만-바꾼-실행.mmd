@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  cm["두 실행 같음<br>같은 문의 · 같은 노드<br>모델 요청 한 번씩"]
+  subgraph one["처음 목록"]
+    direction TB
+    x1["고른 목록<br>messages · updates<br>custom"]:::flow
+    a["모드 차례<br>custom · messages<br>custom · updates"]:::measure
+    x1 --> a
+  end
+  subgraph two["바꾼 목록"]
+    direction TB
+    x2["고른 목록<br>updates · messages<br>custom"]:::flow
+    b["모드 차례<br>custom · messages<br>custom · updates"]:::measure
+    x2 --> b
+  end
+  r["두 칸 모두<br>첫 사건 진행 값 30<br>글자가 든 첫 스트림 청크<br>자리 3"]
+  cm --> one
+  cm --> two
+  one ~~~ r
+  two ~~~ r

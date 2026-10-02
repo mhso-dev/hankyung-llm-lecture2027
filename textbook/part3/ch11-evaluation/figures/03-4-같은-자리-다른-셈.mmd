@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph rec[재현율 자리 5]
+    direction TB
+    r1["나누는 수는 정답 문서 1개"]:::flow
+    r2["값 1.0"]:::measure
+    r1 --> r2
+  end
+  subgraph pre[정밀도 자리 5]
+    direction TB
+    p1["나누는 수는 자르는 자리 5"]:::flow
+    p2["값 0.2"]:::measure
+    p1 --> p2
+  end
+  common["두 칸 모두에 해당<br>질문 Q001의 앞 5자리에<br>정답 문서 1개"]
+  rec --> common
+  pre --> common

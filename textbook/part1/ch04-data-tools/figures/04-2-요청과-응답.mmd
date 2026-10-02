@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  REQ["요청<br>GET /orders?page=1"]:::tool
+  SRV["연습용 주문 서비스<br>page=1.json 글을 보냄"]:::tool
+  RES["응답<br>상태 코드 200<br>본문 JSON 글"]:::measure
+  DICT["딕셔너리<br>주문 2건 · next_page 2"]:::measure
+  REQ -- "httpx.get()" --> SRV
+  SRV --> RES
+  RES -- "response.json()" --> DICT

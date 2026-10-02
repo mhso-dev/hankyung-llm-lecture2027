@@ -1,0 +1,19 @@
+flowchart LR
+  %% classes
+  subgraph one["질문 하나로 한 번 검색"]
+    direction TB
+    o1["검색에 쓴 질문 하나"]:::tool
+    o2["정답 문서 LIB-002는<br>자리 일곱"]:::measure
+    o1 ~~~ o2
+  end
+  subgraph many["네 목록을 합친 뒤"]
+    direction TB
+    m1["검색에 쓴 질문 넷"]:::tool
+    m2["목록 하나만 정답 문서를<br>첫 자리에 둠"]:::measure
+    m3["정답 문서는 자리 넷"]:::measure
+    m1 ~~~ m2
+    m2 ~~~ m3
+  end
+  same["C01과 C02에<br>같은 머리글과<br>같은 가중치를 씀"]
+  one ~~~ many
+  many ~~~ same

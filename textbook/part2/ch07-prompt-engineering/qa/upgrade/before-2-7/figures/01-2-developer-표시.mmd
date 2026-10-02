@@ -1,0 +1,8 @@
+flowchart TB
+  %% classes
+  T["developer 튜플<br>과업 제약"]:::tool
+  C["invoke 안<br>convert_to_messages"]:::flow
+  S["SystemMessage<br>__openai_role__:<br>developer"]:::measure
+  O["langchain-openai<br>요청 역할을<br>developer로 적음"]
+  M["gpt-5.4-mini"]:::model
+  T --> C --> S --> O --> M

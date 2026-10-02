@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  one["평가 사례 한 건<br>질문 · 답<br>기준 답 · 근거 문서"]:::tool
+  c1["정답 일치도<br>답과 기준 답"]:::model
+  c2["답변 관련성<br>답과 질문"]:::model
+  c3["근거 충실도<br>답과 근거 문서"]:::model
+  c4["검색 관련성<br>근거 문서와 질문"]:::model
+  one --> c1
+  one --> c2
+  one --> c3
+  one --> c4

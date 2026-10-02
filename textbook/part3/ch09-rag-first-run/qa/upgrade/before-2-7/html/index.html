@@ -1,0 +1,210 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ch 9 · RAG 첫 완주 + 실험 하네스 — Ch 9 · RAG 첫 완주 + 실험 하네스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>{if(!window.hljs)return;document.querySelectorAll("pre:not(.out) code").forEach(el=>hljs.highlightElement(el));});</script>
+<style>
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+pre{white-space:pre-wrap;overflow-wrap:anywhere} .nav-foot>span{min-width:0;overflow-wrap:anywhere} .goal li::before{content:none!important}.goal li{padding-left:0!important}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+.diagram-scroll{overflow-x:auto;max-width:100%}figure svg{width:100%;min-width:760px;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media print{body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style>
+</head><body><div class="page">
+<!-- 생성: _build.py · 원본 조각 _src/index.html · 도식 figures/*.svg · 삽화 figures/*.png (Higgsfield nano_banana_pro, 2026-09-07) -->
+<header class="top">
+<p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 3 RAG · Ch 9 · RAG 첫 완주 + 실험 하네스</p>
+<h1>Ch 9 · RAG 첫 완주 + 실험 하네스</h1>
+<div class="meta"><span>16h</span><span>강의 6h · 실습 10h</span><span>절 7개</span><span>W4~W5</span><span>Jupyter Notebook</span></div>
+</header>
+
+<p>생성 모델은 Ch 6에서 배운 <code>init_chat_model</code>로 준비하고 <code>invoke()</code>로 호출합니다. 텍스트는 응답의 <code>text</code> 속성에서 읽으며, 임베딩은 <code>OpenAIEmbeddings</code>를 사용합니다.</p>
+<h2><span class="no">Ch 9</span>챕터 개요</h2>
+<p>이 챕터에서는 <strong>수업을 위해 내용을 지어 만든 PDF로 작은 RAG를 처음부터 끝까지 실행합니다.</strong> 노트북 안에서 PDF 읽기 → 문서 청크 나누기 → 임베딩 → 벡터스토어 → top-k 검색 → 출처가 있는 답 생성을 순서대로 확인합니다. 06절에서는 실습 폴더의 설정 파일을 읽어 이번 실행 설정을 만들고, 색인 설정으로 만든 색인 이름표를 앞 실행과 비교합니다. 같은 절에서 제공된 디지털 PDF 18건과 Ch 11의 개발 질문 Q001로 검색·답변을 실행해, 실행 기록 한 줄을 JSONL 파일 두 개에 남깁니다. 마지막 07절은 문서 청크 크기만 바꿔 검색부터 답 검사까지 두 번 실행하고 비교하는 실습 절입니다.</p>
+<div class="callout blue"><b>커리큘럼 두 규칙</b>① 이 챕터에 에이전트는 없습니다 — 검색 횟수·<code>k</code>·과업 명세는 학생이 코드에 적고, 모델은 답 문장을 만듭니다. ② 측정이 튜닝보다 먼저입니다 — 이 챕터의 실행 기록 한 줄은 품질 지표 없이 설정·검색 결과·생성 답만 적습니다. Ch 11은 이 기록의 검색 결과를 읽어 별도 평가 로그에 품질 지표를 계산합니다.</div>
+<h2><span class="no">목표</span>챕터를 마치면</h2>
+<div class="goal"><ul>
+<li>제공된 합성 PDF 한 건의 다섯 쪽을 모두 읽어 문서 청크로 나눈 뒤, 질문 하나에 출처가 붙은 답을 받을 수 있습니다.</li>
+<li>검색 결과의 문서 청크와 검색 점수를 읽고 "검색이 틀렸나, 생성이 틀렸나"를 가릴 수 있습니다.</li>
+<li>답이 근거를 벗어난 경우를 검색 누락과 답이 없는 질문으로 가르고, 정답 출처와 정답 문서 ID가 왜 필요한지 말할 수 있습니다.</li>
+<li>설정 파일에서 검색 개수 <code>k</code>만 바꿔 실행할 수 있습니다. 색인 이름표와 검색한 문서 청크, 출처가 붙은 답을 실행 기록 한 줄로 JSONL 파일에 남길 수 있습니다.</li>
+<li>문서 청크 크기만 바꿔 두 번 실행하고, 점검표 한 줄로 검색 결과와 답 검사를 나란히 비교할 수 있습니다.</li>
+</ul></div>
+<h2><span class="no">절</span>구성 — 16h (강의 6 · 실습 10)</h2>
+<div class="tw"><table>
+<tr><th>절</th><th>개념</th><th>강의</th><th>실습</th><th>코드</th><th>도식·삽화</th></tr>
+<tr><td><a href="01-RAG-지도.html">01 RAG 지도</a></td><td>제공 PDF 경로, 쪽별 Document, 문서 청크, 검색 개수 <code>k</code>, 출처가 있는 답</td><td>1h</td><td>1h</td><td><code>01-RAG-지도.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="02-로더와-스플리터.html">02 로더와 스플리터</a></td><td>로더 함수, 줄 모으기와 겹침, 글자 수와 토큰 수</td><td>1h</td><td>2h</td><td><code>02-로더와-스플리터.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="03-임베딩과-벡터스토어.html">03 임베딩·벡터스토어·top-k</a></td><td>E01 문서 청크 8개, 실제 임베딩, InMemoryVectorStore, 검색 점수와 <code>k</code></td><td>1h</td><td>2h</td><td><code>03-임베딩과-벡터스토어.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="04-생성과-출처-인용.html">04 생성과 출처 인용</a></td><td>검색 결과를 기록으로, 메시지 목록, 출처 표시와 지킬 말 검사</td><td>1h</td><td>2h</td><td><code>04-생성과-출처-인용.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="05-첫-실패-보기.html">05 첫 실패를 일부러 보기</a></td><td>정답 출처, 검색 누락, 답이 없는 질문, 검색 개수 <code>k</code>=1·8</td><td>1h</td><td>2h</td><td><code>05-첫-실패-보기.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="06-실험-하네스.html">06 실험 하네스</a></td><td>설정 파일과 실행 설정, 색인 이름표, 디지털 PDF 18건 색인, 실행 기록 한 줄</td><td>1h</td><td>1h</td><td><code>06-실험-하네스.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="07-RAG-실습.html">07 RAG 실습</a></td><td>문서 청크 크기 500자·300자, 검색부터 답 검사까지 조립, 점검표 한 줄 비교</td><td>—</td><td>30분(실습 10h 안)</td><td><code>07-RAG-실습.ipynb</code></td><td>Mermaid 3장 · 삽화 1장</td></tr>
+</table></div>
+<h2><span class="no">준비</span>실습 환경</h2>
+<p>각 절의 노트북을 Jupyter에서 열고 <strong>커널 다시 시작 후 모두 실행</strong>을 선택합니다. 첫 코드 셀이 필요한 패키지 버전을 설치합니다. OpenAI API를 사용하는 절의 환경 셀은 프로젝트 루트의 <code>.env</code>를 찾으며, API를 사용하지 않는 02절은 패키지 버전만 확인합니다. 터미널에서 별도의 설치 명령을 실행하거나 교재 코드를 모듈 파일로 옮길 필요가 없습니다.</p>
+<p><code>OPENAI_API_KEY</code>는 프로젝트 루트 <code>.env</code>에 둡니다. 임베딩 모델은 <code>text-embedding-3-small</code>, 생성 모델은 <code>gpt-5.4-mini</code>입니다(2026-09-17 모델 안내 확인). 노트북은 수업 중 반복 실행해도 호출량이 작도록 문서와 질문을 최소 규모로 구성했습니다. 06절만 디지털 PDF 18건을 색인하므로 한 번 실행에 임베딩 요청이 더 붙습니다.</p>
+<h2><span class="no">연결</span>이 챕터가 만든 것 · 다음 챕터로 넘기는 것</h2>
+<div class="tw"><table>
+<tr><th>만든 것</th><th>어디에서 다시 쓰이는가</th></tr>
+<tr><td><code>01-RAG-지도.ipynb</code> — PDF 읽기부터 출처가 있는 답까지 연결한 작은 RAG</td><td>Ch 10에서 문서 형식과 문서 청크 나누는 방식을 바꾸고, Ch 11에서 검색 품질을 측정합니다.</td></tr>
+<tr><td><code>Document.metadata</code>의 문서 ID(<code>doc_id</code>)·쪽 번호(<code>page</code>), 06절이 더한 문서 청크 이름(<code>chunk_id</code>)</td><td>Ch 11(정답 문서 ID 비교) · Ch 12(pgvector의 저장 열과 출처 정보로 결과 거르기)</td></tr>
+<tr><td>출처 표시 형식 <code>[E01 p.2]</code></td><td>Ch 11("무엇을 맞다고 볼지" 합의) · Ch 16(출력 검증) · 중간 프로젝트 요건</td></tr>
+<tr><td><code>06-실험-하네스.ipynb</code> — 실행 설정, 색인 이름표, 디지털 PDF 18건과 Q001의 실행 기록 한 줄 JSONL</td><td>Ch 10의 여섯 조합 비교와 Ch 11의 실제 로그 입력으로 이어집니다.</td></tr>
+<tr><td><code>05-첫-실패-보기.ipynb</code> — 검색 누락과 답이 없는 질문을 가른 출력</td><td>Ch 11의 정답 문서 ID와 Ch 12의 검색 설정 비교로 이어집니다.</td></tr>
+</table></div>
+<p>새 용어(챕터 전체 30개 이내 — 절 용어 표 기준 24개): RAG(검색 증강 생성), 색인, Document, 문서 청크(chunk), 벡터스토어, top-k 검색, 로더, 스플리터, 크기(chunk_size), 겹침(chunk_overlap), 끊을 자리 순서(separators), 저장 항목, 저장 ID, 검색 점수, 출처 인용, 정답 출처, 검색 누락, 답이 없는 질문, 실험 하네스, 실행 설정, 색인 이름표, 실행 기록 한 줄, 정답 문서 ID, JSONL(한 줄에 JSON 하나를 두는 파일 형식). 본문에서 함께 푸는 말은 임베딩, 벡터, 코사인 유사도, 검색 출처, 점검표 한 줄이고, 환각·답변 보류·보류 문장은 Ch 5 07절 뜻 그대로 씁니다.</p>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script>
+<div class="nav-foot"><span>&nbsp;</span><span><a href="index.html">챕터 목차</a></span><span><a href="01-RAG-지도.html">01 · RAG 지도 — 검색으로 Select를 자동화한다 →</a></span></div>
+</div></body></html>

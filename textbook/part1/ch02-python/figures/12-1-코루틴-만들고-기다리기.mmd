@@ -1,0 +1,11 @@
+flowchart TD
+  %% classes
+  callstep["check_stock(&quot;연필&quot;, 0.2)<br>부르기만 함"]:::flow
+  coro["waiting<br>자료형 coroutine<br>확인 시작 줄 없음"]:::tool
+  awaitstep["stock_text = await waiting"]:::flow
+  body["본문 실행<br>확인 시작 → 0.2초 기다림<br>→ 확인 끝"]:::flow
+  out["받은 값: 연필 재고 있음<br>자료형 str"]:::measure
+  callstep --> coro
+  coro --> awaitstep
+  awaitstep --> body
+  body --> out

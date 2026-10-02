@@ -1,0 +1,504 @@
+{
+  "chapter": "ch27-deepagents",
+  "label": "before",
+  "totals": {
+    "G1": 23,
+    "G2": 15,
+    "G3": 12,
+    "G4": 5,
+    "G5": 46,
+    "G6": 120,
+    "G7": 24
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-하네스와-일곱-기능",
+      "code_cells": 4,
+      "sentences": 71,
+      "counts": {
+        "G1": 0,
+        "G2": 2,
+        "G3": 1,
+        "G4": 0,
+        "G5": 5,
+        "G6": 11,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [
+          "cell6:one_line_compound",
+          "cell8:nested_call_2plus"
+        ],
+        "G3": [
+          "cell4:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:기능을 일곱 이름으로 외우는 것이 목적이 아니라, 파일이 사라졌는지·위임 도구가 없는지·요약이 동작하지 않는지에 따라 확인할 위치를 찾는 것이 목적입니다",
+          "long:DeepAgents는 이 기능을 대체하지 않고 LangChain과 LangGraph 위에서 긴 작업에 자주 필요한 구성을 묶습니다",
+          "long:DeepAgents 0.7.0의 생성 함수와 미들웨어 조립 코드를 기준으로 이 장에서는 일곱 기능을 파일시스템, 서브에이전트, 컨텍스트 요약, 스킬, 장기 메모리, 파일 권한과 사람 승인, 비동기 서브에이전트 로 분류합니다",
+          "long:색이 쓰인 곳에서 파란색은 학생 코드와 실행 흐름, 보라색은 모델의 판단, 초록색은 도구와 데이터, 노란색은 측정값, 빨간색은 실패 또는 권한 경계를 뜻합니다",
+          "long:실행 결과에서 파일시스템·서브에이전트·컨텍스트 요약·스킬·장기 메모리·권한과 사람 승인·비동기 서브에이전트가 모두 True였고 합계는 7이었습니다",
+          "long:실행 결과에서 파일시스템·서브에이전트·컨텍스트 요약·스킬·장기 메모리·권한과 사람 승인·비동기 서브에이전트가 모두 True였고 합계는 7이었습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 이름 목록을 넘어 create_deep_agent가 만든 그래프에 질문을 보내고 course_lookup 도구가 선택되는지 확인합니다",
+          "long:확인 날짜: 2026-09-11. 기준 환경: Python 3.12, DeepAgents 0.7.0, LangChain 1.4.0, langchain-openai 1.6.0.",
+          "english_start:DeepAgents는 이 기능을 대체하지 않고 LangChain과 Lan",
+          "english_start:LangGraph는 상태와 노드의 실행 순서를 구성하고, LangChai",
+          "english_start:LangGraph는 상태와 노드의 실행 순서를 구성하고, LangChai"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-create-deep-agent와-도구",
+      "code_cells": 5,
+      "sentences": 69,
+      "counts": {
+        "G1": 6,
+        "G2": 4,
+        "G3": 2,
+        "G4": 1,
+        "G5": 7,
+        "G6": 19,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell10:list_comprehension",
+          "cell10:list_comprehension",
+          "cell10:list_comprehension",
+          "cell10:list_comprehension",
+          "cell10:generator_expression",
+          "cell10:generator_expression"
+        ],
+        "G2": [
+          "cell10:one_letter_name:m",
+          "cell10:one_letter_name:m",
+          "cell10:one_letter_name:m",
+          "cell10:one_letter_name:m"
+        ],
+        "G3": [
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing"
+        ],
+        "G4": [
+          "cell6:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:함수 시그니처만 읽으면 tools 인자가 있다는 사실은 알 수 있지만 모델이 도구를 선택하고 결과를 다시 읽는지는 알 수 없습니다",
+          "long:이 절은 Chapter 27이라는 고정 입력을 course_lookup에 전달하고 HumanMessage → AIMessage → ToolMessage → AIMessage 순서를 실제로 확인합니다",
+          "long:`course_lookup` 같은 업무 도구는 모델이 필요하다고 판단할 때 호출하지만, 필수 호출을 보장해야 한다면 시스템 지침만 의존하지 말고 궤적 검사나 명시적 그래프 경로를 추가합니다",
+          "long:색이 쓰인 곳에서 파란색은 학생 코드와 실행 흐름, 보라색은 모델의 판단, 초록색은 도구와 데이터, 노란색은 측정값, 빨간색은 실패 또는 권한 경계를 뜻합니다",
+          "long:create_deep_agent가 백엔드·미들웨어를 조립하고 파일·위임 도구를 더한 뒤 CompiledStateGraph를 반환하는 순서입니다",
+          "long:저장된 실행은 그래프 노드에 model과 tools를 표시했고, 메시지 사이에 course_lookup 이름의 ToolMessage를 남겼습니다",
+          "long:저장된 실행은 그래프 노드에 model과 tools를 표시했고, 메시지 사이에 course_lookup 이름의 ToolMessage를 남겼습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 기본에서 빠진 write_todos를 TodoListMiddleware로 직접 추가하고 실제 계획 상태를 확인합니다",
+          "long:확인 날짜: 2026-09-11. 기준 환경: Python 3.12, DeepAgents 0.7.0, LangChain 1.4.0, langchain-openai 1.6.0.",
+          "long:`course_lookup` 같은 업무 도구는 모델이 필요하다고 판단할 때 호출하지만, 필수 호출을 보장해야 한다면 시스템 지침만 의존하지 말고 궤적 검사나 명시적 그래프 경로를 추가합니다",
+          "english_start:course_lookup은 네트워크를 사용하지 않는 교재용 고정 자료입니",
+          "english_start:`create_deep_agent`는 LangChain의 `create_",
+          "english_start:`execute`는 실행을 지원하는 샌드박스 백엔드가 있을 때만 실제 명",
+          "english_start:create_deep_agent가 백엔드·미들웨어를 조립하고 파일·위임 ",
+          "english_start:init_chat_model로 gpt-5.4-mini를 준비하고 cour",
+          "english_start:`create_deep_agent`가 반환한 그래프는 `invoke`할 ",
+          "english_start:create_deep_agent에 tools를 전달하면 기본 파일 도구가",
+          "english_start:`agent.invoke({'messages': [...]})`를 호출해",
+          "english_start:`invoke()`가 반환한 메시지 목록에서 AI의 `tool_calls"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-플래닝과-시스템-프롬프트",
+      "code_cells": 5,
+      "sentences": 75,
+      "counts": {
+        "G1": 3,
+        "G2": 1,
+        "G3": 2,
+        "G4": 1,
+        "G5": 7,
+        "G6": 15,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:list_comprehension",
+          "cell8:list_comprehension",
+          "cell8:generator_expression"
+        ],
+        "G2": [
+          "cell8:one_letter_name:m"
+        ],
+        "G3": [
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing"
+        ],
+        "G4": [
+          "cell6:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이를 `middleware=[...]`로 전달하는 것은 모든 요청에 계획을 강제한다는 뜻이 아니라, 모델이 할 일 목록을 기록할 수 있는 기능을 선택적으로 연결하는 것입니다",
+          "long:기본 지침을 줄이면 첫 호출 입력은 작아질 수 있지만, 업무에 필요한 제약까지 빠지면 재시도나 잘못된 도구 사용이 늘 수 있습니다",
+          "long:색이 쓰인 곳에서 파란색은 학생 코드와 실행 흐름, 보라색은 모델의 판단, 초록색은 도구와 데이터, 노란색은 측정값, 빨간색은 실패 또는 권한 경계를 뜻합니다",
+          "long:TodoListMiddleware를 middleware 인자에 넣고 두 할 일을 write_todos로 먼저 기록하라고 요청합니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 대화 안의 계획 대신 파일시스템에 조사 중간 결과를 남겨 실행 사이의 인계 지점을 만듭니다",
+          "long:확인 날짜: 2026-09-11. 기준 환경: Python 3.12, DeepAgents 0.7.0, LangChain 1.4.0, langchain-openai 1.6.0.",
+          "long:이를 `middleware=[...]`로 전달하는 것은 모든 요청에 계획을 강제한다는 뜻이 아니라, 모델이 할 일 목록을 기록할 수 있는 기능을 선택적으로 연결하는 것입니다",
+          "long:기본 지침을 줄이면 첫 호출 입력은 작아질 수 있지만, 업무에 필요한 제약까지 빠지면 재시도나 잘못된 도구 사용이 늘 수 있습니다",
+          "english_start:`TodoListMiddleware()`는 모델에게 `write_todo",
+          "english_start:TodoListMiddleware를 middleware 인자에 넣고 두 ",
+          "english_start:tool_calls와 todos 상태를 출력합니다",
+          "english_start:`completed`는 모델이 todo를 완료 상태로 기록한 값입니다",
+          "english_start:completed는 모델이 남긴 계획 상태이며 업무 결과 검증은 아닙니다",
+          "english_start:todos의 in_progress는 실패를 뜻하나요",
+          "english_start:`TodoListMiddleware()`는 모델에게 `write_todo"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-파일시스템과-중간-결과",
+      "code_cells": 4,
+      "sentences": 69,
+      "counts": {
+        "G1": 3,
+        "G2": 0,
+        "G3": 1,
+        "G4": 0,
+        "G5": 6,
+        "G6": 20,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell8:list_comprehension",
+          "cell8:generator_expression"
+        ],
+        "G2": [],
+        "G3": [
+          "cell4:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:파일은 큰 자료를 이름과 경로로 인계하고 실행 뒤에도 검사하기 좋지만, 오래된 파일을 잘못 읽거나 여러 실행이 같은 경로를 덮어쓸 수 있습니다",
+          "long:색이 쓰인 곳에서 파란색은 학생 코드와 실행 흐름, 보라색은 모델의 판단, 초록색은 도구와 데이터, 노란색은 측정값, 빨간색은 실패 또는 권한 경계를 뜻합니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 파일시스템이 큰 도구 결과를 자동으로 옮기는 경우를 실행해 수동 중간 저장과 자동 오프로딩을 구분합니다",
+          "long:확인 날짜: 2026-09-11. 기준 환경: Python 3.12, DeepAgents 0.7.0, LangChain 1.4.0, langchain-openai 1.6.0.",
+          "long:파일은 큰 자료를 이름과 경로로 인계하고 실행 뒤에도 검사하기 좋지만, 오래된 파일을 잘못 읽거나 여러 실행이 같은 경로를 덮어쓸 수 있습니다",
+          "english_start:FilesystemBackend로 조사 중간 결과를 실제 디스크에 저장하",
+          "english_start:FilesystemBackend의 파일은 체크포인터 메시지와 다른 저장 ",
+          "english_start:`FilesystemBackend`는 에이전트가 보는 가상 경로를 지정한",
+          "english_start:`FilesystemBackend(root_dir=...)`는 에이전트가",
+          "english_start:`write_file`은 문자열을 저장하고 성공 여부를 구조화된 결과로 ",
+          "english_start:ReadResult의 file_data에서 UTF-8 내용을 읽고 ls의",
+          "english_start:WriteResult가 반환됐고 읽은 내용은 ‘자료 A’ 제목과 하네스 ",
+          "english_start:FilesystemBackend로 조사 중간 결과를 실제 디스크에 저장하",
+          "english_start:WriteResult가 반환됐고 읽은 내용은 ‘자료 A’ 제목과 하네스 ",
+          "english_start:root_dir와 /research/source-a.md는 각각 무엇인가",
+          "english_start:entries는 경로와 메타데이터를 보여 주며 본문은 read 결과에서 ",
+          "english_start:URL과 원문 식별자를 내용에 함께 기록하고 대조해야 합니다",
+          "english_start:FilesystemBackend로 조사 중간 결과를 실제 디스크에 저장하",
+          "english_start:`FilesystemBackend(root_dir=...)`는 에이전트가",
+          "english_start:`write_file`은 문자열을 저장하고 성공 여부를 구조화된 결과로 "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-컨텍스트-관리와-오프로딩",
+      "code_cells": 5,
+      "sentences": 72,
+      "counts": {
+        "G1": 2,
+        "G2": 2,
+        "G3": 2,
+        "G4": 1,
+        "G5": 6,
+        "G6": 14,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell8:list_comprehension"
+        ],
+        "G2": [
+          "cell8:nested_call_2plus",
+          "cell8:one_letter_name:m"
+        ],
+        "G3": [
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing"
+        ],
+        "G4": [
+          "cell6:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이번 출력에서 `ToolMessage`에 파일 경로가 남고 실제 파일이 존재하는지는 오프로딩을 확인하지만, 오래된 대화가 정확히 요약되는지는 확인하지 않습니다",
+          "long:색이 쓰인 곳에서 파란색은 학생 코드와 실행 흐름, 보라색은 모델의 판단, 초록색은 도구와 데이터, 노란색은 측정값, 빨간색은 실패 또는 권한 경계를 뜻합니다",
+          "long:원문 전체 대신 약 1,600자의 안내가 ToolMessage에 남았고, large_tool_results 아래에 호출 ID 이름의 파일이 생성됐습니다",
+          "long:원문 전체 대신 약 1,600자의 안내가 ToolMessage에 남았고, large_tool_results 아래에 호출 ID 이름의 파일이 생성됐습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 큰 세부 조사 자체를 별도 문맥으로 보내 부모에게 최종 보고만 반환하는 위임을 실행합니다",
+          "long:확인 날짜: 2026-09-11. 기준 환경: Python 3.12, DeepAgents 0.7.0, LangChain 1.4.0, langchain-openai 1.6.0.",
+          "long:이번 출력에서 `ToolMessage`에 파일 경로가 남고 실제 파일이 존재하는지는 오프로딩을 확인하지만, 오래된 대화가 정확히 요약되는지는 확인하지 않습니다",
+          "english_start:DeepAgents는 한도를 넘은 텍스트를 파일로 옮기고 미리보기와 경로",
+          "english_start:`SummarizationMiddleware`는 오래된 대화 메시지를 요",
+          "english_start:large_result는 같은 근거 문장을 3,000번 반환합니다",
+          "english_start:FilesystemMiddleware의 한도를 200토큰으로 낮추고 모델",
+          "english_start:ToolMessage의 미리보기는 원문 파일의 대체물이 아닙니다",
+          "english_start:ToolMessage가 1,600자면 원문이 손실된 것인가요",
+          "english_start:ToolMessage의 길이와 안내 문구를 출력해 원문 전체가 대화에 남"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "06-서브에이전트-위임",
+      "code_cells": 4,
+      "sentences": 68,
+      "counts": {
+        "G1": 4,
+        "G2": 2,
+        "G3": 1,
+        "G4": 1,
+        "G5": 5,
+        "G6": 16,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:list_comprehension",
+          "cell8:list_comprehension",
+          "cell8:list_comprehension",
+          "cell8:generator_expression"
+        ],
+        "G2": [
+          "cell8:one_letter_name:m",
+          "cell8:one_letter_name:m"
+        ],
+        "G3": [
+          "cell4:first_line_comment_missing"
+        ],
+        "G4": [
+          "cell6:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:동기 서브에이전트 호출에서는 부모가 작업이 끝날 때까지 기다리고, 부모 상태에는 세부 도구 기록 전체 대신 최종 반환 보고가 들어옵니다",
+          "long:예를 들어 ‘0.7 변경 두 가지, 각 출처 ID, 확인하지 못한 범위를 반환’이라고 적으면 부모가 빠진 항목을 검사할 수 있습니다",
+          "long:공식 문서에서 확인되는 것처럼 사용자 정의 서브에이전트의 도구·스킬·권한 상속 규칙은 항목마다 다르므로, 필요한 표면만 명시적으로 전달합니다",
+          "long:색이 쓰인 곳에서 파란색은 학생 코드와 실행 흐름, 보라색은 모델의 판단, 초록색은 도구와 데이터, 노란색은 측정값, 빨간색은 실패 또는 권한 경계를 뜻합니다",
+          "long:부모의 tool_calls에서 task를 찾고 task ToolMessage에 planning opt-in 주장이 있는지 확인합니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 두 자료를 각각 확인하고 검증 주장·범위 한계·출처 ID를 하나의 final.md로 합칩니다",
+          "long:확인 날짜: 2026-09-11. 기준 환경: Python 3.12, DeepAgents 0.7.0, LangChain 1.4.0, langchain-openai 1.6.0.",
+          "long:동기 서브에이전트 호출에서는 부모가 작업이 끝날 때까지 기다리고, 부모 상태에는 세부 도구 기록 전체 대신 최종 반환 보고가 들어옵니다",
+          "long:예를 들어 ‘0.7 변경 두 가지, 각 출처 ID, 확인하지 못한 범위를 반환’이라고 적으면 부모가 빠진 항목을 검사할 수 있습니다",
+          "long:공식 문서에서 확인되는 것처럼 사용자 정의 서브에이전트의 도구·스킬·권한 상속 규칙은 항목마다 다르므로, 필요한 표면만 명시적으로 전달합니다",
+          "english_start:source-reviewer에 한 자료의 확인을 맡기면 부모는 task의",
+          "english_start:`subagents=[{...}]`의 각 사전은 이름, 역할 설명, 시스",
+          "english_start:source_lookup의 세부 ToolMessage는 서브에이전트 문맥",
+          "english_start:source-reviewer의 이름·설명·시스템 지침·도구를 선언합니다",
+          "english_start:`source_lookup`의 세부 호출은 서브에이전트 문맥에 있습니다",
+          "english_start:`subagents=[{...}]`의 각 사전은 이름, 역할 설명, 시스"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "07-출처-검증형-deep-research",
+      "code_cells": 4,
+      "sentences": 67,
+      "counts": {
+        "G1": 2,
+        "G2": 1,
+        "G3": 1,
+        "G4": 0,
+        "G5": 5,
+        "G6": 18,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell8:generator_expression"
+        ],
+        "G2": [
+          "cell6:over_15_lines"
+        ],
+        "G3": [
+          "cell4:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:조사 도구가 어떤 자료를 반환하는지, 서브에이전트가 어떤 범위에서 결론을 내리는지, 최종 파일에 식별자가 남는지를 설계해야 합니다",
+          "long:검색 누락, 상충 자료 탐색, 웹페이지 변경 감지는 포함하지 않으며 실제 서비스에서는 검색 도구와 URL 허용 정책을 별도로 설계해야 합니다",
+          "long:URL이나 출처 ID가 있다는 사실만으로 원문이 주장을 실제로 뒷받침하는 것은 아니므로 주장과 근거 문장을 함께 대조해야 합니다",
+          "long:검색 결과의 누락을 줄이기 위한 여러 질의, 원문 페이지 열기, 발행일과 버전 확인, 서로 맞지 않는 자료 비교, 접근 실패 기록이 필요합니다",
+          "long:따라서 결과를 ‘Deep Agents 0.7에 대해 제공된 두 공식 자료에서 확인한 내용’으로 한정하고 웹 전체를 조사한 결론으로 표현하지 않습니다",
+          "long:색이 쓰인 곳에서 파란색은 학생 코드와 실행 흐름, 보라색은 모델의 판단, 초록색은 도구와 데이터, 노란색은 측정값, 빨간색은 실패 또는 권한 경계를 뜻합니다",
+          "long:부모는 두 검증을 위임한 뒤 Verified claims, Scope limits, Source ids의 세 제목으로 파일을 씁니다",
+          "long:저장된 실행의 부모 마지막 응답은 입력 2,379·출력 34·합계 2,413토큰이었지만 서브에이전트 전체 사용량 합계는 아닙니다",
+          "long:다음 학습과 이어지는 지점 — 마지막 절에서는 새 작업 폴더에서 허용 쓰기와 거부 쓰기를 함께 실행해 운영 경계와 종료 결과를 확인합니다",
+          "long:확인 날짜: 2026-09-11. 기준 환경: Python 3.12, DeepAgents 0.7.0, LangChain 1.4.0, langchain-openai 1.6.0.",
+          "long:URL이나 출처 ID가 있다는 사실만으로 원문이 주장을 실제로 뒷받침하는 것은 아니므로 주장과 근거 문장을 함께 대조해야 합니다",
+          "long:검색 결과의 누락을 줄이기 위한 여러 질의, 원문 페이지 열기, 발행일과 버전 확인, 서로 맞지 않는 자료 비교, 접근 실패 기록이 필요합니다",
+          "long:따라서 결과를 ‘Deep Agents 0.7에 대해 제공된 두 공식 자료에서 확인한 내용’으로 한정하고 웹 전체를 조사한 결론으로 표현하지 않습니다",
+          "english_start:FilesystemBackend는 부모와 서브에이전트가 같은 경로를 인계",
+          "english_start:`source_lookup`은 웹 검색기가 아니라 교재가 제공한 두 자료",
+          "english_start:overview와 release를 딕셔너리로 준비하고 source_loo",
+          "english_start:final.md의 Scope limits가 필요한 이유는 무엇인가요",
+          "english_start:`source_lookup`은 웹 검색기가 아니라 교재가 제공한 두 자료"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "08-통합-실행과-운영-한계",
+      "code_cells": 5,
+      "sentences": 67,
+      "counts": {
+        "G1": 3,
+        "G2": 3,
+        "G3": 2,
+        "G4": 1,
+        "G5": 5,
+        "G6": 7,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell4:generator_expression",
+          "cell8:list_comprehension",
+          "cell10:list_comprehension"
+        ],
+        "G2": [
+          "cell8:one_line_compound",
+          "cell8:one_letter_name:m",
+          "cell10:one_letter_name:m"
+        ],
+        "G3": [
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing"
+        ],
+        "G4": [
+          "cell6:temperature_missing"
+        ],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:색이 쓰인 곳에서 파란색은 학생 코드와 실행 흐름, 보라색은 모델의 판단, 초록색은 도구와 데이터, 노란색은 측정값, 빨간색은 실패 또는 권한 경계를 뜻합니다",
+          "long:/run/report.md에는 status: complete가 저장됐고 /blocked.txt 쓰기는 permission denied로 반환됐습니다",
+          "long:확인 날짜: 2026-09-11. 기준 환경: Python 3.12, DeepAgents 0.7.0, LangChain 1.4.0, langchain-openai 1.6.0.",
+          "english_start:workspace-08을 새 root_dir로 만들고 /blocked.t",
+          "english_start:ReadResult와 permission denied ToolMessag",
+          "english_start:`/run/report.md`의 완료 내용과 `/blocked.txt` ",
+          "english_start:deny와 interrupt의 차이는 무엇인가요"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

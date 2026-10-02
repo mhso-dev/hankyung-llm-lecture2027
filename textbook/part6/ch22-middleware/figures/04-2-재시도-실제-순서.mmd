@@ -1,0 +1,12 @@
+sequenceDiagram
+  participant A as 에이전트와 재시도 미들웨어
+  participant M as 모델 (timeout 0.001초)
+  A->>M: 시도 1
+  M-->>A: 시간 초과
+  Note over A: 설정: 0.5초 기다림
+  A->>M: 시도 2
+  M-->>A: 시간 초과
+  Note over A: 설정: 1초 기다림
+  A->>M: 시도 3
+  M-->>A: 시간 초과
+  Note over A: 실패 안내 메시지로 끝냄

@@ -1,0 +1,24 @@
+{
+  "chapter": "ch13-langgraph-basics",
+  "include": [
+    "textbook/part4/ch13-langgraph-basics/*.html",
+    "textbook/part4/ch13-langgraph-basics/figures/*.svg",
+    "labs/part4/ch13-langgraph-basics/README.md",
+    "labs/part4/ch13-langgraph-basics/pyproject.toml",
+    "labs/part4/ch13-langgraph-basics/uv.lock",
+    "labs/part4/ch13-langgraph-basics/notebooks/*.ipynb",
+    "labs/part4/ch13-langgraph-basics/notebooks/rag_tools.py",
+    "labs/part4/ch13-langgraph-basics/runs/graph-integrated-result.json"
+  ],
+  "requires_existing_public_files": [
+    "labs/part3/ch12-retrieval-tuning/data/advanced-documents.json",
+    "labs/part3/ch12-retrieval-tuning/runs/advanced-continuity-integrated-result.json",
+    "labs/data/rag-corpus/pdf/easy/E01.pdf",
+    "labs/data/rag-corpus/pdf/easy/E02.pdf",
+    "labs/data/rag-corpus/pdf/hard/H01.pdf",
+    "labs/data/rag-corpus/pdf/hard/H02.pdf",
+    "labs/data/rag-corpus/pdf/medium/M01.pdf",
+    "labs/data/rag-corpus/pdf/medium/M02.pdf"
+  ],
+  "exclude": [".env", "**/.venv/**", "**/*.failure.json"]
+}

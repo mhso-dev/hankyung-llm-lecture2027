@@ -1,0 +1,598 @@
+{
+  "chapters": [
+    {
+      "chapter": "ch21-create-agent",
+      "lessons": [
+        {
+          "slug": "01-create-agent와-ReAct-루프",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 3,
+          "prose_characters": 5849,
+          "hangul_characters": 4531
+        },
+        {
+          "slug": "02-구조화-출력-두-전략",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 3,
+          "prose_characters": 5487,
+          "hangul_characters": 4462
+        },
+        {
+          "slug": "03-AgentState와-context-schema",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 3,
+          "prose_characters": 5443,
+          "hangul_characters": 4363
+        },
+        {
+          "slug": "04-0x에서-1x로-마이그레이션",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 3,
+          "prose_characters": 5320,
+          "hangul_characters": 4184
+        },
+        {
+          "slug": "05-retriever를-도구로-전환",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 3,
+          "prose_characters": 5678,
+          "hangul_characters": 4534
+        },
+        {
+          "slug": "06-같은-평가셋으로-RAG-비교",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 3,
+          "prose_characters": 5915,
+          "hangul_characters": 4844
+        },
+        {
+          "slug": "07-create-agent-실습",
+          "lecture_hours": 0.0,
+          "practice_hours": 0.0,
+          "new_terms": 0,
+          "prose_characters": 5865,
+          "hangul_characters": 4775,
+          "chapter_end_practice": true,
+          "practice_minutes": 30
+        }
+      ],
+      "hours": [
+        6.0,
+        10.0
+      ],
+      "expected_hours": [
+        6,
+        10
+      ],
+      "prose_characters": 39557
+    },
+    {
+      "chapter": "ch22-middleware",
+      "lessons": [
+        {
+          "slug": "01-미들웨어와-6개-훅",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 4,
+          "prose_characters": 3237,
+          "hangul_characters": 2502
+        },
+        {
+          "slug": "02-PII-마스킹-이식",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 3,
+          "prose_characters": 2599,
+          "hangul_characters": 2081
+        },
+        {
+          "slug": "03-요약-압축과-Compress",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 3,
+          "prose_characters": 2404,
+          "hangul_characters": 1934
+        },
+        {
+          "slug": "04-호출-한도와-재시도-폴백",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 3,
+          "prose_characters": 2637,
+          "hangul_characters": 2232
+        },
+        {
+          "slug": "05-커스텀-예산-미들웨어",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 2,
+          "prose_characters": 2255,
+          "hangul_characters": 1878
+        },
+        {
+          "slug": "06-커스텀-감사-미들웨어",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 2,
+          "prose_characters": 2289,
+          "hangul_characters": 1863
+        },
+        {
+          "slug": "07-순서와-합성",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 1,
+          "prose_characters": 2291,
+          "hangul_characters": 1703
+        },
+        {
+          "slug": "08-컨텍스트-분리와-Isolate",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 1,
+          "prose_characters": 2217,
+          "hangul_characters": 1819
+        },
+        {
+          "slug": "09-Middleware-실습",
+          "lecture_hours": 0.0,
+          "practice_hours": 0.0,
+          "new_terms": 0,
+          "prose_characters": 2534,
+          "hangul_characters": 2074,
+          "chapter_end_practice": true,
+          "practice_minutes": 30
+        }
+      ],
+      "hours": [
+        8.0,
+        16.0
+      ],
+      "expected_hours": [
+        8,
+        16
+      ],
+      "prose_characters": 22463
+    },
+    {
+      "chapter": "ch23-persistence",
+      "lessons": [
+        {
+          "slug": "01-체크포인터와-스레드",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 3,
+          "prose_characters": 4945,
+          "hangul_characters": 3965
+        },
+        {
+          "slug": "02-PostgresSaver-준비와-스키마",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 3,
+          "prose_characters": 5651,
+          "hangul_characters": 4371
+        },
+        {
+          "slug": "03-스레드-재개와-대화-이어가기",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 3,
+          "prose_characters": 5829,
+          "hangul_characters": 4644
+        },
+        {
+          "slug": "04-내구-실행-모드-비교",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 4,
+          "prose_characters": 5885,
+          "hangul_characters": 4756
+        },
+        {
+          "slug": "05-pending-writes와-장애-복구",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 3,
+          "prose_characters": 5275,
+          "hangul_characters": 4230
+        },
+        {
+          "slug": "06-노드-재시작과-멱등성",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 3,
+          "prose_characters": 5594,
+          "hangul_characters": 4537
+        },
+        {
+          "slug": "07-Persistence-실습",
+          "lecture_hours": 0.0,
+          "practice_hours": 0.0,
+          "new_terms": 0,
+          "prose_characters": 5585,
+          "hangul_characters": 4621,
+          "chapter_end_practice": true,
+          "practice_minutes": 30
+        }
+      ],
+      "hours": [
+        6.0,
+        10.0
+      ],
+      "expected_hours": [
+        6,
+        10
+      ],
+      "prose_characters": 38764
+    },
+    {
+      "chapter": "ch24-human-in-the-loop",
+      "lessons": [
+        {
+          "slug": "01-interrupt-승인-게이트",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 3,
+          "prose_characters": 5725,
+          "hangul_characters": 4673
+        },
+        {
+          "slug": "02-Command-resume으로-실행-재개",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 2,
+          "prose_characters": 6470,
+          "hangul_characters": 5439
+        },
+        {
+          "slug": "03-상태-기록과-다른-분기-재실행",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 3,
+          "prose_characters": 6386,
+          "hangul_characters": 5410
+        },
+        {
+          "slug": "04-Human-in-the-Loop-실습",
+          "lecture_hours": 0.0,
+          "practice_hours": 0.0,
+          "new_terms": 0,
+          "prose_characters": 5499,
+          "hangul_characters": 4613,
+          "chapter_end_practice": true,
+          "practice_minutes": 30
+        }
+      ],
+      "hours": [
+        3.0,
+        5.0
+      ],
+      "expected_hours": [
+        3,
+        5
+      ],
+      "prose_characters": 24080
+    },
+    {
+      "chapter": "ch25-streaming",
+      "lessons": [
+        {
+          "slug": "01-일곱-가지-stream-mode",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 3,
+          "prose_characters": 5954,
+          "hangul_characters": 4816
+        },
+        {
+          "slug": "02-토큰과-중간-진행-스트리밍",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.5,
+          "new_terms": 3,
+          "prose_characters": 5275,
+          "hangul_characters": 4269
+        },
+        {
+          "slug": "03-TTFT와-total-비교",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 2,
+          "prose_characters": 5918,
+          "hangul_characters": 4848
+        },
+        {
+          "slug": "04-Streaming-실습",
+          "lecture_hours": 0.0,
+          "practice_hours": 0.0,
+          "new_terms": 0,
+          "prose_characters": 5801,
+          "hangul_characters": 4670,
+          "chapter_end_practice": true,
+          "practice_minutes": 30
+        }
+      ],
+      "hours": [
+        3.0,
+        5.0
+      ],
+      "expected_hours": [
+        3,
+        5
+      ],
+      "prose_characters": 22948
+    },
+    {
+      "chapter": "ch26-delegation",
+      "lessons": [
+        {
+          "slug": "01-Subagent-도구-위임",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.0,
+          "new_terms": 4,
+          "prose_characters": 6762,
+          "hangul_characters": 5623
+        },
+        {
+          "slug": "02-Handoff-상태-전환",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.0,
+          "new_terms": 4,
+          "prose_characters": 6925,
+          "hangul_characters": 5830
+        },
+        {
+          "slug": "03-Router-분류와-병렬-실행",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.0,
+          "new_terms": 4,
+          "prose_characters": 6283,
+          "hangul_characters": 5249
+        },
+        {
+          "slug": "04-호출-수-비용-종료-조건-비교",
+          "lecture_hours": 1.0,
+          "practice_hours": 1.0,
+          "new_terms": 1,
+          "prose_characters": 7877,
+          "hangul_characters": 6461
+        },
+        {
+          "slug": "05-위임-구조-실습",
+          "lecture_hours": 0.0,
+          "practice_hours": 0.0,
+          "new_terms": 0,
+          "prose_characters": 5736,
+          "hangul_characters": 4659,
+          "chapter_end_practice": true,
+          "practice_minutes": 30
+        }
+      ],
+      "hours": [
+        4.0,
+        4.0
+      ],
+      "expected_hours": [
+        4,
+        4
+      ],
+      "prose_characters": 33583
+    },
+    {
+      "chapter": "ch27-deepagents",
+      "lessons": [
+        {
+          "slug": "01-하네스와-일곱-기능",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 6,
+          "prose_characters": 7988,
+          "hangul_characters": 6262
+        },
+        {
+          "slug": "02-create-deep-agent와-도구",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 1,
+          "prose_characters": 5761,
+          "hangul_characters": 4647
+        },
+        {
+          "slug": "03-플래닝과-시스템-프롬프트",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 0,
+          "prose_characters": 6716,
+          "hangul_characters": 5400
+        },
+        {
+          "slug": "04-파일시스템과-중간-결과",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 1,
+          "prose_characters": 5988,
+          "hangul_characters": 4933
+        },
+        {
+          "slug": "05-컨텍스트-관리와-오프로딩",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 2,
+          "prose_characters": 6575,
+          "hangul_characters": 5250
+        },
+        {
+          "slug": "06-서브에이전트-위임",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 0,
+          "prose_characters": 6640,
+          "hangul_characters": 5282
+        },
+        {
+          "slug": "07-출처-검증형-deep-research",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 2,
+          "prose_characters": 5895,
+          "hangul_characters": 4946
+        },
+        {
+          "slug": "08-통합-실행과-운영-한계",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 2,
+          "prose_characters": 7423,
+          "hangul_characters": 6073
+        },
+        {
+          "slug": "09-DeepAgents-실습",
+          "lecture_hours": 0.0,
+          "practice_hours": 0.0,
+          "new_terms": 0,
+          "prose_characters": 6227,
+          "hangul_characters": 5054,
+          "chapter_end_practice": true,
+          "practice_minutes": 30
+        }
+      ],
+      "hours": [
+        8.0,
+        16.0
+      ],
+      "expected_hours": [
+        8,
+        16
+      ],
+      "prose_characters": 59213
+    },
+    {
+      "chapter": "ch28-mcp",
+      "lessons": [
+        {
+          "slug": "01-MCP-구조와-capability-협상",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 6,
+          "prose_characters": 6762,
+          "hangul_characters": 5200
+        },
+        {
+          "slug": "02-FastMCP-로컬-서버-제작",
+          "lecture_hours": 1.0,
+          "practice_hours": 3.0,
+          "new_terms": 4,
+          "prose_characters": 6604,
+          "hangul_characters": 5383
+        },
+        {
+          "slug": "03-stdio와-원격-전송-권한-경계",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 6,
+          "prose_characters": 8430,
+          "hangul_characters": 6422
+        },
+        {
+          "slug": "04-LangChain-MCP-클라이언트-연동",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 4,
+          "prose_characters": 6749,
+          "hangul_characters": 5299
+        },
+        {
+          "slug": "05-도구-정의와-첫-호출-토큰",
+          "lecture_hours": 1.0,
+          "practice_hours": 2.0,
+          "new_terms": 2,
+          "prose_characters": 6619,
+          "hangul_characters": 5273
+        },
+        {
+          "slug": "06-MCP-실습",
+          "lecture_hours": 0.0,
+          "practice_hours": 0.0,
+          "new_terms": 0,
+          "prose_characters": 6714,
+          "hangul_characters": 5436,
+          "chapter_end_practice": true,
+          "practice_minutes": 30
+        }
+      ],
+      "hours": [
+        5.0,
+        11.0
+      ],
+      "expected_hours": [
+        5,
+        11
+      ],
+      "prose_characters": 41878
+    },
+    {
+      "chapter": "ch29-agent-evaluation",
+      "lessons": [
+        {
+          "slug": "01-에이전트-평가-세-전략",
+          "lecture_hours": 0.75,
+          "practice_hours": 1.25,
+          "new_terms": 5,
+          "prose_characters": 6371,
+          "hangul_characters": 5173
+        },
+        {
+          "slug": "02-궤적-매칭-네-모드",
+          "lecture_hours": 0.75,
+          "practice_hours": 1.25,
+          "new_terms": 6,
+          "prose_characters": 6985,
+          "hangul_characters": 5834
+        },
+        {
+          "slug": "03-LLM-judge로-궤적-평가",
+          "lecture_hours": 0.75,
+          "practice_hours": 1.25,
+          "new_terms": 3,
+          "prose_characters": 6802,
+          "hangul_characters": 5530
+        },
+        {
+          "slug": "04-운영-지표와-Ch18-궤적-비교",
+          "lecture_hours": 0.75,
+          "practice_hours": 1.25,
+          "new_terms": 2,
+          "prose_characters": 6907,
+          "hangul_characters": 5478
+        },
+        {
+          "slug": "05-Agent-평가-실습",
+          "lecture_hours": 0.0,
+          "practice_hours": 0.0,
+          "new_terms": 0,
+          "prose_characters": 6898,
+          "hangul_characters": 5611,
+          "chapter_end_practice": true,
+          "practice_minutes": 30
+        }
+      ],
+      "hours": [
+        3.0,
+        5.0
+      ],
+      "expected_hours": [
+        3,
+        5
+      ],
+      "prose_characters": 33963
+    }
+  ],
+  "failures": [],
+  "prose_note": "Whitespace, HTML tags, inline code and notebook placeholders excluded; character counts support manual depth review."
+}

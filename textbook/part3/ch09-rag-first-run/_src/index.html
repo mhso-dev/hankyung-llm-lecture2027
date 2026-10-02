@@ -1,0 +1,37 @@
+
+<p>생성 모델은 Ch 6에서 배운 <code>init_chat_model</code>로 준비하고 <code>invoke()</code>로 호출합니다. 텍스트는 응답의 <code>text</code> 속성에서 읽으며, 임베딩은 <code>OpenAIEmbeddings</code>를 사용합니다.</p>
+<h2><span class="no">Ch 9</span>챕터 개요</h2>
+<p>이 챕터에서는 <strong>수업을 위해 내용을 지어 만든 PDF로 작은 RAG를 처음부터 끝까지 실행합니다.</strong> 노트북 안에서 PDF 읽기 → 문서 청크 나누기 → 임베딩 → 벡터스토어 → top-k 검색 → 출처가 있는 답 생성을 순서대로 확인합니다. 06절에서는 실습 폴더의 설정 파일을 읽어 이번 실행 설정을 만들고, 색인 설정으로 만든 색인 이름표를 앞 실행과 비교합니다. 같은 절에서 제공된 디지털 PDF 18건과 Ch 11의 개발 질문 Q001로 검색·답변을 실행해, 실행 기록 한 줄을 JSONL 파일 두 개에 남깁니다. 마지막 07절은 문서 청크 크기만 바꿔 검색부터 답 검사까지 두 번 실행하고 비교하는 실습 절입니다.</p>
+<div class="callout blue"><b>커리큘럼 두 규칙</b>① 이 챕터에 에이전트는 없습니다 — 검색 횟수·<code>k</code>·과업 명세는 학생이 코드에 적고, 모델은 답 문장을 만듭니다. ② 측정이 튜닝보다 먼저입니다 — 이 챕터의 실행 기록 한 줄은 품질 지표 없이 설정·검색 결과·생성 답만 적습니다. Ch 11은 이 기록의 검색 결과를 읽어 별도 평가 로그에 품질 지표를 계산합니다.</div>
+<h2><span class="no">목표</span>챕터를 마치면</h2>
+<div class="goal"><ul>
+<li>제공된 합성 PDF 한 건의 다섯 쪽을 모두 읽어 문서 청크로 나눈 뒤, 질문 하나에 출처가 붙은 답을 받을 수 있습니다.</li>
+<li>검색 결과의 문서 청크와 검색 점수를 읽고 "검색이 틀렸나, 생성이 틀렸나"를 가릴 수 있습니다.</li>
+<li>답이 근거를 벗어난 경우를 검색 누락과 답이 없는 질문으로 가르고, 정답 출처와 정답 문서 ID가 왜 필요한지 말할 수 있습니다.</li>
+<li>설정 파일에서 검색 개수 <code>k</code>만 바꿔 실행할 수 있습니다. 색인 이름표와 검색한 문서 청크, 출처가 붙은 답을 실행 기록 한 줄로 JSONL 파일에 남길 수 있습니다.</li>
+<li>문서 청크 크기만 바꿔 두 번 실행하고, 점검표 한 줄로 검색 결과와 답 검사를 나란히 비교할 수 있습니다.</li>
+</ul></div>
+<h2><span class="no">절</span>구성 — 16h (강의 6 · 실습 10)</h2>
+<div class="tw"><table>
+<tr><th>절</th><th>개념</th><th>강의</th><th>실습</th><th>코드</th><th>도식·삽화</th></tr>
+<tr><td><a href="01-RAG-지도.html">01 RAG 지도</a></td><td>제공 PDF 경로, 쪽별 Document, 문서 청크, 검색 개수 <code>k</code>, 출처가 있는 답</td><td>1h</td><td>1h</td><td><code>01-RAG-지도.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="02-로더와-스플리터.html">02 로더와 스플리터</a></td><td>로더 함수, 줄 모으기와 겹침, 글자 수와 토큰 수</td><td>1h</td><td>2h</td><td><code>02-로더와-스플리터.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="03-임베딩과-벡터스토어.html">03 임베딩·벡터스토어·top-k</a></td><td>E01 문서 청크 8개, 실제 임베딩, InMemoryVectorStore, 검색 점수와 <code>k</code></td><td>1h</td><td>2h</td><td><code>03-임베딩과-벡터스토어.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="04-생성과-출처-인용.html">04 생성과 출처 인용</a></td><td>검색 결과를 기록으로, 메시지 목록, 출처 표시와 지킬 말 검사</td><td>1h</td><td>2h</td><td><code>04-생성과-출처-인용.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="05-첫-실패-보기.html">05 첫 실패를 일부러 보기</a></td><td>정답 출처, 검색 누락, 답이 없는 질문, 검색 개수 <code>k</code>=1·8</td><td>1h</td><td>2h</td><td><code>05-첫-실패-보기.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="06-실험-하네스.html">06 실험 하네스</a></td><td>설정 파일과 실행 설정, 색인 이름표, 디지털 PDF 18건 색인, 실행 기록 한 줄</td><td>1h</td><td>1h</td><td><code>06-실험-하네스.ipynb</code></td><td>Mermaid 4장 · 삽화 1장</td></tr>
+<tr><td><a href="07-RAG-실습.html">07 RAG 실습</a></td><td>문서 청크 크기 500자·300자, 검색부터 답 검사까지 조립, 점검표 한 줄 비교</td><td>—</td><td>30분(실습 10h 안)</td><td><code>07-RAG-실습.ipynb</code></td><td>Mermaid 3장 · 삽화 1장</td></tr>
+</table></div>
+<h2><span class="no">준비</span>실습 환경</h2>
+<p>각 절의 노트북을 Jupyter에서 열고 <strong>커널 다시 시작 후 모두 실행</strong>을 선택합니다. 첫 코드 셀이 필요한 패키지 버전을 설치합니다. OpenAI API를 사용하는 절의 환경 셀은 프로젝트 루트의 <code>.env</code>를 찾으며, API를 사용하지 않는 02절은 패키지 버전만 확인합니다. 터미널에서 별도의 설치 명령을 실행하거나 교재 코드를 모듈 파일로 옮길 필요가 없습니다.</p>
+<p><code>OPENAI_API_KEY</code>는 프로젝트 루트 <code>.env</code>에 둡니다. 임베딩 모델은 <code>text-embedding-3-small</code>, 생성 모델은 <code>gpt-5.4-mini</code>입니다(2026-09-17 모델 안내 확인). 노트북은 수업 중 반복 실행해도 호출량이 작도록 문서와 질문을 최소 규모로 구성했습니다. 06절만 디지털 PDF 18건을 색인하므로 한 번 실행에 임베딩 요청이 더 붙습니다.</p>
+<h2><span class="no">연결</span>이 챕터가 만든 것 · 다음 챕터로 넘기는 것</h2>
+<div class="tw"><table>
+<tr><th>만든 것</th><th>어디에서 다시 쓰이는가</th></tr>
+<tr><td><code>01-RAG-지도.ipynb</code> — PDF 읽기부터 출처가 있는 답까지 연결한 작은 RAG</td><td>Ch 10에서 문서 형식과 문서 청크 나누는 방식을 바꾸고, Ch 11에서 검색 품질을 측정합니다.</td></tr>
+<tr><td><code>Document.metadata</code>의 문서 ID(<code>doc_id</code>)·쪽 번호(<code>page</code>), 06절이 더한 문서 청크 이름(<code>chunk_id</code>)</td><td>Ch 11(정답 문서 ID 비교) · Ch 12(pgvector의 저장 열과 출처 정보로 결과 거르기)</td></tr>
+<tr><td>출처 표시 형식 <code>[E01 p.2]</code></td><td>Ch 11("무엇을 맞다고 볼지" 합의) · Ch 16(출력 검증) · 중간 프로젝트 요건</td></tr>
+<tr><td><code>06-실험-하네스.ipynb</code> — 실행 설정, 색인 이름표, 디지털 PDF 18건과 Q001의 실행 기록 한 줄 JSONL</td><td>Ch 10의 여섯 조합 비교와 Ch 11의 실제 로그 입력으로 이어집니다.</td></tr>
+<tr><td><code>05-첫-실패-보기.ipynb</code> — 검색 누락과 답이 없는 질문을 가른 출력</td><td>Ch 11의 정답 문서 ID와 Ch 12의 검색 설정 비교로 이어집니다.</td></tr>
+</table></div>
+<p>새 용어(챕터 전체 30개 이내 — 절 용어 표 기준 24개): RAG(검색 증강 생성), 색인, Document, 문서 청크(chunk), 벡터스토어, top-k 검색, 로더, 스플리터, 크기(chunk_size), 겹침(chunk_overlap), 끊을 자리 순서(separators), 저장 항목, 저장 ID, 검색 점수, 출처 인용, 정답 출처, 검색 누락, 답이 없는 질문, 실험 하네스, 실행 설정, 색인 이름표, 실행 기록 한 줄, 정답 문서 ID, JSONL(한 줄에 JSON 하나를 두는 파일 형식). 본문에서 함께 푸는 말은 임베딩, 벡터, 코사인 유사도, 검색 출처, 점검표 한 줄이고, 환각·답변 보류·보류 문장은 Ch 5 07절 뜻 그대로 씁니다.</p>

@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  TEXT["오늘 주문 상태를 확인해 주세요.<br>18글자"]:::tool
+  GPT["GPT-2 토큰화기<br>어휘 50257개"]:::tool
+  KLUE["KLUE 토큰화기<br>어휘 32000개"]:::tool
+  GP["조각 39개<br>한글이 아닌 글자 조각"]:::measure
+  GD["앞 세 ID 168 · 246 · 97<br>되돌리면 한 글자 오"]:::measure
+  KP["조각 9개<br>오늘 · 주문 · 상태 · ##를 · 확인 …"]:::measure
+  TEXT --> GPT
+  TEXT --> KLUE
+  GPT -- "tokenize()" --> GP
+  GP -- "앞 세 ID 되돌리기" --> GD
+  KLUE -- "tokenize()" --> KP

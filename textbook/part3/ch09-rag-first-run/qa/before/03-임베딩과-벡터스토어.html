@@ -1,0 +1,195 @@
+<!--meta: 강의 1h | 실습 2h | 코드 rag.py · examples/ex03_index_search.py | 새 용어 6 | 임베딩 비용 약 $0.002 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 청크 176개를 임베딩해 <code>InMemoryVectorStore</code>에 넣고, 파일로 저장했다가 다시 불러올 수 있습니다.</li>
+<li>이 절을 마치면 <code>similarity_search_with_score()</code>의 반환값(청크, 점수)을 읽고, 점수가 무엇을 뜻하며 왜 절대 기준이 없는지 설명할 수 있습니다.</li>
+<li>이 절을 마치면 같은 질문에 표지 청크가 1위로 오는 현상과, 이름이 비슷한 두 회사가 검색에서 어떻게 갈리는지를 출력으로 보여 줄 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>왜 지금 이것인가</h2>
+<p>02절에서 청크를 만들었습니다. 이제 "질문과 관련 있는 청크"를 골라야 합니다. 단어가 겹치는지로 고를 수도 있지만(Ch 12의 BM25), 이 절은 <strong>의미가 가까운지</strong>로 고릅니다. Ch 5에서 배운 임베딩이 그 도구입니다. 문장을 숫자 벡터로 바꾸면 "가깝다"를 계산할 수 있고, 계산할 수 있으면 176개 중 4개를 자동으로 고를 수 있습니다.</p>
+<p>이 절이 만드는 <code>search()</code>는 Ch 12에서 가장 많이 고쳐지는 함수입니다. 하이브리드 검색, 리랭킹, 메타데이터 필터가 전부 이 함수 안에 들어갑니다. 그래서 지금은 가장 단순한 형태로 두고, 대신 <em>반환값을 읽는 눈</em>을 만듭니다. 점수가 0.65인지 0.35인지, 1위가 표지인지 본문인지, 같은 문서의 다른 쪽이 함께 왔는지를 읽을 수 있어야 Ch 12에서 무엇을 고칠지 압니다.</p>
+
+<h2 id="b3"><span class="no">3</span>선수 지식 되짚기</h2>
+<ul>
+<li><strong>Ch 5 임베딩과 의미 유사도</strong> — 문장 두 개를 벡터로 바꿔 코사인 유사도를 직접 계산했습니다. 이 절의 벡터스토어는 그 계산을 176번 하고 정렬하는 것입니다.</li>
+<li><strong>02절 <code>split_docs()</code></strong> — 여기서 만든 청크 목록이 이 절의 입력입니다. <code>metadata</code>의 <code>doc_id</code>·<code>page</code>·<code>chunk_id</code>가 검색 결과를 읽는 이름표가 됩니다.</li>
+<li><strong>Ch 4 스키마 읽기</strong> — 벡터스토어에 무엇이 저장되는지(텍스트·벡터·메타데이터 세 칸)를 테이블로 상상하면 Ch 12 pgvector 스키마가 그대로 보입니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+
+<h3>비유 — 지도 위의 핀</h3>
+<p>청크 176개를 지도 위 핀 176개라고 생각하세요. 비슷한 내용은 가까운 자리에 놓입니다. 도서관 이용 안내의 쪽들은 한 구역에, 화재공제 약관의 쪽들은 다른 구역에 모입니다. 질문이 들어오면 질문도 같은 지도에 핀 하나로 표시합니다. 그리고 그 핀에서 가장 가까운 핀 k개를 고릅니다. 이것이 top-k 검색의 전부입니다. 지도의 좌표가 벡터이고, 지도가 벡터스토어이며, "가깝다"의 잣대가 코사인 유사도입니다. 실제 지도는 2차원이지만 이 지도는 1,536차원입니다. 차원이 많다는 것만 다르고 "가까운 핀을 고른다"는 원리는 같습니다.</p>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>임베딩 (embedding)</dt>
+<dd>텍스트를 고정 길이의 숫자 벡터로 바꾸는 것, 또는 그 벡터입니다. 이 절의 모델 <code>text-embedding-3-small</code>은 어떤 길이의 텍스트든 1,536개의 실수로 바꿉니다. 의미가 비슷한 텍스트는 비슷한 벡터가 됩니다.</dd>
+<dt>코사인 유사도 (cosine similarity)</dt>
+<dd>두 벡터가 이루는 각도로 가까운 정도를 측정하는 값입니다. 1이면 같은 방향, 0이면 무관, 음수면 반대입니다. <code>InMemoryVectorStore</code>의 점수가 이것입니다.</dd>
+<dt>벡터스토어 (vector store)</dt>
+<dd>청크 텍스트·벡터·메타데이터를 함께 저장하고, 질문 벡터와 가까운 것을 찾아 주는 저장소입니다. <code>InMemoryVectorStore</code>는 전부 메모리에 두고 176개를 하나씩 비교합니다. 수만 개가 넘으면 Ch 12의 pgvector처럼 색인 구조(HNSW)가 있는 저장소로 옮깁니다.</dd>
+<dt>top-k</dt>
+<dd>점수 상위 k개만 반환하는 것입니다. k는 학생이 정하는 값이고, 04절에서 프롬프트에 들어가는 청크 수가 됩니다.</dd>
+<dt>질문 임베딩 (query embedding)</dt>
+<dd>질문 문장을 청크와 같은 모델로 벡터화한 것입니다. <em>같은 모델</em>이어야 같은 지도에 놓입니다. 청크는 A 모델, 질문은 B 모델로 임베딩하면 점수가 무의미해집니다.</dd>
+<dt>dump / load</dt>
+<dd><code>InMemoryVectorStore</code>를 JSON 파일로 저장하고 불러오는 메서드입니다. 임베딩은 돈과 시간이 드는 작업이므로 한 번 만든 색인은 저장해 둡니다.</dd>
+</dl>
+
+<h3>도식 — 질문 핀과 가까운 청크 핀</h3>
+<figure>
+{{svg:03-벡터-검색}}
+<figcaption>"미르시립도서관의 정기 휴관일은 언제인가요?"를 질문 벡터로 넣었을 때의 실제 검색 결과입니다. 1위는 45자짜리 표지 청크(0.649)였고, 답이 있는 2쪽 청크는 2위(0.565)였습니다. 점선 원 안이 k=4입니다.</figcaption>
+</figure>
+
+<h3>코드 — 색인과 검색</h3>
+<p class="file">labs/part3/ch09-rag-first-run/rag.py (일부)</p>
+<pre><code class="language-python">from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_openai import OpenAIEmbeddings
+
+# [[미정: 임베딩 모델]] — 확정 전까지 OpenAI text-embedding-3-small 로 진행
+DEFAULT_EMBEDDING = "text-embedding-3-small"
+
+
+def build_index(
+    chunks: list[Document], embedding_model: str = DEFAULT_EMBEDDING
+) -> InMemoryVectorStore:
+    """청크를 임베딩해 메모리 벡터스토어에 넣는다. 한 번 만들면 dump()로 저장할 수 있다."""
+    embeddings = OpenAIEmbeddings(model=embedding_model)
+    store = InMemoryVectorStore(embedding=embeddings)
+    store.add_documents(chunks)
+    return store
+
+
+def search(store: InMemoryVectorStore, query: str, k: int = 4) -> list[tuple[Document, float]]:
+    """질문과 가장 가까운 청크 k개를 (청크, 유사도) 쌍으로 돌려준다. 점수가 높을수록 가깝다."""
+    return store.similarity_search_with_score(query, k=k)</code></pre>
+<p>세 줄이 핵심입니다. <code>OpenAIEmbeddings</code>가 텍스트를 벡터로 바꾸는 담당, <code>InMemoryVectorStore</code>가 벡터를 담는 담당, <code>add_documents()</code>가 청크 목록을 받아 하나씩 임베딩해 넣는 동작입니다. 검색은 <code>similarity_search()</code>와 <code>similarity_search_with_score()</code> 두 가지가 있는데, 이 과정에서는 항상 <strong>점수가 붙은 쪽</strong>을 씁니다. 점수가 없으면 "왜 이 청크가 왔는가"를 물을 수 없습니다.</p>
+<div class="callout blue"><b>왜 <code>as_retriever()</code>를 쓰지 않는가</b>벡터스토어에는 검색기 객체를 만들어 주는 <code>as_retriever()</code>가 있고, 공식 예제에도 자주 나옵니다. 이 과정에서는 쓰지 않습니다. 검색기 객체는 점수를 감추고, Ch 12에서 직접 구현할 하이브리드 병합·리랭킹이 그 객체 안에 숨어 있으면 고칠 수 없기 때문입니다. <code>search()</code>는 평범한 함수이고 반환값이 전부 보입니다.</div>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p class="file">labs/part3/ch09-rag-first-run/examples/ex03_index_search.py</p>
+<pre><code class="language-python">import time
+from pathlib import Path
+
+from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_openai import OpenAIEmbeddings
+
+from rag import DEFAULT_EMBEDDING, build_index, corpus_paths, load_pdfs, search, split_docs
+
+INDEX_PATH = Path(".cache") / "index-easy-medium-hard-500-50-text-embedding-3-small.json"
+
+docs = load_pdfs(corpus_paths(["easy", "medium", "hard"]))
+chunks = split_docs(docs, chunk_size=500, chunk_overlap=50)
+print(f"문서 {len(docs)}쪽 → 청크 {len(chunks)}개")
+
+if INDEX_PATH.exists():
+    store = InMemoryVectorStore.load(str(INDEX_PATH), OpenAIEmbeddings(model=DEFAULT_EMBEDDING))
+    print("저장된 색인을 불러왔습니다:", INDEX_PATH.name)
+else:
+    t = time.time()
+    store = build_index(chunks)
+    print(f"임베딩 + 색인 {time.time() - t:.1f}초")
+    INDEX_PATH.parent.mkdir(exist_ok=True)
+    store.dump(str(INDEX_PATH))
+    print("색인을 저장했습니다:", INDEX_PATH.name)
+
+# 임베딩 벡터가 무엇인지 한 번 본다
+emb = OpenAIEmbeddings(model=DEFAULT_EMBEDDING)
+v = emb.embed_query("도서관 휴관일")
+print(f"\n'도서관 휴관일' → 길이 {len(v)} 벡터, 앞 4개 값 {[round(x, 4) for x in v[:4]]}")
+
+def show(query: str, k: int = 4) -> None:
+    print(f"\n질문: {query}")
+    for doc, score in search(store, query, k=k):
+        m = doc.metadata
+        head = doc.page_content[:60].replace("\n", " ")
+        print(f"  {score:.3f}  [{m['doc_id']} p.{m['page']} #{m['chunk_id']}]  {head}…")
+
+show("미르시립도서관의 정기 휴관일은 언제인가요?")
+show("도우미봇 R2 배터리는 몇 시간 가나요?")
+show("오로라 로지스틱스 사고 원인은 무엇인가요?")</code></pre>
+<pre class="out">문서 90쪽 → 청크 176개
+임베딩 + 색인 2.0초
+색인을 저장했습니다: index-easy-medium-hard-500-50-text-embedding-3-small.json
+
+'도서관 휴관일' → 길이 1536 벡터, 앞 4개 값 [-0.0299, 0.0421, 0.0276, 0.0105]
+
+질문: 미르시립도서관의 정기 휴관일은 언제인가요?
+  0.649  [E01 p.1 #0]  미르시립도서관 이용 안내 미르시립도서관 2026년판 발행 2026. 3. 1. 1…
+  0.565  [E01 p.2 #1]  1. 도서관 소개 미르시립도서관은 1998년 10월 미르시 중앙동에 문을 연 공공도서관입니다. 지상 4층, …
+  0.494  [M04 p.3 #86]  Ⅳ. 행사별 세부 계획 1. 미르강 가을축제 일시 2025년 10월 10일(금)~12일(일) 3일간, 장소 …
+  0.464  [H03 p.2 #142]  의사일정 제1항 2026년도 미르시 일반회계 세입·세출 예산안(문화관광국 소관) 제2항 2026년도 미르시 …
+
+질문: 도우미봇 R2 배터리는 몇 시간 가나요?
+  0.632  [M01 p.1 #47]  도우미봇 R2 기술 사양서 오로라 로보틱스 제품기술본부 문서번호 SPEC-R2-2026-01 · 개정 3판 …
+  0.596  [E03 p.1 #16]  도우미봇 R2 빠른 시작 가이드 오로라 로보틱스 모델명 AR-R2 · 문서번호 QSG-R2-03 2026. …
+  0.514  [M01 p.2 #48]  1. 문서 목적과 적용 범위 이 사양서는 서비스 로봇 도우미봇 R2(모델명 AR-R2, 이하 "R2")의 하…
+  0.509  [M01 p.3 #51]  장착해야 한다. 패드 미장착 시 가속·감속 구간에서 용기가 이동할 수 있다. 4.3 배터리·연속 동작 시간 …
+
+질문: 오로라 로지스틱스 사고 원인은 무엇인가요?
+  0.425  [H04 p.1 #155]  2025년 3분기 물류센터 안전사고 조사 보고서 오로라 로지스틱스 주식회사 안전보건팀 대상: 평택 제2물류센…
+  0.414  [H04 p.2 #156]  주의: 본 보고서의 작성 주체는 오로라 로지스틱스(물류·창고업)이며, 서비스 로봇 제조사 오로라 로보틱스와는…
+  0.328  [H04 p.5 #162]  7. 결론 이번 사고는 개인의 부주의로 단정할 수 없는 구조적 문제에서 비롯되었다. 제어반 위치와 걸림 빈도…
+  0.295  [H04 p.2 #157]  성하였다. 2. 사고 경위 시각 내용 근거 14:21 3번 라인 출구 센서에 상자 걸림 감지, 컨베이어 자동…</pre>
+<p class="look"><b>확인할 점</b> — ① 176개 청크를 임베딩하는 데 2초, 비용은 미화 0.002달러 안팎입니다(한국어 약 6만 자). ② 첫 질문의 1위가 <strong>표지</strong>입니다. 표지에는 "미르시립도서관"이라는 단어만 있고 휴관일은 없습니다. 제목 단어가 질문과 겹치면 짧은 청크가 높은 점수를 받습니다. 답은 2위에 있었습니다. ③ 배터리 질문에는 사양서(M01)와 가이드(E03)의 표지가 나란히 왔고, 실제 수치가 있는 M01 3쪽은 4위입니다. ④ 세 번째 질문은 점수대가 0.3~0.4로 낮지만, 4개 모두 로지스틱스 문서(H04)에서 왔습니다. 로보틱스 문서는 끼지 않았습니다. 점수의 절대값보다 <em>순위</em>와 <em>출처의 일관성</em>을 읽는 습관을 들입니다. (두 번째 실행부터는 "저장된 색인을 불러왔습니다"가 출력됩니다.)</p>
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p><strong>실패 1 — 질문에서 기관 이름을 빼 본다.</strong> "책을 3일 늦게 반납하면 어떤 불이익이 있나요?"를 <code>show()</code>에 넣어 보세요.</p>
+<pre class="out">질문: 책을 3일 늦게 반납하면 어떤 불이익이 있나요?
+  0.367  [M06 p.4 #112]  필요한 경우 30일까지 연장할 수 있으며 이 경우 사유를 서면으로 통지한…
+  0.353  [M02 p.4 #63]  ③ 냉동·냉장 화물은 기본 운임에 냉동 할증(20%)을, 위험물은 위험물…
+  0.341  [M04 p.3 #87]  장 '미르극장'(복원 개관). 상영작 32개국 96편, 이 중 경쟁부문 …
+  0.334  [E01 p.4 #5]  열람실에서는 음료 중 뚜껑이 있는 음료만 허용되며, 음식물 섭취와 통화는…</pre>
+<p>연체 규정이 있는 E01 3쪽(#3)이 4위 안에 없습니다. 6위까지 넓히면 여섯 번째(0.331)에 겨우 나타납니다. 질문에 "도서관"이라는 단어가 없고 "반납·불이익·3일"처럼 여러 문서에 흩어진 단어만 있어서, 공제 상품(M06)이나 운송 약관(M02)의 "연장·할증" 문장과 비슷한 자리에 놓인 것입니다. 같은 질문 앞에 "미르시립도서관에서"를 붙이면 #3이 5위(0.415)로 올라오지만, 표지·소개 쪽과 미르시 행사 계획(M04)이 여전히 그 앞에 있습니다. 이것이 <strong>검색 실패</strong>이고, 05절에서 이 실패가 답에 어떻게 나타나는지 봅니다. 고치는 방법(한국어 형태소 + BM25, 하이브리드)은 Ch 12 Day 2~3입니다.</p>
+<p><strong>실패 2 — 청크와 질문의 임베딩 모델을 다르게 해 본다.</strong> <code>InMemoryVectorStore.load(path, OpenAIEmbeddings(model="text-embedding-3-large"))</code>처럼 색인은 small로 만들고 불러올 때 large를 넘기면, 오류 없이 검색이 되지만 점수와 순위가 무의미해집니다. 두 모델의 벡터 길이가 다르면(1,536 vs 3,072) 계산 단계에서 오류가 나고, 같으면 조용히 잘못된 결과가 나옵니다. 색인을 만든 모델 이름을 파일명이나 메타 파일에 반드시 남기는 이유입니다(06절 하네스가 설정 해시로 이것을 강제합니다).</p>
+<p><strong>실패 3 — k를 1로 줄인다.</strong> 첫 질문을 <code>k=1</code>로 검색하면 표지 청크만 반환됩니다. 04절에서 이 결과를 그대로 모델에게 주면 답을 만들 재료가 없습니다. k는 "몇 개나 보여 줄 것인가"이면서 동시에 "1위가 틀렸을 때의 보험"입니다.</p>
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>점수에 절대 기준은 없습니다.</strong> 0.65가 좋고 0.35가 나쁘다고 말할 수 없습니다. 모델마다, 언어마다, 질문 길이마다 분포가 다릅니다. "이 점수 아래면 버린다"는 임계값은 Ch 11의 질의셋으로 <em>측정한 뒤</em> 정합니다(Ch 14 CRAG의 폴백 기준이 그것입니다).</li>
+<li><strong>한국어 임베딩 품질.</strong> 실패 1이 보여 주듯 영어 벤치마크 상위 모델이 한국어 조사·어미 변화에 강하다는 보장이 없습니다. 이 챕터의 모델은 <span class="tbd">[[미정: 임베딩 모델]]</span>이 확정될 때까지의 임시값입니다. Ch 10에서 한국어 벤치 상위 오픈 모델 2종과 비교합니다.</li>
+<li><strong>표지·목차 청크.</strong> 02절에서 예고한 대로 짧은 표지가 자리를 차지합니다. 실무에서는 로더 단계에서 거르거나, 최소 청크 길이를 두거나, 검색 후 필터로 뺍니다. 이 챕터는 일부러 남겨 두었습니다.</li>
+<li><strong><code>InMemoryVectorStore</code>의 한계.</strong> 176개는 문제없지만 수만 개가 되면 검색마다 전부 비교하므로 느려지고, 프로세스가 죽으면 사라집니다. <code>dump()</code>는 임시 저장이지 데이터베이스가 아닙니다. Ch 12에서 pgvector로 옮깁니다.</li>
+<li><strong>비용과 재임베딩.</strong> 청크 크기나 임베딩 모델을 바꾸면 전부 다시 임베딩해야 합니다. 이 챕터 규모에서는 2초·0.002달러지만 문서 1만 건이면 다릅니다. Ch 10에서 캐싱과 재임베딩 비용을 다룹니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul>
+<li>임베딩은 텍스트를 1,536차원 벡터로 바꾸고, 벡터스토어는 그 벡터를 담아 질문 벡터와 가까운 k개를 반환합니다. 청크와 질문은 같은 모델로 임베딩해야 합니다.</li>
+<li><code>search()</code>는 (청크, 점수) 목록을 반환하는 평범한 함수입니다. 점수의 절대값보다 순위와 출처의 일관성을 읽습니다.</li>
+<li>표지가 1위로 오고, 기관 이름이 빠진 질문은 엉뚱한 문서로 향합니다. 이 두 실패를 아직 고치지 않습니다.</li>
+</ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — <code>search()</code>는 Ch 12에서 dense + sparse(Kiwi·BM25) 하이브리드와 RRF 병합, cross-encoder 리랭킹으로 바뀝니다. 지금 저장한 <code>.cache/index-*.json</code>은 06절 하네스의 캐시가 됩니다. 다음 04절에서 검색 결과를 프롬프트에 넣고 첫 답을 받습니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. 청크는 <code>text-embedding-3-small</code>로, 질문은 다른 모델로 임베딩하면 어떤 일이 생깁니까?</p>
+<p class="quiz-a">두 벡터가 같은 좌표계에 있지 않으므로 코사인 유사도가 의미를 잃습니다. 벡터 길이가 다르면 오류가 나고, 같으면 오류 없이 잘못된 순위가 나옵니다. 색인을 만든 모델을 반드시 기록해 둡니다.</p>
+<p class="quiz-q">2. 휴관일 질문에 표지 청크가 1위로 온 이유와, 그래도 04절에서 답이 맞게 나올 수 있는 이유를 쓰세요.</p>
+<p class="quiz-a">표지는 45자뿐이고 그중 "미르시립도서관"이 질문과 겹쳐 벡터가 질문 쪽으로 쏠립니다. k=4라 답이 있는 2위 청크도 함께 프롬프트에 들어가므로 모델이 답을 찾을 수 있습니다.</p>
+<p class="quiz-q">3. "점수 0.5 이하는 관련 없는 청크로 버린다"는 규칙을 지금 넣으면 안 되는 이유는 무엇입니까?</p>
+<p class="quiz-a">점수 분포는 모델·언어·질문에 따라 다르고, 실행 예제만 봐도 정답 문서가 0.41~0.46에 있는 경우가 있습니다. 임계값은 Ch 11 질의셋으로 정답 청크의 점수 분포를 측정한 뒤에 정해야 합니다.</p>
+<p class="quiz-q">4. "책을 3일 늦게 반납하면"이 실패하고 "미르시립도서관의 정기 휴관일은"이 성공한 차이를 임베딩 관점에서 설명하세요.</p>
+<p class="quiz-a">후자는 기관 이름이라는 강한 신호가 있어 E01 구역에 놓였지만, 전자는 "반납·불이익·3일"처럼 여러 문서에 흩어진 일반 단어뿐이라 공제·운송 약관의 비슷한 문장 사이에 놓였습니다. 단어 일치를 보는 sparse 검색을 섞으면(Ch 12) "반납"이라는 단어 자체가 E01을 가리킵니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>강사 노트</h2>
+<details class="instructor"><summary>시간 배분 · 시연 순서 · 예상 질문 · 막히는 지점 · A/B 트랙</summary>
+<p><strong>시간 배분(3h)</strong> — 강의 60분: 지도 비유와 코사인(15) · 코드 세 줄(10) · 도식과 실제 결과 읽기(20) · <code>as_retriever</code>를 안 쓰는 이유(5) · 비용·저장(10). 실습 120분: 색인 만들고 저장(20) · 질문 10개 던져 순위표 만들기(40) · 실패 1~3 재현(40) · 자기 질문에서 "기관 이름 유무"로 순위 비교(20).</p>
+<p><strong>시연 순서</strong> — ① <code>embed_query()</code> 결과의 길이와 앞 몇 값을 보여 주고 "이것이 좌표"라고 명확히 말하기 ② 색인 생성 시간을 재고 두 번째 실행에서 캐시가 뜨는 것 확인 ③ 휴관일 질문의 표지 1위를 보여 주고 학생에게 "왜?"를 묻기 ④ 반납 질문의 실패를 보여 주고 "고치지 않는다, 05·12에서"라고 명시 ⑤ 로지스틱스 질문에서 로보틱스가 안 섞인 것을 보여 주며 문서 세트의 혼동 요소를 소개.</p>
+<p><strong>예상 질문</strong> — "점수 몇 점 이상이면 믿을 수 있나요?" → 없다, 측정 후 정한다(Ch 11·14). "왜 Chroma나 FAISS 안 쓰나요?" → 지금은 176개라 메모리로 충분하고, 저장소 선택은 Ch 12에서 pgvector로 간다. "임베딩을 한국어 모델로 바꾸면 반납 질문이 되나요?" → 될 수도 있고 그것을 측정하는 것이 Ch 10 실습이라고 답하고, 지금은 <code>[[미정: 임베딩 모델]]</code> 상태임을 알림.</p>
+<p><strong>학생이 막히는 지점</strong> — <code>.cache/</code> 경로가 실행 위치에 따라 달라지는 문제(예제는 챕터 폴더에서 실행). 색인을 만든 뒤 <code>chunk_size</code>를 바꾸고 캐시를 지우지 않아 옛 색인으로 검색하는 실수 — 06절 해시 캐시로 해결됨을 예고. API 키 미설정 시 첫 <code>add_documents</code>에서 인증 오류.</p>
+<p><strong>A/B 트랙</strong> — A트랙은 순위표 작성까지. B트랙은 <code>similarity_search_with_score</code> 없이 <code>embed_query</code>·<code>embed_documents</code>와 <code>numpy</code>로 코사인 유사도를 직접 계산해 같은 순위가 나오는지 확인하게 합니다(Ch 5 내용 되짚기).</p>
+</details>
+
+<h2 id="b11"><span class="no">11</span>참고 자료</h2>
+<ul>
+<li>LangChain Core 「InMemoryVectorStore」 — <a href="https://reference.langchain.com/python/langchain-core/vectorstores/in_memory/InMemoryVectorStore">reference.langchain.com/python/langchain-core/vectorstores/in_memory/InMemoryVectorStore</a> · 확인 2026-09-07 · <code>add_documents</code>·<code>similarity_search_with_score</code>·<code>dump</code>·<code>load</code>.</li>
+<li>LangChain 「Build a RAG agent」 — Embeddings·Vector store 선택 절 — <a href="https://docs.langchain.com/oss/python/langchain/rag">docs.langchain.com/oss/python/langchain/rag</a> · 확인 2026-09-07.</li>
+<li>OpenAI 임베딩 요금 — text-embedding-3-small 미화 0.02달러 / 100만 토큰 — <a href="https://developers.openai.com/api/docs/pricing">developers.openai.com/api/docs/pricing</a> · 확인 2026-09-07.</li>
+<li>기준 버전: langchain-core 1.6.2 · langchain-openai 1.6.0.</li>
+</ul>

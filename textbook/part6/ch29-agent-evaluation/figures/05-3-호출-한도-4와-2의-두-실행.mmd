@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  same["두 실행에 같게 둔 것<br>질문 · 도구 둘<br>시스템 메시지 글<br>실행 한도 20 · run_agent"]
+  l1["실행 1 · 호출 한도 4"]:::flow
+  r1["요청 3 · 도구를 요청한 응답 2<br>03절 셈 True<br>끝은 모델이 쓴 답<br>네 모드 모두 True · 점수 1.0"]:::measure
+  l2["실행 2 · 호출 한도 2"]:::flow
+  r2["요청 2 · 도구를 요청한 응답 2<br>03절 셈 False<br>끝은 한도가 끼운 글<br>Model call limits exceeded<br>사용량 None<br>네 모드 모두 True · 점수 1.0"]:::measure
+  tal["점수가 1.0인 실행 둘<br>03절 셈이 맞은 실행 하나"]:::measure
+  same -.-> l1
+  same -.-> l2
+  l1 --> r1
+  l2 --> r2
+  r1 --> tal
+  r2 --> tal

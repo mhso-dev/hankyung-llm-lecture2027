@@ -1,0 +1,15 @@
+%%{init: {'themeCSS': '.tick text { font-size: 15px; }', "gantt": {"leftPadding": 190, "barHeight": 28, "barGap": 8, "fontSize": 15, "sectionFontSize": 15}}}%%
+gantt
+  dateFormat x
+  axisFormat 0.%L초
+  tickInterval 100millisecond
+  todayMarker off
+  section 5번 차례로 await<br>걸린 시간(초): 0.3
+    연필 0.2초 : p1, 0, 200ms
+    노트 0.1초 : n1, after p1, 100ms
+  section 6번 gather<br>걸린 시간(초): 0.2
+    연필 0.2초 : p2, 0, 200ms
+    노트 0.1초 : n2, 0, 100ms
+  section 7번 노트만 0.3초<br>걸린 시간(초): 0.3
+    연필 0.2초 : p3, 0, 200ms
+    노트 0.3초 : n3, 0, 300ms

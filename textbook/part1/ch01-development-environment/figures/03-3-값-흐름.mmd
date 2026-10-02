@@ -1,0 +1,11 @@
+flowchart TD
+  %% classes
+  C["check_code<br>prefix와 base_prefix를<br>출력하는 코드"]:::tool
+  P["python_a<br>env_a/bin/python"]:::tool
+  R["result_a.stdout<br>경로 두 줄"]:::tool
+  X["prefix_a.name<br>env_a"]:::tool
+  Y{"prefix_a != base_a<br>True"}:::measure
+  C -- "-c 뒤에 넣어 실행" --> P
+  P -- "출력을 담음" --> R
+  R -- "첫 줄의 폴더 이름" --> X
+  R -- "두 줄 비교" --> Y

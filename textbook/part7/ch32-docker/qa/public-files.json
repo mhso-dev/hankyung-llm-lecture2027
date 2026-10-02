@@ -1,0 +1,18 @@
+[
+  "labs/part7/ch32-docker/.dockerignore",
+  "labs/part7/ch32-docker/.env.example",
+  "labs/part7/ch32-docker/Dockerfile",
+  "labs/part7/ch32-docker/Dockerfile.baseline",
+  "labs/part7/ch32-docker/README.md",
+  "labs/part7/ch32-docker/app.py",
+  "labs/part7/ch32-docker/compose.yaml",
+  "labs/part7/ch32-docker/init.sql",
+  "labs/part7/ch32-docker/notebooks/01-이미지와-레이어.ipynb",
+  "labs/part7/ch32-docker/notebooks/02-uv-멀티스테이지-빌드.ipynb",
+  "labs/part7/ch32-docker/notebooks/03-빌드-캐시와-이미지-크기.ipynb",
+  "labs/part7/ch32-docker/notebooks/04-Compose와-pgvector-스택.ipynb",
+  "labs/part7/ch32-docker/notebooks/05-환경변수-시크릿-헬스체크-로그.ipynb",
+  "labs/part7/ch32-docker/pyproject.toml",
+  "labs/part7/ch32-docker/secrets/db_password.txt.example",
+  "labs/part7/ch32-docker/uv.lock"
+]

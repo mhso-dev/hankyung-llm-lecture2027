@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  fn["처리 함수 chat_stream<br>질문 반납 기한을 알려 주세요"]:::tool
+  direct["바로 부름<br>async for로 꺼냄"]:::flow
+  objs["ServerSentEvent 일곱<br>token 여섯 done 하나"]:::measure
+  http["시험용 클라이언트로 POST<br>본문을 끝까지 모아 받음"]:::flow
+  texts["본문 글 SSE 사건 일곱<br>칸 data는 JSON 글"]:::measure
+  same["token 사건의 data<br>처리 함수 값과 같음 True"]:::measure
+  fn --> direct --> objs --> same
+  fn --> http --> texts --> same

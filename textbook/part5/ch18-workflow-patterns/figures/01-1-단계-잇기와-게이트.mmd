@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  req["기획 요청 글<br>칸 셋 제목 독자 절차를 약속함"]:::tool
+  plan["gpt-5.4-mini<br>첫 단계 기획"]:::model
+  mid["중간 결과<br>기획 딕셔너리 칸 셋"]:::measure
+  gate["게이트 check_plan<br>필수 칸 셋 · 절차 셋 이상"]:::flow
+  write["gpt-5.4-mini<br>둘째 단계 작성"]:::model
+  done["상태 완료<br>안내문"]:::measure
+  stop["상태 멈춤<br>문제 목록<br>작성 요청 없음"]:::measure
+  req --> plan
+  plan --> mid
+  mid --> gate
+  gate -.->|문제 없음| write
+  write --> done
+  gate -.->|문제 있음| stop

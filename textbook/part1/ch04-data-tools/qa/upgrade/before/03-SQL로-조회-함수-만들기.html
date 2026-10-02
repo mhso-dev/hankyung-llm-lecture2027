@@ -1,0 +1,305 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SQL로 조회 함수 만들기 — Ch 4 · 데이터 다루기 — 도구 제작 관점</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 4 · 데이터 다루기 — 도구 제작 관점</p>
+<h1>SQL로 조회 함수 만들기</h1><div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>SELECT·JOIN·WHERE·ORDER BY의 역할을 구분할 수 있습니다.</li><li>SQLite 조회 행을 사전 목록으로 변환하는 함수를 작성할 수 있습니다.</li><li>사용자 입력을 SQL 문자열과 분리해 매개변수로 전달할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>표 파일은 학습과 작은 업무에 편리하지만 여러 사용자가 같은 구조를 반복 조회할 때는 데이터베이스가 더 적합합니다. SQL은 어떤 열을 반환하고 어떤 테이블을 연결하며 어떤 조건과 순서로 결과를 만들지 선언합니다. 에이전트 도구의 함수는 자연어 질문 전체를 SQL로 바꾸기 전에 검증된 조건 조회부터 제공하는 편이 안전합니다.</p><p>이번 절의 <code>find_customer_orders(database, customer_id)</code>는 데이터베이스 경로와 고객 번호를 입력으로 받고 사전 목록을 반환합니다. Ch 19에서 이 함수를 도구로 등록할 때는 실행 환경에서 데이터베이스 경로를 정하고 모델이 고객 번호를 전달하도록 입력 범위를 설계합니다. 데이터 접근과 답변 생성을 나누면 어느 단계에서 잘못된 값이 생겼는지 찾기 쉬워집니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>앞 절에서 고객 표의 기본 키와 주문 표의 외래 키를 확인하고 pandas의 <code>merge</code>로 두 표를 연결했습니다. Ch 2의 04절에서는 함수의 입력과 반환값을, 05절에서는 예외 처리를 확인했습니다. SQLite는 Python 표준 라이브러리 <code>sqlite3</code>로 사용할 수 있어 별도 데이터베이스 서버 없이 같은 관계를 SQL로 조회할 수 있습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>요청 문장을 SQL 절로 나눕니다</h3><p>“고객 C001의 주문 번호, 이름, 금액을 금액이 큰 순서로 주세요”라는 요청에는 네 가지 결정이 들어 있습니다. <code>SELECT</code>는 반환할 열, <code>FROM</code>과 <code>JOIN</code>은 읽고 연결할 테이블, <code>WHERE</code>는 남길 행의 조건, <code>ORDER BY</code>는 반환 순서를 정합니다. SQL은 보통 <code>SELECT → FROM/JOIN → WHERE → ORDER BY → LIMIT</code> 순서로 작성합니다. <code>LIMIT</code>는 최대 몇 행을 반환할지 정하며 이번 함수에는 사용하지 않습니다.</p><p>데이터베이스가 개념적으로 처리하는 순서는 작성 순서와 다릅니다. 먼저 <code>FROM/JOIN</code>으로 행의 원천을 만들고, <code>WHERE</code>로 행을 줄인 뒤, <code>SELECT</code>로 반환 열을 정하고, <code>ORDER BY</code>로 정렬하며, 마지막에 <code>LIMIT</code>로 행 수를 제한합니다.</p><h3>쿼리와 입력값을 분리합니다</h3><p><strong>SQL(Structured Query Language)</strong>은 관계형 데이터베이스의 구조와 데이터를 다루는 언어입니다. <strong>쿼리(query)</strong>는 데이터베이스에 보내는 조회 또는 변경 명령입니다. <strong>매개변수 쿼리(parameterized query)</strong>는 SQL 문장과 입력값을 분리해 전달합니다. Python sqlite3에서는 물음표 자리표시자와 값 튜플을 사용하므로 입력 전체가 SQL 문법이 아닌 하나의 값으로 처리됩니다.</p><p><code>db.execute(sql, (customer_id,))</code>에서 첫 번째 인자는 SQL 문자열이고 두 번째 인자는 물음표에 대응하는 값의 튜플입니다. 값이 하나뿐이어도 <code>(customer_id,)</code>처럼 쉼표를 써야 한 원소 튜플이 됩니다. 반환되는 커서는 조회 결과를 순회할 수 있는 객체입니다. <strong>행 팩토리(row factory)</strong>는 커서가 각 행을 어떤 Python 객체로 만들지 정합니다. <code>sqlite3.Row</code>를 사용하면 열 이름으로 값에 접근할 수 있고 <code>dict(row)</code>로 사전으로 변환할 수 있습니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270" width="720" height="270" role="img"
+ aria-labelledby="title-03-sql-query desc-03-sql-query">
+<title id="title-03-sql-query">SQL 조회 함수의 경계</title>
+<desc id="desc-03-sql-query">파란 입력에서 노란 처리를 거쳐 초록 결과가 나오며 빨간 상자는 실패 사례를 나타냅니다.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker></defs>
+<rect width="720" height="270" fill="#fff"/>
+<text x="24" y="35" font-size="20" font-weight="700" fill="#111827">SQL 조회 함수의 경계</text>
+<path d="M210 110H265" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M450 110H505" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M360 155V180" stroke="#dc2626" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="30" y="75" width="160" height="70" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="110.0" y="101.0" text-anchor="middle" font-size="16" fill="#111827">database +</text>
+<text x="110.0" y="124.0" text-anchor="middle" font-size="16" fill="#111827">customer_id</text>
+<rect x="280" y="75" width="160" height="70" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="101.0" text-anchor="middle" font-size="16" fill="#111827">SELECT·JOIN</text>
+<text x="360.0" y="124.0" text-anchor="middle" font-size="16" fill="#111827">WHERE·ORDER BY</text>
+<rect x="530" y="75" width="160" height="70" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="610.0" y="101.0" text-anchor="middle" font-size="16" fill="#111827">사전 목록</text>
+<text x="610.0" y="124.0" text-anchor="middle" font-size="16" fill="#111827">O101·O103</text>
+<rect x="280" y="185" width="160" height="55" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="360.0" y="203.5" text-anchor="middle" font-size="16" fill="#111827">문자열 결합</text>
+<text x="360.0" y="226.5" text-anchor="middle" font-size="16" fill="#111827">조건식 변경</text>
+</svg></div><p>초록 상자는 데이터베이스 경로·고객 번호 입력과 반환 사전을 나타냅니다. 파란 상자는 테이블 연결, 행 선택, 열 선택, 정렬의 처리 흐름이고 빨간 상자는 입력을 문자열에 직접 붙여 조건식의 구조가 바뀌는 실패를 보여 줍니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p><code>import sqlite3</code>는 Python 표준 라이브러리의 SQLite 기능을 불러옵니다. <code>TemporaryDirectory()</code>는 실습이 끝나면 정리할 임시 폴더 객체를 반환하고, <code>Path(temp_dir.name) / "orders.db"</code>는 그 폴더 안의 데이터베이스 경로를 만듭니다. <code>sqlite3.connect(database)</code>는 해당 파일에 연결한 Connection 객체를 반환합니다. <code>connection.row_factory = sqlite3.Row</code>는 이후 조회 행을 열 이름으로 읽게 설정합니다.</p><p><code>execute()</code>는 SQL 문장 하나를, <code>executescript()</code>는 세미콜론으로 구분한 여러 SQL 문장을 실행합니다. <code>PRAGMA foreign_keys = ON</code>은 현재 연결에서 외래 키 검사를 켭니다. <code>commit()</code>은 테이블 생성과 입력 내용을 파일에 확정하고 <code>close()</code>는 준비용 연결을 닫습니다.</p><p><code>find_customer_orders</code>의 입력은 데이터베이스 경로와 고객 번호입니다. 함수는 새 연결을 열고 <code>with db:</code> 블록에서 조회합니다. 연결 객체의 <code>with</code> 블록은 정상 종료 시 진행 중인 트랜잭션을 커밋하고 예외가 발생하면 롤백하지만 연결을 닫지는 않습니다. 따라서 <code>finally</code>에서 <code>close()</code>를 별도로 호출합니다.</p><p><code>orders o</code>는 <code>orders</code> 테이블에 짧은 별칭 <code>o</code>를, <code>customers c</code>는 <code>customers</code> 테이블에 <code>c</code>를 붙입니다. 그래서 <code>o.order_id</code>와 <code>c.name</code>처럼 어느 테이블의 열인지 표시할 수 있습니다. <code>USING(customer_id)</code>은 양쪽 테이블에 이름이 같은 <code>customer_id</code> 열이 있을 때 그 두 열의 값이 같은 행을 연결합니다.</p><p>쿼리는 <code>JOIN</code>으로 주문과 고객을 결합하고, <code>WHERE</code>로 입력 고객만 남기고, <code>ORDER BY amount DESC, order_id</code>로 정렬합니다. 각 <code>sqlite3.Row</code>를 <code>dict</code>로 바꾸므로 사전 목록을 반환합니다. C001은 O101·O103, C002는 O102를 반환합니다.</p><section class="notebook" data-notebook="03-SQL로-조회-함수-만들기" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="03-SQL로-조회-함수-만들기.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBTUUzroZwg7KGw7ZqMIO2VqOyImCDrp4zrk6TquLBcbiIsCiAgICAiXG4iLAogICAgIlNRTGl0ZeyXkOyEnCDrp6TqsJzrs4DsiJggU1FM66GcIOqzoOqwnSDso7zrrLjsnYQg7KGw7ZqM7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6Ttlokg7ZmY6rK9IOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAiYGltcG9ydCBzcWxpdGUzYOuKlCBQeXRob24g7ZGc7KSAIOudvOydtOu4jOufrOumrOydmCBTUUxpdGUg6riw64ql7J2EIOu2iOufrOyYteuLiOuLpC4gYFRlbXBvcmFyeURpcmVjdG9yeSgpYOuKlCDsi6TsirUg65KkIOygleumrO2VoCDsnoTsi5wg7Y+0642UIOqwneyytOulvCwgYHNxbGl0ZTMuY29ubmVjdCjqsr3roZwpYOuKlCDrjbDsnbTthLDrsqDsnbTsiqQg7Jew6rKwIOqwneyytOulvCDrsJjtmZjtlanri4jri6QuIGByb3dfZmFjdG9yeSA9IHNxbGl0ZTMuUm93YOuKlCDsobDtmowg7ZaJ7J2EIOyXtCDsnbTrpoTsnLzroZwg7J296rKMIO2VqeuLiOuLpC4gYGV4ZWN1dGUoXCJQUkFHTUEgZm9yZWlnbl9rZXlzID0gT05cIilg7J2AIOydtCDsl7DqsrDsl5DshJwg7Jm4656YIO2CpCDqsoDsgqzrpbwg7Lyt64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MzM6MDcuOTU2NzY3WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MzM6MDcuOTU2NTYzWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MzM6MDcuOTYzODYzWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjozMzowNy45NjMzNTRaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFtdLAogICAic291cmNlIjogWwogICAgIiMg7J6E7IucIFNRTGl0ZSDtjIzsnbzqs7wg7ZaJIOydtOumhCDsoJHqt7wg67Cp7Iud7J2EIOykgOu5hO2VqeuLiOuLpC5cbiIsCiAgICAiaW1wb3J0IHNxbGl0ZTNcbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgImZyb20gdGVtcGZpbGUgaW1wb3J0IFRlbXBvcmFyeURpcmVjdG9yeVxuIiwKICAgICJcbiIsCiAgICAidGVtcF9kaXIgPSBUZW1wb3JhcnlEaXJlY3RvcnkoKVxuIiwKICAgICJkYXRhYmFzZSA9IFBhdGgodGVtcF9kaXIubmFtZSkgLyBcIm9yZGVycy5kYlwiXG4iLAogICAgImNvbm5lY3Rpb24gPSBzcWxpdGUzLmNvbm5lY3QoZGF0YWJhc2UpXG4iLAogICAgImNvbm5lY3Rpb24ucm93X2ZhY3RvcnkgPSBzcWxpdGUzLlJvd1xuIiwKICAgICJfID0gY29ubmVjdGlvbi5leGVjdXRlKFwiUFJBR01BIGZvcmVpZ25fa2V5cyA9IE9OXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOq4sOuzuCDsi6TtlolcbiIsCiAgICAiXG4iLAogICAgImBleGVjdXRlKClg64qUIFNRTCDrrLjsnqUg7ZWY64KY66W8IOyLpO2Wie2VmOqzoCBgZXhlY3V0ZXNjcmlwdCgpYOuKlCDshLjrr7jsvZzroaDsnLzroZwg6rWs67aE65CcIOyXrOufrCDrrLjsnqXsnYQg7Iuk7ZaJ7ZWp64uI64ukLiBgY29tbWl0KClg7J2AIOykgOu5hO2VnCDthYzsnbTruJTqs7wg7ZaJ7J2EIO2MjOydvOyXkCDtmZXsoJXtlZjqs6AgYGNsb3NlKClg64qUIOyXsOqysOydhCDri6vsirXri4jri6QuIFNRTOydgCBgU0VMRUNUIOKGkiBGUk9NL0pPSU4g4oaSIFdIRVJFIOKGkiBPUkRFUiBCWSDihpIgTElNSVRgIOyInOyEnOuhnCDsnpHshLHtlZjsp4Drp4wg642w7J207YSw67Kg7J207Iqk64qUIOqwnOuFkOyggeycvOuhnCDsm5Dsspzqs7wg7Jew6rKw7J2EIOygle2VnCDrkqQg7ZaJ7J2EIOqxsOultOqzoCDrsJjtmZgg7Je06rO8IOyInOyEnOulvCDsoJXtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjozMzowNy45NjU4MTBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjozMzowNy45NjU2MzJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjozMzowNy45NzEwNTJaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjMzOjA3Ljk3MDUxMloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLspIDruYTrkJwg7KO866y4OiAzXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg6riw67O4IO2CpOyZgCDsmbjrnpgg7YKkIOygnOyVveydhCDqsIDsp4Qg65GQIO2FjOydtOu4lOydhCDrp4zrk63ri4jri6QuXG4iLAogICAgImNvbm5lY3Rpb24uZXhlY3V0ZXNjcmlwdChcIlwiXCJcbiIsCiAgICAiQ1JFQVRFIFRBQkxFIGN1c3RvbWVycyhjdXN0b21lcl9pZCBURVhUIFBSSU1BUlkgS0VZLCBuYW1lIFRFWFQgTk9UIE5VTEwpO1xuIiwKICAgICJDUkVBVEUgVEFCTEUgb3JkZXJzKG9yZGVyX2lkIFRFWFQgUFJJTUFSWSBLRVksIGN1c3RvbWVyX2lkIFRFWFQgTk9UIE5VTEwsIHN0YXR1cyBURVhUIE5PVCBOVUxMLFxuIiwKICAgICIgYW1vdW50IElOVEVHRVIgTk9UIE5VTEwsIEZPUkVJR04gS0VZKGN1c3RvbWVyX2lkKSBSRUZFUkVOQ0VTIGN1c3RvbWVycyhjdXN0b21lcl9pZCkpO1xuIiwKICAgICJJTlNFUlQgSU5UTyBjdXN0b21lcnMgVkFMVUVTICgnQzAwMScsJ+q5gO2VmOuCmCcpLCgnQzAwMicsJ+ydtOuRkOumrCcpO1xuIiwKICAgICJJTlNFUlQgSU5UTyBvcmRlcnMgVkFMVUVTICgnTzEwMScsJ0MwMDEnLCdwYWlkJywzMjAwMCksKCdPMTAyJywnQzAwMicsJ3BlbmRpbmcnLDE4MDAwKSwoJ08xMDMnLCdDMDAxJywncGFpZCcsMjcwMDApO1xuIiwKICAgICJcIlwiXCIpXG4iLAogICAgImNvbm5lY3Rpb24uY29tbWl0KClcbiIsCiAgICAiY29ubmVjdGlvbi5jbG9zZSgpXG4iLAogICAgInByaW50KFwi7KSA67mE65CcIOyjvOusuDogM1wiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDYiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDspJHqsIQg6rKw6rO8IOq0gOywsFxuIiwKICAgICJcbiIsCiAgICAi7ZWo7IiYIOyeheugpeydgCDrjbDsnbTthLDrsqDsnbTsiqQg6rK966Gc7JmAIOqzoOqwnSDrsojtmLjsnoXri4jri6QuIGBvcmRlcnMgb2DsmYAgYGN1c3RvbWVycyBjYOuKlCDquLQg7YWM7J2067iUIOydtOumhOyXkCDqsIHqsIEgYG9gLCBgY2DrnbzripQg7Ken7J2AIOuzhOy5reydhCDrtpnsnoXri4jri6QuIOq3uOuemOyEnCBgby5vcmRlcl9pZGDsmYAgYGMubmFtZWDsspjrn7wg7Je07J2YIOy2nOyymOulvCDtkZzsi5ztlaAg7IiYIOyeiOyKteuLiOuLpC4gYFVTSU5HKGN1c3RvbWVyX2lkKWDsnYAg65GQIO2FjOydtOu4lOyXkOyEnCDsnbTrpoTsnbQg6rCZ7J2AIGBjdXN0b21lcl9pZGAg7Je07J2YIOqwkuydtCDqsJnsnYAg7ZaJ7J2EIOyXsOqysO2VqeuLiOuLpC4gYHdpdGggZGI6YOuKlCDsoJXsg4Eg7KKF66OMIOyLnCDsp4Ttlokg7KSR7J24IO2KuOuenOyereyFmOydhCDsu6TrsIvtlZjqs6Ag7JiI7Jm46rCAIOuwnOyDne2VmOuptCDroaTrsLHtlZjsp4Drp4wg7Jew6rKw7J2EIOuLq+yngOuKlCDslYrsirXri4jri6QuIOq3uOuemOyEnCBgZmluYWxseWDsl5DshJwgYGNsb3NlKClg66W8IOuUsOuhnCDtmLjstpztlanri4jri6QuIOu4lOuhnSDslYjsl5DshJzripQgYEpPSU5gLCBgV0hFUkVgLCBgT1JERVIgQllg66W8IOyggeyaqe2VmOqzoCBgZGIuZXhlY3V0ZShzcWwsIChjdXN0b21lcl9pZCwpKWDsnZgg6rCSIO2KnO2UjOydhCDrrLzsnYztkZzsmYAg67aE66as7ZW0IOyghOuLrO2VqeuLiOuLpC4g67CY7ZmY6rCS7J2AIGBzcWxpdGUzLlJvd2Drpbwg7IKs7KCE7Jy866GcIOuzgO2ZmO2VnCDrqqnroZ3snoXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjozMzowNy45NzIzMjFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjozMzowNy45NzIyMTJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjozMzowNy45NzU0OTJaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjMzOjA3Ljk3NDkxN1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJbeydvcmRlcl9pZCc6ICdPMTAxJywgJ2N1c3RvbWVyX25hbWUnOiAn6rmA7ZWY64KYJywgJ3N0YXR1cyc6ICdwYWlkJywgJ2Ftb3VudCc6IDMyMDAwfSwgeydvcmRlcl9pZCc6ICdPMTAzJywgJ2N1c3RvbWVyX25hbWUnOiAn6rmA7ZWY64KYJywgJ3N0YXR1cyc6ICdwYWlkJywgJ2Ftb3VudCc6IDI3MDAwfV1cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDqsr3roZzsmYAg6rOg6rCdIOuyiO2YuOulvCDrsJvslYQg66ek6rCc67OA7IiYIFNRTCDqsrDqs7zrpbwg7IKs7KCEIOuqqeuhneycvOuhnCDrsJjtmZjtlanri4jri6QuXG4iLAogICAgImRlZiBmaW5kX2N1c3RvbWVyX29yZGVycyhkYXRhYmFzZTogc3RyIHwgUGF0aCwgY3VzdG9tZXJfaWQ6IHN0cikgLT4gbGlzdFtkaWN0XTpcbiIsCiAgICAiICAgIHNxbCA9IFwiXCJcIlNFTEVDVCBvLm9yZGVyX2lkLCBjLm5hbWUgQVMgY3VzdG9tZXJfbmFtZSwgby5zdGF0dXMsIG8uYW1vdW50XG4iLAogICAgIiAgICAgICAgICAgICBGUk9NIG9yZGVycyBvIEpPSU4gY3VzdG9tZXJzIGMgVVNJTkcoY3VzdG9tZXJfaWQpXG4iLAogICAgIiAgICAgICAgICAgICBXSEVSRSBjdXN0b21lcl9pZCA9ID8gT1JERVIgQlkgYW1vdW50IERFU0MsIG9yZGVyX2lkXCJcIlwiXG4iLAogICAgIiAgICBkYiA9IHNxbGl0ZTMuY29ubmVjdChkYXRhYmFzZSlcbiIsCiAgICAiICAgIHRyeTpcbiIsCiAgICAiICAgICAgICBkYi5yb3dfZmFjdG9yeSA9IHNxbGl0ZTMuUm93XG4iLAogICAgIiAgICAgICAgd2l0aCBkYjpcbiIsCiAgICAiICAgICAgICAgICAgcmV0dXJuIFtkaWN0KHJvdykgZm9yIHJvdyBpbiBkYi5leGVjdXRlKHNxbCwgKGN1c3RvbWVyX2lkLCkpXVxuIiwKICAgICIgICAgZmluYWxseTpcbiIsCiAgICAiICAgICAgICBkYi5jbG9zZSgpXG4iLAogICAgInJvd3MgPSBmaW5kX2N1c3RvbWVyX29yZGVycyhkYXRhYmFzZSwgXCJDMDAxXCIpXG4iLAogICAgInByaW50KHJvd3MpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wOCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOqwkiDtlZjrgpjrpbwg67CU6r+UIOu5hOq1kFxuIiwKICAgICJcbiIsCiAgICAiU1FMIOusuOyepeqzvCDsspjrpqwg7Iic7ISc64qUIOycoOyngO2VmOqzoCDqs6DqsJ0g67KI7Zi466eMIEMwMDHsl5DshJwgQzAwMuuhnCDrsJTqv4nri4jri6QuIOuwmO2ZmCDtlonsnbQg7ZWcIOqxtOycvOuhnCDspITslrTrj4Qg7Je0IOydtOumhOqzvCDsgqzsoIQg66qp66Gd7J20652864qUIOuwmO2ZmCDtmJXsi53snYAg7Jyg7KeA65CY64qU7KeAIO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjMzOjA3Ljk3NjY5MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjMzOjA3Ljk3NjU4M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjMzOjA3Ljk3OTM1NloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MzM6MDcuOTc4ODI5WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIlt7J29yZGVyX2lkJzogJ08xMDInLCAnY3VzdG9tZXJfbmFtZSc6ICfsnbTrkZDrpqwnLCAnc3RhdHVzJzogJ3BlbmRpbmcnLCAnYW1vdW50JzogMTgwMDB9XVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOqzoOqwnSDrsojtmLjrp4wg67CU6r647Ja0IOuwmO2ZmCDtlokg7IiY7JmAIOygleugrCDqt5zsuZnsnYQg7ZmV7J247ZWp64uI64ukLlxuIiwKICAgICJhc3NlcnQgW3Jvd1tcIm9yZGVyX2lkXCJdIGZvciByb3cgaW4gcm93c10gPT0gW1wiTzEwMVwiLCBcIk8xMDNcIl1cbiIsCiAgICAicHJpbnQoZmluZF9jdXN0b21lcl9vcmRlcnMoZGF0YWJhc2UsIFwiQzAwMlwiKSlcbiIsCiAgICAiYXNzZXJ0IGxlbihmaW5kX2N1c3RvbWVyX29yZGVycyhkYXRhYmFzZSwgXCJDMDAyXCIpKSA9PSAxIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xMCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7YyoIOyerO2YhFxuIiwKICAgICJcbiIsCiAgICAi7J6F66ClIOusuOyekOyXtOydhCBTUUzsl5Ag7KeB7KCRIOu2meydtOuptCDsobDqsbTsnZgg65y77J20IOuwlOuAlCDsiJgg7J6I7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MzM6MDcuOTgwNDMwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MzM6MDcuOTgwMzM3WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MzM6MDcuOTgyODU4WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjozMzowNy45ODIzODdaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLrrLjsnpDsl7Qg6rKw7ZWpIOyhsO2ajCDtlok6IDNcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDrrLjsnpDsl7Qg6rKw7ZWp7J2AIOyeheugpSDsnbzrtoDrpbwgU1FMIOyhsOqxtOyLneycvOuhnCDtlbTshJ3tlZjqsowg66eM65Ot64uI64ukLlxuIiwKICAgICJ1bnNhZmVfaW5wdXQgPSBcIkMwMDEnIE9SIDE9MSAtLVwiXG4iLAogICAgImRiID0gc3FsaXRlMy5jb25uZWN0KGRhdGFiYXNlKVxuIiwKICAgICJ0cnk6XG4iLAogICAgIiAgICB1bnNhZmVfc3FsID0gZlwiU0VMRUNUICogRlJPTSBvcmRlcnMgV0hFUkUgY3VzdG9tZXJfaWQgPSAne3Vuc2FmZV9pbnB1dH0nXCJcbiIsCiAgICAiICAgIHVuc2FmZV9yb3dzID0gZGIuZXhlY3V0ZSh1bnNhZmVfc3FsKS5mZXRjaGFsbCgpXG4iLAogICAgImZpbmFsbHk6XG4iLAogICAgIiAgICBkYi5jbG9zZSgpXG4iLAogICAgInByaW50KFwi66y47J6Q7Je0IOqysO2VqSDsobDtmowg7ZaJOlwiLCBsZW4odW5zYWZlX3Jvd3MpKVxuIiwKICAgICJhc3NlcnQgbGVuKHVuc2FmZV9yb3dzKSA9PSAzIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xMiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsiJjsoJVcbiIsCiAgICAiXG4iLAogICAgIlNRTOydmCDrrLzsnYztkZwg7J6Q66as7ZGc7Iuc7J6Q7JmAIOqwkiDtipztlIzsnYQg67aE66as7ZW0IOyghOuLrO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDYsCiAgICJpZCI6ICJjZWxsLTEzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjMzOjA3Ljk4Mzg5MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjMzOjA3Ljk4Mzc5OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjMzOjA3Ljk4NzQyM1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MzM6MDcuOTg2ODU5WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJJbnRlZ3JpdHlFcnJvciDrtoDrqqgg7JeG64qUIOyjvOusuCDqsbDrtoBcbiIsCiAgICAgICLrp6TqsJzrs4DsiJgg7KGw7ZqMIO2WiTogMFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOunpOqwnOuzgOyImCDsobDtmozsmYAg7Jm4656YIO2CpCDqsJXsoJzrpbwg6rCB6rCBIOyLpOygnCDsmKTrpZjCt+qysOqzvOuhnCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgImFzc2VydCBmaW5kX2N1c3RvbWVyX29yZGVycyhkYXRhYmFzZSwgdW5zYWZlX2lucHV0KSA9PSBbXVxuIiwKICAgICJkYiA9IHNxbGl0ZTMuY29ubmVjdChkYXRhYmFzZSlcbiIsCiAgICAidHJ5OlxuIiwKICAgICIgICAgZGIuZXhlY3V0ZShcIlBSQUdNQSBmb3JlaWduX2tleXMgPSBPTlwiKVxuIiwKICAgICIgICAgdHJ5OlxuIiwKICAgICIgICAgICAgIHdpdGggZGI6XG4iLAogICAgIiAgICAgICAgICAgIGRiLmV4ZWN1dGUoXCJJTlNFUlQgSU5UTyBvcmRlcnMgVkFMVUVTICgnTzk5OScsJ0M5OTknLCdwYWlkJywxMDAwKVwiKVxuIiwKICAgICIgICAgZXhjZXB0IHNxbGl0ZTMuSW50ZWdyaXR5RXJyb3IgYXMgZXJyb3I6XG4iLAogICAgIiAgICAgICAgcHJpbnQodHlwZShlcnJvcikuX19uYW1lX18sIFwi67aA66qoIOyXhuuKlCDso7zrrLgg6rGw67aAXCIpXG4iLAogICAgIiAgICBlbHNlOlxuIiwKICAgICIgICAgICAgIHJhaXNlIEFzc2VydGlvbkVycm9yKFwi7Jm4656YIO2CpOqwgCDqsJXsoJzrkJjsp4Ag7JWK7JWY7Iq164uI64ukLlwiKVxuIiwKICAgICJmaW5hbGx5OlxuIiwKICAgICIgICAgZGIuY2xvc2UoKVxuIiwKICAgICJwcmludChcIuunpOqwnOuzgOyImCDsobDtmowg7ZaJOiAwXCIpXG4iLAogICAgInRlbXBfZGlyLmNsZWFudXAoKSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAicGFpcmVkIiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNiwKICAgImNvZGVfc2hhMjU2IjogImIwN2I4ZTYwMmJkYjk1NzcwZThhOGU1OTExMzM5NzI3YTQ4ODQyOGNkZTVmODQzMjRkYWZhZGFkMTI0YWFhNmMiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwNjozMzowOC4xMDQ2MTgrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjcwZThkZTIxZWFiYmIzODU2ZjdlOGI2NTU5ZTA4YmRmM2RjYmZhMDgyOWIwZDZhNzZmNDQyNWRlNWFmN2FhMDIiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>SQL로 조회 함수 만들기</h2>
+<p>SQLite에서 매개변수 SQL로 고객 주문을 조회합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p><code>import sqlite3</code>는 Python 표준 라이브러리의 SQLite 기능을 불러옵니다. <code>TemporaryDirectory()</code>는 실습 뒤 정리할 임시 폴더 객체를, <code>sqlite3.connect(경로)</code>는 데이터베이스 연결 객체를 반환합니다. <code>row_factory = sqlite3.Row</code>는 조회 행을 열 이름으로 읽게 합니다. <code>execute(&quot;PRAGMA foreign_keys = ON&quot;)</code>은 이 연결에서 외래 키 검사를 켭니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 임시 SQLite 파일과 행 이름 접근 방식을 준비합니다.
+import sqlite3
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+temp_dir = TemporaryDirectory()
+database = Path(temp_dir.name) / &quot;orders.db&quot;
+connection = sqlite3.connect(database)
+connection.row_factory = sqlite3.Row
+_ = connection.execute(&quot;PRAGMA foreign_keys = ON&quot;)</code></pre></div></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p><code>execute()</code>는 SQL 문장 하나를 실행하고 <code>executescript()</code>는 세미콜론으로 구분된 여러 문장을 실행합니다. <code>commit()</code>은 준비한 테이블과 행을 파일에 확정하고 <code>close()</code>는 연결을 닫습니다. SQL은 <code>SELECT → FROM/JOIN → WHERE → ORDER BY → LIMIT</code> 순서로 작성하지만 데이터베이스는 개념적으로 원천과 연결을 정한 뒤 행을 거르고 반환 열과 순서를 정합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 기본 키와 외래 키 제약을 가진 두 테이블을 만듭니다.
+connection.executescript(&quot;&quot;&quot;
+CREATE TABLE customers(customer_id TEXT PRIMARY KEY, name TEXT NOT NULL);
+CREATE TABLE orders(order_id TEXT PRIMARY KEY, customer_id TEXT NOT NULL, status TEXT NOT NULL,
+ amount INTEGER NOT NULL, FOREIGN KEY(customer_id) REFERENCES customers(customer_id));
+INSERT INTO customers VALUES (&#x27;C001&#x27;,&#x27;김하나&#x27;),(&#x27;C002&#x27;,&#x27;이두리&#x27;);
+INSERT INTO orders VALUES (&#x27;O101&#x27;,&#x27;C001&#x27;,&#x27;paid&#x27;,32000),(&#x27;O102&#x27;,&#x27;C002&#x27;,&#x27;pending&#x27;,18000),(&#x27;O103&#x27;,&#x27;C001&#x27;,&#x27;paid&#x27;,27000);
+&quot;&quot;&quot;)
+connection.commit()
+connection.close()
+print(&quot;준비된 주문: 3&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">준비된 주문: 3
+</pre></div>
+<div class="nb-markdown"><h3>중간 결과 관찰</h3>
+<p>함수 입력은 데이터베이스 경로와 고객 번호입니다. <code>orders o</code>와 <code>customers c</code>는 긴 테이블 이름에 각각 <code>o</code>, <code>c</code>라는 짧은 별칭을 붙입니다. 그래서 <code>o.order_id</code>와 <code>c.name</code>처럼 열의 출처를 표시할 수 있습니다. <code>USING(customer_id)</code>은 두 테이블에서 이름이 같은 <code>customer_id</code> 열의 값이 같은 행을 연결합니다. <code>with db:</code>는 정상 종료 시 진행 중인 트랜잭션을 커밋하고 예외가 발생하면 롤백하지만 연결을 닫지는 않습니다. 그래서 <code>finally</code>에서 <code>close()</code>를 따로 호출합니다. 블록 안에서는 <code>JOIN</code>, <code>WHERE</code>, <code>ORDER BY</code>를 적용하고 <code>db.execute(sql, (customer_id,))</code>의 값 튜플을 물음표와 분리해 전달합니다. 반환값은 <code>sqlite3.Row</code>를 사전으로 변환한 목록입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 경로와 고객 번호를 받아 매개변수 SQL 결과를 사전 목록으로 반환합니다.
+def find_customer_orders(database: str | Path, customer_id: str) -&gt; list[dict]:
+    sql = &quot;&quot;&quot;SELECT o.order_id, c.name AS customer_name, o.status, o.amount
+             FROM orders o JOIN customers c USING(customer_id)
+             WHERE customer_id = ? ORDER BY amount DESC, order_id&quot;&quot;&quot;
+    db = sqlite3.connect(database)
+    try:
+        db.row_factory = sqlite3.Row
+        with db:
+            return [dict(row) for row in db.execute(sql, (customer_id,))]
+    finally:
+        db.close()
+rows = find_customer_orders(database, &quot;C001&quot;)
+print(rows)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[{&#x27;order_id&#x27;: &#x27;O101&#x27;, &#x27;customer_name&#x27;: &#x27;김하나&#x27;, &#x27;status&#x27;: &#x27;paid&#x27;, &#x27;amount&#x27;: 32000}, {&#x27;order_id&#x27;: &#x27;O103&#x27;, &#x27;customer_name&#x27;: &#x27;김하나&#x27;, &#x27;status&#x27;: &#x27;paid&#x27;, &#x27;amount&#x27;: 27000}]
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 비교</h3>
+<p>SQL 문장과 처리 순서는 유지하고 고객 번호만 C001에서 C002로 바꿉니다. 반환 행이 한 건으로 줄어도 열 이름과 사전 목록이라는 반환 형식은 유지되는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 고객 번호만 바꾸어 반환 행 수와 정렬 규칙을 확인합니다.
+assert [row[&quot;order_id&quot;] for row in rows] == [&quot;O101&quot;, &quot;O103&quot;]
+print(find_customer_orders(database, &quot;C002&quot;))
+assert len(find_customer_orders(database, &quot;C002&quot;)) == 1</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[{&#x27;order_id&#x27;: &#x27;O102&#x27;, &#x27;customer_name&#x27;: &#x27;이두리&#x27;, &#x27;status&#x27;: &#x27;pending&#x27;, &#x27;amount&#x27;: 18000}]
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 준비 셀의 연결 설정과 데이터 확정 순서를 먼저 확인합니다. 조회 셀에서는 SQL의 물음표 수와 값의 수, 한 원소 튜플의 쉼표, 테이블 별칭, <code>USING</code>의 연결 열, <code>AS</code>로 정한 반환 키, <code>with</code>의 트랜잭션 처리와 <code>close()</code>의 연결 정리를 구분합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before는 <code>C001' OR 1=1 --</code>을 문자열 보간으로 SQL에 붙입니다. 입력의 <code>OR 1=1</code>이 조건식으로 해석되어 세 주문이 모두 조회됩니다. 이 결과는 SQL 주입(SQL injection)을 작은 예제로 재현합니다. After는 SQL을 고정하고 입력을 값 튜플로 전달합니다. 같은 문자열 전체가 고객 번호로 비교되므로 일치하는 행이 없습니다. 이어서 부모 고객이 없는 주문도 외래 키 제약으로 거부합니다.</p><section class="notebook" data-notebook="03-SQL로-조회-함수-만들기" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>입력 문자열을 SQL에 직접 붙이면 조건의 뜻이 바뀔 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 문자열 결합은 입력 일부를 SQL 조건식으로 해석하게 만듭니다.
+unsafe_input = &quot;C001&#x27; OR 1=1 --&quot;
+db = sqlite3.connect(database)
+try:
+    unsafe_sql = f&quot;SELECT * FROM orders WHERE customer_id = &#x27;{unsafe_input}&#x27;&quot;
+    unsafe_rows = db.execute(unsafe_sql).fetchall()
+finally:
+    db.close()
+print(&quot;문자열 결합 조회 행:&quot;, len(unsafe_rows))
+assert len(unsafe_rows) == 3</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">문자열 결합 조회 행: 3
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>SQL의 물음표 자리표시자와 값 튜플을 분리해 전달합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 매개변수 조회와 외래 키 강제를 각각 실제 오류·결과로 확인합니다.
+assert find_customer_orders(database, unsafe_input) == []
+db = sqlite3.connect(database)
+try:
+    db.execute(&quot;PRAGMA foreign_keys = ON&quot;)
+    try:
+        with db:
+            db.execute(&quot;INSERT INTO orders VALUES (&#x27;O999&#x27;,&#x27;C999&#x27;,&#x27;paid&#x27;,1000)&quot;)
+    except sqlite3.IntegrityError as error:
+        print(type(error).__name__, &quot;부모 없는 주문 거부&quot;)
+    else:
+        raise AssertionError(&quot;외래 키가 강제되지 않았습니다.&quot;)
+finally:
+    db.close()
+print(&quot;매개변수 조회 행: 0&quot;)
+temp_dir.cleanup()</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">IntegrityError 부모 없는 주문 거부
+매개변수 조회 행: 0
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>값은 매개변수로 전달하지만 테이블명이나 열 이름은 허용 목록에서 고릅니다. 자리표시자는 일반적으로 SQL 식별자를 대신하지 않습니다.</li><li>조회 결과가 없다는 사실과 데이터베이스 오류를 같은 빈 목록으로 처리하지 않습니다. 오류는 기록하거나 호출자에게 전달해야 원인을 구분할 수 있습니다.</li><li>연결 객체의 <code>with</code> 블록은 트랜잭션의 커밋과 롤백을 관리하며 연결을 자동으로 닫지 않습니다. 사용이 끝난 연결은 <code>close()</code>로 정리합니다.</li><li>실제 서비스에서는 읽기 전용 계정, 쿼리 시간 제한, 반환 행 수 제한도 함께 적용합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>SQL 절은 반환 열, 연결, 조건, 순서를 각각 명시합니다.</li><li>조회 행을 사전 목록으로 변환하면 후속 코드가 열 이름으로 값을 읽을 수 있습니다.</li><li>사용자 입력은 SQL 문자열에 붙이지 않고 매개변수로 전달합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 데이터베이스 대신 HTTP로 제공되는 REST 서비스에서 여러 페이지를 조회합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 결과 행을 금액 내림차순으로 정하는 SQL 절은 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> <code>ORDER BY amount DESC</code>입니다.</p><p class="quiz-q">2. JOIN이 필요한 이유는 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> 주문의 고객 번호를 고객 표의 이름과 결합하기 위해서입니다.</p><p class="quiz-q">3. 입력을 문자열 보간으로 붙였을 때 세 행이 반환된 이유는 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> 입력 일부가 SQL 조건식으로 해석되어 <code>OR 1=1</code>이 모든 행에서 참이 되었기 때문입니다.</p><p class="quiz-q">4. 빈 결과와 실행 오류를 구분해야 하는 이유는 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> 조건에 맞는 데이터가 없는 상태와 조회 자체가 실패한 상태는 대응 방법이 다르기 때문입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.python.org/3/library/sqlite3.html">Python 공식 문서 · sqlite3</a> · 2026-09-09 확인 · Python 3.12</li><li><a href="https://www.sqlite.org/lang_select.html">SQLite 공식 문서 · SELECT</a> · 2026-09-09 확인</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="02-관계형-테이블과-키.html">← 관계형 테이블과 키</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="04-REST와-페이지네이션.html">REST와 페이지네이션 →</a></span></div></div></body></html>

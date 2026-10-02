@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  vals["Ch 21 세 줄<br>걸린 초와 토큰 수<br>작은 값부터 줄 세움"]:::tool
+  p95["nearest_rank<br>백분위 95"]:::flow
+  p50["값 바꿔 보기<br>백분위 50"]:::flow
+  o95["자리 3<br>가장 큰 값"]:::measure
+  o50["자리 2<br>가운데 값"]:::measure
+  tbl["줄 수 표<br>열아홉 줄까지<br>자리가 줄 수와 같음<br>스무 줄에서 자리 19"]:::measure
+  vals --> p95
+  vals --> p50
+  p95 --> o95
+  p50 --> o50
+  p95 -.-> tbl

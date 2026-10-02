@@ -1,0 +1,194 @@
+[
+  {
+    "qid": "C01",
+    "gold": "LIB-001",
+    "dense": [
+      "LIB-004",
+      "LIB-001",
+      "LIB-003"
+    ],
+    "sparse": [
+      "LIB-004",
+      "LIB-003",
+      "LIB-001"
+    ],
+    "rrf": [
+      "LIB-004",
+      "LIB-001",
+      "LIB-003"
+    ],
+    "hits": {
+      "dense": true,
+      "sparse": true,
+      "rrf": true
+    }
+  },
+  {
+    "qid": "C02",
+    "gold": "LIB-002",
+    "dense": [
+      "LIB-003",
+      "LIB-004",
+      "LIB-001"
+    ],
+    "sparse": [
+      "LIB-002",
+      "LIB-003",
+      "LIB-004"
+    ],
+    "rrf": [
+      "LIB-003",
+      "LIB-004",
+      "LIB-001"
+    ],
+    "hits": {
+      "dense": false,
+      "sparse": true,
+      "rrf": false
+    }
+  },
+  {
+    "qid": "C03",
+    "gold": "LIB-003",
+    "dense": [
+      "LIB-003",
+      "ACC-002",
+      "LIB-004"
+    ],
+    "sparse": [
+      "LIB-003",
+      "ACC-003",
+      "LIB-004"
+    ],
+    "rrf": [
+      "LIB-003",
+      "ACC-002",
+      "LIB-004"
+    ],
+    "hits": {
+      "dense": true,
+      "sparse": true,
+      "rrf": true
+    }
+  },
+  {
+    "qid": "C04",
+    "gold": "FAC-001",
+    "dense": [
+      "FAC-001",
+      "FAC-004",
+      "LIB-001"
+    ],
+    "sparse": [
+      "FAC-001",
+      "ACC-001",
+      "FAC-002"
+    ],
+    "rrf": [
+      "FAC-001",
+      "ACC-001",
+      "LIB-001"
+    ],
+    "hits": {
+      "dense": true,
+      "sparse": true,
+      "rrf": true
+    }
+  },
+  {
+    "qid": "C05",
+    "gold": "FAC-003",
+    "dense": [
+      "FAC-003",
+      "LIB-002",
+      "FAC-004"
+    ],
+    "sparse": [
+      "FAC-003",
+      "ACC-004",
+      "LIB-001"
+    ],
+    "rrf": [
+      "FAC-003",
+      "LIB-002",
+      "ACC-004"
+    ],
+    "hits": {
+      "dense": true,
+      "sparse": true,
+      "rrf": true
+    }
+  },
+  {
+    "qid": "C06",
+    "gold": "ACC-001",
+    "dense": [
+      "ACC-001",
+      "ACC-003",
+      "LIB-002"
+    ],
+    "sparse": [
+      "ACC-001",
+      "LIB-001",
+      "LIB-003"
+    ],
+    "rrf": [
+      "ACC-001",
+      "ACC-003",
+      "LIB-001"
+    ],
+    "hits": {
+      "dense": true,
+      "sparse": true,
+      "rrf": true
+    }
+  },
+  {
+    "qid": "C07",
+    "gold": "ACC-002",
+    "dense": [
+      "ACC-002",
+      "ACC-004",
+      "ACC-003"
+    ],
+    "sparse": [
+      "ACC-002",
+      "LIB-004",
+      "LIB-001"
+    ],
+    "rrf": [
+      "ACC-002",
+      "ACC-004",
+      "LIB-004"
+    ],
+    "hits": {
+      "dense": true,
+      "sparse": true,
+      "rrf": true
+    }
+  },
+  {
+    "qid": "C08",
+    "gold": "ACC-003",
+    "dense": [
+      "ACC-003",
+      "ACC-001",
+      "FAC-002"
+    ],
+    "sparse": [
+      "ACC-003",
+      "FAC-002",
+      "LIB-001"
+    ],
+    "rrf": [
+      "ACC-003",
+      "FAC-002",
+      "ACC-001"
+    ],
+    "hits": {
+      "dense": true,
+      "sparse": true,
+      "rrf": true
+    }
+  }
+]

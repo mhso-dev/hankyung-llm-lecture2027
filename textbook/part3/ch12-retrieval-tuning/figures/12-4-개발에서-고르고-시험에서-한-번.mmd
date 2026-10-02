@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  base["36벌 가운데 고른 설정 한 벌<br>가중치 [0.0, 1.0] · 관련성 비중 1.0"]:::flow
+  subgraph dev["개발 15문항"]
+    d1["nDCG 자리 5<br>1.0"]:::measure
+  end
+  subgraph exam["시험 15문항"]
+    t1["nDCG 자리 5<br>0.9754"]:::measure
+  end
+  same["재현율 세 칸 1.0 · 부모 문서 정밀도 0.2<br>두 묶음에서 같은 값이라 가를 수 없음"]
+  base --> d1
+  base --> t1
+  d1 --> same
+  t1 --> same

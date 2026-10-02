@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph ka["기본값 async · 스레드 pending-a"]
+    direction TB
+    a1["실패 뒤<br>체크포인트 둘<br>다음 노드 flaky"]:::measure
+    a2["이어 간 뒤<br>체크포인트 셋<br>good 한 번 flaky 두 번"]:::measure
+    a1 --> a2
+  end
+  subgraph ke["exit · 스레드 exit-run"]
+    direction TB
+    e1["실패 뒤<br>체크포인트 하나<br>다음 노드 flaky"]:::measure
+    e2["이어 간 뒤<br>체크포인트 둘<br>good 한 번 flaky 두 번"]:::measure
+    e1 --> e2
+  end
+  cm["두 값 모두<br>표 writes에 good 줄 results<br>flaky 줄 __error__"]
+  ka ~~~ cm
+  ke ~~~ cm

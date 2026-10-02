@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph plan["그래프가 그린 구조"]
+    direction TB
+    c1["등록한 노드 다섯"]:::flow
+    c2["화살표가 있는 줄 여섯"]:::flow
+    c1 ~~~ c2
+  end
+  subgraph runs["이번 실행이 남긴 흔적"]
+    direction TB
+    d1["실행 흔적 칸의<br>이름 다섯"]:::measure
+    d2["마지막 이름<br>make_reply"]:::measure
+    d1 ~~~ d2
+  end
+  note["줄이 나온 차례는<br>실행 차례가 아님"]
+  plan ~~~ runs
+  runs ~~~ note

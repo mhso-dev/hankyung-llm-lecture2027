@@ -1,0 +1,8 @@
+{
+  "date": "2026-09-09",
+  "scope": "existing shared notebook execution/rendering/template tests",
+  "command": "uv run --project labs/part2/ch08-context-engineering --with nbclient==0.11.0 --with ipykernel==7.3.0 --with pillow python -m pytest -q textbook/_notebook/tests",
+  "result": "37 passed, 16 subtests passed in 5.25s",
+  "exit_code": 0,
+  "integration_scripts_ruff": "All checks passed!"
+}

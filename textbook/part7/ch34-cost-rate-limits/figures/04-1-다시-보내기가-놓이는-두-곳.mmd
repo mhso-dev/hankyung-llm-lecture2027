@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  retry["우리 코드 with_retry<br>시도 세 번까지"]:::flow
+  inner["모델 객체 안<br>openai 클라이언트<br>429면 두 번 더 보냄"]
+  server["늘 429를 보내는 연습용 서버<br>127.0.0.1"]:::tool
+  count["서버가 받은 요청 수<br>응답 머리 practice-count"]:::measure
+  retry -- 부를 때마다 --> inner
+  inner --> server
+  server --> count

@@ -1,0 +1,7 @@
+{
+  "environment_source": "ch06-langchain-start",
+  "command": "chapter .venv python -m pip --version",
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "[chapter .venv]/bin/python: No module named pip\n"
+}

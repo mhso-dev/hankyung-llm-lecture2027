@@ -1,0 +1,51 @@
+{
+  "part": 3,
+  "part_title": "Part 3 · RAG 시스템",
+  "chapter": "ch11-evaluation",
+  "title": "평가 기초 — 측정 가능한 검색 품질",
+  "hours": "총 16h · 강의 6h · 실습 10h",
+  "objectives": [
+    "질문 30개와 정답 문서 ID로 검색 평가셋을 만들 수 있습니다.",
+    "Recall@50과 Precision@5와 nDCG@5를 직접 계산하고 함께 해석할 수 있습니다.",
+    "난이도와 갈래로 조건별 평균을 내고 오류 이름 셋으로 실패한 질문을 가를 수 있습니다.",
+    "설정·지표·날짜·지표 규칙 이름을 담은 실행 기록을 남기고 두 실행을 견줄 수 있습니다."
+  ],
+  "lab_path": "labs/part3/ch11-evaluation",
+  "sections": [
+    {
+      "slug": "01-질의셋과-정답-문서-ID",
+      "title": "질의셋과 정답 문서 ID",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-Recall-at-50",
+      "title": "Recall at 50",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-Precision-at-5",
+      "title": "Precision at 5",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-nDCG-at-5",
+      "title": "nDCG at 5",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-조건별-평가와-오류-분류",
+      "title": "조건별 평가와 오류 분류",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-실험-로그와-자동-실행",
+      "title": "실험 로그와 자동 실행",
+      "format": "experiment"
+    },
+    {
+      "slug": "07-평가-기초-실습",
+      "title": "평가 기초 실습: 자르는 자리를 바꿔 두 실행 견주기",
+      "format": "experiment"
+    }
+  ]
+}

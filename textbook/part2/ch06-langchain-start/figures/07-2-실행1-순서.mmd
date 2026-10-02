@@ -1,0 +1,16 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant NB as 노트북 반복문
+  participant CP as card_path
+  participant MI as gpt-5.4-mini
+  NB->>CP: 질문 1 with_fallbacks 카드
+  CP->>MI: 요청 · timeout 30초
+  MI-->>CP: 원본 답 AIMessage
+  CP-->>NB: 결과 딕셔너리 raw · parsed
+  Note over NB,CP: make_card_record · 입력 190 · 출력 64<br>1.41초 · 0.0004305달러
+  NB->>CP: 질문 2 usage_metadata 카드
+  CP->>MI: 요청 · timeout 30초
+  MI-->>CP: 원본 답 AIMessage
+  CP-->>NB: 결과 딕셔너리 raw · parsed
+  Note over NB,CP: make_card_record · 입력 188 · 출력 57<br>1.15초 · 0.0003975달러
+  Note over NB,MI: 반복이 끝난 뒤 출력<br>응답한 모델 gpt-5.4-mini-2026-03-17 두 줄

@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  t["하위 질문 두 줄"]:::tool
+  s["하위 질문마다 거리 검색"]:::flow
+  a["첫 자리 문서 FAC-003"]:::measure
+  b["첫 자리 문서 ACC-003"]:::measure
+  u["겹치는 문서 빼기"]:::flow
+  r["근거 문서 목록에 문서 둘"]:::measure
+  t --> s
+  s --> a
+  s --> b
+  a --> u
+  b --> u
+  u --> r

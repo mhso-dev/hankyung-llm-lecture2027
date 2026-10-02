@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  kind["모델이 썼다고 정한 종류 이름<br>환불 · 주소 변경"]:::tool
+  pick["pick_next_step<br>코드의 if가 다음 단계를 고름"]:::flow
+  r1["환불 안내 찾기<br>종류 이름 환불"]:::measure
+  r2["배송 조회<br>이번에 고르지 않음"]
+  r3["상담원 연결<br>종류 이름 주소 변경"]:::measure
+  rec["사례 5 기록<br>모델이 한 단계 둘<br>모델이 고른 단계 없음<br>구조 워크플로우"]:::measure
+  kind --> pick
+  pick -.-> r1
+  pick -.-> r2
+  pick -.-> r3
+  r2 ~~~ rec

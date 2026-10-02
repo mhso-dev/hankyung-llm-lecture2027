@@ -1,0 +1,25 @@
+flowchart TB
+  %% classes
+  subgraph D1[스레드 desk-1]
+    direction LR
+    subgraph A[첫 차례]
+      direction TB
+      a1["다른 도서관<br>책을 묻는 글"]:::tool
+      a2["실행 흔적<br>loan_desk<br>interlibrary_desk<br>담당 칸 저장<br>interlibrary_desk"]:::measure
+      a1 --> a2
+    end
+    subgraph B[둘째 차례]
+      direction TB
+      b1["며칠 뒤에<br>받는지 묻는 글"]:::tool
+      b2["이번 차례에<br>지난 노드<br>interlibrary_desk<br>상호대차 담당이 답함"]:::measure
+      b1 --> b2
+    end
+    A -->|저장된 담당 칸| B
+  end
+  subgraph D2[스레드 desk-2]
+    direction TB
+    c1["같은 둘째 글"]:::tool
+    c2["실행 흔적<br>loan_desk<br>대출 규정 담당이 답함"]:::measure
+    c1 --> c2
+  end
+  D1 ~~~ D2

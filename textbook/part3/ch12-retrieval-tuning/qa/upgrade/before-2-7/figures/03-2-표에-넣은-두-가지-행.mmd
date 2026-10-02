@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  queries["질문 8개<br>01절과 같은 자료"]:::tool
+  filler["채움 행 400개<br>질문마다 50개"]:::tool
+  docs["교육용 문서 12개<br>범주 세 가지"]:::tool
+  vectors["문서 벡터 12개<br>숫자 256개씩"]:::tool
+  table["표 ch12_core_filter<br>412행"]:::tool
+  index["HNSW 색인<br>vector_cosine_ops"]:::tool
+  counts["범주별 행 수<br>library 4 · other 400"]:::measure
+  queries -->|규칙으로 벡터 만들기| filler
+  docs -->|임베딩 요청 1번| vectors
+  filler --> table
+  vectors --> table
+  table -->|CREATE INDEX| index
+  index --> counts

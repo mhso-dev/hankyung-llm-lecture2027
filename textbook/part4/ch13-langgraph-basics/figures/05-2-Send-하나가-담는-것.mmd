@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  send["Send 하나"]
+  name["갈 노드 이름<br>inspect_document"]
+  arg["그 실행에만 넘길 상태<br>문서 하나와 자리 번호"]:::tool
+  node["노드가 받는 상태<br>문서 하나와 자리 번호"]:::tool
+  made["노드가 낸 갱신<br>결과 한 줄과 흔적 하나"]:::flow
+  send --> name
+  send --> arg
+  arg --> node
+  node --> made

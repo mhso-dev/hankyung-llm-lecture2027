@@ -1,0 +1,24 @@
+flowchart TB
+  %% classes
+  subgraph qa["대출 질문"]
+    direction TB
+    a1["규칙 갈래<br>요청 한 번<br>인자 대출<br>입력 토큰 72"]:::measure
+    a2["모델 선택<br>요청 두 번<br>인자 대출<br>입력 토큰 378"]:::measure
+    a1 ~~~ a2
+  end
+  subgraph qb["인사 질문"]
+    direction TB
+    b1["규칙 갈래<br>요청 한 번<br>도구 없음<br>입력 토큰 18"]:::measure
+    b2["모델 선택<br>요청 한 번<br>도구 없음<br>입력 토큰 160"]:::measure
+    b1 ~~~ b2
+  end
+  subgraph qc["운영·연체 질문"]
+    direction TB
+    c1["규칙 갈래<br>요청 한 번<br>인자 운영<br>입력 토큰 75"]:::measure
+    c2["모델 선택<br>요청 세 번<br>인자 운영 다음 연체<br>입력 토큰 638"]:::measure
+    c1 ~~~ c2
+  end
+  sum["세 질문 합<br>규칙 갈래 요청 세 번<br>입력 토큰 165<br>모델 선택 요청 여섯 번<br>입력 토큰 1176"]:::measure
+  qa ~~~ sum
+  qb ~~~ sum
+  qc ~~~ sum

@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 문자 수로만 크기를 맞춤"]
+    direction LR
+    b1["같은 글<br>905자"]:::tool
+    b2["문자 수 200자를<br>목표로 나눔"]:::flow
+    b3["문서 청크 1·4·6이<br>한도 150을 넘음<br>190 · 155 · 177조각"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 조각 수를 목표로 삼음"]
+    direction LR
+    a1["같은 글<br>905자"]:::tool
+    a2["조각 수 100을<br>목표로 나눔"]:::flow
+    a3["문서 청크 13개<br>가장 큰 것 92조각"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  note1["한도 150은 사람이 정한 값입니다<br>끊을 자리 순서는 두 나누기가 같습니다"]
+  BEFORE ~~~ AFTER
+  AFTER ~~~ note1

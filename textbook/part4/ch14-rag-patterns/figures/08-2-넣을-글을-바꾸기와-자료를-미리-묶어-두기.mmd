@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  both["같은 문서 열두 건과<br>같은 질문"]:::tool
+  old["앞 절 · 검색에 넣을 글 바꾸기<br>이 노트북에서 실행하지 않음"]
+  now["이 절 · 질문을 받기 전에<br>자료를 갈래로 묶어 두기"]:::flow
+  once["요약 셋 만들기는 한 번만"]:::flow
+  after["질문을 받은 뒤에는<br>거리 재기만"]:::flow
+  both --> old
+  both --> now
+  now --> once
+  once --> after

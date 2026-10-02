@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  rows["요청 기록 420줄<br>대화 번호 · 요청 차례<br>예상 비용<br>요청 수와 비용은<br>이 절에서 정한 값"]:::tool
+  group["cost_by_conversation<br>대화 번호가 같은 줄끼리 더함"]:::flow
+  costs["대화당 비용 목록<br>대화 백 개"]:::measure
+  pct["nearest_rank<br>작은 값부터 줄 세워<br>가장 가까운 자리의 값"]:::flow
+  avg["average<br>모두 더해 백으로 나눔"]:::flow
+  res1["p50 0.003<br>p95 0.006<br>p99 0.025"]:::measure
+  res2["평균 0.0042"]:::measure
+  rows --> group
+  group --> costs
+  costs --> pct
+  costs -- 견주려고 --> avg
+  pct --> res1
+  avg --> res2

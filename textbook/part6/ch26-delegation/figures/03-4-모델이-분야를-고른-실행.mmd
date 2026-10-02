@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  q["3절과 같은 문의 글"]:::tool
+  c["classify_by_model<br>with_structured_output<br>include_raw=True"]:::flow
+  m["분류 모델 gpt-5.4-mini<br>요청 1"]:::model
+  x["interlibrary_desk<br>전문 에이전트 부르지 않음"]
+  subgraph picked ["두 분야를 고른 실행"]
+    direction LR
+    l["loan_desk<br>전문 에이전트 요청 1"]:::model
+    f["facility_desk<br>전문 에이전트 요청 1"]:::model
+  end
+  r["모델 요청 수 3<br>분류 1 + 고른 분야 수<br>답 칸 줄 수와 고른 분야 수가 같음 True"]:::measure
+  q --> c
+  c -->|분류 요청| m
+  m -.->|고른 이름마다 Send| l
+  m -.->|고른 이름마다 Send| f
+  m -.- x
+  l --> r
+  f --> r

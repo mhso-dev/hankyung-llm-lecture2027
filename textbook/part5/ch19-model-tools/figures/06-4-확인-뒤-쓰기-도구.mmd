@@ -1,0 +1,8 @@
+flowchart TB
+  %% classes
+  c["바꾼 값<br>person_confirmed True"]:::tool
+  s["명세 둘<br>get_order_by_id<br>cancel_order"]:::measure
+  m["gpt-5.4-mini<br>O101 주문을 취소해 줘."]:::model
+  run["cancel_order 실행<br>도구 메시지<br>결과 상태 success<br>cancel_requested true"]:::measure
+  csv["CSV의 O101 상태 paid<br>흉내라 파일은 그대로"]:::measure
+  c --> s --> m --> run --> csv

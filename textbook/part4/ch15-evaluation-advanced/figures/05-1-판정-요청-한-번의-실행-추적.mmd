@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  case["사례 Q002<br>근거 문서와 답"]:::tool
+  s1["1단계 요청 글 만들기<br>build_judge_prompt"]:::flow
+  s2["2단계 모델 요청<br>gpt-5.4-mini invoke"]:::model
+  s3["3단계 JSON 읽기<br>json.loads"]:::flow
+  trace["실행 추적 한 건<br>단계 기록 셋<br>전체 걸린 초<br>입력 · 캐시 입력 · 출력<br>토큰 수"]:::measure
+  note["단계 앞뒤 시각 넷을<br>한 셀 안에서 적음<br>time.perf_counter"]
+  case --> s1
+  s1 --> s2
+  s2 --> s3
+  s3 --> trace
+  s2 -- 사용량 --> trace
+  s1 ~~~ note

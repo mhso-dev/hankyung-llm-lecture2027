@@ -1,0 +1,15 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant P as 노트북 코드
+  participant M as gpt-5.4-mini
+  participant T as 도구<br>get_order_by_id
+  P->>M: 요청 1 · 질문과 명세 · 여럿 담기 True
+  M-->>P: 도구 호출 요청 둘 · O101 · O103
+  P->>T: 첫 요청 실행 · O101
+  T-->>P: 도구 메시지 · 금액 32000
+  P->>T: 둘째 요청 실행 · O103
+  T-->>P: 도구 메시지 · 금액 27000
+  Note over P: 호출 ID 짝이 맞음 True
+  P->>M: 요청 2 · 질문 · 첫 응답 · 도구 메시지 둘
+  M-->>P: 최종 답 · 도구 호출 요청 0건
+  Note over P: 답 글에 32000 · 27000 있음

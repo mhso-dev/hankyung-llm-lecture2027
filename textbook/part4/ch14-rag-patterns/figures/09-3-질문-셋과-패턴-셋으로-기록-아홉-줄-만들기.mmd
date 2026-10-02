@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  quest["질문 셋<br>C02 · C05 · C06"]:::tool
+  drive["질문마다 패턴 셋을<br>차례로 실행"]:::flow
+  rows["기록 아홉 줄<br>자리와 요청 수"]:::measure
+  count["요청 수를 더해<br>미리 적어 둔 값과 견주기"]:::flow
+  mark["문서와 질문의<br>지문 만들기"]:::flow
+  saved["산출 파일 한 개<br>아홉 줄"]:::measure
+  quest --> drive
+  drive --> rows
+  rows --> count
+  count --> mark
+  mark --> saved

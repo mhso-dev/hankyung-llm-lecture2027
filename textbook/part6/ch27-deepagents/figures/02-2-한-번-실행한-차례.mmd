@@ -1,0 +1,16 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant U as 우리 코드
+  participant G as Deep Agent 그래프
+  box Lavender
+  participant M as 모델<br>gpt-5.4-mini
+  end
+  U->>G: 질문 한 줄로 invoke
+  Note over G: 기록 훅<br>도구 아홉 · execute 없음
+  G->>M: 요청 1
+  M-->>G: 도구 요청 lookup_rule
+  Note over G: 도구 실행 노드<br>ToolMessage 결과 상태 success
+  Note over G: 기록 훅<br>도구 아홉 · execute 없음
+  G->>M: 요청 2
+  M-->>G: 도구 요청 없음
+  G-->>U: 결과 메시지 넷

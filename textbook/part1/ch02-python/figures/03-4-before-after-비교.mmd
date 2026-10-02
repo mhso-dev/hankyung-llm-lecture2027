@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · backup = cart"]
+    direction LR
+    bc["이름 cart"]:::flow --> bl["목록 하나<br>키보드 · 마우스 · 헤드셋"]:::tool
+    bb["이름 backup"]:::flow --> bl
+    bl --> br["같은 목록인가 True<br>백업 그대로인가 False"]:::fail
+  end
+  subgraph AFTER["After · backup = cart.copy()"]
+    direction LR
+    ac["이름 cart"]:::flow --> al["원래 목록<br>키보드 · 마우스 · 헤드셋"]:::tool
+    ab["이름 backup"]:::flow --> an["copy()로 만든 새 목록<br>키보드 · 마우스"]:::tool
+    al --> ar["같은 목록인가 False<br>백업 그대로인가 True"]:::measure
+    an --> ar
+  end
+  BEFORE ~~~ AFTER

@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  docs["교육용 문서 12개"]:::tool
+  quest["질문 8개"]:::tool
+  policy["같은 정책으로<br>검색 낱말 만들기"]:::flow
+  dterms["문서마다 검색 낱말 목록"]:::tool
+  qterms["질문의 검색 낱말 목록"]:::tool
+  bm["BM25가 문서 12개 점수 계산"]:::flow
+  top["점수가 큰 순서로 상위 3개"]:::measure
+  docs --> policy
+  quest --> policy
+  policy --> dterms
+  policy --> qterms
+  dterms --> bm
+  qterms --> bm
+  bm --> top

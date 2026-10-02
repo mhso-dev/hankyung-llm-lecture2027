@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  tr["답만 틀린 궤적과 기준 궤적<br>메시지 여섯씩"]:::tool
+  fm["_format_inputs<br>설치판 함수"]
+  tx["궤적 글 둘<br>user·assistant·tool 태그"]:::measure
+  hd["판정 머리글<br>판정 기준 네 줄과<br>궤적 글 자리 둘"]
+  rq["요청 글 하나<br>글자 수 1694"]:::measure
+  jd["평가 모델<br>이 칸에서는 부르지 않음"]
+  rs["결과 딕셔너리<br>key·score<br>comment·metadata<br>설치판 소스로 본 모양"]
+  tr --> fm
+  fm --> tx
+  tx --> rq
+  hd --> rq
+  rq -.-> jd
+  jd -.-> rs
+  style jd stroke-dasharray: 5 5

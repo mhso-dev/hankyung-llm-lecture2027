@@ -1,0 +1,16 @@
+sequenceDiagram
+  participant A as 미들웨어 A
+  participant B as 미들웨어 B
+  participant M as 모델
+  Note over A: 1 A before_model
+  Note over B: 2 B before_model
+  Note over A: 3 A wrap 시작
+  A->>B: 안쪽으로
+  Note over B: 4 B wrap 시작
+  B->>M: 모델 호출
+  M-->>B: 응답
+  Note over B: 5 B wrap 끝
+  B-->>A: 바깥으로
+  Note over A: 6 A wrap 끝
+  Note over B: 7 B after_model
+  Note over A: 8 A after_model

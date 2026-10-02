@@ -1,0 +1,29 @@
+<svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 455" width="720" height="455" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-04-recovery-tools desc-04-recovery-tools">
+<title id="title-04-recovery-tools">상황에 맞는 Git 도구 선택</title>
+<desc id="desc-04-recovery-tools">세 행은 서로 다른 상황입니다. 공개 변경 취소에는 revert, 로컬 참조 복구에는 reflog, 두 작업 폴더 사용에는 worktree를 선택합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="720" height="455" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">상황에 맞는 Git 도구 선택</tspan></text>
+<rect x="30" y="90" width="295" height="65" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="177.5" y="122.5" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="177.5" dy="0.0">공유한 변경을 취소할 때</tspan></text>
+<rect x="410" y="90" width="280" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="550.0" y="111.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="550.0" dy="0.0">revert</tspan><tspan x="550.0" dy="21.6">취소하는 새 커밋</tspan></text>
+<polyline points="325,122 410,122" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="30" y="205" width="295" height="65" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="177.5" y="237.5" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="177.5" dy="0.0">로컬 커밋을 다시 찾을 때</tspan></text>
+<rect x="410" y="205" width="280" height="65" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="550.0" y="226.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="550.0" dy="0.0">reflog</tspan><tspan x="550.0" dy="21.6">참조 이동 기록 확인</tspan></text>
+<polyline points="325,237 410,237" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="30" y="320" width="295" height="65" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="177.5" y="352.5" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="177.5" dy="0.0">두 브랜치를 함께 작업할 때</tspan></text>
+<rect x="410" y="320" width="280" height="65" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="550.0" y="341.7" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="550.0" dy="0.0">worktree</tspan><tspan x="550.0" dy="21.6">브랜치별 작업 폴더</tspan></text>
+<polyline points="325,352 410,352" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<text x="360.0" y="429.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg>

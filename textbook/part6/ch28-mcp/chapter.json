@@ -1,0 +1,47 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 개발",
+  "chapter": "ch28-mcp",
+  "title": "MCP — Model Context Protocol",
+  "hours": "총 16h · 강의 5h · 실습 11h",
+  "objectives": [
+    "서버 파일의 MCP 서버에 메모리로 연결해 판 번호·기능 목록·도구·자료·메시지 틀을 읽고, 기능 목록은 받는 요청의 종류를 알리는 값이라 등록된 항목이나 부를 권한이 아님을 설명할 수 있습니다.",
+    "서버 객체에 데코레이터 줄로 도구를 붙이고, 매개변수 힌트가 만든 입력 형식이 잘못된 값을 몸통 전에 거절하는지 힌트 없는 도구와 견줄 수 있습니다.",
+    "서버를 자식 프로세스(stdio)와 이 컴퓨터 안의 HTTP 서버로 띄워, 넘기는 환경 변수와 접근 토큰의 범위가 서버가 받는 값과 보이는 도구를 어떻게 가르는지 설명할 수 있습니다.",
+    "클래스 MCPAdapter로 MCP 도구를 LangChain 도구로 바꿔 에이전트에 붙이고, 도구 정의가 첫 요청 입력 토큰에 더하는 몫을 조건을 하나씩 바꿔 셀 수 있습니다.",
+    "실습에서 서버가 알린 도구 셋 가운데 에이전트에 붙이는 수 하나만 바꾼 두 실행을, 요청마다 입력 토큰으로 견줄 수 있습니다."
+  ],
+  "lab_path": "labs/part6/ch28-mcp",
+  "sections": [
+    {
+      "slug": "01-MCP-구조와-capability-협상",
+      "title": "MCP 구조와 capability 협상",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-FastMCP-로컬-서버-제작",
+      "title": "FastMCP 로컬 서버 제작",
+      "format": "paired"
+    },
+    {
+      "slug": "03-stdio와-원격-전송-권한-경계",
+      "title": "stdio와 원격 전송·권한 경계",
+      "format": "paired"
+    },
+    {
+      "slug": "04-LangChain-MCP-클라이언트-연동",
+      "title": "LangChain MCP 클라이언트 연동",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-도구-정의와-첫-호출-토큰",
+      "title": "도구 정의와 첫 호출 토큰",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-MCP-실습",
+      "title": "MCP 실습: 에이전트에 붙이는 MCP 도구를 하나에서 셋으로 늘리기",
+      "format": "experiment"
+    }
+  ]
+}

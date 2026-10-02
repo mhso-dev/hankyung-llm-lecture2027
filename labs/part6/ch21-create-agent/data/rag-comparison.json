@@ -1,0 +1,107 @@
+[
+  {
+    "qid": "C01",
+    "gold_doc_id": "LIB-001",
+    "fixed_answer": "일반 도서는 **14일 동안** 대출할 수 있습니다.  \n전자책은 **7일**입니다.",
+    "agent_answer": "일반 도서는 **14일 동안 대출**할 수 있습니다.  \n예약자가 없으면 **한 번 연장**도 가능합니다.",
+    "fixed_doc_ids": [
+      "LIB-004",
+      "LIB-001",
+      "LIB-003"
+    ],
+    "agent_trace": [
+      {
+        "query": "책 대출 기간",
+        "doc_ids": [
+          "LIB-001",
+          "LIB-004",
+          "ACC-002"
+        ]
+      }
+    ],
+    "tool_calls": 1,
+    "fixed_usage": {
+      "model_calls": 1,
+      "input_tokens": 178,
+      "output_tokens": 28
+    },
+    "agent_usage": {
+      "model_calls": 2,
+      "input_tokens": 632,
+      "output_tokens": 52
+    },
+    "agent_latency_s": 1.829,
+    "fixed_supported": true,
+    "agent_supported": true
+  },
+  {
+    "qid": "C05",
+    "gold_doc_id": "FAC-003",
+    "fixed_answer": "토요일 자료실은 **오후 5시에 폐관**합니다.",
+    "agent_answer": "토요일 자료실은 **오후 5시에 폐관**합니다.",
+    "fixed_doc_ids": [
+      "FAC-003",
+      "LIB-002",
+      "FAC-004"
+    ],
+    "agent_trace": [
+      {
+        "query": "토요일 자료실 폐관 시각",
+        "doc_ids": [
+          "FAC-003",
+          "LIB-002",
+          "ACC-004"
+        ]
+      }
+    ],
+    "tool_calls": 1,
+    "fixed_usage": {
+      "model_calls": 1,
+      "input_tokens": 186,
+      "output_tokens": 19
+    },
+    "agent_usage": {
+      "model_calls": 2,
+      "input_tokens": 638,
+      "output_tokens": 43
+    },
+    "agent_latency_s": 1.36,
+    "fixed_supported": true,
+    "agent_supported": true
+  },
+  {
+    "qid": "C07",
+    "gold_doc_id": "ACC-002",
+    "fixed_answer": "아니요. 자료에 따르면 **휴학생은 전자자료를 원격으로 이용할 수 없습니다**.  \n대신 **방문 열람과 일반 도서 대출은 가능합니다**.",
+    "agent_answer": "휴학생은 **원격으로 전자자료를 이용할 수 없습니다**.  \n다만 **방문 열람과 일반 도서 대출은 가능합니다**.",
+    "fixed_doc_ids": [
+      "ACC-002",
+      "ACC-004",
+      "ACC-003"
+    ],
+    "agent_trace": [
+      {
+        "query": "휴학 원격 전자자료",
+        "doc_ids": [
+          "ACC-002",
+          "ACC-004",
+          "ACC-003"
+        ]
+      }
+    ],
+    "tool_calls": 1,
+    "fixed_usage": {
+      "model_calls": 1,
+      "input_tokens": 185,
+      "output_tokens": 45
+    },
+    "agent_usage": {
+      "model_calls": 2,
+      "input_tokens": 638,
+      "output_tokens": 61
+    },
+    "agent_latency_s": 2.003,
+    "fixed_supported": true,
+    "agent_supported": true
+  }
+]

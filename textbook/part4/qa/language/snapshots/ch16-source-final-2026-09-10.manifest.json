@@ -1,0 +1,38 @@
+{
+  "snapshot": "ch16-source-final-2026-09-10.txt",
+  "sha256": "e949aac281b198e2cdf2e2420c7f362c80efcd744feff9a20b6244e342e67695",
+  "sections": 6,
+  "files": [
+    {
+      "path": "textbook/part4/ch16-guardrails/_src/01-입출력-출처-검증.html",
+      "source_sha256": "8c1ac06bb0616b2984be6d9c0b66b73cc3889498c65670538dccecca1a65825c",
+      "prose_characters": 2101
+    },
+    {
+      "path": "textbook/part4/ch16-guardrails/_src/02-PII-마스킹.html",
+      "source_sha256": "0d418827e2cc9accfffc1db8773380afc0baf2a8f1ff6cf01ff2f97698f5a840",
+      "prose_characters": 2156
+    },
+    {
+      "path": "textbook/part4/ch16-guardrails/_src/03-히스토리-트리밍과-요약.html",
+      "source_sha256": "630d985ca971eff77b477e07e9b8ebc8644a44177c8d1df7256cdbe5810d5d81",
+      "prose_characters": 2187
+    },
+    {
+      "path": "textbook/part4/ch16-guardrails/_src/04-호출-한도와-비용-상한.html",
+      "source_sha256": "491197b3b3a7d54982387b9b51b7d0c3e07b594bdd948fbb5278d075b813b610",
+      "prose_characters": 2136
+    },
+    {
+      "path": "textbook/part4/ch16-guardrails/_src/05-재시도-폴백과-감사-로그.html",
+      "source_sha256": "94366da71408bb4ce4ec7cfac467b7e8d9b60755c4862c00a51adb7784612e1e",
+      "prose_characters": 2468
+    },
+    {
+      "path": "textbook/part4/ch16-guardrails/_src/06-문서-프롬프트-인젝션과-통합.html",
+      "source_sha256": "6958c041d1007899e08ed096ac39c0e0eb38eb2eb807acef63f01805139a0979",
+      "prose_characters": 2823
+    }
+  ],
+  "note": "Read-only extraction. Code, preformatted output, scripts, styles, and notebook placeholders are excluded."
+}

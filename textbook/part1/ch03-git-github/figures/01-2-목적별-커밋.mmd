@@ -1,0 +1,13 @@
+flowchart LR
+  %% classes
+  subgraph HIST["저장소 이력 · 위가 먼저 만든 커밋"]
+    direction TB
+    C1["커밋 1 · chore<br>생성 파일 추적 제외<br>.gitignore · 1 file changed"]:::tool
+    C2["커밋 2 · feat<br>주문 요약 추가<br>app.py · 1 file changed"]:::tool
+    C3["커밋 3 · fix<br>주문 건수 수정<br>app.py 2건 → 3건"]:::tool
+    C1 --> C2 --> C3
+  end
+  subgraph WT["작업 폴더에만 있음"]
+    ENV["상태 표시 !! .env<br>파일은 작업 폴더에만 있음"]:::measure
+  end
+  HIST ~~~ WT

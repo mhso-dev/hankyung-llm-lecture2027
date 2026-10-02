@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  pair["사례 Q002의 질문과 두 답<br>짧은 답 43자 · 긴 답 86자"]:::tool
+  build["build_pair_prompt<br>받은 차례대로<br>첫째 글 · 둘째 글 자리에"]:::flow
+  judge["평가 모델 gpt-5.4-mini<br>머리글 rag-pair-v1.0.0<br>요청 글 280자"]:::model
+  pick["받은 판정<br>자리 번호 pick 1"]:::measure
+  name["picked_name<br>자리 번호를 글 이름으로"]:::flow
+  result["첫째 차례에서 고른 글<br>짧은 답"]:::measure
+  pair --> build
+  build --> judge
+  judge --> pick
+  pick --> name
+  name --> result

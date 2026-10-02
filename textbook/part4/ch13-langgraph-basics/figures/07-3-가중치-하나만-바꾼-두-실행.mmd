@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph run1["가중치 1.0과 1.0을 넣은 실행"]
+    direction TB
+    a1["넣은 가중치<br>1.0과 1.0"]:::tool
+    a2["부모 문서 차례<br>E01 하나"]:::measure
+    a3["답에 대출 권수와<br>기간이 있음"]:::measure
+    a1 ~~~ a2
+    a2 ~~~ a3
+  end
+  subgraph run2["가중치 1.0과 0.0을 넣은 실행"]
+    direction TB
+    b1["넣은 가중치<br>1.0과 0.0"]:::tool
+    b2["부모 문서 차례<br>E01과 E02 둘"]:::measure
+    b3["답은 자료에서<br>찾지 못했다고 함"]:::measure
+    b1 ~~~ b2
+    b2 ~~~ b3
+  end
+  same["두 실행 모두<br>같은 그래프와<br>실행 흔적 다섯"]
+  run1 ~~~ run2
+  run2 ~~~ same

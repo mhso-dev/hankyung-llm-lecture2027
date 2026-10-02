@@ -1,0 +1,44 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "ch11-evaluation",
+  "elements": [
+    {
+      "id": "box0",
+      "type": "rectangle",
+      "x": 30,
+      "y": 55,
+      "width": 170,
+      "height": 80,
+      "strokeColor": "#4f46e5",
+      "backgroundColor": "#eef2ff",
+      "label": "관련도"
+    },
+    {
+      "id": "box1",
+      "type": "rectangle",
+      "x": 240,
+      "y": 55,
+      "width": 170,
+      "height": 80,
+      "strokeColor": "#047857",
+      "backgroundColor": "#ecfdf5",
+      "label": "순위 할인"
+    },
+    {
+      "id": "box2",
+      "type": "rectangle",
+      "x": 450,
+      "y": 55,
+      "width": 170,
+      "height": 80,
+      "strokeColor": "#c2410c",
+      "backgroundColor": "#fff7ed",
+      "label": "0~1 정규화"
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}

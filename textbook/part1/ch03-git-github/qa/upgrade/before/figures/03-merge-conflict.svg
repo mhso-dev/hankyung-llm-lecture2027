@@ -1,0 +1,28 @@
+<svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 695" width="720" height="695" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-03-merge-conflict desc-03-merge-conflict">
+<title id="title-03-merge-conflict">팀 저장소의 병합 충돌 해결</title>
+<desc id="desc-03-merge-conflict">두 작업자가 같은 줄을 다르게 수정하면 원격 push가 거부되고 병합 충돌을 정책 자료에 맞춰 해결합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="720" height="695" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">팀 저장소의 병합 충돌 해결</tspan></text>
+<rect x="80" y="75" width="560" height="76" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="360.0" y="101.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">공통 main</tspan><tspan x="360.0" dy="23.0">출고 정책 기록</tspan></text>
+<polyline points="360,151 360,185" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="185" width="560" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="211.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">Alice 변경</tspan><tspan x="360.0" dy="23.0">14시 이전 오늘 출고</tspan></text>
+<polyline points="360,261 360,295" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="295" width="560" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="321.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">Bob 변경</tspan><tspan x="360.0" dy="23.0">내일 출고</tspan></text>
+<polyline points="360,371 360,405" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="405" width="560" height="76" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="360.0" y="431.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">push 거부와 pull 충돌</tspan><tspan x="360.0" dy="23.0">같은 줄의 다른 내용</tspan></text>
+<polyline points="360,481 360,515" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="515" width="560" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="541.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">정책 근거로 해결</tspan><tspan x="360.0" dy="23.0">원격 main 갱신</tspan></text>
+<text x="360.0" y="669.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg>

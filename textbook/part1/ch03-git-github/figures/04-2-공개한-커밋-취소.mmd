@@ -1,0 +1,15 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant A as 작성자 author
+  participant T as 원격 team.git
+  participant R as 리뷰어 reviewer
+  A->>T: git push (fix: 할인율 90 설정)
+  R->>T: git pull
+  T-->>R: Fast-forward
+  Note over R: config.txt: discount=90
+  A->>A: git revert --no-edit HEAD
+  Note over A: 커밋 세 개, 90 커밋도 남음
+  A->>T: git push (main -> main)
+  R->>T: git pull
+  T-->>R: Fast-forward
+  Note over R: config.txt: discount=10

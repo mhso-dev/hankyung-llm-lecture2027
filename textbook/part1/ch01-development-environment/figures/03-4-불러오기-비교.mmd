@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph KN["커널 Python · 프로젝트 환경"]
+    direction LR
+    k1["import ipykernel"]:::tool --> k2["종료 코드 0"]:::measure
+  end
+  subgraph EA["env_a Python · 새 환경"]
+    direction LR
+    a1["import ipykernel"]:::tool --> a2["종료 코드 1<br>ModuleNotFoundError"]:::fail
+  end
+  subgraph EJ["값 바꿔 보기 · env_a Python"]
+    direction LR
+    j1["import json"]:::tool --> j2["종료 코드 0"]:::measure
+  end
+  KN -- "실행한 Python만 바꿈" --> EA
+  EA -- "불러올 이름만 바꿈" --> EJ

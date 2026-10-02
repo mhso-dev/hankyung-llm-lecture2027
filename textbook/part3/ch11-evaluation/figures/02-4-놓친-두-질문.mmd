@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph wide[자르는 자리 50]
+    direction TB
+    w1["Q085 고유 문서 목록"]:::measure
+    w2["정답 문서 H01 10번째<br>재현율 1.0"]:::measure
+    w1 --> w2
+  end
+  subgraph narrow[자르는 자리 5]
+    direction TB
+    n1["앞 5자리 문서만 남김"]:::measure
+    n2["정답 문서 H01 없음<br>재현율 0.0"]:::measure
+    n1 --> n2
+  end
+  common["두 자리 모두에 해당<br>같은 고유 문서 목록 · 같은 정답 문서"]
+  wide --> common
+  narrow --> common

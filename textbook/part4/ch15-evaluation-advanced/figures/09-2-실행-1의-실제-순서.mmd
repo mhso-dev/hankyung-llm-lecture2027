@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  qid["고른 질문 번호<br>Q090"]:::tool
+  oldline["old-Q090<br>요청 글 5093자"]:::tool
+  newline["new-Q090<br>요청 글 5117자"]:::tool
+  judge["gpt-5.4-mini<br>요청 두 번"]:::model
+  oldscore["이전 판 점수 0<br>입력 토큰 3248"]:::measure
+  newscore["이후 판 점수 1<br>입력 토큰 3266"]:::measure
+  result["깨진 사례 없음<br>짝지어 본 검사<br>통과 True"]:::measure
+  qid --> oldline
+  qid --> newline
+  oldline --> judge
+  newline --> judge
+  judge --> oldscore
+  judge --> newscore
+  oldscore --> result
+  newscore --> result

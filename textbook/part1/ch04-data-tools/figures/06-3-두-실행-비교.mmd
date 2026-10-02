@@ -1,0 +1,19 @@
+flowchart LR
+  %% classes
+  subgraph RUN1["실행 1 · customers.csv"]
+    direction TB
+    a1["고객 파일<br>C001, C002"]:::tool
+    a2["고객 번호가<br>모두 다른가 True"]
+    a3["넣지 못한 고객 []"]
+    a4["받은 주문 3건<br>연결한 행 3개<br>김하나 59000<br>이두리 18000"]:::measure
+    a1 --> a2 --> a3 --> a4
+  end
+  subgraph RUN2["실행 2 · all_customers.csv"]
+    direction TB
+    b1["고객 파일<br>C001, C002, C001"]:::tool
+    b2["고객 번호가<br>모두 다른가 False"]:::measure
+    b3["넣지 못한 고객 ['C001']<br>UNIQUE constraint failed"]:::measure
+    b4["받은 주문 3건<br>연결한 행 3개<br>김하나 59000<br>이두리 18000"]:::measure
+    b1 --> b2 --> b3 --> b4
+  end
+  RUN1 ~~~ RUN2

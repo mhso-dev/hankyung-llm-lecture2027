@@ -1,0 +1,292 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>과정 지도와 학습 규칙 — Ch 1 · 오리엔테이션 · 개발환경</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 1 · 오리엔테이션 · 개발환경</p>
+<h1>과정 지도와 학습 규칙</h1><div class="meta"><span>강의 1h</span><span>실습 0h</span><span>새 용어 5</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 0h | 코드 Jupyter Notebook | 새 용어 5 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul><li>이 절을 마치면 과정의 개발 기반 학습이 뒤의 프로젝트에 어떻게 이어지는지 설명할 수 있습니다.</li><li>실행 전에 결과를 예상하고 실제 출력과 비교한 기록을 남길 수 있습니다.</li><li>입력 하나를 바꾼 결과로 확인한 사실과 아직 확인하지 않은 사실을 구분할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>처음 프로그램을 실행하면 화면에 숫자나 문장이 나타납니다. 그 결과가 의도한 것인지 판단하려면 실행 전에 무엇을 만들려 했는지 알아야 합니다. 예를 들어 3,000원짜리 상품 두 개의 합계는 6,000원입니다. 프로그램이 오류 없이 3,002원을 출력했더라도 가격을 올바르게 계산한 것은 아닙니다. <b>실행되었다는 사실과 원하는 일을 했다는 사실을 각각 확인</b>하는 습관을 첫 장부터 연습합니다.</p>
+<p>프로그램에 적힌 명령을 <b>코드(code)</b>라고 합니다. 초반에는 코드를 직접 읽고 입력하며, 바꾼 줄이 결과에 미치는 영향을 설명합니다. 다른 사람이 작성한 코드를 사용하는 경우에도 입력·처리·결과를 스스로 확인할 수 있어야 합니다. 답을 빠르게 얻는 데만 집중하면 예상하지 못한 결과를 어디서부터 살펴볼지 알기 어렵습니다. 지금 쌓는 실행 기록은 이후 더 긴 프로그램을 읽고 수정할 때 원인을 찾는 근거가 됩니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>이 절은 첫 학습이므로 프로그래밍 경험을 요구하지 않습니다. 파일을 내려받고 폴더에서 찾는 방법을 알고 있으면 시작할 수 있습니다. 아직 실행 도구가 없다면 지금은 설명과 저장된 출력을 읽습니다. 다음 절의 설치 안내와 3절의 실행 환경 준비를 마친 뒤 이 절의 노트북으로 돌아와 직접 실행합니다. HTML은 내용을 읽고 코드를 복사하는 데 사용하는 교재이며, 화면의 복사 버튼이 코드를 실행하지는 않습니다.</p>
+<p>준비된 환경이 있다면 이 절 상단의 노트북 내려받기로 파일을 저장합니다. 파일 이름 끝의 <code>.ipynb</code>는 설명과 실행 코드를 함께 담은 노트북 파일임을 나타냅니다. 파일을 열었을 때 글과 코드가 여러 칸으로 나뉘어 보이면 맞는 화면입니다. 파일 내용이 중괄호와 따옴표로만 보이면 텍스트 편집기로 열린 상태이므로 2절의 Jupyter 확장 준비를 확인합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>예상한 금액과 영수증을 비교합니다</h3>
+<p>가게에서 상품 두 개를 살 때 머릿속으로 계산한 금액과 영수증을 비교할 수 있습니다. 프로그램에서도 실행 전에 예상값을 적고 실행 후 표시된 값과 비교합니다. 영수증의 합계만 보는 대신 상품 수량과 단가도 확인하는 것처럼, 프로그램이 받은 값과 계산한 값을 함께 살펴봅니다. 이 비유에서는 예상 금액이 확인 기준이며 실제 영수증이 실행 결과에 해당합니다.</p>
+<h3>이번 절에서 사용하는 다섯 가지 말</h3>
+<p><b>프로그램(program)</b>은 컴퓨터가 수행할 작업을 적은 것입니다. <b>입력(input)</b>은 작업에 사용하는 값이며, 여기서는 단가 3,000과 수량 2입니다. <b>출력(output)</b>은 실행 결과로 밖에 보여 주는 값입니다. 계산한 합계 6,000을 화면에 표시하면 출력이 됩니다. <b>셀(cell)</b>은 노트북에서 설명이나 코드를 담는 한 칸입니다. <b>검증(verification)</b>은 결과가 미리 정한 조건에 맞는지 확인하는 일입니다. 이번 조건은 ‘단가에 수량을 곱한 값이 합계와 같다’입니다.</p>
+<p>계산한 값을 기억하는 것과 화면에 표시하는 것은 별개의 동작입니다. 코드에서 이름에 값을 저장해도 화면에 아무것도 나타나지 않을 수 있습니다. 이 교재는 확인할 값을 <code>print</code>로 표시합니다. 처음에는 괄호 안의 값을 화면에 보여 주는 명령으로 읽으면 충분합니다. 코드에서 <code>*</code>는 곱셈을 뜻하고, <code>=</code>는 오른쪽 값을 왼쪽 이름에 저장할 때 사용합니다. 이름과 값의 관계는 Ch 2에서 자세히 배웁니다.</p>
+<h3>과정에서 이 연습이 이어지는 순서</h3>
+<div class="tw"><table><thead><tr><th>학습 구간</th><th>직접 확인할 일</th><th>다음 학습에 필요한 이유</th></tr></thead><tbody><tr><td>Ch 1~5 개발 기반</td><td>파일과 실행 환경을 준비하고, 코드를 읽고 수정하며 데이터를 다룹니다.</td><td>결과가 달라졌을 때 코드와 입력을 찾아 확인할 수 있어야 합니다.</td></tr><tr><td>Ch 6~8 생성 모델 활용 준비</td><td>첫 외부 API 호출과 입력 구성 방법을 배웁니다.</td><td>이 장에서는 호출하지 않습니다. 먼저 개발 도구를 사용할 준비를 합니다.</td></tr><tr><td>Ch 9~17 검색과 평가</td><td>문서를 검색하고 결과를 측정한 뒤 개선합니다.</td><td>Ch 11의 측정을 Ch 12의 조정보다 먼저 배웁니다.</td></tr><tr><td>Ch 18~29 도구와 에이전트</td><td>실행 조건을 살펴보고 도구를 연결합니다.</td><td>흐름을 모델이 정하는 학습은 Ch 20부터 시작합니다.</td></tr><tr><td>Ch 30~41 서비스와 종합 구현</td><td>프로그램을 서비스로 만들고 함께 검토하며 완성합니다.</td><td>앞에서 만든 실행·수정·검증 습관을 프로젝트 전체에 적용합니다.</td></tr></tbody></table></div>
+<p>표는 앞으로 무엇을 배우는지 확인하는 과정 지도입니다. 지금 새 도구 이름을 암기할 필요는 없습니다. 첫 두 주에는 파이썬과 협업의 기반을 먼저 익히며, 이 장의 실행 예제는 숫자·파일·개발 도구만 사용합니다. 뒤의 내용을 미리 구현하는 대신 현재 단계에서 만든 파일을 다시 실행할 수 있는지 확인합니다.</p>
+<div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:800px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 430" width="800" height="430" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-01-learning-cycle desc-01-learning-cycle">
+<title id="title-01-learning-cycle">예측하고 확인하며 코드를 바꾸는 학습 순환</title>
+<desc id="desc-01-learning-cycle">예측한 결과와 실제 결과를 비교하고, 값 하나를 바꾼 뒤 다시 확인합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="800" height="430" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">예측하고 확인하며 코드를 바꾸는 학습 순환</tspan></text>
+<rect x="45" y="105" width="120" height="72" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="105.0" y="130.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="105.0" dy="0.0">① 예측</tspan><tspan x="105.0" dy="21.6">결과는 6,000</tspan></text>
+<polyline points="165,141 195,141" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="195" y="105" width="120" height="72" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="255.0" y="130.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="255.0" dy="0.0">② 실행</tspan><tspan x="255.0" dy="21.6">3,000 * 2</tspan></text>
+<polyline points="315,141 345,141" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="345" y="105" width="120" height="72" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="405.0" y="130.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="405.0" dy="0.0">③ 관찰</tspan><tspan x="405.0" dy="21.6">6,000</tspan></text>
+<polyline points="465,141 495,141" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="495" y="105" width="120" height="72" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="555.0" y="130.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="555.0" dy="0.0">④ 변경</tspan><tspan x="555.0" dy="21.6">count = 3</tspan></text>
+<polyline points="615,141 645,141" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="645" y="105" width="120" height="72" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="705.0" y="130.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="705.0" dy="0.0">⑤ 검증</tspan><tspan x="705.0" dy="21.6">9,000</tspan></text>
+<polyline points="705,177 705,240 105,240 105,177" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)" stroke-dasharray="7 5"/>
+<text x="405" y="265.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="bold"><tspan x="405" dy="0.0">다음 값으로 반복</tspan></text>
+<text x="170" y="300.0" font-size="16" fill="#166534" text-anchor="middle" dominant-baseline="middle" font-weight="bold"><tspan x="170" dy="0.0">price = 3000</tspan></text>
+<text x="400" y="300.0" font-size="16" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="bold"><tspan x="400" dy="0.0">count = 2  →  count = 3</tspan></text>
+<text x="635" y="300.0" font-size="16" fill="#166534" text-anchor="middle" dominant-baseline="middle" font-weight="bold"><tspan x="635" dy="0.0">total = price * count</tspan></text>
+<text x="400" y="360.0" font-size="15" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="400" dy="0.0">작은 값을 바꾸면 코드와 결과의 관계를 바로 확인할 수 있습니다.</tspan></text>
+</svg></div>
+<p class="look"><b>확인할 점</b> — 파란 단계는 학생이 정한 실행 순서, 노란 단계는 결과를 확인하는 행동을 나타냅니다. 3,000×2를 예상한 뒤 6,000이라는 출력과 비교하고, 수량만 3으로 바꿔 9,000인지 다시 확인하는 순서로 읽습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>첫 실행에서는 코드를 바꾸지 않습니다. 6,000이라는 예상값을 먼저 적고 셀을 위에서 아래로 실행합니다. 앞 셀이 만든 값을 다음 셀이 사용하므로 중간 셀만 실행하면 필요한 값이 없을 수 있습니다. 셀 왼쪽의 입력 번호는 실행된 순서를 나타내며, 교재의 번호를 외우거나 코드에 복사할 필요는 없습니다.</p>
+<p>첫 셀의 <code>import sys</code>는 Python에 포함된 <code>sys</code> 기능을 현재 노트북에서 사용하겠다는 뜻입니다. <code>sys.version_info</code>는 실행 중인 Python의 버전 정보를 반환합니다. 뒤의 <code>[:2]</code>는 그 정보에서 앞의 두 값인 주 버전과 부 버전만 고릅니다. <code>== (3, 12)</code>는 고른 두 값이 3과 12인지 비교하며, 비교 결과는 참을 뜻하는 <code>True</code> 또는 거짓을 뜻하는 <code>False</code>가 됩니다. 이 문법은 Ch 2에서 차례로 배우므로, 지금은 “현재 실행기가 Python 3.12인가?”라는 질문을 코드로 적은 것으로 읽습니다.</p>
+<p><code>price = 3000</code>에서 <code>price</code>는 값을 다시 사용할 수 있도록 붙인 이름이고, <code>=</code>는 오른쪽 값 3000을 왼쪽 이름에 저장합니다. <code>print(...)</code>는 괄호 안에서 만든 문장을 화면에 출력합니다. 문자열 앞의 <code>f</code>와 중괄호는 저장한 값을 문장 안에 넣는 표기입니다. 예를 들어 <code>f"{price}원"</code>은 <code>3000원</code>이라는 문장을 만듭니다. 함수, 문자열, 이름에 관한 규칙은 Ch 2에서 배우지만, 이 절에서는 각 줄의 역할을 구분할 수 있어야 합니다.</p>
+<p><code>assert total == prediction</code>은 <code>total</code>과 <code>prediction</code>이 같은지 검사합니다. 두 값이 같으면 별도 문장을 출력하지 않고 다음 줄로 넘어가며, 다르면 실행을 멈추고 <code>AssertionError</code>를 표시합니다. 따라서 출력이 없다는 사실만 보지 말고, 그 앞의 <code>print</code> 결과와 셀이 오류 없이 끝났는지를 함께 확인합니다.</p>
+<section class="notebook" data-notebook="01-과정-지도와-학습-규칙" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-09</span><button type="button" class="copy-all">전체 코드 복사</button><a download="01-과정-지도와-학습-규칙.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI0Y2M4ZjY4NyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMg6rO87KCVIOyngOuPhOyZgCDtlZnsirUg6rec7LmZXG4iLAogICAgIlxuIiwKICAgICLsmIjsg4HtlZjqs6AsIOyLpO2Wie2VmOqzoCwg6rCS7J2EIOuwlOq+vCDrkqQg64uk7IucIO2ZleyduO2VmOuKlCDtlZnsirUg7Iic7ISc66W8IOyXsOyKte2VqeuLiOuLpC4g7ZSE66Gc6re4656o7J2AIOy7tO2TqO2EsOqwgCDsiJjtlontlaAg7J6R7JeF7J2EIOyggeydgCDqsoPsnbTqs6AsIOy9lOuTnOuKlCDqt7gg7J6R7JeF7J2EIFB5dGhvbiDrrLjrspXsnLzroZwg7ZGc7ZiE7ZWcIOq4gOyeheuLiOuLpC4g7L2U65OcIOyFgOydhCDsi6TtlontlZjrqbQg7Luk64SQ7J20IOy9lOuTnOulvCDsnb3qs6Ag7JWeIOyFgOyXkOyEnCDrp4zrk6Ag6rCS7J2EIOq4sOyWte2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI1OWIwNzE2MyIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7ZmV7J24XG4iLAogICAgIlxuIiwKICAgICLsnbQg64W47Yq467aB7J2AIFB5dGhvbiAzLjEyIOy7pOuEkOyXkOyEnCDssqsg7IWA67aA7YSwIOyInOyEnOuMgOuhnCDsi6Ttlontlanri4jri6QuIOy7pOuEkOydgCDrhbjtirjrtoHsnZggUHl0aG9uIOy9lOuTnOulvCDsi6TtlontlZjqs6Ag7JWeIOyFgOyXkOyEnCDrp4zrk6Ag6rCS7J2EIOq4sOyWte2VmOuKlCDtlITroZzqt7jrnqjsnoXri4jri6QuIGBpbXBvcnQgc3lzYOuKlCBQeXRob27sl5Ag7Y+s7ZWo65CcIGBzeXNgIOq4sOuKpeydhCDqsIDsoLjsmKTrqbAsIGBzeXMudmVyc2lvbl9pbmZvWzoyXWDripQg7Iuk7ZaJIOykkeyduCBQeXRob24g67KE7KCE7JeQ7IScIOyVnuydmCDrkZAg7Iir7J6Q66W8IOqzoOumheuLiOuLpC4gYD09ICgzLCAxMilg7J2YIOqysOqzvOqwgCBgVHJ1ZWDsnbTrqbQg7KO8IOuyhOyghCAz6rO8IOu2gCDrsoTsoIQgMTLqsIAg66ee7Iq164uI64ukLiBgYXNzZXJ0YOuKlCDsnbQg7KGw6rG07J20IOqxsOynk+ydvCDrlYwg7Iuk7ZaJ7J2EIOupiOy2peuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICI3YmU1NWIyYyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxMjoxNzo1OC4zOTEwNDJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxMjoxNzo1OC4zOTA3OTNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxMjoxNzo1OC4zOTczMTlaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDEyOjE3OjU4LjM5NjYzOFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJQeXRob24gMy4xMjogVHJ1ZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJpbXBvcnQgc3lzXG4iLAogICAgIlxuIiwKICAgICIjIHZlcnNpb25faW5mb+uKlCDtmITsnqwgUHl0aG9u7J2YIOyjvCDrsoTsoITqs7wg67aAIOuyhOyghOydhCDsiKvsnpDroZwg7KCc6rO17ZWp64uI64ukLlxuIiwKICAgICJweXRob25fMzEyID0gc3lzLnZlcnNpb25faW5mb1s6Ml0gPT0gKDMsIDEyKVxuIiwKICAgICJwcmludChmXCJQeXRob24gMy4xMjoge3B5dGhvbl8zMTJ9XCIpXG4iLAogICAgImFzc2VydCBweXRob25fMzEyIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiYTVjOWJmYTkiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyAx64uo6rOEOiDqsrDqs7wg7JiI7IOBXG4iLAogICAgIlxuIiwKICAgICLqsIDqsqnsnbQgMywwMDDsm5Dsnbgg7IOB7ZKIIDLqsJzsnZgg7LSd7JWh7J2EIOuovOyggCDsmIjsg4Htlanri4jri6QuIGBwcmljZWAsIGBjb3VudGAsIGBwcmVkaWN0aW9uYOydgCDqsIHqsIEg64uo6rCALCDsiJjrn4ksIOyYiOyDgSDtlanqs4Tsl5Ag67aZ7J24IOydtOumhOyeheuLiOuLpC4gYD1g64qUIOyYpOuluOyqvSDqsJLsnYQg7Jm87Kq9IOydtOumhOyXkCDsoIDsnqXtlanri4jri6QuIOusuOyekOyXtCDslZ7snZggYGZg7JmAIOusuOyepSDslYjsnZgg7KSR6rSE7Zi464qUIOyggOyepe2VnCDqsJLsnYQg7Lac66ClIOusuOyepeyXkCDrhKPsirXri4jri6QuIOydtCDrrLjrspXsnYAgQ2ggMuyXkOyEnCDrsLDsmrDrqbAsIOyXrOq4sOyEnOuKlCDshLgg7J2066aE7JeQIOyWtOuWpCDqsJLsnbQg7KCA7J6l65CY64qU7KeAIO2VnCDspITslKkg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogIjcxZGY3YTQ5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDEyOjE3OjU4LjM5ODkyOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDEyOjE3OjU4LjM5ODc5MloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDEyOjE3OjU4LjQwMTY1MVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTI6MTc6NTguNDAwOTIyWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyYiOyDgSDstJ3slaE6IDYwMDDsm5BcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBwcmljZeuKlCDtlZwg6rCc7J2YIOqwgOqyqSwgY291bnTripQg7IOB7ZKIIOqwnOyImOyeheuLiOuLpC5cbiIsCiAgICAicHJpY2UgPSAzMDAwXG4iLAogICAgImNvdW50ID0gMlxuIiwKICAgICJwcmVkaWN0aW9uID0gNjAwMFxuIiwKICAgICJwcmludChmXCLsmIjsg4Eg7LSd7JWhOiB7cHJlZGljdGlvbn3sm5BcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjYWIwZTM3ZiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIDLri6jqs4Q6IOy9lOuTnCDsi6TtlolcbiIsCiAgICAiXG4iLAogICAgIuqzseyFiCDquLDtmLggYCpg66GcIOyLpOygnCDstJ3slaHsnYQg6rOE7IKw7ZWY6rOgIOyYiOyDgeqzvCDrp57ripTsp4Ag7ZmV7J247ZWp64uI64ukLiBgdG90YWwgPSBwcmljZSAqIGNvdW50YOuKlCDsoIDsnqXrkJwgMywwMDDqs7wgMuulvCDqs7HtlbQgNiwwMDDsnYQg66eM65OgIOuSpCBgdG90YWxg7JeQIOyggOyepe2VqeuLiOuLpC4gYHByaW50YOuKlCDqsJLsnYQg7ZmU66m07JeQIOuztOyXrCDso7zqs6AsIGBhc3NlcnQgdG90YWwgPT0gcHJlZGljdGlvbmDsnYAg7Iuk7KCcIO2VqeqzhOyZgCDsmIjsg4Eg7ZWp6rOE6rCAIOqwmeydgOyngCDqsoDsgqztlanri4jri6QuIOyhsOqxtOydtCDssLjsnbTrqbQgYGFzc2VydGDripQg7JWE66y0IOusuOyepeuPhCDstpzroKXtlZjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogIjA4OTM1MDY2IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDEyOjE3OjU4LjQwMjk4NFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDEyOjE3OjU4LjQwMjgzOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDEyOjE3OjU4LjQwNTI1MloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTI6MTc6NTguNDA0NzYwWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyLpO2WiSDstJ3slaE6IDYwMDDsm5BcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBwcmljZSAqIGNvdW507J2YIOqysOqzvOulvCB0b3RhbOydtOudvOuKlCDsnbTrpoTsnLzroZwg7KCA7J6l7ZWp64uI64ukLlxuIiwKICAgICJ0b3RhbCA9IHByaWNlICogY291bnRcbiIsCiAgICAicHJpbnQoZlwi7Iuk7ZaJIOy0neyVoToge3RvdGFsfeybkFwiKVxuIiwKICAgICJhc3NlcnQgdG90YWwgPT0gcHJlZGljdGlvbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImRiYjEwNjdhIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgM+uLqOqzhDog6rCSIO2VmOuCmCDrs4Dqsr1cbiIsCiAgICAiXG4iLAogICAgIuqwgOqyqeydgCDqt7jrjIDroZwg65GQ6rOgIOqwnOyImOunjCAz6rCc66GcIOuwlOq/peuLiOuLpC4g6rKw6rO86rCAIDksMDAw7JuQ7Jy866GcIOuzgO2VmOuKlOyngCDruYTqtZDtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiYjQ4M2FhMjkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTI6MTc6NTguNDA2NDc2WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTI6MTc6NTguNDA2MzUzWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTI6MTc6NTguNDA4NzU2WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxMjoxNzo1OC40MDgzMDdaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiMuqwnDogNjAwMOybkFxuIiwKICAgICAgIjPqsJw6IDkwMDDsm5BcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBjb3VudOunjCAy7JeQ7IScIDPsnLzroZwg67CU6r68IOuSpCDri6Tsi5wg6rOE7IKw7ZWp64uI64ukLlxuIiwKICAgICJjb3VudCA9IDNcbiIsCiAgICAiY2hhbmdlZF90b3RhbCA9IHByaWNlICogY291bnRcbiIsCiAgICAicHJpbnQoZlwiMuqwnDoge3RvdGFsfeybkFwiKVxuIiwKICAgICJwcmludChmXCIz6rCcOiB7Y2hhbmdlZF90b3RhbH3sm5BcIilcbiIsCiAgICAiYXNzZXJ0IGNoYW5nZWRfdG90YWwgPT0gOTAwMCIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjVlZDQwNjRmIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZeYIOqysOqzvCDtlbTshJ1cbiIsCiAgICAiXG4iLAogICAgIuyYiOyDgeqzvCDsi6Ttlokg6rKw6rO86rCAIDYsMDAw7JuQ7Jy866GcIOqwmeyVmOyKteuLiOuLpC4g6rCc7IiYIO2VmOuCmOunjCDrsJTqvrjsl4jsnYQg65WMIOy0neyVoeydgCA5LDAwMOybkOycvOuhnCDrs4DtlojsirXri4jri6QuIGBhc3NlcnRg64qUIOq0gOywsO2VnCDqsJLsnbQg6riw64yA7ZWcIOqwkuqzvCDqsJnsnYDsp4Ag7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMuMTIiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAiZXhwZXJpbWVudCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDQsCiAgICJjb2RlX3NoYTI1NiI6ICJlODRmODEyZmJhM2ZkODRlMTJiN2FlNmFkZWU1OTRjNWY2ODAwNzEwNWRmYTM4M2VlMjdlZTA4Y2M0ODA2MjRhIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMDlUMTI6MTc6NTguNTI1MTYzKzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICJlNjZlMDdmM2YzNzJkMGVhY2QyOGIwMmI5OWI4ODYxYTFmMDIyNTIxNzBjYWM2MzNlNjZkZjU3MTcyNTI5ODRjIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>과정 지도와 학습 규칙</h2>
+<p>예상하고, 실행하고, 값을 바꾼 뒤 다시 확인하는 학습 순서를 연습합니다. 프로그램은 컴퓨터가 수행할 작업을 적은 것이고, 코드는 그 작업을 Python 문법으로 표현한 글입니다. 코드 셀을 실행하면 커널이 코드를 읽고 앞 셀에서 만든 값을 기억합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 확인</h3>
+<p>이 노트북은 Python 3.12 커널에서 첫 셀부터 순서대로 실행합니다. 커널은 노트북의 Python 코드를 실행하고 앞 셀에서 만든 값을 기억하는 프로그램입니다. <code>import sys</code>는 Python에 포함된 <code>sys</code> 기능을 가져오며, <code>sys.version_info[:2]</code>는 실행 중인 Python 버전에서 앞의 두 숫자를 고릅니다. <code>== (3, 12)</code>의 결과가 <code>True</code>이면 주 버전 3과 부 버전 12가 맞습니다. <code>assert</code>는 이 조건이 거짓일 때 실행을 멈춥니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import sys
+
+# version_info는 현재 Python의 주 버전과 부 버전을 숫자로 제공합니다.
+python_312 = sys.version_info[:2] == (3, 12)
+print(f&quot;Python 3.12: {python_312}&quot;)
+assert python_312</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Python 3.12: True
+</pre></div>
+<div class="nb-markdown"><h3>1단계: 결과 예상</h3>
+<p>가격이 3,000원인 상품 2개의 총액을 먼저 예상합니다. <code>price</code>, <code>count</code>, <code>prediction</code>은 각각 단가, 수량, 예상 합계에 붙인 이름입니다. <code>=</code>는 오른쪽 값을 왼쪽 이름에 저장합니다. 문자열 앞의 <code>f</code>와 문장 안의 중괄호는 저장한 값을 출력 문장에 넣습니다. 이 문법은 Ch 2에서 배우며, 여기서는 세 이름에 어떤 값이 저장되는지 한 줄씩 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># price는 한 개의 가격, count는 상품 개수입니다.
+price = 3000
+count = 2
+prediction = 6000
+print(f&quot;예상 총액: {prediction}원&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">예상 총액: 6000원
+</pre></div>
+<div class="nb-markdown"><h3>2단계: 코드 실행</h3>
+<p>곱셈 기호 <code>*</code>로 실제 총액을 계산하고 예상과 맞는지 확인합니다. <code>total = price * count</code>는 저장된 3,000과 2를 곱해 6,000을 만든 뒤 <code>total</code>에 저장합니다. <code>print</code>는 값을 화면에 보여 주고, <code>assert total == prediction</code>은 실제 합계와 예상 합계가 같은지 검사합니다. 조건이 참이면 <code>assert</code>는 아무 문장도 출력하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># price * count의 결과를 total이라는 이름으로 저장합니다.
+total = price * count
+print(f&quot;실행 총액: {total}원&quot;)
+assert total == prediction</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">실행 총액: 6000원
+</pre></div>
+<div class="nb-markdown"><h3>3단계: 값 하나 변경</h3>
+<p>가격은 그대로 두고 개수만 3개로 바꿥니다. 결과가 9,000원으로 변하는지 비교합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># count만 2에서 3으로 바꾼 뒤 다시 계산합니다.
+count = 3
+changed_total = price * count
+print(f&quot;2개: {total}원&quot;)
+print(f&quot;3개: {changed_total}원&quot;)
+assert changed_total == 9000</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">2개: 6000원
+3개: 9000원
+</pre></div>
+<div class="nb-markdown"><h3>실험 결과 해석</h3>
+<p>예상과 실행 결과가 6,000원으로 같았습니다. 개수 하나만 바꾸었을 때 총액은 9,000원으로 변했습니다. <code>assert</code>는 관찰한 값이 기대한 값과 같은지 확인합니다.</p></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<p class="look"><b>확인할 점</b> — 기본 수량 2의 합계와 변경한 수량 3의 합계를 비교합니다. 단가는 그대로 두었습니다. <code>assert</code> 뒤 조건이 참이면 오류가 발생하지 않습니다. 출력 문장과 확인 조건을 함께 읽고 어느 계산을 확인했는지 설명합니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2>
+<p>이번 실행에서는 같은 단가에 수량만 바꿨습니다. 3,000에 2를 곱하면 6,000이고, 3을 곱하면 9,000입니다. 두 조건의 차이는 수량 하나이므로 합계가 3,000만큼 증가한 이유를 설명할 수 있습니다. 입력을 여러 개 동시에 바꾸면 어떤 값이 결과 차이를 만들었는지 따로 확인해야 합니다. 처음에는 비교 조건을 하나씩 정하는 편이 원인을 추적하기 좋습니다.</p>
+<p>이 결과로 모든 계산 프로그램이 올바르다고 판단할 수는 없습니다. 할인·환불·배송비가 포함된 계산은 실행하지 않았습니다. 이번 실습에서 확인한 것은 정수 단가와 두 수량의 곱셈입니다. 오류를 재현하지 않은 절이므로 실패를 고쳤다고 기록하지 않습니다. 4절에서는 잘못된 연산으로 계산한 실제 결과를 관찰하고 같은 입력에서 수정합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<p>실습 기록에는 예상한 값, 실제 출력, 바꾼 입력, 다음에 확인할 것을 남깁니다. ‘잘 됨’만 적으면 무엇이 맞았는지 나중에 확인하기 어렵습니다. ‘단가 3,000과 수량 2에서 출력 6,000을 확인했다’처럼 입력과 결과를 함께 적습니다. 오류가 발생하면 마지막 메시지와 실행한 셀을 기록하고, 이미 확인한 정상 셀을 무작정 여러 군데 바꾸지 않습니다.</p>
+<p>저장된 출력은 교재를 만들 때 실행한 기록입니다. 파일을 열어 출력이 보인다는 사실만으로 자신의 컴퓨터에서도 실행된 것은 아닙니다. 직접 셀을 실행하고 새 입력 번호와 출력을 확인해야 합니다. 실습 중 값이 예상과 다르게 남았다면 실행 프로그램을 다시 시작한 후 처음부터 순서대로 실행합니다. 이 초기화 방법은 3절에서 배웁니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<p>실행 전에 입력과 예상 결과를 정합니다.<br>실행 후 실제 출력이 조건에 맞는지 확인합니다.<br>값 하나를 바꾸고 같은 확인 과정을 반복합니다.</p>
+<p><strong>다음 학습과 이어지는 지점</strong> — 다음 절은 이 과정을 자신의 컴퓨터에서 수행하도록 편집기와 터미널을 준비합니다. 이번 절에서 남긴 예상값과 실제값 기록은 4절의 계산 오류를 설명하는 데 다시 사용합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz"><summary>1. 입력과 출력은 각각 무엇인가요? · 기초</summary><p>단가 3,000과 수량 2는 입력이며, 화면에 표시한 합계 6,000은 출력입니다. 어떤 값을 사용했는지와 무엇을 보여 주었는지를 구분합니다.</p></details>
+<details class="quiz"><summary>2. 수량을 3으로 바꾸면 어떤 값을 예상하나요? · 적용</summary><p>단가를 3,000으로 유지하면 9,000을 예상합니다. 실행 전에 예상값을 적고, 실행 후 출력과 비교합니다.</p></details>
+<details class="quiz"><summary>3. 오류 없이 3,002가 출력되면 올바른 합계인가요? · 적용</summary><p>아닙니다. 두 상품의 총금액은 6,000이어야 합니다. 실행 가능 여부와 계산 결과의 정확성은 별도로 확인해야 합니다.</p></details>
+<details class="quiz"><summary>4. 두 번 확인한 결과로 할인 계산도 맞다고 말할 수 있나요? · 분석</summary><p>말할 수 없습니다. 할인 조건은 입력하거나 실행하지 않았습니다. 할인 규칙과 예상값을 정한 별도 사례가 필요합니다. 해석 범위를 다시 읽고 실행한 조건만 기록합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul><li><a href="../../../커리큘럼_v6.html">과정 커리큘럼 v6</a> — Ch 1과 후속 챕터의 학습 순서. 프로젝트 제공 자료, 확인 2026-09-09.</li><li><a href="https://docs.python.org/3.12/tutorial/introduction.html">Python 3.12 입문: 수와 계산</a> — 문법 설명의 기준. 확인 2026-09-09. 계산 예제는 이 교재에서 작성했습니다.</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span>&nbsp;</span><span><a href="index.html">챕터 목차</a></span><span><a href="02-도구-설치와-터미널.html">도구 설치와 터미널 →</a></span></div></div></body></html>

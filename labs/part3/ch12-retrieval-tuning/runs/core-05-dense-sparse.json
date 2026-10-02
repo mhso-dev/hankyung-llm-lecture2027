@@ -1,0 +1,130 @@
+[
+  {
+    "qid": "C01",
+    "kind": "semantic",
+    "dense": [
+      "LIB-004",
+      "LIB-001",
+      "LIB-003"
+    ],
+    "sparse": [
+      "LIB-004",
+      "LIB-003",
+      "LIB-001"
+    ],
+    "dense_hit": true,
+    "sparse_hit": true
+  },
+  {
+    "qid": "C02",
+    "kind": "semantic",
+    "dense": [
+      "LIB-003",
+      "LIB-004",
+      "LIB-001"
+    ],
+    "sparse": [
+      "LIB-002",
+      "LIB-003",
+      "LIB-004"
+    ],
+    "dense_hit": false,
+    "sparse_hit": true
+  },
+  {
+    "qid": "C03",
+    "kind": "keyword",
+    "dense": [
+      "LIB-003",
+      "ACC-002",
+      "LIB-004"
+    ],
+    "sparse": [
+      "LIB-003",
+      "ACC-003",
+      "LIB-004"
+    ],
+    "dense_hit": true,
+    "sparse_hit": true
+  },
+  {
+    "qid": "C04",
+    "kind": "keyword",
+    "dense": [
+      "FAC-001",
+      "FAC-004",
+      "LIB-001"
+    ],
+    "sparse": [
+      "FAC-001",
+      "ACC-001",
+      "FAC-002"
+    ],
+    "dense_hit": true,
+    "sparse_hit": true
+  },
+  {
+    "qid": "C05",
+    "kind": "semantic",
+    "dense": [
+      "FAC-003",
+      "LIB-002",
+      "FAC-004"
+    ],
+    "sparse": [
+      "FAC-003",
+      "ACC-004",
+      "LIB-001"
+    ],
+    "dense_hit": true,
+    "sparse_hit": true
+  },
+  {
+    "qid": "C06",
+    "kind": "semantic",
+    "dense": [
+      "ACC-001",
+      "ACC-003",
+      "LIB-002"
+    ],
+    "sparse": [
+      "ACC-001",
+      "LIB-001",
+      "LIB-003"
+    ],
+    "dense_hit": true,
+    "sparse_hit": true
+  },
+  {
+    "qid": "C07",
+    "kind": "keyword",
+    "dense": [
+      "ACC-002",
+      "ACC-004",
+      "ACC-003"
+    ],
+    "sparse": [
+      "ACC-002",
+      "LIB-004",
+      "LIB-001"
+    ],
+    "dense_hit": true,
+    "sparse_hit": true
+  },
+  {
+    "qid": "C08",
+    "kind": "semantic",
+    "dense": [
+      "ACC-003",
+      "ACC-001",
+      "FAC-002"
+    ],
+    "sparse": [
+      "ACC-003",
+      "FAC-002",
+      "LIB-001"
+    ],
+    "dense_hit": true,
+    "sparse_hit": true
+  }
+]

@@ -1,0 +1,308 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REST와 페이지네이션 — Ch 4 · 데이터 다루기 — 도구 제작 관점</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 4 · 데이터 다루기 — 도구 제작 관점</p>
+<h1>REST와 페이지네이션</h1><div class="meta"><span>강의 1h</span><span>실습 3h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 3h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>HTTP 요청과 JSON 응답에서 상태 코드와 본문을 확인할 수 있습니다.</li><li>다음 페이지 값이 없어질 때까지 REST 결과를 수집할 수 있습니다.</li><li>시간 제한과 상태 코드 검사를 포함한 조회 함수를 작성할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>기사, 상품, 업무 시스템의 데이터는 파일이나 데이터베이스 대신 HTTP API로 제공되기도 합니다. 한 번의 요청으로 모든 결과를 반환하면 응답이 너무 커질 수 있어 서버는 여러 페이지로 나눕니다. 첫 페이지만 읽는 함수는 정상 응답을 받더라도 뒤쪽 데이터를 빠뜨립니다. 에이전트 도구가 이 함수를 사용하면 모델은 누락 사실을 알기 어렵습니다.</p><p>이번 실습은 외부 사업자의 실제 API 동작을 그대로 재현하지 않습니다. Python의 HTTP 서버를 localhost 임의 포트에서 실행하고 httpx가 실제 TCP·HTTP 요청을 보냅니다. 네트워크 요청, 쿼리 매개변수, 상태 코드, JSON 변환, 페이지 종료를 재현하면서 외부 서비스의 변경과 비용 없이 결과를 고정합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>앞 절에서 함수 입력과 데이터 조회를 분리하고 조회 결과를 사전 목록으로 반환했습니다. Ch 2의 05절에서는 예외 처리를 확인했습니다. <code>async</code>/<code>await</code>은 아직 선수 개념으로 사용하지 않습니다. 이번 절은 코드가 한 요청의 응답을 받은 뒤 다음 요청을 보내는 동기 <code>httpx.Client</code> 흐름에 집중합니다. 비동기 클라이언트는 Ch 30의 실행 환경에서 다룹니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>요청과 응답을 한 쌍으로 읽습니다</h3><p><strong>HTTP 요청(request)</strong>은 클라이언트가 서버에 보내는 메시지입니다. 요청에는 주소(URL), 작업을 나타내는 메서드, 추가 조건, 필요하면 본문이 들어갑니다. <strong>HTTP 응답(response)</strong>은 서버가 반환하는 메시지이며 상태 코드, 헤더, 본문으로 구성됩니다. 이 절의 클라이언트는 <code>GET /articles?page=1</code>을 요청하고 서버는 상태 코드 200, JSON이라는 본문 형식을 알리는 헤더, 기사 목록이 든 본문을 반환합니다.</p><p><strong>JSON(JavaScript Object Notation)</strong>은 문자열·숫자·참과 거짓·null·배열·객체를 텍스트로 표현하는 형식입니다. HTTPX의 <code>response.json()</code>은 JSON 본문을 Python의 사전과 목록으로 변환합니다. JSON의 <code>null</code>은 Python에서 <code>None</code>이 됩니다.</p><h3>페이지를 하나씩 이어서 요청합니다</h3><p><strong>페이지네이션(pagination)</strong>은 큰 결과를 여러 응답으로 나누는 방식입니다. 첫 응답에는 기사 두 건과 다음 페이지 2가 들어 있습니다. 함수는 현재 페이지를 요청 입력으로 보내고, 응답의 기사 목록을 누적한 뒤, <code>next_page</code>를 다음 요청 입력으로 바꿉니다. 두 번째 응답의 <code>next_page</code>가 <code>None</code>이면 반복을 마치고 누적한 목록을 반환합니다. 구현마다 페이지 번호, 커서, 다음 링크를 사용할 수 있으므로 API 문서를 확인해야 합니다.</p><h3>REST와 실패 처리를 구분합니다</h3><p><strong>REST API</strong>는 HTTP의 주소, 메서드, 상태 코드와 표현 형식을 사용해 자원을 다루는 인터페이스입니다. 이 절은 GET 요청으로 기사 목록을 읽습니다. <strong>시간 제한(timeout)</strong>은 응답을 무한히 기다리지 않도록 대기 한도를 정합니다. <code>raise_for_status()</code>는 4xx·5xx 응답을 성공 데이터처럼 처리하지 않고 예외로 바꿉니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270" width="720" height="270" role="img"
+ aria-labelledby="title-04-rest-pagination desc-04-rest-pagination">
+<title id="title-04-rest-pagination">REST 페이지네이션 종료</title>
+<desc id="desc-04-rest-pagination">파란 입력에서 노란 처리를 거쳐 초록 결과가 나오며 빨간 상자는 실패 사례를 나타냅니다.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker></defs>
+<rect width="720" height="270" fill="#fff"/>
+<text x="24" y="35" font-size="20" font-weight="700" fill="#111827">REST 페이지네이션 종료</text>
+<path d="M210 110H265" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M450 110H505" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M360 155V180" stroke="#dc2626" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="30" y="75" width="180" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="120.0" y="106.0" text-anchor="middle" font-size="16" fill="#111827">GET page=1</text>
+<text x="120.0" y="129.0" text-anchor="middle" font-size="16" fill="#111827">A01·A02</text>
+<rect x="270" y="75" width="180" height="80" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="106.0" text-anchor="middle" font-size="16" fill="#111827">next_page=2</text>
+<text x="360.0" y="129.0" text-anchor="middle" font-size="16" fill="#111827">GET page=2</text>
+<rect x="510" y="75" width="180" height="80" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="600.0" y="106.0" text-anchor="middle" font-size="16" fill="#111827">3건 확인</text>
+<text x="600.0" y="129.0" text-anchor="middle" font-size="16" fill="#111827">next_page=None</text>
+<rect x="270" y="185" width="180" height="55" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="360.0" y="203.5" text-anchor="middle" font-size="16" fill="#111827">첫 페이지만 읽음</text>
+<text x="360.0" y="226.5" text-anchor="middle" font-size="16" fill="#111827">A03 누락</text>
+</svg></div><p>초록 상자는 첫 페이지에서 받은 기사 데이터를 나타냅니다. 파란 상자는 <code>next_page</code> 값을 다음 요청의 입력으로 사용하는 흐름이고 노란 상자는 기사 세 건과 종료 조건을 확인한 결과입니다. 빨간 상자는 첫 페이지만 읽으면 A03이 누락되는 실패를 나타냅니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>첫 두 코드 셀은 HTTP 개념을 관찰하기 위한 보조 서버를 준비합니다. <code>class Handler(BaseHTTPRequestHandler)</code>에서 괄호 안의 이름은 기존 HTTP 요청 처리 기능을 물려받는 부모 클래스입니다. 이 상속 표기는 아직 일반 Python 경로에서 배우지 않았으므로 서버 구현 자체는 학습 목표가 아닙니다. <code>do_GET</code>은 GET 요청이 왔을 때 실행할 메서드이고, <code>send_response</code>와 <code>send_header</code>는 상태 코드와 헤더를 작성하며, <code>wfile.write</code>는 JSON 본문 바이트를 응답으로 보냅니다.</p><p><code>ThreadingHTTPServer(("127.0.0.1", 0), Handler)</code>의 주소는 이 컴퓨터 안에서만 접속할 수 있고 포트 0은 운영체제에 사용 가능한 포트를 선택해 달라는 뜻입니다. <code>threading.Thread(..., daemon=True)</code>는 서버의 대기 작업을 별도 실행 흐름에 두며 <code>start()</code>가 그 흐름을 시작합니다. 이 준비 셀의 결과는 외부 서비스 대신 같은 HTTP 규칙에 따라 고정 응답을 제공하는 로컬 보조 서버입니다.</p><p>첫 요청의 <code>params={"page": 1}</code>은 주소 뒤에 <code>?page=1</code>이라는 쿼리 매개변수를 만듭니다. <code>timeout=2.0</code>은 최대 대기 시간을 초 단위로 지정합니다. 반환된 <code>response</code>에서 <code>raise_for_status()</code>로 상태를 검사한 다음 <code>json()</code>으로 본문을 변환합니다.</p><p>노트북의 기본 <code>fetch_articles</code>는 <code>base_url</code>과 <code>timeout</code>을 입력받습니다. <code>httpx.Client</code>는 여러 요청에 재사용할 클라이언트 객체를 반환하고, <code>client.get()</code>은 GET 요청을 보내 Response 객체를 반환합니다. <code>extend()</code>는 현재 페이지의 기사들을 기존 목록 뒤에 추가합니다. 사전의 <code>get("next_page")</code>은 다음 페이지 번호를 반환하며 키가 없으면 <code>None</code>을 반환합니다. 이 값으로 다음 요청을 정하고 <code>None</code>에서 반복을 끝낸 뒤 기사 목록을 반환합니다. <code>finally</code>의 <code>client.close()</code>는 요청 도중 오류가 발생해도 연결 자원을 정리합니다.</p><p>공용 <code>data_tools.py</code>는 이 기본 흐름에 범주 필터, 외부 클라이언트 입력, 반복 페이지 검사를 더한 확장 함수입니다. 노트북에서는 기본 두 페이지 흐름을 실제로 실행합니다.</p><section class="notebook" data-notebook="04-REST와-페이지네이션" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="04-REST와-페이지네이션.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBSRVNU7JmAIO2OmOydtOyngOuEpOydtOyFmFxuIiwKICAgICJcbiIsCiAgICAi7Lu07ZOo7YSw7JeQ7IScIOyLpO2Wie2VnCBIVFRQIOyEnOuyhOuhnOu2gO2EsCDrkZAg7Y6Y7J207KeA66W8IOyInOyEnOuMgOuhnCDrsJvsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLri6TsnYwg65GQIOy9lOuTnCDshYDsnYAgSFRUUCDsmpTssq3qs7wg7J2R64u17J2EIOq0gOywsO2VmOq4sCDsnITtlZwg66Gc7LusIOuztOyhsCDshJzrsoTrpbwg66eM65Ot64uI64ukLiDshJzrsoQg6rWs7ZiEIOyekOyytOuKlCDtlZnsirUg66qp7ZGc6rCAIOyVhOuLmeuLiOuLpC4gYGpzb25g7J2AIFB5dGhvbiDqsJLsnYQgSlNPTiDrs7jrrLjsnLzroZwg67CU6r646rOgLCBgdGhyZWFkaW5nYOydgCDshJzrsoTqsIAg7JqU7LKt7J2EIOq4sOuLpOumrOuKlCDrj5nslYgg64uk7J2MIOyFgOydhCDsi6TtlontlaAg7IiYIOyeiOuPhOuhnSDrs4Trj4Qg7Iuk7ZaJIO2dkOumhOydhCDsoJzqs7Xtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjozMzowOC40OTMxNDBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjozMzowOC40OTI5NTVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjozMzowOC41MTU0NzNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjMzOjA4LjUxNDg1N1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogW10sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsi6TsoJwg66Gc7LusIEhUVFAg7ISc67KE7JmAIGh0dHB4IO2BtOudvOydtOyWuO2KuOulvCDspIDruYTtlanri4jri6QuXG4iLAogICAgImltcG9ydCBqc29uXG4iLAogICAgImltcG9ydCB0aHJlYWRpbmdcbiIsCiAgICAiZnJvbSBodHRwLnNlcnZlciBpbXBvcnQgQmFzZUhUVFBSZXF1ZXN0SGFuZGxlciwgVGhyZWFkaW5nSFRUUFNlcnZlclxuIiwKICAgICJcbiIsCiAgICAiaW1wb3J0IGh0dHB4XG4iLAogICAgIlxuIiwKICAgICJwYWdlcyA9IHsxOntcIml0ZW1zXCI6W3tcImlkXCI6XCJBMDFcIn0se1wiaWRcIjpcIkEwMlwifV0sXCJuZXh0X3BhZ2VcIjoyfSxcbiIsCiAgICAiICAgICAgICAgMjp7XCJpdGVtc1wiOlt7XCJpZFwiOlwiQTAzXCJ9XSxcIm5leHRfcGFnZVwiOk5vbmV9fSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDquLDrs7gg7Iuk7ZaJXG4iLAogICAgIlxuIiwKICAgICJgY2xhc3MgSGFuZGxlcihCYXNlSFRUUFJlcXVlc3RIYW5kbGVyKWDsnZgg6rSE7Zi4IOyViCDsnbTrpoTsnYAg6riw7KG0IEhUVFAg7LKY66asIOq4sOuKpeydhCDrrLzroKTrsJvripQg67aA66qoIO2BtOuemOyKpOyeheuLiOuLpC4g7J20IOyDgeyGjSDtkZzquLDripQg7JWE7KeBIOydvOuwmCBQeXRob24g6rK966Gc7JeQ7IScIOuwsOyasOyngCDslYrslZjsnLzrr4DroZwg6re464yA66GcIOyLpO2Wie2VoCDrs7TsobAg7L2U65Oc66GcIOydveyKteuLiOuLpC4gYGRvX0dFVGDsnYAgR0VUIOyalOyyreydhCDsspjrpqztlZjqs6AsIGBzZW5kX3Jlc3BvbnNlYOyZgCBgc2VuZF9oZWFkZXJg64qUIOyDge2DnOyZgCDtl6TrjZTrpbwsIGB3ZmlsZS53cml0ZWDripQgSlNPTiDrs7jrrLjsnYQg67O064OF64uI64ukLiBgVGhyZWFkaW5nSFRUUFNlcnZlcigoXCIxMjcuMC4wLjFcIiwgMCksIEhhbmRsZXIpYOydmCDtj6ztirggMOydgCDsmrTsmIHssrTsoJzsl5Ag7IKs7JqpIOqwgOuKpe2VnCDtj6ztirjrpbwg7ISg7YOd7ZW0IOuLrOudvOuKlCDrnLvsnoXri4jri6QuIGBUaHJlYWQoLi4uKS5zdGFydCgpYOuKlCDshJzrsoQg64yA6riw66W8IOuzhOuPhCDsi6Ttlokg7Z2Q66aE7JeQ7IScIOyLnOyeke2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjMzOjA4LjUxNjg0M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjMzOjA4LjUxNjczM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjMzOjA4LjUyNDY5MloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MzM6MDguNTI0MjE3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuuhnOy7rCDshJzrsoQg7KSA67mEIOyZhOujjFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyalOyyreydmCBwYWdlIOqwkuydhCDsnb3slrQg6rKw7KCV7KCB7J24IEpTT04g7Y6Y7J207KeA66W8IOuwmO2ZmO2VqeuLiOuLpC5cbiIsCiAgICAiY2xhc3MgSGFuZGxlcihCYXNlSFRUUFJlcXVlc3RIYW5kbGVyKTpcbiIsCiAgICAiICAgIGRlZiBkb19HRVQoc2VsZikgLT4gTm9uZTpcbiIsCiAgICAiICAgICAgICBwYWdlID0gaW50KHNlbGYucGF0aC5zcGxpdChcInBhZ2U9XCIpWy0xXSlcbiIsCiAgICAiICAgICAgICBib2R5ID0ganNvbi5kdW1wcyhwYWdlc1twYWdlXSkuZW5jb2RlKClcbiIsCiAgICAiICAgICAgICBzZWxmLnNlbmRfcmVzcG9uc2UoMjAwKVxuIiwKICAgICIgICAgICAgIHNlbGYuc2VuZF9oZWFkZXIoXCJDb250ZW50LVR5cGVcIiwgXCJhcHBsaWNhdGlvbi9qc29uXCIpXG4iLAogICAgIiAgICAgICAgc2VsZi5zZW5kX2hlYWRlcihcIkNvbnRlbnQtTGVuZ3RoXCIsIHN0cihsZW4oYm9keSkpKVxuIiwKICAgICIgICAgICAgIHNlbGYuZW5kX2hlYWRlcnMoKVxuIiwKICAgICIgICAgICAgIHNlbGYud2ZpbGUud3JpdGUoYm9keSlcbiIsCiAgICAiICAgIGRlZiBsb2dfbWVzc2FnZShzZWxmLCBmb3JtYXQ6IHN0ciwgKmFyZ3M6IG9iamVjdCkgLT4gTm9uZTpcbiIsCiAgICAiICAgICAgICBwYXNzXG4iLAogICAgInNlcnZlciA9IFRocmVhZGluZ0hUVFBTZXJ2ZXIoKFwiMTI3LjAuMC4xXCIsIDApLCBIYW5kbGVyKVxuIiwKICAgICJ0aHJlYWQgPSB0aHJlYWRpbmcuVGhyZWFkKHRhcmdldD1zZXJ2ZXIuc2VydmVfZm9yZXZlciwgZGFlbW9uPVRydWUpXG4iLAogICAgInRocmVhZC5zdGFydCgpXG4iLAogICAgImJhc2VfdXJsID0gZlwiaHR0cDovLzEyNy4wLjAuMTp7c2VydmVyLnNlcnZlcl9wb3J0fVwiXG4iLAogICAgInByaW50KFwi66Gc7LusIOyEnOuyhCDspIDruYQg7JmE66OMXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOykkeqwhCDqsrDqs7wg6rSA7LCwXG4iLAogICAgIlxuIiwKICAgICLssqsgR0VUIOyalOyyreydmCDsnoXroKXsnYAgYC9hcnRpY2xlc2Ag7KO87IaM7JmAIGBwYWdlPTFgIOy/vOumrCDrp6TqsJzrs4DsiJjsnoXri4jri6QuIGByYWlzZV9mb3Jfc3RhdHVzKClg66GcIOyYpOulmCDsg4Htg5zrpbwg66i87KCAIOqygOyCrO2VmOqzoCBgcmVzcG9uc2UuanNvbigpYOycvOuhnCBKU09OIOuzuOusuOydhCBQeXRob24g7IKs7KCE7Jy866GcIOuwlOq/ieuLiOuLpC4g7Lac66Cl7J2YIGBpdGVtc2DripQg7ZiE7J6sIO2OmOydtOyngCDsnpDro4zsnbTqs6AgYG5leHRfcGFnZT0yYOuKlCDri6TsnYwg7JqU7LKt7JeQIOyCrOyaqe2VoCDsnoXroKXsnoXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjozMzowOC41MjU3ODhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjozMzowOC41MjU2OTVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjozMzowOC41NjMwODBaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjMzOjA4LjU2MjcwNVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsg4Htg5wg7L2U65OcOiAyMDBcbiIsCiAgICAgICLsmpTssq0g7KO87IaMOiBodHRwOi8vMTI3LjAuMC4xOjU0Mzc2L2FydGljbGVzP3BhZ2U9MVxuIiwKICAgICAgInsnaXRlbXMnOiBbeydpZCc6ICdBMDEnfSwgeydpZCc6ICdBMDInfV0sICduZXh0X3BhZ2UnOiAyfVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOyyqyDtjpjsnbTsp4DsnZgg7IOB7YOc66W8IO2ZleyduO2VnCDrkqQgSlNPTuqzvCDri6TsnYwg7Y6Y7J207KeAIOqwkuydhCDsnb3sirXri4jri6QuXG4iLAogICAgInJlc3BvbnNlID0gaHR0cHguZ2V0KGZcIntiYXNlX3VybH0vYXJ0aWNsZXNcIiwgcGFyYW1zPXtcInBhZ2VcIjoxfSwgdGltZW91dD0yLjApXG4iLAogICAgInJlc3BvbnNlLnJhaXNlX2Zvcl9zdGF0dXMoKVxuIiwKICAgICJmaXJzdCA9IHJlc3BvbnNlLmpzb24oKVxuIiwKICAgICJwcmludChcIuyDge2DnCDsvZTrk5w6XCIsIHJlc3BvbnNlLnN0YXR1c19jb2RlKVxuIiwKICAgICJwcmludChcIuyalOyyrSDso7zshow6XCIsIHJlc3BvbnNlLnJlcXVlc3QudXJsKVxuIiwKICAgICJwcmludChmaXJzdClcbiIsCiAgICAiYXNzZXJ0IGZpcnN0W1wibmV4dF9wYWdlXCJdID09IDIiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rCSIO2VmOuCmOulvCDrsJTqv5Qg67mE6rWQXG4iLAogICAgIlxuIiwKICAgICLtjpjsnbTsp4Ag7J6F66Cl66eMIDHsl5DshJwgMuuhnCDrsJTqv4nri4jri6QuIEpTT07snZggYG51bGxg7J2AIFB5dGhvbuyXkOyEnCBgTm9uZWDsnLzroZwg67OA7ZmY65CY66+A66GcIGBuZXh0X3BhZ2UgaXMgTm9uZWDsnbTrqbQg642UIOyalOyyre2VoCDtjpjsnbTsp4DqsIAg7JeG64uk64qUIOucu+yeheuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjMzOjA4LjU2Mzk0MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjMzOjA4LjU2Mzg2OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjMzOjA4LjU2OTQ0NloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MzM6MDguNTY5MTYzWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInsnaXRlbXMnOiBbeydpZCc6ICdBMDMnfV0sICduZXh0X3BhZ2UnOiBOb25lfVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIHBhZ2Ug6rCS66eMIOuwlOq+uOyWtCDrkZAg67KI7Ke4IOydkeuLteydtCDsooXro4zrpbwg7ZGc7Iuc7ZWY64qU7KeAIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAic2Vjb25kID0gaHR0cHguZ2V0KGZcIntiYXNlX3VybH0vYXJ0aWNsZXNcIiwgcGFyYW1zPXtcInBhZ2VcIjoyfSwgdGltZW91dD0yLjApLmpzb24oKVxuIiwKICAgICJwcmludChzZWNvbmQpXG4iLAogICAgImFzc2VydCBzZWNvbmRbXCJuZXh0X3BhZ2VcIl0gaXMgTm9uZSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2MqCDsnqztmIRcbiIsCiAgICAiXG4iLAogICAgIuyyqyDsnZHri7Xrp4wg67CY7ZmY7ZWY66m0IOuRkCDrsojsp7gg7Y6Y7J207KeA7J2YIEEwM+ydtCDriITrnb3rkKnri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiY2VsbC0xMSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjozMzowOC41NzAyMjZaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjozMzowOC41NzAxNjBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjozMzowOC41NzU2NzlaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjMzOjA4LjU3NTM2N1oiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIu2VnCDtjpjsnbTsp4AgSUQ6IFsnQTAxJywgJ0EwMiddXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7LKrIOydkeuLteunjCDrsJjtmZjtlZjripQg7ZWo7IiY64qUIOuSpOyqvSDquLDsgqwgQTAz7J2EIOuIhOudve2VqeuLiOuLpC5cbiIsCiAgICAiZGVmIGZldGNoX29uZV9wYWdlKGJhc2VfdXJsOiBzdHIpIC0+IGxpc3RbZGljdF06XG4iLAogICAgIiAgICByZXNwb25zZSA9IGh0dHB4LmdldChmXCJ7YmFzZV91cmx9L2FydGljbGVzXCIsIHBhcmFtcz17XCJwYWdlXCI6MX0sIHRpbWVvdXQ9Mi4wKVxuIiwKICAgICIgICAgcmVzcG9uc2UucmFpc2VfZm9yX3N0YXR1cygpXG4iLAogICAgIiAgICByZXR1cm4gcmVzcG9uc2UuanNvbigpW1wiaXRlbXNcIl1cbiIsCiAgICAid3JvbmcgPSBmZXRjaF9vbmVfcGFnZShiYXNlX3VybClcbiIsCiAgICAicHJpbnQoXCLtlZwg7Y6Y7J207KeAIElEOlwiLCBbaXRlbVtcImlkXCJdIGZvciBpdGVtIGluIHdyb25nXSlcbiIsCiAgICAiYXNzZXJ0IFtpdGVtW1wiaWRcIl0gZm9yIGl0ZW0gaW4gd3JvbmddID09IFtcIkEwMVwiLCBcIkEwMlwiXSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTIiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7IiY7KCVXG4iLAogICAgIlxuIiwKICAgICLsnbQg64W47Yq467aB7J2YIOq4sOuzuCDtlajsiJjripQgYGJhc2VfdXJsYOqzvCBgdGltZW91dGDrp4wg7J6F66Cl67Cb7Iq164uI64ukLiBgaHR0cHguQ2xpZW50KHRpbWVvdXQ9dGltZW91dClg7J2AIOyXrOufrCDsmpTssq3sl5Ag7J6s7IKs7Jqp7ZWgIO2BtOudvOydtOyWuO2KuCDqsJ3ssrTrpbwg67CY7ZmY7ZWp64uI64ukLiBgY2xpZW50LmdldCjso7zshowsIHBhcmFtcz3qsJIpYOydgCBHRVQg7JqU7LKt7J2EIOuztOuCtCBgUmVzcG9uc2VgIOqwneyytOulvCDrsJjtmZjtlanri4jri6QuXG4iLAogICAgIlxuIiwKICAgICJgaXRlbXMuZXh0ZW5kKO2YhOyerF/rqqnroZ0pYOydgCDtmITsnqwg7Y6Y7J207KeA7J2YIOqwgSDquLDsgqzrpbwg6riw7KG0IOuqqeuhnSDrkqTsl5Ag7LaU6rCA7ZWp64uI64ukLiBgcGF5bG9hZC5nZXQoLi4uKWDsnYAg64uk7J2MIO2OmOydtOyngCDrsojtmLjrpbwg67CY7ZmY7ZWY66mwIO2CpOqwgCDsl4bsnLzrqbQgYE5vbmVg7J2EIOuwmO2ZmO2VqeuLiOuLpC4gYE5vbmVg7J20IOuQoCDrlYzquYzsp4Ag7JqU7LKt7ZWcIOuSpCDquLDsgqwg66qp66Gd7J2EIOuwmO2ZmO2VqeuLiOuLpC4gYGZpbmFsbHlg7J2YIGBjbGllbnQuY2xvc2UoKWDripQg7Jik66WY6rCAIOuwnOyDne2VtOuPhCDsl7DqsrAg7J6Q7JuQ7J2EIOygleumrO2VqeuLiOuLpC4g6rO17JqpIGBkYXRhX3Rvb2xzLnB5YOyXkOuKlCDrspTso7wg7ZWE7YSwLCDsmbjrtoAg7YG065287J207Ja47Yq4IOyeheugpSwg67CY67O1IO2OmOydtOyngCDqsoDsgqzrj4Qg7J6I7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImNlbGwtMTMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MzM6MDguNTc2NDE4WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MzM6MDguNTc2MzU4WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MzM6MDkuMDg1OTYwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjozMzowOS4wODQ4MDdaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyghOyytCBJRDogWydBMDEnLCAnQTAyJywgJ0EwMyddXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg6riw67O4IOyalOyyrSwg64iE7KCBLCDri6TsnYwg7Y6Y7J207KeAIOqwseyLoCwg67CY7ZmYIOyInOyEnOuhnCDqtaztmITtlanri4jri6QuXG4iLAogICAgImRlZiBmZXRjaF9hcnRpY2xlcyhiYXNlX3VybDogc3RyLCAqLCB0aW1lb3V0OiBmbG9hdCA9IDIuMCkgLT4gbGlzdFtkaWN0XTpcbiIsCiAgICAiICAgIGNsaWVudCA9IGh0dHB4LkNsaWVudCh0aW1lb3V0PXRpbWVvdXQpXG4iLAogICAgIiAgICBpdGVtczogbGlzdFtkaWN0XSA9IFtdXG4iLAogICAgIiAgICBwYWdlOiBpbnQgfCBOb25lID0gMVxuIiwKICAgICIgICAgdHJ5OlxuIiwKICAgICIgICAgICAgIHdoaWxlIHBhZ2UgaXMgbm90IE5vbmU6XG4iLAogICAgIiAgICAgICAgICAgIHJlc3BvbnNlID0gY2xpZW50LmdldChmXCJ7YmFzZV91cmx9L2FydGljbGVzXCIsIHBhcmFtcz17XCJwYWdlXCI6IHBhZ2V9KVxuIiwKICAgICIgICAgICAgICAgICByZXNwb25zZS5yYWlzZV9mb3Jfc3RhdHVzKClcbiIsCiAgICAiICAgICAgICAgICAgcGF5bG9hZCA9IHJlc3BvbnNlLmpzb24oKVxuIiwKICAgICIgICAgICAgICAgICBpdGVtcy5leHRlbmQocGF5bG9hZFtcIml0ZW1zXCJdKVxuIiwKICAgICIgICAgICAgICAgICBwYWdlID0gcGF5bG9hZC5nZXQoXCJuZXh0X3BhZ2VcIilcbiIsCiAgICAiICAgIGZpbmFsbHk6XG4iLAogICAgIiAgICAgICAgY2xpZW50LmNsb3NlKClcbiIsCiAgICAiICAgIHJldHVybiBpdGVtc1xuIiwKICAgICJhbGxfaXRlbXMgPSBmZXRjaF9hcnRpY2xlcyhiYXNlX3VybClcbiIsCiAgICAicHJpbnQoXCLsoITssrQgSUQ6XCIsIFtpdGVtW1wiaWRcIl0gZm9yIGl0ZW0gaW4gYWxsX2l0ZW1zXSlcbiIsCiAgICAiYXNzZXJ0IFtpdGVtW1wiaWRcIl0gZm9yIGl0ZW0gaW4gYWxsX2l0ZW1zXSA9PSBbXCJBMDFcIiwgXCJBMDJcIiwgXCJBMDNcIl1cbiIsCiAgICAic2VydmVyLnNodXRkb3duKClcbiIsCiAgICAidGhyZWFkLmpvaW4oKSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAicGFpcmVkIiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNiwKICAgImNvZGVfc2hhMjU2IjogIjA4NzBhOTZlN2Y3ZTIyOWYyMDhmYjRhMmYzYmU5OGExNTY5YmFkYmVmYjUyMWQyNGI2MTM0YWQzMTJmY2ViMWYiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwNjozMzowOS4yMDQyNTErMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjMwMmRmMzMxZWVmYTA3MGRmYzJjYzE3MDJlMmM4OTM3MmI0YmMwMDRlNzBhZDA5M2Y1NzA4MTNhY2RmNTlkNjMiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>REST와 페이지네이션</h2>
+<p>컴퓨터에서 실행한 HTTP 서버로부터 두 페이지를 순서대로 받습니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>다음 두 코드 셀은 HTTP 요청과 응답을 관찰하기 위한 로컬 보조 서버를 만듭니다. 서버 구현 자체는 학습 목표가 아닙니다. <code>json</code>은 Python 값을 JSON 본문으로 바꾸고, <code>threading</code>은 서버가 요청을 기다리는 동안 다음 셀을 실행할 수 있도록 별도 실행 흐름을 제공합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 실제 로컬 HTTP 서버와 httpx 클라이언트를 준비합니다.
+import json
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+import httpx
+
+pages = {1:{&quot;items&quot;:[{&quot;id&quot;:&quot;A01&quot;},{&quot;id&quot;:&quot;A02&quot;}],&quot;next_page&quot;:2},
+         2:{&quot;items&quot;:[{&quot;id&quot;:&quot;A03&quot;}],&quot;next_page&quot;:None}}</code></pre></div></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p><code>class Handler(BaseHTTPRequestHandler)</code>의 괄호 안 이름은 기존 HTTP 처리 기능을 물려받는 부모 클래스입니다. 이 상속 표기는 아직 일반 Python 경로에서 배우지 않았으므로 그대로 실행할 보조 코드로 읽습니다. <code>do_GET</code>은 GET 요청을 처리하고, <code>send_response</code>와 <code>send_header</code>는 상태와 헤더를, <code>wfile.write</code>는 JSON 본문을 보냅니다. <code>ThreadingHTTPServer((&quot;127.0.0.1&quot;, 0), Handler)</code>의 포트 0은 운영체제에 사용 가능한 포트를 선택해 달라는 뜻입니다. <code>Thread(...).start()</code>는 서버 대기를 별도 실행 흐름에서 시작합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 요청의 page 값을 읽어 결정적인 JSON 페이지를 반환합니다.
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self) -&gt; None:
+        page = int(self.path.split(&quot;page=&quot;)[-1])
+        body = json.dumps(pages[page]).encode()
+        self.send_response(200)
+        self.send_header(&quot;Content-Type&quot;, &quot;application/json&quot;)
+        self.send_header(&quot;Content-Length&quot;, str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+    def log_message(self, format: str, *args: object) -&gt; None:
+        pass
+server = ThreadingHTTPServer((&quot;127.0.0.1&quot;, 0), Handler)
+thread = threading.Thread(target=server.serve_forever, daemon=True)
+thread.start()
+base_url = f&quot;http://127.0.0.1:{server.server_port}&quot;
+print(&quot;로컬 서버 준비 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">로컬 서버 준비 완료
+</pre></div>
+<div class="nb-markdown"><h3>중간 결과 관찰</h3>
+<p>첫 GET 요청의 입력은 <code>/articles</code> 주소와 <code>page=1</code> 쿼리 매개변수입니다. <code>raise_for_status()</code>로 오류 상태를 먼저 검사하고 <code>response.json()</code>으로 JSON 본문을 Python 사전으로 바꿉니다. 출력의 <code>items</code>는 현재 페이지 자료이고 <code>next_page=2</code>는 다음 요청에 사용할 입력입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 첫 페이지의 상태를 확인한 뒤 JSON과 다음 페이지 값을 읽습니다.
+response = httpx.get(f&quot;{base_url}/articles&quot;, params={&quot;page&quot;:1}, timeout=2.0)
+response.raise_for_status()
+first = response.json()
+print(&quot;상태 코드:&quot;, response.status_code)
+print(&quot;요청 주소:&quot;, response.request.url)
+print(first)
+assert first[&quot;next_page&quot;] == 2</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">상태 코드: 200
+요청 주소: http://127.0.0.1:54376/articles?page=1
+{&#x27;items&#x27;: [{&#x27;id&#x27;: &#x27;A01&#x27;}, {&#x27;id&#x27;: &#x27;A02&#x27;}], &#x27;next_page&#x27;: 2}
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 비교</h3>
+<p>페이지 입력만 1에서 2로 바꿉니다. JSON의 <code>null</code>은 Python에서 <code>None</code>으로 변환되므로 <code>next_page is None</code>이면 더 요청할 페이지가 없다는 뜻입니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># page 값만 바꾸어 두 번째 응답이 종료를 표시하는지 확인합니다.
+second = httpx.get(f&quot;{base_url}/articles&quot;, params={&quot;page&quot;:2}, timeout=2.0).json()
+print(second)
+assert second[&quot;next_page&quot;] is None</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;items&#x27;: [{&#x27;id&#x27;: &#x27;A03&#x27;}], &#x27;next_page&#x27;: None}
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 보조 서버 코드는 실행 환경 준비로 구분하고, 학습 대상은 첫 요청의 입력 <code>page=1</code>, 응답 상태 200, <code>items</code>와 <code>next_page=2</code>의 연결입니다. 다음 요청에서 <code>next_page</code>가 <code>None</code>으로 바뀌어 A01·A02·A03이 반환되는지 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before 함수는 page=1을 한 번만 요청해 A01과 A02를 반환합니다. HTTP 요청과 JSON 변환은 성공하지만 A03이 누락됩니다. After 함수는 현재 페이지를 변수로 두고 <code>next_page</code>가 <code>None</code>이 될 때까지 반복합니다. 각 응답에서 상태를 검사하고 기사 목록을 누적하여 A01, A02, A03을 모두 반환합니다. 마지막에는 클라이언트와 서버를 종료해 연결 자원, 포트, 스레드를 정리합니다. 반복 페이지 검사는 공용 모듈의 확장 기능이며 이 노트북의 기본 함수에는 포함하지 않습니다.</p><section class="notebook" data-notebook="04-REST와-페이지네이션" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>첫 응답만 반환하면 두 번째 페이지의 A03이 누락됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 첫 응답만 반환하는 함수는 뒤쪽 기사 A03을 누락합니다.
+def fetch_one_page(base_url: str) -&gt; list[dict]:
+    response = httpx.get(f&quot;{base_url}/articles&quot;, params={&quot;page&quot;:1}, timeout=2.0)
+    response.raise_for_status()
+    return response.json()[&quot;items&quot;]
+wrong = fetch_one_page(base_url)
+print(&quot;한 페이지 ID:&quot;, [item[&quot;id&quot;] for item in wrong])
+assert [item[&quot;id&quot;] for item in wrong] == [&quot;A01&quot;, &quot;A02&quot;]</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">한 페이지 ID: [&#x27;A01&#x27;, &#x27;A02&#x27;]
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>이 노트북의 기본 함수는 <code>base_url</code>과 <code>timeout</code>만 입력받습니다. <code>httpx.Client(timeout=timeout)</code>은 여러 요청에 재사용할 클라이언트 객체를 반환합니다. <code>client.get(주소, params=값)</code>은 GET 요청을 보내 <code>Response</code> 객체를 반환합니다.</p>
+<p><code>items.extend(현재_목록)</code>은 현재 페이지의 각 기사를 기존 목록 뒤에 추가합니다. <code>payload.get(...)</code>은 다음 페이지 번호를 반환하며 키가 없으면 <code>None</code>을 반환합니다. <code>None</code>이 될 때까지 요청한 뒤 기사 목록을 반환합니다. <code>finally</code>의 <code>client.close()</code>는 오류가 발생해도 연결 자원을 정리합니다. 공용 <code>data_tools.py</code>에는 범주 필터, 외부 클라이언트 입력, 반복 페이지 검사도 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 기본 요청, 누적, 다음 페이지 갱신, 반환 순서로 구현합니다.
+def fetch_articles(base_url: str, *, timeout: float = 2.0) -&gt; list[dict]:
+    client = httpx.Client(timeout=timeout)
+    items: list[dict] = []
+    page: int | None = 1
+    try:
+        while page is not None:
+            response = client.get(f&quot;{base_url}/articles&quot;, params={&quot;page&quot;: page})
+            response.raise_for_status()
+            payload = response.json()
+            items.extend(payload[&quot;items&quot;])
+            page = payload.get(&quot;next_page&quot;)
+    finally:
+        client.close()
+    return items
+all_items = fetch_articles(base_url)
+print(&quot;전체 ID:&quot;, [item[&quot;id&quot;] for item in all_items])
+assert [item[&quot;id&quot;] for item in all_items] == [&quot;A01&quot;, &quot;A02&quot;, &quot;A03&quot;]
+server.shutdown()
+thread.join()</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">전체 ID: [&#x27;A01&#x27;, &#x27;A02&#x27;, &#x27;A03&#x27;]
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>페이지 종료 규칙은 서비스마다 다릅니다. 빈 목록, 다음 링크 부재, 커서 부재 중 무엇을 사용하는지 공식 문서를 확인합니다.</li><li>시간 제한은 연결·읽기 등 단계별로 설정할 수 있습니다. 작업의 응답 시간 요구와 서버 특성에 맞춰 정합니다.</li><li>모든 오류를 즉시 재시도하면 서버 장애를 키울 수 있습니다. 재시도할 상태, 횟수, 대기 증가 규칙을 정하고 중복 요청의 영향을 확인합니다.</li><li>실제 API의 인증 토큰은 코드나 노트북 출력에 넣지 않고 환경 변수에서 읽습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>HTTP 응답은 상태를 확인한 뒤 본문을 해석합니다.</li><li>페이지네이션 함수는 다음 값과 정상 종료 조건을 처리합니다.</li><li>시간 제한과 자원 정리는 조회 함수의 정상 동작에 포함됩니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 JSON API가 없는 HTML 문서에서 구조를 읽고 필요한 필드를 추출합니다. 이 절의 <code>fetch_articles</code>는 Ch 19 도구 함수의 세 번째 재사용 예제입니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 첫 페이지만 읽은 함수가 반환한 기사 ID는 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> A01과 A02입니다. A03은 두 번째 페이지에 있어 누락됩니다.</p><p class="quiz-q">2. <code>raise_for_status()</code>의 역할은 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> 4xx·5xx 응답을 정상 데이터로 계속 처리하지 않고 HTTP 상태 오류로 알립니다.</p><p class="quiz-q">3. 반복문이 끝나는 조건은 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> 응답의 <code>next_page</code>가 None이 되는 경우입니다.</p><p class="quiz-q">4. 로컬 서버 실습으로 확인할 수 없는 실제 운영 조건 하나를 쓰세요.</p><p class="quiz-a"><strong>정답 예</strong> 인증, 사업자별 호출량 제한, 외부 네트워크 장애, 실제 응답 스키마 변경 중 하나입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://www.python-httpx.org/quickstart/">HTTPX 공식 문서 · QuickStart</a> · 2026-09-09 확인 · httpx 0.28.1</li><li><a href="https://docs.python.org/3/library/http.server.html">Python 공식 문서 · http.server</a> · 2026-09-09 확인 · Python 3.12</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="03-SQL로-조회-함수-만들기.html">← SQL로 조회 함수 만들기</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="05-문서-파싱과-스크래핑.html">문서 파싱과 스크래핑 →</a></span></div></div></body></html>

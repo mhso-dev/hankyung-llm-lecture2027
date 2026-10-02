@@ -1,0 +1,24 @@
+flowchart TB
+  %% classes
+  src["SWE-agent 추출본 단계 열넷<br>칸 고른 쪽 없음"]:::tool
+  subgraph right["모델로 채움"]
+    direction TB
+    r1["to_steps<br>고른 쪽 모델"]:::flow
+    r2["classify<br>모델이 고른 줄 14"]:::flow
+    r3["에이전트 후보"]:::measure
+    r1 --> r2
+    r2 --> r3
+  end
+  subgraph left["모름으로 채움"]
+    direction TB
+    l1["to_steps<br>고른 쪽 모름"]:::flow
+    l2["classify<br>모델이 고른 줄 0"]:::flow
+    l3["워크플로우"]:::measure
+    l1 --> l2
+    l2 --> l3
+  end
+  same["같은 자료<br>판정은 채운 값에서 나옴<br>단계 차례만으로는<br>고를 수 없음"]
+  src --> r1
+  src --> l1
+  left ~~~ same
+  right ~~~ same

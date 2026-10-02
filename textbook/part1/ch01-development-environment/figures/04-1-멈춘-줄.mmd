@@ -1,0 +1,15 @@
+flowchart TD
+  %% classes
+  C1["명령 b 3, c"]:::flow
+  subgraph S1["멈춤 1 · 3번 줄 앞"]
+    direction LR
+    L1["total = price + count<br>아직 실행 전"]:::tool --> V1["p price 3000<br>p count 2<br>p total NameError"]:::measure
+  end
+  C2["명령 n<br>멈춘 줄 하나만 실행"]:::flow
+  subgraph S2["멈춤 2 · 4번 줄 앞"]
+    direction LR
+    L2["print(f#quot;총액: {total}원#quot;)<br>아직 실행 전"]:::tool --> V2["p total 3002"]:::fail
+  end
+  C1 --> S1
+  S1 --> C2
+  C2 --> S2

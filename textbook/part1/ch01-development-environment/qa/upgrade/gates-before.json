@@ -1,0 +1,414 @@
+{
+  "chapter": "ch01-development-environment",
+  "label": "before",
+  "totals": {
+    "G1": 2,
+    "G2": 1,
+    "G3": 11,
+    "G4": 0,
+    "G5": 29,
+    "G6": 197,
+    "G7": 15
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-과정-지도와-학습-규칙",
+      "code_cells": 4,
+      "sentences": 128,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 1,
+        "G4": 0,
+        "G5": 6,
+        "G6": 15,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [
+          "cell2:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:이 문법은 Ch 2에서 차례로 배우므로, 지금은 “현재 실행기가 Python 3.12인가?”라는 질문을 코드로 적은 것으로 읽습니다",
+          "english_start:HTML은 내용을 읽고 코드를 복사하는 데 사용하는 교재이며, 화면의 복",
+          "english_start:`sys.version_info`는 실행 중인 Python의 버전 정보를",
+          "english_start:`== (3, 12)`는 고른 두 값이 3과 12인지 비교하며, 비교 결",
+          "english_start:`print(...)`는 괄호 안에서 만든 문장을 화면에 출력합니다",
+          "english_start:`assert total == prediction`은 `total`과 `",
+          "english_start:`import sys`는 Python에 포함된 `sys` 기능을 가져오며",
+          "english_start:`== (3, 12)`의 결과가 `True`이면 주 버전 3과 부 버전 ",
+          "english_start:`assert`는 이 조건이 거짓일 때 실행을 멈춥니다",
+          "english_start:`=`는 오른쪽 값을 왼쪽 이름에 저장합니다",
+          "english_start:`total = price * count`는 저장된 3,000과 2를 곱",
+          "english_start:`print`는 값을 화면에 보여 주고, `assert total == ",
+          "english_start:`assert`는 관찰한 값이 기대한 값과 같은지 확인합니다",
+          "dense_paragraph:프로그램(program) 은 컴퓨터가 수행할 작업을 적은 것입니다. 입력(input) 은 작업에 사용하는 값",
+          "dense_paragraph:계산한 값을 기억하는 것과 화면에 표시하는 것은 별개의 동작입니다. 코드에서 이름에 값을 저장해도 화면에 아"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-도구-설치와-터미널",
+      "code_cells": 5,
+      "sentences": 155,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 1,
+        "G4": 0,
+        "G5": 5,
+        "G6": 26,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [
+          "cell2:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:절대 경로(absolute path) 는 파일 시스템의 기준 위치부터 적고, 상대 경로(relative path) 는 현재 위치 같은 지정된 기준에서 적습니다",
+          "long:설치 후 VS Code를 열어 왼쪽 Extensions 화면에서 Microsoft가 제공하는 Python과 Jupyter 확장을 설치합니다",
+          "english_start:macOS는 Apple silicon과 Intel 구분을 확인하고, Wi",
+          "english_start:uv는 공식 설치 페이지의 Standalone installer에서 자신",
+          "english_start:`uv --version`으로 버전 문자열이 출력되는지 확인합니다",
+          "english_start:Git과 Docker Desktop의 설치 파일도 표의 공식 페이지에서 ",
+          "english_start:`TemporaryDirectory`는 연습용 임시 폴더를 만드는 기능입",
+          "english_start:`from pathlib import Path`는 Python 기본 기능",
+          "english_start:`workspace / \"practice\"`의 `/`는 이 코드에서 나눗",
+          "english_start:`write_text`는 첫 번째 인자의 글을 파일에 저장하며 `enco",
+          "english_start:`read_text`는 같은 규칙으로 파일을 읽어 문자열을 반환합니다",
+          "english_start:`project.mkdir()`는 경로 객체의 폴더 생성 기능을 실행합니",
+          "english_start:`else`는 예상한 오류가 발생하지 않았을 때 실행됩니다",
+          "english_start:`from pathlib import Path`는 경로를 다루는 `Pat",
+          "english_start:`TemporaryDirectory()`가 반환한 결과에는 임시 폴더 이",
+          "english_start:`Path(temporary_folder.name)`은 그 이름을 경로 ",
+          "english_start:`/`는 `Path` 뒤에 폴더 이름을 연결하고, `mkdir()`가 실",
+          "english_start:`project.mkdir()`는 객체에 속한 기능(메서드)을 호출해 폴",
+          "english_start:`encoding=\"utf-8\"`은 한글을 파일의 바이트로 바꾸고 다시 ",
+          "english_start:`is_file()`은 해당 위치가 파일이면 `True`를 반환합니다",
+          "english_start:`project / relative_path`는 기준 폴더와 `data/",
+          "english_start:`read_text`는 파일 내용을 문자열로 반환하고, `basic_me",
+          "english_start:`FileNotFoundError`가 발생하면 `except` 아래가 실",
+          "english_start:`else`는 예상한 오류가 발생하지 않았을 때 실행됩니다",
+          "english_start:`cleanup()`은 실습용 임시 폴더를 정리합니다",
+          "dense_paragraph:uv는 공식 설치 페이지의 Standalone installer에서 자신의 운영체제 탭을 선택합니다. 해당 "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-Python과-가상환경",
+      "code_cells": 4,
+      "sentences": 160,
+      "counts": {
+        "G1": 1,
+        "G2": 0,
+        "G3": 3,
+        "G4": 0,
+        "G5": 6,
+        "G6": 38,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell6:conditional_expression"
+        ],
+        "G2": [],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell4:first_line_comment_missing",
+          "cell6:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:`notebooks`에서 원하는 절의 `.ipynb`를 열고, 오른쪽 위 Select Kernel → Python Environments에서 같은 프로젝트의 `.venv`를 선택합니다",
+          "long:`uv sync`는 프로젝트의 실행 환경을 준비하는 명령이고, `--locked`는 제공된 잠금 파일을 변경하지 않고 사용할 수 있는지 확인하는 옵션입니다",
+          "long:`sys`, `os`, `shutil`, `subprocess`, `pathlib`, `tempfile`은 Python과 함께 제공되는 표준 라이브러리이므로 이 노트북에서 별도 설치하지 않습니다",
+          "long:운영체제에 따라 가상환경 안의 Python 파일 위치가 다르므로 `os.name == \"nt\"`일 때 Windows 경로를, 그렇지 않을 때 macOS·Linux 경로를 선택합니다",
+          "long:실제 사용자 폴더 경로를 외우지 않고, 환경 A와 B가 서로 다른 위치인지와 각 환경이 기반 Python의 위치와 다른지를 확인합니다",
+          "long:실행 중인 변수, 저장한 코드, 저장된 출력이 각각 무엇인지 구분하면 이전 실행의 숫자를 새 결과로 오해하는 일을 줄일 수 있습니다",
+          "long:`.venv`를 이동하거나 이름을 바꾼 경우에는 기존 경로를 기억한 설정이 맞지 않을 수 있으므로 제공된 설정으로 새 위치에서 환경을 준비하고 다시 선택합니다",
+          "long:VS Code Python 환경 · 노트북 커널 선택 — 확인 2026-09-09, 실제 메뉴 이름은 설치 버전에 따라 달라질 수 있습니다",
+          "long:인터프리터는 Python 코드를 읽어 실행하는 프로그램이고, 가상환경은 프로젝트별 Python 실행 위치와 패키지 설치 위치를 구분합니다",
+          "english_start:`uv --version`이 인식되지 않으면 2절의 설치 안내를 먼저 확",
+          "english_start:`uv run python --version`을 실행해 `Python 3",
+          "english_start:`uv sync`는 프로젝트의 실행 환경을 준비하는 명령이고, `--lo",
+          "english_start:`uv run`은 프로젝트 환경에서 뒤에 적은 명령을 실행합니다",
+          "english_start:`sys`는 실행 중인 Python 정보를 읽고, `subprocess`",
+          "english_start:`import`는 이미 준비된 기능을 현재 코드에서 사용할 수 있게 가져",
+          "english_start:`shutil.which(\"uv\")`는 셸이 실행할 수 있는 `uv` 명",
+          "english_start:`assert uv is not None`은 위치를 찾았는지 확인하고, ",
+          "english_start:`check=True`는 명령이 실패 상태를 반환하면 Python 실행도",
+          "english_start:`capture_output=True`는 별도 프로그램의 출력을 화면에 ",
+          "english_start:`sys.prefix`는 현재 실행 환경의 위치이고 `sys.base_p",
+          "english_start:`is not None`은 값이 없는 상태인 `None`이 아닌지 확인합",
+          "english_start:`.venv`를 이동하거나 이름을 바꾼 경우에는 기존 경로를 기억한 설정",
+          "english_start:uv로 환경을 준비하고 VS Code의 인터프리터와 커널을 각각 선택합니",
+          "english_start:`import sys`는 실행 중인 Python 정보를 읽는 표준 기능을",
+          "english_start:`version_info[:2]`는 버전 정보의 앞 두 값인 주 버전과 ",
+          "english_start:`uv venv`는 지정한 폴더에 Python 가상환경을 만듭니다",
+          "english_start:`--python 3.12`는 Python 버전을 고정하고, `--no-",
+          "english_start:`shutil.which(\"uv\")`는 실행 가능한 uv 명령의 위치를 ",
+          "english_start:`subprocess.run`의 대괄호 안에는 터미널에서 실행할 프로그램",
+          "english_start:`check=True`는 명령 실패 시 실행을 멈춥니다",
+          "english_start:`uv is not None`은 명령 위치가 없는 상태인지 확인하는 식입",
+          "english_start:`None`이 아니면 참입니다",
+          "english_start:`assert 조건, \"안내 문장\"`의 쉼표 뒤 문자열은 조건이 거짓일 ",
+          "english_start:`subprocess.run`의 `-c`는 뒤의 Python 코드를 파일",
+          "english_start:`capture_output=True`는 별도 실행의 출력을 반환 결과의",
+          "english_start:`splitlines()`는 여러 출력 줄을 줄별 목록으로 나눕니다",
+          "english_start:`lines_a[0]`은 첫 번째 결과인 가상환경 여부이고, `lines",
+          "dense_paragraph:`uv venv`는 지정한 폴더에 Python 가상환경을 만듭니다. `--python 3.12`는 Pytho"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-첫-스크립트와-디버거",
+      "code_cells": 5,
+      "sentences": 158,
+      "counts": {
+        "G1": 1,
+        "G2": 1,
+        "G3": 1,
+        "G4": 0,
+        "G5": 6,
+        "G6": 30,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell8:list_comprehension"
+        ],
+        "G2": [
+          "cell8:over_15_lines"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:이 절을 마치면 VS Code에 Python, Python Debugger, Jupyter 확장을 설치하고 프로젝트의 `.venv`를 선택할 수 있습니다",
+          "long:Python 확장은 Python 환경 탐색과 코드 편집 기능을 제공하고, Python Debugger 확장은 실행을 멈추고 값을 살펴보는 기능을 제공하며, Jupyter 확장은 `.ipynb` 노트북 셀을 실행합니다",
+          "long:파란색은 학생이 파일을 저장하고 F5·F10을 누르는 행동, 초록색은 선택한 `.venv`와 디버거, 노란색은 현재 줄과 Variables 패널에서 확인하는 값, 빨간색은 덧셈 때문에 생긴 잘못된 합계를 뜻합니다",
+          "long:VS Code의 빨간 중단점, 노란 현재 줄, Variables 패널은 노트북 출력에 포함되지 않으므로 같은 실패 코드를 VS Code에서 직접 열어 화면으로 확인합니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 만든 파일의 변경 상태를 Git으로 확인하고, 뒤에서 같은 실행 환경을 재현할 때 사용할 Docker의 준비 상태를 점검합니다",
+          "long:정답과 해설 — 더하는 두 값이 모두 숫자이므로 덧셈 자체는 유효하지만, 단가와 수량으로 합계를 구한다는 요구에는 맞지 않습니다",
+          "long:Visual Studio Code, 「Python environments in VS Code」 — code.visualstudio.com/docs/python/environments · 확인 2026-09-09. 인터프리터 선택과 `.venv` 탐색 기준.",
+          "long:Visual Studio Code, 「Python debugging in VS Code」 — code.visualstudio.com/docs/python/debugging · 페이지 표시 2026-02-04 · 확인 2026-09-09. Python Debugger, F5, 중단점, 선택한 인터프리터의 사용 기준.",
+          "long:Visual Studio Code, 「Jupyter Kernels and the Jupyter Extension」 — code.visualstudio.com/docs/datascience/jupyter-kernel-management · 확인 2026-09-09. 노트북 커널 선택 기준.",
+          "long:Python Software Foundation, 「The Python Debugger」 — docs.python.org/3.12/library/pdb.html · Python 3.12 · 확인 2026-09-09. 노트북의 `pdb` 시연 기준.",
+          "long:스크립트는 Python 명령을 순서대로 적어 저장한 .py 파일이고, 디버거는 실행을 특정 줄에서 멈춰 그 시점의 값을 확인하는 도구입니다",
+          "english_start:`launch.json`은 실행 인자나 다른 인터프리터 같은 별도 설정이",
+          "english_start:`bug_file = workspace / \"price_bug.py\"`는",
+          "english_start:`strip()`은 출력 끝의 줄바꿈을 제거하고, `int(...)`는 ",
+          "english_start:`pdb`는 Python에 포함된 줄 단위 디버거입니다",
+          "english_start:`observed[-3:]`는 고른 결과의 마지막 세 값을 뜻합니다",
+          "english_start:F10으로 그 줄을 실행하면 다음 줄 앞에서 멈추며, 그때 대입된 `to",
+          "english_start:`import`는 준비된 기능을 현재 코드로 가져옵니다",
+          "english_start:`subprocess`는 다른 프로그램을 실행하고, `sys`는 현재 P",
+          "english_start:`bug_file`은 `price_bug.py`가 놓일 경로만 나타내며,",
+          "english_start:`=`는 오른쪽 값을 왼쪽 이름에 저장하고, `*`는 곱셈을 뜻합니다",
+          "english_start:`print`는 계산 결과를 화면에 표시합니다",
+          "english_start:`assert`는 `total`이 6000인지 검사하며, 조건이 참이면 ",
+          "english_start:`write_text`는 그 문자열을 파일에 저장합니다",
+          "english_start:`subprocess.run`은 현재 노트북의 Python으로 저장한 파",
+          "english_start:`stdout`은 스크립트가 출력한 글이며, `strip`은 끝의 줄바꿈",
+          "english_start:`b 4`는 4번 줄에 중단점을 두고, `c`는 그 줄까지 계속 실행하며",
+          "english_start:`q`는 디버거를 종료합니다",
+          "dense_paragraph:디버거(debugger)는 실행을 잠시 멈추고 현재 줄과 변수 값을 확인하는 도구입니다. 중단점(breakp",
+          "dense_paragraph:F10 은 다음 줄로 한 단계 진행하는 Step Over입니다. 현재 줄을 실행한 뒤 다음 줄 앞에서 다시 "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-Git과-Docker-준비",
+      "code_cells": 7,
+      "sentences": 221,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 5,
+        "G4": 0,
+        "G5": 6,
+        "G6": 88,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [
+          "cell1:first_line_comment_missing",
+          "cell5:first_line_comment_missing",
+          "cell7:first_line_comment_missing",
+          "cell9:first_line_comment_missing",
+          "cell11:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell1:result_reading_quotes_no_output",
+          "cell3:result_reading_quotes_no_output",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output"
+        ],
+        "G6": [
+          "long:Docker는 설치 파일을 임의로 내려받지 않고 운영체제별 공식 안내를 확인하며, 명령을 입력할 수 있는 상태와 실제 실행 서비스가 준비된 상태를 구분합니다",
+          "long:문서를 여러 차례 수정할 때 파일 이름을 `최종`, `진짜최종`처럼 늘리는 대신, 변경 이력을 한곳에 기록하면 어느 부분이 달라졌는지 찾기 쉽습니다",
+          "long:Docker Desktop을 시작한 뒤 `docker version`을 실행하여 클라이언트에 해당하는 Client 구역과 데몬에 해당하는 Server 구역이 모두 나타나는지 확인합니다",
+          "long:파란색은 학생이 버전과 상태 명령을 입력하는 행동, 초록색은 Git·Docker 클라이언트와 Docker 데몬, 노란색은 출력에서 확인할 저장소 상태와 Client·Server 구역, 빨간색은 명령을 찾지 못했거나 Server가 응답하지 않는 상태를 뜻합니다",
+          "long:마지막에는 Python, uv, 가상환경, Git, Docker 클라이언트, Docker 데몬의 여섯 항목을 같은 표에 표시합니다",
+          "long:확인할 점 — Git 임시 저장소에서 파일을 만들기 전에는 짧은 상태 출력에 새 파일이 없고, 파일을 만든 뒤에는 아직 추적하지 않은 파일 표시가 나타나는지 확인합니다",
+          "long:Git 항목은 변경 상태를 기록할 도구를, Docker 클라이언트와 데몬 항목은 이후 컨테이너 실습을 시작할 준비를 각각 확인합니다",
+          "long:Docker 클라이언트나 데몬만 준비되지 않았다면 Ch 2의 Python 학습은 진행할 수 있지만, Docker를 사용하는 후속 실습 전에 설치와 실행 상태를 보완합니다",
+          "long:Git의 사용자 이름 설정, GitHub 로그인, 네트워크 연결, Docker 이미지 내려받기, 컨테이너 실행 성능은 측정하지 않습니다",
+          "long:2026년 9월 9일 검증 환경에서는 Python 3.12, uv, 현재 커널의 가상환경 여부, Git, Docker 클라이언트, Docker 서버가 모두 `True`로 출력되었습니다",
+          "long:`total = price * count` 줄의 중단점에서 F5로 멈췄을 때, 그 줄의 실행 전과 F10을 누른 후 Variables 패널이 어떻게 다른지 설명합니다",
+          "long:B 트랙 권장 — 1~4번을 독립적으로 수행하고 5~6번에서 실제 작성 경험을 구체적으로 설명할 수 있다면 확장 과제를 함께 수행합니다",
+          "long:A 트랙 권장 — B 트랙의 조건을 모두 충족하지 않으면 기초 경로에서 Ch 2의 변수, 연산자, 조건문, 함수 단계를 순서대로 학습합니다",
+          "long:1~4번은 수행했지만 함수·예외 처리·테스트 경험이 부족한 학습자도 A 트랙에서 해당 내용을 익힌 뒤 B 트랙 확장 과제를 선택할 수 있습니다",
+          "long:4번은 중단점 줄을 실행하기 전에는 그 줄이 만들 새 `total`을 아직 확인할 수 없고, F10을 누른 뒤에는 계산된 `total`을 변수 창에서 확인할 수 있다고 설명해야 합니다",
+          "long:다음 학습과 이어지는 지점 — Ch 2에서는 여기서 준비한 Python 3.12와 uv 환경으로 문법과 자료구조를 배우며 여러 스크립트를 작성합니다",
+          "long:정답과 해설 — Docker 클라이언트 명령은 설치되어 있지만 데몬이 실행되지 않았거나 현재 클라이언트가 데몬과 통신하지 못하는 상태입니다",
+          "long:Docker를 사용하는 후속 실습 전에는 운영체제별 공식 안내로 Docker Desktop을 설치하고, 클라이언트와 데몬 상태를 각각 다시 확인합니다",
+          "long:Git Project, 「Installing Git」 — git-scm.com/book/en/v2/Getting-Started-Installing-Git · 확인 2026-09-09. macOS·Windows·Linux 설치 경로.",
+          "long:Git Project, 「git-status」 — git-scm.com/docs/git-status · 문서 표시 2.53.0 · 확인 2026-09-09. 작업 폴더와 아직 추적하지 않은 파일의 상태 표시 기준.",
+          "long:Docker, 「Install Docker Desktop on Windows」 — docs.docker.com/desktop/setup/install/windows-install · 확인 2026-09-09. Windows와 WSL 2 요구 사항.",
+          "long:Docker, 「Install Docker Desktop on Mac」 — docs.docker.com/desktop/setup/install/mac-install · 확인 2026-09-09. macOS와 칩별 설치 안내.",
+          "long:Docker, 「Install Docker Desktop on Linux」 — docs.docker.com/desktop/setup/install/linux · 확인 2026-09-09. 지원 배포판과 KVM·QEMU 요구 사항.",
+          "long:Docker, 「Docker Desktop CLI」 — docs.docker.com/desktop/features/desktop-cli · 확인 2026-09-09. `docker desktop status` 등 Desktop 상태 명령.",
+          "long:Python 버전, uv 응답, 현재 커널의 가상환경 여부, Git, Docker 클라이언트, Docker 서버를 각각 읽습니다",
+          "english_start:Git은 어떤 파일이 달라졌는지 기록하는 도구입니다",
+          "english_start:Docker는 필요한 프로그램과 설정을 묶은 실행 환경을 만드는 데 사용",
+          "english_start:Git은 현재 폴더를 저장소로 준비하고 상태를 읽는 데까지 다룹니다",
+          "english_start:Docker는 설치 파일을 임의로 내려받지 않고 운영체제별 공식 안내를 ",
+          "english_start:Git의 브랜치와 협업은 뒤의 실습에서, 컨테이너 설계와 배포는 Ch 3",
+          "english_start:Git이 이 기록을 맡습니다",
+          "english_start:Docker는 필요한 도구가 놓인 작업대의 설계와 실행을 담당합니다",
+          "english_start:`git init`을 실행하면 현재 폴더에 Git 관리 정보가 생기며, ",
+          "english_start:Git을 설치했다고 GitHub 계정이 자동으로 생기지 않으며, `git",
+          "english_start:`git status`는 현재 저장소에서 무엇이 달라졌는지 보여 줍니다",
+          "english_start:`docker version`의 Server 정보가 이 서비스와 통신한 ",
+          "english_start:`docker --version`이 출력되면 클라이언트 명령을 찾았다는 ",
+          "english_start:Windows는 WSL 2와 하드웨어 가상화, 지원 Windows 빌드를",
+          "english_start:macOS는 Apple silicon과 Intel 중 자신의 칩에 맞는 ",
+          "english_start:Linux는 지원 배포판, KVM, QEMU, systemd, 데스크톱 ",
+          "english_start:`git_command is not None`은 위치를 찾았는지 비교하여",
+          "english_start:`if`는 조건이 참일 때 들여쓴 코드만 실행하고, `else`는 조건이",
+          "english_start:Git이 없는 컴퓨터에서 Git 명령을 무리하게 호출하지 않고 안내를 출",
+          "english_start:`git_version.returncode == 0`은 명령이 운영체제에",
+          "english_start:`subprocess.run`의 `cwd=repository`는 그 명령",
+          "english_start:`git init`은 그 폴더 안에 Git 관리 정보를 준비하고, `gi",
+          "english_start:`docker --version`은 명령을 보내는 클라이언트 프로그램이 ",
+          "english_start:`timeout=10`은 10초 안에 응답하지 않으면 계속 기다리지 않도",
+          "english_start:Git은 임시 폴더를 만들고 `git init`을 실행한 뒤, 파일 생성",
+          "english_start:Docker는 설치를 변경하지 않고 버전과 응답 가능 여부만 확인합니다",
+          "english_start:`server.returncode == 0`은 명령이 성공 상태로 마쳤는",
+          "english_start:`server.stdout.strip()`은 받은 출력의 앞뒤 공백과 줄",
+          "english_start:`bool(...)`은 남은 글자가 있으면 `True`, 빈 문자열이면 ",
+          "english_start:`and`로 두 조건을 연결했으므로 명령이 성공하고 버전 글자도 있어야 ",
+          "english_start:Docker는 Client와 Server를 나누어 읽습니다",
+          "english_start:Python과 uv 항목은 과정의 명령을 실행할 기반을, 가상환경 항목은",
+          "english_start:Git의 사용자 이름 설정, GitHub 로그인, 네트워크 연결, Doc",
+          "english_start:Git은 파일 생성 전에 상태 출력이 비어 있었고, 파일 생성 뒤 `??",
+          "english_start:Git과 GitHub를 같은 도구로 설명하지 않습니다",
+          "english_start:Git은 로컬 변경 이력을 관리하는 프로그램이고, GitHub는 저장소 ",
+          "english_start:Docker는 후속 프로젝트의 실행 환경을 준비할 때 다시 사용하고, C",
+          "english_start:`git init`은 현재 폴더를 로컬 Git 저장소로 준비합니다",
+          "english_start:GitHub에 전송하려면 원격 저장소 설정, 인증, 전송 명령이 추가로 ",
+          "english_start:Docker를 사용하는 후속 실습 전에는 운영체제별 공식 안내로 Dock",
+          "english_start:Git과 Docker가 아직 없으면 해당 실습을 생략하고 미준비 상태를 ",
+          "english_start:`import`는 Python에 포함된 기능을 가져옵니다",
+          "english_start:`shutil.which`는 터미널에서 실행할 수 있는 명령 위치를 찾아",
+          "english_start:`subprocess.run`의 대괄호 안에는 실행할 프로그램과 인자를 ",
+          "english_start:`capture_output=True`는 결과를 변수에 저장하고, `te",
+          "english_start:`if`는 조건이 참일 때 들여쓴 코드를 실행하고, `else`는 거짓일",
+          "english_start:`cwd`는 명령이 사용할 현재 작업 폴더를 지정하므로 노트북 폴더가 아",
+          "english_start:`git status --short`의 출력이 비어 있으면 표시할 변경 ",
+          "english_start:`git init`은 관리 정보를 준비할 뿐 파일을 커밋하거나 GitHu",
+          "english_start:`??`는 Git이 새 파일을 발견했지만 아직 추적하지 않는다는 표시입니",
+          "english_start:`docker --version`은 클라이언트 프로그램이 응답하는지 확인",
+          "english_start:`--format`은 전체 정보에서 서버 버전만 선택합니다",
+          "english_start:`timeout=10`은 10초가 지나면 계속 기다리지 않게 하며, 이때",
+          "english_start:`server.returncode == 0`은 명령이 성공 상태로 마쳤는",
+          "english_start:`server.stdout.strip()`은 받은 출력의 앞뒤 공백과 줄",
+          "english_start:`bool(...)`은 남은 글자가 있으면 `True`, 빈 문자열이면 ",
+          "english_start:`and`로 두 조건을 연결했으므로 명령이 성공하고 버전 글자도 있어야 ",
+          "english_start:`sys.prefix != sys.base_prefix`는 현재 커널의 ",
+          "english_start:Git의 변경 상태는 파일 하나의 생성 전후를 비교한 실제 결과입니다",
+          "dense_paragraph:Git 컴퓨터의 폴더에서 파일 변경 이력을 기록하고 비교하는 버전 관리 프로그램입니다. 인터넷 연결 없이도 ",
+          "dense_paragraph:클라이언트(client) 사용자가 입력한 `docker` 명령을 받아 Docker의 실행 서비스에 요청하는 ",
+          "dense_paragraph:1번의 합계는 6000원입니다. 2번에서 `count = 4`로 바꾸면 가격은 유지되고 합계는 12000원이",
+          "dense_paragraph:이번 실습은 도구 설치와 실행 준비 상태를 각각 확인합니다. 3절의 Python 3.12 프로젝트 환경을 준",
+          "dense_paragraph:명령 위치를 찾는 것과 실제 실행은 구분합니다. `subprocess.run`의 대괄호 안에는 실행할 프로그"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  q["원 질문 C01<br>책을 빌릴 수 있는<br>기간은 며칠인가요"]:::tool
+  p["우리가 적은<br>변형 프롬프트"]:::flow
+  m["답 모델 gpt-5.4-mini"]:::model
+  v["변형 질문 세 줄"]:::measure
+  s["우리가 적은<br>거리 검색 네 번"]:::flow
+  f["우리가 적은<br>순위 합치기"]:::flow
+  g["정답 문서 LIB-001이<br>자리 하나"]:::measure
+  q --> p
+  p --> m
+  m --> v
+  q --> s
+  v --> s
+  s --> f
+  f --> g

@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph hand["손으로 적은 글 · 8절"]
+    direction TB
+    h1["지어 넣은 글<br>내선 1234<br>helpdesk@company.com"]:::tool
+    h2["find_new_contacts"]:::flow
+    h3["helpdesk@company.com<br>1234"]:::measure
+    h1 --> h2
+    h2 --> h3
+  end
+  subgraph model["모델의 종합 답 · 7절과 10절"]
+    direction TB
+    m1["gpt-5.4-mini<br>종합 요청으로 받은 안내문 둘"]:::model
+    m2["find_new_contacts"]:::flow
+    m3["빈 목록 둘<br>두 번 실행 모두"]:::measure
+    m1 --> m2
+    m2 --> m3
+  end
+  same["정규식 둘<br>주소 모양 · 숫자 모양<br>공통 사실에서 찾은 값은 뺌"]
+  hand ~~~ same
+  model ~~~ same

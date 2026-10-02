@@ -1,0 +1,13 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant S as 조립 함수<br>serve_notice
+  participant M as gpt-5.4-mini
+  participant W as 03절<br>write_sections
+  S->>M: 분류 요청 한 번
+  M-->>S: 종류 보안 · 신뢰도 0.99
+  Note over S: 분류 입력 토큰 138<br>check_route 문제 없음
+  S->>W: 보안 갈래 설정 · 부분 둘
+  W->>M: 적용 · 등록 부분 요청을 함께
+  M-->>W: 부분 답 둘 · 넣은 차례 적용 · 등록
+  W-->>S: 안내문 · 부분 답 둘
+  Note over S: 상태 완료<br>요청 3 · 부분 요청 2

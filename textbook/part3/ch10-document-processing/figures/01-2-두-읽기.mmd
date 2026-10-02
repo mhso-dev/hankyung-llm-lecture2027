@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  P["E01.pdf 2쪽<br>같은 파일 · 같은 쪽"]:::tool
+  A["기본 읽기<br>extract_text()"]:::flow
+  B["레이아웃 읽기<br>extraction_mode<br>= layout"]:::flow
+  AR["905자 · 26줄<br>정기 휴관일 입니다<br>빈칸 있음"]:::measure
+  BR["1396자 · 51줄<br>정기 휴관일입니다<br>빈칸 없음"]:::measure
+  Q["세 칸 기록은 둘이 같음<br>doc_id E01 · page 2<br>source E01.pdf"]:::measure
+  P --> A
+  P --> B
+  A --> AR
+  B --> BR
+  AR --> Q
+  BR --> Q

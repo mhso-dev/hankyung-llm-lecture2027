@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  base["작업 폴더<br>base_folder"]:::flow
+  env["Python 3.12<br>가상환경<br>1절·3절"]:::tool
+  file["data/message.txt<br>확인 2절"]:::tool
+  hello["python hello.py<br>실행 4절"]:::tool
+  git["git status --short<br>5절"]:::tool
+  docker["docker 찾기<br>5절"]:::tool
+  table["점검표<br>여섯 칸"]:::measure
+  base --> file
+  base --> hello
+  base --> git
+  env --> table
+  file --> table
+  hello --> table
+  git --> table
+  docker --> table

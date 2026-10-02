@@ -1,0 +1,395 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "s04-c00",
+   "metadata": {
+    "html": "skip"
+   },
+   "source": "# 운영 지표와 Ch18 궤적 비교\n\n**이 노트북에서 할 일**\n\n1. Ch 18 06절 노트북에 저장된 출력과 Ch 21 06절의 비교 기록 파일을 읽기만 합니다.\n2. 두 기록의 줄을 같은 칸 이름의 딕셔너리로 옮겨 담고, 요청 수와 성공 여부를 셉니다.\n3. 칸마다 평균과 95 백분위수를 보고, 줄이 셋이면 95 백분위수가 가장 큰 값이 되는 까닭을 셉니다.\n\n**준비물** — 이 노트북은 모델을 부르지 않아 API 키가 필요 없습니다.\n모델 요청은 0번이고, 요금도 들지 않습니다.\n읽는 파일은 앞 챕터 파일 둘과 같은 폴더의 도구 파일 `eval_tools.py`이고, 쓰는 파일은 없습니다.\n두 파일은 Ch 18 06절과 Ch 21 06절을 한 번 실행해 남긴 기록이고, 이 노트북은 두 절을 다시 실행하지 않습니다.\n이 노트북은 걸린 시간을 재지 않고, 기록에 적힌 걸린 초를 읽기만 합니다.\n\n**기준 버전** — 첫 셀에서 패키지 하나를 설치합니다.\n판은 langchain 1.4.0이고, 도구 파일이 메시지 클래스를 가져올 때 씁니다.\n교재 출력은 Linux의 Python 3.12.13으로 만들었습니다.\n다른 판과 Windows·macOS에서는 실행하지 않았습니다.\n\n**강의와 실습 범위** — 강의 시간에는 2~5절을 읽습니다.\n두 기록을 찾아 읽고, 같은 칸 이름으로 옮겨 담아 세는 자리입니다.\n6~8절은 평균과 95 백분위수를 보고 백분위 하나를 바꿔 보는 실습이고, 실습 시간에 실행합니다.\n\n실습 폴더 `labs/part6/ch29-agent-evaluation`에서 `uv sync --locked`를 실행합니다.\n그다음 `notebooks/` 폴더의 이 노트북을 열고, 실습 폴더의 `.venv` 커널을 고릅니다.\n첫 셀부터 순서대로 실행합니다."
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c01",
+   "metadata": {
+    "html": "skip"
+   },
+   "source": "## 오늘 볼 그림\n\n![위에서 아래로 읽는 흐름도입니다. 맨 위 초록 상자 둘은 앞 챕터가 남긴 기록입니다. 왼쪽 상자는 Ch 18 06절 노트북에 저장된 비교 표 다섯 줄로, 칸 calls·tokens·latency_s·quality/5·status가 있습니다. 오른쪽 상자는 Ch 21 06절 비교 기록 파일로, 질문 세 줄에 칸 열둘이 있고 model_calls·tool_calls·agent_latency_s 등이 적혀 있습니다. 왼쪽 상자는 파란 상자 ch18_row, 도구 요청 수는 None, 점수는 품질 ÷ 5로 이어집니다. 오른쪽 상자는 파란 상자 ch21_row, 점수는 평가 모델 판정, 참이면 1.0으로 이어집니다. 두 파란 상자는 맨 아래 노란 상자 공통 칸 표 여덟 줄로 모이고, 칸은 이름·요청 수·도구 요청 수·토큰 수·걸린 초·점수인 그림](attachment:04-1-두-기록을-같은-칸으로.png)\n\n위에서 아래로 읽습니다.\n초록 상자 둘은 앞 챕터가 남긴 기록이고, 파란 상자 둘은 이 노트북 4절에서 정의한 함수입니다.\n노란 상자는 4절에서 출력한 공통 칸 표입니다.\nCh 18 쪽 도구 요청 수는 기록에 칸이 없어 None으로 두었습니다.\n칸 점수는 두 기록의 잣대가 서로 달라, 두 쪽을 견주지 않습니다."
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c02",
+   "metadata": {},
+   "source": "## 1. 준비\n\n01~03절은 궤적 하나를 코드 규칙과 평가 모델로 판정했습니다.\n이 절은 모델을 부르지 않고, 앞 챕터가 남긴 실행 기록 두 개를 읽어 운영 지표를 견줍니다.\n뜻과 구성은 본문 「핵심 개념」에서 풉니다.\n\n첫 셀은 패키지 하나를 설치하고 설치된 판 번호를 출력합니다.\n설치에는 몇십 초가 걸릴 수 있습니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c03",
+   "metadata": {
+    "lesson_role": "setup"
+   },
+   "outputs": [],
+   "source": "# 이 절에서 쓰는 패키지를 설치하고 버전을 확인합니다\n%pip install -q \"langchain==1.4.0\"\nfrom importlib.metadata import version\n\nprint(\"langchain:\", version(\"langchain\"))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c04",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `langchain: 1.4.0`이 보입니다.\n실습 폴더 잠금과 같은 판입니다.\n이 노트북의 셀은 langchain을 직접 쓰지 않습니다.\n도구 파일 `eval_tools.py`가 맨 위에서 메시지 클래스를 가져오기 때문에 설치합니다.\n\n다음 셀은 이 절에서 쓸 모듈과 함수를 가져옵니다.\n모듈 `json`과 `os`는 Ch 21 06절처럼 파일을 찾고 읽을 때 씁니다.\n모듈 `math`의 함수 `math.ceil`은 Ch 15 06절에서 본 올림 함수입니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c05",
+   "metadata": {
+    "lesson_role": "setup"
+   },
+   "outputs": [],
+   "source": "# 기록 파일을 찾고 읽는 모듈 둘과, 올림 함수 ceil이 든 모듈 math(Ch 15 06절)를 가져옵니다\nimport json\nimport math\nimport os\n# 앞에서 배운 함수는 도구 파일에서 가져옵니다\nfrom eval_tools import average, nearest_rank\n\nprint(\"도구 파일에서 가져온 함수:\", \"average, nearest_rank\")"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c06",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 `도구 파일에서 가져온 함수:` 뒤에 `average`와 `nearest_rank`가 보입니다.\n앞에서 배운 함수는 `eval_tools.py`에 모아 두었습니다.\n파일을 열면 코드를 볼 수 있습니다.\n\n노트북과 같은 폴더(`notebooks/`)에 있는 파일입니다.\n커널이 `notebooks/` 폴더에서 시작해야 이 파일을 가져올 수 있습니다.\n교재 출력을 만든 실행 도구는 이 폴더를 따로 알려 주어, 다른 자리에서 시작해도 가져오기가 되었습니다.\n\n두 함수는 Ch 15 06절 노트북에서 배웠고, 이 절부터 도구 파일에서 가져옵니다.\n도구 파일에는 그 노트북 셀의 주석과 본문을 글자 그대로 옮겼고, 인자도 같습니다.\n함수 `average(values)`는 값 목록의 평균을 소수 여섯째 자리까지 냅니다.\n함수 `nearest_rank(values, percent)`는 가장 가까운 자리 방식으로 백분위수 하나를 냅니다.\n\n## 2. 두 기록 파일 찾기\n\n이 절이 읽는 기록은 둘입니다.\n하나는 Ch 18 06절 노트북에 저장된 비교 표 출력이고, 다른 하나는 Ch 21 06절이 쓴 비교 기록 파일입니다.\n두 파일은 다른 챕터 폴더에 있어, 다음 셀은 먼저 프로젝트 맨 위 폴더를 찾습니다.\n셀 모양은 Ch 21 06절의 자리 찾기 셀과 같고, 확인하는 폴더만 다릅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c07",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 노트북을 어느 폴더에서 열어도 프로젝트 맨 위를 찾게 후보 세 개를 차례로 봅니다\ncandidates = [\".\", \"../../..\", \"../../../..\"]\nroot_path = None\nfor candidate in candidates:\n    if os.path.exists(candidate + \"/labs/part6/ch21-create-agent/data\"):\n        root_path = candidate\n        break\nprint(\"고른 자리:\", root_path)\nassert root_path is not None, \"notebooks 폴더나 실습 폴더 맨 위에서 노트북을 열어 주세요.\""
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c08",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `고른 자리: .`은 교재 출력을 프로젝트 맨 위에서 실행했다는 뜻입니다.\n교재 출력은 실행 도구가 프로젝트 맨 위 폴더에서 커널을 띄운 실행이라 `.`이 찍혔습니다.\n노트북을 `notebooks/` 폴더에서 열면 이 줄에 `../../../..`가 찍힙니다.\n학생 묶음을 풀어 `notebooks/` 폴더에서 열어도 같은 자리를 찾습니다.\n\n다음 셀은 두 기록 파일의 자리를 만들고, 파일이 있는지 봅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c09",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 두 기록 파일의 자리를 만들고, 둘 다 있는지 봅니다(두 파일은 읽기만 하고 고치지 않습니다)\nch18_path = root_path + \"/labs/part5/ch18-workflow-patterns/notebooks/06-같은-과제로-다섯-패턴-비교.ipynb\"\nch21_path = root_path + \"/labs/part6/ch21-create-agent/data/rag-comparison.json\"\nprint(\"Ch 18 06절 노트북이 있는가:\", os.path.exists(ch18_path))\nprint(\"Ch 21 06절 비교 기록이 있는가:\", os.path.exists(ch21_path))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c10",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `Ch 18 06절 노트북이 있는가: True`와 `Ch 21 06절 비교 기록이 있는가: True`가 보입니다.\n두 파일 모두 이 자리에 있습니다.\n\n## 3. Ch 18 기록: 저장된 출력에서 표 줄 찾기\n\nCh 18 06절은 같은 과제를 다섯 흐름으로 실행하고, 비교 표를 출력했습니다.\n표의 칸은 패턴·요청 수·토큰 수·걸린 초·품질·상태 여섯입니다.\n이 표에는 도구를 부른 차례가 없습니다.\nCh 18의 다섯 흐름은 도구 호출 요청을 쓰지 않았기 때문입니다.\n그래서 Ch 18 줄은 궤적이 아니라, 흐름 하나를 실행한 기록 한 줄로 읽습니다.\n\n노트북 파일(`.ipynb`)은 셀의 글과 저장된 출력을 담은 JSON 파일입니다.\n다음 셀은 Ch 18 06절 노트북 파일을 JSON으로 읽고, 셀 수를 봅니다.\n그 노트북은 실행하지 않습니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c11",
+   "metadata": {},
+   "outputs": [],
+   "source": "# Ch 18 06절 노트북 파일을 JSON으로 읽습니다(그 노트북은 실행하지 않고, 저장된 출력만 씁니다)\nwith open(ch18_path, encoding=\"utf-8\") as file:\n    ch18_notebook = json.loads(file.read())\nprint(\"셀 수:\", len(ch18_notebook[\"cells\"]))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c12",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `셀 수: 58`이 보입니다.\n비교 표는 그 가운데 한 코드 셀의 저장된 출력에 있습니다.\n이 절이 읽는 비교 표는 Ch 18 06절을 한 번 실행해 저장한 출력입니다.\n\n셀마다 저장된 출력은 칸 `outputs`의 목록에 있습니다.\n출력 가운데 `print`로 찍힌 글은 칸 `output_type`이 `stream`이고, 글은 칸 `text`에 줄 목록으로 들어 있습니다.\n다음 셀은 코드 셀 하나에서 이 글만 모아 한 줄씩 내놓는 함수를 정의합니다.\n글 메서드 `join`(Ch 16 01절)으로 줄 목록을 한 글로 잇고, `splitlines`(03절)로 다시 줄마다 나눕니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c13",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 코드 셀 하나의 저장된 출력 가운데 print로 찍힌 글(stream)만 한 줄씩 나눠 목록으로 내놓습니다\ndef printed_lines_of(cell):\n    lines = []\n    for output in cell[\"outputs\"]:\n        if output[\"output_type\"] == \"stream\":\n            printed_text = \"\".join(output[\"text\"])\n            for line in printed_text.splitlines():\n                lines.append(line)\n    return lines"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c14",
+   "metadata": {},
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n함수 `printed_lines_of(cell)`는 코드 셀 하나를 받아, `print`로 찍힌 줄의 목록을 내놓습니다.\n\n다음 셀은 이 함수로 노트북의 모든 코드 셀에서 저장된 출력 줄을 모읍니다.\n마크다운 셀에는 칸 `outputs`가 없어, 칸 `cell_type`이 `code`인 셀만 봅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c15",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 코드 셀마다 저장된 출력 줄을 모두 모읍니다(마크다운 셀에는 출력이 없어 건너뜁니다)\nprinted_lines = []\nfor cell in ch18_notebook[\"cells\"]:\n    if cell[\"cell_type\"] == \"code\":\n        for line in printed_lines_of(cell):\n            printed_lines.append(line)\nprint(\"저장된 출력 줄 수:\", len(printed_lines))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c16",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `저장된 출력 줄 수: 69`가 보입니다.\nCh 18 06절 노트북의 코드 셀들이 찍은 줄을 모두 모은 수입니다.\n\n비교 표 줄은 칸을 「 | 」로 나눠 찍었습니다.\n표 맨 위의 머리 줄은 `pattern`으로 시작해, 표 줄에서 뺍니다.\n다음 셀은 「 | 」가 든 줄 가운데 머리 줄이 아닌 줄만 모읍니다.\n03절에서 쓴 글 메서드 `startswith`로 머리 줄을 가립니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c17",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 칸 구분 「 | 」가 든 줄 가운데 머리 줄(pattern으로 시작)을 뺀 표 줄만 모읍니다\ntable_lines = []\nfor line in printed_lines:\n    if \" | \" in line:\n        if not line.startswith(\"pattern\"):\n            table_lines.append(line)\nprint(\"표 줄 수:\", len(table_lines))\nassert len(table_lines) >= 5, \"Ch 18 06절 노트북에 저장된 비교 표가 다섯 줄보다 적습니다.\""
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c18",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `표 줄 수: 5`가 보이고, `assert`도 오류 없이 지나갔습니다.\nCh 18 06절 표의 다섯 흐름이 한 줄씩입니다.\n\n다음 셀은 표 줄 가운데 마지막 다섯 줄을 Ch 18 기록으로 씁니다.\n비교 표는 Ch 18 06절 노트북의 뒤쪽에서 한 번 찍히므로, 마지막 다섯 줄이 그 표입니다.\n번호 `[-5:]`는 Ch 16 03절에서 본 음수 슬라이스로, 끝에서 다섯 개를 자릅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c19",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 표 줄 가운데 마지막 다섯 줄을 Ch 18 다섯 흐름의 기록으로 씁니다(칸: 패턴·요청 수·토큰 수·걸린 초·품질·상태)\nch18_lines = table_lines[-5:]\nprint(\"Ch 18 표 다섯 줄:\")\nfor line in ch18_lines:\n    print(line)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c20",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 `Ch 18 표 다섯 줄:` 아래 다섯 줄이 보입니다.\n첫 줄은 `chaining | 2 | 712 | 3.756 | 5 | ok`이고, 마지막 줄은 `generator_evaluator`로 시작합니다.\n\n줄마다 차례대로 패턴 이름·요청 수·토큰 수·걸린 초·품질·상태입니다.\n요청 수는 모델 요청 수이고, 토큰 수는 입력 토큰과 출력 토큰을 더한 값입니다.\n품질은 안내문을 코드로 검사해 센 0~5이고, 평가 모델의 점수가 아닙니다.\n\n## 4. 공통 칸으로 옮겨 담기\n\n두 기록은 칸 이름이 다릅니다.\nCh 18 표의 `calls`와 Ch 21 기록의 `model_calls`는 이름이 다르지만, 둘 다 모델 요청 수입니다.\n이런 값을 같은 이름의 칸으로 옮겨 담으면, 두 기록을 한 표에 모을 수 있습니다.\n이렇게 맞춘 칸을 이 절에서는 공통 칸이라고 부릅니다.\n공통 칸은 이름·요청 수·도구 요청 수·토큰 수·걸린 초·점수 여섯입니다.\n\n다음 셀은 표 줄 하나를 칸 여섯으로 나누는 함수를 정의합니다.\n글 메서드 `split`으로 「|」에서 나누고, `strip`으로 칸마다 앞뒤 빈칸을 뺍니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c21",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 표 줄 하나를 「|」로 나누고, 칸마다 앞뒤 빈칸을 뺀 글을 목록으로 내놓습니다\ndef split_row(line):\n    parts = []\n    for part in line.split(\"|\"):\n        parts.append(part.strip())\n    return parts"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c22",
+   "metadata": {},
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n함수 `split_row(line)`는 표 줄 하나를 받아, 글 여섯 개의 목록을 내놓습니다.\n\n다음 셀은 나눈 칸 여섯을 공통 칸 딕셔너리로 옮겨 담는 함수를 정의합니다.\nCh 18 기록에는 도구 요청 수 칸이 없어, 그 칸은 모르는 값 `None`으로 둡니다.\n점수는 품질을 만점으로 나눠 0~1로 맞추고, 만점은 인자 `full_quality`로 받습니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c23",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 나눈 Ch 18 표 줄 하나를 공통 칸 딕셔너리로 옮겨 담아 내놓습니다(도구 요청 수는 기록에 없어 None)\ndef ch18_row(parts, full_quality):\n    return {\n        \"이름\": \"Ch 18 \" + parts[0],\n        \"요청 수\": int(parts[1]),\n        \"도구 요청 수\": None,\n        \"토큰 수\": int(parts[2]),\n        \"걸린 초\": float(parts[3]),\n        \"점수\": int(parts[4]) / full_quality,\n    }"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c24",
+   "metadata": {},
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n함수 `ch18_row(parts, full_quality)`는 나눈 칸 목록과 품질 만점을 받아, 공통 칸 딕셔너리 하나를 내놓습니다.\n요청 수·토큰 수·품질은 `int`로, 걸린 초는 `float`로 바꿔 숫자로 담습니다.\n\n다음 셀은 Ch 18 다섯 줄을 모두 옮겨 담고, 상태 칸이 `ok`인 줄을 셉니다.\n품질 만점은 코드 검사 항목 수 5입니다.\n다섯 흐름이 모두 끝까지 갔는지는 기록의 모양이라 `assert`로 확인합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c25",
+   "metadata": {},
+   "outputs": [],
+   "source": "# Ch 18 다섯 줄을 공통 칸으로 옮겨 담고, 상태 칸이 ok인 줄을 셉니다(품질 칸의 만점은 코드 검사 다섯 항목)\nfull_quality = 5\nch18_rows = []\nok_count = 0\nfor line in ch18_lines:\n    parts = split_row(line)\n    ch18_rows.append(ch18_row(parts, full_quality))\n    if parts[5] == \"ok\":\n        ok_count = ok_count + 1\nprint(\"옮겨 담은 줄 수:\", len(ch18_rows), \"| 상태가 ok인 줄 수:\", ok_count)\nassert ok_count == len(ch18_rows), \"Ch 18 표에 상태가 ok가 아닌 줄이 있습니다.\""
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c26",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `옮겨 담은 줄 수: 5 | 상태가 ok인 줄 수: 5`가 보이고, `assert`도 지나갔습니다.\n다섯 흐름 모두 상태가 `ok`였습니다.\n\n이제 Ch 21 기록을 읽습니다.\nCh 21 06절은 질문 세 개를 고정 흐름과 에이전트 흐름으로 견주고, 질문마다 비교 기록 한 줄을 파일에 썼습니다.\n이 절은 그 가운데 에이전트 흐름의 칸만 읽습니다.\n다음 셀은 파일을 읽고, 줄 수와 질문 번호를 봅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c27",
+   "metadata": {},
+   "outputs": [],
+   "source": "# Ch 21 06절이 쓴 비교 기록 파일을 읽고, 줄 수·한 줄의 칸 수·질문 번호를 봅니다\nwith open(ch21_path, encoding=\"utf-8\") as file:\n    ch21_records = json.loads(file.read())\nqids = []\nfor record in ch21_records:\n    qids.append(record[\"qid\"])\nprint(\"줄 수:\", len(ch21_records), \"| 한 줄의 칸 수:\", len(ch21_records[0]))\nprint(\"질문 번호:\", qids)\nassert len(ch21_records) == 3, \"Ch 21 비교 기록은 질문 세 줄이어야 합니다.\""
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c28",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `줄 수: 3 | 한 줄의 칸 수: 12`와 `질문 번호: ['C01', 'C05', 'C07']`이 보입니다.\n줄이 셋이라 `assert`도 지나갔습니다.\n\n한 줄의 칸 열둘 가운데 이 절은 여섯을 읽습니다.\n질문 번호 `qid`, 사용량 `agent_usage`, 도구 요청 수 `tool_calls`, 걸린 초 `agent_latency_s`가 그 가운데 넷입니다.\n나머지 둘은 평가 모델 판정 `agent_supported`와 검색 기록 `agent_trace`입니다.\n다음 셀은 한 줄을 공통 칸 딕셔너리로 옮겨 담는 함수를 정의합니다.\n참·거짓 값에 `float`를 쓰면, 참은 `1.0`이 되고 거짓은 `0.0`이 됩니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c29",
+   "metadata": {},
+   "outputs": [],
+   "source": "# Ch 21 비교 기록 한 줄을 공통 칸 딕셔너리로 옮겨 담아 내놓습니다(점수는 평가 모델 판정 — 참이면 1.0)\ndef ch21_row(record):\n    return {\n        \"이름\": \"Ch 21 \" + record[\"qid\"],\n        \"요청 수\": record[\"agent_usage\"][\"model_calls\"],\n        \"도구 요청 수\": record[\"tool_calls\"],\n        \"토큰 수\": record[\"agent_usage\"][\"input_tokens\"] + record[\"agent_usage\"][\"output_tokens\"],\n        \"걸린 초\": record[\"agent_latency_s\"],\n        \"점수\": float(record[\"agent_supported\"]),\n    }"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c30",
+   "metadata": {},
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n함수 `ch21_row(record)`는 비교 기록 한 줄을 받아, 공통 칸 딕셔너리 하나를 내놓습니다.\n토큰 수는 입력 토큰과 출력 토큰을 더해, Ch 18 표의 토큰 수와 같은 뜻으로 맞춥니다.\n\n다음 셀은 세 줄을 모두 옮겨 담습니다.\nCh 21 06절은 이 파일의 줄마다 도구 요청 수가 1 이상이라고 적어 두었습니다.\n그래서 줄마다 이 값을 `assert`로 확인합니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c31",
+   "metadata": {},
+   "outputs": [],
+   "source": "# Ch 21 세 줄을 공통 칸으로 옮겨 담고, 줄마다 도구 요청 수가 1 이상인지 확인합니다\nch21_rows = []\nfor record in ch21_records:\n    ch21_rows.append(ch21_row(record))\n    assert record[\"tool_calls\"] >= 1, \"도구를 부르지 않은 줄이 있습니다.\"\nprint(\"옮겨 담은 줄 수:\", len(ch21_rows))\nprint(\"첫 줄:\", ch21_rows[0])"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c32",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `옮겨 담은 줄 수: 3`이 보이고, `assert`도 세 줄 모두 지나갔습니다.\n라벨 `첫 줄:` 뒤 딕셔너리의 칸 `'요청 수': 2`와 `'도구 요청 수': 1`이 보입니다.\n\n다음 셀은 공통 칸 딕셔너리 한 줄을 표 한 줄로 출력하는 함수를 정의합니다.\nCh 18 줄과 Ch 21 줄에 같은 함수를 씁니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c33",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 공통 칸 딕셔너리 한 줄을 「|」로 이은 표 한 줄로 출력합니다(내놓는 값 없음)\ndef show_row(row):\n    print(row[\"이름\"], \"|\", row[\"요청 수\"], \"|\", row[\"도구 요청 수\"], \"|\", row[\"토큰 수\"], \"|\", row[\"걸린 초\"], \"|\", row[\"점수\"])"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c34",
+   "metadata": {},
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n함수 `show_row(row)`는 칸 여섯을 「|」로 이어 한 줄로 출력하고, 내놓는 값은 없습니다.\n\n다음 셀은 두 기록의 여덟 줄을 공통 칸 표 하나로 출력합니다.\n표 하나에 모아도, 두 기록의 과제와 조건은 서로 다릅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c35",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 두 기록의 여덟 줄을 공통 칸 표 하나로 출력합니다(걸린 초와 토큰 수는 각 기록이 한 번 실행한 값)\nprint(\"이름 | 요청 수 | 도구 요청 수 | 토큰 수 | 걸린 초 | 점수\")\nfor row in ch18_rows:\n    show_row(row)\nfor row in ch21_rows:\n    show_row(row)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c36",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 `이름 | 요청 수 | 도구 요청 수 | 토큰 수 | 걸린 초 | 점수` 아래 여덟 줄이 보입니다.\nCh 18 다섯 줄은 `Ch 18 chaining | 2 | None`처럼 도구 요청 수가 `None`입니다.\nCh 21 세 줄은 `Ch 21 C01 | 2 | 1`처럼 요청 수 2, 도구 요청 수 1입니다.\n\n토큰 수와 걸린 초는 각 기록이 한 번 실행한 값입니다.\n교재 출력에서는 Ch 18 걸린 초가 `1.043`부터 `6.966`까지, Ch 21 걸린 초가 `1.36`부터 `2.003`까지였습니다.\n두 기록은 과제·질문·요청을 보낸 방법이 달라, 이 값으로 어느 쪽이 낫다고 정하지 않습니다.\n점수 칸도 Ch 18은 코드 검사, Ch 21은 평가 모델 판정이라 잣대가 다릅니다.\n\n## 5. 세는 값으로 읽기\n\n03절에서 본 것처럼, 에이전트의 모델 요청 수는 「도구를 요청한 응답 수 + 1」입니다.\nCh 21 기록의 칸 `tool_calls`는 도구 메시지 수입니다.\n도구 메시지가 하나이면, 도구를 요청한 응답도 하나입니다.\n다음 셀은 이 셈이 세 줄에 맞는지 보고, 칸 `agent_trace`에 든 검색 기록 수도 셉니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c37",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 03절의 요청 수 셈(도구를 요청한 응답 수 + 1)이 Ch 21 세 줄에 맞는지, 검색 기록 수도 함께 봅니다\nprint(\"질문 | 요청 수 | 도구 요청 수 | 요청 수 = 도구 요청 수 + 1 | 검색 기록 수\")\nfor record in ch21_records:\n    calls = record[\"agent_usage\"][\"model_calls\"]\n    tools = record[\"tool_calls\"]\n    searches = len(record[\"agent_trace\"])\n    print(record[\"qid\"], \"|\", calls, \"|\", tools, \"|\", calls == tools + 1, \"|\", searches)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c38",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 아래 세 줄 `C01 | 2 | 1 | True | 1`, `C05 | 2 | 1 | True | 1`, `C07 | 2 | 1 | True | 1`이 보입니다.\n세 줄 모두 요청 수가 도구 요청 수에 1을 더한 값과 같았습니다.\n검색 기록 수도 줄마다 1로, 도구 요청 수와 같았습니다.\n\n요청 수는 도구를 요청한 응답 하나와 답을 쓴 응답 하나를 더한 2입니다.\n03절의 에이전트는 도구 둘을 차례로 불러 요청이 3번이었고, 이 기록은 도구 하나라 2번입니다.\n도구를 한 번 부른 것은 Ch 21 06절의 실행에서 모델이 고른 일이라, 그 절을 다시 실행하면 달라질 수 있습니다.\n\n다음 셀은 두 기록이 잘됐다고 적은 줄을 셉니다.\nCh 18은 상태 칸과 품질 칸, Ch 21은 평가 모델 판정으로 셉니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c39",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 두 기록이 잘됐다고 적은 줄을 기록마다 제 잣대로 셉니다(Ch 18은 상태·품질 칸, Ch 21은 평가 모델 판정)\nfull_count = 0\nfor row in ch18_rows:\n    if row[\"점수\"] == 1.0:\n        full_count = full_count + 1\nsupported_count = 0\nfor record in ch21_records:\n    if record[\"agent_supported\"]:\n        supported_count = supported_count + 1\nprint(\"Ch 18 상태가 ok인 줄:\", ok_count, \"| 품질이 만점인 줄:\", full_count, \"| 전체:\", len(ch18_rows))\nprint(\"Ch 21 평가 모델 판정이 참인 줄:\", supported_count, \"| 전체:\", len(ch21_rows))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c40",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `Ch 18 상태가 ok인 줄: 5 | 품질이 만점인 줄: 4 | 전체: 5`가 보입니다.\n출력 줄 `Ch 21 평가 모델 판정이 참인 줄: 3 | 전체: 3`도 보입니다.\n\nCh 18 상태 칸은 흐름이 끝까지 갔는지, 품질 칸은 안내문이 코드 검사를 몇 항목 지났는지입니다.\nCh 21 판정은 답이 준 문서로 뒷받침되는지를 평가 모델이 Ch 21 06절에서 한 번 본 값입니다.\n세 값 모두 「잘됐다」를 세지만 잣대가 서로 달라, 줄 수를 두 기록 사이에서 견주지 않습니다.\n\n## 6. 칸마다 평균\n\n다음 셀은 공통 칸 딕셔너리 목록에서 칸 하나의 값만 모으는 함수를 정의합니다.\n이 목록을 Ch 15 06절 함수 `average`와 `nearest_rank`에 넘깁니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c41",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 공통 칸 딕셔너리 목록에서 칸 이름 하나의 값만 차례대로 모아 목록으로 내놓습니다\ndef column_values(rows, key):\n    values = []\n    for row in rows:\n        values.append(row[key])\n    return values"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c42",
+   "metadata": {},
+   "source": "**결과 읽기** — 정의 셀이라 출력이 없습니다.\n함수 `column_values(rows, key)`는 딕셔너리 목록과 칸 이름을 받아, 그 칸의 값 목록을 내놓습니다.\n\n다음 셀은 Ch 18 다섯 줄에서 칸마다 평균을 냅니다.\n도구 요청 수 칸은 `None`이라 평균을 내지 않습니다.\n기록의 걸린 초가 소수 셋째 자리까지라, `round`로 평균도 셋째 자리까지 남깁니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c43",
+   "metadata": {},
+   "outputs": [],
+   "source": "# Ch 18 다섯 줄에서 칸마다 값을 모아 평균을 냅니다(Ch 15 06절 함수 average, 소수 셋째 자리까지)\nprint(\"Ch 18 다섯 줄의 평균:\")\nfor key in [\"요청 수\", \"점수\", \"토큰 수\", \"걸린 초\"]:\n    values = column_values(ch18_rows, key)\n    mean_value = round(average(values), 3)\n    print(key, \"|\", mean_value)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c44",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 `Ch 18 다섯 줄의 평균:` 아래 네 줄이 보입니다.\n출력 줄 `요청 수 | 2.8`과 `점수 | 0.96`이 보입니다.\n요청 수 합 14를 다섯 흐름으로 나눈 값이고, 점수는 다섯 줄 가운데 넷이 만점이라 0.96입니다.\n\n교재 출력에서는 `토큰 수 | 862.2`, `걸린 초 | 4.206`이었습니다.\n두 값은 Ch 18 06절을 한 번 실행한 값이라, 그 절을 다시 실행하면 달라집니다.\n\n다음 셀은 Ch 21 세 줄에서 같은 칸마다 평균을 냅니다.\n도구 요청 수 칸도 함께 봅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c45",
+   "metadata": {},
+   "outputs": [],
+   "source": "# Ch 21 세 줄에서도 칸마다 평균을 냅니다(도구 요청 수 칸은 이 기록에만 있습니다)\nprint(\"Ch 21 세 줄의 평균:\")\nfor key in [\"요청 수\", \"도구 요청 수\", \"점수\", \"토큰 수\", \"걸린 초\"]:\n    values = column_values(ch21_rows, key)\n    mean_value = round(average(values), 3)\n    print(key, \"|\", mean_value)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c46",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 `Ch 21 세 줄의 평균:` 아래 다섯 줄이 보입니다.\n출력 줄 `요청 수 | 2.0`과 `도구 요청 수 | 1.0`, `점수 | 1.0`이 보입니다.\n세 줄의 값이 모두 같아, 평균도 그 값입니다.\n\n교재 출력에서는 `토큰 수 | 688.0`, `걸린 초 | 1.731`이었습니다.\n두 값도 Ch 21 06절을 한 번 실행한 값입니다.\nCh 18 평균과 나란히 놓아도, 과제가 달라 어느 쪽이 빠르거나 적다고 읽지 않습니다.\n\n## 7. 95 백분위수\n\n평균만으로는 오래 걸린 실행이 있었는지 알기 어렵습니다.\nCh 15 06절에서는 값을 줄 세워 95번째 백분위수를 봤습니다.\n가장 가까운 자리 방식에서 자리는 95 × 줄 수 ÷ 100을 올린 정수이고, 줄 세운 값에서 그 자리의 값을 고릅니다.\n\n다음 셀은 Ch 21 세 줄의 걸린 초와 토큰 수로 이 자리와 값을 봅니다.\n실행 전에 예상해 봅니다. 줄이 셋이면 95 백분위수는 몇 번째 자리일까요?"
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c47",
+   "metadata": {},
+   "outputs": [],
+   "source": "# Ch 21 세 줄의 걸린 초와 토큰 수를 줄 세워 보고, 95 백분위수를 찾습니다(Ch 15 06절 함수 nearest_rank)\npercent = 95\nch21_seconds = column_values(ch21_rows, \"걸린 초\")\nch21_tokens = column_values(ch21_rows, \"토큰 수\")\nrank = math.ceil(percent * len(ch21_seconds) / 100)\nprint(\"95 백분위수 자리:\", rank, \"| 줄 수:\", len(ch21_seconds))\nprint(\"줄 세운 걸린 초:\", sorted(ch21_seconds))\nprint(\"95 백분위수 걸린 초:\", nearest_rank(ch21_seconds, percent))\nprint(\"줄 세운 토큰 수:\", sorted(ch21_tokens))\nprint(\"95 백분위수 토큰 수:\", nearest_rank(ch21_tokens, percent))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c48",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `95 백분위수 자리: 3 | 줄 수: 3`이 보입니다.\n95 × 3 ÷ 100 = 2.85를 올리면 3이라, 줄 세운 세 값 가운데 세 번째, 곧 가장 큰 값입니다.\n\n교재 출력에서는 라벨 `줄 세운 걸린 초:` 뒤가 `[1.36, 1.829, 2.003]`이었습니다.\n그래서 `95 백분위수 걸린 초: 2.003`이었고, 토큰 수도 가장 큰 값 `699`였습니다.\n두 값은 Ch 21 06절을 한 번 실행한 값입니다.\n\n줄이 셋일 때만 이런지 궁금합니다.\n다음 셀은 같은 셈을 줄 수만 바꿔, 95 백분위수가 가장 큰 값의 자리인지 봅니다."
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c49",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 줄 수마다 95 백분위수가 몇 번째 자리인지 셉니다(자리 = 95 × 줄 수 ÷ 100을 올린 정수)\nprint(\"줄 수 | 95 백분위수 자리 | 가장 큰 값의 자리인가\")\nfor row_count in [3, 5, 19, 20, 100]:\n    rank = math.ceil(percent * row_count / 100)\n    print(row_count, \"|\", rank, \"|\", rank == row_count)"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c50",
+   "metadata": {},
+   "source": "**결과 읽기** — 라벨 줄 아래 다섯 줄이 보입니다.\n줄 `3 | 3 | True`, `5 | 5 | True`, `19 | 19 | True`는 자리가 줄 수와 같았습니다.\n줄 `20 | 19 | False`부터는 가장 큰 값이 아닌 자리를 골랐습니다.\n\n줄이 열아홉 이하이면 95 백분위수는 늘 가장 큰 값입니다.\n그래서 줄이 적은 기록의 95 백분위수는 가장 큰 값 하나를 다시 읽는 것과 같습니다.\n오래 걸린 실행이 얼마나 드문지 보려면, 같은 서비스의 실행을 훨씬 많이 모아야 합니다.\n\n## 8. 값 바꿔 보기: 백분위 하나만 바꾸기\n\n이제 값 하나만 바꿔 봅니다.\n바꿀 값은 백분위이고, 95를 50으로 바꿉니다.\n줄 수와 값 목록은 그대로 둡니다.\n실행 전에 예상해 봅니다. 줄 셋에서 50 백분위수는 몇 번째 자리일까요?"
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "s04-c51",
+   "metadata": {},
+   "outputs": [],
+   "source": "# 값 바꿔 보기: 백분위 하나만 95에서 50으로 바꿔, 같은 세 줄에서 자리와 값을 봅니다\nchanged_percent = 50\nchanged_rank = math.ceil(changed_percent * len(ch21_seconds) / 100)\nprint(\"50 백분위수 자리:\", changed_rank)\nprint(\"50 백분위수 걸린 초:\", nearest_rank(ch21_seconds, changed_percent))\nprint(\"50 백분위수 토큰 수:\", nearest_rank(ch21_tokens, changed_percent))"
+  },
+  {
+   "cell_type": "markdown",
+   "id": "s04-c52",
+   "metadata": {},
+   "source": "**결과 읽기** — 출력 줄 `50 백분위수 자리: 2`가 보입니다.\n50 × 3 ÷ 100 = 1.5를 올린 2라, 줄 세운 세 값의 가운데 값입니다.\n\n교재 출력에서는 `50 백분위수 걸린 초: 1.829`, `50 백분위수 토큰 수: 684`였습니다.\n95 백분위수와 달리 가장 큰 값이 아닌 가운데 값이 나왔습니다.\n백분위를 바꾸면 자리가 바뀌고, 자리가 바뀌면 고르는 값이 바뀝니다.\n\n## 정리\n\n1. 두 기록의 여덟 줄을 공통 칸 여섯의 딕셔너리로 옮겨 담았습니다. 기록에 없는 Ch 18 도구 요청 수는 `None`으로 두었습니다.\n2. 이 기록에서 Ch 21 세 줄은 모두 요청 2번·도구 요청 1번으로, 03절의 요청 수 셈과 맞았습니다. Ch 18 다섯 흐름은 요청 수가 흐름마다 달랐고, 다섯 줄 모두 상태가 ok였습니다. 두 기록의 값은 모두 앞 챕터를 한 번 실행한 값입니다.\n3. 줄이 셋이면 95 백분위수의 자리가 3이라 가장 큰 값이 나옵니다. 줄이 스무 개는 되어야 가장 큰 값에서 떨어집니다.\n\n다음 학습은 05절 실습입니다. 그 절에서는 03절의 평가받는 에이전트를 호출 한도만 바꿔 두 번 실행하고, 네 모드와 공통 칸으로 두 실행을 견줍니다."
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "name": "python",
+   "version": "3.12"
+  },
+  "lesson_format": "experiment",
+  "quality_upgrade": "2026-09-29"
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

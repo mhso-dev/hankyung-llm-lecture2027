@@ -1,0 +1,161 @@
+
+===== labs/part4/ch15-evaluation-advanced/README.md =====
+# Ch 15 평가 심화 실습
+
+8개 노트북을 Python 3.12 새 커널에서 순서와 관계없이 독립 실행할 수 있습니다. Ch12의 공개 학습용 검색 로그를 읽는 절은 프로젝트 루트부터 상위 폴더를 찾아 상대 경로로 접근합니다. 실제 API 키 값은 노트북과 출력에 저장하지 않습니다.
+
+`data/evaluation-cases.json`에는 공개 가상 문서를 사용해 `gpt-5.4-mini`로 생성한 답변 3건과 Groundedness judge 출력 3건이 있습니다. `reference_kind`는 `교육용 작성자 기준`이며 독립적인 인간 평가 라벨이 아닙니다. 운영 judge 모델은 `[[미정: judge 모델]]`로 유지합니다.
+
+`runs/batch-eval-input.jsonl`은 OpenAI Batch API 제출 형식의 로컬 검증 결과입니다. 실제 업로드, Batch 완료, 실제 할인 청구를 확인한 기록은 아닙니다.
+
+
+===== labs/part4/ch15-evaluation-advanced/notebooks/01-실패-로그와-평가-대상.ipynb =====
+[markdown cell 1]
+# 실패 로그와 평가 대상
+
+이 노트북은 Python 3.12 새 커널에서 독립 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+[markdown cell 4]
+## 입력 준비와 기본 실행
+
+[markdown cell 6]
+## 중간 결과 확인
+
+[markdown cell 8]
+## 실험 결과와 검사
+
+
+===== labs/part4/ch15-evaluation-advanced/notebooks/02-4대-RAG-평가자.ipynb =====
+[markdown cell 1]
+# 4대 RAG 평가자
+
+이 노트북은 Python 3.12 새 커널에서 독립 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+[markdown cell 4]
+## 입력 준비와 기본 실행
+
+[markdown cell 6]
+## 중간 결과 확인
+
+[markdown cell 8]
+## 실험 결과와 검사
+
+
+===== labs/part4/ch15-evaluation-advanced/notebooks/03-judge-프롬프트와-편향.ipynb =====
+[markdown cell 1]
+# judge 프롬프트와 편향
+
+이 노트북은 Python 3.12 새 커널에서 독립 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+[markdown cell 4]
+## 입력 준비와 기본 실행
+
+[markdown cell 6]
+## 중간 결과 확인
+
+[markdown cell 8]
+## 실험 결과와 검사
+
+
+===== labs/part4/ch15-evaluation-advanced/notebooks/04-제시-라벨과-일치율.ipynb =====
+[markdown cell 1]
+# 제시 라벨과 일치율
+
+이 노트북은 Python 3.12 새 커널에서 독립 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+[markdown cell 4]
+## 입력 준비와 기본 실행
+
+[markdown cell 6]
+## 중간 결과 확인
+
+[markdown cell 8]
+## 실험 결과와 검사
+
+
+===== labs/part4/ch15-evaluation-advanced/notebooks/05-로컬-트레이싱과-지연.ipynb =====
+[markdown cell 1]
+# 로컬 트레이싱과 지연
+
+이 노트북은 Python 3.12 새 커널에서 독립 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+[markdown cell 4]
+## 입력 준비와 기본 실행
+
+[markdown cell 6]
+## 중간 결과 확인
+
+[markdown cell 8]
+## 실험 결과와 검사
+
+
+===== labs/part4/ch15-evaluation-advanced/notebooks/06-대화당-비용-백분위수.ipynb =====
+[markdown cell 1]
+# 대화당 비용 백분위수
+
+이 노트북은 Python 3.12 새 커널에서 독립 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+[markdown cell 4]
+## 입력 준비와 기본 실행
+
+[markdown cell 6]
+## 중간 결과 확인
+
+[markdown cell 8]
+## 실험 결과와 검사
+
+
+===== labs/part4/ch15-evaluation-advanced/notebooks/07-회귀-스위트.ipynb =====
+[markdown cell 1]
+# 회귀 스위트
+
+이 노트북은 Python 3.12 새 커널에서 독립 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+[markdown cell 4]
+## 입력 준비와 기본 실행
+
+[markdown cell 6]
+## Before: 평균만 확인하는 판정
+
+[markdown cell 8]
+## After: 사례별 품질·지연·비용 게이트
+
+
+===== labs/part4/ch15-evaluation-advanced/notebooks/08-Batch-평가-입력.ipynb =====
+[markdown cell 1]
+# Batch 평가 입력
+
+이 노트북은 Python 3.12 새 커널에서 독립 실행합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+[markdown cell 4]
+## 입력 준비와 기본 실행
+
+[markdown cell 6]
+## 중간 결과 확인
+
+[markdown cell 8]
+## 실험 결과와 검사

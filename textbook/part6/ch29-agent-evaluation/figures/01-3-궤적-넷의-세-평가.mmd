@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  base["기준 궤적과<br>strict 모드 평가 함수<br>네 궤적 모두 같은 것과 견줌"]
+  subgraph rows["궤적마다 세 평가 결과"]
+    direction TB
+    t1["기준과 같음<br>최종 답 True · 한 단계 True<br>궤적 True"]:::measure
+    t2["검색 세 번<br>최종 답 True · 한 단계 True<br>궤적 False"]:::measure
+    t3["답만 틀림<br>최종 답 False · 한 단계 True<br>궤적 True"]:::measure
+    t4["차례 바꿈<br>최종 답 True · 한 단계 False<br>궤적 False"]:::measure
+    t1 ~~~ t2 ~~~ t3 ~~~ t4
+  end
+  base --> rows

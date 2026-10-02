@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  st["판 20260911_01<br>줄 셋 환불 · 배송 · 결제"]
+  rev["Before 판 20260929_02<br>칸 owner nullable=False<br>기본값 없음"]:::flow
+  sql["Alembic이 보낸 SQL 글<br>ALTER TABLE …<br>ADD COLUMN owner<br>VARCHAR(50) NOT NULL"]
+  tx["서버가 SQL 문장을 막음<br>판 함수가 끝나지 않아<br>판 번호를 적지 않음"]
+  err["받은 오류 IntegrityError<br>NotNullViolation · 23502"]:::measure
+  res["판 번호 20260911_01 그대로<br>칸 id · question 그대로"]:::fail
+  st --> rev --> sql --> tx --> err --> res

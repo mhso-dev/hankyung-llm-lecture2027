@@ -1,0 +1,8 @@
+flowchart TD
+  %% classes
+  s1["발급 서비스에서 폐기·교체<br>이번에 실행하지 않음"]
+  s2["새 복제본에서<br>git filter-repo"]:::flow
+  s3["git log -S 더미 키<br>빈 출력 확인"]:::measure
+  s4["git push --force<br>origin main"]:::flow
+  s5["팀원은 다시 복제<br>reviewer-new"]:::flow
+  s1 --> s2 --> s3 --> s4 --> s5

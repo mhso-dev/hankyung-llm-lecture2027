@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  TEXT["한국어 문장 · 18글자<br>오늘 주문 상태를 확인해 주세요."]:::tool
+  KLUE["KLUE 토큰화기<br>어휘 32000개"]:::tool
+  PIECES["조각 목록 · 9개<br>오늘 · 주문 · 상태 · ##를 · …"]:::measure
+  IDS["ID 목록 · 11개<br>2 · 3822 · 4867 · … · 3"]:::measure
+  MODEL["모델 입력<br>이 절에서 실행하지 않음"]
+  TEXT --> KLUE
+  KLUE -- "tokenize()" --> PIECES
+  KLUE -- "encode()" --> IDS
+  IDS -. "ID 목록을 받음" .-> MODEL

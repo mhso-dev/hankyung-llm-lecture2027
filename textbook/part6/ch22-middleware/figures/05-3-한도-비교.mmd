@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph L1["한도 1토큰"]
+    direction LR
+    x1["질문 1 답함"]:::model ~~~ x2["질문 2 차단"]:::fail ~~~ x3["사용량 45토큰"]:::measure
+  end
+  subgraph L1000["한도 1,000토큰"]
+    direction LR
+    y1["질문 1 답함"]:::model ~~~ y2["질문 2 답함"]:::model ~~~ y3["사용량 106토큰"]:::measure
+  end
+  L1 ~~~ L1000

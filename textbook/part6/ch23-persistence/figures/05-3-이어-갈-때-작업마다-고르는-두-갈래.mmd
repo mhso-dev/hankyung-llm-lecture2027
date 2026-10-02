@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  r1["이어 갈 때<br>남은 쓰기를<br>작업마다 다시 붙임<br>오류 줄은 붙이지 않음"]
+  r2["good<br>다시 실행하지 않음"]
+  r3["flaky<br>다시 실행"]
+  r4["good<br>부른 횟수 한 번 그대로"]:::measure
+  r5["flaky<br>부른 횟수 두 번"]:::measure
+  r6["결과 글 둘 모두 있음<br>다음 노드 없음"]:::measure
+  r1 -.->|쓰기가 남은 작업| r2
+  r1 -.->|쓰기가 없는 작업| r3
+  r2 --> r4
+  r3 --> r5
+  r4 --> r6
+  r5 --> r6

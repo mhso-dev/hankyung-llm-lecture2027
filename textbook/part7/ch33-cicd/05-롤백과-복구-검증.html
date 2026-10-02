@@ -1,0 +1,252 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>롤백과 복구 검증 — Ch 33 · CI/CD와 배포 운영</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 프로덕션 엔지니어링 · Ch 33 · CI/CD와 배포 운영</p>
+<h1>롤백과 복구 검증</h1><div class="meta"><span>강의 1h</span><span>실습 2.2h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2.2h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>배포 이력에서 이전 리비전과 식별자를 선택할 수 있습니다.</li><li>실패 신호 뒤 롤백 사건을 새 기록으로 추가할 수 있습니다.</li><li>활성 식별자와 실제 HTTP 응답으로 복구 결과를 확인할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>경보를 확인한 뒤에도 이전 버전을 정확히 선택하고 서비스 회복을 검증해야 합니다. 최신 배포 기록을 삭제하면 장애 원인과 대응 시점을 추적할 근거도 사라집니다. 이 절에서는 v2 실패 기록을 보존한 채 v1을 가리키는 롤백 사건을 새 리비전으로 추가합니다.</p>
+<p>상태 파일만 바꾸고 끝내지 않습니다. 실제 HTTP 프로세스를 v1, v2, v1 순서로 시작해 <code>/health</code> 응답이 200, 503, 200으로 변하는지 확인합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>앞 절에서 두 구간 연속 이상을 FIRING으로 판정했고 03절에서 배포 결과를 로컬 이미지 ID로 기록했습니다. 이 절은 그 판단 방식과 기록 형식을 참고하여 별도의 모의 식별자로 복구 절차를 실행합니다. 앞 절의 실제 이미지 ID 기록을 읽는 실습은 아닙니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>이전 조리법으로 되돌린 뒤 다시 맛보기</h3><p>새 조리법의 결과가 나쁘면 기록에서 이전 조리법을 선택할 수 있습니다. 그러나 종이의 번호만 바꿔서는 음식이 회복됐는지 알 수 없습니다. 롤백도 이전 배포를 활성화한 뒤 실제 요청을 보내 복구를 확인해야 합니다.</p>
+<h3>정의</h3><p>롤백(rollback)은 문제가 있는 새 배포를 이전에 확인된 리비전으로 되돌리는 운영 절차입니다. 리비전(revision)은 배포 상태의 순서가 있는 버전 기록입니다. 롤백은 코드만 이전으로 바꾸는 작업으로 끝나지 않습니다. 데이터베이스 스키마, 메시지 형식, 캐시, 외부 API가 이전 버전과 호환되는지 확인해야 합니다. 복구 검증은 이전 다이제스트가 활성화되었는지, readiness가 정상인지, 오류와 지연이 회복되는지 확인합니다. 이 실습의 v1과 v2 식별자는 고정 문자열 stable-v1과 regressed-v2를 SHA-256으로 해시해 만든 모의 값입니다. 실제 Docker 이미지 ID나 레지스트리 다이제스트를 조회한 값이 아닙니다. 기록의 digest 필드에는 이 모의 값을 넣어 롤백 이력 형식과 상태 전환을 확인합니다. 운영에서는 앞 절에서 확인한 실제 이미지 식별자를 전달해야 합니다.</p>
+<p>앞 절에서 가장 긴 위반 구간이 2로 계산되어 FIRING이 되었습니다. 이 절은 그 신호를 복구 판단에 사용합니다. 롤백 사건에는 출발 리비전, 목표 리비전, 이유, 활성 다이제스트를 함께 기록합니다.</p>
+<h3>코드 읽기와 개념 경계</h3><p>롤백은 이전 다이제스트를 다시 활성화하는 변경이고, 복구 검증은 그 뒤 서비스가 기대 상태로 돌아왔는지 확인하는 별도 단계입니다. 예제는 v1과 v2 배포 사건을 기록하고 경보 프로세스의 실패를 확인한 뒤 <code>rollback.py</code>로 새 사건을 추가합니다. 마지막에는 활성 다이제스트와 HTTP 검사를 모두 확인합니다.</p><p>이전 이미지로 돌아갔다고 데이터베이스와 외부 작업까지 되돌아가는 것은 아닙니다. 스키마가 비호환이거나 이미 발송된 메시지가 있다면 코드 롤백만으로 복구되지 않습니다. 배포 전에는 이전 버전이 현재 데이터 구조를 읽을 수 있는지, 롤백 후 어떤 대표 요청으로 기능을 확인할지 정합니다.</p><h3>도식 읽기</h3><figure><img src="figures/05-흐름.svg" alt="롤백과 복구 검증 단계 도식"><figcaption>v2의 경보와 HTTP 503에서 이전 v1 식별자를 선택하고, 새 롤백 사건을 남긴 뒤 HTTP 200을 확인하는 순서입니다. 기존 실패 기록은 삭제하지 않습니다.</figcaption></figure>
+<p>활성 식별자 확인은 제어 상태를, HTTP 응답은 실행 상태를 보여 줍니다. 두 결과를 함께 확인해야 기록만 바뀌었거나 프로세스만 우연히 살아 있는 경우를 구분할 수 있습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>안정 버전 v1과 회귀가 있는 버전 v2의 모의 식별자를 차례로 로컬 배포 이력에 기록합니다. v2 이후의 고정 메트릭에서 경보 검사 프로세스가 실패하는지 확인합니다. 그다음 롤백 스크립트를 실행해 기존 사건은 보존하고, v1을 활성 상태로 지정하는 새 롤백 사건이 추가되었는지 검사합니다.</p><section class="notebook" data-notebook="05-롤백과-복구-검증" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="05-롤백과-복구-검증.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDroaTrsLHqs7wg67O16rWsIOqygOymnVxuIiwKICAgICJcbiIsCiAgICAi65GQIOumrOu5hOyghOydmCDrqqjsnZgg67Cw7Y+s66W8IOq4sOuhne2VnCDrkqQg6rK967O066W8IOq3vOqxsOuhnCDsnbTsoIQg7Iud67OE7J6Q66W8IOuLpOyLnCDtmZzshLHtmZTtlanri4jri6QuXG4iLAogICAgIlxuIiwKICAgICLsnbQg7Iuk7Iq17J2YIHYx6rO8IHYyIOyLneuzhOyekOuKlCDqs6DsoJUg66y47J6Q7Je0IHN0YWJsZS12MeqzvCByZWdyZXNzZWQtdjLrpbwgU0hBLTI1NuycvOuhnCDtlbTsi5ztlbQg66eM65OgIOuqqOydmCDqsJLsnoXri4jri6QuIOyLpOygnCBEb2NrZXIg7J2066+47KeAIElE64KYIOugiOyngOyKpO2KuOumrCDri6TsnbTsoJzsiqTtirjrpbwg7KGw7ZqM7ZWcIOqwkuydtCDslYTri5nri4jri6QuIOq4sOuhneydmCBkaWdlc3Qg7ZWE65Oc7JeQ64qUIOydtCDrqqjsnZgg6rCS7J2EIOuEo+yWtCDroaTrsLEg7J2066ClIO2YleyLneqzvCDsg4Htg5wg7KCE7ZmY7J2EIO2ZleyduO2VqeuLiOuLpC4g7Jq07JiB7JeQ7ISc64qUIOyVniDsoIjsl5DshJwg7ZmV7J247ZWcIOyLpOygnCDsnbTrr7jsp4Ag7Iud67OE7J6Q66W8IOyghOuLrO2VtOyVvCDtlanri4jri6QuXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJwcmVwLTMzLTA1LTAiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg7J20IOykgOu5hCDshYDsnbQg7ZWY64qUIOydvFxuIiwKICAgICJcbiIsCiAgICAi7LKrIOyFgOydmCBgUGF0aGAg7YOQ7IOJ7J2AIOyWtOuKkCDsg4HsnIQg7Y+0642U7JeQ7IScIOyXtOyWtOuPhCBDaDMz7J2YIGBweXByb2plY3QudG9tbGDsnYQg6riw7KSA7Jy866GcIOyLpOyKtSDtj7TrjZTrpbwg7LC+7Iq164uI64ukLiDrkqTsnZggYHN1YnByb2Nlc3MucnVuKC4uLiwgY3dkPWxhYiwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSlg7J2AIOuqheugueydhCDrs4Trj4Qg7ZSE66Gc7IS47Iqk66GcIOyLpO2Wie2VmOqzoCDtmZTrqbQg66y46rWs7JmAIOyiheujjCDsvZTrk5zrpbwg7ZWo6ruYIOuwmO2ZmO2VqeuLiOuLpC4g7J20IOuztOyhsCDsvZTrk5zripQgQ0nrpbwg7Z2J64K0IOuCtOuKlCDqs7XthrUg7Iuk7ZaJIOqyveqzhOydtOupsCwg6rCBIOygiOydmCDtjJDsoJXsnYAg64uk7J2MIOyFgOyXkOyEnCDtlbTri7kg66qF66C57J2YIOyLpOygnCDrsJjtmZjqsJLsnYQg7J297Ja0IOqysOygle2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICJjZWxsLTAyIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjIyOjI2LjUyMjQ0OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjIyOjI2LjUyMjIyOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjIyOjI2LjUyOTkzNFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MjI6MjYuNTI5MzYyWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICJmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGhcbiIsCiAgICAiaW1wb3J0IGhhc2hsaWIsIHN1YnByb2Nlc3MsIHN5cywgdGVtcGZpbGUsIGpzb24sIHNodXRpbFxuIiwKICAgICJsYWIgPSBuZXh0KChwIGZvciBwIGluIFtQYXRoLmN3ZCgpLCAqUGF0aC5jd2QoKS5wYXJlbnRzXSBpZiBwLm5hbWUgPT0gXCJjaDMzLWNpY2RcIiBhbmQgKHAgLyBcInB5cHJvamVjdC50b21sXCIpLmlzX2ZpbGUoKSksIFBhdGgoXCJsYWJzL3BhcnQ3L2NoMzMtY2ljZFwiKSkucmVzb2x2ZSgpXG4iLAogICAgInYxID0gXCJzaGEyNTY6XCIgKyBoYXNobGliLnNoYTI1NihiXCJzdGFibGUtdjFcIikuaGV4ZGlnZXN0KClcbiIsCiAgICAidjIgPSBcInNoYTI1NjpcIiArIGhhc2hsaWIuc2hhMjU2KGJcInJlZ3Jlc3NlZC12MlwiKS5oZXhkaWdlc3QoKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNvbmNlcHQtMzMtMDUtYSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDrsJTroZwg64uk7J2MIOy9lOuTnOulvCDsnb3ripQg67Cp67KVXG4iLAogICAgIlxuIiwKICAgICLroaTrsLHsnYAg7J207KCEIOuqqOydmCDsi53rs4TsnpDrpbwg64uk7IucIO2ZnOyEse2ZlO2VmOuKlCDrs4Dqsr3snbTqs6AsIOuzteq1rCDqsoDspp3snYAg6re4IOuSpCDshJzruYTsiqTqsIAg6riw64yAIOyDge2DnOuhnCDrj4zslYTsmZTripTsp4Ag7ZmV7J247ZWY64qUIOuzhOuPhCDri6jqs4TsnoXri4jri6QuIOyYiOygnOuKlCB2MeqzvCB2MiDrsLDtj6wg7IKs6rG07J2EIOq4sOuhne2VmOqzoCDqsr3rs7Qg7ZSE66Gc7IS47Iqk7J2YIOyLpO2MqOulvCDtmZXsnbjtlZwg65KkIGByb2xsYmFjay5weWDroZwg7IOIIOyCrOqxtOydhCDstpTqsIDtlanri4jri6QuIOuniOyngOunieyXkOuKlCDtmZzshLEg66qo7J2YIOyLneuzhOyekOyZgCBIVFRQIOqygOyCrOulvCDrqqjrkZAg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MjI6MjYuNTMxMzEwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MjI6MjYuNTMxMTkwWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MjI6MjYuNTg0OTg1WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoyMjoyNi41ODQ2MjNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiZGVwbG95ZWQgcmV2aXNpb249MSBkaWdlc3Q9c2hhMjU2OmZjYjY3ZTFiMDM5YS4uLlxuIiwKICAgICAgImRlcGxveWVkIHJldmlzaW9uPTIgZGlnZXN0PXNoYTI1Njo5ZTkwOTI1MGVjYjQuLi5cbiIsCiAgICAgICJbeydyZXZpc2lvbic6IDEsICdldmVudCc6ICdkZXBsb3knLCAnZGlnZXN0JzogJ3NoYTI1NjpmY2I2N2UxYjAzOWFhZDRjOTk4YTYzNWM0N2ZmZTVkMDllYWNiNmJiY2NjOThhY2JkZWVkODYzODYxNzI5MzA3JywgJ3N0YXR1cyc6ICdyZWFkeSd9LCB7J3JldmlzaW9uJzogMiwgJ2V2ZW50JzogJ2RlcGxveScsICdkaWdlc3QnOiAnc2hhMjU2OjllOTA5MjUwZWNiNDg1YTIxODYxODUzODg3YTlmZmFjZDYxZGJmM2FmMzdlYjkzNDgxYmZiOTFjYTMyNDRmNGUnLCAnc3RhdHVzJzogJ3JlYWR5J31dXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgInRlbXAgPSB0ZW1wZmlsZS5UZW1wb3JhcnlEaXJlY3RvcnkoKVxuIiwKICAgICJ0ID0gUGF0aCh0ZW1wLm5hbWUpXG4iLAogICAgInNodXRpbC5jb3B5dHJlZShsYWIgLyBcInNjcmlwdHNcIiwgdCAvIFwic2NyaXB0c1wiKVxuIiwKICAgICIodCAvIFwicnVuc1wiKS5ta2RpcigpXG4iLAogICAgImZvciBkaWdlc3QgaW4gKHYxLCB2Mik6XG4iLAogICAgIiAgICByZXN1bHQgPSBzdWJwcm9jZXNzLnJ1bihbc3lzLmV4ZWN1dGFibGUsIFwic2NyaXB0cy9kZXBsb3kucHlcIiwgZGlnZXN0XSwgY3dkPXQsIHRleHQ9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSlcbiIsCiAgICAiICAgIHByaW50KHJlc3VsdC5zdGRvdXQuc3RyaXAoKSlcbiIsCiAgICAicHJpbnQoanNvbi5sb2FkcygodCAvIFwicnVucy9kZXBsb3ltZW50Lmpzb25cIikucmVhZF90ZXh0KCkpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2MqCDsnqztmIRcbiIsCiAgICAiXG4iLAogICAgInYyIOuwsO2PrCDtm4TsnZgg6rOg7KCVIOyatOyYgSDsnpDro4zsl5DshJwg6rK967O0IO2UhOuhnOyEuOyKpOuKlCDsooXro4wg7L2U65OcIDHsnYQg67CY7ZmY7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MjI6MjYuNTg1OTMyWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MjI6MjYuNTg1ODU1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MjI6MjYuNjA4MTA2WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoyMjoyNi42MDc3NTBaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJhbGVydDogRklSSU5HIGxvbmdlc3Rfc3RyZWFrPTIgZXhpdF9jb2RlPSAxXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImZhaWxlZCA9IHN1YnByb2Nlc3MucnVuKFtzeXMuZXhlY3V0YWJsZSwgc3RyKGxhYiAvIFwic2NyaXB0cy9jaGVja19tZXRyaWNzLnB5XCIpXSwgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlKVxuIiwKICAgICJwcmludChmYWlsZWQuc3Rkb3V0LnN0cmlwKCkuc3BsaXRsaW5lcygpWy0xXSwgXCJleGl0X2NvZGU9XCIsIGZhaWxlZC5yZXR1cm5jb2RlKVxuIiwKICAgICJhc3NlcnQgZmFpbGVkLnJldHVybmNvZGUgPT0gMSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDYiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7IiY7KCVXG4iLAogICAgIlxuIiwKICAgICLroaTrsLEg7Iqk7YGs66a97Yq466GcIOyDiCDroaTrsLEg7IKs6rG07J2EIOy2lOqwgO2VmOqzoCDtmZzshLEg66qo7J2YIOyLneuzhOyekOqwgCB2MeyduOyngCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY29uY2VwdC0zMy0wNS1iIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg64uo6rOE7JeQ7IScIOq1rOu2hO2VoCDrspTsnIRcbiIsCiAgICAiXG4iLAogICAgIuydtOyghCDsnbTrr7jsp4DroZwg64+M7JWE6rCU64uk6rOgIOuNsOydtO2EsOuyoOydtOyKpOyZgCDsmbjrtoAg7J6R7JeF6rmM7KeAIOuQmOuPjOyVhOqwgOuKlCDqsoPsnYAg7JWE64uZ64uI64ukLiDsiqTtgqTrp4jqsIAg67mE7Zi47ZmY7J206rGw64KYIOydtOuvuCDrsJzshqHrkJwg66mU7Iuc7KeA6rCAIOyeiOuLpOuptCDsvZTrk5wg66Gk67Cx66eM7Jy866GcIOuzteq1rOuQmOyngCDslYrsirXri4jri6QuIOuwsO2PrCDsoITsl5DripQg7J207KCEIOuyhOyghOydtCDtmITsnqwg642w7J207YSwIOq1rOyhsOulvCDsnb3snYQg7IiYIOyeiOuKlOyngCwg66Gk67CxIO2bhCDslrTrlqQg64yA7ZGcIOyalOyyreycvOuhnCDquLDriqXsnYQg7ZmV7J247ZWg7KeAIOygle2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA3IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjIyOjI2LjYwOTAwM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjIyOjI2LjYwODk0MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjIyOjI3LjMyMjY1MFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MjI6MjcuMzIyMjk5WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJyb2xsZWQgYmFjayAyIC0+IDEgYWN0aXZlPSBzaGEyNTY6ZmNiNjdlMWIwMzlhXG4iCiAgICAgXQogICAgfSwKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiMjAwIHYxIG9rXG4iLAogICAgICAiNTAzIHYyIHJlZ3Jlc3NlZFxuIiwKICAgICAgIjIwMCB2MSBva1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJyb2xsZWQgPSBzdWJwcm9jZXNzLnJ1bihbc3lzLmV4ZWN1dGFibGUsIFwic2NyaXB0cy9yb2xsYmFjay5weVwiXSwgY3dkPXQsIHRleHQ9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSlcbiIsCiAgICAiaGlzdG9yeSA9IGpzb24ubG9hZHMoKHQgLyBcInJ1bnMvZGVwbG95bWVudC5qc29uXCIpLnJlYWRfdGV4dCgpKVxuIiwKICAgICJwcmludChyb2xsZWQuc3Rkb3V0LnN0cmlwKCksIFwiYWN0aXZlPVwiLCBoaXN0b3J5Wy0xXVtcImRpZ2VzdFwiXVs6MTldKVxuIiwKICAgICJodHRwID0gc3VicHJvY2Vzcy5ydW4oW3N5cy5leGVjdXRhYmxlLCBzdHIobGFiIC8gXCJzY3JpcHRzL3ZlcmlmeV9odHRwX3JvbGxiYWNrLnB5XCIpXSwgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlKVxuIiwKICAgICJwcmludChodHRwLnN0ZG91dC5zdHJpcCgpKVxuIiwKICAgICJhc3NlcnQgcm9sbGVkLnJldHVybmNvZGUgPT0gMCBhbmQgaGlzdG9yeVstMV1bXCJkaWdlc3RcIl0gPT0gdjEgYW5kIGh0dHAucmV0dXJuY29kZSA9PSAwXG4iLAogICAgInRlbXAuY2xlYW51cCgpIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJwYWlyZWQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA0LAogICAiY29kZV9zaGEyNTYiOiAiMDVjYWQ4YjNmNmMyMzVkOTAzZjVmYjM0OWFhM2M5YjM2MjIwM2I1MzcwMDZkN2ExNzY5YjBhNDA1ZDhjNWZjMyIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTExVDAyOjIyOjI3LjQ0MDU1NCswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiMjRhZDY2MGY1ZmI1NjU0ZWYzMDdlOTY0NjVkNDYyYTM4NDMyMTliOWEyNjA1NTBhZTZlY2M4YzllMzhlZDBjNCIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>롤백과 복구 검증</h2>
+<p>두 리비전의 모의 배포를 기록한 뒤 경보를 근거로 이전 식별자를 다시 활성화합니다.</p>
+<p>이 실습의 v1과 v2 식별자는 고정 문자열 stable-v1과 regressed-v2를 SHA-256으로 해시해 만든 모의 값입니다. 실제 Docker 이미지 ID나 레지스트리 다이제스트를 조회한 값이 아닙니다. 기록의 digest 필드에는 이 모의 값을 넣어 롤백 이력 형식과 상태 전환을 확인합니다. 운영에서는 앞 절에서 확인한 실제 이미지 식별자를 전달해야 합니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>첫 셀의 <code>Path</code> 탐색은 어느 상위 폴더에서 열어도 Ch33의 <code>pyproject.toml</code>을 기준으로 실습 폴더를 찾습니다. 뒤의 <code>subprocess.run(..., cwd=lab, capture_output=True)</code>은 명령을 별도 프로세스로 실행하고 화면 문구와 종료 코드를 함께 반환합니다. 이 보조 코드는 CI를 흉내 내는 공통 실행 경계이며, 각 절의 판정은 다음 셀에서 해당 명령의 실제 반환값을 읽어 결정합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">from pathlib import Path
+import hashlib, subprocess, sys, tempfile, json, shutil
+lab = next((p for p in [Path.cwd(), *Path.cwd().parents] if p.name == &quot;ch33-cicd&quot; and (p / &quot;pyproject.toml&quot;).is_file()), Path(&quot;labs/part7/ch33-cicd&quot;)).resolve()
+v1 = &quot;sha256:&quot; + hashlib.sha256(b&quot;stable-v1&quot;).hexdigest()
+v2 = &quot;sha256:&quot; + hashlib.sha256(b&quot;regressed-v2&quot;).hexdigest()</code></pre></div></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>롤백은 이전 모의 식별자를 다시 활성화하는 변경이고, 복구 검증은 그 뒤 서비스가 기대 상태로 돌아왔는지 확인하는 별도 단계입니다. 예제는 v1과 v2 배포 사건을 기록하고 경보 프로세스의 실패를 확인한 뒤 <code>rollback.py</code>로 새 사건을 추가합니다. 마지막에는 활성 모의 식별자와 HTTP 검사를 모두 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">temp = tempfile.TemporaryDirectory()
+t = Path(temp.name)
+shutil.copytree(lab / &quot;scripts&quot;, t / &quot;scripts&quot;)
+(t / &quot;runs&quot;).mkdir()
+for digest in (v1, v2):
+    result = subprocess.run([sys.executable, &quot;scripts/deploy.py&quot;, digest], cwd=t, text=True, capture_output=True)
+    print(result.stdout.strip())
+print(json.loads((t / &quot;runs/deployment.json&quot;).read_text()))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">deployed revision=1 digest=sha256:fcb67e1b039a...
+deployed revision=2 digest=sha256:9e909250ecb4...
+[{&#x27;revision&#x27;: 1, &#x27;event&#x27;: &#x27;deploy&#x27;, &#x27;digest&#x27;: &#x27;sha256:fcb67e1b039aad4c998a635c47ffe5d09eacb6bbccc98acbdeed863861729307&#x27;, &#x27;status&#x27;: &#x27;ready&#x27;}, {&#x27;revision&#x27;: 2, &#x27;event&#x27;: &#x27;deploy&#x27;, &#x27;digest&#x27;: &#x27;sha256:9e909250ecb485a21861853887a9ffacd61dbf3af37eb93481bfb91ca3244f4e&#x27;, &#x27;status&#x27;: &#x27;ready&#x27;}]
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — v1·v2 배포 기록, 경보 종료 코드 1, 새 롤백 사건과 활성 v1 식별자를 순서대로 확인합니다. 마지막 HTTP 검사가 복구된 응답을 반환하는지도 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before에서는 v2 HTTP 프로세스의 <code>/health</code>가 503과 <code>regressed</code>를 반환하고 운영 검사도 FIRING, 종료 코드 1입니다. After에서는 기존 배포 이력을 삭제하지 않고 롤백 사건을 새 리비전으로 추가합니다. 이어 v1 HTTP 프로세스를 다시 시작해 <code>/health</code>가 200과 <code>ok</code>를 반환하는지 확인합니다. 이 실습은 로컬 실제 요청 복구를 확인하지만 클라우드 트래픽 전환과 데이터베이스 호환성은 검증하지 않습니다.</p><section class="notebook" data-notebook="05-롤백과-복구-검증" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>v2 배포 후의 고정 운영 자료에서 경보 프로세스는 종료 코드 1을 반환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">failed = subprocess.run([sys.executable, str(lab / &quot;scripts/check_metrics.py&quot;)], text=True, capture_output=True)
+print(failed.stdout.strip().splitlines()[-1], &quot;exit_code=&quot;, failed.returncode)
+assert failed.returncode == 1</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">alert: FIRING longest_streak=2 exit_code= 1
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>롤백 스크립트로 새 롤백 사건을 추가하고 활성 모의 식별자가 v1인지 확인합니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>이전 이미지로 돌아갔다고 데이터베이스와 외부 작업까지 되돌아가는 것은 아닙니다. 스키마가 비호환이거나 이미 발송된 메시지가 있다면 코드 롤백만으로 복구되지 않습니다. 배포 전에는 이전 버전이 현재 데이터 구조를 읽을 수 있는지, 롤백 후 어떤 대표 요청으로 기능을 확인할지 정합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">rolled = subprocess.run([sys.executable, &quot;scripts/rollback.py&quot;], cwd=t, text=True, capture_output=True)
+history = json.loads((t / &quot;runs/deployment.json&quot;).read_text())
+print(rolled.stdout.strip(), &quot;active=&quot;, history[-1][&quot;digest&quot;][:19])
+http = subprocess.run([sys.executable, str(lab / &quot;scripts/verify_http_rollback.py&quot;)], text=True, capture_output=True)
+print(http.stdout.strip())
+assert rolled.returncode == 0 and history[-1][&quot;digest&quot;] == v1 and http.returncode == 0
+temp.cleanup()</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">rolled back 2 -&gt; 1 active= sha256:fcb67e1b039a
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">200 v1 ok
+503 v2 regressed
+200 v1 ok
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>되돌릴 이미지가 레지스트리에서 삭제되지 않도록 보존 정책을 정합니다.</li><li>하위 호환되지 않는 데이터 마이그레이션은 애플리케이션 롤백만으로 복구되지 않을 수 있습니다. 확장 후 축소 방식이나 별도 데이터 복구 절차를 준비합니다.</li><li>자동 롤백은 잘못된 경보에도 반응할 수 있으므로 영향 범위와 승인 정책, 최대 반복 횟수를 정합니다.</li></ul>
+<p>HTTP 200은 이 예제의 health 경로가 응답했다는 사실만 보여 줍니다. 데이터베이스 쓰기, 외부 API, 사용자 핵심 흐름은 별도 확인이 필요합니다. 데이터 형식이 이전 버전과 호환되지 않으면 애플리케이션 이미지만 되돌려도 복구되지 않습니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>롤백은 이전에 검증한 리비전과 다이제스트를 다시 선택합니다.</li><li>롤백 뒤에는 배포 상태와 서비스 지표를 다시 검증합니다.</li><li>코드와 데이터의 호환성을 함께 설계해야 복구 절차가 작동합니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — Ch38 Hooks는 이 장의 평가, 배포 전 검사, 배포 후 health 확인을 작업 경계에서 자동으로 호출합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>롤백과 재배포의 공통점은 무엇인가요?</summary><p class="quiz-a">둘 다 선택한 이미지 다이제스트를 배포 환경의 활성 버전으로 지정합니다.</p></details><details class="quiz"><summary>롤백 뒤 무엇을 확인해야 하나요?</summary><p class="quiz-a">활성 다이제스트, readiness, 핵심 요청, 오류율과 지연의 회복을 확인해야 합니다.</p></details><details class="quiz"><summary>애플리케이션만 되돌려도 복구되지 않는 사례는 무엇인가요?</summary><p class="quiz-a">이전 버전과 호환되지 않는 데이터베이스 스키마 변경이 이미 적용된 사례입니다.</p></details><details class="quiz"><summary>자동 롤백에 필요한 제한은 무엇인가요?</summary><p class="quiz-a">경보 조건, 영향 범위, 승인 정책, 최대 반복 횟수와 중단 조건이 필요합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/">Kubernetes Docs, Performing a Rolling Update</a> · 확인 2026-09-11</li><li><a href="https://kubernetes.io/docs/concepts/workloads/management/">Kubernetes Docs, Managing Workloads</a> · 확인 2026-09-11</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="04-모니터링과-알림.html">← 모니터링과 알림</a></span><span><a href="index.html">챕터 목차</a></span><span>챕터 끝</span></div></div></body></html>

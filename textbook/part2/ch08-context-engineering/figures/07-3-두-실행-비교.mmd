@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 320}}}%%
+flowchart LR
+  %% classes
+  subgraph R1 [실행 1 · 수업 예산 600 · 입력 가용분 440]
+    direction TB
+    C1["휴관<br>본문 · 추정 184<br>보냄 · 실제 입력 198"]:::measure
+    L1["대출 연장<br>본문 · 추정 217<br>보냄 · 실제 입력 231"]:::measure
+    P1["주차<br>본문 · 추정 197<br>보냄 · 답에 30분마다 500원 있음"]:::measure
+    C1 ~~~ L1 ~~~ P1
+  end
+  subgraph R2 [실행 2 · 수업 예산 300 · 입력 가용분 140]
+    direction TB
+    C2["휴관<br>줄인 기록 · 추정 136<br>보냄 · 실제 입력 150"]:::measure
+    L2["대출 연장<br>줄인 기록 · 추정 128<br>보냄 · 실제 입력 142"]:::measure
+    P2["주차<br>줄인 기록 · 추정 103<br>넣기 전 빠진 지킬 말 30분마다 500원<br>보내지 않음"]:::measure
+    C2 ~~~ L2 ~~~ P2
+  end
+  R1 ~~~ R2

@@ -1,0 +1,57 @@
+# Ch11 evaluation verification commands (2026-09-10)
+
+## Regression tests
+$ uv run --project labs/part3/ch11-evaluation --with pytest==9.0.2 pytest -q labs/part3/ch11-evaluation/tests/test_evaluate.py
+
+........                                                                 [100%]
+8 passed in 0.03s
+
+## Static analysis
+$ uv run --project labs/part3/ch11-evaluation --with ruff==0.15.7 ruff check labs/part3/ch11-evaluation/evaluate.py labs/part3/ch11-evaluation/tests/test_evaluate.py labs/part3/ch11-evaluation/_make_notebooks.py
+All checks passed!
+
+## Baseline dev/test, notebook 06, and HTML build
+$ uv run --project labs/part3/ch11-evaluation python labs/part3/ch11-evaluation/evaluate.py --split dev --output labs/part3/ch11-evaluation/runs/continuity-baseline-dev-20260910.json
+$ uv run --project labs/part3/ch11-evaluation python labs/part3/ch11-evaluation/evaluate.py --split test --output labs/part3/ch11-evaluation/runs/continuity-baseline-test-20260910.json
+$ uv run --project labs/part3/ch11-evaluation --with nbclient==0.11.0 --with ipykernel==7.3.0 --with pip --with python-dotenv==1.2.3 python textbook/_notebook/execute.py labs/part3/ch11-evaluation/notebooks/06-실험-로그와-자동-실행.ipynb --cwd "$PWD"
+$ uv run --project labs/part3/ch11-evaluation --with pillow python textbook/part3/ch11-evaluation/_build.py
+$ uv run --project labs/part3/ch11-evaluation python textbook/_notebook/verify.py --chapter textbook/part3/ch11-evaluation
+
+{
+  "metrics": {
+    "recall_at_5": 1.0,
+    "recall_at_50": 1.0,
+    "precision_at_5": 0.2,
+    "ndcg_at_5": 0.8928526173809582
+  },
+  "query_count": 15,
+  "output": "labs/part3/ch11-evaluation/runs/continuity-baseline-dev-20260910.json"
+}
+{
+  "metrics": {
+    "recall_at_5": 1.0,
+    "recall_at_50": 1.0,
+    "precision_at_5": 0.2,
+    "ndcg_at_5": 0.9174573004761943
+  },
+  "query_count": 15,
+  "output": "labs/part3/ch11-evaluation/runs/continuity-baseline-test-20260910.json"
+}
+PASS 06-실험-로그와-자동-실행.ipynb: 6 cells
+wrote index.html
+wrote 01-질의셋과-정답-문서-ID.html
+wrote 02-Recall-at-50.html
+wrote 03-Precision-at-5.html
+wrote 04-nDCG-at-5.html
+wrote 05-조건별-평가와-오류-분류.html
+wrote 06-실험-로그와-자동-실행.html
+PASS 6 sections / 32 code cells (max 24 lines)
+PASS 6 sections / 32 code cells (max 24 lines)
+
+## README path smoke from labs/part3/ch11-evaluation
+$ uv run python evaluate.py --retrieval-log labs/part3/ch09-rag-first-run/runs/continuity-ch09-search.jsonl --retrieval-log labs/part3/ch10-document-processing/runs/continuity-ch10-indexing.jsonl --output runs/continuity-upstream-20260910.json
+{
+  "run_count": 7,
+  "query_counts": [1, 1, 1, 1, 1, 1, 1],
+  "output": "runs/continuity-upstream-20260910.json"
+}

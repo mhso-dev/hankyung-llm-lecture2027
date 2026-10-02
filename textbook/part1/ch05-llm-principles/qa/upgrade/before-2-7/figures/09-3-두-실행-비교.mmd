@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph RUN1["실행 1 · 04절 시스템 지시"]
+    direction TB
+    a0["주어진 문서 범위에서만<br>답하세요."]:::tool
+    a1["환불 질문 · 입력 57조각<br>답 14일 이내에 신청<br>새 숫자 14"]:::measure
+    a2["무게 질문 · 입력 66조각<br>답 약 150g<br>새 숫자 150"]:::measure
+    a0 --> a1 --> a2
+  end
+  subgraph RUN2["실행 2 · 07절 보류 지시"]
+    direction TB
+    b0["정답 근거가 없으면<br>추측하지 말고 보류 문장"]:::tool
+    b1["환불 질문 · 입력 79조각<br>답 7일 이내에<br>새 숫자 없음"]:::measure
+    b2["무게 질문 · 입력 88조각<br>답 보류 문장<br>보류 문장 있음 True"]:::measure
+    b0 --> b1 --> b2
+  end
+  RUN1 ~~~ RUN2

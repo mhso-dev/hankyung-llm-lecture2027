@@ -1,0 +1,9 @@
+flowchart TD
+  %% classes
+  S["small_orders = []<br>빈 목록에서 시작"]:::flow
+  A1["18000 · 30000 미만<br>append → [18000]"]:::tool
+  A2["42000 · 30000 이상<br>append 건너뜀"]
+  A3["65000 · 30000 이상<br>append 건너뜀"]
+  A4["27000 · 30000 미만<br>append → [18000, 27000]"]:::tool
+  R["출력<br>[18000, 27000] · 2개"]:::measure
+  S --> A1 --> A2 --> A3 --> A4 --> R

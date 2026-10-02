@@ -1,0 +1,30 @@
+{
+  "version": "v1.6",
+  "genre": "prose",
+  "char_count": 16793,
+  "metrics": {
+    "comma_inclusion_rate": 0.06706408345752608,
+    "comma_usage_rate": 0.09239940387481371,
+    "ending_comma_rate": 0.10588235294117647,
+    "comma_segment_length": 5.130674002751031,
+    "conclusion_pivot_count": 0,
+    "safe_balance_count": 0,
+    "hanja_nominalizer_density": 0.0016133369185264857,
+    "lexical_diversity": 0.42403872008604465
+  },
+  "z_scores": {
+    "comma_inclusion_rate": -1.1292391505902875,
+    "comma_usage_rate": -1.45118964493033,
+    "ending_comma_rate": 0.8249504506188999,
+    "comma_segment_length": 0.37086650962044254,
+    "hanja_nominalizer_density": -1.9462221027157838,
+    "lexical_diversity": -4.5192255982791085
+  },
+  "risk_band": "low",
+  "risk_score": 1,
+  "evidence": {
+    "conclusion_pivots": [],
+    "safe_balances": []
+  },
+  "warning": "baseline_genre_null:prose->essay"
+}

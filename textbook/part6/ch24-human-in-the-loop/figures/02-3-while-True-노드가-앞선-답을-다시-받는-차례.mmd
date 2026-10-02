@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  c["Command<br>resume=approve<br>스레드 loop로 invoke"]:::flow
+  s["노드 ask_in_loop를<br>처음부터 다시 실행"]:::flow
+  i1["첫째 interrupt<br>소스 확인<br>앞선 답 maybe를 다시 받음"]
+  i2["둘째 interrupt<br>소스 확인<br>앞선 답 yes를 다시 받음"]
+  i3["셋째 interrupt<br>새 답 approve를 받아<br>노드가 끝남"]:::measure
+  r["이 셀에서 부른 횟수 셋<br>누적 아홉 · 체크포인트 셋"]:::measure
+  c --> s
+  s --> i1
+  i1 --> i2
+  i2 --> i3
+  i3 --> r

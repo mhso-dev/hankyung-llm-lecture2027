@@ -1,0 +1,16 @@
+
+## 3단계 옛 검사 스크립트 (2026-10-01)
+
+- **고친 15개**(설명 맨 위 「전체 마감 2026-10-01: …」, 원본 `.cache/final-close/3-check-scripts/before/`, 전후 해시 `log/changed.tsv`, 바뀐 줄 `log/diffs.patch`) — 옛 구조를 가리키는 곳만 바꾸고 검사 항목은 그대로:
+  - Part 4·5·6 `check_figures.py`: `.excalidraw` 짝이 없는 Mermaid SVG를 원본 `.mmd`와 견줌(라벨·화살촉 수·`.render.json` 도장·PNG) → 163·119·260쌍 통과. Part 7 `check_figures.py` 20행: 개선 챕터는 Mermaid·삽화 원본과 렌더, 막힌 `before/generators/blocked/_gen_figures.py`를 요구하고 Mermaid도 상자 1~7까지 견줌, Ch 32·33은 옛 구조 → 119쌍 통과.
+  - 실습 절·절 수: Part 5·6 `check_scope.py`(통과) · `check_notebook_readiness.py`(21·47 → chapter.json 절 목록) · Part 6 `check_visual_reports.py`(116 → 134) · Part 1 `check_delivery.py`(35 → 40, 실습 절 「실습 30분」은 시수 합에서 뺌, 절마다 Mermaid 3~5장) · Part 2 `check_delivery.py`(20·180 → 23·470) · `textbook/qa/check_course_delivery.py`(87 → 246) · Part 3 `finalize_continuity_evidence.py`(94 → 폴더별 쪽 × 두 너비, 합 98).
+  - Part 7 `check_bundle_execution.py`: 실행기를 Part 4~6과 같은 `uv run --project <챕터> --with nbclient==0.11.0 --with python-dotenv==1.2.3`로, `--pre-exec`면 Ch 31 `pre_exec.sh`를 같은 셸에서 먼저 부름, 보고서에 zip 해시. 대상 그대로. 옛 zip으로 풀기·`uv sync --locked` 다섯·실행기 환경·훅 DB 연결까지만 시험(노트북 실행 0). Part 7 `check_delivery.py`: 기준을 `existing-artifacts-final-close.json`(옛 파일과 같은 범위)으로, `--write-baseline`으로 한 번만 만듦(아직 없음, 옛 파일 그대로).
+- **결과 파일**: `figure-consistency.json` 넷·`lesson-scope.json` 둘·`notebook-readiness.json` 둘을 새로 씀(`log/results-changed.tsv`).
+- **남은 실패**: 내용(사람 결정) — 함수 타입힌트 없음 Part 5 25/25·Part 6 46/56(AGENTS.md 283행), Ch 29 01 `assert` 0, Ch 2 01~12 복습 6문항(규칙 3~5, Ch 6 04도 6). 화면 재촬영 뒤 — Part 6(Ch 21·22·25·목차 둘), Part 3(ch08 07·ch09 07 쪽 — ch08은 새로 찾음). 묶음 재생성 뒤 — 각 check_delivery·연속성 둘(사본에서 낡은 zip 대조만 빼면 통과).
+- **고치지 않음**: Part 4 `check_language_freeze.py`·Part 5 `finalize_evidence.py`(2026-09-10 언어 감사 승인 해시가 기준 — 새 감사 없이 만들 수 없음) · `textbook/qa/collect_course_changes.py`(검사 아님) · Ch 2 `qa/audit.py`(챕터 단위, 범위 밖). 구조 문제 없음: Part 3~6 나머지 검사·`check_course_continuity.py`·`collect_public_files.py` 둘.
+- **다음 단계**(`ROOT=$HOME/mnt/한국경제신문; cd $ROOT; export PYTHONDONTWRITEBYTECODE=1; U="env -u UV_PROJECT_ENVIRONMENT -u UV_NO_SYNC -u OPENAI_API_KEY -u PYTHONPATH UV_LINK_MODE=symlink"`):
+  1. 묶음 재생성 뒤: `python3 textbook/part1/qa/check_delivery.py --revised-existing` · part2~6 `qa/check_delivery.py` · `textbook/qa/check_course_delivery.py` · `textbook/part7/qa/check_secrets.py` · Part 1~6 원본 확정 뒤 `python3 textbook/part7/qa/check_delivery.py --write-baseline` 한 번 → 같은 스크립트를 인자 없이.
+  2. `$U UV_CACHE_DIR=$ROOT/.cache/vm/bundle-check/uv-cache python3 textbook/partN/qa/check_bundle_execution.py`(N=4·5·6) · Part 7은 `$U UV_CACHE_DIR=/tmp/uv-cache nohup python3 textbook/part7/qa/check_bundle_execution.py --pre-exec > 기록 2>&1 &`(Ch 33 setuptools 빌드 임시 폴더를 연결 폴더 캐시에서 못 지워 멈춤 — 루트 여유 700MB 이상, 끝나면 55431 포트 0) · `$U UV_CACHE_DIR=$ROOT/.cache/vm/bundle-check/uv-cache python3 textbook/part3/qa/run_continuity_bundle.py`(모델 요청).
+  3. 화면 재촬영 뒤: `python3 textbook/part3/qa/finalize_continuity_evidence.py` · `python3 textbook/part6/qa/check_visual_reports.py`.
+  4. `python3 textbook/part3/qa/check_continuity.py` · `.cache/vm/venv-ch06-langchain-start/bin/python textbook/qa/check_course_continuity.py`. 옛 그림 삭제 뒤 `check_figures.py` 넷을 다시.
+- **남은 것**: 사람 결정 둘(타입힌트·Ch 2 복습 문항) · 삭제 승인 목록에 기기 `$TMPDIR/fc3-ch33`·`fc3-ch34`(97MB)·`.cache/final-close/3-check-scripts/`.

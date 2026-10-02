@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  ref["기준 요청 둘<br>search_documents<br>check_source"]:::tool
+  act["실제 요청 넷<br>search_documents 셋<br>check_source 하나"]:::tool
+  fn["unpaired_names<br>두 방향으로 이름 짝짓기"]:::flow
+  left["기준과 짝이 없는<br>실제 요청<br>search_documents 둘"]:::measure
+  right["실제와 짝이 없는<br>기준 요청<br>빈 목록"]:::measure
+  sb["모드 subset<br>False"]:::measure
+  sp["모드 superset<br>True"]:::measure
+  ref --> fn
+  act --> fn
+  fn --> left
+  fn --> right
+  left -.-> sb
+  right -.-> sp

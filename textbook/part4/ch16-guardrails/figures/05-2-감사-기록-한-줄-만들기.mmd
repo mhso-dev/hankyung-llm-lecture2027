@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  q["받은 질문<br>가짜 이메일 · 전화번호"]:::tool
+  mask["질문 가리기<br>mask_pii"]:::flow
+  fp["소금값을 붙여 지문<br>앞 12글자"]:::flow
+  det["detail도 JSON 글로 가리기<br>safe_detail"]:::flow
+  add["기록 목록에 한 줄 더함"]:::flow
+  write["파일 전체를 다시 씀<br>여는 방식 w"]:::flow
+  out["노트북 7절 파일 두 줄<br>남은 원문 값 없음"]:::measure
+  q --> mask
+  mask --> fp
+  fp --> det
+  det --> add
+  add --> write
+  write --> out

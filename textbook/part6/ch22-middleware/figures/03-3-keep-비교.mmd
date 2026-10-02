@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph K2["keep = 2"]
+    direction LR
+    k2a["요약 1개"]:::model ~~~ k2b["최근 2개"]:::flow ~~~ k2c["모델 입력 3개"]:::measure
+  end
+  subgraph K4["keep = 4"]
+    direction LR
+    k4a["요약 1개"]:::model ~~~ k4b["최근 4개"]:::flow ~~~ k4c["모델 입력 5개"]:::measure
+  end
+  K2 ~~~ K4

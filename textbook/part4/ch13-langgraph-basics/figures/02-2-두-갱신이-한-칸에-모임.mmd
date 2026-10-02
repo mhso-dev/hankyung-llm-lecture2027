@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  inp["들어간 상태<br>실행 흔적 칸이 빈 목록"]:::tool
+  n1["노드 normalize"]:::flow
+  n2["노드 make_query"]:::flow
+  u1["낸 갱신<br>실행 흔적 normalize"]:::flow
+  u2["낸 갱신<br>실행 흔적 make_query"]:::flow
+  slot["실행 흔적 칸에 모인 갱신 둘"]:::tool
+  inp --> n1
+  n1 --> n2
+  n1 --> u1
+  n2 --> u2
+  u1 --> slot
+  u2 --> slot

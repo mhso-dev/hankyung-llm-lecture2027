@@ -1,0 +1,11 @@
+flowchart TD
+  %% classes
+  A["debug_lines<br>디버거 출력 줄 목록"]:::tool
+  R["removeprefix()<br>(Pdb) 표시 떼기"]:::flow
+  Q{"파일 이름이 있거나<br>빈 줄인가?"}:::measure
+  K["건너뜀<br>Breakpoint 1 at …price_bug.py:3"]
+  P["print(text)<br>3000 같은 줄"]:::tool
+  A -- "for line in debug_lines" --> R
+  R --> Q
+  Q -- "예" --> K
+  Q -- "아니요" --> P

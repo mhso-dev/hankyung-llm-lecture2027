@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  same["같은 입력 다섯 줄<br>같은 결과 파일 네 줄<br>같은 오류 파일 한 줄"]
+  subgraph before["Before · 입력 차례대로"]
+    direction TB
+    b1["pair_by_order"]:::flow
+    b2["이름표가 다른 짝 셋<br>결과 없이 남은 입력<br>inquiry-5"]:::fail
+    b1 --> b2
+  end
+  subgraph after["After · 요청 이름표로"]
+    direction TB
+    a1["answers_by_name<br>pair_by_name"]:::flow
+    a2["다섯 줄 모두 제 이름표<br>inquiry-2는 오류 파일<br>unsupported_value"]:::measure
+    a3["값 바꿔 보기<br>결과 차례를 거꾸로 해도<br>답 딕셔너리 같음 True"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  same --> before
+  same --> after

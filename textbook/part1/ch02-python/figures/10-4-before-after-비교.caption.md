@@ -1,0 +1,4 @@
+- 설명 대상 문장: Before 모델과 달라진 곳은 인자 strict=True 하나입니다. 같은 글자 '3'이 Before에서는 False, After에서는 int_type 오류와 True가 됩니다.
+- 캡션: 같은 빠뜨림, 다른 결과. 기본 모드는 글자를 바꿔 받아 False, strict=True를 더한 필드는 오류로 알려 True입니다.
+- 읽는 법: 위 칸이 Before, 아래 칸이 After이고 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 초록 상자의 빠뜨린 글자 '3'은 두 칸이 같고, 가운데 파란 상자(기본 모드·엄격 모드)와 결과 상자(빨간 False·노란 True)만 다릅니다.
+- alt: Before는 int() 줄을 빠뜨린 글자 '3'이 Field(ge=1, le=10) 기본 모드에서 정수로 바뀌어 인스턴스 count=3이 되고 모델이 알렸나요? False가 나오고, After는 같은 글자 '3'이 Field(strict=True, ge=1, le=10) 엄격 모드에서 바로 오류가 되어 오류 종류 int_type과 모델이 알렸나요? True가 나오는 비교 그림

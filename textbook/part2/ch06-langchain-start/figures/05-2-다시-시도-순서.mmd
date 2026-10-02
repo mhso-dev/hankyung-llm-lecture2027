@@ -1,0 +1,16 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant NB as 노트북 코드
+  participant RR as retry_runnable
+  participant FN as ask_current_model
+  NB->>RR: invoke(messages)
+  RR->>FN: 시도 1 · tiny_model로 요청
+  FN-->>RR: OpenAITimeoutError
+  Note over RR: 1~2초 기다림
+  RR->>FN: 시도 2
+  FN-->>RR: OpenAITimeoutError
+  Note over RR: 2~3초 기다림
+  RR->>FN: 시도 3
+  FN-->>RR: OpenAITimeoutError
+  RR-->>NB: 셋째 시도의 OpenAITimeoutError
+  Note over NB,FN: 7절 출력 · 시도 기록 세 줄 · 시도한 횟수 3 · 걸린 초 4.5

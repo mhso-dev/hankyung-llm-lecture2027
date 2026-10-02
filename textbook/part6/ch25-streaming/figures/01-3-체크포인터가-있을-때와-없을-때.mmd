@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  cm["두 그래프 같음<br>노드 prepare 다음 write<br>values 셋 · updates 둘<br>custom 둘 · messages 없음"]
+  subgraph saver["체크포인터 있음"]
+    direction TB
+    w["checkpoints 넷<br>tasks 넷<br>debug 여덟<br>모두 스물셋"]:::measure
+  end
+  subgraph plain["체크포인터 없음"]
+    direction TB
+    o["checkpoints 없음<br>tasks 넷<br>debug 넷<br>모두 열다섯"]:::measure
+  end
+  cm --> saver
+  cm --> plain

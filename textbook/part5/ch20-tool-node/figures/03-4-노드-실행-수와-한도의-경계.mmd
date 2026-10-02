@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph O["주제어 하나 · 대출 · 노드 실행 세 번"]
+    direction TB
+    o1["한도 3<br>GraphRecursionError"]:::measure
+    o2["한도 4<br>통과 · 노드 실행 수 3"]:::measure
+    o1 ~~~ o2
+  end
+  subgraph T["주제어 둘 · 운영 연체 · 노드 실행 다섯 번"]
+    direction TB
+    t1["한도 5<br>GraphRecursionError"]:::measure
+    t2["한도 6<br>통과 · 노드 실행 수 5"]:::measure
+    t1 ~~~ t2
+  end
+  rule["두 흐름 모두 노드 실행 수보다<br>하나 큰 한도에서 통과<br>소스 확인 · 단계를 시작할 때<br>한도를 먼저 봄"]
+  O ~~~ rule
+  T ~~~ rule

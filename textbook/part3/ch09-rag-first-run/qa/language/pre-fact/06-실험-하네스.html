@@ -1,0 +1,131 @@
+<!--meta: 강의 1h | 실습 1h | 코드 harness.py · config.yaml · prompts.py · tests/test_harness.py | 새 용어 5 | 실행 4회 약 $0.05 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 설정을 YAML 한 곳에 모으고, <code>--set a.b=값</code>으로 값 하나만 바꿔 한 명령으로 실험을 실행할 수 있습니다.</li>
+<li>이 절을 마치면 <code>runs/runs.jsonl</code>의 한 줄이 무엇을 담고 무엇을 아직 담지 않는지(<code>metrics: {}</code>) 말할 수 있습니다.</li>
+<li>이 절을 마치면 설정 해시로 색인 캐시를 판단하는 이유를 설명하고, 같은 질의셋을 네 가지 설정으로 실행한 답을 나란히 놓고 "눈으로 비교하는 일이 왜 한계에 부딪히는지" 확인할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>왜 지금 이것인가</h2>
+<p>05절까지 여러분은 설정을 바꿀 때마다 스크립트를 고치고, 실행하고, 화면을 읽고, 결과를 기억에 의존해 두었습니다. 다섯 번까지는 됩니다. Ch 12는 5일 동안 "가설 → 설정 변경 → 평가 실행 → 표에 한 줄"을 30번 이상 반복합니다. 커리큘럼은 이 절의 이유를 한 문장으로 적어 두었습니다. "이게 없으면 Chapter 12에서 5일 동안 실험을 세 번밖에 못 돌립니다."(커리큘럼 원문)</p>
+<p>하네스가 하는 일은 세 가지뿐입니다. <strong>설정을 한 곳에 모은다. 실행한다. 한 줄 기록한다.</strong> 지표는 아직 없습니다. Ch 11이 지표를 만들면 하네스의 빈칸에 들어옵니다. 순서가 중요합니다. 지표 없이 튜닝하면 "느낌으로 좋아졌다"가 되고, 하네스 없이 지표만 있으면 실험을 실행할 때마다 손으로 표를 채우게 됩니다.</p>
+
+<h2 id="b3"><span class="no">3</span>선수 지식 되짚기</h2>
+<ul>
+<li><strong>Ch 2 파일·예외·딕셔너리</strong> — YAML을 읽으면 중첩 딕셔너리가 됩니다. <code>--set split.chunk_size=1000</code>을 그 딕셔너리에 써 넣는 것이 이 절의 첫 함수입니다.</li>
+<li><strong>Ch 2 pytest</strong> — 하네스는 API 없이 테스트할 수 있는 부분(설정·해시·질의셋 필터)을 따로 두었습니다. <code>tests/test_harness.py</code>가 그것입니다.</li>
+<li><strong>03절 <code>dump()/load()</code></strong> — 색인 저장이 이 절에서 "설정 해시 캐시"로 자동화됩니다.</li>
+<li><strong>04절 <code>Answer</code></strong> — <code>input_tokens</code>·<code>output_tokens</code>·<code>sources</code>가 한 줄 기록의 재료입니다.</li>
+<li><strong>05절 <code>prompts.py</code></strong> — <code>strict</code>·<code>helpful</code>이 설정값이 됩니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+
+<h3>비유 — 실험 노트</h3>
+<p>설정을 바꿀 때마다 한 줄이 쌓이는 실험 노트가 없으면, 5일이 지나도 무엇을 해 봤는지 모릅니다. 화학 실험실에서 시약의 양을 바꿔 가며 반응을 볼 때, 연구자는 매번 노트에 한 줄을 씁니다. 날짜, 조건, 결과. 노트가 없으면 "어제 그 조건이 무엇이었더라"를 찾는 데 하루가 걸립니다. 하네스는 그 노트를 자동으로 쓰는 장치입니다. 설정 다이얼을 돌리고(YAML) 실행하면(한 명령) 노트에 한 줄이 생깁니다(JSONL).</p>
+<figure>
+{{img:06-실험-노트|메모가 어지럽게 흩어진 책상과, 다이얼을 돌리며 노트에 행을 한 줄씩 추가하는 정돈된 책상의 대비.}}
+<figcaption>왼쪽은 메모가 흩어진 책상, 오른쪽은 설정 다이얼을 조정할 때마다 노트에 한 줄을 더하는 연구자입니다. 하네스가 자동으로 하는 일이 오른쪽입니다.<span class="gaze">보는 순서 — ① 왼쪽의 흩어진 메모 → ② 오른쪽 손의 다이얼(설정 변경) → ③ 노트의 한 줄 행에서 다이얼로 이어지는 순환 화살표.</span></figcaption>
+</figure>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>실험 하네스 (experiment harness)</dt>
+<dd>설정을 입력받아 파이프라인을 실행하고 결과를 정해진 형식으로 기록하는 실행기입니다. 파이프라인 자체(<code>rag.py</code>)와 분리되어 있어, 파이프라인을 고쳐도 기록 형식은 그대로입니다.</dd>
+<dt>설정 파일 (config.yaml)</dt>
+<dd>바꿀 수 있는 값 전부를 모아 둔 한 파일입니다. 코드 안에 숫자를 적지 않고 이 파일에서 읽습니다. "설정을 바꾼다"는 이 파일을 고치거나 <code>--set</code>으로 덮어쓰는 것입니다.</dd>
+<dt>실행 (run) · run_id</dt>
+<dd>설정 하나로 질의셋을 한 번 돌리는 단위입니다. 시각과 이름을 붙인 <code>run_id</code>로 구분하고, 요약 한 줄과 상세 파일 하나가 남습니다.</dd>
+<dt>설정 해시 (config hash) · 캐시</dt>
+<dd>색인 결과를 좌우하는 설정(문서·청크·임베딩)만 골라 짧은 문자열로 만든 것입니다. 같은 해시면 색인을 다시 만들지 않고 저장된 것을 씁니다. <code>k</code>나 프롬프트를 바꾸는 실험은 색인이 같으므로 임베딩 비용이 0입니다.</dd>
+<dt>JSON Lines (JSONL)</dt>
+<dd>한 줄에 JSON 객체 하나를 두는 파일 형식입니다. 줄을 덧붙이기만 하면 되고, 한 줄이 깨져도 나머지는 읽힙니다. <code>queries.jsonl</code>과 <code>runs.jsonl</code>이 이 형식입니다.</dd>
+</dl>
+
+<h3>도식 — 루프</h3>
+<figure>
+{{svg:06-하네스-루프}}
+<figcaption>설정 → 실행 → 한 줄 기록 → 읽고 다음 설정. 노란 상자가 기록이고, 점선 <code>metrics</code> 칸은 Ch 11이 채웁니다.</figcaption>
+</figure>
+
+<h3>설정 파일</h3>
+<p class="file">labs/part3/ch09-rag-first-run/config.yaml</p>
+<pre><code class="language-yaml">{{code:config.yaml}}</code></pre>
+<p>이 파일의 키 하나하나가 01절 도식의 상자 하나에 대응합니다. <code>corpus</code>·<code>split</code>·<code>embedding</code>은 색인 흐름, <code>retrieval</code>·<code>generation</code>은 질의 흐름입니다. <code>queries</code>는 어떤 질의셋을 실행할지, <code>prices</code>는 비용을 어떻게 계산할지 정합니다. 값의 위치가 헷갈리면 이 파일만 확인하면 됩니다.</p>
+
+<h3>코드 — 설정 덮어쓰기와 해시</h3>
+<p class="file">labs/part3/ch09-rag-first-run/harness.py (일부)</p>
+<pre><code class="language-python">{{code:harness.py#load_config,index_key}}</code></pre>
+<p><code>load_config()</code>의 마지막 줄이 요점입니다. <code>--set split.chunk_size=1000</code>에서 <code>"1000"</code>은 문자열로 들어오는데, <code>yaml.safe_load("1000")</code>이 정수 1000으로 바꿔 줍니다. <code>"[easy]"</code>는 리스트가 됩니다. 이 한 줄이 없으면 <code>chunk_size="1000"</code>이 스플리터에 들어가 오류가 납니다. <code>index_key()</code>는 설정 딕셔너리 중 색인에 영향을 주는 세 덩어리만 골라 해시합니다. <code>retrieval.k</code>나 <code>generation.prompt</code>는 넣지 않습니다. 그래서 k만 바꾼 실험은 캐시를 그대로 씁니다.</p>
+
+<h3>코드 — 한 줄 기록</h3>
+<pre><code class="language-python">{{code:harness.py#run}}</code></pre>
+<p>한 줄에 들어가는 것은 네 종류입니다. <strong>설정</strong>(무엇을 바꿨나), <strong>규모</strong>(청크 수·질의 수), <strong>비용</strong>(시간·토큰·달러), 그리고 비어 있는 <strong>지표</strong>. 질문별 답과 검색 결과는 상세 파일 <code>runs/{run_id}.jsonl</code>에 따로 둡니다. 요약 한 줄은 표로 만들기 위한 것이고, 상세 파일은 "이 숫자가 나온 원인"을 확인하기 위한 것입니다. 상세 파일의 각 행에는 <code>gold_doc_id</code>(질의셋의 정답 문서)가 이미 적혀 있습니다. Ch 11은 이 칸과 <code>retrieved</code> 칸을 비교하는 함수 하나를 더할 뿐입니다.</p>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>네 가지 설정으로 같은 질의 8개를 실행합니다. 기준선, 청크를 두 배로, k를 두 배로, 프롬프트를 친절하게.</p>
+<pre><code class="language-bash">{{code:examples/ex06_commands.sh}}</code></pre>
+<pre class="out">{{output:ex06_preserved.txt}}</pre>
+<p class="look"><b>확인할 점</b> — ① 네 번 실행에 색인은 두 종류뿐입니다(<code>n_chunks</code> 176과 107). k8과 helpful은 기준선의 캐시를 그대로 썼습니다. ② 청크를 두 배로 하면 청크 수는 절반이 되지만 k=4로 가져오는 글자 수가 두 배가 되어 입력 토큰이 1.6배입니다. ③ k를 두 배로 해도 입력 토큰이 1.8배입니다. 둘 다 "더 많이 보여 준다"이지만, 하나는 색인을 다시 만들어야 하고 하나는 그렇지 않습니다. ④ helpful은 입력은 비슷한데 <strong>출력이 2.5배</strong>입니다. 친절한 답은 길고, 출력 토큰은 입력의 6배 비쌉니다. ⑤ 지연 평균은 1.1~1.8초로 실행 순서와 API 상태에 더 좌우되었습니다 — 평균 하나로는 부족하다는 것을 Ch 15에서 다룹니다. ⑥ 그런데 어느 설정이 <em>더 잘 답했는지</em>는 이 네 줄 어디에도 없습니다.</p>
+<p>상세 파일을 열어 답을 나란히 비교합니다. 8문항 중 설정에 따라 결과가 갈린 3문항입니다. 검색 결과는 <code>문서 쪽 #청크</code>로 적었습니다.</p>
+<table>
+<tr><th>질문 (정답)</th><th>baseline (k=4)</th><th>chunk1000</th><th>k8</th><th>helpful</th></tr>
+<tr><td>Q003 책을 3일 늦게 반납하면? (E01 p.3 #3)</td><td>검색 M06·M02·M04·E01p4#5<br><span class="tbd">찾을 수 없습니다</span></td><td>검색 4위에 E01p3#2<br>3일간 대출 정지, 연체료 없음 [E01 p.3]</td><td>검색 6위에 E01p3#3<br>3일간 대출 정지, 연체료 없음 [E01 p.3]</td><td>검색 baseline과 동일<br><span class="tbd">"전자책은 대출 기간 10일, 자동 반납"</span></td></tr>
+<tr><td>Q007 별빛제과 시차출퇴근 시간대? (E02 p.2 #10)</td><td>검색 E02#8·#9·<b>M05#95</b>·#102<br>오전 8~10시 <span class="tbd">[M05 p.2]</span></td><td>검색 2위에 E02p2#6<br>8~10시 30분 단위 [E02 p.2]</td><td>검색 5위에 E02p2#10<br>8~10시 30분 단위 [E02 p.2]</td><td>검색 baseline과 동일<br>오전 8~10시 (본사 근무시간 1일 8시간…)</td></tr>
+<tr><td>Q008 별빛제과 급여일? (E02 p.2 #10)</td><td>검색 E02#8·#9·M05#96·#102<br><span class="tbd">찾을 수 없습니다</span></td><td>검색 1위에 E02p2#6<br>매월 25일 [E02 p.2]</td><td>검색 5위에 E02p2#10<br>매월 25일 [E02 p.2]</td><td>검색 baseline과 동일<br><span class="tbd">"문서에 따르면 매월 25일"</span></td></tr>
+</table>
+<p class="look"><b>확인할 점</b> — 세 문항 모두 기준선의 실패 원인이 같습니다. <strong>정답 청크가 k=4 안에 없었습니다.</strong> Q003과 Q008은 정답 청크가 5~6위에 있었고, 청크를 키우거나 k를 늘리자 범위에 들어와 답이 나왔습니다. Q007의 기준선은 답은 맞는데 출처가 <em>누리테크</em>(M05)입니다. 별빛제과 청크 #10 대신 누리테크 근무 규정 #95가 4위 안에 들어왔고, 두 회사의 시차출퇴근 시간대가 우연히 같아서 맞는 것처럼 보이는 답입니다. 출처를 보지 않으면 잡히지 않습니다. helpful 열이 가장 위험합니다. Q003에서는 관련 없는 청크(전자책 규정)를 근거로 답했고, Q008에서는 정답 청크가 <em>없는데도</em> "문서에 따르면 매월 25일"이라고 답했습니다. 결과는 맞지만 근거는 없습니다. 이 표를 손으로 만드는 데 8문항 × 4설정 = 32칸을 읽었습니다. 30문항 × 30설정이면 900칸입니다. 여기서 "눈으로 비교"는 한계에 이릅니다. 실행일 2026-09-07, gpt-5.4-mini. 답 표현은 실행마다 다릅니다.</p>
+<div class="callout yellow"><b>쪽 단위 로그가 숨긴 것</b>처음 만든 하네스는 검색 결과를 <code>doc_id</code>와 <code>page</code>만 기록했습니다. 그 로그로는 Q008 기준선이 "E02 2쪽을 가져왔는데 왜 못 찾았지?"로 보였습니다. 청크 ID를 함께 적자 2쪽의 <em>다른</em> 청크(#9, 환영 인사)였음이 드러났습니다. 기록의 단위는 검색의 단위와 같아야 합니다. <code>harness.py</code>의 <code>retrieved</code>에 <code>chunk_id</code>가 들어간 이유입니다.</div>
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p><strong>실패 1 — 캐시를 속인다.</strong> <code>.cache/index-*.json</code>이 있는 상태에서 <code>rag.py</code>의 <code>split_docs()</code> 안 <code>separators</code>를 바꾸고 하네스를 실행하세요. 해시는 <code>split</code> 설정(<code>chunk_size</code>·<code>chunk_overlap</code>)만 보므로 바뀐 것을 모르고 옛 색인을 씁니다. 코드 변경은 해시에 잡히지 않습니다. 실무에서는 코드 버전(git 커밋 해시)을 해시에 함께 넣거나, 코드가 바뀌면 캐시를 지우는 규칙을 둡니다. Ch 33 CI에서 이 문제를 다시 만납니다.</p>
+<p><strong>실패 2 — 타입이 틀린 값을 넣는다.</strong> <code>--set retrieval.k=four</code>를 넣으면 <code>similarity_search_with_score(k="four")</code>에서 오류가 납니다. 그런데 오류는 색인을 만들고 질의셋을 읽은 <em>뒤</em>에 납니다. 설정을 읽은 직후에 타입을 검사하는 함수를 하나 두면(<code>assert isinstance(cfg["retrieval"]["k"], int)</code>) 몇 초를 아낍니다. Ch 2 B트랙에서 본 Pydantic으로 설정 스키마를 만드는 것이 정석이며, B트랙 과제입니다.</p>
+<p><strong>실패 3 — 이름을 바꾸지 않고 두 번 실행한다.</strong> <code>--set name</code> 없이 기준선을 두 번 실행하면 <code>runs.jsonl</code>에 <code>name=baseline</code> 두 줄이 생깁니다. <code>run_id</code>는 시각이 붙어 다르지만, 나중에 표를 만들 때 어느 줄이 어느 가설인지 알 수 없습니다. <code>name</code>은 가설의 이름입니다. "k8"이 아니라 "k8-표지제외전"처럼 실행 이유가 드러나게 짓는 습관을 Ch 12에서 30번 반복하게 됩니다.</p>
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>비용 추정의 정확도.</strong> 생성 토큰은 응답 메타데이터에서 정확히 오지만, 임베딩 토큰은 <code>OpenAIEmbeddings</code>가 알려 주지 않아 글자 수 ÷ 1.2로 어림했습니다(02절 실측 498자 = 431토큰). 이 챕터 규모에서는 오차가 0.001달러 미만입니다. 정확한 값이 필요하면 <code>tiktoken</code>으로 세어 넣으면 됩니다.</li>
+<li><strong>요금은 바뀝니다.</strong> <code>prices</code> 칸의 값은 2026-09-07 확인값이며 확인 날짜를 주석에 적어 두었습니다. 요금표 URL을 함께 적어 두면 나중에 갱신할 때 어디를 볼지 압니다.</li>
+<li><strong>지연 시간은 평균만으로 부족합니다.</strong> <code>latency_mean_s</code>만 기록했지만 Ch 15는 p50/p95/p99를 요구합니다. 상세 파일에 질문별 지연을 남겨 두면 나중에 계산할 수 있습니다 — 지금 하네스는 남기지 않으니 B트랙 과제입니다.</li>
+<li><strong>동시 실행과 로그 경쟁.</strong> <code>runs.jsonl</code>에 덧붙이기(<code>"a"</code> 모드)는 한 프로세스일 때 안전합니다. Ch 12에서 실험을 병렬로 실행하면 줄이 섞일 수 있습니다. 병렬 실행 시에는 실행마다 파일을 따로 쓰고 나중에 합칩니다.</li>
+<li><strong><code>.cache/</code>와 <code>runs/</code>는 git에 넣지 않습니다.</strong> 색인 파일은 수 MB이고 실행 로그는 개인 실험 기록입니다. 프로젝트 <code>.gitignore</code>에 <code>.cache/</code>가 들어 있습니다. 다만 Ch 12의 실험 로그 30건은 중간 프로젝트 리포트의 근거이므로 Ch 12에서는 <code>runs.jsonl</code>만 따로 보관합니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul>
+<li>하네스는 설정(YAML) → 실행(한 명령) → 기록(JSONL 한 줄)입니다. 하네스는 <code>rag.py</code>의 파이프라인 함수를 직접 호출하고 결과를 기록합니다.</li>
+<li>설정 해시로 색인 캐시를 판단하므로 k·프롬프트 실험은 임베딩 비용이 0입니다. 코드 변경은 해시에 잡히지 않습니다.</li>
+<li>한 줄에는 설정·규모·비용이 있고 지표는 비어 있습니다. 네 설정의 답을 눈으로 비교해 보면 그 빈칸이 왜 필요한지 보입니다.</li>
+</ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — Ch 10 실습 "문서 100건 × 3 청킹 × 2 임베딩"은 이 하네스에 <code>--set</code> 6가지 조합을 적용하는 것입니다. Ch 11은 상세 파일의 <code>gold_doc_id</code>와 <code>retrieved</code>를 비교하는 Recall@k·Precision@k 함수를 만들어 <code>metrics</code> 칸에 넣습니다. Ch 12는 이 루프를 5일 동안 30번 이상 실행하고, 그 <code>runs.jsonl</code>이 중간 프로젝트 평가 리포트의 뼈대가 됩니다. Ch 15는 여기에 judge 점수와 p95 지연을 더합니다. 이 챕터는 여기서 마무리됩니다. 다음은 Ch 10 문서 처리입니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. <code>--set retrieval.k=8</code>로 실행했을 때 색인을 다시 만들지 않는 이유는 무엇입니까?</p>
+<p class="quiz-a"><code>index_key()</code>가 <code>corpus</code>·<code>split</code>·<code>embedding</code>만 해시하므로 <code>retrieval.k</code>가 바뀌어도 해시가 같고, 같은 해시의 <code>.cache/index-{hash}.json</code>이 있으면 그것을 불러옵니다.</p>
+<p class="quiz-q">2. 청크 1000과 k=8은 둘 다 "모델에게 더 많이 보여 준다"입니다. 비용 구조가 어떻게 다릅니까?</p>
+<p class="quiz-a">청크 1000은 색인을 다시 만들어야 하고(임베딩 비용·시간) 청크 하나가 길어져 입력 토큰이 1.6배가 됩니다. k=8은 색인은 그대로이고 입력 토큰만 약 1.8배가 되었습니다. 어느 쪽이 답을 더 잘 맞히는지는 지표가 있어야 알 수 있습니다.</p>
+<p class="quiz-q">3. Q008에서 기준선은 E02 2쪽을 가져왔는데도 "찾을 수 없습니다"였습니다. 쪽 단위 로그만 보면 생성 실패로 보입니다. 실제 원인은 무엇이고, 어떻게 알 수 있었습니까?</p>
+<p class="quiz-a">검색 실패입니다. 가져온 것은 2쪽의 첫 청크(#9, 환영 인사)였고 급여일이 있는 청크(#10)는 5위였습니다. 로그에 <code>chunk_id</code>를 함께 적어야 드러납니다. 기록 단위는 검색 단위(청크)와 같아야 하고, 검색 지표(정답 청크가 k개 안에 있었나)와 생성 지표(답이 맞았나)를 나눠 기록해야 합니다.</p>
+<p class="quiz-q">4. <code>runs.jsonl</code> 한 줄에 아직 없는 것과, 그것을 채우는 챕터를 쓰세요.</p>
+<p class="quiz-a">품질 지표(<code>metrics: {}</code>)와 지연의 분포(p95 등)입니다. 검색·생성 지표는 Ch 11, judge 점수와 p50/p95/p99는 Ch 15가 채웁니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>강사 노트</h2>
+<details class="instructor"><summary>시간 배분 · 시연 순서 · 예상 질문 · 막히는 지점 · A/B 트랙</summary>
+<p><strong>시간 배분(2h)</strong> — 강의 60분: 실험 노트 비유(10) · 설정 파일 읽기(15) · 덮어쓰기·해시 코드(15) · 한 줄 기록과 네 실행 결과 표(20). 실습 60분: 네 설정 실행(15) · 상세 파일에서 갈린 문항 찾아 표 만들기(25) · 실패 1~3(20).</p>
+<p><strong>시연 순서</strong> — ① <code>config.yaml</code>을 열어 01절 도식의 상자와 키를 짝지어 보여 줌 ② 기준선 실행, 한 줄 출력 ③ <code>--set retrieval.k=8</code>을 실행하며 색인을 다시 만들지 않는 점 확인(<code>index_seconds</code> 동일) ④ <code>runs.jsonl</code>을 <code>cat</code>으로 열어 네 줄 확인 ⑤ 상세 파일 두 개를 나란히 열어 Q003·Q008을 찾게 하고 "900칸이면?"이라고 묻기 ⑥ <code>metrics: {}</code>를 가리키며 Ch 11 예고.</p>
+<p><strong>예상 질문</strong> — "지금 정답 문서 ID가 있으니 Recall을 바로 계산하면 안 되나요?" → 계산할 수 있으며 B트랙에서는 시도하되, 지표를 <em>어떻게 나눠 측정할지</em>(Recall@50 vs Precision@5)와 <em>무엇을 맞다고 볼지</em>가 Ch 11의 내용이므로 Ch 11에서 정식으로 다룬다고 답함. "YAML 대신 파이썬 딕셔너리로 하면요?" → 가능하지만 설정과 코드가 섞이면 "무엇을 바꿨나"가 diff에 드러나지 않는다고 답함. "MLflow 같은 도구를 쓰면요?" → 나중에 사용해도 되며, 그 도구의 역할을 이해하려고 30줄짜리 하네스를 먼저 만드는 것이 이 과정의 방식이라고 답함.</p>
+<p><strong>학생이 막히는 지점</strong> — <code>--set</code>의 값에 공백이 있으면 셸이 나누는 문제(따옴표 안내). <code>queries.file</code>의 상대 경로가 실행 위치 기준이 아니라 <code>harness.py</code> 위치 기준이라는 점. 캐시를 지우지 않고 <code>rag.py</code>를 고친 뒤 결과가 바뀌지 않는 상황(실패 1로 연결).</p>
+<p><strong>A/B 트랙</strong> — A트랙은 네 실행과 비교표까지. B트랙은 ① Pydantic 설정 스키마 ② 질문별 지연을 상세 파일에 남기고 p95 계산 ③ 상세 파일에서 <code>gold_doc_id in retrieved</code> 비율을 세는 함수(Ch 11 예행, 이름은 아직 Recall이라 부르지 않게 함).</p>
+</details>
+
+<h2 id="b11"><span class="no">11</span>참고 자료</h2>
+<ul>
+<li>커리큘럼 v6 Ch 9 — "설정을 YAML 한 곳에 모으고, 설정 바꾸기 → 실행 → 결과 한 줄 기록이 한 명령으로 되게." 이 절의 요구 사양.</li>
+<li>커리큘럼 v6 Ch 11·12 — 실험 로그 포맷(설정·지표·날짜 한 행), Day 1~5 루프, 실험 로그 30건. 이 하네스가 이어지는 곳.</li>
+<li>PyYAML 6 — <code>yaml.safe_load</code>. Python 표준 라이브러리 <code>hashlib</code>·<code>json</code>·<code>argparse</code>.</li>
+<li>OpenAI API 요금 — <a href="https://developers.openai.com/api/docs/pricing">developers.openai.com/api/docs/pricing</a> · 확인 2026-09-07 · <code>config.yaml</code>의 <code>prices</code> 출처.</li>
+<li>기준 버전: Python 3.12.13 · uv 0.12.3 · langchain 1.4.0.</li>
+</ul>

@@ -1,0 +1,19 @@
+%%{init: {"sequence": {"messageAlign": "left", "actorMargin": 30, "width": 110}}}%%
+sequenceDiagram
+  participant U as 우리 코드
+  participant G as 그래프
+  participant F as 상태 칸 files
+  box Lavender
+  participant M as 모델<br>gpt-5.4-mini
+  end
+  U->>G: 질문 한 줄로 invoke
+  G->>M: 요청 1
+  M-->>G: read_visit_log 요청
+  G->>F: 방문 기록 전체를 옮겨 둠
+  Note over G: 도구 메시지는 안내 글<br>안내 글인가 True
+  G->>M: 요청 2 · 안내 글을 받음
+  M-->>G: grep 요청
+  G->>F: grep이 옮겨 둔 파일을 찾음
+  G->>M: 요청 3
+  M-->>G: 도구 요청 없음 · 답 글
+  G-->>U: 결과 메시지 · 옮겨 둔 파일 수 1

@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  req["손으로 만든 요청<br>read_visit_log · 호출 ID hand_log_1"]:::tool
+  res["도구 결과 88889자<br>기준 80000자를 넘음"]:::measure
+  mw["FilesystemMiddleware<br>기준보다 크면 옮김"]
+  subgraph fileSide[상태 칸 files]
+    direction TB
+    f1["/large_tool_results/hand_log_1<br>88889자 · 원래 결과와 같음 True"]:::measure
+  end
+  subgraph listSide[메시지 목록]
+    direction TB
+    m1["도구 메시지<br>안내 글 1122자"]:::measure
+  end
+  req --> res
+  res --> mw
+  mw --> listSide
+  mw --> fileSide

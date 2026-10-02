@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part7/qa/check_figures.py", line 46, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part7/qa/check_figures.py", line 20, in main
+    assert (figures / '_gen_figures.py').is_file(), chapter
+AssertionError: /sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part7/ch30-fastapi-serving

@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph R1["실행 1 · 수량 2"]
+    direction LR
+    a1["예상 6000"]:::tool ~~~ a2["실제 6000"]:::tool ~~~ a3["비교 True"]:::measure
+  end
+  subgraph R2["실행 2 · 수량 3"]
+    direction LR
+    b1["예상 9000"]:::tool ~~~ b2["실제 9000"]:::tool ~~~ b3["비교 True"]:::measure
+  end
+  R1 -- "수량만 2 → 3<br>합계 차이 3000" --> R2

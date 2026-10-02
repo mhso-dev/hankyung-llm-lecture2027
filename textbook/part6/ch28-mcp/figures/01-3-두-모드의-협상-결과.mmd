@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  subgraph auto["기본 모드 auto"]
+    direction TB
+    a0["첫 요청 server/discover<br>노트북 밖 확인"]
+    a1["판 번호 2026-07-28<br>초기화 결과가 있는가 False"]:::measure
+    a2["listChanged 셋 모두 False<br>extensions 칸 있음"]:::measure
+    a0 --> a1
+    a1 ~~~ a2
+  end
+  subgraph legacy["옛 판 모드 legacy"]
+    direction TB
+    b0["첫 요청 initialize<br>다음 알림 notifications/initialized<br>노트북 밖 확인"]
+    b1["판 번호 2025-11-25<br>초기화 결과가 있는가 True"]:::measure
+    b2["listChanged 셋 모두 True<br>extensions 칸 없음"]:::measure
+    b0 --> b1
+    b1 ~~~ b2
+  end
+  common["두 모드 공통<br>서버 이름 · 서버 판<br>사용 설명 같음<br>세 목록 이름과 도구 결과 같음"]
+  auto ~~~ legacy ~~~ common

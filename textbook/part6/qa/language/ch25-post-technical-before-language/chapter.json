@@ -1,0 +1,30 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 심화",
+  "chapter": "ch25-streaming",
+  "title": "Streaming",
+  "hours": "총 8h · 강의 3h · 실습 5h",
+  "objectives": [
+    "LangGraph의 일곱 가지 stream mode가 내보내는 사건을 구분할 수 있습니다.",
+    "토큰·노드 갱신·사용자 정의 진행 상황을 목적에 맞게 선택할 수 있습니다.",
+    "첫 사건·첫 토큰까지의 시간·전체 완료 시간을 따로 측정할 수 있습니다."
+  ],
+  "lab_path": "labs/part6/ch25-streaming",
+  "sections": [
+    {
+      "slug": "01-일곱-가지-stream-mode",
+      "title": "일곱 가지 stream mode",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-토큰과-중간-진행-스트리밍",
+      "title": "토큰과 중간 진행 스트리밍",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-TTFT와-total-비교",
+      "title": "TTFT와 total 비교",
+      "format": "experiment"
+    }
+  ]
+}

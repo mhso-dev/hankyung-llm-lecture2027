@@ -1,0 +1,320 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>조건문과 반복문 — Ch 2 · 파이썬 프로그래밍</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 2 · 파이썬 프로그래밍</p>
+<h1>조건문과 반복문</h1><div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li><code>if</code>·<code>elif</code>·<code>else</code>로 금액 구간에 맞는 한 경로를 실행할 수 있습니다.</li><li><code>for</code>와 <code>while</code> 반복의 종료 조건을 설명할 수 있습니다.</li><li><code>break</code>와 <code>continue</code>가 반복 순서에 미치는 영향을 출력에서 확인할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>주문 금액이 50000원 이상이면 배송비를 받지 않고, 그보다 작으면 배송비를 더해야 합니다. 주문이 세 건이면 같은 판정을 세 번 적용해야 합니다. 모든 경우를 줄마다 복사하면 기준이 바뀔 때 여러 곳을 수정해야 하고 일부 주문을 빠뜨릴 수 있습니다. <strong>조건문</strong>은 어떤 문장을 실행할지 고르고, <strong>반복문</strong>은 같은 처리 규칙을 여러 값에 적용합니다. 프로그램이 값을 저장하는 단계를 넘어 실제 규칙에 따라 행동하려면 두 흐름을 함께 이해해야 합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>앞 절에서 변수에 주문 수량과 금액을 저장하고 숫자 자료형으로 계산했습니다. 이 절에서는 세 주문 금액 <code>[18000, 42000, 65000]</code>과 무료 배송 기준 <code>50000</code>을 새 커널에서 준비합니다. 대괄호로 묶인 여러 값은 다음 절에서 자세히 배울 목록입니다. 지금은 앞에서부터 금액을 하나씩 꺼낼 수 있는 묶음으로 사용합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>갈림길과 반복 구간</h3><p>배송 규칙표에서 주문 금액에 맞는 행 하나를 고르는 과정이 조건문과 비슷합니다. <strong>조건문(conditional statement)</strong>은 참이나 거짓으로 판단되는 조건에 따라 실행 경로를 고릅니다. <code>&gt;=</code>는 “크거나 같다”, <code>&lt;</code>는 “작다”, <code>==</code>는 “두 값이 같다”라고 읽는 비교 연산자입니다. 비교 결과는 불리언 <code>True</code> 또는 <code>False</code>입니다. <code>if 조건:</code>의 콜론은 다음 들여쓰기 블록이 해당 조건에 속함을 나타냅니다. <code>elif</code>는 앞 조건이 거짓일 때 확인할 추가 조건이고, <code>else</code>는 앞의 모든 조건이 거짓일 때 실행합니다. 위에서부터 검사하며 처음 참이 된 한 경로만 실행합니다.</p><p><strong>반복(iteration)</strong>은 정해진 규칙을 여러 번 적용하는 일입니다. <code>for amount in test_amounts:</code>는 묶음에서 값을 하나씩 꺼내 <code>amount</code>에 저장하고 들여쓴 블록을 실행합니다. <code>while 조건:</code>은 조건이 참인 동안 계속 실행하므로 반복 중에 조건을 거짓으로 만드는 변화가 필요합니다. <code>index += 1</code>은 현재 값에 1을 더해 다시 저장하는 복합 대입입니다. <code>break</code>는 반복 전체를 즉시 끝내고, <code>continue</code>는 현재 차례의 남은 문장을 건너뛰고 다음 차례로 이어집니다.</p><p><code>len(목록)</code>은 항목 수를 반환합니다. 위치 번호는 0부터 시작하므로 길이가 5인 목록의 위치는 0부터 4까지입니다. <code>range(4)</code>는 끝값 4를 포함하지 않고 0, 1, 2, 3을 제공합니다. <code>enumerate(목록)</code>는 존재하는 각 항목에 위치 번호를 붙여 두 값을 함께 제공합니다. 이 함수들은 입력 묶음을 직접 바꾸지 않습니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:900px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 550" width="900" height="550" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-02-concept desc-02-concept">
+<title id="title-02-concept">조건 선택과 반복 종료</title>
+<desc id="desc-02-concept">주문 금액을 조건과 비교해 배송비 한 경로를 선택하고, 반복 중 0을 만나면 처리를 끝내는 흐름입니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="900" height="550" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">조건 선택과 반복 종료</tspan></text>
+<text x="20" y="72.0" font-size="16" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">조건문: 참인 경로 하나를 선택합니다</tspan></text>
+<rect x="25" y="100" width="205" height="78" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="127.5" y="127.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="127.5" dy="0.0">주문 금액</tspan><tspan x="127.5" dy="23.0">18000원</tspan></text>
+<polyline points="230,139 315,139" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="315" y="90" width="270" height="98" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="450.0" y="128.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">18000 &gt;= 50000 → 거짓</tspan><tspan x="450.0" dy="21.6">18000 &gt;= 30000 → 거짓</tspan></text>
+<polyline points="585,139 675,139" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="595.0" y="112.0" width="70.0" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="630.0" y="124.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="630.0" dy="0.0">else</tspan></text>
+<rect x="675" y="100" width="200" height="78" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="775.0" y="127.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="775.0" dy="0.0">배송비</tspan><tspan x="775.0" dy="23.0">3000원</tspan></text>
+<text x="20" y="255.0" font-size="16" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">반복문: 입력을 차례로 확인합니다</tspan></text>
+<rect x="25" y="290" width="255" height="105" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="152.5" y="331.0" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="152.5" dy="0.0">18000, -1, 42000,</tspan><tspan x="152.5" dy="23.0">0, 65000</tspan></text>
+<polyline points="280,342 335,342" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="335" y="282" width="235" height="120" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="452.5" y="330.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="452.5" dy="0.0">-1이면 continue</tspan><tspan x="452.5" dy="23.0">0이면 break</tspan></text>
+<polyline points="570,342 650,342" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="572.6" y="315.0" width="74.8" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="610.0" y="327.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="610.0" dy="0.0">0 뒤는 중단</tspan></text>
+<rect x="650" y="290" width="225" height="105" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="762.5" y="331.0" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="762.5" dy="0.0">처리한 주문</tspan><tspan x="762.5" dy="23.0">[18000, 42000]</tspan></text>
+<text x="450.0" y="524.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg></div><p>위쪽 줄은 주문 금액 18000원을 왼쪽에서 오른쪽으로 읽습니다. 두 조건 <code>&gt;= 50000</code>과 <code>&gt;= 30000</code>이 모두 거짓이므로 배송비 3000원을 선택합니다. 아래쪽은 별도의 반복 예제입니다. 목록의 -1은 <code>continue</code>로 건너뛰고 0을 만나면 <code>break</code>로 반복을 종료합니다. 따라서 뒤에 있는 65000원은 처리하지 않고 결과에는 18000과 42000만 남습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>기본 실행의 입력은 다섯 주문 금액과 두 배송 기준입니다. <code>for</code>가 금액 하나를 <code>amount</code>에 저장하고, 조건문이 첫 번째로 참인 경로의 배송비를 <code>shipping_fee</code>에 저장합니다. 49999원은 50000원 이상이 아니므로 2000원 경로로 들어가고, 50000원은 <code>&gt;=</code>에 경계값이 포함되어 0원 경로로 들어갑니다. 처리 결과는 금액마다 한 줄씩 출력됩니다.</p><p><code>while</code> 예제의 입력에는 정상 금액, 건너뛸 값 -1, 종료 표시 0이 함께 있습니다. <code>len()</code>이 반환한 항목 수보다 <code>index</code>가 작은 동안 위치의 값을 읽습니다. 위치 번호를 먼저 1 늘리므로 <code>continue</code>를 만나도 다음 항목으로 이동합니다. 0에서는 <code>break</code>가 실행되어 뒤의 65000원은 읽지 않으며, 처리 목록에는 18000과 42000만 남습니다.</p><p>값 하나 변경 셀은 원래 주문 세 건을 유지하고 무료 배송 기준만 50000원에서 40000원으로 바꿉니다. 두 개수 변수를 0에서 시작해 조건이 참일 때마다 1을 더합니다. 원래 기준의 누적 결과는 1건, 변경 기준의 누적 결과는 2건입니다.</p><section class="notebook" data-notebook="02-조건문과-반복문" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="02-조건문과-반복문.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsobDqsbTrrLjqs7wg67CY67O166y4XG4iLAogICAgIlxuIiwKICAgICLsobDqsbTsl5Ag65Sw6528IOuwsOyGoeu5hOulvCDsoJXtlZjqs6AsIOyXrOufrCDso7zrrLgg6riI7JWh7J2EIOyInOyEnOuMgOuhnCDsspjrpqztlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLsnbQg64W47Yq467aB7J2AIFB5dGhvbiAzLjEyIO2RnOykgCDquLDriqXrp4wg7IKs7Jqp7ZWp64uI64ukLiDqsIEg7IWA7J2AIOyVniDshYDsnZgg6rKw6rO866W8IOydtOyWtOyEnCDsgqzsmqntlanri4jri6QuIOuMgOq0hO2YuCDslYjsnZgg6rCS7J2AIOuLpOydjCDsoIjsl5DshJwg7J6Q7IS47Z6IIOuwsOyasOuKlCDrqqnroZ3snoXri4jri6QuIOyXrOq4sOyEnOuKlCDsl6zrn6wg6riI7JWh7J2EIOyVnuyXkOyEnOu2gO2EsCDtlZjrgpjslKkg7J296riwIOychO2VnCDrrLbsnYzsnLzroZwg7IKs7Jqp7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MDI6NDYuOTYwODg4WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MDI6NDYuOTYwNzUwWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MDI6NDYuOTY1ODU4WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjowMjo0Ni45NjUyOTJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiWzE4MDAwLCA0MjAwMCwgNjUwMDBdXG4iLAogICAgICAi66y066OMIOuwsOyGoSDquLDspIA6IDUwMDAw7JuQXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7IS4IOqxtOydmCDso7zrrLgg6riI7JWh6rO8IOustOujjCDrsLDshqEg6riw7KSA7J2EIOykgOu5hO2VqeuLiOuLpC5cbiIsCiAgICAib3JkZXJfYW1vdW50cyA9IFsxODAwMCwgNDIwMDAsIDY1MDAwXVxuIiwKICAgICJmcmVlX3NoaXBwaW5nX21pbmltdW0gPSA1MDAwMFxuIiwKICAgICJwcmludChvcmRlcl9hbW91bnRzKVxuIiwKICAgICJwcmludChmXCLrrLTro4wg67Cw7IahIOq4sOykgDoge2ZyZWVfc2hpcHBpbmdfbWluaW11bX3sm5BcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6riw67O4IOyLpO2WiVxuIiwKICAgICJcbiIsCiAgICAi7KO866y4IOq4iOyVoSDri6TshK8g6rCc66W8IGBpZmAsIGBlbGlmYCwgYGVsc2Vg7J2YIOyEuCDqsr3roZzsmYAg7LCo66GA66GcIOu5hOq1kO2VqeuLiOuLpC4gYGZvciBhbW91bnQgaW4gdGVzdF9hbW91bnRzOmDripQg66qp66Gd7JeQ7IScIOqwkuydhCDtlZjrgpgg6rq864K0IGBhbW91bnRg7JeQIOyggOyepe2VnCDrkqQg65Ok7Jes7JO0IOu4lOuhneydhCDrsJjrs7XtlZzri6TripQg65y77J6F64uI64ukLiDsvZzroaAgYDpg7J2AIOuLpOydjCDrk6Tsl6zsk7DquLAg67iU66Gd7J20IOyLnOyekeuQqOydhCDtkZzsi5ztlanri4jri6QuIGA+PWDripQg7Jm87Kq9IOqwkuydtCDsmKTrpbjsqr0g6rCS67O064ukIO2BrOqxsOuCmCDqsJnsnYDsp4Ag6rKA7IKs7ZW0IGBUcnVlYCDrmJDripQgYEZhbHNlYOulvCDrp4zrk63ri4jri6QuIOychOyXkOyEnCDsspjsnYwg7LC47J20IOuQnCDruJTroZ0g7ZWY64KY66eMIOyLpO2Wie2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjAyOjQ2Ljk2NzM1MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjAyOjQ2Ljk2NzIxM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjAyOjQ2Ljk2OTk4NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MDI6NDYuOTY5NDc5WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIjE4MDAw7JuQIC0+IOuwsOyGoeu5hCAzMDAw7JuQXG4iLAogICAgICAiNDIwMDDsm5AgLT4g67Cw7Iah67mEIDIwMDDsm5BcbiIsCiAgICAgICI0OTk5OeybkCAtPiDrsLDshqHruYQgMjAwMOybkFxuIiwKICAgICAgIjUwMDAw7JuQIC0+IOuwsOyGoeu5hCAw7JuQXG4iLAogICAgICAiNjUwMDDsm5AgLT4g67Cw7Iah67mEIDDsm5BcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDshLgg6rK966Gc7JmAIDUwMDAw7JuQIOqyveqzhOulvCDsi6TsoJwg6rCS7Jy866GcIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAidGVzdF9hbW91bnRzID0gWzE4MDAwLCA0MjAwMCwgNDk5OTksIDUwMDAwLCA2NTAwMF1cbiIsCiAgICAiZm9yIGFtb3VudCBpbiB0ZXN0X2Ftb3VudHM6XG4iLAogICAgIiAgICBpZiBhbW91bnQgPj0gZnJlZV9zaGlwcGluZ19taW5pbXVtOlxuIiwKICAgICIgICAgICAgIHNoaXBwaW5nX2ZlZSA9IDBcbiIsCiAgICAiICAgIGVsaWYgYW1vdW50ID49IDMwMDAwOlxuIiwKICAgICIgICAgICAgIHNoaXBwaW5nX2ZlZSA9IDIwMDBcbiIsCiAgICAiICAgIGVsc2U6XG4iLAogICAgIiAgICAgICAgc2hpcHBpbmdfZmVlID0gMzAwMFxuIiwKICAgICIgICAgcHJpbnQoZlwie2Ftb3VudH3sm5AgLT4g67Cw7Iah67mEIHtzaGlwcGluZ19mZWV97JuQXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOykkeqwhCDqsrDqs7wg6rSA7LCwXG4iLAogICAgIlxuIiwKICAgICJgd2hpbGVg7J2AIOyhsOqxtOydtCDssLjsnbgg64+Z7JWIIOuwmOuzte2VqeuLiOuLpC4gYGxlbihhbW91bnRzX3dpdGhfc3RvcClg7J2AIOuqqeuhneydmCDtla3rqqkg7IiYIDXrpbwg67CY7ZmY7ZWY6rOgLCBgYW1vdW50c193aXRoX3N0b3BbaW5kZXhdYOuKlCDsnITsuZgg67KI7Zi47JeQIO2VtOuLue2VmOuKlCDqsJLsnYQg7J297Iq164uI64ukLiDsnITsuZgg67KI7Zi464qUIDDrtoDthLAg7Iuc7J6R7ZWp64uI64ukLiBgaW5kZXggKz0gMWDsnYAgYGluZGV4ID0gaW5kZXggKyAxYOqzvCDqsJnsnYAg65y77J6F64uI64ukLiDrqLzsoIAg7JyE7LmY66W8IOuKmOumsCDrkqQg7J2M7IiY64qUIGBjb250aW51ZWDroZwg7ZiE7J6sIOywqOuhgOydmCDrgpjrqLjsp4Drpbwg6rG064SI65uw6rOgLCAw7J2AIGBicmVha2DroZwg67CY67O1IOyghOyytOulvCDrgZ3rg4Xri4jri6QuIGBhcHBlbmQoKWDripQg7LKY66as7ZWcIOq4iOyVoeydhCDruYgg66qp66Gd7J2YIOuBneyXkCDstpTqsIDtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiY2VsbC0wNyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjowMjo0Ni45NzEyMzdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjowMjo0Ni45NzExMDFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjowMjo0Ni45NzM4NjJaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjAyOjQ2Ljk3MzM5OFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsspjrpqztlZwg7KO866y4OiBbMTgwMDAsIDQyMDAwXVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOychOy5mCDrsojtmLjqsIAg66qp66GdIOq4uOydtOuztOuLpCDsnpHsnYAg64+Z7JWIIOyjvOusuOydhCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgImFtb3VudHNfd2l0aF9zdG9wID0gWzE4MDAwLCAtMSwgNDIwMDAsIDAsIDY1MDAwXVxuIiwKICAgICJpbmRleCA9IDBcbiIsCiAgICAicHJvY2Vzc2VkID0gW11cbiIsCiAgICAid2hpbGUgaW5kZXggPCBsZW4oYW1vdW50c193aXRoX3N0b3ApOlxuIiwKICAgICIgICAgYW1vdW50ID0gYW1vdW50c193aXRoX3N0b3BbaW5kZXhdXG4iLAogICAgIiAgICBpbmRleCArPSAxXG4iLAogICAgIiAgICBpZiBhbW91bnQgPCAwOlxuIiwKICAgICIgICAgICAgIGNvbnRpbnVlXG4iLAogICAgIiAgICBpZiBhbW91bnQgPT0gMDpcbiIsCiAgICAiICAgICAgICBicmVha1xuIiwKICAgICIgICAgcHJvY2Vzc2VkLmFwcGVuZChhbW91bnQpXG4iLAogICAgInByaW50KGZcIuyymOumrO2VnCDso7zrrLg6IHtwcm9jZXNzZWR9XCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wOCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOqwkiDtlZjrgpjrpbwg67CU6r+UIOu5hOq1kFxuIiwKICAgICJcbiIsCiAgICAi7KO866y4IOq4iOyVoeydgCDqt7jrjIDroZwg65GQ6rOgIOustOujjCDrsLDshqEg6riw7KSA66eMIDQwMDAw7JuQ7Jy866GcIOuCruy2peuLiOuLpC4g65GQIOqwnOydmCDqsJzsiJgg67OA7IiY66W8IDDsl5DshJwg7Iuc7J6R7ZWY6rOgLCDsobDqsbTsnbQg7LC47J28IOuVjOuniOuLpCBgKz0gMWDroZwg7ZWcIOqxtOyUqSDrjZTtlanri4jri6QuIOydtCDshYDsnYAg6rCS7J2EIOuwmO2ZmO2VmOuKlCDtlajsiJjqsIAg7JeG7Jy866mwLCDrsJjrs7XsnbQg64Gd64KcIOuSpCDrkZAg67OA7IiY7JeQIOuIhOyggeuQnCDqsrDqs7zrpbwg7Lac66Cl7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImNlbGwtMDkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MDI6NDYuOTc1MTAyWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MDI6NDYuOTc0OTgxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MDI6NDYuOTc3NTY0WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjowMjo0Ni45NzcwNTVaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi6riw7KSAIDUwMDAw7JuQOiAx6rG0XG4iLAogICAgICAi6riw7KSAIDQwMDAw7JuQOiAy6rG0XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg6riw7KSA6rCSIO2VmOuCmOunjCDrsJTqv5Qg6rKw6rO866W8IOu5hOq1kO2VqeuLiOuLpC5cbiIsCiAgICAiY2hhbmdlZF9taW5pbXVtID0gNDAwMDBcbiIsCiAgICAiZnJlZV9jb3VudF9iZWZvcmUgPSAwXG4iLAogICAgImZyZWVfY291bnRfYWZ0ZXIgPSAwXG4iLAogICAgImZvciBhbW91bnQgaW4gb3JkZXJfYW1vdW50czpcbiIsCiAgICAiICAgIGlmIGFtb3VudCA+PSBmcmVlX3NoaXBwaW5nX21pbmltdW06XG4iLAogICAgIiAgICAgICAgZnJlZV9jb3VudF9iZWZvcmUgKz0gMVxuIiwKICAgICIgICAgaWYgYW1vdW50ID49IGNoYW5nZWRfbWluaW11bTpcbiIsCiAgICAiICAgICAgICBmcmVlX2NvdW50X2FmdGVyICs9IDFcbiIsCiAgICAicHJpbnQoZlwi6riw7KSAIDUwMDAw7JuQOiB7ZnJlZV9jb3VudF9iZWZvcmV96rG0XCIpXG4iLAogICAgInByaW50KGZcIuq4sOykgCA0MDAwMOybkDoge2ZyZWVfY291bnRfYWZ0ZXJ96rG0XCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xMCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7YyoIOyerO2YhFxuIiwKICAgICJcbiIsCiAgICAi66qp66GdIOq4uOydtOqwgCAz7J2066m0IOyCrOyaqe2VoCDsiJgg7J6I64qUIOychOy5mCDrsojtmLjripQgMCwgMSwgMuyeheuLiOuLpC4gYGxlbihvcmRlcl9hbW91bnRzKSArIDFg7J2AIDTsnbTqs6AsIGByYW5nZSg0KWDripQgMCwgMSwgMiwgM+ydhCDssKjroYDroZwg7KCc6rO17ZWp64uI64ukLiDrp4jsp4Drp4kgYG9yZGVyX2Ftb3VudHNbM11g7J2AIOyhtOyerO2VmOyngCDslYrripQg64SkIOuyiOynuCDtla3rqqnsnYQg7JqU7LKt7ZWY66+A66GcIGBJbmRleEVycm9yYOqwgCDrsJzsg53tlanri4jri6QuIGB0cnlg64qUIOyLpO2WieydhCDsi5zrj4TtlaAg67iU66GdLCBgZXhjZXB0IEluZGV4RXJyb3IgYXMgZXJyb3Jg64qUIO2VtOuLuSDsmKTrpZjqsIAg7IOd6rK87J2EIOuVjOunjCDsi6TtlontlaAg67iU66Gd7J6F64uI64ukLiDsmIjsmbgg7LKY66as64qUIDA17KCI7JeQ7IScIOyekOyEuO2eiCDrsLDsm4Hri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiY2VsbC0xMSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjowMjo0Ni45Nzg3MjlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjowMjo0Ni45Nzg2MjFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjowMjo0Ni45ODA4MTNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjAyOjQ2Ljk4MDQ1MVoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIjAgMTgwMDBcbiIsCiAgICAgICIxIDQyMDAwXG4iLAogICAgICAiMiA2NTAwMFxuIiwKICAgICAgIkluZGV4RXJyb3JcbiIsCiAgICAgICJsaXN0IGluZGV4IG91dCBvZiByYW5nZVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOuqqeuhnSDquLjsnbTrs7Tri6Qg7ZWcIOy5uCDrjZQg7KCR6re87ZW0IOyLpOygnCBJbmRleEVycm9y66W8IOq0gOywsO2VqeuLiOuLpC5cbiIsCiAgICAidHJ5OlxuIiwKICAgICIgICAgZm9yIGluZGV4IGluIHJhbmdlKGxlbihvcmRlcl9hbW91bnRzKSArIDEpOlxuIiwKICAgICIgICAgICAgIHByaW50KGluZGV4LCBvcmRlcl9hbW91bnRzW2luZGV4XSlcbiIsCiAgICAiZXhjZXB0IEluZGV4RXJyb3IgYXMgZXJyb3I6XG4iLAogICAgIiAgICBwcmludCh0eXBlKGVycm9yKS5fX25hbWVfXylcbiIsCiAgICAiICAgIHByaW50KGVycm9yKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTIiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7IiY7KCVXG4iLAogICAgIlxuIiwKICAgICJgZW51bWVyYXRlKG9yZGVyX2Ftb3VudHMpYOuKlCDrqqnroZ3snYQg7J6F66Cl67Cb7JWEIOyLpOygnCDtla3rqqnrp4jri6QgYCjsnITsuZgg67KI7Zi4LCDqsJIpYCDtlZwg7IyN7J2EIOygnOqzte2VqeuLiOuLpC4gYGZvciBpbmRleCwgYW1vdW50IGluIC4uLmDsnYAg6re4IOuRkCDqsJLsnYQg6rCB6rCB7J2YIOuzgOyImOyXkCDrgpjriITslrQg7KCA7J6l7ZWp64uI64ukLiDsobTsnqztlZjripQg7ZWt66qp66eMIOyymOumrO2VmOuvgOuhnCDrspTsnITrpbwg7KeB7KCRIOqzhOyCsO2VmOyngCDslYrslYQg66eI7KeA66eJIOychOy5mOulvCDrhJjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImNlbGwtMTMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MDI6NDYuOTgyMDE1WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MDI6NDYuOTgxOTA1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MDI6NDYuOTg0MTY1WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjowMjo0Ni45ODM3MzFaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIjAgMTgwMDBcbiIsCiAgICAgICIxIDQyMDAwXG4iLAogICAgICAiMiA2NTAwMFxuIiwKICAgICAgIuyymOumrCDqsbTsiJg6IDPqsbRcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBlbnVtZXJhdGXroZwg7JyE7LmYIOuyiO2YuOyZgCDqsJLsnYQg7ZWo6ruYIOyInO2ajO2VqeuLiOuLpC5cbiIsCiAgICAidmlzaXRlZCA9IFtdXG4iLAogICAgImZvciBpbmRleCwgYW1vdW50IGluIGVudW1lcmF0ZShvcmRlcl9hbW91bnRzKTpcbiIsCiAgICAiICAgIHZpc2l0ZWQuYXBwZW5kKGFtb3VudClcbiIsCiAgICAiICAgIHByaW50KGluZGV4LCBhbW91bnQpXG4iLAogICAgInByaW50KGZcIuyymOumrCDqsbTsiJg6IHtsZW4odmlzaXRlZCl96rG0XCIpXG4iLAogICAgImFzc2VydCB2aXNpdGVkID09IG9yZGVyX2Ftb3VudHMiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogInBhaXJlZCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDYsCiAgICJjb2RlX3NoYTI1NiI6ICJjYzYwOGZmMjA4NjZlZWM1ODg0MjAzZGNjNzJkOTZlOTlhYzAxMDEzOGVkMGE3MTE4Mjc4OTQ1NGJlYzIxZDlmIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDY6MDI6NDcuMTAxNDExKzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICIyZjZmNTFmZGZjNDhhY2M2Njg1NDE0ZDc1OWFjNDRkOTI1YTdhZmNhZjE0MjA5MmYzZjkwNTMxNTNhY2NjM2IwIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>조건문과 반복문</h2>
+<p>조건에 따라 배송비를 정하고, 여러 주문 금액을 순서대로 처리합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>이 노트북은 Python 3.12 표준 기능만 사용합니다. 각 셀은 앞 셀의 결과를 이어서 사용합니다. 대괄호 안의 값은 다음 절에서 자세히 배우는 목록입니다. 여기서는 여러 금액을 앞에서부터 하나씩 읽기 위한 묶음으로 사용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 세 건의 주문 금액과 무료 배송 기준을 준비합니다.
+order_amounts = [18000, 42000, 65000]
+free_shipping_minimum = 50000
+print(order_amounts)
+print(f&quot;무료 배송 기준: {free_shipping_minimum}원&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">[18000, 42000, 65000]
+무료 배송 기준: 50000원
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p>주문 금액 다섯 개를 <code>if</code>, <code>elif</code>, <code>else</code>의 세 경로와 차례로 비교합니다. <code>for amount in test_amounts:</code>는 목록에서 값을 하나 꺼내 <code>amount</code>에 저장한 뒤 들여쓴 블록을 반복한다는 뜻입니다. 콜론 <code>:</code>은 다음 들여쓰기 블록이 시작됨을 표시합니다. <code>&gt;=</code>는 왼쪽 값이 오른쪽 값보다 크거나 같은지 검사해 <code>True</code> 또는 <code>False</code>를 만듭니다. 위에서 처음 참이 된 블록 하나만 실행합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 세 경로와 50000원 경계를 실제 값으로 확인합니다.
+test_amounts = [18000, 42000, 49999, 50000, 65000]
+for amount in test_amounts:
+    if amount &gt;= free_shipping_minimum:
+        shipping_fee = 0
+    elif amount &gt;= 30000:
+        shipping_fee = 2000
+    else:
+        shipping_fee = 3000
+    print(f&quot;{amount}원 -&gt; 배송비 {shipping_fee}원&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">18000원 -&gt; 배송비 3000원
+42000원 -&gt; 배송비 2000원
+49999원 -&gt; 배송비 2000원
+50000원 -&gt; 배송비 0원
+65000원 -&gt; 배송비 0원
+</pre></div>
+<div class="nb-markdown"><h3>중간 결과 관찰</h3>
+<p><code>while</code>은 조건이 참인 동안 반복합니다. <code>len(amounts_with_stop)</code>은 목록의 항목 수 5를 반환하고, <code>amounts_with_stop[index]</code>는 위치 번호에 해당하는 값을 읽습니다. 위치 번호는 0부터 시작합니다. <code>index += 1</code>은 <code>index = index + 1</code>과 같은 뜻입니다. 먼저 위치를 늘린 뒤 음수는 <code>continue</code>로 현재 차례의 나머지를 건너뛰고, 0은 <code>break</code>로 반복 전체를 끝냅니다. <code>append()</code>는 처리한 금액을 빈 목록의 끝에 추가합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 위치 번호가 목록 길이보다 작은 동안 주문을 확인합니다.
+amounts_with_stop = [18000, -1, 42000, 0, 65000]
+index = 0
+processed = []
+while index &lt; len(amounts_with_stop):
+    amount = amounts_with_stop[index]
+    index += 1
+    if amount &lt; 0:
+        continue
+    if amount == 0:
+        break
+    processed.append(amount)
+print(f&quot;처리한 주문: {processed}&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">처리한 주문: [18000, 42000]
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 비교</h3>
+<p>주문 금액은 그대로 두고 무료 배송 기준만 40000원으로 낮춥니다. 두 개의 개수 변수를 0에서 시작하고, 조건이 참일 때마다 <code>+= 1</code>로 한 건씩 더합니다. 이 셀은 값을 반환하는 함수가 없으며, 반복이 끝난 뒤 두 변수에 누적된 결과를 출력합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 기준값 하나만 바꿔 결과를 비교합니다.
+changed_minimum = 40000
+free_count_before = 0
+free_count_after = 0
+for amount in order_amounts:
+    if amount &gt;= free_shipping_minimum:
+        free_count_before += 1
+    if amount &gt;= changed_minimum:
+        free_count_after += 1
+print(f&quot;기준 50000원: {free_count_before}건&quot;)
+print(f&quot;기준 40000원: {free_count_after}건&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">기준 50000원: 1건
+기준 40000원: 2건
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — <code>while</code> 셀에서 <code>index += 1</code>이 조건 검사보다 앞서 실행되므로 <code>continue</code>를 만나도 위치 번호가 증가합니다. 이 증가가 없다면 -1에서 같은 값을 계속 확인하게 됩니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>목록 길이가 3이면 사용할 수 있는 위치 번호는 0, 1, 2입니다. Before 셀은 <code>range(len(order_amounts) + 1)</code>을 사용해 0, 1, 2, 3을 만듭니다. 앞의 세 값은 출력되지만 위치 3의 항목은 없으므로 실제 <code>IndexError</code>와 <code>list index out of range</code> 메시지가 나타납니다. <code>range()</code>의 끝값이 포함되지 않는다는 사실을 알고 있어도 길이에 1을 더하면 범위를 넘습니다.</p><p>After 셀은 <code>enumerate(order_amounts)</code>로 올바른 위치 번호와 주문 금액을 함께 받습니다. 출력은 <code>0 18000</code>, <code>1 42000</code>, <code>2 65000</code>이며 처리 건수는 3건입니다. 목록을 순서대로 처리하는 목적이라면 값만 직접 순회할 수 있습니다. 위치 번호까지 출력하거나 기록해야 할 때 <code>enumerate()</code>를 사용하면 범위를 따로 계산하지 않아도 됩니다.</p><section class="notebook" data-notebook="02-조건문과-반복문" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>목록 길이가 3이면 사용할 수 있는 위치 번호는 0, 1, 2입니다. <code>len(order_amounts) + 1</code>은 4이고, <code>range(4)</code>는 0, 1, 2, 3을 차례로 제공합니다. 마지막 <code>order_amounts[3]</code>은 존재하지 않는 네 번째 항목을 요청하므로 <code>IndexError</code>가 발생합니다. <code>try</code>는 실행을 시도할 블록, <code>except IndexError as error</code>는 해당 오류가 생겼을 때만 실행할 블록입니다. 예외 처리는 05절에서 자세히 배웁니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 목록 길이보다 한 칸 더 접근해 실제 IndexError를 관찰합니다.
+try:
+    for index in range(len(order_amounts) + 1):
+        print(index, order_amounts[index])
+except IndexError as error:
+    print(type(error).__name__)
+    print(error)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">0 18000
+1 42000
+2 65000
+IndexError
+list index out of range
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p><code>enumerate(order_amounts)</code>는 목록을 입력받아 실제 항목마다 <code>(위치 번호, 값)</code> 한 쌍을 제공합니다. <code>for index, amount in ...</code>은 그 두 값을 각각의 변수에 나누어 저장합니다. 존재하는 항목만 처리하므로 범위를 직접 계산하지 않아 마지막 위치를 넘지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># enumerate로 위치 번호와 값을 함께 순회합니다.
+visited = []
+for index, amount in enumerate(order_amounts):
+    visited.append(amount)
+    print(index, amount)
+print(f&quot;처리 건수: {len(visited)}건&quot;)
+assert visited == order_amounts</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">0 18000
+1 42000
+2 65000
+처리 건수: 3건
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>조건의 순서는 결과를 바꿉니다. <code>amount &gt;= 30000</code>을 <code>amount &gt;= 50000</code>보다 먼저 두면 65000원도 먼저 참이 된 30000원 경로로 들어갑니다.</li><li><code>while</code> 조건에 쓰는 값을 반복 안에서 바꾸지 않으면 종료되지 않을 수 있습니다. 시작값, 변화, 종료 조건을 함께 확인합니다.</li><li><code>continue</code> 앞에서 상태 변경이 빠지지 않았는지 확인합니다. 이 노트북은 <code>index += 1</code>을 먼저 실행해 다음 항목으로 이동합니다.</li><li><code>break</code> 뒤의 항목은 처리되지 않습니다. 0 뒤의 65000원이 출력에서 빠진 이유가 업무 규칙과 일치하는지 확인해야 합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li><code>if</code>·<code>elif</code>·<code>else</code>는 위에서부터 조건을 검사해 한 경로를 실행합니다.</li><li><code>for</code>는 항목을 순회하고 <code>while</code>은 조건이 참인 동안 실행합니다.</li><li><code>break</code>는 반복을 끝내며 <code>continue</code>는 현재 차례만 건너뜁니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 반복문이 읽은 여러 값을 목록, 튜플, 딕셔너리, 집합에 목적별로 저장합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 첫 주문 18000원의 배송비가 3000원인 이유를 조건 순서에 따라 설명하십시오.</p><p class="quiz-a"><strong>정답:</strong> 50000원 이상과 30000원 이상 조건이 모두 거짓이므로 마지막 <code>else</code> 경로가 실행됩니다.</p><p class="quiz-q">2. <code>while</code> 셀에서 실제로 처리된 주문 금액은 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> 18000원과 42000원입니다. -1은 <code>continue</code>로 건너뛰고, 0에서 <code>break</code>가 실행되어 뒤의 65000원은 처리하지 않습니다.</p><p class="quiz-q">3. 무료 배송 기준을 50000원에서 40000원으로 바꾸면 무료 배송 주문 수는 어떻게 달라집니까?</p><p class="quiz-a"><strong>정답:</strong> 1건에서 2건으로 늘어납니다. 42000원이 변경한 기준을 새로 충족합니다.</p><p class="quiz-q">4. Before 셀의 <code>IndexError</code>를 <code>enumerate()</code>가 방지하는 이유는 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> <code>enumerate()</code>는 목록에 실제로 존재하는 항목과 위치 번호만 제공합니다. 길이에 1을 더한 잘못된 위치 3을 만들지 않습니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.python.org/3.12/tutorial/controlflow.html">Python 3.12 자습서 4장: 기타 제어 흐름 도구</a> · 확인 2026-09-09 · 기준 Python 3.12</li><li><a href="https://docs.python.org/3.12/library/functions.html#enumerate">Python 3.12 내장 함수 enumerate</a> · 확인 2026-09-09 · 기준 Python 3.12</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="01-변수와-자료형.html">← 변수와 자료형</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="03-자료구조.html">자료구조 →</a></span></div></div></body></html>

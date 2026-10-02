@@ -1,0 +1,19 @@
+flowchart LR
+  %% classes
+  subgraph st["stdio 전송"]
+    direction TB
+    s1["노트북 클라이언트<br>MCP 설정 한 벌"]:::flow
+    s2["자식 프로세스로<br>띄운 서버"]:::tool
+    s3["서버가 받은 환경 변수<br>기본 이름 + 칸 env"]:::tool
+    s1 -->|표준 입력 · 출력| s2
+    s2 ~~~ s3
+  end
+  subgraph ht["Streamable HTTP 전송"]
+    direction TB
+    h1["노트북 클라이언트<br>MCP 주소 + 접근 토큰"]:::flow
+    h2["따로 띄운 서버<br>127.0.0.1의 MCP 주소"]:::tool
+    h3["인증과 인가<br>접근 토큰과 범위를 봄"]
+    h1 -->|HTTP POST 요청| h2
+    h2 ~~~ h3
+  end
+  st ~~~ ht

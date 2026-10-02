@@ -1,0 +1,17 @@
+flowchart LR
+  %% classes
+  subgraph cond["조건부 엣지로 이은 그래프"]
+    direction TB
+    c1["make_query 뒤에<br>조건 함수를 둠"]:::flow
+    c2["나온 실행 흔적<br>normalize 다음<br>make_query 다음<br>ask_more"]:::measure
+    c1 ~~~ c2
+  end
+  subgraph fix["고정 엣지로만 이은 그래프"]
+    direction TB
+    f1["make_query 뒤에<br>노드 둘을 차례로 이음"]:::flow
+    f2["나온 실행 흔적<br>normalize 다음<br>make_query 다음<br>make_answer 다음<br>ask_more"]:::measure
+    f1 ~~~ f2
+  end
+  common2["두 그래프 모두<br>같은 노드 넷과<br>같은 점수 0.41"]
+  cond ~~~ fix
+  fix ~~~ common2

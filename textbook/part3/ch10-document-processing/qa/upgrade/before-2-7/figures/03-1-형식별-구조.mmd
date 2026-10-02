@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  f1["형식 견본 세 개<br>sample.docx · sample.html · sample.csv"]:::tool
+  r1["형식마다 다른 읽기"]:::flow
+  s1["DOCX<br>문단 2개 · 표 목록 1개"]:::measure
+  s2["HTML<br>h1 1개 · p 1개 · table 0개"]:::measure
+  s3["CSV<br>칸 이름 2개 · 행 2개"]:::measure
+  rec["네 칸 출처 기록<br>page 칸 없음 · CSV만 row 칸"]:::tool
+  nxt["문서 청크와 색인<br>이 절에서 실행하지 않음"]
+  f1 --> r1
+  r1 --> s1
+  r1 --> s2
+  r1 --> s3
+  s1 --> rec
+  s2 --> rec
+  s3 --> rec
+  rec --> nxt

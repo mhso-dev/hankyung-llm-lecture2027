@@ -1,0 +1,31 @@
+[
+  {
+    "product": "SWE-agent v0.7.0 demonstration",
+    "source": "https://raw.githubusercontent.com/SWE-agent/SWE-agent/3ea751c087f32b16e039a2233dd6eefecef325d5/trajectories/demonstrations/replay__marshmallow-code__marshmallow-1867__default__t-0.20__p-0.95__c-2.00__install-1___install_from_source/marshmallow-code__marshmallow-1867.traj",
+    "sha256": "8856076ec31832f20aefa7f0a2714e3ad6bc752f14815d94d2e852e50213a459",
+    "hash_verified": true,
+    "license": "MIT",
+    "specific_checks": {
+      "turns": 14,
+      "recovery_steps": [
+        10,
+        11
+      ],
+      "observed_before": 344,
+      "observed_after": 345
+    }
+  },
+  {
+    "product": "mini-SWE-agent GitHub issue fixture",
+    "source": "https://raw.githubusercontent.com/SWE-agent/mini-swe-agent/04d809ceab9df28f9adaed044884180159172930/tests/test_data/github_issue.traj.json",
+    "sha256": "86d060a4881efc19b59b4ee6667b1c80b2b769544d4f6cecb42521e09e95c6a0",
+    "hash_verified": true,
+    "license": "MIT",
+    "specific_checks": {
+      "assistant_commands": 10,
+      "zero_division_in_observation": true,
+      "last_role": "user",
+      "completion_status": "unconfirmed"
+    }
+  }
+]

@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  full["전체 입력<br>문서 세 개 본문<br>추정 420 · 실제 434"]:::tool
+  sel["고른 입력<br>E01 p.3 본문 하나<br>추정 217 · 실제 231"]:::tool
+  cmp["줄인 입력<br>03절 줄인 기록<br>추정 128 · 실제 142"]:::tool
+  mdl["gpt-5.4-mini<br>출력 상한 120<br>설계마다 요청 1번"]:::model
+  res["세 답 모두<br>빠진 연장 조건 없음"]:::measure
+  cost["출력 토큰 57 · 104 · 53<br>예상 비용(달러)<br>전체 0.000582<br>고른 0.000641<br>줄인 0.000345"]:::measure
+  full --> mdl
+  sel --> mdl
+  cmp --> mdl
+  mdl --> res
+  mdl --> cost

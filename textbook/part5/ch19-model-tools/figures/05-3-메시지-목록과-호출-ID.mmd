@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  subgraph msgs["메시지 목록 · 넷"]
+    direction TB
+    q["HumanMessage<br>질문 O101 · O103 금액"]:::tool
+    a["AIMessage 첫 응답<br>도구 호출 요청 둘"]:::measure
+    t1["ToolMessage 금액 32000<br>호출 ID · 첫 요청 id와 짝"]:::measure
+    t2["ToolMessage 금액 27000<br>호출 ID · 둘째 요청 id와 짝"]:::measure
+    q ~~~ a ~~~ t1 ~~~ t2
+  end
+  llm["gpt-5.4-mini<br>요청 2"]:::model
+  fin["최종 답<br>도구 호출 요청 0건<br>32000 · 27000 있음"]:::measure
+  msgs --> llm --> fin

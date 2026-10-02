@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph before["Before · 검사 없는 흐름"]
+    direction TB
+    b1["gpt-5.4-mini<br>문의마다 분류 요청"]:::model
+    b2["섞인 문의<br>종류 모름 · KeyError<br>요청 하나 뒤 멈춤"]:::fail
+    b3["배송 문의<br>신뢰도가 기준값 아래<br>그 갈래로 답 · 상태 완료<br>요청 둘"]:::fail
+    b1 --> b2
+    b1 --> b3
+  end
+  subgraph after["After · 검사하는 흐름"]
+    direction TB
+    a1["gpt-5.4-mini<br>문의마다 분류 요청"]:::model
+    a2["검사 check_route"]:::flow
+    a3["두 문의 모두<br>상태 되묻기<br>요청 하나씩<br>답 요청 없음"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  same["두 칸 모두 같은 문의 둘<br>섞인 문의 · 배송 문의<br>같은 지시 글과 갈래 표"]
+  before ~~~ same
+  after ~~~ same

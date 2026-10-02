@@ -1,0 +1,10 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant F as 함수 fetch_all_orders()
+  participant S as 연습용 주문 서비스
+  F->>S: GET /orders?page=1
+  S-->>F: 200 · 주문 O101, O102 · next_page 2
+  Note over F: page = 2
+  F->>S: GET /orders?page=2
+  S-->>F: 200 · 주문 O103 · next_page null
+  Note over F: page = None<br>반복 끝, 주문 3건 반환<br>호출 셀의 금액 합계 77000

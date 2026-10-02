@@ -1,0 +1,23 @@
+{
+  "chapter": "ch07-prompt-engineering",
+  "include": [
+    "textbook/part2/ch07-prompt-engineering/*.html",
+    "labs/part2/ch07-prompt-engineering/README.md",
+    "labs/part2/ch07-prompt-engineering/pyproject.toml",
+    "labs/part2/ch07-prompt-engineering/uv.lock",
+    "labs/part2/ch07-prompt-engineering/notebooks/*.ipynb",
+    "labs/part2/ch07-prompt-engineering/notebooks/llm_tools.py",
+    "labs/part2/ch07-prompt-engineering/runs/prompt-ab-continuity.json"
+  ],
+  "requires_existing_public_files": [
+    "labs/part2/ch06-langchain-start/runs/provider-comparison-continuity.json"
+  ],
+  "exclude": [
+    ".env",
+    "**/.venv/**",
+    "**/.ruff_cache/**",
+    "**/*.failure.json",
+    "**/__pycache__/**"
+  ],
+  "note": "Part 2 묶음은 textbook/part2/_build_index.py가 textbook/_notebook/build_bundle.py의 practice_files()로 만든다. 노트북·준비 파일·runs 기록은 그 안의 목록으로, 도구 파일 llm_tools.py는 textbook/part2/public-files.json으로 들어간다(2026-09-21 §2-7)."
+}

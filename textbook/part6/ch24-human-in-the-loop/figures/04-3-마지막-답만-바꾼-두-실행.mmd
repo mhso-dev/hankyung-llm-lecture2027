@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  v["바꾼 값 하나<br>사람의 마지막 답<br>실행 1 approve<br>실행 2 reject"]:::tool
+  subgraph R1["실행 1 · approve"]
+    direction TB
+    r1["연장 기록 파일에<br>같은 키 한 줄"]:::measure
+  end
+  subgraph R2["실행 2 · reject"]
+    direction TB
+    r2["연장 기록 파일 없음"]:::measure
+  end
+  cm["두 실행 같음<br>다시 물은 질문의<br>오류 글 change<br>새 가지의 질문<br>연장 일수 7<br>연장 뒤 남은 날 10<br>체크포인트 여덟<br>look_up_loan 한 번<br>plan_extension 두 번<br>ask_extension 다섯 번"]
+  v --> R1
+  v --> R2
+  R1 ~~~ cm
+  R2 ~~~ cm

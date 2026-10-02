@@ -1,0 +1,242 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>레지스트리·다이제스트와 클라우드 배포 — Ch 33 · CI/CD와 배포 운영</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 프로덕션 엔지니어링 · Ch 33 · CI/CD와 배포 운영</p>
+<h1>레지스트리·다이제스트와 클라우드 배포</h1><div class="meta"><span>강의 1h</span><span>실습 2.2h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2.2h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>이동 가능한 이미지 태그와 로컬 이미지 ID의 차이를 설명할 수 있습니다.</li><li>두 리비전 빌드가 서로 다른 로컬 이미지 ID를 만드는지 확인할 수 있습니다.</li><li>레지스트리 manifest digest와 클라우드 배포가 이 실습의 미실행 범위임을 구분할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p><code>latest</code> 같은 태그는 새 이미지를 가리키도록 이동할 수 있습니다. 태그만 배포 기록에 남기면 장애가 난 시점에 어떤 바이트를 실행했는지 확인하기 어렵습니다. 이 절에서는 같은 Dockerfile에서 v1과 v2 이미지를 실제로 빌드하고, 서로 다른 이미지 ID를 배포 기록에 고정합니다.</p>
+<p>로컬 Docker 데몬은 이미지 빌드와 검사를 담당합니다. 레지스트리 push와 클라우드 반영에는 별도 자격 증명과 대상 환경이 필요하므로 실행하지 않으며, 어느 경계까지 확인했는지 출력과 확인 필요 항목으로 구분합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>Ch32에서 Dockerfile로 이미지를 만들었고 앞 절에서 검사를 통과한 변경만 다음 단계로 보냈습니다. 이 절은 그 결과물을 어떤 식별자로 기록해야 이전 배포를 다시 선택할 수 있는지 다룹니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>진열 이름과 창고 물품 번호</h3><p>매장의 ‘신상품’ 표시는 다른 상품으로 옮겨 갈 수 있지만 창고 물품 번호는 특정 재고를 가리킵니다. Docker 태그는 이동 가능한 이름이고, 이 실습에서 확인하는 로컬 이미지 ID는 현재 Docker 데몬의 특정 이미지 구성을 식별합니다.</p>
+<h3>정의</h3><p>이미지 레지스트리(image registry)는 컨테이너 이미지를 저장하고 배포 환경에 전달하는 서비스입니다. 태그(tag)는 <code>v1</code>이나 <code>latest</code>처럼 사람이 읽기 좋은 이름이며 새 이미지로 이동할 수 있습니다. 로컬 이미지 ID는 현재 Docker 데몬이 빌드한 이미지 구성을 식별합니다. 레지스트리 manifest digest는 push된 매니페스트의 내용을 식별하며, 다중 플랫폼 이미지에서는 목록과 플랫폼별 매니페스트의 적용 단위도 구분해야 합니다. 이 실습은 로컬 이미지 ID와 JSON 이력까지만 확인하고 레지스트리 digest는 생성하지 않습니다.</p>
+<p>앞 절에서 만든 wheel과 평가 보고서는 CI가 만든 결과물입니다. 이 절은 그 결과를 실행 환경과 묶은 OCI 이미지를 다룹니다. Docker의 이미지 ID는 로컬 이미지 구성을 식별하며, 레지스트리에 push한 뒤 받는 manifest digest와 적용 범위를 구분해야 합니다.</p>
+<h3>코드 읽기와 개념 경계</h3><p>이미지 태그는 이동 가능한 이름입니다. 노트북의 <code>docker image inspect ... {{.Id}}</code>는 레지스트리 digest가 아니라 로컬 이미지 ID를 반환합니다. 실습은 v1과 v2 이미지의 로컬 ID가 다른지 확인하고, 교육용 JSON의 <code>digest</code> 필드에 v1의 로컬 ID를 저장합니다. 필드 이름만 보고 레지스트리 매니페스트를 검증했다고 해석하지 않습니다.</p><p>특정 이미지 식별자를 기록해도 그 이미지가 안전하거나 올바르다는 보장은 아닙니다. 서명·취약점 검사·테스트 결과를 같은 산출물과 연결해야 합니다. 레지스트리 manifest digest는 실제 push 뒤 별도로 기록하며, 이번 로컬 실험에서는 관찰하지 않았습니다. 클라우드 배포 권한과 환경 승인은 이미지 생성 권한과 분리합니다.</p><h3>도식 읽기</h3><figure><img src="figures/03-흐름.svg" alt="레지스트리·다이제스트와 클라우드 배포 단계 도식"><figcaption>같은 태그 설명 아래 v1·v2를 빌드하고 서로 다른 로컬 이미지 ID를 얻어 교육용 배포 기록에 저장하는 범위입니다. 레지스트리 push 단계는 도식의 미실행 경계로 읽습니다.</figcaption></figure>
+<p>레지스트리에 push하면 manifest digest가 별도로 생기며 다중 플랫폼 목록에서는 적용 단위가 다시 달라질 수 있습니다. 이번 JSON의 `digest` 필드명은 교육용이지만 실제로 담긴 값은 로컬 이미지 ID입니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>같은 Dockerfile에 서로 다른 리비전 빌드 인자를 주어 v1과 v2 OCI 이미지를 실제로 빌드합니다. Docker가 계산한 이미지 ID가 달라지는지 확인하고 v1 식별자를 배포 기록에 저장합니다. 로컬 Docker 데몬까지 실행하며 레지스트리 전송과 클라우드 권한 사용은 수행하지 않습니다.</p><section class="notebook" data-notebook="03-레지스트리-다이제스트와-클라우드-배포" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="03-레지스트리-다이제스트와-클라우드-배포.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDroIjsp4DsiqTtirjrpqzCt+uLpOydtOygnOyKpO2KuOyZgCDtgbTrnbzsmrDrk5wg67Cw7Y+sXG4iLAogICAgIlxuIiwKICAgICLtg5zqt7jsmYAg64uk7J207KCc7Iqk7Yq46rCAIOqwgOumrO2CpOuKlCDrsLDtj6wg64yA7IOB7J2EIOu5hOq1kO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJwcmVwLTMzLTAzLTAiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg7J20IOykgOu5hCDshYDsnbQg7ZWY64qUIOydvFxuIiwKICAgICJcbiIsCiAgICAi7LKrIOyFgOydmCBgUGF0aGAg7YOQ7IOJ7J2AIOyWtOuKkCDsg4HsnIQg7Y+0642U7JeQ7IScIOyXtOyWtOuPhCBDaDMz7J2YIGBweXByb2plY3QudG9tbGDsnYQg6riw7KSA7Jy866GcIOyLpOyKtSDtj7TrjZTrpbwg7LC+7Iq164uI64ukLiDrkqTsnZggYHN1YnByb2Nlc3MucnVuKC4uLiwgY3dkPWxhYiwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSlg7J2AIOuqheugueydhCDrs4Trj4Qg7ZSE66Gc7IS47Iqk66GcIOyLpO2Wie2VmOqzoCDtmZTrqbQg66y46rWs7JmAIOyiheujjCDsvZTrk5zrpbwg7ZWo6ruYIOuwmO2ZmO2VqeuLiOuLpC4g7J20IOuztOyhsCDsvZTrk5zripQgQ0nrpbwg7Z2J64K0IOuCtOuKlCDqs7XthrUg7Iuk7ZaJIOqyveqzhOydtOupsCwg6rCBIOygiOydmCDtjJDsoJXsnYAg64uk7J2MIOyFgOyXkOyEnCDtlbTri7kg66qF66C57J2YIOyLpOygnCDrsJjtmZjqsJLsnYQg7J297Ja0IOqysOygle2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICJjZWxsLTAyIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjE5OjI1LjU4NDkwNloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjE5OjI1LjU4NDgyNVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjE5OjI1LjU4ODE1MVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MTk6MjUuNTg3NTk1WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICJmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGhcbiIsCiAgICAiaW1wb3J0IGhhc2hsaWIsIHN1YnByb2Nlc3MsIHN5cywgdGVtcGZpbGUsIGpzb25cbiIsCiAgICAibGFiID0gbmV4dCgocCBmb3IgcCBpbiBbUGF0aC5jd2QoKSwgKlBhdGguY3dkKCkucGFyZW50c10gaWYgcC5uYW1lID09IFwiY2gzMy1jaWNkXCIgYW5kIChwIC8gXCJweXByb2plY3QudG9tbFwiKS5pc19maWxlKCkpLCBQYXRoKFwibGFicy9wYXJ0Ny9jaDMzLWNpY2RcIikpLnJlc29sdmUoKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNvbmNlcHQtMzMtMDMtYSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDrsJTroZwg64uk7J2MIOy9lOuTnOulvCDsnb3ripQg67Cp67KVXG4iLAogICAgIlxuIiwKICAgICLsnbTrr7jsp4Ag7YOc6re464qUIOydtOuPmSDqsIDriqXtlZwg7J2066aE7J6F64uI64ukLiDrhbjtirjrtoHsnZggYGRvY2tlciBpbWFnZSBpbnNwZWN0IC4uLiB7ey5JZH19YOuKlCDroIjsp4DsiqTtirjrpqwgbWFuaWZlc3QgZGlnZXN06rCAIOyVhOuLiOudvCDtmITsnqwgRG9ja2VyIOuNsOuqrOydmCDroZzsu6wg7J2066+47KeAIElE66W8IOuwmO2ZmO2VqeuLiOuLpC4g7Iuk7Iq17J2AIHYx6rO8IHYyIOydtOuvuOyngOydmCDroZzsu6wgSUTqsIAg64uk66W47KeAIO2ZleyduO2VmOqzoCwg6rWQ7Jyh7JqpIEpTT07snZggYGRpZ2VzdGAg7ZWE65Oc7JeQIHYx7J2YIOuhnOy7rCBJROulvCDsoIDsnqXtlanri4jri6QuIO2VhOuTnCDsnbTrpoTrp4wg67O06rOgIOugiOyngOyKpO2KuOumrCDrp6Tri4jtjpjsiqTtirjrpbwg6rKA7Kad7ZaI64uk6rOgIO2VtOyEne2VmOyngCDslYrsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoxOToyNS41ODkxMjRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoxOToyNS41ODkwNjFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoxOToyOC4wMDYxNTlaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjE5OjI4LjAwNTcwOVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJ2MSBzaGEyNTY6MWNiNzZkYjBlYTU4ZjQzZjUwZGMgZXhpdF9jb2RlPSAwXG4iCiAgICAgXQogICAgfSwKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAidjIgc2hhMjU2OjQwNjc5NThjMDJkZTZkYTY5MzQ1IGV4aXRfY29kZT0gMFxuIiwKICAgICAgInNhbWVfdGFnPWxhdGVzdCBzYW1lX2RpZ2VzdD0gRmFsc2VcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiZm9yIHJldmlzaW9uIGluIChcInYxXCIsIFwidjJcIik6XG4iLAogICAgIiAgICBidWlsdCA9IHN1YnByb2Nlc3MucnVuKFtcImRvY2tlclwiLCBcImJ1aWxkXCIsIFwiLXFcIiwgXCItdFwiLCBmXCJjaDMzLWRlbW86e3JldmlzaW9ufVwiLCBcIi0tYnVpbGQtYXJnXCIsIGZcIkFQUF9SRVZJU0lPTj17cmV2aXNpb259XCIsIFwiLlwiXSwgY3dkPWxhYiwgdGV4dD1UcnVlLCBjYXB0dXJlX291dHB1dD1UcnVlKVxuIiwKICAgICIgICAgcHJpbnQocmV2aXNpb24sIGJ1aWx0LnN0ZG91dC5zdHJpcCgpWzoyN10sIFwiZXhpdF9jb2RlPVwiLCBidWlsdC5yZXR1cm5jb2RlKVxuIiwKICAgICIgICAgYXNzZXJ0IGJ1aWx0LnJldHVybmNvZGUgPT0gMFxuIiwKICAgICJkaWdlc3RfdjEgPSBzdWJwcm9jZXNzLmNoZWNrX291dHB1dChbXCJkb2NrZXJcIiwgXCJpbWFnZVwiLCBcImluc3BlY3RcIiwgXCJjaDMzLWRlbW86djFcIiwgXCItLWZvcm1hdFwiLCBcInt7LklkfX1cIl0sIHRleHQ9VHJ1ZSkuc3RyaXAoKVxuIiwKICAgICJkaWdlc3RfdjIgPSBzdWJwcm9jZXNzLmNoZWNrX291dHB1dChbXCJkb2NrZXJcIiwgXCJpbWFnZVwiLCBcImluc3BlY3RcIiwgXCJjaDMzLWRlbW86djJcIiwgXCItLWZvcm1hdFwiLCBcInt7LklkfX1cIl0sIHRleHQ9VHJ1ZSkuc3RyaXAoKVxuIiwKICAgICJwcmludChcInNhbWVfdGFnPWxhdGVzdFwiLCBcInNhbWVfZGlnZXN0PVwiLCBkaWdlc3RfdjEgPT0gZGlnZXN0X3YyKVxuIiwKICAgICJhc3NlcnQgZGlnZXN0X3YxICE9IGRpZ2VzdF92MiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNvbmNlcHQtMzMtMDMtYiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDsnbQg64uo6rOE7JeQ7IScIOq1rOu2hO2VoCDrspTsnIRcbiIsCiAgICAiXG4iLAogICAgIu2KueyglSDsnbTrr7jsp4Ag7Iud67OE7J6Q66W8IOq4sOuhne2VtOuPhCDqt7gg7J2066+47KeA6rCAIOyViOyghO2VmOqxsOuCmCDsmKzrsJTrpbTri6TripQg67O07J6l7J2AIOyVhOuLmeuLiOuLpC4g7ISc66qFwrfst6jslb3soJAg6rKA7IKswrfthYzsiqTtirgg6rKw6rO866W8IOqwmeydgCDsgrDstpzrrLzqs7wg7Jew6rKw7ZW07JW8IO2VqeuLiOuLpC4g66CI7KeA7Iqk7Yq466asIG1hbmlmZXN0IGRpZ2VzdOuKlCDsi6TsoJwgcHVzaCDrkqQg67OE64+E66GcIOq4sOuhne2VmOupsCwg7J2067KIIOuhnOy7rCDsi6Ttl5jsl5DshJzripQg6rSA7LCw7ZWY7KeAIOyViuyVmOyKteuLiOuLpC4g7YG065287Jqw65OcIOuwsO2PrCDqtoztlZzqs7wg7ZmY6rK9IOyKueyduOydgCDsnbTrr7jsp4Ag7IOd7ISxIOq2jO2VnOqzvCDrtoTrpqztlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiY2VsbC0wNCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoxOToyOC4wMDc0MDNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoxOToyOC4wMDczMjNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoxOToyOC4wMzAxMjNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjE5OjI4LjAyOTgxNVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJkZXBsb3llZCByZXZpc2lvbj0xIGRpZ2VzdD1zaGEyNTY6MWNiNzZkYjBlYTU4Li4uIGV4aXRfY29kZT0gMFxuIiwKICAgICAgIltcbiIsCiAgICAgICIgIHtcbiIsCiAgICAgICIgICAgXCJyZXZpc2lvblwiOiAxLFxuIiwKICAgICAgIiAgICBcImV2ZW50XCI6IFwiZGVwbG95XCIsXG4iLAogICAgICAiICAgIFwiZGlnZXN0XCI6IFwic2hhMjU2OjFjYjc2ZGIwZWE1OGY0M2Y1MGRjODQxNDFkZmMyODk2ZWZlZDA5OGFhMmU2N2UwMWZjOWY1MTE2Y2M0MTczMjhcIixcbiIsCiAgICAgICIgICAgXCJzdGF0dXNcIjogXCJyZWFkeVwiXG4iLAogICAgICAiICB9XG4iLAogICAgICAiXVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJ3aXRoIHRlbXBmaWxlLlRlbXBvcmFyeURpcmVjdG9yeSgpIGFzIHRlbXA6XG4iLAogICAgIiAgICB0ID0gUGF0aCh0ZW1wKVxuIiwKICAgICIgICAgKHQgLyBcInNjcmlwdHNcIikubWtkaXIoKVxuIiwKICAgICIgICAgKHQgLyBcInJ1bnNcIikubWtkaXIoKVxuIiwKICAgICIgICAgKHQgLyBcInNjcmlwdHMvZGVwbG95LnB5XCIpLndyaXRlX3RleHQoKGxhYiAvIFwic2NyaXB0cy9kZXBsb3kucHlcIikucmVhZF90ZXh0KCkpXG4iLAogICAgIiAgICByZXN1bHQgPSBzdWJwcm9jZXNzLnJ1bihbc3lzLmV4ZWN1dGFibGUsIFwic2NyaXB0cy9kZXBsb3kucHlcIiwgZGlnZXN0X3YxXSwgY3dkPXQsIHRleHQ9VHJ1ZSwgY2FwdHVyZV9vdXRwdXQ9VHJ1ZSlcbiIsCiAgICAiICAgIHByaW50KHJlc3VsdC5zdGRvdXQuc3RyaXAoKSwgXCJleGl0X2NvZGU9XCIsIHJlc3VsdC5yZXR1cm5jb2RlKVxuIiwKICAgICIgICAgcHJpbnQoKHQgLyBcInJ1bnMvZGVwbG95bWVudC5qc29uXCIpLnJlYWRfdGV4dCgpLnN0cmlwKCkpXG4iLAogICAgIiAgICBhc3NlcnQgcmVzdWx0LnJldHVybmNvZGUgPT0gMCIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDqsrDqs7wg7ZW07ISdXG4iLAogICAgIlxuIiwKICAgICLqsJnsnYAgbGF0ZXN0IO2DnOq3uOudvOuKlCDshKTrqoXrp4zsnLzroZwg7Iuk7KCcIOuwlOydtO2KuOulvCDsi53rs4TtlaAg7IiYIOyXhuyngOunjCwg64K07Jqp7JeQ7IScIOqzhOyCsO2VnCDri6TsnbTsoJzsiqTtirjripQgdjHqs7wgdjLqsIAg64us656Q7Iq164uI64ukLiDroZzsu6wg67Cw7Y+sIOq4sOuhneydgCDri6TsnbTsoJzsiqTtirjrpbwg7KCA7J6l7ZaI7Iq164uI64ukLiIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAiZXhwZXJpbWVudCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDMsCiAgICJjb2RlX3NoYTI1NiI6ICIyMjIxNzY0NGYyMGFmNDIxNzZhYzkyMjcxYjgxMzI2MzA4YmY4OThjNDVlYzMxNTY2MTUzYTk3ZjAyNTFmZWY1IiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDI6MTk6MjguMTQ1MjE4KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICJiNWJkM2U1M2JiMTM1NmY3NzJlODc3NzJkZDYyNjQ0OTYwNGFjZGUyMDAwZjEyZDliZTI4ZTdjY2M5ZDBhZDNjIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>레지스트리·다이제스트와 클라우드 배포</h2>
+<p>태그와 다이제스트가 가리키는 배포 대상을 비교합니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>첫 셀의 <code>Path</code> 탐색은 어느 상위 폴더에서 열어도 Ch33의 <code>pyproject.toml</code>을 기준으로 실습 폴더를 찾습니다. 뒤의 <code>subprocess.run(..., cwd=lab, capture_output=True)</code>은 명령을 별도 프로세스로 실행하고 화면 문구와 종료 코드를 함께 반환합니다. 이 보조 코드는 CI를 흉내 내는 공통 실행 경계이며, 각 절의 판정은 다음 셀에서 해당 명령의 실제 반환값을 읽어 결정합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">from pathlib import Path
+import hashlib, subprocess, sys, tempfile, json
+lab = next((p for p in [Path.cwd(), *Path.cwd().parents] if p.name == &quot;ch33-cicd&quot; and (p / &quot;pyproject.toml&quot;).is_file()), Path(&quot;labs/part7/ch33-cicd&quot;)).resolve()</code></pre></div></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>이미지 태그는 이동 가능한 이름입니다. 노트북의 <code>docker image inspect ... {{.Id}}</code>는 레지스트리 manifest digest가 아니라 현재 Docker 데몬의 로컬 이미지 ID를 반환합니다. 실습은 v1과 v2 이미지의 로컬 ID가 다른지 확인하고, 교육용 JSON의 <code>digest</code> 필드에 v1의 로컬 ID를 저장합니다. 필드 이름만 보고 레지스트리 매니페스트를 검증했다고 해석하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">for revision in (&quot;v1&quot;, &quot;v2&quot;):
+    built = subprocess.run([&quot;docker&quot;, &quot;build&quot;, &quot;-q&quot;, &quot;-t&quot;, f&quot;ch33-demo:{revision}&quot;, &quot;--build-arg&quot;, f&quot;APP_REVISION={revision}&quot;, &quot;.&quot;], cwd=lab, text=True, capture_output=True)
+    print(revision, built.stdout.strip()[:27], &quot;exit_code=&quot;, built.returncode)
+    assert built.returncode == 0
+digest_v1 = subprocess.check_output([&quot;docker&quot;, &quot;image&quot;, &quot;inspect&quot;, &quot;ch33-demo:v1&quot;, &quot;--format&quot;, &quot;{{.Id}}&quot;], text=True).strip()
+digest_v2 = subprocess.check_output([&quot;docker&quot;, &quot;image&quot;, &quot;inspect&quot;, &quot;ch33-demo:v2&quot;, &quot;--format&quot;, &quot;{{.Id}}&quot;], text=True).strip()
+print(&quot;same_tag=latest&quot;, &quot;same_digest=&quot;, digest_v1 == digest_v2)
+assert digest_v1 != digest_v2</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">v1 sha256:1cb76db0ea58f43f50dc exit_code= 0
+</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">v2 sha256:4067958c02de6da69345 exit_code= 0
+same_tag=latest same_digest= False
+</pre></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>특정 이미지 식별자를 기록해도 그 이미지가 안전하거나 올바르다는 보장은 아닙니다. 서명·취약점 검사·테스트 결과를 같은 산출물과 연결해야 합니다. 레지스트리 manifest digest는 실제 push 뒤 별도로 기록하며, 이번 로컬 실험에서는 관찰하지 않았습니다. 클라우드 배포 권한과 환경 승인은 이미지 생성 권한과 분리합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">with tempfile.TemporaryDirectory() as temp:
+    t = Path(temp)
+    (t / &quot;scripts&quot;).mkdir()
+    (t / &quot;runs&quot;).mkdir()
+    (t / &quot;scripts/deploy.py&quot;).write_text((lab / &quot;scripts/deploy.py&quot;).read_text())
+    result = subprocess.run([sys.executable, &quot;scripts/deploy.py&quot;, digest_v1], cwd=t, text=True, capture_output=True)
+    print(result.stdout.strip(), &quot;exit_code=&quot;, result.returncode)
+    print((t / &quot;runs/deployment.json&quot;).read_text().strip())
+    assert result.returncode == 0</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">deployed revision=1 digest=sha256:1cb76db0ea58... exit_code= 0
+[
+  {
+    &quot;revision&quot;: 1,
+    &quot;event&quot;: &quot;deploy&quot;,
+    &quot;digest&quot;: &quot;sha256:1cb76db0ea58f43f50dc84141dfc2896efed098aa2e67e01fc9f5116cc417328&quot;,
+    &quot;status&quot;: &quot;ready&quot;
+  }
+]
+</pre></div>
+<div class="nb-markdown"><h3>결과 해석</h3>
+<p>같은 latest 태그라는 설명만으로 실제 바이트를 식별할 수 없지만, 내용에서 계산한 다이제스트는 v1과 v2가 달랐습니다. 로컬 배포 기록은 다이제스트를 저장했습니다.</p></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — v1과 v2의 로컬 이미지 ID가 다른지, 교육용 배포 JSON이 v1의 로컬 ID를 저장했는지 확인합니다. 레지스트리 manifest digest는 출력되지 않습니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>v1과 v2는 같은 태그 이름을 사용할 수 있지만 로컬 Docker가 반환한 이미지 ID는 서로 달랐습니다. 따라서 배포 기록에 태그만 남기면 당시의 정확한 내용을 나중에 식별하지 못할 수 있습니다. 이 실습은 로컬 이미지 ID를 저장해 롤백에서 이전 로컬 결과를 다시 선택합니다. 로컬 이미지 ID 확인은 레지스트리에 push한 manifest digest, 서명, 다중 플랫폼 이미지 목록까지 검증하지 않습니다. 클라우드에서는 승인된 digest를 Deployment 매니페스트의 image 값에 기록하고 OIDC 기반 최소 권한으로 적용합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>이미지 다이제스트와 이미지 서명은 역할이 다릅니다. 다이제스트는 내용 식별과 변경 탐지를 돕고, 서명 검증은 신뢰한 주체가 만든 이미지인지 확인하는 정책에 사용합니다.</li><li>클라우드 자격 증명은 저장소 파일에 넣지 않고 OIDC 또는 비밀 저장소와 최소 권한을 사용합니다.</li><li>배포 성공 뒤에도 readiness와 실제 요청 검증이 끝나기 전에는 새 버전이 정상이라고 판단하지 않습니다.</li></ul>
+<p>이번 출력의 <code>sha256:</code> 값은 로컬 이미지 ID입니다. 레지스트리 manifest digest, 이미지 서명, 다중 플랫폼 목록은 확인하지 않았습니다. 실제 클라우드 배포 전에는 push 결과의 digest와 배포 매니페스트의 image 값이 같은지 별도로 검사합니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>레지스트리는 배포할 이미지를 저장하고 전달합니다.</li><li>태그는 이동할 수 있지만 다이제스트는 특정 내용을 식별합니다.</li><li>이 실습은 로컬 배포 기록까지 확인했으며 실제 push와 클라우드 반영은 수행하지 않았습니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 다음 절은 새 이미지가 요청을 정상 처리하는지 오류율과 p95 지연으로 관찰합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>태그와 다이제스트의 차이는 무엇인가요?</summary><p class="quiz-a">태그는 사람이 정한 이동 가능한 이름이고, 다이제스트는 이미지 내용에 대응하는 식별자입니다.</p></details><details class="quiz"><summary>다이제스트만 확인하면 제작자를 신뢰할 수 있나요?</summary><p class="quiz-a">그렇지 않습니다. 제작자 신뢰에는 이미지 서명과 공급망 정책이 추가로 필요합니다.</p></details><details class="quiz"><summary>실제 배포에 추가로 필요한 것은 무엇인가요?</summary><p class="quiz-a">레지스트리와 클라우드 권한, 배포 대상, readiness 검사, 네트워크 설정 등이 필요합니다.</p></details><details class="quiz"><summary>배포 기록에 다이제스트를 남기는 이유는 무엇인가요?</summary><p class="quiz-a">정확히 어떤 내용을 배포했는지 추적하고 이전 내용을 다시 선택하기 위해서입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.docker.com/reference/cli/docker/image/push/">Docker Docs, docker image push</a> · 확인 2026-09-11</li><li><a href="https://docs.docker.com/build/exporters/image-registry/">Docker Docs, Image and registry exporters</a> · 확인 2026-09-11</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="02-평가-회귀를-CI에-연결하기.html">← 평가 회귀를 CI에 연결하기</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="04-모니터링과-알림.html">모니터링과 알림 →</a></span></div></div></body></html>

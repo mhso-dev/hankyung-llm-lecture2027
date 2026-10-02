@@ -1,0 +1,72 @@
+{
+  "snapshot": "ch09-ch10-12-sections-before-2026-09-09.txt",
+  "sha256": "235ca48ba4d3e7e95741f00bafb2eba506d89ccc6e5f8eb62d54ef5d7e4adbd6",
+  "sections": 12,
+  "excluded": [
+    "textbook/part3/ch09-rag-first-run/_src/06-실험-하네스.html",
+    "textbook/part3/ch10-document-processing/_src/08-인덱싱-비교-실험.html"
+  ],
+  "files": [
+    {
+      "path": "textbook/part3/ch09-rag-first-run/_src/01-RAG-지도.html",
+      "source_sha256": "7353c4ec9cd0d5f08ce437f3358a0f8945a148a260f4b6d53b872ffc703266f6",
+      "prose_characters": 6723
+    },
+    {
+      "path": "textbook/part3/ch09-rag-first-run/_src/02-로더와-스플리터.html",
+      "source_sha256": "0f3c16988bd9ba837138ff2e2e34a7a5c692ae376b5978b256fb1e8e7dbb4980",
+      "prose_characters": 4203
+    },
+    {
+      "path": "textbook/part3/ch09-rag-first-run/_src/03-임베딩과-벡터스토어.html",
+      "source_sha256": "4b5a6c0ed82bd4d6d2d8b1050f9b8cfa928be0b59d5c46ff0bdd218157814f3d",
+      "prose_characters": 4495
+    },
+    {
+      "path": "textbook/part3/ch09-rag-first-run/_src/04-생성과-출처-인용.html",
+      "source_sha256": "97f4a7f9fda0e52a3f04a5c61a1890f0a88d9ea0c1560833a9fcfe0c4dba9923",
+      "prose_characters": 3697
+    },
+    {
+      "path": "textbook/part3/ch09-rag-first-run/_src/05-첫-실패-보기.html",
+      "source_sha256": "4a793926d735fe844c4f414d1d96aa165b2bcb16003c6cc96e747300bd04aa56",
+      "prose_characters": 5103
+    },
+    {
+      "path": "textbook/part3/ch10-document-processing/_src/01-문서와-메타데이터.html",
+      "source_sha256": "9d1754215e16132801443991d03b6bac3ad3d9bb8637cc8a304f3f8afa1ac46a",
+      "prose_characters": 4847
+    },
+    {
+      "path": "textbook/part3/ch10-document-processing/_src/02-PDF와-표-OCR.html",
+      "source_sha256": "f6335c97c380d25d3806d0203c7100a69abc91435d2e30316e89d78d9eabdc25",
+      "prose_characters": 4694
+    },
+    {
+      "path": "textbook/part3/ch10-document-processing/_src/03-DOCX-HTML-CSV.html",
+      "source_sha256": "5ff7e5a2224818c7fabebe743413969d66bbf7dbc8bd8fc253cb6051d85e356f",
+      "prose_characters": 3967
+    },
+    {
+      "path": "textbook/part3/ch10-document-processing/_src/04-HWP와-HWPX.html",
+      "source_sha256": "5466e83c7e38843510dd81b20e767560339866c4c16b1c0d4d5b943f412bd88d",
+      "prose_characters": 4522
+    },
+    {
+      "path": "textbook/part3/ch10-document-processing/_src/05-문자-재귀-토큰-청킹.html",
+      "source_sha256": "68870f29220aab54d3cde5e3d94b4770669af90d76a4bc47679547383856df93",
+      "prose_characters": 4663
+    },
+    {
+      "path": "textbook/part3/ch10-document-processing/_src/06-구조와-시맨틱-청킹.html",
+      "source_sha256": "efa7dc18dcae1390ebb80ab646c9b127f345e40ec6bfc253edd47359bfea73c0",
+      "prose_characters": 4925
+    },
+    {
+      "path": "textbook/part3/ch10-document-processing/_src/07-한국어-임베딩과-캐시.html",
+      "source_sha256": "81a17b9ca5d59259a43db02f21e99eabe35b24846778ae37b13cbbf5622390a7",
+      "prose_characters": 6469
+    }
+  ],
+  "note": "Read-only extraction. Code, preformatted output, scripts, styles, and notebook placeholders are excluded."
+}

@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · lookup_stock을 바로 부름"]
+    direction LR
+    b1["stock_text =<br>lookup_stock(...)"]:::flow --> b2["동기 함수 lookup_stock<br>time.sleep(0.2) 동안<br>이벤트 루프도 멈춤"]:::tool --> b3["끝 연필 → 시작 노트<br>걸린 시간(초): 0.3"]:::fail
+  end
+  subgraph AFTER["After · to_thread()로 부름"]
+    direction LR
+    a1["stock_text = await<br>asyncio.to_thread(<br>lookup_stock, ...)"]:::flow --> a2["동기 함수 lookup_stock<br>time.sleep(0.2)은<br>다른 스레드에서 멈춤"]:::tool --> a3["시작 노트 → 끝 연필<br>걸린 시간(초): 0.2"]:::measure
+  end
+  BEFORE ~~~ AFTER

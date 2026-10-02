@@ -1,0 +1,17 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant E as 임베딩 모델 MiniLM
+  participant R as 조립 함수 run_check()
+  participant Q as 언어 모델 Qwen
+  R->>E: 환불 질문
+  E-->>R: 질문 벡터(숫자 384개)
+  Note over R: 문서 0 유사도 0.7636<br>고른 문서 환불 문장
+  R->>Q: 04절 지시 · 환불 문장 · 질문 57조각
+  Q-->>R: 환불은 결제일로부터 14일 이내에 신청합니다.
+  Note over R: 새 숫자 ['14']<br>보류 문장 있음 False
+  R->>E: 무게 질문
+  E-->>R: 질문 벡터(숫자 384개)
+  Note over R: 문서 1 유사도 0.5174<br>고른 문서 배터리 문장
+  R->>Q: 04절 지시 · 배터리 문장 · 질문 66조각
+  Q-->>R: 노을 워커 3의 무게는 약 150g 입니다.
+  Note over R: 새 숫자 ['150']<br>보류 문장 있음 False

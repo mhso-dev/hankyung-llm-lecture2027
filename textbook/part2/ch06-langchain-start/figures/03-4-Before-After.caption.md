@@ -1,0 +1,4 @@
+- 설명 대상 문장: 설명 글은 칸의 뜻을 알려 줄 뿐이고, 범위를 막은 것은 `Field()`의 규칙이었습니다.
+- 캡션: 범위를 설명에만 적은 Before는 오류 없이 9를 받았고, Field에 범위 규칙을 적은 After는 같은 질문에 3을 받았습니다.
+- 읽는 법: 위 칸 Before(`NoRangeCard`, 원본 답 `"difficulty":9`, `parsing_error: None`, `난이도가 1~3 안인가: False`), 아래 칸 After(`StudyCard 난이도 칸:`의 `'maximum': 3, 'minimum': 1`, 원본 답 `"difficulty":3`, `난이도가 1~3 안인가: True`, assert 통과). 칸마다 왼쪽에서 오른쪽. 빨간 상자는 오류 없이 잘못된 값을 받아들인 Before 결함 결과(규격 §5-3, Ch 4 05-3 선례).
+- alt: 위 칸 Before는 초록 상자 difficulty 칸 설명 1부터 3까지 규칙 없음이 보라 상자 gpt-5.4-mini 9로 쓰라는 질문을 거쳐 빨간 상자 difficulty 9 parsing_error None 1~3 안인가 False로 이어지고, 아래 칸 After는 초록 상자 difficulty 칸 maximum 3 minimum 1이 보라 상자 같은 질문을 거쳐 노란 상자 difficulty 3 parsing_error None assert 통과로 이어지는 비교 그림

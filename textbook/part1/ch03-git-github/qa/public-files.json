@@ -1,0 +1,18 @@
+{
+  "chapter": "ch03-git-github",
+  "include": [
+    "textbook/part1/ch03-git-github/*.html",
+    "labs/part1/ch03-git-github/README.md",
+    "labs/part1/ch03-git-github/pyproject.toml",
+    "labs/part1/ch03-git-github/uv.lock",
+    "labs/part1/ch03-git-github/notebooks/*.ipynb",
+    "labs/part1/ch03-git-github/notebooks/git_tools.py"
+  ],
+  "exclude": [
+    ".env",
+    "**/.venv/**",
+    "**/*.failure.json",
+    "**/__pycache__/**"
+  ],
+  "note": "Part 1 묶음은 textbook/_notebook/build_bundle.py의 practice_files()가 만든다. 노트북·준비 파일은 그 안의 목록으로, 도구 파일 git_tools.py는 textbook/part1/public-files.json으로 들어간다(2026-09-21 §2-7)."
+}

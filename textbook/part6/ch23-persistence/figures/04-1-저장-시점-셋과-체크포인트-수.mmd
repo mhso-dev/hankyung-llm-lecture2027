@@ -1,0 +1,24 @@
+flowchart TB
+  %% classes
+  subgraph ke["exit"]
+    direction TB
+    e1["저장하는 때<br>그래프가<br>끝날 때만"]
+    e2["끝까지 실행한 뒤<br>체크포인트<br>하나"]:::measure
+    e1 --> e2
+  end
+  subgraph ka["async"]
+    direction TB
+    a1["저장하는 때<br>다음 단계를<br>실행하는 동안 뒤에서"]
+    a2["끝까지 실행한 뒤<br>체크포인트<br>넷"]:::measure
+    a1 --> a2
+  end
+  subgraph ks["sync"]
+    direction TB
+    s1["저장하는 때<br>다음 단계를<br>시작하기 전에 끝냄"]
+    s2["끝까지 실행한 뒤<br>체크포인트<br>넷"]:::measure
+    s1 --> s2
+  end
+  cm["세 값 모두<br>같은 설계 객체 builder<br>마친 노드 first second"]
+  ke ~~~ cm
+  ka ~~~ cm
+  ks ~~~ cm

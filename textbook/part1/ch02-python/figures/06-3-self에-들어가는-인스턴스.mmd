@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph S5["5번 소제목 · 점 왼쪽 pencil"]
+    direction LR
+    c1["pencil.add_count(2)"]:::flow --> s1["self에 pencil<br>수량 3 + 2 저장"]:::tool --> o1["pencil 수량: 5<br>note 수량: 2"]:::measure
+  end
+  subgraph S6["6번 소제목 · 점 왼쪽 note"]
+    direction LR
+    c2["note.add_count(2)"]:::flow --> s2["self에 note<br>수량 2 + 2 저장"]:::tool --> o2["pencil 수량: 5<br>note 수량: 4"]:::measure
+  end
+  S5 ~~~ S6

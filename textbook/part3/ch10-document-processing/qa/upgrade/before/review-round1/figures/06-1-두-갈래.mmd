@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  src["E01.pdf 2쪽 글<br>905자 · 26줄"]:::tool
+  mark["제목 줄에 표시 붙이기<br>911자"]:::flow
+  sres["구조 방식 · 문서 청크 3개<br>223 · 470 · 182자"]:::measure
+  emb["text-embedding-3-small<br>임베딩 요청 2번"]:::model
+  amt["끊는 기준값 95 백분위수"]:::flow
+  mres["시맨틱 방식 · 문서 청크 2개<br>233 · 671자"]:::measure
+  rec["문서 청크마다 출처 기록<br>출처 표시 [E01 p.2]"]:::tool
+  src --> mark
+  mark --> sres
+  sres --> rec
+  src --> emb
+  emb --> amt
+  amt --> mres
+  mres --> rec

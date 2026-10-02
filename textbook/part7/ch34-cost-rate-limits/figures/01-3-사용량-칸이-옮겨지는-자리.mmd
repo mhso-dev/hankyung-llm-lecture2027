@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  raw["사용량 원본 prompt_tokens_details<br>cached_tokens<br>cache_write_tokens None"]:::measure
+  lc["langchain-openai 1.6.0 옮기기<br>None인 칸은<br>키로 만들지 않음<br>설치판 소스로 확인"]
+  det["input_token_details<br>audio와 cache_read"]:::measure
+  no["cache_creation 키 없음"]:::measure
+  price["요금표 2026-09-29<br>0.75 · 0.075 · 4.50"]:::tool
+  est["estimate_cost<br>cache_read만 캐시 입력 요금으로"]:::flow
+  raw --> lc
+  lc --> det
+  lc -.-> no
+  det --> est
+  price --> est

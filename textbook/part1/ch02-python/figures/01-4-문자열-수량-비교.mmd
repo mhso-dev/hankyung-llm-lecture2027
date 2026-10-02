@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 문자열 그대로 곱하기"]
+    direction LR
+    b1["input_quantity<br>#quot;2#quot; · str"]:::tool -- "× 3" --> b2["전체 수량 222<br>비교 False"]:::fail
+  end
+  subgraph AFTER["After · int()로 바꾼 뒤 곱하기"]
+    direction LR
+    a1["input_quantity<br>#quot;2#quot; · str"]:::tool -- "int()" --> a2["converted_quantity<br>2 · int"]:::tool -- "× 3" --> a3["전체 수량 6<br>비교 True"]:::measure
+  end
+  BEFORE ~~~ AFTER

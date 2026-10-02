@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph REQ["모델 요청 — 바뀜"]
+    direction LR
+    r1["분리 전 5개"] --> r2["분리 후 3개"]:::model
+  end
+  subgraph STATE["저장된 대화 기록 — 지운 것 없음"]
+    direction LR
+    s1["원래 5개"] --> s2["새 답 더해 6개"]
+  end
+  REQ ~~~ STATE

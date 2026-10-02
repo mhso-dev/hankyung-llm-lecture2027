@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  s(["가상 시작점 START"])
+  m["모델 노드 model<br>함수 call_model"]:::flow
+  t["도구 실행 노드 tools<br>ToolNode"]
+  e(["가상 끝점 END"])
+  s --> m
+  m -.->|도구 호출 요청 있음 · 이름표 tools| t
+  m -.->|도구 호출 요청 없음 · 이름표 END| e
+  t -->|되돌아가는 엣지| m

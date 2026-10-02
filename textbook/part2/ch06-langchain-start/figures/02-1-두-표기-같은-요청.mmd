@@ -1,0 +1,10 @@
+flowchart LR
+  %% classes
+  T["튜플 목록<br>system · user"]:::tool
+  O["메시지 객체 목록<br>SystemMessage<br>HumanMessage"]:::tool
+  C["invoke가<br>메시지 객체로 맞춤"]:::flow
+  M["gpt-5.4-mini"]:::model
+  R["입력 토큰 수<br>두 호출 모두 33"]:::measure
+  T --> C
+  O --> C
+  C --> M --> R

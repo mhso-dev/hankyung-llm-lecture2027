@@ -1,0 +1,102 @@
+{
+  "run_id": "ch08-context-20260909T174025306280Z",
+  "run_date": "2026-09-09",
+  "source_chapter": "ch08",
+  "source_record": {
+    "path": "labs/part2/ch07-prompt-engineering/runs/prompt-ab-continuity.json",
+    "sha256": "e124b791d070bc023c70176bedeb3cdb3e73924c16b4e991be718f37f26bc02b",
+    "run_id": "ch07-prompt-ab-20260909T174009751770Z"
+  },
+  "model": "openai:gpt-5.4-mini",
+  "settings": {
+    "max_tokens": 300,
+    "pricing_date": "2026-09-09",
+    "pricing_usd_per_million": {
+      "ordinary_input": 0.75,
+      "cached_input": 0.075,
+      "output": 4.5
+    }
+  },
+  "question": "대출 권수, 기간, 연장 조건과 출처를 알려 주세요.",
+  "comparison_policy": "문자열 확인은 원문 정독 보조임",
+  "results": [
+    {
+      "design": "full",
+      "context": "[E01-p2] 월요일 휴관\n[E01-p3] 회원 1명당 최대 7권, 대출 기간 14일. 예약이 없으면 1회 7일 연장.\n[E01-p5] 회원은 최초 2시간 무료입니다.",
+      "answer": "대출 관련 근거는 다음과 같습니다.\n\n- **대출 권수**: 회원 1명당 **최대 7권**\n- **대출 기간**: **14일**\n- **연장 조건**: **예약이 없으면 1회 7일 연장 가능**\n\n**출처**: **[E01-p3]**  \n> 회원 1명당 최대 7권, 대출 기간 14일. 예약이 없으면 1회 7일 연장.\n\n참고로, 사용자가 함께 제시한 **[E01-p2] 월요일 휴관**과 **[E01-p5] 회원은 최초 2시간 무료입니다.** 는 대출 권수·기간·연장 조건과는 직접 관련이 없습니다.",
+      "usage": {
+        "input_tokens": 110,
+        "output_tokens": 169,
+        "total_tokens": 279,
+        "input_token_details": {
+          "audio": 0,
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "audio": 0,
+          "reasoning": 0
+        }
+      },
+      "latency_ms": 1376.7,
+      "cache_read_tokens": 0,
+      "estimated_cost_usd": 0.000843,
+      "checks": {
+        "대출 조건": true,
+        "연장 예외": true,
+        "출처": true
+      }
+    },
+    {
+      "design": "selected",
+      "context": "[E01-p3] 회원 1명당 최대 7권, 대출 기간 14일. 예약이 없으면 1회 7일 연장.",
+      "answer": "- **대출 권수**: 회원 **1명당 최대 7권**  \n  - **근거/출처**: **[E01-p3]**\n\n- **대출 기간**: **14일**  \n  - **근거/출처**: **[E01-p3]**\n\n- **연장 조건**: **예약이 없는 경우에 한해 1회 7일 연장 가능**  \n  - **예외/조건**: **예약이 있으면 연장 불가**로 해석됩니다.  \n  - **근거/출처**: **[E01-p3]**\n\n원하시면 위 내용을 표로도 정리해 드릴게요.",
+      "usage": {
+        "input_tokens": 86,
+        "output_tokens": 155,
+        "total_tokens": 241,
+        "input_token_details": {
+          "audio": 0,
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "audio": 0,
+          "reasoning": 0
+        }
+      },
+      "latency_ms": 1411.3,
+      "cache_read_tokens": 0,
+      "estimated_cost_usd": 0.000762,
+      "checks": {
+        "대출 조건": true,
+        "연장 예외": true,
+        "출처": true
+      }
+    },
+    {
+      "design": "compressed",
+      "context": "1명당 최대 7권, 14일 대출, 예약 없으면 1회 7일 연장 [E01-p3]",
+      "answer": "대출 조건은 다음과 같습니다.\n\n- **대출 권수:** 1인당 **최대 7권**\n- **대출 기간:** **14일**\n- **연장 조건:** **예약이 없는 경우에 한해 1회 7일 연장 가능**\n- **출처:** **[E01-p3]**\n\n즉, **한 사람당 7권까지 14일 동안 빌릴 수 있고, 해당 도서에 예약이 없으면 한 번에 7일 연장**할 수 있습니다.",
+      "usage": {
+        "input_tokens": 82,
+        "output_tokens": 118,
+        "total_tokens": 200,
+        "input_token_details": {
+          "audio": 0,
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "audio": 0,
+          "reasoning": 0
+        }
+      },
+      "latency_ms": 1450.1,
+      "cache_read_tokens": 0,
+      "estimated_cost_usd": 0.0005925,
+      "checks": {
+        "대출 조건": true,
+        "연장 예외": true,
+        "출처": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · git reset --hard HEAD~1"]
+    direction LR
+    b1["experiment 이름을<br>바로 앞 커밋으로 옮김"]:::flow
+    b2["git log --oneline<br>아이디어 커밋 없음"]:::measure
+    b3["idea.txt가 폴더에<br>있는가: False"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph AFTER["After · git reflog -5"]
+    direction LR
+    a1["HEAD@{1}: commit:<br>docs: 쿠폰 아이디어 기록"]:::measure
+    a2["git branch<br>recovered-idea<br>HEAD@{1}"]:::flow
+    a3["idea.txt가 폴더에<br>있는가: True"]:::measure
+    a1 --> a2 --> a3
+  end
+  BEFORE --> AFTER

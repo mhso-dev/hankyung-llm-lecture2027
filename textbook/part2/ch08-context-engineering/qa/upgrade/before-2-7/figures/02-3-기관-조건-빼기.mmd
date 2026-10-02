@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph A["4절 · 기관과 주제로 고름"]
+    direction LR
+    a1["기관 미르시립도서관<br>and 주제 대출 · 주차"]:::flow
+    a2["기록 2개<br>E01 p.3 · E01 p.5<br>근거 37토큰"]:::measure
+    a1 --> a2
+  end
+  subgraph B["5절 · 주제만으로 고름"]
+    direction LR
+    b1["주제 대출 · 주차<br>기관 조건 없음"]:::flow
+    b2["기록 4개 · 근거 101토큰<br>+ E02 p.5 별빛제과 주차<br>+ E04 p.2 청담해운 대출"]:::measure
+    b3["요청은<br>보내지 않음"]
+    b1 --> b2
+    b2 --> b3
+  end
+  A ~~~ B

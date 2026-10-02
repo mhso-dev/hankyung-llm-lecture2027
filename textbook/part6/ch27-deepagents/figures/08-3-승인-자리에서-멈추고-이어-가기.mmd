@@ -1,0 +1,12 @@
+%%{init: {"sequence": {"messageAlign": "left", "actorMargin": 30, "width": 120}}}%%
+sequenceDiagram
+  participant U as 우리 코드
+  participant R as 승인 노드 review
+  participant T as 도구 실행 노드
+  U->>R: 손 요청 write_file 하나로 invoke
+  Note over R: 멈춤 · 다음 노드 review<br>보고 파일 없음
+  R-->>U: 결과 키 interrupt · 질문 값 두 키
+  U->>R: Command resume · 결정 목록 approve 하나
+  R->>T: 승인한 write_file
+  T-->>U: success · 보고 파일 생김
+  Note over U: 글 하나 approve만 넘기면<br>TypeError

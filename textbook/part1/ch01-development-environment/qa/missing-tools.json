@@ -1,0 +1,22 @@
+{
+  "scenario": "PATH에 Git·uv·Docker 명령이 없는 환경",
+  "verification": {
+    "status": "passed",
+    "executed_at": "2026-09-09T12:13:12.724105+00:00",
+    "code_sha256": "41cef72f3622d12ce0bc3e429aac55a098cecca5e5e40d05843b27d643aacb03",
+    "outputs_sha256": "055a3ea4c18be662b41233fb36fd95e34de87f18efe25c70155402bbc152fc15",
+    "code_cells": 7,
+    "fresh_kernel": true,
+    "allow_errors": false,
+    "python_version": "3.12.13"
+  },
+  "outputs": [
+    "Git 명령 발견: False\nuv 명령 발견: False\nDocker 명령 발견: False\n",
+    "Git: 2절의 설치 안내를 확인하세요.\n",
+    "저장소 비교: Git 미준비로 실행하지 않음\n",
+    "파일 상태 비교: Git 미준비로 실행하지 않음\n",
+    "Docker 클라이언트: 명령을 찾지 못함\n",
+    "Docker 서버: 클라이언트 미준비로 확인하지 않음\n",
+    "Python 3.12: True\nuv 응답: False\n현재 커널이 가상환경 내부: True\nGit 응답: False\nDocker 클라이언트 응답: False\nDocker 서버 응답: False\n"
+  ]
+}

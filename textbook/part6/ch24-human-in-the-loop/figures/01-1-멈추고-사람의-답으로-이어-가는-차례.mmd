@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  a["첫 invoke<br>주문 키 order-2401"]:::tool
+  n1["노드 ask_only 시작<br>interrupt에서 멈춤"]:::flow
+  p["멈춤 표시 하나와 질문 값<br>체크포인트 둘"]:::measure
+  h["사람의 답 approve"]:::tool
+  c["Command<br>resume=approve<br>같은 스레드로 invoke"]:::flow
+  n2["노드 ask_only를<br>처음부터 다시 실행<br>interrupt가 답을 내놓음"]:::flow
+  d["칸 answer approve<br>체크포인트 셋"]:::measure
+  a --> n1
+  n1 --> p
+  p --> h
+  h --> c
+  c --> n2
+  n2 --> d

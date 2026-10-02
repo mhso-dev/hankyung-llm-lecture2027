@@ -1,0 +1,93 @@
+<!--meta: 강의 1h · 실습은 챕터 전체 10h 안에서 진행합니다. -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><p>이 절을 마치면 다음을 할 수 있습니다.</p><ul><li>튜플 <code>("user", …)</code>과 메시지 객체 <code>HumanMessage(…)</code>를 같은 역할의 다른 표기로 읽을 수 있습니다.</li><li>모델 이름의 콜론 뒤와 앞을 바꿨을 때, 그대로 되는 것과 다시 확인할 인자를 나눌 수 있습니다.</li><li>실행함·키 없음·요청 오류를 기록표에 서로 다른 상태로 적을 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>첫 호출이 되면 다른 모델에도 같은 질문을 보내 보고 싶어집니다. 이때 질문까지 바꾸면 답이 달라진 이유를 나누기 어렵습니다. 그래서 메시지 목록은 그대로 두고 모델 설정만 바꿉니다.</p>
+<p>함수 <code>init_chat_model()</code>은 여러 제공자의 모델 객체를 같은 모양의 줄로 만들어 줍니다. 그렇다고 키와 인자까지 같아지지는 않습니다. 이 절에서는 그대로 쓸 수 있는 부분과 제공자마다 다시 확인할 부분을 실행으로 나눕니다.</p>
+<p><strong>이 절의 질문</strong> — 같은 메시지를 여러 모델 설정에 보낼 때, 무엇을 고정하고 무엇을 기록해야 할까요?</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<table><thead><tr><th>앞 절</th><th>배운 것</th><th>이 절에서 이어지는 곳</th></tr></thead><tbody>
+<tr><td>01절</td><td>메시지 튜플 목록, <code>init_chat_model()</code>·<code>invoke()</code>, 응답의 <code>text</code>·<code>usage_metadata</code></td><td>튜플 목록과 메시지 객체 목록을 같은 모델로 보내기</td></tr>
+<tr><td>01절</td><td>모델 객체를 만들 때는 요청 0번, 값 검사 오류 <code>ValidationError</code></td><td>5·6절에서 요청 없이 객체만 만들기, 6절 인자 거부</td></tr>
+<tr><td>Ch 2 03절</td><td>튜플 풀어 담기, 딕셔너리 <code>get(키, 기본값)</code></td><td>다른 제공자 목록 반복, 상태별 줄 수 세기</td></tr>
+<tr><td>Ch 2 04·05절</td><td>함수 정의, 오류 이름만 받는 <code>try/except 이름 as error</code></td><td>기록 함수 <code>make_record()</code>, 6·7절 오류 받기</td></tr>
+<tr><td>Ch 5 04절</td><td>역할 딕셔너리 <code>{"role": "user", "content": …}</code></td><td>역할 이름 user와 human</td></tr>
+<tr><td>Ch 5 08절</td><td>필수 조건과 선택 기준으로 모델 고르기</td><td>모델 이름을 바꿔 본 것은 모델 고르기가 아님</td></tr>
+</tbody></table>
+<p>01절에서는 튜플 <code>("system", …)</code>을 목록에 담아 보냈습니다. 튜플 내용이 <code>None</code>이면 요청 전에 <code>ValidationError</code>가 났습니다. 그 오류 메시지에 나온 이름 HumanMessage가 이 절에서 직접 만드는 메시지 객체입니다.</p>
+<p>값 검사 오류의 뜻은 01절에서 풀었고, 자세한 내용은 <a href="../../part1/ch02-python/10-Pydantic.html">Ch 2 10절 Pydantic</a>에 있습니다. 이 절 6절에서 같은 이름의 오류를 다시 만납니다.</p>
+<p>Ch 5 08절에서는 필수 조건으로 후보를 거르고, 미리 정한 선택 기준으로 모델을 골랐습니다. 이 절에서 <code>gpt-5.4-nano</code>로 바꿔 보는 것은 그 절차가 아닙니다. 같은 코드에서 모델 이름만 바꿀 수 있는지 확인하는 실험입니다.</p>
+<p>실습 폴더와 <code>.env</code> 파일의 <code>OPENAI_API_KEY</code>는 01절과 같습니다. 이 절은 Anthropic·Google 키가 없어도 끝까지 실행됩니다. 노트북은 앞 절 없이 새 커널에서 시작합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유로 시작하기</h3>
+<p>책상 위에 우편함 세 개가 있습니다. 파란 카드에는 공통 지시를, 노란 카드에는 이번 질문을 적어 한 벌로 겹칩니다. 똑같은 카드 한 벌을 우편함마다 하나씩 준비합니다.</p>
+<p>초록 우편함 두 개는 모양이 같고 크기만 다릅니다. 두 곳 모두 입구에 카드가 들어갑니다. 회색 우편함은 모양이 다르고 입구에 자물쇠가 걸려 있어, 카드가 그 앞 책상에 그대로 남습니다.</p>
+{{img:02-5-우편함-세-개|나무 책상 위에 모양이 같은 초록 상자 우편함 큰 것과 작은 것, 둥근 지붕의 회색 우편함이 나란히 있고, 두 초록 우편함 입구에는 파란 카드를 노란 카드 위에 겹친 한 벌이 반쯤 꽂혀 있으며, 자물쇠가 걸린 회색 우편함 앞 책상에는 같은 카드 한 벌이 놓인 삽화|같은 카드 한 벌을 우편함 세 곳에 준비했습니다. 초록 우편함 두 곳에는 들어가고, 자물쇠가 걸린 회색 우편함 앞에서는 책상에 남습니다.}}
+<p><strong>그림 읽기</strong> — 왼쪽의 큰 초록 우편함과 가운데의 작은 초록 우편함은 모양이 같습니다. 두 입구에는 파란 카드를 노란 카드 위에 겹친 한 벌이 반쯤 꽂혀 있습니다. 오른쪽 회색 우편함은 지붕이 둥글고 입구에 자물쇠가 걸려, 같은 카드 한 벌이 그 앞 책상에 놓여 있습니다.</p>
+<p>카드 한 벌이 메시지 목록이고, 파란 카드와 노란 카드가 system과 user 역할입니다. 우편함은 모델이고, 우편함의 색과 모양은 제공자입니다. 자물쇠는 준비되지 않은 키입니다. 01절 창구 그림의 노란 쪽지는 프롬프트 전체였지만, 이 그림의 노란 카드는 user 질문 하나입니다.</p>
+<h3>메시지 객체와 역할 이름</h3>
+<p>메시지 객체(message object)는 역할을 클래스 이름으로 드러낸 메시지입니다. 카드 색으로 지시와 질문을 나누는 것과 비슷합니다. 노트북 3절에서는 <code>SystemMessage("한 문장의 한국어로 답하세요.")</code>처럼 괄호 안에 내용을 넣어 만들었습니다.</p>
+<p>튜플과 메시지 객체는 같은 역할의 다른 표기입니다. 튜플의 역할 이름 user는 객체에서 클래스 <code>HumanMessage</code>가 됩니다. 속성 <code>type</code>에는 human으로 적힙니다. 두 이름이 달라도 제공자가 달라진 것은 아닙니다.</p>
+<p>메서드 <code>invoke()</code>는 튜플을 받으면 먼저 메시지 객체로 바꿉니다. 01절에서 설치한 langchain-core 1.6.2 소스로 확인한 단계입니다. 노트북 4절에서 두 목록을 보낸 호출의 입력 토큰 수는 모두 33으로 같았습니다.</p>
+{{mermaid:02-1-두-표기-같은-요청|왼쪽 초록 상자 튜플 목록과 초록 상자 메시지 객체 목록이 파란 상자 invoke가 메시지 객체로 맞춤으로 모이고, 보라 상자 gpt-5.4-mini를 거쳐 노란 상자 입력 토큰 수 두 호출 모두 33으로 이어지는 흐름도|튜플 목록과 메시지 객체 목록은 invoke 안에서 같은 메시지 객체가 됩니다. 따로 보낸 두 호출의 입력 토큰 수는 모두 33이었습니다.}}
+<p><strong>도식 읽기</strong> — 왼쪽에서 오른쪽으로 읽습니다. 초록 상자 두 개는 같은 역할과 내용을 튜플과 메시지 객체로 적은 목록입니다. 두 목록은 파란 상자에서 메시지 객체로 맞춰진 뒤, 보라 상자 <code>gpt-5.4-mini</code>로 갑니다.</p>
+<p>노란 상자는 노트북 4절에서 출력으로 확인한 입력 토큰 수입니다. 실제로는 두 목록을 따로 두 번 보냈습니다. 두 호출이 같은 길을 지난다는 뜻으로 그림에서는 한 줄로 합쳤습니다.</p>
+<h3>모델 이름의 콜론 앞과 뒤</h3>
+<p>01절에서 본 것처럼 <code>openai:gpt-5.4-mini</code>의 콜론 앞은 제공자, 뒤는 모델 이름입니다. 함수 <code>init_chat_model()</code>은 콜론 앞 이름으로 모델 객체의 종류를 고릅니다. 설치한 langchain 1.4.0 소스에서 짝을 확인했습니다. 이름 anthropic은 ChatAnthropic을 만듭니다. 이름 google_genai는 ChatGoogleGenerativeAI를 만듭니다.</p>
+<p>통합 패키지(integration package)는 공통 호출을 한 제공자의 요청 형식으로 바꾸는 패키지입니다. 나라마다 콘센트 모양이 달라 변환 플러그를 끼우는 것과 비슷합니다. 준비 셀에서 설치한 langchain-anthropic 1.7.1이 anthropic용 통합 패키지입니다.</p>
+<p>함수 <code>init_chat_model()</code>은 모델 이름 말고 받은 인자를 고른 모델 객체에 그대로 넘깁니다. 그래서 인자 이름이 같아도 받는 값은 제공자마다 다를 수 있습니다. 노트북 6절에서 Anthropic 모델 객체는 <code>reasoning_effort="none"</code>을 받지 않았습니다.</p>
+<h3>이 절에서 쓰는 말</h3>
+<table><thead><tr><th>용어</th><th>뜻</th><th>이 절에서 보이는 모습</th></tr></thead><tbody>
+<tr><td>메시지 객체(message object)</td><td>역할을 클래스 이름으로 드러낸 메시지. 카드 색으로 지시와 질문을 나누는 것과 비슷함</td><td><code>SystemMessage | system | 한 문장의 한국어로 답하세요.</code></td></tr>
+<tr><td>역할 이름</td><td>메시지 객체의 속성 <code>type</code>에 적힌 이름. 튜플의 user가 객체에서는 human</td><td><code>HumanMessage | human |</code></td></tr>
+<tr><td>통합 패키지(integration package)</td><td>공통 호출을 한 제공자의 요청 형식으로 바꿔 주는 패키지</td><td><code>langchain-anthropic: 1.7.1</code></td></tr>
+<tr><td>실행 상태</td><td>설정마다 요청이 어떻게 끝났는지 기록표에 적은 값. 실행함·키 없음·요청 오류. 키가 있는데 이 노트북이 부르지 않은 제공자는 <code>키 있음, 부르지 않음</code></td><td><code>openai:gpt-5.4-mimi | 요청 오류 | None</code></td></tr>
+<tr><td>모델 없음 오류</td><td>요청한 모델을 서버가 찾지 못했을 때 나는 오류 <code>ModelNotFoundError</code>. 없는 방 번호로 보낸 편지가 되돌아오는 것과 비슷함</td><td><code>오류 종류: OpenAIModelNotFoundError</code></td></tr>
+<tr><td>상태 코드</td><td>서버가 요청 결과를 숫자로 알려 주는 값. 404는 요청한 대상을 찾지 못했다는 뜻</td><td><code>Error code: 404</code></td></tr>
+</tbody></table>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>노트북은 같은 역할과 내용을 튜플 목록과 메시지 객체 목록으로 만들어 같은 모델에 보냅니다. 그다음 모델 이름과 제공자 이름을 하나씩 바꾸고, 없는 모델 이름으로도 요청을 보냅니다. 마지막에 결과를 기록표에 적고 상태별로 셉니다.</p>
+<p>실제 OpenAI 모델을 temperature 0으로 부릅니다. 이 페이지의 출력은 2026-09-17에 실행한 결과입니다. 요청은 모두 4번이고, 그중 답을 받은 호출은 3번입니다. 예상 비용은 0.01달러 미만이고, 답 문장은 실행마다 달라질 수 있습니다.</p>
+{{notebook:02-메시지와-제공자-전환}}
+<p class="look"><b>확인할 점</b> — 4절 마지막 줄 <code>두 호출의 입력 토큰 수가 같은가: True</code>를 봅니다. 6절에서는 오류 메시지 첫 줄 <code>1 validation error for ChatAnthropic</code>을 봅니다. 7절에서는 <code>Error code: 404</code>를 봅니다.</p>
+<h3>모델 이름을 하나씩 바꾸면</h3>
+<p>노트북 5절은 콜론 뒤만 <code>gpt-5.4-nano</code>로 바꿨고, 6절은 콜론 앞을 anthropic으로 바꿨습니다. 5절은 같은 코드로 답을 받았습니다. 6절은 인자 한 줄을 지워야 모델 객체가 만들어졌습니다.</p>
+{{mermaid:02-2-모델-이름-바꾸기|위 칸은 초록 상자 openai gpt-5.4-nano reasoning_effort none이 보라 상자 gpt-5.4-nano를 거쳐 노란 상자 ChatOpenAI 답 한 문장 출력 44토큰으로, 가운데 칸은 초록 상자 anthropic claude-haiku-4-5 reasoning_effort none이 노란 상자 ValidationError none은 받지 않음으로, 아래 칸은 초록 상자 anthropic claude-haiku-4-5 temperature 0이 노란 상자 ChatAnthropic 키 없음 요청 0번으로 이어지는 그림|콜론 뒤 모델 이름만 바꾸면 같은 코드로 답을 받았고, 콜론 앞 제공자를 바꾸자 reasoning_effort none이 거부되었습니다. 추론 설정 줄을 빼자 ChatAnthropic이 만들어졌습니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 세 칸을 읽고, 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 초록 상자는 넘긴 모델 이름과 인자, 보라 상자는 실행한 모델, 노란 상자는 출력으로 확인한 값입니다.</p>
+<p>맨 위 칸은 nano 모델이 한 문장으로 답하고 출력 44토큰을 쓴 결과입니다. 가운데 칸의 노란 상자는 값 none이 거부된 결과입니다. 노트북은 이 오류를 받아 출력했고, 다음 셀에서 인자 한 줄을 지워 고칩니다.</p>
+<p>맨 아래 칸은 추론 설정 줄을 뺀 뒤 <code>ChatAnthropic</code> 객체가 만들어진 결과입니다. 키가 없어 이 객체로는 요청을 보내지 않았습니다.</p>
+<h3>멈춘 자리가 다른 세 경우</h3>
+<p>노트북 6절과 7절에는 답을 받지 못한 경우가 셋 있습니다. 인자가 거부된 경우, 키가 없어 부르지 않은 경우, 서버가 거절한 경우입니다. 세 경우는 요청이 나갔는지가 달라서 기록도 다르게 합니다.</p>
+{{mermaid:02-3-멈춘-자리|노트북 코드, 모델 객체, OpenAI 서버 세 세로줄 사이에서 anthropic 모델 객체를 만들다 ValidationError를 받고 요청 0번 메모, 추론 설정을 빼고 ChatAnthropic을 받은 뒤 키 없음이라 invoke 안 부름 메모, gpt-5.4-mimi로 invoke하자 모델 객체가 서버로 요청 1번을 보내고 404 model_not_found를 받아 OpenAIModelNotFoundError를 넘긴 뒤 요청 오류 메모가 붙은 순서도|앞의 두 경우는 요청이 0번이고, 없는 모델 이름만 요청 1번이 서버까지 가서 404로 거절되었습니다.}}
+<p><strong>도식 읽기</strong> — 세로줄은 왼쪽부터 노트북 코드, 모델 객체, OpenAI 서버입니다. 위에서 아래로 시간 순서이고, 실선은 요청, 점선은 응답입니다. 노란 메모는 각 경우가 끝난 뒤 출력으로 확인한 것입니다.</p>
+<p>첫 메모는 모델 객체를 만들다 <code>ValidationError</code>로 멈춘 경우라 요청 0번입니다. 둘째 메모는 <code>ChatAnthropic</code> 객체를 받았지만, 키가 없어 <code>invoke()</code>를 부르지 않은 경우입니다.</p>
+<p>마지막 경우만 요청 1번이 서버까지 갔습니다. 서버가 <code>404 model_not_found</code>를 보내자, 모델 객체가 <code>OpenAIModelNotFoundError</code>로 넘겼습니다. 그래서 기록표에는 이 경우만 요청 오류로 적었습니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2>
+<p>노트북 8절 기록표는 다섯 줄입니다. 9절 출력은 <code>상태별 줄 수: {'실행함': 2, '요청 오류': 1, '키 없음': 2}</code>였습니다.</p>
+{{mermaid:02-4-기록표|위 칸 실행함에는 노란 상자 openai gpt-5.4-mini 출력 39토큰과 openai gpt-5.4-nano 출력 44토큰, 가운데 칸 요청 오류에는 노란 상자 openai gpt-5.4-mimi 404 출력 None, 아래 칸 키 없음에는 회색 상자 anthropic claude-haiku-4-5 출력 None과 google_genai gemini-2.5-flash-lite 출력 None이 있는 기록표 그림|기록표 다섯 줄을 상태별로 나눴습니다. 답을 받은 두 줄만 출력 토큰 수가 있고, 나머지 세 줄은 0이 아니라 None입니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 상태별 칸을 읽습니다. 노란 상자는 출력으로 확인한 결과이고, 회색 상자는 요청을 보내지 않은 설정입니다. 요청 오류 칸도 노랑입니다. 코드가 오류를 받아 기록표의 상태로 적었기 때문입니다.</p>
+<p>이 기록표로 말할 수 있는 것은 OpenAI 모델 두 개가 같은 메시지에 한 문장으로 답했다는 것까지입니다. 출력 39토큰과 44토큰은 한 번씩 받은 값이라 두 모델의 차이로 일반화하지 않습니다. 두 답이 맞는 설명인지도 이번에 판정하지 않았습니다.</p>
+<p>키 없음 두 줄은 모델이 나쁘다는 결과가 아니라, 실행하지 않았다는 기록입니다. 출력 토큰 수를 0이 아니라 <code>None</code>으로 적은 이유도 같습니다. 세 제공자의 품질과 속도 순위는 이 표로 정할 수 없습니다. Anthropic·Google 키를 준비한 컴퓨터에서는 두 줄이 <code>키 있음, 부르지 않음</code>으로 나옵니다. 이 노트북은 그때도 두 제공자에 요청을 보내지 않습니다.</p>
+<p>같은 입력을 temperature 0으로 두 번 보냈을 때, 입력 토큰 수는 33으로 같았지만 답의 낱말 몇 개가 달랐습니다. 튜플 목록 호출의 「말투」가 메시지 객체 목록 호출에서는 「톤」으로 나왔습니다. 01절에서 말한 「비슷한 답, 똑같다고 보장하지 않음」을 이번 실행에서 한 번 본 것입니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul><li>키 값은 출력하지 않습니다. 이 절도 키 설정 여부 <code>True</code>·<code>False</code>만 출력했습니다. 한 제공자의 키를 다른 제공자의 변수 이름에 옮겨 적지 않습니다.</li>
+<li>키 설정 여부 <code>True</code>는 인증에 성공했다는 뜻이 아닙니다. 요청을 보내 답을 받아야 그 키로 그 모델을 쓸 수 있다는 것이 확인됩니다.</li>
+<li>이 절은 Anthropic·Google에 요청을 보내지 않았습니다. 두 제공자의 답, 사용량, 인자 지원은 키를 준비한 환경에서 따로 확인합니다. 키 없이 <code>invoke()</code>를 부르면 어떻게 되는지도 이번에 실행하지 않았습니다.</li>
+<li>교재를 만들 때 탐색 실행에서, Google 모델 객체는 키가 없으면 만드는 단계에서 <code>ValidationError</code>가 났습니다. 그래서 노트북은 Google 모델 객체를 만들지 않고 키만 확인합니다. 그 오류 메시지는 <code>GOOGLE_API_KEY</code>와 <code>GEMINI_API_KEY</code>를 함께 안내했지만, 노트북은 앞의 이름만 확인합니다.</li>
+<li>제공자를 바꿀 때는 인자를 다시 확인합니다. Anthropic 모델 객체는 인자 <code>reasoning_effort</code>에 max·xhigh·high·medium·low만 받았습니다. 설치한 langchain-anthropic 1.7.1에서 본 값이라, 패키지 판이 바뀌면 받는 값도 바뀔 수 있습니다.</li>
+<li>오류 이름 <code>ModelNotFoundError</code>는 설치한 소스에서 OpenAI·Anthropic·Google 통합 패키지가 모두 씁니다. 이번에 실제로 받은 것은 OpenAI의 404 하나입니다. 모델 이름 오타는 모델 객체를 만들 때가 아니라 요청을 보낸 뒤에 드러났습니다.</li>
+<li>메시지 역할은 권한이 아닙니다. system 메시지에 적은 규칙을 모델이 늘 지킨다는 보장은 없습니다. 이 절은 규칙을 어기라고 요구하는 user 질문을 실행하지 않았습니다. 중요한 규칙은 출력 검사로 함께 확인합니다.</li>
+<li>모델 이름 <code>gpt-5.4-nano</code>와 오타 <code>gpt-5.4-mimi</code>는 흐름을 보여 주려고 정한 예입니다. 오타 이름의 404 거절과 Anthropic 인자 거부는 교재를 만들 때 탐색 실행으로 먼저 확인했습니다.</li>
+<li>교재 출력은 Linux의 Python 3.12.13으로 만들었습니다. 패키지는 langchain 1.4.0, langchain-core 1.6.2, langchain-openai 1.6.0입니다. langchain-anthropic 1.7.1, langchain-google-genai 4.4.0도 설치했습니다. 다른 버전과 Windows·macOS에서는 실행하지 않았습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>튜플 <code>("user", …)</code>과 메시지 객체 <code>HumanMessage(…)</code>는 같은 역할의 다른 표기였고, 두 호출의 입력 토큰 수가 33으로 같았습니다.</li><li>콜론 뒤 모델 이름만 바꾸면 같은 코드로 답을 받았습니다. 콜론 앞 제공자를 바꾸자 <code>reasoning_effort="none"</code>이 요청 전에 거부되었습니다.</li><li>답을 받은 호출은 실행함, 키가 없어 부르지 않은 제공자는 키 없음, 서버가 거절한 요청은 요청 오류로 따로 적었습니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 03절에서는 답을 자유로운 문장 대신 이름 있는 칸으로 받습니다. 이 절에서 읽은 응답 객체 <code>AIMessage</code>와, 칸이 정해진 결과가 어떻게 다른지 확인합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz"><summary>문제 1 · 두 역할 이름</summary><p class="quiz-q">튜플의 <code>user</code>와 메시지 객체의 <code>human</code>은 서로 다른 제공자를 뜻하나요?</p><p class="quiz-a"><b>해설</b> — 아닙니다. 같은 역할의 다른 표기입니다. 제공자는 모델 이름의 콜론 앞에서 정해집니다. 두 목록을 보낸 호출의 입력 토큰 수도 33으로 같았습니다.</p></details>
+<details class="quiz"><summary>문제 2 · 요청이 나간 셀</summary><p class="quiz-q">노트북 5절에서 nano 모델 객체를 만든 셀을 실행했을 때 요청은 몇 번 나갔나요?</p><p class="quiz-a"><b>해설</b> — 0번입니다. 01절처럼 모델 객체를 만드는 줄은 요청을 보내지 않습니다. 요청은 다음 셀의 <code>invoke()</code>에서 나갔습니다.</p></details>
+<details class="quiz"><summary>문제 3 · 그대로 옮긴 인자</summary><p class="quiz-q">OpenAI 모델에 쓰던 인자를 그대로 두고 콜론 앞만 anthropic으로 바꿨습니다. 무슨 일이 났고, 요청은 나갔나요?</p><p class="quiz-a"><b>해설</b> — Anthropic 모델 객체를 만들 때 <code>ValidationError</code>가 났습니다. 인자 <code>reasoning_effort</code>의 값 none을 받지 않았기 때문입니다. 객체를 만드는 단계라 요청은 나가지 않았습니다.</p></details>
+<details class="quiz"><summary>문제 4 · 실행하지 않은 줄</summary><p class="quiz-q">키가 없는 Google 줄의 출력 토큰 수를 0으로 적으면 어떤 오해가 생기나요?</p><p class="quiz-a"><b>해설</b> — 답을 받았는데 아주 짧았던 것처럼 보입니다. 실제로는 요청이 없었으므로 상태 키 없음과 <code>None</code>을 적습니다.</p></details>
+<details class="quiz"><summary>문제 5 · 오타가 드러난 자리</summary><p class="quiz-q">모델 이름 오타 <code>gpt-5.4-mimi</code>는 모델 객체를 만들 때 알 수 있었나요?</p><p class="quiz-a"><b>해설</b> — 아닙니다. 모델 객체는 만들어졌고, 요청이 서버에 닿은 뒤 404로 거절되었습니다. 요청이 나갔으므로 6절의 인자 거부와 달리 요청 오류로 기록합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<p>문서는 2026-09-17에 다시 열어 확인했습니다. 클래스 이름, 인자 값, 오류 이름은 실습 가상환경에 설치한 패키지 소스에서도 확인했습니다. 확인한 판은 <code>langchain 1.4.0</code>, <code>langchain-core 1.6.2</code>, <code>langchain-openai 1.6.0</code>, <code>langchain-anthropic 1.7.1</code>, <code>langchain-google-genai 4.4.0</code>입니다.</p>
+<ul><li><div><a href="https://docs.langchain.com/oss/python/langchain/messages">LangChain Messages</a></div>메시지 객체와 역할 · 확인 2026-09-17</li><li><div><a href="https://docs.langchain.com/oss/python/langchain/models">LangChain Models</a></div>제공자와 모델 이름을 함께 적는 모델 초기화 · 확인 2026-09-17</li><li><div><a href="https://docs.langchain.com/oss/python/integrations/chat/anthropic">ChatAnthropic integration</a></div>Anthropic 통합 패키지와 키 이름 · 확인 2026-09-17</li><li><div><a href="https://docs.langchain.com/oss/python/integrations/chat/google_generative_ai">ChatGoogleGenerativeAI integration</a></div>Google 통합 패키지와 키 이름 · 확인 2026-09-17</li><li><div><a href="https://github.com/langchain-ai/langchain/blob/master/LICENSE">LangChain MIT License</a></div>예제의 질문과 설명은 이 교재에 맞게 새로 썼습니다</li></ul>

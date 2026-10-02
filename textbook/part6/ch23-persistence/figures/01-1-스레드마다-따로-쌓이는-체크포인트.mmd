@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  cfg["설정 딕셔너리<br>키 configurable 아래 thread_id"]:::tool
+  gr["그래프 graph<br>체크포인터를 붙여 컴파일"]
+  mem["체크포인터 InMemorySaver<br>이 프로그램의 메모리에 저장"]
+  ta["스레드 customer-a<br>체크포인트 여섯 · 합계 7"]:::measure
+  tb["스레드 customer-b<br>체크포인트 셋 · 합계 4"]:::measure
+  cfg -->|invoke의 둘째 인자| gr
+  gr -->|단계를 마칠 때마다 저장| mem
+  mem -.->|thread_id가 customer-a| ta
+  mem -.->|thread_id가 customer-b| tb

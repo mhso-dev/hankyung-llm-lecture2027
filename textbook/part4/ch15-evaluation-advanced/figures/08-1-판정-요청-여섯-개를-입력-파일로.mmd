@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  cases["평가 사례 세 건<br>이전 판 답<br>자료 파일"]:::tool
+  answers["이후 판 답 둘<br>Q002 · Q090<br>07절에서 만든 답"]:::tool
+  prompts["make_prompts<br>판정 요청 글 여섯 개<br>07절과 같은 글"]:::flow
+  lines["make_batch_lines<br>판 표시 old · new와<br>질문 번호로 요청 식별자"]:::flow
+  file["runs/<br>batch-eval-input.jsonl<br>요청 여섯 줄"]:::tool
+  check["제출 전 검사<br>네 칸 · POST · 주소 · 모델<br>어긋난 것 없음<br>겹친 요청 식별자 없음"]:::measure
+  later["올리기 · 일괄 작업 만들기<br>결과 파일 받기<br>이번에 하지 않음"]
+  cases --> prompts
+  answers --> prompts
+  prompts --> lines
+  lines --> file
+  file --> check
+  check -.-> later

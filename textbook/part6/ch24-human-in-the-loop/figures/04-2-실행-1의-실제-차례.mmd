@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  s1["첫 invoke · 연장 일수 14<br>노드 셋 실행 · 멈춤<br>질문 값<br>연장 뒤 남은 날 17"]:::measure
+  s2["사람의 답 change"]:::tool
+  s3["ask_extension 두 번 실행<br>다시 물은 질문 값에<br>허용하지 않는 값 change"]:::measure
+  s4["find_before로 단계 1 고름<br>update_state로 연장 일수 7<br>invoke None으로 새 가지"]:::flow
+  s5["plan_extension과<br>ask_extension 실행<br>새 가지의 질문 값<br>연장 뒤 남은 날 10"]:::measure
+  s6["사람의 답 approve"]:::tool
+  s7["연장 기록 한 줄<br>체크포인트 여덟<br>원래 가지는 연장 일수 14의<br>다시 물은 질문에서 멈춘 채"]:::measure
+  s1 --> s2
+  s2 --> s3
+  s3 --> s4
+  s4 --> s5
+  s5 --> s6
+  s6 --> s7

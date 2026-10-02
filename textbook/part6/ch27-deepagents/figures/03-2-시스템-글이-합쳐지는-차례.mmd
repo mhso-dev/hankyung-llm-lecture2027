@@ -1,0 +1,17 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  subgraph on[6절 할 일 목록과 우리 글]
+    direction TB
+    ours["우리 글 93자"]:::tool
+    guide["할 일 설명 글<br>요청마다 끝에 붙임<br>소스 확인"]
+    joined["요청의 시스템 글 1465자<br>우리 글 · 빈 줄 · 할 일 설명 글"]:::measure
+    ours --> joined
+    guide --> joined
+  end
+  subgraph off[5절 할 일 목록 없이]
+    direction TB
+    none["system_prompt<br>주지 않음"]:::tool
+    empty["요청의 시스템 글<br>빈 글"]:::measure
+    none --> empty
+  end

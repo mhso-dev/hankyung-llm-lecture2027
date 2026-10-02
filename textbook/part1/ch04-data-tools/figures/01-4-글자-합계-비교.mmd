@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 모든 열을 글자로 읽기"]
+    direction LR
+    b1["read_csv(dtype=str)<br>amount 열 str"]:::flow
+    b2["sum()<br>글자 이어 붙이기"]:::flow
+    b3["320001800027000<br>자료형 str"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph AFTER["After · 숫자로 바꾼 뒤 합계"]
+    direction LR
+    a1["pd.to_numeric()<br>amount 열 int64"]:::flow
+    a2["sum()<br>숫자 더하기"]:::flow
+    a3["금액 합계 77000<br>assert 통과"]:::measure
+    a4["목록에 미정 섞기<br>pd.to_numeric()"]:::flow
+    a5["ValueError 받아 출력<br>position 1"]:::measure
+    a1 --> a2 --> a3
+    a4 --> a5
+  end
+  BEFORE --> AFTER

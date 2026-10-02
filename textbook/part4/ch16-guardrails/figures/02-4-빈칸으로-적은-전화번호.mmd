@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph dash["붙임표로 적은 번호 · 노트북 5절"]
+    direction TB
+    d1["질문 속 번호<br>010-0000-0000"]:::tool
+    d2["전화번호 하나를 찾음<br>표식으로 바뀜"]:::measure
+    d1 --> d2
+  end
+  subgraph blank["빈칸으로 적은 번호 · 노트북 9절"]
+    direction TB
+    s1["질문 속 번호<br>010 0000 0000"]:::tool
+    s2["찾은 전화번호 없음<br>원문이 그대로 남음"]:::measure
+    s1 --> s2
+  end
+  same["같은 함수 mask_pii로 가림<br>나머지 세 값은<br>두 칸 모두 표식으로"]
+  dash ~~~ same
+  blank ~~~ same

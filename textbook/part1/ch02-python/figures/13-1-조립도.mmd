@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  F["파일 이름<br>file_name"]:::tool
+  L["read_items()<br>collect_order_lines()<br>5·6절 부품"]:::flow
+  O["주문 인스턴스 목록<br>order_lines"]:::tool
+  S["건너뛴 줄 목록<br>skipped_lines"]:::tool
+  P["가격표<br>unit_prices"]:::tool
+  T["add_up_total()<br>7절 calculate_line_total"]:::flow
+  B["기록장 report<br>칸 다섯 개"]:::measure
+  F --> L
+  L -->|수량이 정수| O
+  L -->|ValueError| S
+  O --> T
+  P --> T
+  T -->|합계| B
+  S --> B

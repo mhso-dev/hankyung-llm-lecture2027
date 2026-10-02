@@ -1,0 +1,14 @@
+flowchart LR
+  %% classes
+  K["지킬 말 5개<br>7권 · 14일<br>예약이 없는 경우<br>1회 · 7일 연장"]:::tool
+  F["find_missing_words<br>글에 없는<br>지킬 말만 모음"]:::flow
+  subgraph RES["검사한 글과 빠진 지킬 말"]
+    direction TB
+    R1["원문 141토큰<br>빠진 말 없음"]:::measure
+    R2["02절 대출 기록 16토큰<br>빠진 말 예약이 없는 경우<br>1회 · 7일 연장"]:::measure
+    R3["줄인 기록 39토큰<br>빠진 말 없음"]:::measure
+    R1 ~~~ R2
+    R2 ~~~ R3
+  end
+  K --> F
+  F --> RES

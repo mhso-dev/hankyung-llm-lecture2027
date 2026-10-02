@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph before["Before · 한도를 보지 않는 흐름"]
+    direction TB
+    b0["질문 셋"]:::tool
+    b1["보낼 목록 요청 셋<br>한도 둘을 넘는 요청 하나"]:::fail
+    b0 --> b1
+  end
+  subgraph after["After · 부르기 전에 예약하는 흐름"]
+    direction TB
+    a0["질문 셋"]:::tool
+    a1["예약 reserve"]:::flow
+    a2["모델에 보낸 요청 둘"]:::measure
+    a3["셋째 질문 멈춤<br>호출 한도"]:::measure
+    a0 --> a1
+    a1 --> a2
+    a1 --> a3
+  end
+  same["두 칸 모두 같은 질문 셋<br>호출 한도 둘 · 비용 상한 0.01"]
+  before ~~~ same
+  after ~~~ same

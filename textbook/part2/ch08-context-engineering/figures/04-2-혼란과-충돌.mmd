@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph CONF["3절 · 혼란 목록"]
+    direction LR
+    c1["기록 4개<br>E01 p.2 · p.3 · p.5<br>E02 p.2<br>추정 235"]:::tool
+    c2["gpt-5.4-mini<br>출력 상한 120"]:::model
+    c3["답의 출처 E01 p.2만<br>빠진 지킬 말 없음"]:::measure
+    c1 --> c2
+    c2 --> c3
+  end
+  subgraph CLASH["4·5절 · 충돌 목록"]
+    direction LR
+    k1["휴관 기록 + 상담 메모<br>두 순서로 보냄<br>추정 170"]:::tool
+    k2["gpt-5.4-mini<br>출력 상한 120"]:::model
+    k3["두 답 모두 출처 E01 p.2만<br>메모 내용 안 씀<br>다르다는 말 없음"]:::measure
+    k1 --> k2
+    k2 --> k3
+  end
+  CONF ~~~ CLASH

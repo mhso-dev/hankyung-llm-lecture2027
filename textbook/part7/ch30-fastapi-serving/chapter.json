@@ -1,0 +1,70 @@
+{
+  "part": 7,
+  "part_title": "Part 7 · 서비스화 & 배포",
+  "chapter": "ch30-fastapi-serving",
+  "title": "FastAPI로 Agent 서빙",
+  "hours": "총 32h · 강의 10h · 실습 22h",
+  "objectives": [
+    "처리 함수에 입력 형식과 응답 형식을 적어, 맞지 않는 요청은 422로 멈추고 응답에는 정한 칸만 나가는 것을 출력으로 확인합니다.",
+    "의존성과 제공 함수로 처리 함수에 값을 넘기고, 시험에서 채운 재정의 딕셔너리를 비워야 다음 요청에 남지 않는 것을 봅니다.",
+    "비동기 노드 그래프를 ainvoke로 기다려 부르고, astream과 async for로 스트림 사건을 하나씩 받아 이어 붙입니다.",
+    "SSE 응답의 사건 이름·사건 번호·칸 data를 읽고, 요청 머리 Last-Event-ID로 이어 받으며 마지막 사건으로 오류 사건을 가려냅니다.",
+    "CORS 사전 요청과 허용 출처, 접근 토큰 검사의 401, 시간 제한의 504를 응답 머리와 상태 코드로 확인합니다.",
+    "앱 객체가 만든 응답 문서를 실습 폴더의 파일과 견주고, 그 문서로 만든 생성 SDK의 함수를 읽습니다.",
+    "실제 모델과 도구를 쓰는 에이전트를 HTTP 요청 주소로 부르고, 모드 messages의 스트림 청크가 SSE 사건으로 오는 모양을 봅니다.",
+    "실습에서 사전 요청·SSE 응답·이어 받기를 한 요청 흐름으로 잇고, 접근 토큰 하나만 바꾼 실행과 단계 기록을 견줍니다."
+  ],
+  "lab_path": "labs/part7/ch30-fastapi-serving",
+  "sections": [
+    {
+      "slug": "01-비동기-라우팅과-스키마",
+      "title": "비동기 라우팅과 스키마",
+      "format": "paired"
+    },
+    {
+      "slug": "02-의존성으로-Agent-주입",
+      "title": "의존성으로 Agent 주입",
+      "format": "paired"
+    },
+    {
+      "slug": "03-ainvoke-요청-응답",
+      "title": "ainvoke 요청 응답",
+      "format": "paired"
+    },
+    {
+      "slug": "04-astream과-응답-스트림",
+      "title": "astream과 응답 스트림",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-POST-SSE-이벤트-설계",
+      "title": "POST SSE 이벤트 설계",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-fetch-재연결과-오류-이벤트",
+      "title": "fetch 재연결과 오류 이벤트",
+      "format": "paired"
+    },
+    {
+      "slug": "07-인증-CORS-타임아웃",
+      "title": "인증 CORS 타임아웃",
+      "format": "paired"
+    },
+    {
+      "slug": "08-OpenAPI와-TS-SDK",
+      "title": "OpenAPI와 TS SDK",
+      "format": "experiment"
+    },
+    {
+      "slug": "09-실제-Agent-HTTP-통합",
+      "title": "실제 Agent HTTP 통합",
+      "format": "experiment"
+    },
+    {
+      "slug": "10-FastAPI-서빙-실습",
+      "title": "FastAPI 서빙 실습: 끊긴 SSE 응답을 이어 받는 흐름에서 접근 토큰 하나만 바꾸기",
+      "format": "experiment"
+    }
+  ]
+}

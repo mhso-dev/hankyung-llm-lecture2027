@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 320}}}%%
+flowchart LR
+  %% classes
+  subgraph YES["분류 이름 규칙 있음 · 6·8절"]
+    direction TB
+    Y1["첫 줄<br>교환 · 교환 · 교환"]:::measure
+    Y2["교환 3표<br>합의한 분류 교환"]:::measure
+    Y1 --> Y2
+  end
+  subgraph NO["분류 이름 규칙 없음 · 10절"]
+    direction TB
+    N1["첫 줄<br>분류: 교환 요청(파손)<br>분류: 파손/교환 문의<br>분류: 교환 요청(파손)"]:::measure
+    N2["형식 오류 3표<br>합의 없음"]:::measure
+    N1 --> N2
+  end
+  YES ~~~ NO

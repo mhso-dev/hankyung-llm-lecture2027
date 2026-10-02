@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  ov["첫 테스트가 적은 재정의<br>get_timeout 대신 zero_timeout<br>내놓는 초 0.0"]:::flow
+  first["첫 테스트의 질문<br>상태 코드 504"]:::measure
+  subgraph bf["Before · 재정의를 남긴 채"]
+    direction TB
+    b1["다음 테스트<br>새 시험용 클라이언트로 보냄"]:::flow
+    b2["다음 질문 상태 코드 504<br>딕셔너리 키 수 1"]:::fail
+    b1 --> b2
+  end
+  subgraph af["After · 딕셔너리를 비움"]
+    direction TB
+    a1["첫 테스트 끝에서<br>dependency_overrides<br>.clear()"]:::flow
+    a2["딕셔너리 키 수 0<br>다음 질문 상태 코드 200"]:::measure
+    a1 --> a2
+  end
+  ov --> first
+  first --> bf
+  first --> af

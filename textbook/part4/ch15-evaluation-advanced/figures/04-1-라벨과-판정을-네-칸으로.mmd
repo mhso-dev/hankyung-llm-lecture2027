@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph author["교재 작성자 눈금"]
+    direction TB
+    a1["답 네 개<br>자료 답 셋 · 바꾼 답 하나"]:::tool
+    a2["제시 라벨<br>판정을 받기 전에 적음"]:::tool
+    a1 --> a2
+  end
+  subgraph scale["평가 모델 저울"]
+    direction TB
+    j1["같은 답 네 개"]:::tool
+    j2["평가 모델 gpt-5.4-mini<br>판정 머리글 두 판"]:::model
+    j3["점수 0 또는 1"]:::measure
+    j1 --> j2
+    j2 --> j3
+  end
+  count["box_name · count_boxes<br>답마다 라벨과 점수를<br>짝지어 네 칸에 세기"]:::flow
+  table["네 칸 표와 일치율<br>둘 다 1 · 둘 다 0<br>라벨 0 판정 1 · 라벨 1 판정 0"]:::measure
+  author --> count
+  scale --> count
+  count --> table

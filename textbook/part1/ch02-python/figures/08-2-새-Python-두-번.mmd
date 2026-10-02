@@ -1,0 +1,14 @@
+sequenceDiagram
+  participant K as 노트북 커널
+  participant F as 작업 폴더
+  participant P1 as 새 Python 1
+  participant P2 as 새 Python 2
+  K->>F: 테스트 파일 저장<br>152글자 · 테스트 1개
+  K->>P1: run_pytest()
+  P1->>F: 파일 불러오기
+  P1-->>K: 점 하나<br>1 passed · 종료 코드 0
+  Note over P1: 결과를 전하고 끝남
+  K->>F: 테스트 파일 다시 저장<br>테스트 2개
+  K->>P2: run_pytest()
+  P2->>F: 다시 쓴 파일<br>새로 불러오기
+  P2-->>K: 점 둘<br>2 passed · 종료 코드 0

@@ -1,0 +1,332 @@
+[
+  {
+    "qid": "Q001",
+    "tier": "easy",
+    "question": "미르시립도서관의 정기 휴관일은 언제인가요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "E01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q002",
+    "tier": "easy",
+    "question": "도서는 한 번에 몇 권까지, 며칠 동안 빌릴 수 있나요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "E01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q003",
+    "tier": "easy",
+    "question": "책을 3일 늦게 반납하면 어떤 불이익이 있나요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "E01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q004",
+    "tier": "easy",
+    "question": "3D 프린터 재료비는 얼마인가요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "E01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q005",
+    "tier": "easy",
+    "question": "열람실 좌석을 예약하고 입실하지 않으면 몇 분 뒤 취소되나요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "E01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q006",
+    "tier": "easy",
+    "question": "도서관 주차장 요금은 어떻게 되나요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "E01"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q007",
+    "tier": "easy",
+    "question": "별빛제과 본사 시차출퇴근제의 출근 가능 시간대는?",
+    "type": "single",
+    "gold_doc_ids": [
+      "E02"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q008",
+    "tier": "easy",
+    "question": "별빛제과 급여일은 언제인가요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "E02"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q009",
+    "tier": "easy",
+    "question": "별빛제과 자기계발비는 연간 얼마인가요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "E02"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q010",
+    "tier": "easy",
+    "question": "별빛제과 수습 기간 급여는 정규 급여의 몇 %인가요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "E02"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q037",
+    "tier": "medium",
+    "question": "R2가 3kg을 싣고 0.7m/s로 50% 주행할 때 연속 동작 시간은?",
+    "type": "table",
+    "gold_doc_ids": [
+      "M01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q038",
+    "tier": "medium",
+    "question": "R2 빠른 시작 가이드에는 배터리 8시간이라고 되어 있는데, 순찰 주행 시에는 몇 시간인가요?",
+    "type": "multi_doc",
+    "gold_doc_ids": [
+      "M01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q039",
+    "tier": "medium",
+    "question": "편하중 상태에서 R2 트레이 최대 적재량은?",
+    "type": "single",
+    "gold_doc_ids": [
+      "M01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q040",
+    "tier": "medium",
+    "question": "R2-Plus의 본체 무게와 높이는?",
+    "type": "table",
+    "gold_doc_ids": [
+      "M01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q041",
+    "tier": "medium",
+    "question": "R2 로컬 API 토큰의 유효 기간은?",
+    "type": "single",
+    "gold_doc_ids": [
+      "M01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q042",
+    "tier": "medium",
+    "question": "기업 고객이 AMC를 체결하면 본체 보증은 몇 개월이 되나요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "M01"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q043",
+    "tier": "medium",
+    "question": "사양서 3판에서 새로 추가된 내용은?",
+    "type": "table",
+    "gold_doc_ids": [
+      "M01"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q044",
+    "tier": "medium",
+    "question": "R2 사양서에서 '50% 주행'의 정의는?",
+    "type": "single",
+    "gold_doc_ids": [
+      "M01"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q045",
+    "tier": "medium",
+    "question": "청담해운 약관에서 냉동·냉장 화물의 운송 신청 기한은?",
+    "type": "single",
+    "gold_doc_ids": [
+      "M02"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q046",
+    "tier": "medium",
+    "question": "위험물이면서 냉동 화물인 경우 운임 할증은 총 몇 %인가요?",
+    "type": "reasoning",
+    "gold_doc_ids": [
+      "M02"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q085",
+    "tier": "hard",
+    "question": "누리테크가 납기를 지체하면 지체상금은 얼마이며 한도는?",
+    "type": "single",
+    "gold_doc_ids": [
+      "H01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q086",
+    "tier": "hard",
+    "question": "전국 물류 파업으로 납기가 지체되었는데 누리테크가 3영업일 뒤에 통지했다면 지체상금이 면제되나요?",
+    "type": "reasoning",
+    "gold_doc_ids": [
+      "H01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q087",
+    "tier": "hard",
+    "question": "NT-LD-16 라이다 모듈의 2026년 2월 이후 단가와 2025년 단가는?",
+    "type": "temporal",
+    "gold_doc_ids": [
+      "H01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q088",
+    "tier": "hard",
+    "question": "계약 본문과 별첨 1의 단가가 다르면 무엇이 우선하나요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "H01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q089",
+    "tier": "hard",
+    "question": "중대한 결함의 보증 기간과 리콜 비용 분담은?",
+    "type": "multi_hop",
+    "gold_doc_ids": [
+      "H01"
+    ],
+    "answerable": true,
+    "split": "dev"
+  },
+  {
+    "qid": "Q090",
+    "tier": "hard",
+    "question": "이 계약의 입회인은 누구인가요?",
+    "type": "ocr",
+    "gold_doc_ids": [
+      "H01"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q091",
+    "tier": "hard",
+    "question": "오로라 로보틱스가 연간 최소 수량에 미달하면 어떻게 되나요?",
+    "type": "single",
+    "gold_doc_ids": [
+      "H01"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q092",
+    "tier": "hard",
+    "question": "갑의 수입검사 기간과 미통지 시 효과는?",
+    "type": "multi_hop",
+    "gold_doc_ids": [
+      "H01"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q093",
+    "tier": "hard",
+    "question": "한빛 화재공제에서 지진으로 인한 손해는 보상되나요?",
+    "type": "reasoning",
+    "gold_doc_ids": [
+      "H02"
+    ],
+    "answerable": true,
+    "split": "test"
+  },
+  {
+    "qid": "Q094",
+    "tier": "hard",
+    "question": "낙뢰로 인한 손해는 자연재해로 분류되어 면책인가요?",
+    "type": "multi_hop",
+    "gold_doc_ids": [
+      "H02"
+    ],
+    "answerable": true,
+    "split": "test"
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "part": 5,
+  "part_title": "Part 5 · Agent 입문: 프레임워크 없이 먼저",
+  "chapter": "ch18-workflow-patterns",
+  "title": "워크플로우 5패턴: 맨손 구현",
+  "hours": "총 16h · 강의 4h · 실습 12h",
+  "objectives": [
+    "OpenAI SDK와 파이썬 제어문으로 다섯 워크플로우 패턴을 구현할 수 있습니다.",
+    "중간 실패·분류 실패·동점·빈 응답을 숨기지 않고 처리할 수 있습니다.",
+    "같은 과제에서 호출 수·토큰·지연·품질을 비교할 수 있습니다."
+  ],
+  "lab_path": "labs/part5/ch18-workflow-patterns",
+  "sections": [
+    {
+      "slug": "01-게이트가-있는-프롬프트-체이닝",
+      "title": "게이트가 있는 프롬프트 체이닝",
+      "format": "paired"
+    },
+    {
+      "slug": "02-실패를-처리하는-라우팅",
+      "title": "실패를 처리하는 라우팅",
+      "format": "paired"
+    },
+    {
+      "slug": "03-병렬-섹셔닝과-투표",
+      "title": "병렬 섹셔닝과 투표",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-동적-오케스트레이터와-워커",
+      "title": "동적 오케스트레이터와 워커",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-생성자-평가자와-정지-조건",
+      "title": "생성자 평가자와 정지 조건",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-같은-과제로-다섯-패턴-비교",
+      "title": "같은 과제로 다섯 패턴 비교",
+      "format": "experiment"
+    }
+  ]
+}

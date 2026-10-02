@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  pick["확인 전 목록<br>pick_tools · 사람 확인 False<br>읽기 도구 하나<br>get_order_by_id"]:::flow
+  m1["gpt-5.4-mini 요청 1<br>O999 주문의 금액을 알려 줘."]:::model
+  req["도구 호출 요청<br>get_order_by_id · O999"]:::measure
+  exc["ToolException<br>오류 담기 설정 True"]
+  tm["도구 메시지<br>결과 상태 error<br>내용 오류 글"]:::measure
+  m2["gpt-5.4-mini 요청 2<br>질문 · 첫 응답 · 도구 메시지"]:::model
+  ans["최종 답<br>도구 호출 요청 0건<br>답 글에 O999 있음"]:::measure
+  pick --> m1 --> req --> exc --> tm --> m2 --> ans

@@ -1,0 +1,24 @@
+flowchart TB
+  %% classes
+  subgraph qa["Q002 · 답을 바꿈"]
+    direction TB
+    a1["이전 판 1"]:::measure
+    a2["이후 판 0<br>깨짐"]:::measure
+    a1 --> a2
+  end
+  subgraph qb["Q006 · 답 그대로"]
+    direction TB
+    b1["이전 판 1"]:::measure
+    b2["이후 판 1"]:::measure
+    b1 --> b2
+  end
+  subgraph qc["Q090 · 답을 바꿈"]
+    direction TB
+    c1["이전 판 0"]:::measure
+    c2["이후 판 1<br>좋아짐"]:::measure
+    c1 --> c2
+  end
+  same["두 판 모두<br>점수 합 둘 · 평균 0.666667"]
+  qa ~~~ same
+  qb ~~~ same
+  qc ~~~ same

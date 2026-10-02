@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  q["원 질문 하나"]:::tool
+  a["질문을 질문으로 바꾸기<br>앞 네 절"]
+  c["답처럼 보이는 글<br>지어내기"]:::flow
+  v["가상 문서 두 문장"]:::measure
+  r["정답 문서 LIB-004가<br>첫 자리"]:::measure
+  q --> a
+  q --> c
+  c --> v
+  v --> r

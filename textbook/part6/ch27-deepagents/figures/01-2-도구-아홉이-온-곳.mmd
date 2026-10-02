@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  plain["create_agent<br>도구 없음<br>노드 셋 · 도구 실행 노드 없음"]:::measure
+  fsonly["create_agent<br>+ FilesystemMiddleware<br>노드 넷 · 도구 여덟"]:::measure
+  deep["create_deep_agent<br>인자 없음<br>노드 다섯 · 도구 아홉"]:::measure
+  cmp["함수 names_only_in<br>둘째 목록에만 있는 이름"]:::flow
+  only["Deep Agent에만 있는 것<br>도구 task<br>노드 PatchToolCallsMiddleware<br>.before_agent"]:::measure
+  plain ~~~ fsonly
+  fsonly ~~~ deep
+  fsonly --> cmp
+  deep --> cmp
+  cmp --> only

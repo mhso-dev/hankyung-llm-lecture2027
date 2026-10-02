@@ -1,0 +1,15 @@
+sequenceDiagram
+  participant C as 실행 1 셀
+  participant S as summarize_orders
+  participant L as collect_order_lines
+  participant T as add_up_total
+  C->>S: "orders.txt", 가격표
+  Note over S: read_items 줄 목록<br>['연필,3', '노트,2']
+  S->>L: 줄 목록 2개
+  Note over L: ValueError 없음
+  L-->>S: 인스턴스 2개<br>건너뛴 줄 []
+  S->>T: 인스턴스 2개<br>가격표
+  Note over T: 연필 금액: 3000<br>노트 금액: 5000
+  T-->>S: 합계 8000
+  S-->>C: 기록장 report_1
+  Note over C: 주문 수 | 2<br>건너뛴 줄 | []<br>합계 | 8000

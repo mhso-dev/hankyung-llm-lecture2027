@@ -1,0 +1,312 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>요약 압축과 Compress — Ch 22 · Middleware</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 6 · Agent 개발 · Ch 22 · Middleware</p>
+<h1>요약 압축과 Compress</h1><div class="meta"><span>강의 1h · 실습 2h</span><span>새 용어 6개</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h · 실습 2h | 코드 Jupyter Notebook | 새 용어 6개 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>trigger와 keep 조건을 설명할 수 있습니다.</li><li>Ch16 수동 요약 호출과 SummarizationMiddleware의 실행 지점을 비교할 수 있습니다.</li><li>압축 결과에서 조건·예외·출처가 남았는지 확인할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>대화가 길어지면 모든 메시지를 모델에 전달하는 비용이 커지고 모델이 현재 질문에 필요한 사실을 찾기 어려워집니다. Ch8의 Compress는 필요한 정보를 남기고 반복을 줄이는 전략이었습니다. Ch16에서는 summarize_history를 직접 호출했습니다. 미들웨어는 모델 호출 직전에 임계값을 검사하고 오래된 메시지를 요약해 이 전략을 반복 루프에 연결합니다.</p><p><strong>이 절의 질문</strong> — 자동 요약 압축은 언제 실행되며 최근 메시지와 중요 조건을 어떻게 보존해야 할까요?</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch8에서는 압축할 때 결정·조건·예외·출처를 보존해야 한다고 배웠습니다. Ch16 summarize_history는 system 메시지와 최근 대화를 남기고, 오래된 대화를 summarizer 함수에 넘긴 뒤 참고용 요약 메시지로 바꿨습니다. 이번 절은 같은 메시지 수 조건을 미들웨어 설정으로 표현합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>비유로 시작하기</h3><p>회의록을 다음 회의용 한 장 요약으로 바꾸는 상황을 생각해 봅니다. trigger는 언제 요약을 시작할지, keep은 최근 기록을 얼마나 원문으로 남길지 정합니다. SummarizationMiddleware는 before_model 훅에서 메시지 수나 토큰 수를 검사합니다. 요약 모델은 압축문을 만들고 주 모델은 압축된 문맥으로 답합니다. 압축은 원문을 완전히 보존하지 않으므로 결정, 예외, 날짜, 출처처럼 반드시 남겨야 할 필드를 프롬프트와 검증에 넣어야 합니다.</p><h3>코드를 읽는 순서</h3><p>요약 압축은 오래된 메시지의 핵심을 짧은 메시지로 바꾸어 다음 모델 입력을 줄이는 처리입니다. <code>SummarizationMiddleware</code>는 트리거 조건을 넘으면 요약 모델을 호출하고, 최근 메시지 일부와 생성한 요약을 다음 요청에 전달합니다. 체크포인터의 과거 기록 전체를 삭제하는 기능과는 다릅니다. 무엇을 저장했는지와 이번 모델에 무엇을 보냈는지를 구분합니다.</p><p>실습의 <code>CaptureAll</code>과 <code>CaptureCompressed</code>는 모델이 실제로 받은 메시지를 <code>seen_before</code>, <code>seen_after</code>에 복사하는 관찰 장치입니다. 요약문의 길이만 줄었다고 성공으로 판단하지 않고, 대출 권수·기간·연장 조건·출처가 남았는지 문자열을 읽습니다. 압축은 손실을 허용하는 변환이므로 업무에 필요한 사실을 먼저 정해야 합니다.</p><h3>도식 읽기</h3><p>파란 원본 여섯 메시지가 노란 trigger 검사로 들어갑니다. 임계값 미만이면 그대로 보라색 주 모델로 이동합니다. 임계값 이상이면 오래된 메시지가 보라색 요약 모델을 거쳐 파란 요약문과 최근 두 메시지로 바뀐 뒤 주 모델에 전달됩니다. E01 p.3은 압축 뒤에도 확인할 보존 항목입니다.</p><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 530" style="width:360px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="임계값을 넘으면 오래된 대화를 요약하고 최근 메시지를 보존합니다"><title>임계값을 넘으면 오래된 대화를 요약하고 최근 메시지를 보존합니다</title><defs><marker id="03-요약-압축과-Compress-흐름-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190,85 L190,116" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#03-요약-압축과-Compress-흐름-arrow)"/><path d="M190,185 L190,216" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#03-요약-압축과-Compress-흐름-arrow)"/><path d="M190,285 L190,316" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#03-요약-압축과-Compress-흐름-arrow)"/><path d="M190,385 L190,416" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#03-요약-압축과-Compress-흐름-arrow)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="59.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">원본 메시지 6개</text><rect x="30" y="120" width="320" height="65" rx="10" fill="#F7EDC7" stroke="#334155" stroke-width="2"/><text x="190.0" y="159.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">trigger 메시지 4개</text><rect x="30" y="220" width="320" height="65" rx="10" fill="#E9E0F3" stroke="#334155" stroke-width="2"/><text x="190.0" y="259.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">오래된 대화 요약</text><rect x="30" y="320" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="359.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">요약문 + 최근 2개</text><rect x="30" y="420" width="320" height="65" rx="10" fill="#E9E0F3" stroke="#334155" stroke-width="2"/><text x="190.0" y="459.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">주 모델</text></svg></div>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>여섯 메시지를 Before 에이전트에 그대로 전달한 뒤, trigger=4·keep=2 조건의 SummarizationMiddleware를 붙입니다. 결정적 요약문으로 메시지 구성 변화를 재현하고, 별도 실제 모델 호출로 권수·기간·연장 조건·출처를 보존한 요약문과 사용량을 확인합니다.</p><section class="notebook" data-notebook="03-요약-압축과-Compress" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-10</span><button type="button" class="copy-all">전체 코드 복사</button><a download="03-요약-압축과-Compress.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsmpTslb0g7JWV7LaV6rO8IENvbXByZXNzXG4iLAogICAgIlxuIiwKICAgICLsnpDrj5kg7JqU7JW9IOyVley2leydgCDslrjsoJwg7Iuk7ZaJ65CY66mwIOy1nOq3vCDrqZTsi5zsp4DsmYAg7KSR7JqUIOyhsOqxtOydhCDslrTrlrvqsowg67O07KG07ZW07JW8IO2VoOq5jOyalD9cbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6Ttlokg7ZmY6rK9IOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAi7Iuk7Iq1IO2MjOydvOydgCBgbGFicy9wYXJ0Ni9jaDIyLW1pZGRsZXdhcmUvbm90ZWJvb2tzLzAzLeyalOyVvS3slZXstpXqs7wtQ29tcHJlc3MuaXB5bmJg7J6F64uI64ukLiBQeXRob24gMy4xMiDsg4gg7Luk64SQ7JeQ7IScIOychOyXkOyEnOu2gO2EsCDsi6Ttlontlanri4jri6QuXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAzIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Yyo7YKk7KeAIOuyhOyghCDtmZXsnbhcbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTBUMTY6MTc6NTkuODIyODMxWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTBUMTY6MTc6NTkuODIyNjk0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTBUMTY6MTg6MDAuMjQ5MjM5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMFQxNjoxODowMC4yNDg3MjdaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiTm90ZTogeW91IG1heSBuZWVkIHRvIHJlc3RhcnQgdGhlIGtlcm5lbCB0byB1c2UgdXBkYXRlZCBwYWNrYWdlcy4iCiAgICAgXQogICAgfSwKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiXG4iLAogICAgICAibGFuZ2NoYWluIDEuNC4wXG4iLAogICAgICAibGFuZ2NoYWluLW9wZW5haSAxLjYuMFxuIiwKICAgICAgImxhbmdncmFwaCAxLjIuMTFcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnbQg7IWA7J2AIO2MqO2CpOyngCDrsoTsoIQg7ZmV7J24IOyekeyXheydhCDsiJjtlontlZjqs6Ag7ZmV7J247ZWgIOqwkuydhCDstpzroKXtlanri4jri6QuXG4iLAogICAgIiVwaXAgaW5zdGFsbCAtcSBcImxhbmdjaGFpbj09MS40LjBcIiBcImxhbmdjaGFpbi1vcGVuYWk9PTEuNi4wXCIgXCJsYW5nZ3JhcGg9PTEuMi4xMVwiIFwicHl0aG9uLWRvdGVudj09MS4yLjNcIlxuIiwKICAgICJmcm9tIGltcG9ydGxpYi5tZXRhZGF0YSBpbXBvcnQgdmVyc2lvblxuIiwKICAgICJwcmludChcImxhbmdjaGFpblwiLCB2ZXJzaW9uKFwibGFuZ2NoYWluXCIpKVxuIiwKICAgICJwcmludChcImxhbmdjaGFpbi1vcGVuYWlcIiwgdmVyc2lvbihcImxhbmdjaGFpbi1vcGVuYWlcIikpXG4iLAogICAgInByaW50KFwibGFuZ2dyYXBoXCIsIHZlcnNpb24oXCJsYW5nZ3JhcGhcIikpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOqysOygleyggSDrqqjrjbgg7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLsnbQg66qo64247J2AIOygle2VtCDrkZQg7J2R64u17Jy866GcIO2bhSDqsr3qs4Trpbwg6rSA7LCw7ZWY64qUIOqysOygleyggSDqsoDsgqwg7J6l7LmY7J6F64uI64ukLiBgQmFzZUNoYXRNb2RlbGAg7IOB7IaNIOq1rO2YhCDsnpDssrTripQg7J20IOygiOydmCDtlZnsirUg64yA7IOB7J20IOyVhOuLmeuLiOuLpC5cbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDYiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTBUMTY6MTg6MDAuMjUwMzYyWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTBUMTY6MTg6MDAuMjUwMjg5WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTBUMTY6MTg6MDAuNDc1NTg3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMFQxNjoxODowMC40NzUyMTNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFtdLAogICAic291cmNlIjogWwogICAgIiMg7J20IOyFgOydgCDqsrDsoJXsoIEg66qo6424IOykgOu5hCDsnpHsl4XsnYQg7IiY7ZaJ7ZWY6rOgIO2ZleyduO2VoCDqsJLsnYQg7Lac66Cl7ZWp64uI64ukLlxuIiwKICAgICIjIOygle2VtCDrkZQg7J2R64u17Jy866GcIOuvuOuTpOybqOyWtCDsi6Ttlokg7Iic7ISc66W8IOyerO2YhO2VqeuLiOuLpC5cbiIsCiAgICAiZnJvbSB0eXBpbmcgaW1wb3J0IEFueVxuIiwKICAgICJmcm9tIGxhbmdjaGFpbi5hZ2VudHMgaW1wb3J0IGNyZWF0ZV9hZ2VudFxuIiwKICAgICJmcm9tIGxhbmdjaGFpbi5hZ2VudHMubWlkZGxld2FyZSBpbXBvcnQgQWdlbnRNaWRkbGV3YXJlXG4iLAogICAgImZyb20gbGFuZ2NoYWluLnRvb2xzIGltcG9ydCB0b29sXG4iLAogICAgImZyb20gbGFuZ2NoYWluX2NvcmUubGFuZ3VhZ2VfbW9kZWxzLmNoYXRfbW9kZWxzIGltcG9ydCBCYXNlQ2hhdE1vZGVsXG4iLAogICAgImZyb20gbGFuZ2NoYWluX2NvcmUubWVzc2FnZXMgaW1wb3J0IEFJTWVzc2FnZVxuIiwKICAgICJmcm9tIGxhbmdjaGFpbl9jb3JlLm91dHB1dHMgaW1wb3J0IENoYXRHZW5lcmF0aW9uLCBDaGF0UmVzdWx0XG4iLAogICAgImNsYXNzIFNjcmlwdGVkTW9kZWwoQmFzZUNoYXRNb2RlbCk6XG4iLAogICAgIiAgICByZXBsaWVzOiBsaXN0W0FJTWVzc2FnZV1cbiIsCiAgICAiICAgIGluZGV4OiBpbnQgPSAwXG4iLAogICAgIiAgICBAcHJvcGVydHlcbiIsCiAgICAiICAgIGRlZiBfbGxtX3R5cGUoc2VsZikgLT4gc3RyOiByZXR1cm4gXCJzY3JpcHRlZC1tb2RlbFwiXG4iLAogICAgIiAgICBkZWYgX2dlbmVyYXRlKHNlbGYsIG1lc3NhZ2VzOiBBbnksIHN0b3A6IEFueSA9IE5vbmUsIHJ1bl9tYW5hZ2VyOiBBbnkgPSBOb25lLCAqKmt3YXJnczogQW55KSAtPiBDaGF0UmVzdWx0OlxuIiwKICAgICIgICAgICAgIHJlcGx5ID0gc2VsZi5yZXBsaWVzW21pbihzZWxmLmluZGV4LCBsZW4oc2VsZi5yZXBsaWVzKSAtIDEpXVxuIiwKICAgICIgICAgICAgIHNlbGYuaW5kZXggKz0gMVxuIiwKICAgICIgICAgICAgIHJldHVybiBDaGF0UmVzdWx0KGdlbmVyYXRpb25zPVtDaGF0R2VuZXJhdGlvbihtZXNzYWdlPXJlcGx5KV0pXG4iLAogICAgIiAgICBkZWYgYmluZF90b29scyhzZWxmLCB0b29sczogQW55LCAqLCB0b29sX2Nob2ljZTogQW55ID0gTm9uZSwgKiprd2FyZ3M6IEFueSkgLT4gXCJTY3JpcHRlZE1vZGVsXCI6XG4iLAogICAgIiAgICAgICAgcmV0dXJuIHNlbGZcbiIsCiAgICAiQHRvb2xcbiIsCiAgICAiZGVmIGxvb2t1cF9ob3VycyhkYXk6IHN0cikgLT4gc3RyOlxuIiwKICAgICIgICAgXCJcIlwi7J6Q66OM7IukIOyatOyYgSDsi5zqsITsnYQg7JqU7J2866GcIOyhsO2ajO2VqeuLiOuLpC5cIlwiXCJcbiIsCiAgICAiICAgIHJldHVybiBcIu2PieydvCAwOTowMH4yMDowMFwiIGlmIGRheSA9PSBcIu2PieydvFwiIGVsc2UgXCLthqDsmpTsnbwgMTA6MDB+MTc6MDBcIiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDquLQg64yA7ZmUIOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAi7JqU7JW9IOyVley2leydgCDsmKTrnpjrkJwg66mU7Iuc7KeA7J2YIO2VteyLrOydhCDsp6fsnYAg66mU7Iuc7KeA66GcIOuwlOq+uOyWtCDri6TsnYwg66qo6424IOyeheugpeydhCDspITsnbTripQg7LKY66as7J6F64uI64ukLiBgU3VtbWFyaXphdGlvbk1pZGRsZXdhcmVg64qUIO2KuOumrOqxsCDsobDqsbTsnYQg64SY7Jy866m0IOyalOyVvSDrqqjrjbjsnYQg7Zi47Lac7ZWY6rOgLCDstZzqt7wg66mU7Iuc7KeAIOydvOu2gOyZgCDsg53shLHtlZwg7JqU7JW97J2EIOuLpOydjCDsmpTssq3sl5Ag7KCE64us7ZWp64uI64ukLiDssrTtgaztj6zsnbjthLDsnZgg6rO86rGwIOq4sOuhnSDsoITssrTrpbwg7IKt7KCc7ZWY64qUIOq4sOuKpeqzvOuKlCDri6TrpoXri4jri6QuIOustOyXh+ydhCDsoIDsnqXtlojripTsp4DsmYAg7J2067KIIOuqqOuNuOyXkCDrrLTsl4fsnYQg67O064OI64qU7KeA66W8IOq1rOu2hO2VqeuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgIuyLpOyKteydmCBgQ2FwdHVyZUFsbGDqs7wgYENhcHR1cmVDb21wcmVzc2VkYOuKlCDrqqjrjbjsnbQg7Iuk7KCc66GcIOuwm+ydgCDrqZTsi5zsp4DrpbwgYHNlZW5fYmVmb3JlYCwgYHNlZW5fYWZ0ZXJg7JeQIOuzteyCrO2VmOuKlCDqtIDssLAg7J6l7LmY7J6F64uI64ukLiDsmpTslb3rrLjsnZgg6ri47J2066eMIOykhOyXiOuLpOqzoCDshLHqs7XsnLzroZwg7YyQ64uo7ZWY7KeAIOyViuqzoCwg64yA7LacIOq2jOyImMK36riw6rCEwrfsl7DsnqUg7KGw6rG0wrfstpzsspjqsIAg64Ko7JWY64qU7KeAIOusuOyekOyXtOydhCDsnb3sirXri4jri6QuIOyVley2leydgCDshpDsi6TsnYQg7ZeI7Jqp7ZWY64qUIOuzgO2ZmOydtOuvgOuhnCDsl4XrrLTsl5Ag7ZWE7JqU7ZWcIOyCrOyLpOydhCDrqLzsoIAg7KCV7ZW07JW8IO2VqeuLiOuLpC5cbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDgiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTBUMTY6MTg6MDAuNDc2NDk2WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTBUMTY6MTg6MDAuNDc2NDQ0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTBUMTY6MTg6MDAuNDc4MjkyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMFQxNjoxODowMC40Nzc5NjhaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7JuQ67O4IOuplOyLnOyngCDsiJg6IDZcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnbQg7IWA7J2AIOq4tCDrjIDtmZQg7KSA67mEIOyekeyXheydhCDsiJjtlontlZjqs6Ag7ZmV7J247ZWgIOqwkuydhCDstpzroKXtlanri4jri6QuXG4iLAogICAgImZyb20gbGFuZ2NoYWluX2NvcmUubWVzc2FnZXMgaW1wb3J0IEh1bWFuTWVzc2FnZSwgQUlNZXNzYWdlXG4iLAogICAgImhpc3RvcnkgPSBbXG4iLAogICAgIiBIdW1hbk1lc3NhZ2UoXCLrjIDstpzsnYAg66qHIOq2jOyduOqwgOyalD9cIiksIEFJTWVzc2FnZShcIjXqtozsnoXri4jri6QgW0UwMSBwLjNdXCIpLFxuIiwKICAgICIgSHVtYW5NZXNzYWdlKFwi6riw6rCE7J2A7JqUP1wiKSwgQUlNZXNzYWdlKFwiMTTsnbzsnbTrqbAg7JiI7JW97J20IOyXhuycvOuptCA37J28IOyXsOyepeuQqeuLiOuLpCBbRTAxIHAuM11cIiksXG4iLAogICAgIiBIdW1hbk1lc3NhZ2UoXCLstpzsspjrpbwg6riw7Ja17ZW0IOyjvOyEuOyalC5cIiksIEh1bWFuTWVzc2FnZShcIuyngOq4iOq5jOyngCDsobDqsbTsnYQg7KCV66as7ZW0IOyjvOyEuOyalC5cIiksXG4iLAogICAgIl1cbiIsCiAgICAicHJpbnQoXCLsm5Drs7gg66mU7Iuc7KeAIOyImDpcIiwgbGVuKGhpc3RvcnkpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDkiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIEJlZm9yZTog7JuQ66y4IOyghOyytCDsoITri6xcbiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTBUMTY6MTg6MDAuNDc5MDc0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTBUMTY6MTg6MDAuNDc5MDI3WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTBUMTY6MTg6MDAuNDgzNzI4WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMFQxNjoxODowMC40ODM0MzBaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLrqqjrjbgg7J6F66ClIOuplOyLnOyngCDsiJg6IDZcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnbQg7IWA7J2AIEJlZm9yZTog7JuQ66y4IOyghOyytCDsoITri6wg7J6R7JeF7J2EIOyImO2Wie2VmOqzoCDtmZXsnbjtlaAg6rCS7J2EIOy2nOugpe2VqeuLiOuLpC5cbiIsCiAgICAic2Vlbl9iZWZvcmU9W11cbiIsCiAgICAiY2xhc3MgQ2FwdHVyZUFsbChBZ2VudE1pZGRsZXdhcmUpOlxuIiwKICAgICIgICAgZGVmIHdyYXBfbW9kZWxfY2FsbChzZWxmLCByZXF1ZXN0OiBBbnksIGhhbmRsZXI6IEFueSkgLT4gQW55OlxuIiwKICAgICIgICAgICAgIHNlZW5fYmVmb3JlLmV4dGVuZChtZXNzYWdlLnRleHQgZm9yIG1lc3NhZ2UgaW4gcmVxdWVzdC5tZXNzYWdlcylcbiIsCiAgICAiICAgICAgICByZXR1cm4gaGFuZGxlcihyZXF1ZXN0KVxuIiwKICAgICJiZWZvcmVfYWdlbnQ9Y3JlYXRlX2FnZW50KFNjcmlwdGVkTW9kZWwocmVwbGllcz1bQUlNZXNzYWdlKFwi64u1XCIpXSksdG9vbHM9W10sbWlkZGxld2FyZT1bQ2FwdHVyZUFsbCgpXSlcbiIsCiAgICAiYmVmb3JlX2FnZW50Lmludm9rZSh7XCJtZXNzYWdlc1wiOmhpc3Rvcnl9KVxuIiwKICAgICJwcmludChcIuuqqOuNuCDsnoXroKUg66mU7Iuc7KeAIOyImDpcIixsZW4oc2Vlbl9iZWZvcmUpKVxuIiwKICAgICJhc3NlcnQgbGVuKHNlZW5fYmVmb3JlKT09NiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgQWZ0ZXI6IOyekOuPmSDsmpTslb0g7KCB7JqpXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjZWxsLTEyIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTEwVDE2OjE4OjAwLjQ4NDQzNVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTEwVDE2OjE4OjAwLjQ4NDM4OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTEwVDE2OjE4OjAwLjQ5MTYzNloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTBUMTY6MTg6MDAuNDkxMjk5WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLrqqjrjbgg7J6F66ClOiBbJ0hlcmUgaXMgYSBzdW1tYXJ5IG9mIHRoZSBjb252ZXJzYXRpb24gdG8gZGF0ZTpcXG5cXG7rjIDstpzsnYAgNeq2jMK3MTTsnbwsIOyYiOyVveydtCDsl4bsnLzrqbQgN+ydvCDsl7DsnqUgW0UwMSBwLjNdJywgJ+y2nOyymOulvCDquLDslrXtlbQg7KO87IS47JqULicsICfsp4DquIjquYzsp4Ag7KGw6rG07J2EIOygleumrO2VtCDso7zshLjsmpQuJ11cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnbQg7IWA7J2AIEFmdGVyOiDsnpDrj5kg7JqU7JW9IOyggeyaqSDsnpHsl4XsnYQg7IiY7ZaJ7ZWY6rOgIO2ZleyduO2VoCDqsJLsnYQg7Lac66Cl7ZWp64uI64ukLlxuIiwKICAgICJmcm9tIGxhbmdjaGFpbi5hZ2VudHMubWlkZGxld2FyZSBpbXBvcnQgU3VtbWFyaXphdGlvbk1pZGRsZXdhcmVcbiIsCiAgICAic3VtbWFyeV9tb2RlbD1TY3JpcHRlZE1vZGVsKHJlcGxpZXM9W0FJTWVzc2FnZShcIuuMgOy2nOydgCA16raMwrcxNOydvCwg7JiI7JW97J20IOyXhuycvOuptCA37J28IOyXsOyepSBbRTAxIHAuM11cIildKVxuIiwKICAgICJzZWVuX2FmdGVyPVtdXG4iLAogICAgImNsYXNzIENhcHR1cmVDb21wcmVzc2VkKEFnZW50TWlkZGxld2FyZSk6XG4iLAogICAgIiAgICBkZWYgd3JhcF9tb2RlbF9jYWxsKHNlbGYsIHJlcXVlc3Q6IEFueSwgaGFuZGxlcjogQW55KSAtPiBBbnk6XG4iLAogICAgIiAgICAgICAgc2Vlbl9hZnRlci5leHRlbmQobWVzc2FnZS50ZXh0IGZvciBtZXNzYWdlIGluIHJlcXVlc3QubWVzc2FnZXMpXG4iLAogICAgIiAgICAgICAgcmV0dXJuIGhhbmRsZXIocmVxdWVzdClcbiIsCiAgICAiYWZ0ZXJfYWdlbnQ9Y3JlYXRlX2FnZW50KFxuIiwKICAgICIgU2NyaXB0ZWRNb2RlbChyZXBsaWVzPVtBSU1lc3NhZ2UoXCLslZXstpXrkJwg7KGw6rG07J2EIO2ZleyduO2WiOyKteuLiOuLpC5cIildKSwgdG9vbHM9W10sXG4iLAogICAgIiBtaWRkbGV3YXJlPVtTdW1tYXJpemF0aW9uTWlkZGxld2FyZShtb2RlbD1zdW1tYXJ5X21vZGVsLHRyaWdnZXI9KFwibWVzc2FnZXNcIiw0KSxrZWVwPShcIm1lc3NhZ2VzXCIsMikpLENhcHR1cmVDb21wcmVzc2VkKCldKVxuIiwKICAgICJhZnRlcl9hZ2VudC5pbnZva2Uoe1wibWVzc2FnZXNcIjpoaXN0b3J5fSlcbiIsCiAgICAicHJpbnQoXCLrqqjrjbgg7J6F66ClOlwiLHNlZW5fYWZ0ZXIpXG4iLAogICAgImpvaW5lZD1cIiBcIi5qb2luKHNlZW5fYWZ0ZXIpXG4iLAogICAgImFzc2VydCBcIjE07J28XCIgaW4gam9pbmVkIGFuZCBcIkUwMSBwLjNcIiBpbiBqb2luZWQiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEzIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpOygnCDrqqjrjbjroZwg7JWV7LaV66y4IOyDneyEsVxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA2LAogICAiaWQiOiAiY2VsbC0xNCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMFQxNjoxODowMC40OTIzNDFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMFQxNjoxODowMC40OTIyOTFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMFQxNjoxODowMS44MzQ0MjhaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTEwVDE2OjE4OjAxLjgzMzc4OFoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAic3VtbWFyeTog64yA7Lac7J2AICoqNeq2jCoq7J2066mwICoq6riw6rCE7J2AIDE07J28KirsnbTqs6AgKirsmIjslb3snbQg7JeG7Jy866m0IDfsnbwg7Jew7J6lKirrkJjrqbAsIOy2nOyymOuKlCAqKkUwMSBwLjMqKuyeheuLiOuLpC5cbiIsCiAgICAgICJ1c2FnZTogeydpbnB1dF90b2tlbnMnOiA3OSwgJ291dHB1dF90b2tlbnMnOiA0NSwgJ3RvdGFsX3Rva2Vucyc6IDEyNCwgJ2lucHV0X3Rva2VuX2RldGFpbHMnOiB7J2F1ZGlvJzogMCwgJ2NhY2hlX3JlYWQnOiAwfSwgJ291dHB1dF90b2tlbl9kZXRhaWxzJzogeydhdWRpbyc6IDAsICdyZWFzb25pbmcnOiAwfX1cbiIsCiAgICAgICJlc3RpbWF0ZWRfY29zdF91c2Q6IDAuMDAwMjYyXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7J20IOyFgOydgCDsi6TsoJwg66qo642466GcIOyVley2leusuCDsg53shLEg7J6R7JeF7J2EIOyImO2Wie2VmOqzoCDtmZXsnbjtlaAg6rCS7J2EIOy2nOugpe2VqeuLiOuLpC5cbiIsCiAgICAiaW1wb3J0IG9zXG4iLAogICAgImZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aFxuIiwKICAgICJmcm9tIGRvdGVudiBpbXBvcnQgbG9hZF9kb3RlbnZcbiIsCiAgICAiZnJvbSBsYW5nY2hhaW4uY2hhdF9tb2RlbHMgaW1wb3J0IGluaXRfY2hhdF9tb2RlbFxuIiwKICAgICJmb3IgZm9sZGVyIGluIFtQYXRoLmN3ZCgpLCAqUGF0aC5jd2QoKS5wYXJlbnRzXTpcbiIsCiAgICAiICAgIGlmIChmb2xkZXIgLyBcIi5lbnZcIikuaXNfZmlsZSgpOiBsb2FkX2RvdGVudihmb2xkZXIgLyBcIi5lbnZcIik7IGJyZWFrXG4iLAogICAgImFzc2VydCBvcy5nZXRlbnYoXCJPUEVOQUlfQVBJX0tFWVwiKSwgXCJPUEVOQUlfQVBJX0tFWeqwgCDtlYTsmpTtlanri4jri6QuXCJcbiIsCiAgICAibGl2ZSA9IGluaXRfY2hhdF9tb2RlbChcIm9wZW5haTpncHQtNS40LW1pbmlcIiwgcmVhc29uaW5nX2VmZm9ydD1cIm5vbmVcIilcbiIsCiAgICAicHJvbXB0ID0gXCLri6TsnYwg6riw66Gd7J2EIO2VnCDrrLjsnqXsnLzroZwg7JqU7JW97ZWY65CYIOq2jOyImCwg6riw6rCELCDsl7DsnqUg7KGw6rG0LCDstpzsspjrpbwg66qo65GQIOuztOyhtO2VmOyEuOyalDogXCIgKyBcIiBcIi5qb2luKG0udGV4dCBmb3IgbSBpbiBoaXN0b3J5Wzo0XSlcbiIsCiAgICAibGl2ZV9zdW1tYXJ5ID0gbGl2ZS5pbnZva2UocHJvbXB0KVxuIiwKICAgICJ1c2FnZSA9IGxpdmVfc3VtbWFyeS51c2FnZV9tZXRhZGF0YSBvciB7fVxuIiwKICAgICJjb3N0ID0gdXNhZ2UuZ2V0KFwiaW5wdXRfdG9rZW5zXCIsMCkvMV8wMDBfMDAwKjAuNzUgKyB1c2FnZS5nZXQoXCJvdXRwdXRfdG9rZW5zXCIsMCkvMV8wMDBfMDAwKjQuNTBcbiIsCiAgICAicHJpbnQoXCJzdW1tYXJ5OlwiLCBsaXZlX3N1bW1hcnkudGV4dClcbiIsCiAgICAicHJpbnQoXCJ1c2FnZTpcIiwgdXNhZ2UpOyBwcmludChcImVzdGltYXRlZF9jb3N0X3VzZDpcIiwgcm91bmQoY29zdCw2KSlcbiIsCiAgICAiYXNzZXJ0IGNvc3QgPCAxLjAgYW5kIGxpdmVfc3VtbWFyeS50ZXh0LnN0cmlwKCkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTE1IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyVley2lSDsoITtm4Qg67mE6rWQXG4iLAogICAgIlxuIiwKICAgICLsuZzqt7ztlZwg66eQ7Yis64KYIOuwmOuzteuQnCDsnbjsgqzripQg7JqU7JW97ZW064+EIOyYge2WpeydtCDsnpHsp4Drp4wsIOyKueyduCDsl6zrtoDCt+qzhOyVvSDsiKvsnpDCt+y2nOyymCDsi53rs4TsnpDripQg67mg7KeA66m0IO2bhOyGjSDri7XsnbQg64us65287KeIIOyImCDsnojsirXri4jri6QuIOydtOufsCDqsJLsnYAg7IOB7YOc7J2YIOuzhOuPhCDtlYTrk5zsl5Ag6rWs7KGw7ZmU7ZW0IOuztOyhtO2VmOqzoCDrjIDtmZQg7JqU7JW97JeQ64qUIOunpeudveunjCDrp6HquLDripQg7ISk6rOE6rCAIOyViOyghO2VqeuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgIuuplOyLnOyngCDsiJgg6rCQ7IaM7JmAIO2GoO2BsCDsiJgg6rCQ7IaM64qUIOq0gOugqOuQmOyngOunjCDqsJnsnYAg6rCS7J2AIOyVhOuLmeuLiOuLpC4g6ri0IO2VnCDrqZTsi5zsp4DqsIAg7Ken7J2AIOyXrOufrCDrqZTsi5zsp4Drs7Tri6Qg7Yag7YGw7J20IOunjuydhCDsiJgg7J6I7Iq164uI64ukLiDsnbTrsogg7Iuk7Iq17J2AIOyghOuLrCDrqZTsi5zsp4DsmYAg67O07KG0IOusuOyekOyXtOydhCDtmZXsnbjtlZjrqbAsIOyLpOygnCDrqqjrjbjrs4Qg7Yag7YGwIOygiOqwkOuloOydtOuCmCDsmpTslb0g7KCV7ZmV64+EIOyghOyytOulvCDrs7TsnqXtlZjsp4Ag7JWK7Iq164uI64ukLlxuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA3LAogICAiaWQiOiAiY2VsbC0xNiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMFQxNjoxODowMS44MzU5ODRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMFQxNjoxODowMS44MzU4NjRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMFQxNjoxODowMS44Mzg0NDFaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTEwVDE2OjE4OjAxLjgzNzkxNFoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiYmVmb3JlX2NvdW50OiA2XG4iLAogICAgICAiYWZ0ZXJfY291bnQ6IDNcbiIsCiAgICAgICJlc3RpbWF0ZWRfY29zdF91c2Q6IDAuMCAo6rKw7KCV7KCBIOuhnOy7rCDrqqjrjbgpXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7J20IOyFgOydgCDslZXstpUg7KCE7ZuEIOu5hOq1kCDsnpHsl4XsnYQg7IiY7ZaJ7ZWY6rOgIO2ZleyduO2VoCDqsJLsnYQg7Lac66Cl7ZWp64uI64ukLlxuIiwKICAgICJwcmludChcImJlZm9yZV9jb3VudDpcIixsZW4oc2Vlbl9iZWZvcmUpKVxuIiwKICAgICJwcmludChcImFmdGVyX2NvdW50OlwiLGxlbihzZWVuX2FmdGVyKSlcbiIsCiAgICAicHJpbnQoXCJlc3RpbWF0ZWRfY29zdF91c2Q6IDAuMCAo6rKw7KCV7KCBIOuhnOy7rCDrqqjrjbgpXCIpIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAibGVzc29uX2Zvcm1hdCI6ICJwYWlyZWQiLAogICJ2ZXJpZmljYXRpb24iOiB7CiAgICJhbGxvd19lcnJvcnMiOiBmYWxzZSwKICAgImNvZGVfY2VsbHMiOiA3LAogICAiY29kZV9zaGEyNTYiOiAiYmY4ZDIwYTU2NTVlZGFkNjc5ZWIxMDNhOWI2MTNhYzdlODU2OWM3ODRiOTk3NjFkZGRmYTkyNjU5ZWQxN2JjOSIsCiAgICJleGVjdXRlZF9hdCI6ICIyMDI2LTA5LTEwVDE2OjE4OjAxLjk1NzMyOCswMDowMCIsCiAgICJmcmVzaF9rZXJuZWwiOiB0cnVlLAogICAib3V0cHV0c19zaGEyNTYiOiAiODRkMWRhNjUxMjc0ZjkxNGNmNTZmNzZlN2ZjNWU2ZGI0MmQxNjY3ZTYxNWUzZmZkMTc1YWVlOTlhNzJhNzdhOSIsCiAgICJweXRob25fdmVyc2lvbiI6ICIzLjEyLjEzIiwKICAgInN0YXR1cyI6ICJwYXNzZWQiCiAgfQogfSwKICJuYmZvcm1hdCI6IDQsCiAibmJmb3JtYXRfbWlub3IiOiA1Cn0K">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>요약 압축과 Compress</h2>
+<p>자동 요약 압축은 언제 실행되며 최근 메시지와 중요 조건을 어떻게 보존해야 할까요?</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>실습 파일은 <code>labs/part6/ch22-middleware/notebooks/03-요약-압축과-Compress.ipynb</code>입니다. Python 3.12 새 커널에서 위에서부터 실행합니다.</p></div>
+<div class="nb-markdown"><h3>패키지 버전 확인</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 패키지 버전 확인 작업을 수행하고 확인할 값을 출력합니다.
+%pip install -q &quot;langchain==1.4.0&quot; &quot;langchain-openai==1.6.0&quot; &quot;langgraph==1.2.11&quot; &quot;python-dotenv==1.2.3&quot;
+from importlib.metadata import version
+print(&quot;langchain&quot;, version(&quot;langchain&quot;))
+print(&quot;langchain-openai&quot;, version(&quot;langchain-openai&quot;))
+print(&quot;langgraph&quot;, version(&quot;langgraph&quot;))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.</pre></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">
+langchain 1.4.0
+langchain-openai 1.6.0
+langgraph 1.2.11
+</pre></div>
+<div class="nb-markdown"><h3>결정적 모델 준비</h3>
+<p>이 모델은 정해 둔 응답으로 훅 경계를 관찰하는 결정적 검사 장치입니다. <code>BaseChatModel</code> 상속 구현 자체는 이 절의 학습 대상이 아닙니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 결정적 모델 준비 작업을 수행하고 확인할 값을 출력합니다.
+# 정해 둔 응답으로 미들웨어 실행 순서를 재현합니다.
+from typing import Any
+from langchain.agents import create_agent
+from langchain.agents.middleware import AgentMiddleware
+from langchain.tools import tool
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import AIMessage
+from langchain_core.outputs import ChatGeneration, ChatResult
+class ScriptedModel(BaseChatModel):
+    replies: list[AIMessage]
+    index: int = 0
+    @property
+    def _llm_type(self) -&gt; str: return &quot;scripted-model&quot;
+    def _generate(self, messages: Any, stop: Any = None, run_manager: Any = None, **kwargs: Any) -&gt; ChatResult:
+        reply = self.replies[min(self.index, len(self.replies) - 1)]
+        self.index += 1
+        return ChatResult(generations=[ChatGeneration(message=reply)])
+    def bind_tools(self, tools: Any, *, tool_choice: Any = None, **kwargs: Any) -&gt; &quot;ScriptedModel&quot;:
+        return self
+@tool
+def lookup_hours(day: str) -&gt; str:
+    &quot;&quot;&quot;자료실 운영 시간을 요일로 조회합니다.&quot;&quot;&quot;
+    return &quot;평일 09:00~20:00&quot; if day == &quot;평일&quot; else &quot;토요일 10:00~17:00&quot;</code></pre></div></div>
+<div class="nb-markdown"><h3>긴 대화 준비</h3>
+<p>요약 압축은 오래된 메시지의 핵심을 짧은 메시지로 바꾸어 다음 모델 입력을 줄이는 처리입니다. <code>SummarizationMiddleware</code>는 트리거 조건을 넘으면 요약 모델을 호출하고, 최근 메시지 일부와 생성한 요약을 다음 요청에 전달합니다. 체크포인터의 과거 기록 전체를 삭제하는 기능과는 다릅니다. 무엇을 저장했는지와 이번 모델에 무엇을 보냈는지를 구분합니다.</p>
+<p>실습의 <code>CaptureAll</code>과 <code>CaptureCompressed</code>는 모델이 실제로 받은 메시지를 <code>seen_before</code>, <code>seen_after</code>에 복사하는 관찰 장치입니다. 요약문의 길이만 줄었다고 성공으로 판단하지 않고, 대출 권수·기간·연장 조건·출처가 남았는지 문자열을 읽습니다. 압축은 손실을 허용하는 변환이므로 업무에 필요한 사실을 먼저 정해야 합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 긴 대화 준비 작업을 수행하고 확인할 값을 출력합니다.
+from langchain_core.messages import HumanMessage, AIMessage
+history = [
+ HumanMessage(&quot;대출은 몇 권인가요?&quot;), AIMessage(&quot;5권입니다 [E01 p.3]&quot;),
+ HumanMessage(&quot;기간은요?&quot;), AIMessage(&quot;14일이며 예약이 없으면 7일 연장됩니다 [E01 p.3]&quot;),
+ HumanMessage(&quot;출처를 기억해 주세요.&quot;), HumanMessage(&quot;지금까지 조건을 정리해 주세요.&quot;),
+]
+print(&quot;원본 메시지 수:&quot;, len(history))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">원본 메시지 수: 6
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 모델 입력이 6개에서 요약문과 최근 2개를 합친 3개로 바뀌고, 14일과 E01 p.3이 남는지 확인합니다.</p>
+<h3>다른 상황과 적용 경계</h3><p>친근한 말투나 반복된 인사는 요약해도 영향이 작지만, 승인 여부·계약 숫자·출처 식별자는 빠지면 후속 답이 달라질 수 있습니다. 이런 값은 상태의 별도 필드에 구조화해 보존하고 대화 요약에는 맥락만 맡기는 설계가 안전합니다.</p><p>메시지 수 감소와 토큰 수 감소는 관련되지만 같은 값은 아닙니다. 긴 한 메시지가 짧은 여러 메시지보다 토큰이 많을 수 있습니다. 이번 실습은 전달 메시지와 보존 문자열을 확인하며, 실제 모델별 토큰 절감률이나 요약 정확도 전체를 보장하지 않습니다.</p><h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before에서는 여섯 메시지가 그대로 주 모델에 전달됩니다. After에서는 trigger=(messages,4), keep=(messages,2)를 적용해 오래된 대화를 요약 메시지로 바꾸고 최근 두 메시지를 유지합니다. 학습용 요약 모델이 만든 문자열에서 14일, 예약 없음, E01 p.3을 검사합니다. 이 검사는 설정이 실행됐음을 보여 주지만 실제 생성 모델의 모든 요약이 정확하다는 뜻은 아닙니다.</p><section class="notebook" data-notebook="03-요약-압축과-Compress" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>Before: 원문 전체 전달</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 Before: 원문 전체 전달 작업을 수행하고 확인할 값을 출력합니다.
+seen_before=[]
+class CaptureAll(AgentMiddleware):
+    def wrap_model_call(self, request: Any, handler: Any) -&gt; Any:
+        seen_before.extend(message.text for message in request.messages)
+        return handler(request)
+before_agent=create_agent(ScriptedModel(replies=[AIMessage(&quot;답&quot;)]),tools=[],middleware=[CaptureAll()])
+before_agent.invoke({&quot;messages&quot;:history})
+print(&quot;모델 입력 메시지 수:&quot;,len(seen_before))
+assert len(seen_before)==6</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">모델 입력 메시지 수: 6
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>After: 자동 요약 적용</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 After: 자동 요약 적용 작업을 수행하고 확인할 값을 출력합니다.
+from langchain.agents.middleware import SummarizationMiddleware
+summary_model=ScriptedModel(replies=[AIMessage(&quot;대출은 5권·14일, 예약이 없으면 7일 연장 [E01 p.3]&quot;)])
+seen_after=[]
+class CaptureCompressed(AgentMiddleware):
+    def wrap_model_call(self, request: Any, handler: Any) -&gt; Any:
+        seen_after.extend(message.text for message in request.messages)
+        return handler(request)
+after_agent=create_agent(
+ ScriptedModel(replies=[AIMessage(&quot;압축된 조건을 확인했습니다.&quot;)]), tools=[],
+ middleware=[SummarizationMiddleware(model=summary_model,trigger=(&quot;messages&quot;,4),keep=(&quot;messages&quot;,2)),CaptureCompressed()])
+after_agent.invoke({&quot;messages&quot;:history})
+print(&quot;모델 입력:&quot;,seen_after)
+joined=&quot; &quot;.join(seen_after)
+assert &quot;14일&quot; in joined and &quot;E01 p.3&quot; in joined</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">모델 입력: [&#x27;Here is a summary of the conversation to date:\n\n대출은 5권·14일, 예약이 없으면 7일 연장 [E01 p.3]&#x27;, &#x27;출처를 기억해 주세요.&#x27;, &#x27;지금까지 조건을 정리해 주세요.&#x27;]
+</pre></div>
+<div class="nb-markdown"><h3>실제 모델로 압축문 생성</h3></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 실제 모델로 압축문 생성 작업을 수행하고 확인할 값을 출력합니다.
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
+for folder in [Path.cwd(), *Path.cwd().parents]:
+    if (folder / &quot;.env&quot;).is_file(): load_dotenv(folder / &quot;.env&quot;); break
+assert os.getenv(&quot;OPENAI_API_KEY&quot;), &quot;OPENAI_API_KEY가 필요합니다.&quot;
+live = init_chat_model(&quot;openai:gpt-5.4-mini&quot;, reasoning_effort=&quot;none&quot;)
+prompt = &quot;다음 기록을 한 문장으로 요약하되 권수, 기간, 연장 조건, 출처를 모두 보존하세요: &quot; + &quot; &quot;.join(m.text for m in history[:4])
+live_summary = live.invoke(prompt)
+usage = live_summary.usage_metadata or {}
+cost = usage.get(&quot;input_tokens&quot;,0)/1_000_000*0.75 + usage.get(&quot;output_tokens&quot;,0)/1_000_000*4.50
+print(&quot;summary:&quot;, live_summary.text)
+print(&quot;usage:&quot;, usage); print(&quot;estimated_cost_usd:&quot;, round(cost,6))
+assert cost &lt; 1.0 and live_summary.text.strip()</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">summary: 대출은 **5권**이며 **기간은 14일**이고 **예약이 없으면 7일 연장**되며, 출처는 **E01 p.3**입니다.
+usage: {&#x27;input_tokens&#x27;: 79, &#x27;output_tokens&#x27;: 45, &#x27;total_tokens&#x27;: 124, &#x27;input_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;cache_read&#x27;: 0}, &#x27;output_token_details&#x27;: {&#x27;audio&#x27;: 0, &#x27;reasoning&#x27;: 0}}
+estimated_cost_usd: 0.000262
+</pre></div>
+<div class="nb-markdown"><h3>압축 전후 비교</h3>
+<p>친근한 말투나 반복된 인사는 요약해도 영향이 작지만, 승인 여부·계약 숫자·출처 식별자는 빠지면 후속 답이 달라질 수 있습니다. 이런 값은 상태의 별도 필드에 구조화해 보존하고 대화 요약에는 맥락만 맡기는 설계가 안전합니다.</p>
+<p>메시지 수 감소와 토큰 수 감소는 관련되지만 같은 값은 아닙니다. 긴 한 메시지가 짧은 여러 메시지보다 토큰이 많을 수 있습니다. 이번 실습은 전달 메시지와 보존 문자열을 확인하며, 실제 모델별 토큰 절감률이나 요약 정확도 전체를 보장하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 이 셀은 압축 전후 비교 작업을 수행하고 확인할 값을 출력합니다.
+print(&quot;before_count:&quot;,len(seen_before))
+print(&quot;after_count:&quot;,len(seen_after))
+print(&quot;estimated_cost_usd: 0.0 (결정적 로컬 모델)&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">before_count: 6
+after_count: 3
+estimated_cost_usd: 0.0 (결정적 로컬 모델)
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>메시지 개수 임계값은 문자 수나 실제 토큰 수와 다릅니다. 운영에서는 모델 프로필이 확인되면 토큰 또는 fraction 조건을 검토합니다.</li><li>요약 호출도 비용과 지연을 추가합니다. 너무 낮은 임계값은 매번 요약을 실행할 수 있습니다.</li><li>압축본에는 원문 식별자를 남겨 중요한 판단 전에 원문을 다시 확인할 수 있게 합니다.</li></ul><p>실습의 결정적 모델은 미들웨어 실행 경계를 재현하기 위한 검사 도구입니다. 실제 모델 품질, 공급자 장애율, 운영 비용을 대신 측정하지 않습니다. 적용 전에는 사용 중인 모델과 계정의 실제 사용량을 다시 확인합니다.</p>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>SummarizationMiddleware는 trigger에 도달하면 오래된 메시지를 요약하고 keep 범위는 원문으로 남깁니다.</li><li>여섯 메시지가 요약문과 최근 두 메시지로 바뀌며 날짜·예외·출처가 남았는지 확인했습니다.</li><li>결정적 요약문의 검사 통과는 실제 생성 모델의 정확성을 보장하지 않습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 다음 절에서는 모델 호출 횟수 제한과 재시도·폴백을 내장 미들웨어로 조합합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. trigger와 keep의 역할은 각각 무엇인가요?</p><p class="quiz-a"><b>해설</b> — trigger는 압축 시작 조건, keep은 압축하지 않고 남길 최근 범위를 정합니다.</p><p class="quiz-q">2. 메시지 수 임계값의 한계는 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 메시지마다 길이가 달라 실제 토큰 사용량을 정확히 나타내지 못합니다.</p><p class="quiz-q">3. 압축 결과에서 출처 식별자를 보존하는 이유는 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 중요한 판단 때 압축 주장과 원문을 다시 대조하기 위해서입니다.</p><p class="quiz-q">4. 요약 미들웨어가 비용을 항상 줄인다고 단정할 수 없는 이유는 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 별도 요약 모델 호출 비용이 들고 임계값과 대화 길이에 따라 절감량이 달라집니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.langchain.com/oss/python/langchain/middleware/custom">LangChain Custom middleware</a> · 확인 2026-09-14 · LangChain 1.4.0</li><li><a href="https://docs.langchain.com/oss/python/langchain/middleware/built-in">LangChain Prebuilt middleware</a> · 확인 2026-09-14 · LangChain 1.4.0</li><li><a href="https://reference.langchain.com/python/langchain/agents/middleware">LangChain middleware API reference</a> · 확인 2026-09-14 · LangChain 1.4.0</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="02-PII-마스킹-이식.html">← PII 마스킹 이식</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="04-호출-한도와-재시도-폴백.html">호출 한도와 재시도 폴백 →</a></span></div></div></body></html>

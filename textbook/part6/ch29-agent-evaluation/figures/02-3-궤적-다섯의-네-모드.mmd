@@ -1,0 +1,22 @@
+flowchart TB
+  %% classes
+  base["기준 궤적과<br>모드 넷의 평가 함수<br>다섯 궤적 모두 같은 것과 견줌"]
+  subgraph g1["모드 strict만 거짓"]
+    direction TB
+    t1["차례 바꿈<br>strict False<br>unordered True<br>subset True<br>superset True"]:::measure
+    t2["한 응답에 요청 둘<br>strict False<br>unordered True<br>subset True<br>superset True"]:::measure
+    t1 ~~~ t2
+  end
+  subgraph g2["모드 subset만 참"]
+    direction TB
+    t3["검색만<br>strict False<br>unordered False<br>subset True<br>superset False"]:::measure
+  end
+  subgraph g3["모드 superset만 참"]
+    direction TB
+    t4["예약을 더함<br>strict False<br>unordered False<br>subset False<br>superset True"]:::measure
+    t5["검색 세 번<br>strict False<br>unordered False<br>subset False<br>superset True"]:::measure
+    t4 ~~~ t5
+  end
+  base --> g1
+  base --> g2
+  base --> g3

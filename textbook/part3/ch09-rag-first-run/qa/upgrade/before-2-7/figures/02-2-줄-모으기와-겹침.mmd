@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  txt["2쪽 글 905자<br>줄 26개 · 빈 줄 없음"]:::tool
+  rule["끊을 자리 순서<br>빈 줄 → 줄바꿈<br>→ 빈칸 → 글자"]:::flow
+  gather["줄을 차례로 모아<br>500자 넘기 전까지 담기"]:::flow
+  subgraph TWO["2쪽 문서 청크 두 개"]
+    direction LR
+    front["앞 문서 청크 498자<br>끝 두 줄: 구역 평일 주말 비고<br>종합자료실(2층) 줄"]:::tool
+    back["뒤 문서 청크 452자<br>같은 두 줄로 시작"]:::tool
+    front -->|겹침 50자 안의 줄| back
+  end
+  sum["다시 넣은 두 줄<br>글자 수 합 44"]:::measure
+  txt --> rule
+  rule --> gather
+  gather --> TWO
+  TWO --> sum

@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 나눈 단가를 그대로 넣음"]
+    direction LR
+    b1["split으로 나눈 단가<br>'39000'<br>자료형 str"]:::tool --> b2["calculate_line_total<br>unit_price: int<br>수량 2"]:::flow --> b3["주문 줄 금액: 3900039000<br>자료형 str<br>78000과 같은가 False"]:::fail
+  end
+  subgraph AFTER["After · int()로 바꾼 뒤 넣음"]
+    direction LR
+    a1["int()로 바꾼 단가<br>39000<br>자료형 int"]:::tool --> a2["calculate_line_total<br>같은 함수<br>수량 2"]:::flow --> a3["주문 줄 금액: 78000<br>자료형 int<br>78000과 같은가 True"]:::measure
+  end
+  BEFORE ~~~ AFTER

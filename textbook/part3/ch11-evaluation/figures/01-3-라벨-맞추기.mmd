@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  ds["평가셋 파일<br>질문 글 · 정답 문서 ID<br>파일 지문 9544b332d5"]:::tool
+  r9["Ch 9 06절 기록 1줄<br>검색 개수 2"]:::tool
+  r10["Ch 10 08절 기록 6줄<br>검색 개수 5"]:::tool
+  check["세 칸을 하나씩 맞춰 보기<br>질문 글 · 정답 문서 ID · 파일 지문"]:::flow
+  out["읽은 기록 줄 수 7<br>어긋난 칸 수 0"]:::measure
+  ds --> check
+  r9 --> check
+  r10 --> check
+  check --> out

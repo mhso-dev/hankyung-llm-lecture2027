@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  ans["일 하나의 답 다섯<br>예 또는 아니오"]:::tool
+  score["workflow_score<br>답이 예인 질문의<br>가중치를 더함"]:::flow
+  qs["진단 질문 다섯<br>가중치 2 · 1 · 1 · 1 · 1<br>가장 큰 점수 6"]
+  rec["recommend<br>점수를 기준값 4와 견줌"]:::flow
+  ok["워크플로우로 충분"]:::measure
+  no["모델이 고르는 단계 검토"]:::measure
+  ans --> score
+  ans ~~~ qs
+  score --> rec
+  rec -.->|4 이상이면| ok
+  rec -.->|4보다 작으면| no

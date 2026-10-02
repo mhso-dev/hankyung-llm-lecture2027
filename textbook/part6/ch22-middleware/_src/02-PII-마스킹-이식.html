@@ -1,0 +1,60 @@
+<!--meta: 강의 1h · 실습 2h | 코드 Jupyter Notebook | 새 용어 3개 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>개인정보가 모델에 그대로 전송되는지 기록 훅으로 확인할 수 있습니다.</li><li>마스킹 미들웨어(PIIMiddleware)를 등록해 모델에 보내기 전에 이메일을 가릴 수 있습니다.</li><li>내장 종류에 없는 개인정보를 정규식 탐지 규칙으로 추가할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>사용자는 질문에 자기 이메일이나 전화번호를 적곤 합니다. 이 글이 그대로 외부 모델 서비스로 나가면 개인정보가 전송됩니다.</p>
+<p>Ch16에서는 모델을 부르기 전에 마스킹 함수를 직접 호출했습니다. 호출하는 자리가 늘어나면 한 곳쯤 빠뜨리기 쉽습니다.</p>
+<p>이번 절에서는 같은 일을 미들웨어에 맡깁니다. 한 번 등록하면 모델을 부를 때마다 자동으로 적용됩니다.</p>
+<p><strong>이 절의 질문</strong> — Ch16의 PII 마스킹을 미들웨어로 옮기면 적용 지점과 코드가 어떻게 달라질까요?</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>Ch16 02절에서 정규식으로 이메일·전화번호·주민등록번호·카드 번호를 찾아 표식으로 바꿨습니다.</p>
+<p>01절에서는 감싸기형 훅을 만들었습니다. <code>handler(request)</code> 줄 앞에서 모델에 들어갈 메시지를 볼 수 있습니다. 이번 절은 이 성질로 「모델이 받은 글」을 기록합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유로 시작하기</h3>
+<p>우체국 발송 창구를 떠올려 봅니다. 직원은 봉투가 우체통에 들어가기 전에 전화번호 칸에 가림 스티커를 붙입니다.</p>
+<p>보내는 사람이 스티커를 챙기지 않아도 됩니다. 창구를 지나는 모든 봉투에 같은 일이 일어나기 때문입니다. 마스킹 미들웨어가 이 창구 직원입니다.</p>
+{{img:02-4-우편-가림막|사람이 건넨 봉투에 창구 직원이 회색 스티커를 붙이고, 그 봉투가 우체통에 들어가는 세 장면 삽화|창구 직원은 모든 봉투가 우체통에 들어가기 전에 가림 스티커를 붙입니다.}}
+<p><strong>그림 읽기</strong> — 왼쪽 봉투에서 오른쪽 우체통으로 따라갑니다. 가운데 직원이 마스킹 미들웨어에 해당합니다.</p>
+<h3>개인정보와 마스킹의 뜻</h3>
+<p>개인정보(PII, Personally Identifiable Information)는 사람을 알아볼 수 있는 정보입니다. 이메일, 전화번호, 주민등록번호가 예입니다.</p>
+<p>마스킹(masking)은 이런 값의 일부나 전부를 다른 글자로 가리는 처리입니다. 예를 들어 <code>learner@example.com</code>을 <code>learner@****.com</code>으로 바꿉니다.</p>
+<h3>마스킹이 일어나는 자리</h3>
+{{mermaid:02-1-마스킹-위치|Before에서는 이메일 원문이, After에서는 가려진 이메일이 모델에 가는 비교 흐름도|같은 질문을 보냈을 때 모델이 받은 글입니다. After에서는 모델 호출 전에 이메일이 가려집니다.}}
+<p><strong>도식 읽기</strong> — 두 줄을 왼쪽에서 오른쪽으로 읽습니다. 오른쪽 끝 상자가 모델이 실제로 받은 글입니다. 파란 상자는 질문과 거쳐 가는 단계입니다.</p>
+<p>위 줄에는 마스킹 단계가 없어서 빨간 상자에 이메일 원문이 보입니다. 아래 줄은 기록 훅보다 먼저 이메일 마스킹을 거칩니다. 그래서 보라 상자에는 가려진 글이 있습니다.</p>
+<h3>직접 호출과 등록의 차이</h3>
+<p>Ch16 방식은 모델을 부르는 코드마다 <code>mask_pii()</code> 함수를 넣어야 합니다. 새 기능을 추가하면서 한 줄을 빠뜨리면 원문이 나갑니다.</p>
+<p>미들웨어 방식은 <code>create_agent()</code> 함수에 한 번 등록합니다. 그 뒤로는 에이전트가 모델을 부를 때마다 마스킹이 먼저 실행됩니다. 입력을 가리는 단계는 01절에서 본 before_model 자리에서 실행됩니다.</p>
+{{mermaid:02-2-호출-방식-비교|Ch16 직접 호출 방식과 미들웨어 등록 방식을 비교한 흐름도|마스킹을 적용하는 두 방식입니다. 위 칸의 점선은 호출을 빠뜨린 경로입니다.}}
+<h3>PIIMiddleware의 인자</h3>
+<table><tr><th>인자</th><th>이번 실습 값</th><th>뜻</th></tr>
+<tr><td>첫 인자(종류)</td><td><code>"email"</code></td><td>가릴 개인정보 종류. 공식 문서 기준으로 이메일, 카드 번호, IP 주소 등이 내장돼 있습니다.</td></tr>
+<tr><td><code>strategy</code></td><td><code>"mask"</code></td><td>가리는 방식. mask는 일부만 별표로 바꿉니다.</td></tr>
+<tr><td><code>apply_to_input</code></td><td><code>True</code></td><td>모델에 보내는 입력에 적용합니다.</td></tr>
+<tr><td><code>apply_to_output</code></td><td><code>True</code></td><td>모델이 만든 답에도 적용합니다. 이번 실습에서는 답 쪽을 확인하지 않았습니다.</td></tr>
+<tr><td><code>detector</code></td><td>전화번호 정규식</td><td>내장 종류가 아닐 때 찾을 모양을 직접 넘깁니다.</td></tr></table>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>노트북은 먼저 Ch16 02절의 가리기 함수를 딕셔너리와 <code>re.compile</code>로 정리한 판을 실행합니다. 함수 <code>re.compile</code>은 정규식 글을 미리 규칙 객체 하나로 만들어 둡니다. 이메일 정규식은 Ch16 02절과 다른 모양이고, 나머지 셋은 같습니다. 네 가지 개인정보가 모두 표식으로 바뀌는지 확인합니다.</p>
+<p>그다음 모델이 받은 글을 기록하는 훅을 만듭니다. 비교는 Before와 After 모두 이 기록으로 합니다. 모델 답 문장은 실행마다 달라지므로 비교 기준으로 쓰지 않습니다.</p>
+{{notebook:02-PII-마스킹-이식|example}}
+<p class="look"><b>확인할 점</b> — 마스킹 결과 네 값이 모두 표식으로 바뀌었는지 봅니다. 이 함수는 호출했을 때만 적용됩니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before에서는 기록 훅만 등록한 에이전트에 이메일이 든 질문을 보냅니다. After에서는 같은 질문을, 마스킹 미들웨어를 추가한 에이전트에 보냅니다.</p>
+<p>바꾼 조건은 <code>PIIMiddleware</code> 등록 하나입니다. 질문, 모델, 기록 훅은 같습니다.</p>
+{{notebook:02-PII-마스킹-이식|failure}}
+<p>Before에서 모델이 받은 글에는 이메일 원문이 있었습니다. After에서는 <code>learner@****.com</code>으로 가려졌고, 대화 기록에 저장된 질문도 가려진 글이었습니다.</p>
+<p>원인은 모델 호출 전에 개인정보를 가리는 단계가 없었다는 것입니다. 미들웨어를 등록하자 그 단계가 모델 호출마다 자동으로 들어갔습니다.</p>
+{{mermaid:02-3-등록-종류별-결과|등록한 종류에 따라 이메일과 전화번호가 가려지거나 그대로 전송된 결과를 세 줄로 비교한 그림|등록한 개인정보 종류에 따라 모델이 받은 글이 달라졌습니다.}}
+<p>값 바꿔 보기에서는 전화번호 질문을 보냈습니다. 이메일만 등록한 에이전트는 전화번호를 가리지 않았습니다. Ch16에서 쓴 전화번호 정규식을 <code>detector</code> 인자로 넘기자 <code>****5678</code>로 가려졌습니다.</p>
+<p>모델 호출은 모두 4번이고 예상 비용은 0.01달러 미만입니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul><li>내장 미들웨어는 등록한 종류만 찾습니다. 서비스에서 받는 개인정보 종류를 먼저 정리하고 빠진 종류는 <code>detector</code>로 추가합니다.</li><li>정규식은 모양이 조금 다른 값(예: 공백이 든 전화번호)을 놓칠 수 있습니다. 실제 입력 예시로 탐지 결과를 확인합니다.</li><li>이번 실습의 마스킹은 모델 입력과 대화 기록에 적용됐습니다. 로그 파일처럼 미들웨어 밖에서 원문을 저장하는 곳은 따로 확인해야 합니다.</li><li>Ch16 함수의 표식(<code>&lt;EMAIL_MASKED&gt;</code>)과 미들웨어의 별표 결과는 모양이 다릅니다. 표식 모양에 의존하는 코드가 있으면 함께 고칩니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>마스킹 함수는 부를 때만, 마스킹 미들웨어는 모델을 부를 때마다 적용됩니다.</li><li>모델이 받은 글을 기록해 Before와 After를 비교했습니다.</li><li>내장 종류에 없는 개인정보는 정규식을 <code>detector</code> 인자로 넘겨 추가합니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 03절에서는 긴 대화를 모델에 보내기 전에 요약하는 미들웨어를 다룹니다. 이번 절의 기록 훅으로 입력 메시지 수를 비교합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary>
+<p class="quiz-q">1. Before에서 모델이 받은 글에 이메일 원문이 있었던 이유는 무엇인가요?</p><p class="quiz-a"><b>해설</b> — 모델 호출 전에 개인정보를 가리는 단계가 없었기 때문입니다. 에이전트에는 기록 훅만 등록돼 있었습니다.</p>
+<p class="quiz-q">2. After에서 바꾼 조건은 무엇이었나요?</p><p class="quiz-a"><b>해설</b> — <code>PIIMiddleware("email", ...)</code>를 등록한 것 하나입니다. 질문과 모델은 같았습니다.</p>
+<p class="quiz-q">3. 이메일만 등록한 에이전트에 전화번호를 보내면 어떻게 됐나요?</p><p class="quiz-a"><b>해설</b> — 전화번호가 가려지지 않고 그대로 모델에 갔습니다. 등록한 종류만 가려지기 때문입니다.</p>
+<p class="quiz-q">4. 전화번호도 가리려면 무엇을 추가했나요?</p><p class="quiz-a"><b>해설</b> — Ch16의 전화번호 정규식을 <code>detector</code> 인자로 넘긴 PIIMiddleware를 하나 더 등록했습니다.</p>
+</details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.langchain.com/oss/python/langchain/middleware/custom">LangChain Custom middleware</a> · 확인 2026-09-14 · LangChain 1.4.0</li><li><a href="https://docs.langchain.com/oss/python/langchain/middleware/built-in">LangChain Prebuilt middleware</a> · 확인 2026-09-14 · LangChain 1.4.0</li><li><a href="https://reference.langchain.com/python/langchain/agents/middleware">LangChain middleware API reference</a> · 확인 2026-09-14 · LangChain 1.4.0</li></ul>

@@ -1,0 +1,9 @@
+flowchart TD
+  %% classes
+  V["오른쪽 값<br>2"]:::tool
+  A["대입 ="]:::flow
+  N["왼쪽 이름<br>quantity"]:::flow
+  T["type(quantity)"]:::measure
+  R["출력<br>#lt;class 'int'#gt;"]:::measure
+  V --> A --> N
+  N -- "자료형 확인" --> T --> R

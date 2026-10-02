@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  r9["Ch 9 기록 1줄<br>검색 항목 2개"]:::tool
+  r10["Ch 10 기록 6줄<br>검색 항목 5개"]:::tool
+  base["이 절 기준선 15문항<br>후보 50개"]:::tool
+  rule["기록 줄 수가 50 이상일 때만<br>자르는 자리 50을 계산"]:::flow
+  skip["자르는 자리 50<br>계산 안 함"]
+  logged["기록 줄 수 자리 재현율<br>Ch 9 1.0 · Ch 10 1.0"]:::measure
+  got["자르는 자리 50<br>질문 평균 재현율 1.0"]:::measure
+  r9 --> rule
+  r10 --> rule
+  base --> rule
+  rule -->|항목 2개와 5개| skip
+  rule -->|항목 50개| got
+  skip --> logged

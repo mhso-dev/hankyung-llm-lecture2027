@@ -1,0 +1,8 @@
+flowchart TB
+  %% classes
+  open["async with Client server<br>as client<br>인자 mode를 주지 않음"]:::flow
+  first["연결할 때 첫 요청 server/discover<br>설치판 소스와 노트북 밖 확인"]
+  inside["블록 안에서 읽은 판 번호<br>2026-07-28"]:::measure
+  close["블록을 벗어남<br>연결이 닫힘"]:::flow
+  outside["블록 밖 판 번호 None<br>연결되어 있는가 False"]:::measure
+  open --> first --> inside --> close --> outside

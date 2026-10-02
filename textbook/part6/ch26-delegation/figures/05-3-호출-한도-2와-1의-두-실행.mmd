@@ -1,0 +1,21 @@
+%%{init: {"flowchart": {"wrappingWidth": 320}}}%%
+flowchart TB
+  %% classes
+  s["두 실행 같음<br>같은 문의 · 같은 도구<br>같은 시스템 메시지 글<br>필요한 분야 loan_desk"]
+  subgraph r1 ["실행 1 호출 한도 2 이번 실행"]
+    direction TB
+    l1["호출 한도 2"]:::tool
+    o1["loan_desk에 한 번 맡김<br>마지막 응답은 최종 답<br>모델 요청 수 3<br>완료 조건 True"]:::measure
+    l1 --> o1
+  end
+  subgraph r2 ["실행 2 호출 한도 1 이번 실행"]
+    direction TB
+    l2["호출 한도 1"]:::tool
+    o2["loan_desk에 한 번 맡김<br>마지막 응답은 한도 글<br>모델 요청 수 2<br>완료 조건 False"]:::measure
+    l2 --> o2
+  end
+  k["두 실행 모두 바깥 메시지는<br>AIMessage · ToolMessage · AIMessage"]:::measure
+  s --> r1
+  s --> r2
+  r1 ~~~ k
+  r2 ~~~ k

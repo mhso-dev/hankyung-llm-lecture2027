@@ -1,0 +1,52 @@
+[
+  {
+    "chapter": 1,
+    "gate_verdict": "WARN",
+    "gate_exit_code": 1,
+    "change_rate": 0.0124,
+    "invariants": "PASS",
+    "record": "_workspace/2026-09-11-003/gates.json",
+    "manual_verdict": "accept",
+    "unresolved_required_changes": 0
+  },
+  {
+    "chapter": 2,
+    "gate_verdict": "WARN",
+    "gate_exit_code": 1,
+    "change_rate": 0.0387,
+    "invariants": "FAIL",
+    "record": "_workspace/2026-09-11-004/gates.json",
+    "manual_verdict": "accept",
+    "unresolved_required_changes": 0
+  },
+  {
+    "chapter": 3,
+    "gate_verdict": "WARN",
+    "gate_exit_code": 1,
+    "change_rate": 0.0749,
+    "invariants": "WARN",
+    "record": "_workspace/2026-09-11-005/gates.json",
+    "manual_verdict": "accept",
+    "unresolved_required_changes": 0
+  },
+  {
+    "chapter": 4,
+    "gate_verdict": "WARN",
+    "gate_exit_code": 1,
+    "change_rate": 0.1888,
+    "invariants": "FAIL",
+    "record": "_workspace/2026-09-11-006/gates.json",
+    "manual_verdict": "corrected",
+    "unresolved_required_changes": 0
+  },
+  {
+    "chapter": 5,
+    "gate_verdict": "WARN",
+    "gate_exit_code": 1,
+    "change_rate": 0.062,
+    "invariants": "WARN",
+    "record": "_workspace/2026-09-11-007/gates.json",
+    "manual_verdict": "accept",
+    "unresolved_required_changes": 0
+  }
+]

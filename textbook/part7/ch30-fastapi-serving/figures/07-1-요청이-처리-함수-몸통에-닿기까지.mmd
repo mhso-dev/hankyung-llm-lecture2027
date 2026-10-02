@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  req["POST /v1/chat<br>요청 머리 Origin과<br>Authorization"]:::tool
+  cors["CORS 층<br>CORSMiddleware<br>사전 요청이면 바로 답함"]
+  auth["제공 함수 require_token<br>접근 토큰 검사"]:::tool
+  body["처리 함수 chat 몸통<br>그래프를 wait_for로 기다림"]:::tool
+  ok["200 답<br>허용 출처면<br>응답 머리를 덧붙임"]:::measure
+  e401["401<br>접근 토큰이 없거나 틀림"]:::measure
+  e504["504<br>시간 제한 0초를 넘김"]:::measure
+  req --> cors
+  cors --> auth
+  auth --> body
+  body --> ok
+  auth -.-> e401
+  body -.-> e504

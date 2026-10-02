@@ -1,0 +1,102 @@
+[
+  {
+    "notebook": "labs/part6/ch25-streaming/notebooks/01-일곱-가지-stream-mode.ipynb",
+    "html": "textbook/part6/ch25-streaming/01-일곱-가지-stream-mode.html",
+    "code_cells": 28,
+    "code_lines": 201,
+    "max_cell_lines": 12,
+    "verification": {
+      "allow_errors": false,
+      "code_cells": 28,
+      "code_sha256": "650e86fce1fa2d9e7b4d902ce2de6e86ee6f0bc6d6fadbbb47dbc416569b6e83",
+      "executed_at": "2026-09-25T17:46:35.773663+00:00",
+      "fresh_kernel": true,
+      "outputs_sha256": "5027ff86da5a1117cdc2703d55314282f2fecffc76e82e6551afb322dd4aac7d",
+      "python_version": "3.12.13",
+      "status": "passed"
+    },
+    "python_version": "3.12.13",
+    "lesson_format": "experiment",
+    "html_matches": true,
+    "download_matches": true,
+    "outputs_match": true,
+    "failure_section_matches": true,
+    "before_cells": 0,
+    "after_cells": 0
+  },
+  {
+    "notebook": "labs/part6/ch25-streaming/notebooks/02-토큰과-중간-진행-스트리밍.ipynb",
+    "html": "textbook/part6/ch25-streaming/02-토큰과-중간-진행-스트리밍.html",
+    "code_cells": 25,
+    "code_lines": 174,
+    "max_cell_lines": 12,
+    "verification": {
+      "allow_errors": false,
+      "code_cells": 25,
+      "code_sha256": "68b434d3f859241f3917ccb2c06c19129a8f95103684a6736916d1e80e97efda",
+      "executed_at": "2026-09-25T18:14:45.642660+00:00",
+      "fresh_kernel": true,
+      "outputs_sha256": "2238f293d7668e7b6f324b295eb3b0974d043ddbe3532ffe651f5b6bd34f3477",
+      "python_version": "3.12.13",
+      "status": "passed"
+    },
+    "python_version": "3.12.13",
+    "lesson_format": "experiment",
+    "html_matches": true,
+    "download_matches": true,
+    "outputs_match": true,
+    "failure_section_matches": true,
+    "before_cells": 0,
+    "after_cells": 0
+  },
+  {
+    "notebook": "labs/part6/ch25-streaming/notebooks/03-TTFT와-total-비교.ipynb",
+    "html": "textbook/part6/ch25-streaming/03-TTFT와-total-비교.html",
+    "code_cells": 24,
+    "code_lines": 170,
+    "max_cell_lines": 11,
+    "verification": {
+      "allow_errors": false,
+      "code_cells": 24,
+      "code_sha256": "ffe254e0d3c24ec22dd6733ad69c175ac416fdb4e789fdcc1a67a9050b9b7209",
+      "executed_at": "2026-09-25T18:45:20.845587+00:00",
+      "fresh_kernel": true,
+      "outputs_sha256": "9a11da7a456d2da4ac3318154534a216031cfac26e810a7b80e260416e6de67e",
+      "python_version": "3.12.13",
+      "status": "passed"
+    },
+    "python_version": "3.12.13",
+    "lesson_format": "experiment",
+    "html_matches": true,
+    "download_matches": true,
+    "outputs_match": true,
+    "failure_section_matches": true,
+    "before_cells": 0,
+    "after_cells": 0
+  },
+  {
+    "notebook": "labs/part6/ch25-streaming/notebooks/04-Streaming-실습.ipynb",
+    "html": "textbook/part6/ch25-streaming/04-Streaming-실습.html",
+    "code_cells": 20,
+    "code_lines": 131,
+    "max_cell_lines": 11,
+    "verification": {
+      "allow_errors": false,
+      "code_cells": 20,
+      "code_sha256": "0c0ecd220c78ba90406c1ef1e15a047ec183f8e45bf14805792c7b2625ecc5d9",
+      "executed_at": "2026-09-25T19:16:02.092995+00:00",
+      "fresh_kernel": true,
+      "outputs_sha256": "40744b4c39294235f6f9f17f9da37fb285009d632b9d3638d09ddb5bbec18e72",
+      "python_version": "3.12.13",
+      "status": "passed"
+    },
+    "python_version": "3.12.13",
+    "lesson_format": "experiment",
+    "html_matches": true,
+    "download_matches": true,
+    "outputs_match": true,
+    "failure_section_matches": true,
+    "before_cells": 0,
+    "after_cells": 0
+  }
+]

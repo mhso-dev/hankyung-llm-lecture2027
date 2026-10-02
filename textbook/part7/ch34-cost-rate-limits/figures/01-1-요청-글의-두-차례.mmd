@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  mk["make_request<br>번호는 늘 맨 앞<br>앞 글과 뒤 글의 차례만 바꿈"]:::flow
+  subgraph r1["실행 1 · 문의 글을 뒤에"]
+    direction TB
+    a1["첫 요청<br>번호 · 정책 · 문의 1"]:::tool
+    a2["둘째 요청<br>번호 · 정책 · 문의 2"]:::tool
+    a3["첫 글자부터 같은 부분<br>번호와 정책 글 전체"]
+    a1 ~~~ a2
+    a2 ~~~ a3
+  end
+  subgraph r2["실행 2 · 문의 글을 앞에"]
+    direction TB
+    b1["첫 요청<br>번호 · 문의 1 · 정책"]:::tool
+    b2["둘째 요청<br>번호 · 문의 2 · 정책"]:::tool
+    b3["첫 글자부터 같은 부분<br>번호뿐"]
+    b1 ~~~ b2
+    b2 ~~~ b3
+  end
+  mk --> r1
+  mk --> r2

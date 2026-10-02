@@ -1,0 +1,22 @@
+flowchart LR
+  %% classes
+  subgraph A["JSON만 · 입력 130"]
+    direction TB
+    A1["한국어 키 세 개<br>분류 · 다음 행동 ·<br>고객에게 보낼 한 문장"]:::measure
+    A2["키 층에서 걸림<br>없는 키 세 개"]:::measure
+    A1 --> A2
+  end
+  subgraph B["키 이름 · 입력 145"]
+    direction TB
+    B1["category 교환 요청"]:::measure
+    B2["값 층에서 걸림<br>허용 이름 밖"]:::measure
+    B1 --> B2
+  end
+  subgraph C["값 규칙 · 입력 191"]
+    direction TB
+    C1["category 교환"]:::measure
+    C2["세 층 모두 지남"]:::measure
+    C1 --> C2
+  end
+  A ~~~ B
+  B ~~~ C

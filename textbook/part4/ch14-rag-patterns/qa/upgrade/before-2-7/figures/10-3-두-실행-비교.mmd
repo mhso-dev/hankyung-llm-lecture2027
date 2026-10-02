@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph one["실행 1"]
+    direction TB
+    a0["후속 질문<br>늦으면 어떻게 되나요?"]:::tool
+    a1["첫 자리 거리 0.64"]:::measure
+    a2["다시 검색한 횟수 1"]:::measure
+    a0 ~~~ a1
+    a1 ~~~ a2
+  end
+  subgraph two["실행 2"]
+    direction TB
+    b0["후속 질문<br>그날 못 가져오면 돈 내야 하나요?"]:::tool
+    b1["첫 자리 거리 0.44"]:::measure
+    b2["다시 검색한 횟수 0"]:::measure
+    b0 ~~~ b1
+    b1 ~~~ b2
+  end
+  same["두 실행 모두 같은 대화 기록 두 줄과<br>같은 거리 기준값 0.5와<br>같은 정답 문서 LIB-002"]
+  one ~~~ two
+  two ~~~ same

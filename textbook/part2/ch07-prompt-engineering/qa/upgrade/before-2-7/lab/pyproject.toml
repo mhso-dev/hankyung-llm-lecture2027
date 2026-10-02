@@ -1,0 +1,18 @@
+[project]
+name = "ch07-prompt-engineering"
+version = "0.1.0"
+description = "Ch 7 프롬프트 엔지니어링 실험"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "langchain==1.4.0",
+    "langchain-openai==1.6.0",
+    "python-dotenv==1.2.3",
+]
+
+[dependency-groups]
+dev = ["pip==26.2", 
+  "ipykernel==7.3.0", "ruff==0.16.6"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

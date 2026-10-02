@@ -1,0 +1,40 @@
+<svg style="min-width:900px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 710" width="900" height="710" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-03-concept desc-03-concept">
+<title id="title-03-concept">주문 정보를 담는 네 자료구조</title>
+<desc id="desc-03-concept">상품 세 개를 목록으로 유지하고 집합으로 고유 상품 두 개를 얻으며, copy로 백업 목록을 분리하는 흐름입니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="900" height="710" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">주문 정보를 담는 네 자료구조</tspan></text>
+<text x="20" y="72.0" font-size="16" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">독립된 저장 예와 실제 조회 결과</tspan></text>
+<rect x="25" y="100" width="245" height="88" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="147.5" y="122.4" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="147.5" dy="0.0">목록 items</tspan><tspan x="147.5" dy="21.6">[키보드, 마우스, 키보드]</tspan><tspan x="147.5" dy="21.6">길이 3</tspan></text>
+<polyline points="270,144 325,144" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="247.1" y="117.0" width="100.8" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="297.5" y="129.0" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="297.5" dy="0.0">set(items)</tspan></text>
+<rect x="325" y="100" width="245" height="88" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="447.5" y="122.4" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="447.5" dy="0.0">집합 unique_items</tspan><tspan x="447.5" dy="21.6">{키보드, 마우스}</tspan><tspan x="447.5" dy="21.6">길이 2</tspan></text>
+<rect x="625" y="100" width="250" height="88" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="750.0" y="133.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="750.0" dy="0.0">튜플 delivery_point</tspan><tspan x="750.0" dy="21.6">(37.5665, 126.9780)</tspan></text>
+<rect x="25" y="245" width="260" height="88" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="155.0" y="267.4" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="155.0" dy="0.0">딕셔너리 order</tspan><tspan x="155.0" dy="21.6">id: A102</tspan><tspan x="155.0" dy="21.6">amount: 78000</tspan></text>
+<text x="20" y="395.0" font-size="16" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">목록 복사 뒤 cart만 변경합니다</tspan></text>
+<rect x="335" y="420" width="230" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="450.0" y="449.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">처음 cart</tspan><tspan x="450.0" dy="21.6">[키보드, 마우스]</tspan></text>
+<polyline points="410,500 410,520 205,545" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="270.1" y="495.5" width="74.8" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="307.5" y="507.5" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="307.5" dy="0.0">.copy()</tspan></text>
+<rect x="25" y="545" width="360" height="90" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="205.0" y="568.4" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="205.0" dy="0.0">backup</tspan><tspan x="205.0" dy="21.6">[키보드, 마우스]</tspan><tspan x="205.0" dy="21.6">변경 없이 유지</tspan></text>
+<polyline points="490,500 490,520 695,545" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="507.4" y="495.5" width="170.2" height="24" rx="4" fill="#ffffff" opacity="0.94"/>
+<text x="592.5" y="507.5" font-size="14" fill="#1e40af" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="592.5" dy="0.0">cart.append(&quot;헤드셋&quot;)</tspan></text>
+<rect x="515" y="545" width="360" height="90" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="695.0" y="568.4" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="695.0" dy="0.0">변경 뒤 cart</tspan><tspan x="695.0" dy="21.6">[키보드, 마우스, 헤드셋]</tspan><tspan x="695.0" dy="21.6">cart is backup → False</tspan></text>
+<text x="325" y="365.0" font-size="14" fill="#4b5563" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="325" dy="0.0">튜플과 딕셔너리는 목록에서 변환된 결과가 아니라 각각 만든 값입니다.</tspan></text>
+<text x="450.0" y="684.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="450.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg>

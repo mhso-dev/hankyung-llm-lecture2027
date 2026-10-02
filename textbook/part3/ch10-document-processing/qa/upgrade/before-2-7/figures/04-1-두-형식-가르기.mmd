@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  f1["견본 두 개<br>legacy-signature.hwp · minimal-marker.hwpx"]:::tool
+  chk["앞 여덟 바이트와<br>압축 묶음 여부를 봄"]:::flow
+  k1["HWP 후보<br>압축 묶음 아님"]:::measure
+  k2["HWPX<br>압축 묶음 맞음"]:::measure
+  no1["전용 도구가 필요함<br>이 절에서 본문을 읽지 않음"]
+  x1["본문 XML 하나를 골라<br>글 15자를 꺼냄"]:::measure
+  rec["다섯 칸 출처 기록<br>page 칸 없음 · section 칸 1"]:::tool
+  f1 --> chk
+  chk --> k1
+  chk --> k2
+  k1 --> no1
+  k2 --> x1
+  x1 --> rec

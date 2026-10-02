@@ -1,0 +1,18 @@
+%%{init: {"flowchart": {"wrappingWidth": 340}}}%%
+flowchart TB
+  %% classes
+  subgraph R1["실행 1 · 문서 청크 크기 500자 · 문서 청크 8개"]
+    direction LR
+    S1["근거 글자 수 543<br>근거에서 빠진 지킬 말 없음"]:::measure
+    A1["입력 토큰 수 513 · 기록 수 1<br>답 내용이 근거에 있음"]:::measure
+    S1 --> A1
+  end
+  subgraph R2["실행 2 · 문서 청크 크기 300자 · 문서 청크 14개"]
+    direction LR
+    S2["근거 글자 수 287<br>근거에서 빠진 지킬 말 세 개"]:::measure
+    A2["입력 토큰 수 345 · 기록 수 0<br>답의 표시 E01 p.3<br>답 내용이 근거에 없음"]:::measure
+    S2 --> A2
+  end
+  note["두 실행 모두 같았던 값<br>검색 출처 E01 p.1 · E01 p.2<br>검색 결과에 없는 정답 출처 없음<br>보류 문장 없음<br>답에서 빠진 지킬 말 법정 공휴일"]
+  R1 ~~~ R2
+  R2 ~~~ note

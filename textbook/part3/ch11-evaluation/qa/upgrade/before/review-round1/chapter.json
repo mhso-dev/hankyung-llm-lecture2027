@@ -1,0 +1,50 @@
+{
+  "part": 3,
+  "part_title": "Part 3 · RAG 시스템",
+  "chapter": "ch11-evaluation",
+  "title": "평가 기초 — 측정 가능한 검색 품질",
+  "hours": "총 16h · 강의 6h · 실습 10h",
+  "objectives": [
+    "30개 질문과 정답 문서 ID로 검색 평가셋을 구성할 수 있습니다.",
+    "Recall@50, Precision@5, nDCG@5를 직접 계산하고 함께 해석할 수 있습니다.",
+    "설정·지표·날짜·정책을 담은 실험 로그를 자동 생성할 수 있습니다."
+  ],
+  "lab_path": "labs/part3/ch11-evaluation",
+  "sections": [
+    {
+      "slug": "01-질의셋과-정답-문서-ID",
+      "title": "질의셋과 정답 문서 ID",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-Recall-at-50",
+      "title": "Recall at 50",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-Precision-at-5",
+      "title": "Precision at 5",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-nDCG-at-5",
+      "title": "nDCG at 5",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-조건별-평가와-오류-분류",
+      "title": "조건별 평가와 오류 분류",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-실험-로그와-자동-실행",
+      "title": "실험 로그와 자동 실행",
+      "format": "experiment"
+    },
+    {
+      "slug": "07-평가-기초-실습",
+      "title": "평가 기초 실습",
+      "format": "experiment"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part1/qa/check_delivery.py", line 159, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part1/qa/check_delivery.py", line 81, in main
+    assert timing, f"Missing section hours: {page}"
+AssertionError: Missing section hours: /sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part1/ch01-development-environment/06-개발환경-실습.html

@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph Q1["운영 시간 질문"]
+    direction LR
+    A1["모델 호출 2번"]:::model ~~~ A2["도구 호출 1번"]:::tool ~~~ A3["훅 기록 12줄"]:::flow
+  end
+  subgraph Q2["인사 질문"]
+    direction LR
+    B1["모델 호출 1번"]:::model ~~~ B2["도구 호출 0번"]:::tool ~~~ B3["훅 기록 6줄"]:::flow
+  end
+  Q1 ~~~ Q2

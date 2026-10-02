@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  G["author의 저장소 기록<br>커밋과 브랜치"]:::tool
+  W1["author 폴더 · * main<br>?? notice.txt<br>discount=10 한 줄"]:::tool
+  W2["urgent-fix 폴더 · fix/urgent<br>fix: 할인율 상한 30 추가"]:::tool
+  W3["../main-copy · main<br>already checked out<br>종료 코드: 128"]:::fail
+  G -- "기본 폴더" --> W1
+  G -- "worktree add -b fix/urgent" --> W2
+  G -- "worktree add main" --> W3

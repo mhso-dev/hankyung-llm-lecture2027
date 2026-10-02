@@ -1,0 +1,9 @@
+flowchart TB
+  %% classes
+  pre["사전 요청<br>OPTIONS /v1/chat<br>Origin<br>http://localhost:5173<br>보낼 요청 방식 POST"]:::tool
+  cors["CORS 층이 바로 답함<br>처리 함수까지 가지 않음"]
+  res["상태 코드 200<br>허용 출처<br>http://localhost:5173<br>자격 증명 허용 true"]:::measure
+  brw["브라우저가 응답 머리를 보고<br>실제 요청을 보낼지 정함<br>노트북에서는 실행하지 않음"]
+  pre --> cors
+  cors --> res
+  res --> brw

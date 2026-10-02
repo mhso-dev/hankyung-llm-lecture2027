@@ -1,0 +1,5 @@
+flowchart TB
+  %% classes
+  d1["order_data<br>{'name': '노트', 'count': 2}"]:::tool -->|"OrderLine.<br>model_validate()"| m["인스턴스 note<br>name='노트' count=2"]:::tool
+  m -->|"note.model_dump()"| d2["note_data<br>{'name': '노트', 'count': 2}"]:::tool
+  d2 --> r["처음 딕셔너리와 같은가: True"]:::measure

@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  op["POST /v1/chat<br>operationId<br>chat_v1_chat_post"]:::tool
+  body["요청 본문 형식<br>ChatRequest를<br>가리킴"]:::measure
+  ok["200 응답 형식<br>ChatResponse를<br>가리킴"]:::measure
+  bad["422 응답<br>입력 형식 검사"]:::measure
+  param["매개변수<br>authorization<br>자리 header"]:::measure
+  comp["components의<br>ChatRequest<br>꼭 채울 칸 둘<br>question 1자 이상<br>500자 이하"]:::measure
+  op --> body
+  op --> ok
+  op --> bad
+  op --> param
+  body --> comp

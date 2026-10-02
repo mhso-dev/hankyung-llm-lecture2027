@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  s(["START 시작점"])
+  c["classify 분류 노드<br>분야 칸에 이름 목록을 냄<br>뒤에 조건 함수 send_to_desks"]:::flow
+  l["loan_desk<br>대출 규정 담당"]:::flow
+  i["interlibrary_desk<br>상호대차 담당"]:::flow
+  f["facility_desk<br>시설 담당"]:::flow
+  j["join_answers 종합 노드<br>분야 이름 차례로 엮음"]:::flow
+  e(["END 끝점"])
+  s --> c
+  c -.->|Send| l
+  c -.->|Send| i
+  c -.->|Send| f
+  l --> j
+  i --> j
+  f --> j
+  j --> e

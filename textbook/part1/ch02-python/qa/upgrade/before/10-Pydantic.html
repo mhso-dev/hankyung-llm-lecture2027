@@ -1,0 +1,302 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pydantic — Ch 2 · 파이썬 프로그래밍</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 2 · 파이썬 프로그래밍</p>
+<h1>Pydantic</h1><div class="meta"><span>강의 1h</span><span>실습 3h</span><span>새 용어 6</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 3h | 코드 Jupyter Notebook | 새 용어 6 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>Pydantic v2 모델로 입력 자료형과 허용 범위를 선언할 수 있습니다.</li><li>기본 자동 변환과 <code>Field(strict=True)</code>의 차이를 실제 출력으로 설명할 수 있습니다.</li><li><code>ValidationError.errors()</code>에서 오류 유형과 필드 위치를 확인할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>명령줄, 환경 변수, JSON 요청에서 받은 값은 겉모양과 실제 자료형이 다를 수 있습니다. 화면에 <code>3</code>으로 보이는 값이 Python 안에서는 문자열 <code>"3"</code>일 수 있습니다. 일반 타입 힌트는 개발 도구에 기대 자료형을 알려 주지만 실행 중 입력을 거부하거나 변환하지 않습니다. Pydantic은 입력 경계에서 자료형과 범위를 확인하고, 허용되는 값은 모델 객체로 만듭니다. 이 절은 B 경로 선택 학습입니다. Ch 18에서는 외부 API 응답을 다룰 때, Ch 30에서는 서비스 요청 데이터를 검사할 때 같은 판단이 필요합니다. FastAPI 자체는 Ch 30에서 처음 사용합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>01절에서 문자열·정수·실수의 차이를, 03절에서 키와 값을 묶은 딕셔너리를 배웠습니다. 05절에서는 예외가 발생했을 때 자료형과 메시지를 읽었고, 06절에서는 클래스로 같은 속성 구조를 가진 객체를 만드는 방법을 배웠습니다. 07절의 타입힌트는 <code>retries: int</code>처럼 기대 자료형을 표시하지만 실행 중 실제 값을 검사하지는 않습니다. 이 절은 이 네 내용을 연결해 딕셔너리 입력을 검사하고 모델 객체로 바꾸는 과정에 집중합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>쉬운 예</h3><p>신청서의 나이 칸에 숫자 모양의 문자열이 들어왔다고 생각해 봅니다. 어떤 시스템은 <code>"20"</code>을 정수 <code>20</code>으로 바꿔도 됩니다. 다른 시스템은 입력 형식 자체가 정해진 규칙이므로 문자열을 거부해야 합니다. 자동 변환과 엄격한 검증 중 무엇이 옳은지는 데이터 경계의 요구에 따라 결정합니다. Pydantic은 입력 규칙과 변환 결과를 모델에 함께 표현합니다.</p><h3>정의와 표기 읽기</h3><p><strong>데이터 검증(data validation)</strong>은 입력이 기대한 자료형, 범위, 형식을 만족하는지 확인하는 과정입니다. <strong>모델(model)</strong>은 여러 필드와 규칙을 묶은 클래스입니다. <code>class LooseJob(BaseModel):</code>은 Pydantic이 제공하는 <code>BaseModel</code>의 검증 기능을 물려받아 <code>LooseJob</code>이라는 새 모델 클래스를 정의한다는 뜻입니다. 들여쓴 <code>retries: int = Field(ge=0, le=5)</code>는 <code>retries</code>라는 필드가 정수이며 0 이상 5 이하라는 규칙입니다. 여기서 <code>Field</code>는 값을 즉시 검사하는 함수 호출이 아니라 모델 클래스가 읽을 필드 설정을 만듭니다.</p><p><code>LooseJob.model_validate({"retries": "3"})</code>를 호출하는 시점에 검증이 실행됩니다. 입력은 문자열을 값으로 가진 딕셔너리이고, 기본 모드는 변환 가능한 문자열 <code>"3"</code>을 정수 3으로 <strong>강제 변환(coercion)</strong>합니다. 검증에 성공하면 딕셔너리를 그대로 반환하는 것이 아니라 <code>LooseJob</code> 객체를 반환합니다. 따라서 <code>job.retries</code>로 정수 값을 읽고 <code>job.model_dump()</code>로 다시 딕셔너리를 만들 수 있습니다.</p><p><strong>엄격 모드(strict mode)</strong>는 이런 변환을 제한하고 입력 자료형 자체를 확인합니다. <code>Field(strict=True)</code>는 해당 필드에 엄격성을 적용합니다. 검증에 실패하면 모델 객체 대신 <strong>ValidationError</strong>가 발생합니다. <code>error.errors()</code>는 오류 딕셔너리의 목록을 반환하며, 첫 항목의 <code>type</code>은 실패 규칙을, <code>loc</code>은 문제가 생긴 필드 경로를 나타냅니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:860px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 580" width="860" height="580" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-10-concept desc-10-concept">
+<title id="title-10-concept">같은 입력에서 자동 변환 허용 여부를 비교합니다</title>
+<desc id="desc-10-concept">문자열 재시도 횟수 3을 기본 모드는 정수로 변환하고 엄격한 모드는 거부합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="860" height="580" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">같은 입력에서 자동 변환 허용 여부를 비교합니다</tspan></text>
+<rect x="280" y="75" width="300" height="70" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="430.0" y="99.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="430.0" dy="0.0">입력: retries = &quot;3&quot;</tspan><tspan x="430.0" dy="21.6">문자열</tspan></text>
+<polyline points="370,145 215,220" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<polyline points="490,145 645,220" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="45" y="220" width="340" height="80" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="215.0" y="249.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="215.0" dy="0.0">기본 모드</tspan><tspan x="215.0" dy="21.6">가능한 자료형 변환 허용</tspan></text>
+<rect x="475" y="220" width="340" height="80" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="645.0" y="249.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="645.0" dy="0.0">엄격한 모드</tspan><tspan x="645.0" dy="21.6">정수 필드에 문자열 거부</tspan></text>
+<polyline points="215,300 215,360" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#m-yellow)"/>
+<polyline points="645,300 645,360" fill="none" stroke="#dc2626" stroke-width="2" marker-end="url(#m-red)"/>
+<rect x="45" y="360" width="340" height="80" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="215.0" y="389.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="215.0" dy="0.0">검증 결과: 3</tspan><tspan x="215.0" dy="21.6">정수</tspan></text>
+<rect x="475" y="360" width="340" height="80" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="645.0" y="389.2" font-size="16" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="645.0" dy="0.0">ValidationError</tspan><tspan x="645.0" dy="21.6">오류 종류: int_type</tspan></text>
+<text x="430" y="490.0" font-size="16" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="430" dy="0.0">문자열을 허용할지는 프로그램이 받아야 할 입력에 따라 정합니다.</tspan></text>
+<text x="430.0" y="554.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="430.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg></div><p>도식의 시작점은 같은 입력 <code>{"retries": "3"}</code>입니다. <code>model_validate()</code>가 호출되면 기본 필드는 변환 경로를 따라 정수 3이 든 모델 객체를 반환하고, 엄격한 필드는 <code>int_type</code> 오류를 발생시킵니다. 정수 3은 엄격한 필드도 통과합니다. 정수 8은 자료형 검사는 통과하지만 범위 검사에서 <code>less_than_equal</code> 오류가 됩니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>Pydantic 2.13.5를 설치하고 세 이름을 가져옵니다. <code>BaseModel</code>은 모델의 바탕 클래스, <code>Field</code>는 필드 규칙을 만드는 함수, <code>ValidationError</code>는 검증 실패를 나타내는 예외 클래스입니다. <code>LooseJob</code>을 정의한 뒤 문자열 <code>"3"</code>이 든 딕셔너리를 <code>model_validate()</code>에 전달합니다. 호출 결과 <code>job</code>은 모델 객체이며, 출력 <code>retries=3</code>과 <code>int</code>는 필드 값이 정수로 변환되었음을 보여 줍니다.</p><p><code>model_dump()</code>는 검증된 모델 객체를 <code>{"retries": 3}</code> 형태의 딕셔너리로 반환합니다. 이어서 같은 범위 규칙을 가진 <code>BoundedJob</code>에 정수 5를 넣으면 모델 객체가 반환됩니다. 정수 8을 넣으면 객체가 반환되지 않고 <code>ValidationError</code>가 발생하며, <code>except</code> 블록에서 첫 오류의 <code>type</code>과 <code>loc</code>을 출력합니다.</p><section class="notebook" data-notebook="10-Pydantic" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="10-Pydantic.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICIzOWZiZmU4MCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMgUHlkYW50aWMgdjIg642w7J207YSwIOqygOymnVxuIiwKICAgICJcbiIsCiAgICAi66y47J6Q7Je0IOyeheugpeydhCDsnpDrj5kg67OA7ZmY7ZWgIOuVjOyZgCDsl4TqsqntlZwg7J6Q66OM7ZiVwrfrspTsnIQg7KCc7JW97J2EIOyggeyaqe2VoCDrlYwg6rKw6rO86rCAIOyWtOuWu+qyjCDri6zrnbzsp4DripTsp4Ag7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjc1OWYyMjIwIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIuydtCDrhbjtirjrtoHsnYAgUHlkYW50aWMgMi4xMy4166W8IOyCrOyaqe2VqeuLiOuLpC4gQiDqsr3roZwg7ISg7YOdIOyLpOyKteyeheuLiOuLpC4gMDPsoIjsnZgg65SV7IWU64SI66asLCAwNeygiOydmCDsmIjsmbgsIDA27KCI7J2YIO2BtOuemOyKpCwgMDfsoIjsnZgg7YOA7J6F7Z6M7Yq466W8IOyXsOqysO2VqeuLiOuLpC4g7J20IOuCtOyaqeydgCBDaCAxOOydmCBBUEkg7J6F66Cl6rO8IENoIDMw7J2YIOyEnOu5hOyKpCDqsr3qs4Tsl5DshJwg64uk7IucIOyCrOyaqe2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICI2ZDlkOGI3ZiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS44MTMxMTVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMS44MTI4NzVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMi4xOTE3MzhaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjEyLjE5MDk3OFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJOb3RlOiB5b3UgbWF5IG5lZWQgdG8gcmVzdGFydCB0aGUga2VybmVsIHRvIHVzZSB1cGRhdGVkIHBhY2thZ2VzLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOq1kOyerOyZgCDqsJnsnYAgUHlkYW50aWMg67KE7KCE7J2EIO2YhOyerCDsu6TrhJDsl5Ag7ISk7LmY7ZWp64uI64ukLlxuIiwKICAgICIlcGlwIGluc3RhbGwgLXEgcHlkYW50aWM9PTIuMTMuNSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogIjM1YjA0NWYyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6riw67O4IOyLpO2WiTog7J6F66Cl7J2EIOuqqOuNuOuhnCDrsJTqvrjquLBcbiIsCiAgICAiXG4iLAogICAgImBjbGFzcyBMb29zZUpvYihCYXNlTW9kZWwpYOydgCBQeWRhbnRpY+ydmCDqsoDspp0g6riw64ql7J2EIOusvOugpOuwm+ydgCDsg4gg66qo6424IO2BtOuemOyKpOulvCDsoJXsnZjtlanri4jri6QuIOuTpOyXrOyTtCBgcmV0cmllczogaW50ID0gRmllbGQoZ2U9MCwgbGU9NSlg64qUIO2VhOuTnCDsnbTrpoQsIOyYiOyDgSDsnpDro4ztmJUsIO2XiOyaqSDrspTsnITrpbwg7ISg7Ja47ZWp64uI64ukLiBgbW9kZWxfdmFsaWRhdGUoKWDrpbwg7Zi47Lac7ZWY64qUIOyLnOygkOyXkCDrlJXshZTrhIjrpqwg7J6F66Cl7J2EIOqygOyCrO2VmOupsCwg7ISx6rO17ZWY66m0IGBMb29zZUpvYmAg6rCd7LK066W8IOuwmO2ZmO2VqeuLiOuLpC4g6riw67O4IOyEpOygleydgCDrs4DtmZjtlaAg7IiYIOyeiOuKlCDrrLjsnpDsl7TsnYQg64yA7IOBIOyekOujjO2YleycvOuhnCDrs4DtmZjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiOWJhOWM5ZDQiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MjI6MTIuMTkzNTA4WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MjI6MTIuMTkzMzcwWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MjI6MTIuMjQ0NTM5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMi4yNDQyMzJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAicmV0cmllcz0zXG4iLAogICAgICAiaW50XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg66y47J6Q7Je0IOyeheugpeydtCDsoJXsiJjroZwg67OA7ZmY65CY64qUIOq4sOuzuCDrqqjrjbjsnYQg66eM65Ot64uI64ukLlxuIiwKICAgICJmcm9tIHB5ZGFudGljIGltcG9ydCBCYXNlTW9kZWwsIEZpZWxkLCBWYWxpZGF0aW9uRXJyb3JcbiIsCiAgICAiXG4iLAogICAgImNsYXNzIExvb3NlSm9iKEJhc2VNb2RlbCk6XG4iLAogICAgIiAgICByZXRyaWVzOiBpbnQgPSBGaWVsZChnZT0wLCBsZT01KVxuIiwKICAgICJcbiIsCiAgICAiam9iID0gTG9vc2VKb2IubW9kZWxfdmFsaWRhdGUoe1wicmV0cmllc1wiOiBcIjNcIn0pXG4iLAogICAgInByaW50KGpvYilcbiIsCiAgICAicHJpbnQodHlwZShqb2IucmV0cmllcykuX19uYW1lX18pIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiNDkzMzUxZDkiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDqsoDspp3rkJwg66qo64247J2EIOuUleyFlOuEiOumrOuhnCDrsJTqvrjquLBcbiIsCiAgICAiXG4iLAogICAgImBqb2Jg7J2AIOqygOymneydhCDthrXqs7ztlZwg66qo6424IOqwneyytOyeheuLiOuLpC4gYGpvYi5yZXRyaWVzYOuhnCDsoJXsiJgg7ZWE65OcIOqwkuydhCDsnb3qs6AsIGBtb2RlbF9kdW1wKClg66W8IO2YuOy2nO2VmOuptCDqsoDspp3rkJwg6rCS7J2EIO2MjOydtOyNrCDrlJXshZTrhIjrpqzroZwg67CY7ZmY67Cb7Iq164uI64ukLiDsnoXroKXsnZgg66y47J6Q7Je0IGBcIjNcImDsnbQg7Lac66ClIOuUleyFlOuEiOumrOyXkOyEnOuKlCDsoJXsiJggYDNg7J247KeAIO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDMsCiAgICJpZCI6ICI5OWYzOTY1MiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMi4yNDUzNDNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMi4yNDUyODVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMi4yNDY4NzVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjEyLjI0NjU0M1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJ7J3JldHJpZXMnOiAzfVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOqygOymneydtCDrgZ3rgpwg66qo64247J2EIOyCrOyghOycvOuhnCDrsJjtmZjtlbQg7J6Q66OM7ZiVIOuzgO2ZmOydhCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgImR1bXBlZCA9IGpvYi5tb2RlbF9kdW1wKClcbiIsCiAgICAicHJpbnQoZHVtcGVkKVxuIiwKICAgICJhc3NlcnQgZHVtcGVkID09IHtcInJldHJpZXNcIjogM30iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI4NzVjN2VlYSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOqwkiDtlZjrgpjrpbwg67CU6r+UIOu5hOq1kDog7ZWE65OcIOuylOychFxuIiwKICAgICJcbiIsCiAgICAiYEZpZWxkYOydmCBgZ2Vg64qUIOydtOyDgSwgYGxlYOuKlCDsnbTtlZgg67KU7JyE66W8IOyngOygle2VqeuLiOuLpC4g7J6F66ClIDXripQg6rKA7Kad65CcIOuqqOuNuCDqsJ3ssrTrpbwg67CY7ZmY7ZWY7KeA66eMLCDsnoXroKUgOOydgCDrqqjrjbgg6rCd7LK0IOuMgOyLoCBgVmFsaWRhdGlvbkVycm9yYOulvCDrsJzsg53si5ztgrXri4jri6QuIGBlcnJvcnMoKWDqsIAg67CY7ZmY7ZWcIOuqqeuhneyXkOyEnCDssqsg7Jik66WY7J2YIGB0eXBlYOqzvCBgbG9jYOydhCDsnb3sirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA0LAogICAiaWQiOiAiMTBlZTNhOTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MjI6MTIuMjQ3NTUyWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MjI6MTIuMjQ3NDk1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MjI6MTIuMjUwMDU1WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMi4yNDk3MjdaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7ZeI7JqpIOqyveqzhDogNVxuIiwKICAgICAgImxlc3NfdGhhbl9lcXVhbCAoJ3JldHJpZXMnLClcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDtl4jsmqkg67KU7JyE66W8IOuyl+yWtOuCnCDsoJXsiJjsnZgg6rWs7KGw7ZmU65CcIOyYpOulmOulvCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgImNsYXNzIEJvdW5kZWRKb2IoQmFzZU1vZGVsKTpcbiIsCiAgICAiICAgIHJldHJpZXM6IGludCA9IEZpZWxkKGdlPTAsIGxlPTUpXG4iLAogICAgIlxuIiwKICAgICJ2YWxpZF9ib3VuZCA9IEJvdW5kZWRKb2IubW9kZWxfdmFsaWRhdGUoe1wicmV0cmllc1wiOiA1fSlcbiIsCiAgICAicHJpbnQoXCLtl4jsmqkg6rK96rOEOlwiLCB2YWxpZF9ib3VuZC5yZXRyaWVzKVxuIiwKICAgICJhc3NlcnQgdmFsaWRfYm91bmQucmV0cmllcyA9PSA1XG4iLAogICAgIlxuIiwKICAgICJ0cnk6XG4iLAogICAgIiAgICBCb3VuZGVkSm9iLm1vZGVsX3ZhbGlkYXRlKHtcInJldHJpZXNcIjogOH0pXG4iLAogICAgImV4Y2VwdCBWYWxpZGF0aW9uRXJyb3IgYXMgZXJyb3I6XG4iLAogICAgIiAgICBpc3N1ZSA9IGVycm9yLmVycm9ycygpWzBdXG4iLAogICAgIiAgICBwcmludChpc3N1ZVtcInR5cGVcIl0sIGlzc3VlW1wibG9jXCJdKVxuIiwKICAgICIgICAgYXNzZXJ0IGlzc3VlW1widHlwZVwiXSA9PSBcImxlc3NfdGhhbl9lcXVhbFwiXG4iLAogICAgImVsc2U6XG4iLAogICAgIiAgICByYWlzZSBBc3NlcnRpb25FcnJvcihcIuyDge2VnCDstIjqs7wg7J6F66Cl7J2EIOqxsOu2gO2VtOyVvCDtlanri4jri6QuXCIpXG4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI5NGFjYmIzOCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMgQmVmb3JlOiDsnpDrj5kg67OA7ZmY7J20IOyemOuqu+uQnCDsnoXroKUg7ZiV7Iud7J2EIOqwgOumvFxuIiwKICAgICJcbiIsCiAgICAi7Jm467aAIOyeheugpSDqt5zsuZnsl5DshJwg7KCV7IiY66eMIO2XiOyaqe2VtOyVvCDtlZjripTrjbAg6riw67O4IOuzgO2ZmOydhCDqt7jrjIDroZwg65GQ66m0IOusuOyekOyXtCBgXCIzXCJg64+EIO2GteqzvO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJmNTQzNTg2ZCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMi4yNTA3NDJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMi4yNTA2OTdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMi4yNTIxNjlaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjIyOjEyLjI1MTg4OFoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyeheugpSAnMycg7Ya16rO8IC0+IDNcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDquLDrs7gg66qo65Oc6rCAIOusuOyekOyXtCDsnqzsi5zrj4Qg7Zqf7IiY66W8IO2XiOyaqe2VmOuKlOyngCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgImxvb3NlID0gTG9vc2VKb2IubW9kZWxfdmFsaWRhdGUoe1wicmV0cmllc1wiOiBcIjNcIn0pXG4iLAogICAgInByaW50KFwi7J6F66ClICczJyDthrXqs7wgLT5cIiwgbG9vc2UucmV0cmllcylcbiIsCiAgICAiYXNzZXJ0IGxvb3NlLnJldHJpZXMgPT0gMyIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImZjMDI5ZWQ2IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIEFmdGVyOiDsl4TqsqntlZwg7ZWE65Oc7JmAIOuylOychCDsoJzslb0g7KCB7JqpXG4iLAogICAgIlxuIiwKICAgICJgc3RyaWN0PVRydWVg64qUIOusuOyekOyXtOydhCDsoJXsiJjroZwg7J6Q64+ZIOuzgO2ZmO2VmOyngCDslYrsirXri4jri6QuIOqwmeydgCDrrLjsnpDsl7Qg65SV7IWU64SI66as66W8IGBtb2RlbF92YWxpZGF0ZSgpYOyXkCDsoITri6ztlZjrqbQgYGludF90eXBlYCDsmKTrpZjqsIAg67Cc7IOd7ZWY6rOgLCDsoJXsiJggM+ydhCDsoITri6ztlZjrqbQg66qo6424IOqwneyytOqwgCDrsJjtmZjrkKnri4jri6QuIOuylOychCDsoJzslb3rj4Qg6rCZ7J2AIO2VhOuTnOyXkCDtlajqu5gg7ISg7Ja47ZWY7JesIOyekOujjO2YlSDqt5zsuZnqs7wg6rCSIOq3nOy5meydhCDtlZzqs7Psl5Ag65Gh64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImVjMzlmZDQ1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjIyOjEyLjI1MjgwMVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjIyOjEyLjI1Mjc0MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjIyOjEyLjI1NDk3M1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MjI6MTIuMjU0NjM2WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJpbnRfdHlwZSAoJ3JldHJpZXMnLClcbiIsCiAgICAgICLsoJXsiJggMyDthrXqs7wgLT4gM1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOqwmeydgCDsnqzsi5zrj4Qg7J6F66Cl7J2EIOyXhOqyqe2VnCDtlYTrk5zroZwg6rKA7IKs7ZWp64uI64ukLlxuIiwKICAgICJjbGFzcyBTdHJpY3RKb2IoQmFzZU1vZGVsKTpcbiIsCiAgICAiICAgIHJldHJpZXM6IGludCA9IEZpZWxkKHN0cmljdD1UcnVlLCBnZT0wLCBsZT01KVxuIiwKICAgICJcbiIsCiAgICAidHJ5OlxuIiwKICAgICIgICAgU3RyaWN0Sm9iLm1vZGVsX3ZhbGlkYXRlKHtcInJldHJpZXNcIjogXCIzXCJ9KVxuIiwKICAgICJleGNlcHQgVmFsaWRhdGlvbkVycm9yIGFzIGVycm9yOlxuIiwKICAgICIgICAgaXNzdWUgPSBlcnJvci5lcnJvcnMoKVswXVxuIiwKICAgICIgICAgcHJpbnQoaXNzdWVbXCJ0eXBlXCJdLCBpc3N1ZVtcImxvY1wiXSlcbiIsCiAgICAiICAgIGFzc2VydCBpc3N1ZVtcInR5cGVcIl0gPT0gXCJpbnRfdHlwZVwiXG4iLAogICAgIlxuIiwKICAgICJlbHNlOlxuIiwKICAgICIgICAgcmFpc2UgQXNzZXJ0aW9uRXJyb3IoXCLrrLjsnpDsl7Qg7J6F66Cl7J2EIOqxsOu2gO2VtOyVvCDtlanri4jri6QuXCIpXG4iLAogICAgIlxuIiwKICAgICJ2YWxpZCA9IFN0cmljdEpvYi5tb2RlbF92YWxpZGF0ZSh7XCJyZXRyaWVzXCI6IDN9KVxuIiwKICAgICJwcmludChcIuygleyImCAzIO2GteqzvCAtPlwiLCB2YWxpZC5yZXRyaWVzKSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAicGFpcmVkIiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNiwKICAgImNvZGVfc2hhMjU2IjogIjRkZjk2ZjE0MDc5ZDEyZTliOTlhOWM0M2YxYjU3NTY0ZjhjOWVmMTg4YWIzNTE2NjJhYmVkMGRmYzZiMjFkZTUiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwNjoyMjoxMi4zNjg0NjkrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjA4NmY1YTYxYjM5NDdjZDE2Y2I3NWZmNmE2NDllNTRhYzFmZmY3NDVkMGZlZmMxYjRmODdiYmZiMWNkYjAzOGQiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>Pydantic v2 데이터 검증</h2>
+<p>문자열 입력을 자동 변환할 때와 엄격한 자료형·범위 제약을 적용할 때 결과가 어떻게 달라지는지 확인합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>이 노트북은 Pydantic 2.13.5를 사용합니다. B 경로 선택 실습입니다. 03절의 딕셔너리, 05절의 예외, 06절의 클래스, 07절의 타입힌트를 연결합니다. 이 내용은 Ch 18의 API 입력과 Ch 30의 서비스 경계에서 다시 사용합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 교재와 같은 Pydantic 버전을 현재 커널에 설치합니다.
+%pip install -q pydantic==2.13.5</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행: 입력을 모델로 바꾸기</h3>
+<p><code>class LooseJob(BaseModel)</code>은 Pydantic의 검증 기능을 물려받은 새 모델 클래스를 정의합니다. 들여쓴 <code>retries: int = Field(ge=0, le=5)</code>는 필드 이름, 예상 자료형, 허용 범위를 선언합니다. <code>model_validate()</code>를 호출하는 시점에 딕셔너리 입력을 검사하며, 성공하면 <code>LooseJob</code> 객체를 반환합니다. 기본 설정은 변환할 수 있는 문자열을 대상 자료형으로 변환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 문자열 입력이 정수로 변환되는 기본 모델을 만듭니다.
+from pydantic import BaseModel, Field, ValidationError
+
+class LooseJob(BaseModel):
+    retries: int = Field(ge=0, le=5)
+
+job = LooseJob.model_validate({&quot;retries&quot;: &quot;3&quot;})
+print(job)
+print(type(job.retries).__name__)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">retries=3
+int
+</pre></div>
+<div class="nb-markdown"><h3>검증된 모델을 딕셔너리로 바꾸기</h3>
+<p><code>job</code>은 검증을 통과한 모델 객체입니다. <code>job.retries</code>로 정수 필드 값을 읽고, <code>model_dump()</code>를 호출하면 검증된 값을 파이썬 딕셔너리로 반환받습니다. 입력의 문자열 <code>&quot;3&quot;</code>이 출력 딕셔너리에서는 정수 <code>3</code>인지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 검증이 끝난 모델을 사전으로 반환해 자료형 변환을 확인합니다.
+dumped = job.model_dump()
+print(dumped)
+assert dumped == {&quot;retries&quot;: 3}</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;retries&#x27;: 3}
+</pre></div>
+<div class="nb-markdown"><h3>값 하나를 바꿔 비교: 필드 범위</h3>
+<p><code>Field</code>의 <code>ge</code>는 이상, <code>le</code>는 이하 범위를 지정합니다. 입력 5는 검증된 모델 객체를 반환하지만, 입력 8은 모델 객체 대신 <code>ValidationError</code>를 발생시킵니다. <code>errors()</code>가 반환한 목록에서 첫 오류의 <code>type</code>과 <code>loc</code>을 읽습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 허용 범위를 벗어난 정수의 구조화된 오류를 확인합니다.
+class BoundedJob(BaseModel):
+    retries: int = Field(ge=0, le=5)
+
+valid_bound = BoundedJob.model_validate({&quot;retries&quot;: 5})
+print(&quot;허용 경계:&quot;, valid_bound.retries)
+assert valid_bound.retries == 5
+
+try:
+    BoundedJob.model_validate({&quot;retries&quot;: 8})
+except ValidationError as error:
+    issue = error.errors()[0]
+    print(issue[&quot;type&quot;], issue[&quot;loc&quot;])
+    assert issue[&quot;type&quot;] == &quot;less_than_equal&quot;
+else:
+    raise AssertionError(&quot;상한 초과 입력을 거부해야 합니다.&quot;)
+</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">허용 경계: 5
+less_than_equal (&#x27;retries&#x27;,)
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 입력은 딕셔너리, 처리는 <code>model_validate()</code>의 변환과 규칙 검사, 성공 반환은 모델 객체입니다. <code>retries=3</code>은 입력 원문이 아니라 검증된 객체의 표시입니다. 범위를 벗어난 정수 8은 자료형이 맞더라도 통과하지 않으므로 자동 변환 여부와 값 범위를 따로 읽습니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before에서는 재시도 횟수에 문자열 <code>"3"</code>을 전달합니다. 기본 모델은 이를 정수로 변환하므로 출력은 <code>입력 '3' 통과 -&gt; 3</code>입니다. 입력 제공자가 반드시 JSON 숫자를 보내야 한다는 규칙이라면 이 변환은 형식 오류를 가립니다. After에서는 같은 범위 제약을 유지하고 필드에 <code>strict=True</code>만 추가합니다. 같은 문자열 입력은 <code>int_type</code> 오류가 되고, 정수 3은 통과합니다. 엄격 모드는 항상 더 좋은 선택이라는 뜻이 아닙니다. 사용자 입력을 편리하게 받아도 되는 경계인지, 시스템 간 형식을 정확히 지켜야 하는 경계인지 먼저 결정합니다.</p><section class="notebook" data-notebook="10-Pydantic" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>Before: 자동 변환이 잘못된 입력 형식을 가림</h3>
+<p>외부 입력 규칙에서 정수만 허용해야 하는데 기본 변환을 그대로 두면 문자열 <code>&quot;3&quot;</code>도 통과합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 기본 모드가 문자열 재시도 횟수를 허용하는지 확인합니다.
+loose = LooseJob.model_validate({&quot;retries&quot;: &quot;3&quot;})
+print(&quot;입력 &#x27;3&#x27; 통과 -&gt;&quot;, loose.retries)
+assert loose.retries == 3</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">입력 &#x27;3&#x27; 통과 -&gt; 3
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>After: 엄격한 필드와 범위 제약 적용</h3>
+<p><code>strict=True</code>는 문자열을 정수로 자동 변환하지 않습니다. 같은 문자열 딕셔너리를 <code>model_validate()</code>에 전달하면 <code>int_type</code> 오류가 발생하고, 정수 3을 전달하면 모델 객체가 반환됩니다. 범위 제약도 같은 필드에 함께 선언하여 자료형 규칙과 값 규칙을 한곳에 둡니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 같은 재시도 입력을 엄격한 필드로 검사합니다.
+class StrictJob(BaseModel):
+    retries: int = Field(strict=True, ge=0, le=5)
+
+try:
+    StrictJob.model_validate({&quot;retries&quot;: &quot;3&quot;})
+except ValidationError as error:
+    issue = error.errors()[0]
+    print(issue[&quot;type&quot;], issue[&quot;loc&quot;])
+    assert issue[&quot;type&quot;] == &quot;int_type&quot;
+
+else:
+    raise AssertionError(&quot;문자열 입력을 거부해야 합니다.&quot;)
+
+valid = StrictJob.model_validate({&quot;retries&quot;: 3})
+print(&quot;정수 3 통과 -&gt;&quot;, valid.retries)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">int_type (&#x27;retries&#x27;,)
+정수 3 통과 -&gt; 3
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>Pydantic v1의 <code>parse_obj()</code> 예제와 섞지 않습니다. 이 교재는 v2의 <code>model_validate()</code>를 사용합니다.</li><li>타입 힌트와 실행 중 검증은 역할이 다릅니다. 타입 검사 도구가 통과해도 외부에서 들어온 데이터는 별도 검증이 필요합니다.</li><li>엄격성은 필드, 모델, 호출 단위로 적용할 수 있습니다. 규칙이 일부 필드에만 필요하다면 <code>Field(strict=True)</code>로 범위를 좁혀 의도를 드러냅니다.</li><li>Python 객체 입력과 JSON 입력은 일부 자료형에서 엄격 모드 동작이 다를 수 있습니다. 실제 입력 방식과 같은 메서드로 검증 결과를 확인합니다.</li><li>오류 메시지 전체 문자열에 의존한 테스트는 버전에 따라 깨질 수 있습니다. <code>type</code>과 <code>loc</code>처럼 구조화된 항목을 확인합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>Pydantic 모델은 입력 필드의 자료형과 값 범위를 한곳에 선언합니다.</li><li>기본 모드는 변환 가능한 값을 바꾸며, 엄격한 필드는 입력 자료형 자체를 확인합니다.</li><li><code>ValidationError.errors()</code>의 오류 유형과 위치를 읽으면 실패 원인을 코드로 다룰 수 있습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 11절에서는 작성한 코드를 다른 프로젝트가 설치할 수 있는 패키지로 만들고, 검증 코드를 독립된 테스트에서 반복 실행합니다. Ch 18과 Ch 30에서는 외부 데이터 경계에서 이 절의 모델 검증을 다시 사용합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. 문자열 <code>"3"</code>이 정수 필드에서 통과할 수 있는 이유는 무엇인가요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> Pydantic 기본 모드가 변환 가능한 입력을 목표 자료형으로 강제 변환하기 때문입니다.</p></details><details class="quiz"><summary>2. 정수만 허용하면서 0 이상 5 이하로 제한하려면 어떻게 선언하나요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> <code>retries: int = Field(strict=True, ge=0, le=5)</code>처럼 선언합니다. 엄격성은 자료형을, <code>ge</code>와 <code>le</code>는 범위를 검사합니다.</p></details><details class="quiz"><summary>3. <code>less_than_equal</code> 오류는 무엇을 뜻하나요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> 입력값이 <code>le</code>로 지정한 최댓값보다 커서 이하 조건을 만족하지 못했다는 뜻입니다.</p></details><details class="quiz"><summary>4. 모든 입력에 엄격 모드를 적용하기 전에 확인할 것은 무엇인가요?</summary><p class="quiz-a"><strong>정답과 해설:</strong> 해당 경계가 편리한 자동 변환을 허용하는지, 입력 형식을 정확히 지켜야 하는지 확인해야 합니다. 요구에 맞춰 필드·모델·호출 가운데 어느 범위에 적용할지 정합니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://docs.pydantic.dev/latest/concepts/strict_mode/">Pydantic strict mode</a> · 확인 2026-09-09 · 실행 기준 Pydantic 2.13.5</li><li><a href="https://docs.pydantic.dev/latest/concepts/fields/">Pydantic fields</a> · 확인 2026-09-09 · 실행 기준 Pydantic 2.13.5</li><li><a href="https://pypi.org/project/pydantic/">PyPI Pydantic</a> · 확인 2026-09-09 · 버전 2.13.5 · MIT</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="09-데코레이터와-컨텍스트-매니저.html">← 데코레이터와 컨텍스트 매니저</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="11-패키징과-테스트-격리.html">패키징과 테스트 격리 →</a></span></div></div></body></html>

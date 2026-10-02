@@ -1,0 +1,16 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant A as 작성자 author
+  participant T as 원격 team.git
+  participant R as 리뷰어 reviewer
+  A->>T: push -u origin feature/order-summary
+  R->>T: clone, switch 기능 브랜치
+  T-->>R: summary.py 받음
+  Note over R: Before<br>확인 파일 실행<br>리뷰 의견 남김
+  A->>T: push (fix 커밋)
+  R->>T: fetch
+  T-->>R: fix 커밋 받음 (behind 1)
+  Note over R: switch main<br>merge --no-ff<br>After 확인 파일 실행
+  R->>T: push origin main (ahead 3)
+  A->>T: fetch
+  T-->>A: origin/main = merge: 주문 요약

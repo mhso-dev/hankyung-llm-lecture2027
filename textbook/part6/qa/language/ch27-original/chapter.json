@@ -1,0 +1,55 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 시스템 확장",
+  "chapter": "ch27-deepagents",
+  "title": "DeepAgents — Harness 계층",
+  "hours": "총 24h · 강의 8h · 실습 16h",
+  "objectives": [
+    "DeepAgents를 하네스 계층으로 설명하고 제공 기능을 현재 API에서 확인할 수 있습니다.",
+    "파일시스템에 중간 결과를 저장하고 서브에이전트에 조사 단위를 위임할 수 있습니다.",
+    "출처가 주어진 연구 자료의 범위 안에서 deep research 에이전트를 구성하고 비용과 한계를 기록할 수 있습니다."
+  ],
+  "lab_path": "labs/part6/ch27-deepagents",
+  "sections": [
+    {
+      "slug": "01-하네스와-일곱-기능",
+      "title": "하네스와 일곱 기능",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-create-deep-agent와-도구",
+      "title": "create deep agent와 도구",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-플래닝과-시스템-프롬프트",
+      "title": "플래닝과 시스템 프롬프트",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-파일시스템과-중간-결과",
+      "title": "파일시스템과 중간 결과",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-컨텍스트-관리와-오프로딩",
+      "title": "컨텍스트 관리와 오프로딩",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-서브에이전트-위임",
+      "title": "서브에이전트 위임",
+      "format": "experiment"
+    },
+    {
+      "slug": "07-출처-검증형-deep-research",
+      "title": "출처 검증형 deep research",
+      "format": "experiment"
+    },
+    {
+      "slug": "08-통합-실행과-운영-한계",
+      "title": "통합 실행과 운영 한계",
+      "format": "experiment"
+    }
+  ]
+}

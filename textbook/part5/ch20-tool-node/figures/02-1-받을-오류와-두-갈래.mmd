@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  r["손으로 만든 도구 호출 요청<br>lookup_policy<br>주제어 주차"]:::tool
+  n["도구 실행 노드 tools<br>도구를 실행"]
+  ok["도구 메시지<br>결과 상태 success"]
+  h["오류 처리 인자가<br>받을 오류인지 정함"]
+  msg["도구 메시지 · 결과 상태 error<br>내용은 오류 처리 함수의 글<br>호출 ID는 요청 id 그대로"]:::measure
+  stop["오류가 그래프 밖으로 올라와<br>실행이 멈춤"]:::fail
+  r --> n
+  n -.->|오류 없음| ok
+  n -.->|오류가 남| h
+  h -.->|받음| msg
+  h -.->|받지 않음| stop

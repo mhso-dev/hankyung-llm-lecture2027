@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  got2["끊기기 전에 받은 사건 둘<br>sse-1:0 · sse-1:1"]:::measure
+  subgraph withid["요청 머리 Last-Event-ID 있음"]
+    direction TB
+    y1["sse-1:1을 적어<br>다시 요청"]:::flow
+    y2["다시 받은 첫 번호 sse-1:2<br>이은 사건 일곱"]:::measure
+    y3["처음 글과 같음<br>True"]:::measure
+    y1 --> y2 --> y3
+  end
+  subgraph noid["요청 머리 없음"]
+    direction TB
+    n1["요청 머리 없이<br>다시 요청"]:::flow
+    n2["다시 받은 첫 번호<br>sse-1:0"]:::measure
+    n3["앞 두 낱말이 두 번<br>처음 글과 같음 False"]:::measure
+    n1 --> n2 --> n3
+  end
+  got2 --> withid
+  got2 --> noid

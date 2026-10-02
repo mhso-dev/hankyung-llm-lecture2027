@@ -1,0 +1,1023 @@
+{
+  "project_name": "한경 KDT LLM Agent 개발 & 바이브코딩 교재",
+  "project_root": "~/working/claude/projects/한국경제신문",
+  "language": "ko",
+  "role": "실무 동료(교육·튜터)",
+  "scanned_at": "2026-09-07T20:39:03+09:00",
+  "moai_pm_version": "1.6.1",
+  "template_version": "1.6.1",
+  "plugins_installed": {
+    "moai-designer": "1.4.1",
+    "cowork-plugin-management": "0.2.2",
+    "moai-story": "1.1.4",
+    "moai-analyst": "1.2.0",
+    "moai-cs": "1.1.2",
+    "moai-pm": "1.6.1",
+    "moai-consultant": "1.1.2",
+    "moai-coworker": "1.2.0",
+    "moai-career": "1.1.2",
+    "moai-officer": "1.2.2",
+    "moai-threads-poster": "1.4.0",
+    "moai-tutor": "1.2.1",
+    "moai-accountant": "1.2.0",
+    "moai-writer": "1.4.1",
+    "moai-recruiter": "1.1.2",
+    "moai-marketer": "1.1.4",
+    "moai-lawyer": "1.2.0",
+    "moai-media": "1.3.0",
+    "moai-seller": "1.3.0"
+  },
+  "skills_available": {
+    "design-brand-system": {
+      "plugin": "moai-designer",
+      "digest": "sha256:c5407a920aa6aa9c"
+    },
+    "design-brand-visual": {
+      "plugin": "moai-designer",
+      "digest": "sha256:5de5c854dccfabe1"
+    },
+    "design-brief": {
+      "plugin": "moai-designer",
+      "digest": "sha256:a791d0dd6ceb57b8"
+    },
+    "design-copywriting": {
+      "plugin": "moai-designer",
+      "digest": "sha256:2eb0365ed57bd99e"
+    },
+    "design-gui-guide": {
+      "plugin": "moai-designer",
+      "digest": "sha256:58e5ced95bf9c383"
+    },
+    "design-handoff-reader": {
+      "plugin": "moai-designer",
+      "digest": "sha256:40a965efffd822a3"
+    },
+    "design-handoff": {
+      "plugin": "moai-designer",
+      "digest": "sha256:f9603fd013a26a20"
+    },
+    "design-iteration-loop": {
+      "plugin": "moai-designer",
+      "digest": "sha256:911553ca95d98bdd"
+    },
+    "design-landing-motion": {
+      "plugin": "moai-designer",
+      "digest": "sha256:d4c0d338e6a92b3b"
+    },
+    "design-logo": {
+      "plugin": "moai-designer",
+      "digest": "sha256:62dc8f3f840ba201"
+    },
+    "design-prompt-builder": {
+      "plugin": "moai-designer",
+      "digest": "sha256:cb639bfb26f8f0f1"
+    },
+    "design-slop-check": {
+      "plugin": "moai-designer",
+      "digest": "sha256:9e78a47eb76a24ca"
+    },
+    "design-sync-upload": {
+      "plugin": "moai-designer",
+      "digest": "sha256:a70f10d1bb1415f0"
+    },
+    "design-system-library": {
+      "plugin": "moai-designer",
+      "digest": "sha256:672f6d7d1a9da218"
+    },
+    "design-system-prep": {
+      "plugin": "moai-designer",
+      "digest": "sha256:85bac2b4981a4c83"
+    },
+    "design-tokens-transformer": {
+      "plugin": "moai-designer",
+      "digest": "sha256:6128dcac8252d297"
+    },
+    "design-workflow": {
+      "plugin": "moai-designer",
+      "digest": "sha256:a4188f2f27bad6fb"
+    },
+    "cowork-plugin-customizer": {
+      "plugin": "cowork-plugin-management",
+      "digest": "sha256:d7a9455692f26479"
+    },
+    "create-cowork-plugin": {
+      "plugin": "cowork-plugin-management",
+      "digest": "sha256:4769717426502a55"
+    },
+    "story-ad-conti": {
+      "plugin": "moai-story",
+      "digest": "sha256:bb7d2ef8b1650ffe"
+    },
+    "story-character-sheet": {
+      "plugin": "moai-story",
+      "digest": "sha256:97417107cf20811d"
+    },
+    "story-conti": {
+      "plugin": "moai-story",
+      "digest": "sha256:f0b21a528eadb908"
+    },
+    "story-cover-art": {
+      "plugin": "moai-story",
+      "digest": "sha256:0f1398153d40c293"
+    },
+    "story-ip-pitch": {
+      "plugin": "moai-story",
+      "digest": "sha256:12a43124b67c7a24"
+    },
+    "story-previz": {
+      "plugin": "moai-story",
+      "digest": "sha256:7fc1d7f93e9e3a84"
+    },
+    "story-project": {
+      "plugin": "moai-story",
+      "digest": "sha256:b030222701116905"
+    },
+    "story-screenplay": {
+      "plugin": "moai-story",
+      "digest": "sha256:a30d402d42f8148b"
+    },
+    "story-series-bible": {
+      "plugin": "moai-story",
+      "digest": "sha256:aab43cc52be62e4e"
+    },
+    "story-synopsis": {
+      "plugin": "moai-story",
+      "digest": "sha256:b5a7a98bae110af9"
+    },
+    "story-webnovel-planner": {
+      "plugin": "moai-story",
+      "digest": "sha256:08b536de9cafa99b"
+    },
+    "story-webnovel-writer": {
+      "plugin": "moai-story",
+      "digest": "sha256:d99c69c19304cd80"
+    },
+    "story-webtoon-art": {
+      "plugin": "moai-story",
+      "digest": "sha256:01919425e857c848"
+    },
+    "story-webtoon-episode": {
+      "plugin": "moai-story",
+      "digest": "sha256:da1aa1c146bac962"
+    },
+    "story-webtoon-lettering": {
+      "plugin": "moai-story",
+      "digest": "sha256:b9234cc5ae9effb5"
+    },
+    "story-webtoon-planner": {
+      "plugin": "moai-story",
+      "digest": "sha256:ad50b3ae2a2b3052"
+    },
+    "story-webtoon-qc": {
+      "plugin": "moai-story",
+      "digest": "sha256:78868f705f0cee72"
+    },
+    "story-webtoon-spec": {
+      "plugin": "moai-story",
+      "digest": "sha256:16ea03aa1bc06327"
+    },
+    "data-building-ledger": {
+      "plugin": "moai-analyst",
+      "digest": "sha256:9c463fa8a424a510"
+    },
+    "data-court-auction": {
+      "plugin": "moai-analyst",
+      "digest": "sha256:297fd89e0a64db9f"
+    },
+    "data-explorer": {
+      "plugin": "moai-analyst",
+      "digest": "sha256:df394703b7415e5e"
+    },
+    "data-public": {
+      "plugin": "moai-analyst",
+      "digest": "sha256:ea79caa56be14475"
+    },
+    "data-realestate": {
+      "plugin": "moai-analyst",
+      "digest": "sha256:2a1a44e7b9dce01b"
+    },
+    "data-stock": {
+      "plugin": "moai-analyst",
+      "digest": "sha256:98152accaf63c952"
+    },
+    "data-visualizer": {
+      "plugin": "moai-analyst",
+      "digest": "sha256:a13624d3e9af0324"
+    },
+    "cs-channel-message": {
+      "plugin": "moai-cs",
+      "digest": "sha256:cff36f29651984ff"
+    },
+    "cs-draft-response": {
+      "plugin": "moai-cs",
+      "digest": "sha256:c5f7b02edf6e0c74"
+    },
+    "cs-escalation": {
+      "plugin": "moai-cs",
+      "digest": "sha256:ba16e49b5f5406c5"
+    },
+    "cs-kb-article": {
+      "plugin": "moai-cs",
+      "digest": "sha256:cb9b5e0216836625"
+    },
+    "cs-ticket-triage": {
+      "plugin": "moai-cs",
+      "digest": "sha256:242059ca909edfe3"
+    },
+    "cs-voc-triage": {
+      "plugin": "moai-cs",
+      "digest": "sha256:504303ca7ba3e553"
+    },
+    "project": {
+      "plugin": "moai-pm",
+      "digest": "sha256:5822b9d8aac206e8"
+    },
+    "consult-brief": {
+      "plugin": "moai-consultant",
+      "digest": "sha256:3b1258217acd9bb5"
+    },
+    "consult-gov-grant": {
+      "plugin": "moai-consultant",
+      "digest": "sha256:14d75c0214c16cf4"
+    },
+    "consult-market": {
+      "plugin": "moai-consultant",
+      "digest": "sha256:adabe953af2bb4b0"
+    },
+    "consult-sbiz365": {
+      "plugin": "moai-consultant",
+      "digest": "sha256:1771e12d01a1a5ce"
+    },
+    "consult-startup": {
+      "plugin": "moai-consultant",
+      "digest": "sha256:a8b21b3df912c137"
+    },
+    "consult-strategy": {
+      "plugin": "moai-consultant",
+      "digest": "sha256:9a9155b9cfa05ad2"
+    },
+    "ai-diagnostic": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:febd39a0976f38dd"
+    },
+    "ai-prompting-basics": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:e1cb712f78238f94"
+    },
+    "ai-slop-reviewer": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:15738fbc015aecfe"
+    },
+    "collab-brand-identity": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:fda00e887b4a13bd"
+    },
+    "collab-conflict": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:1541b4814eb8cb41"
+    },
+    "collab-exec-summary": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:ce938cffa7e36cbc"
+    },
+    "collab-feedback-loop": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:2c851ec01a91f389"
+    },
+    "collab-meeting": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:9b194b0bddad287e"
+    },
+    "collab-negotiation": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:888bf6abcc6cbb71"
+    },
+    "collab-pm-report": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:4fc1bf0251bbf6ec"
+    },
+    "collab-process": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:193f20347994413c"
+    },
+    "collab-productivity-report": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:e5047303c539c05f"
+    },
+    "collab-proposal": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:684f74e74ca8c96f"
+    },
+    "collab-report-speak": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:e9f3dd41cd3253fa"
+    },
+    "collab-roadmap": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:ed1a6c35acaf673a"
+    },
+    "collab-sales-playbook": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:3dd8af847b7ff6a7"
+    },
+    "collab-spec": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:ac0f6d3413366af1"
+    },
+    "collab-status-report": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:68715029f54e0fd2"
+    },
+    "collab-ux-design": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:9a26e61c165a39b2"
+    },
+    "collab-ux-research": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:0f03669ae0910edd"
+    },
+    "collab-vendor": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:205034fb5c11cccc"
+    },
+    "meta-feedback": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:a48f5d2078f11131"
+    },
+    "meta-skill-builder": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:f94b75560cabbc9b"
+    },
+    "meta-skill-template": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:a1e13b6c105acad8"
+    },
+    "meta-skill-tester": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:3dd98e7a518fe4c5"
+    },
+    "personal-event": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:f742bfff4b59c8a1"
+    },
+    "personal-self-care": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:65d331f8dc3516a0"
+    },
+    "personal-travel": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:71e224247c2b1ba7"
+    },
+    "personal-wellness": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:e6022826a3dd5662"
+    },
+    "productivity-goal": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:ed43f0d73509cb51"
+    },
+    "productivity-habit": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:049b9d81473be377"
+    },
+    "productivity-retro": {
+      "plugin": "moai-coworker",
+      "digest": "sha256:87d141c17bd246a8"
+    },
+    "career-interview": {
+      "plugin": "moai-career",
+      "digest": "sha256:dddd7e6435c2a260"
+    },
+    "career-junior-onboarding": {
+      "plugin": "moai-career",
+      "digest": "sha256:7ec9877580bcb222"
+    },
+    "career-portfolio": {
+      "plugin": "moai-career",
+      "digest": "sha256:5badc8fb75576d63"
+    },
+    "career-resume": {
+      "plugin": "moai-career",
+      "digest": "sha256:9d07d245122cf64b"
+    },
+    "career-transition": {
+      "plugin": "moai-career",
+      "digest": "sha256:f1139b3da55067e2"
+    },
+    "doc-design-library": {
+      "plugin": "moai-officer",
+      "digest": "sha256:23f0d521a3fffa08"
+    },
+    "doc-docx": {
+      "plugin": "moai-officer",
+      "digest": "sha256:3482abae50b8ccb2"
+    },
+    "doc-html-report": {
+      "plugin": "moai-officer",
+      "digest": "sha256:6c632523c5eae961"
+    },
+    "doc-html-slide": {
+      "plugin": "moai-officer",
+      "digest": "sha256:f52666ac7700a314"
+    },
+    "doc-hwp": {
+      "plugin": "moai-officer",
+      "digest": "sha256:a4fb5f8a3513a514"
+    },
+    "doc-notion-template": {
+      "plugin": "moai-officer",
+      "digest": "sha256:a23b9ca6c6327511"
+    },
+    "doc-pdf": {
+      "plugin": "moai-officer",
+      "digest": "sha256:e6c3cd9eafde20b8"
+    },
+    "doc-pptx": {
+      "plugin": "moai-officer",
+      "digest": "sha256:6e81ab91864fbf53"
+    },
+    "doc-reader": {
+      "plugin": "moai-officer",
+      "digest": "sha256:245342a4b3f68125"
+    },
+    "doc-xlsx": {
+      "plugin": "moai-officer",
+      "digest": "sha256:c819206fb037dc14"
+    },
+    "productivity-briefing": {
+      "plugin": "moai-officer",
+      "digest": "sha256:4b543d9832dcb4a2"
+    },
+    "productivity-time": {
+      "plugin": "moai-officer",
+      "digest": "sha256:9eeccf78f788042f"
+    },
+    "setup-mcp-connector": {
+      "plugin": "moai-officer",
+      "digest": "sha256:b4d90b00ef65bf85"
+    },
+    "instagram-comments": {
+      "plugin": "moai-threads-poster",
+      "digest": "sha256:a7d1c6e3e10ebdcb"
+    },
+    "instagram-post": {
+      "plugin": "moai-threads-poster",
+      "digest": "sha256:5de32153c6f3ea33"
+    },
+    "threads-multichannel": {
+      "plugin": "moai-threads-poster",
+      "digest": "sha256:e42a0b931cbb0cb7"
+    },
+    "threads-post-draft": {
+      "plugin": "moai-threads-poster",
+      "digest": "sha256:3e112b2a75a77249"
+    },
+    "threads-style-learn": {
+      "plugin": "moai-threads-poster",
+      "digest": "sha256:058ec375a0eeef3b"
+    },
+    "education-assessment-creator": {
+      "plugin": "moai-tutor",
+      "digest": "sha256:333c32649487b37e"
+    },
+    "education-course-followup-sequence": {
+      "plugin": "moai-tutor",
+      "digest": "sha256:1c795293fb75b772"
+    },
+    "education-course-operations-manual": {
+      "plugin": "moai-tutor",
+      "digest": "sha256:07b4636cd36566e7"
+    },
+    "education-curriculum-designer": {
+      "plugin": "moai-tutor",
+      "digest": "sha256:4ecee1a8df4712b7"
+    },
+    "education-grant-writer": {
+      "plugin": "moai-tutor",
+      "digest": "sha256:8bb4157ffdb5154a"
+    },
+    "education-learning-material": {
+      "plugin": "moai-tutor",
+      "digest": "sha256:826e887fbfa73477"
+    },
+    "education-learning-project": {
+      "plugin": "moai-tutor",
+      "digest": "sha256:ef2daede4d723130"
+    },
+    "education-paper-search": {
+      "plugin": "moai-tutor",
+      "digest": "sha256:32e0cd70f6852c7a"
+    },
+    "education-paper-writer": {
+      "plugin": "moai-tutor",
+      "digest": "sha256:c7f361f6f57fc015"
+    },
+    "education-research-assistant": {
+      "plugin": "moai-tutor",
+      "digest": "sha256:8890a914a4503b0f"
+    },
+    "education-tutor-research": {
+      "plugin": "moai-tutor",
+      "digest": "sha256:2d59ca013bd881fa"
+    },
+    "finance-close-management": {
+      "plugin": "moai-accountant",
+      "digest": "sha256:0de89e456fd7e484"
+    },
+    "finance-econ-literacy": {
+      "plugin": "moai-accountant",
+      "digest": "sha256:c4d0ac161be0d321"
+    },
+    "finance-financial-statements": {
+      "plugin": "moai-accountant",
+      "digest": "sha256:0d14faab58668e4c"
+    },
+    "finance-household-budget": {
+      "plugin": "moai-accountant",
+      "digest": "sha256:702de31021effb02"
+    },
+    "finance-insurance-fit": {
+      "plugin": "moai-accountant",
+      "digest": "sha256:5398a0e8805a7f07"
+    },
+    "finance-invest-primer": {
+      "plugin": "moai-accountant",
+      "digest": "sha256:0df642637bb617a1"
+    },
+    "finance-investor-relations": {
+      "plugin": "moai-accountant",
+      "digest": "sha256:b09ad25c58fdec2a"
+    },
+    "finance-personal-tax-saver": {
+      "plugin": "moai-accountant",
+      "digest": "sha256:d830ae5c9e850ce9"
+    },
+    "finance-tax-helper": {
+      "plugin": "moai-accountant",
+      "digest": "sha256:0ccba1d4de68d113"
+    },
+    "finance-variance-analysis": {
+      "plugin": "moai-accountant",
+      "digest": "sha256:8c42b0bb926f835a"
+    },
+    "finance-wealth-roadmap": {
+      "plugin": "moai-accountant",
+      "digest": "sha256:d1fa95e885c3d9c4"
+    },
+    "book-author-bio": {
+      "plugin": "moai-writer",
+      "digest": "sha256:a5500512d2fea939"
+    },
+    "book-chapter-writer": {
+      "plugin": "moai-writer",
+      "digest": "sha256:18595f9af86430eb"
+    },
+    "book-concept-planner": {
+      "plugin": "moai-writer",
+      "digest": "sha256:69fda7704ab13e91"
+    },
+    "book-outline-designer": {
+      "plugin": "moai-writer",
+      "digest": "sha256:aceb9b138cc8c270"
+    },
+    "book-proposal-writer": {
+      "plugin": "moai-writer",
+      "digest": "sha256:fa24096a3c44a5e3"
+    },
+    "book-publisher-matcher": {
+      "plugin": "moai-writer",
+      "digest": "sha256:c635403cef6279bb"
+    },
+    "book-revision-coach": {
+      "plugin": "moai-writer",
+      "digest": "sha256:f09c22bf37a4c034"
+    },
+    "book-target-reader": {
+      "plugin": "moai-writer",
+      "digest": "sha256:faa90ab23a2d43a6"
+    },
+    "korean-humanize": {
+      "plugin": "moai-writer",
+      "digest": "sha256:ef90075c8dca4f88"
+    },
+    "korean-spell-check": {
+      "plugin": "moai-writer",
+      "digest": "sha256:0ae6e189ec054c12"
+    },
+    "hr-draft-offer": {
+      "plugin": "moai-recruiter",
+      "digest": "sha256:912201c1c2925d17"
+    },
+    "hr-employment": {
+      "plugin": "moai-recruiter",
+      "digest": "sha256:f2461c00f0a4e006"
+    },
+    "hr-job-analysis": {
+      "plugin": "moai-recruiter",
+      "digest": "sha256:d7d3ce294aaa1417"
+    },
+    "hr-operations": {
+      "plugin": "moai-recruiter",
+      "digest": "sha256:9a7ca0b7a3ef72f5"
+    },
+    "hr-performance-review": {
+      "plugin": "moai-recruiter",
+      "digest": "sha256:81e72be63334c892"
+    },
+    "hr-resume-screener": {
+      "plugin": "moai-recruiter",
+      "digest": "sha256:6f28c38aba229086"
+    },
+    "content-blog": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:944b55b3075c1f81"
+    },
+    "content-card-news": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:137740f1d3876e02"
+    },
+    "content-copywriting": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:11af33744d10a7da"
+    },
+    "content-editorial-calendar": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:b0c75ef8d41e6ede"
+    },
+    "content-email-sequence": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:29dab8a28d1921bd"
+    },
+    "content-newsletter": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:7c3309b34da50bcb"
+    },
+    "content-sns-content": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:497adf29ff79830b"
+    },
+    "marketing-campaign-planner": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:c809666a09810c50"
+    },
+    "marketing-growth-experiment": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:307f7976df0edad1"
+    },
+    "marketing-keyword-research": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:fd642b03ef7ea711"
+    },
+    "marketing-landing-page-conversion-audit": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:43a1c2b95f398ec1"
+    },
+    "marketing-landing-page": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:72c28fba8fc93b3a"
+    },
+    "marketing-meta-ads-analyzer": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:5168f30446ea1ba7"
+    },
+    "marketing-meta-ads-manager": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:6a85b6d321d1316c"
+    },
+    "marketing-performance-report": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:ed1ce442d3b3d70b"
+    },
+    "marketing-personal-branding": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:014cab41fe4cc56e"
+    },
+    "marketing-pixel-audit": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:74b95addc195469f"
+    },
+    "marketing-retention": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:35e358329d9846e9"
+    },
+    "marketing-seo-audit": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:a699425c8034cf21"
+    },
+    "marketing-target-script": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:3024cd64390d6b32"
+    },
+    "marketing-youtube-podcast-planner": {
+      "plugin": "moai-marketer",
+      "digest": "sha256:d1dbc9e1e7ee8c87"
+    },
+    "legal-compliance-check": {
+      "plugin": "moai-lawyer",
+      "digest": "sha256:9c13277461776adc"
+    },
+    "legal-contract-review": {
+      "plugin": "moai-lawyer",
+      "digest": "sha256:e982d0a30399552f"
+    },
+    "legal-iros-registry-automation": {
+      "plugin": "moai-lawyer",
+      "digest": "sha256:c89fefaf3e2ccef6"
+    },
+    "legal-law-research": {
+      "plugin": "moai-lawyer",
+      "digest": "sha256:7b66002a317a9e75"
+    },
+    "legal-legal-risk": {
+      "plugin": "moai-lawyer",
+      "digest": "sha256:a45ea84758553d9d"
+    },
+    "legal-mfds-safety": {
+      "plugin": "moai-lawyer",
+      "digest": "sha256:a9a830f31fbd47c4"
+    },
+    "legal-nda-triage": {
+      "plugin": "moai-lawyer",
+      "digest": "sha256:d19b6075836d53ed"
+    },
+    "legal-patent-analyzer": {
+      "plugin": "moai-lawyer",
+      "digest": "sha256:96717ca41148f4ce"
+    },
+    "legal-patent-search": {
+      "plugin": "moai-lawyer",
+      "digest": "sha256:eb772217e4233ce9"
+    },
+    "legal-service-launch-checklist": {
+      "plugin": "moai-lawyer",
+      "digest": "sha256:25b5d557b651b564"
+    },
+    "media-asset-production": {
+      "plugin": "moai-media",
+      "digest": "sha256:3ee85da581145432"
+    },
+    "media-audio-gen": {
+      "plugin": "moai-media",
+      "digest": "sha256:fbcbe71ffcfb70d6"
+    },
+    "media-codex-image": {
+      "plugin": "moai-media",
+      "digest": "sha256:313e1354c241cd45"
+    },
+    "media-gemini-3-image-prompt": {
+      "plugin": "moai-media",
+      "digest": "sha256:b0970268643973c9"
+    },
+    "media-gpt-image-2-prompt": {
+      "plugin": "moai-media",
+      "digest": "sha256:e0f1037b3f7493ab"
+    },
+    "media-higgsfield-assets": {
+      "plugin": "moai-media",
+      "digest": "sha256:07b293b81131647d"
+    },
+    "media-higgsfield-core": {
+      "plugin": "moai-media",
+      "digest": "sha256:b81bacb64c05c539"
+    },
+    "media-higgsfield-explainer": {
+      "plugin": "moai-media",
+      "digest": "sha256:81e4c14daa59a2ca"
+    },
+    "media-higgsfield-identity": {
+      "plugin": "moai-media",
+      "digest": "sha256:8317af4128555119"
+    },
+    "media-higgsfield-image": {
+      "plugin": "moai-media",
+      "digest": "sha256:1d070697e0328184"
+    },
+    "media-higgsfield-product": {
+      "plugin": "moai-media",
+      "digest": "sha256:0cc6bafd25a17899"
+    },
+    "media-higgsfield-video": {
+      "plugin": "moai-media",
+      "digest": "sha256:4fe8c1d4fd8e025c"
+    },
+    "media-midjourney-v8-prompt": {
+      "plugin": "moai-media",
+      "digest": "sha256:3fe38489eebadf4e"
+    },
+    "media-notebooklm-slide-prompt": {
+      "plugin": "moai-media",
+      "digest": "sha256:92bc485de4aa4c0b"
+    },
+    "commerce-ad-claim-compliance-kr": {
+      "plugin": "moai-seller",
+      "digest": "sha256:4aee7a749056efc0"
+    },
+    "commerce-automation-audit": {
+      "plugin": "moai-seller",
+      "digest": "sha256:8f0c3bae41433011"
+    },
+    "commerce-coupang-ad-optimizer": {
+      "plugin": "moai-seller",
+      "digest": "sha256:ef8b93dc35986ad5"
+    },
+    "commerce-detail-page-copy": {
+      "plugin": "moai-seller",
+      "digest": "sha256:f057824d32effc25"
+    },
+    "commerce-detail-page-image": {
+      "plugin": "moai-seller",
+      "digest": "sha256:01961fce09c314b5"
+    },
+    "commerce-detail-page-planner": {
+      "plugin": "moai-seller",
+      "digest": "sha256:507bc57b91bbe941"
+    },
+    "commerce-early-fan-builder": {
+      "plugin": "moai-seller",
+      "digest": "sha256:d1455196452bdcf3"
+    },
+    "commerce-influencer-collab": {
+      "plugin": "moai-seller",
+      "digest": "sha256:d117a4f707cd830a"
+    },
+    "commerce-integrated-strategy": {
+      "plugin": "moai-seller",
+      "digest": "sha256:ded00cb1ffccd6d1"
+    },
+    "commerce-jtbd-persona": {
+      "plugin": "moai-seller",
+      "digest": "sha256:9b944e9fdfac5524"
+    },
+    "commerce-live-commerce": {
+      "plugin": "moai-seller",
+      "digest": "sha256:618175774f530906"
+    },
+    "commerce-ltv-cac-architect": {
+      "plugin": "moai-seller",
+      "digest": "sha256:59840e2cc8cfffb0"
+    },
+    "commerce-margin-calculator": {
+      "plugin": "moai-seller",
+      "digest": "sha256:8a91a335d3f2e8bf"
+    },
+    "commerce-market-research": {
+      "plugin": "moai-seller",
+      "digest": "sha256:648e200103e5069c"
+    },
+    "commerce-marketplace-coupang-ads": {
+      "plugin": "moai-seller",
+      "digest": "sha256:c4c9097d50c4e826"
+    },
+    "commerce-marketplace-coupang": {
+      "plugin": "moai-seller",
+      "digest": "sha256:800e3e9a5ed5f576"
+    },
+    "commerce-marketplace-crowdfunding": {
+      "plugin": "moai-seller",
+      "digest": "sha256:daec3d557aca41d0"
+    },
+    "commerce-marketplace-curation": {
+      "plugin": "moai-seller",
+      "digest": "sha256:9c425715d5dcbc0d"
+    },
+    "commerce-marketplace-d2c": {
+      "plugin": "moai-seller",
+      "digest": "sha256:129a905f06675c40"
+    },
+    "commerce-marketplace-naver-ads": {
+      "plugin": "moai-seller",
+      "digest": "sha256:757894849078c7c4"
+    },
+    "commerce-marketplace-naver": {
+      "plugin": "moai-seller",
+      "digest": "sha256:55f4bc62b9417261"
+    },
+    "commerce-message-compliance-kr": {
+      "plugin": "moai-seller",
+      "digest": "sha256:4de610a7897311a2"
+    },
+    "commerce-morning-brief": {
+      "plugin": "moai-seller",
+      "digest": "sha256:2874bef2bb2eea1e"
+    },
+    "commerce-product-detail": {
+      "plugin": "moai-seller",
+      "digest": "sha256:504260d3a7f8b54b"
+    },
+    "commerce-product-image-pipeline": {
+      "plugin": "moai-seller",
+      "digest": "sha256:f2b5a610b16cedd5"
+    },
+    "commerce-product-naming": {
+      "plugin": "moai-seller",
+      "digest": "sha256:fe83c584c5cb4785"
+    },
+    "commerce-product-photo-brief": {
+      "plugin": "moai-seller",
+      "digest": "sha256:d4cbe4139ad8e6b2"
+    },
+    "commerce-promotion-planner": {
+      "plugin": "moai-seller",
+      "digest": "sha256:b1817a716b241fc0"
+    },
+    "commerce-repurchase-timer": {
+      "plugin": "moai-seller",
+      "digest": "sha256:333b534b331054b7"
+    },
+    "commerce-season-calendar": {
+      "plugin": "moai-seller",
+      "digest": "sha256:2d5895e8a6e233cd"
+    },
+    "commerce-subscription-strategist": {
+      "plugin": "moai-seller",
+      "digest": "sha256:f055d037fbada5b0"
+    }
+  },
+  "mcp_connected": {
+    "excalidraw": "connected",
+    "higgsfield": "connected (higgsfield MCP, plus) — credits 1 @2026-09-15; 충전 전 삽화는 prompt 파일만",
+    "notion": "connected"
+  },
+  "hard_block_digests": {
+    "2. 행동 원칙 (HARD)": "sha256:bcc30b8d77f00a8f",
+    "3. 요청 평가 사다리 (HARD)": "sha256:dabe5a7bd5b00d7a",
+    "4. 파일 생성 기준 (HARD)": "sha256:8efaa3833dd386b0",
+    "5. 문서·콘텐츠 생성 우선순위 (HARD)": "sha256:9a1fbbaf1e78aa6b",
+    "6. 한국어 품질 체인 (HARD)": "sha256:a12d4665a1b4ecc3",
+    "7. 인용·저작권 가드 (HARD)": "sha256:16f899ccd92b0760",
+    "8. 톤 규칙 (HARD)": "sha256:4153383a082b7ed9",
+    "13. 맥락 적용 규칙 (HARD)": "sha256:93b469b727e41653"
+  },
+  "sensitivity": "public",
+  "coverage": {
+    "A": "충족",
+    "B": "충족",
+    "C": "충족",
+    "D": "충족",
+    "E": "유예",
+    "F": "충족",
+    "G": "유예",
+    "H": "충족"
+  },
+  "confidence": {
+    "moai-designer": "HIGH",
+    "cowork-plugin-management": "HIGH",
+    "moai-story": "HIGH",
+    "moai-analyst": "HIGH",
+    "moai-cs": "HIGH",
+    "moai-pm": "HIGH",
+    "moai-consultant": "HIGH",
+    "moai-coworker": "HIGH",
+    "moai-career": "HIGH",
+    "moai-officer": "HIGH",
+    "moai-threads-poster": "HIGH",
+    "moai-tutor": "HIGH",
+    "moai-accountant": "HIGH",
+    "moai-writer": "HIGH",
+    "moai-recruiter": "HIGH",
+    "moai-marketer": "HIGH",
+    "moai-lawyer": "HIGH",
+    "moai-media": "HIGH",
+    "moai-seller": "HIGH"
+  },
+  "agents": [
+    "textbook-writer",
+    "lab-notebook-builder",
+    "figure-maker",
+    "easy-upgrade-editor"
+  ],
+  "quality_upgrade": {
+    "started": "2026-09-15",
+    "spec": "textbook/QUALITY-UPGRADE.md",
+    "spec_status": "draft-before-pilot",
+    "chain": "⑨",
+    "agent": "easy-upgrade-editor",
+    "pilot_chapter": "part6/ch22-middleware",
+    "decisions": {
+      "guideline_update": "partial",
+      "code_level": "part-syntax-ladder, basic path fixed to beginner syntax",
+      "jangpyo": "higgsfield illustrations + mermaid diagrams",
+      "figures_per_section": {
+        "mermaid": "3-5",
+        "higgsfield": "1-2"
+      },
+      "style": "합니다체 유지, 문장 구조 단순화",
+      "notebook": "self-sufficient explanations and figures",
+      "setup_code": "no fake models; real model temperature 0",
+      "illustration_when_no_credits": "prompt and caption files only",
+      "rollout": "pilot then Part 1 onward"
+    },
+    "coverage": {
+      "A": "충족",
+      "B": "충족",
+      "C": "충족",
+      "D": "충족",
+      "E": "충족",
+      "F": "충족",
+      "G": "충족",
+      "H": "충족"
+    },
+    "before_snapshot": ".moai/evolution/quality-upgrade-before-2026-09-15/"
+  },
+  "updated_at": "2026-09-15T07:21:39+00:00"
+}

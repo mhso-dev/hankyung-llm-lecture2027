@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  q1["문의 1<br>20글자"]:::tool
+  q2["문의 2<br>25글자"]:::tool
+  q3["문의 3<br>36글자"]:::tool
+  router["choose_model<br>기준 길이 30"]:::flow
+  nano["gpt-5.4-nano<br>문의 1 · 문의 2<br>요청 두 번"]:::model
+  mini["gpt-5.4-mini<br>문의 3<br>요청 한 번"]:::model
+  seen["응답한 모델 이름이<br>고른 이름으로 시작함"]:::measure
+  q1 --> router
+  q2 --> router
+  q3 --> router
+  router -. 30글자 이하 .-> nano
+  router -. 30글자보다 김 .-> mini
+  nano --> seen
+  mini --> seen

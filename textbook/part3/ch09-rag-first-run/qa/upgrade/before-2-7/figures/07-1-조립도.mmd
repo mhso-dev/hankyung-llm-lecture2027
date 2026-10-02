@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 340}}}%%
+flowchart TB
+  %% classes
+  MAT["재료 · 문서 청크 두 벌<br>500자 8개 · 300자 14개<br>휴관일 질문 · 지킬 말 세 개 · 정답 출처 E01 p.2"]:::tool
+  SN["search_notes<br>검색 개수 2 · 검색 결과를 기록으로"]:::flow
+  EMB["text-embedding-3-small"]:::model
+  SR["make_search_row<br>근거 글자 수<br>근거에서 빠진 지킬 말<br>검색 결과에 없는 정답 출처"]:::flow
+  GEN["gpt-5.4-mini"]:::model
+  AA["add_answer_items<br>입력 토큰 수 · 보류 문장<br>답 검사"]:::flow
+  PR["print_rows<br>검색 뒤 점검표 · 답 뒤 점검표"]:::flow
+  MAT --> SN
+  SN --> EMB
+  EMB --> SR
+  SR -- 메시지 목록 --> GEN
+  GEN --> AA
+  AA --> PR

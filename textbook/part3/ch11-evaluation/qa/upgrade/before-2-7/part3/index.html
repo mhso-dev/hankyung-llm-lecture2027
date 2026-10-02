@@ -1,0 +1,76 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Part 3 · RAG</title><style>/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+
+    *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;
+    line-height:1.8;word-break:keep-all;color:#202020;background:#fff}
+    a{color:#2456a6;overflow-wrap:anywhere}h1{font-size:30px;line-height:1.4}
+    h2{font-size:24px;margin-top:40px}li{margin:8px 0}p,li{font-size:16px}
+    .intro{padding:18px;background:#f5f7fa;border:1px solid #cbd5e1;border-radius:8px}
+    </style></head>
+    <body><main class="page"><header class="top"><p><a href="../index.html">전체 교재</a></p>
+    <h1>Part 3 · RAG</h1><p>Ch 9–12 · 36절 · 총 96시간 · 강의 32시간 · 실습 64시간</p></header>
+    <div class="intro"><p>문서에서 근거를 찾아 답을 만드는 과정을 끝까지 실행합니다.
+    문서 처리와 평가 지표를 익힌 뒤 검색 방법과 설정을 비교합니다. Ch 9 → Ch 10 → Ch 11 → Ch 12 순서로 읽습니다.</p>
+    <p><a href="../downloads/part3-practice.zip" download>Part 3 노트북과 실습 자료 받기</a></p>
+    <p>HTML은 교재를 읽고 코드를 복사하는 화면입니다. 코드는 Python 3.12용 Jupyter 커널에서
+    첫 셀부터 실행합니다. 키·패키지·데이터베이스 준비는 묶음의 ‘시작하기.md’와 각 절의 준비 설명을 확인합니다.</p></div>
+    <section><h2><a href="ch09-rag-first-run/index.html">Ch 9 · RAG 첫 완주와 실험 기록</a></h2><p>문서를 검색해 근거와 함께 답을 생성합니다. 설정을 바꾸어 실행하고 결과를 기록합니다.</p><p>강의 6시간 · 실습 10시간 · 7절</p><ol><li><a href="ch09-rag-first-run/01-RAG-지도.html">01 RAG 지도</a></li><li><a href="ch09-rag-first-run/02-로더와-스플리터.html">02 로더와 스플리터</a></li><li><a href="ch09-rag-first-run/03-임베딩과-벡터스토어.html">03 임베딩과 벡터스토어</a></li><li><a href="ch09-rag-first-run/04-생성과-출처-인용.html">04 생성과 출처 인용</a></li><li><a href="ch09-rag-first-run/05-첫-실패-보기.html">05 첫 실패 보기</a></li><li><a href="ch09-rag-first-run/06-실험-하네스.html">06 실험 하네스</a></li><li><a href="ch09-rag-first-run/07-RAG-실습.html">07 RAG 실습</a></li></ol></section><section><h2><a href="ch10-document-processing/index.html">Ch 10 · 문서 처리와 임베딩</a></h2><p>문서 형식과 나누는 자리를 확인합니다. 같은 자료에서 나누기 설정을 바꿔 색인과 검색 결과를 견줍니다.</p><p>강의 8시간 · 실습 16시간 · 9절</p><ol><li><a href="ch10-document-processing/01-문서와-메타데이터.html">01 문서와 메타데이터</a></li><li><a href="ch10-document-processing/02-PDF와-표-OCR.html">02 PDF와 표 OCR</a></li><li><a href="ch10-document-processing/03-DOCX-HTML-CSV.html">03 DOCX HTML CSV</a></li><li><a href="ch10-document-processing/04-HWP와-HWPX.html">04 HWP와 HWPX</a></li><li><a href="ch10-document-processing/05-문자-재귀-토큰-청킹.html">05 문자 재귀 토큰 청킹</a></li><li><a href="ch10-document-processing/06-구조와-시맨틱-청킹.html">06 구조와 시맨틱 청킹</a></li><li><a href="ch10-document-processing/07-한국어-임베딩과-캐시.html">07 한국어 임베딩과 캐시</a></li><li><a href="ch10-document-processing/08-인덱싱-비교-실험.html">08 인덱싱 비교 실험</a></li><li><a href="ch10-document-processing/09-문서-처리-실습.html">09 문서 처리 실습</a></li></ol></section><section><h2><a href="ch11-evaluation/index.html">Ch 11 · 평가 기초</a></h2><p>정답 문서 ID가 있는 질문을 준비하고, 후보의 누락과 상위 순위의 품질을 따로 측정합니다.</p><p>강의 6시간 · 실습 10시간 · 7절</p><ol><li><a href="ch11-evaluation/01-질의셋과-정답-문서-ID.html">01 질의셋과 정답 문서 ID</a></li><li><a href="ch11-evaluation/02-Recall-at-50.html">02 Recall at 50</a></li><li><a href="ch11-evaluation/03-Precision-at-5.html">03 Precision at 5</a></li><li><a href="ch11-evaluation/04-nDCG-at-5.html">04 nDCG at 5</a></li><li><a href="ch11-evaluation/05-조건별-평가와-오류-분류.html">05 조건별 평가와 오류 분류</a></li><li><a href="ch11-evaluation/06-실험-로그와-자동-실행.html">06 실험 로그와 자동 실행</a></li><li><a href="ch11-evaluation/07-평가-기초-실습.html">07 평가 기초 실습</a></li></ol></section><section><h2><a href="ch12-retrieval-tuning/index.html">Ch 12 · 검색 품질과 튜닝</a></h2><p>검색·병합·재정렬을 직접 구현하고 같은 질문과 정답 기준으로 설정을 비교합니다.</p><p>강의 12시간 · 실습 28시간 · 13절</p><ol><li><a href="ch12-retrieval-tuning/01-벡터-거리와-정확-검색.html">01 벡터 거리와 정확 검색</a></li><li><a href="ch12-retrieval-tuning/02-pgvector와-HNSW.html">02 pgvector와 HNSW</a></li><li><a href="ch12-retrieval-tuning/03-메타데이터-필터와-iterative-scan.html">03 메타데이터 필터와 iterative scan</a></li><li><a href="ch12-retrieval-tuning/04-한국어-Kiwi와-BM25.html">04 한국어 Kiwi와 BM25</a></li><li><a href="ch12-retrieval-tuning/05-dense와-sparse-비교.html">05 dense와 sparse 비교</a></li><li><a href="ch12-retrieval-tuning/06-RRF-하이브리드-검색.html">06 RRF 하이브리드 검색</a></li><li><a href="ch12-retrieval-tuning/07-cross-encoder-리랭킹.html">07 cross encoder 리랭킹</a></li><li><a href="ch12-retrieval-tuning/08-후보-수와-리랭커-비교.html">08 후보 수와 리랭커 비교</a></li><li><a href="ch12-retrieval-tuning/09-Parent-document-검색.html">09 Parent document 검색</a></li><li><a href="ch12-retrieval-tuning/10-MMR-다양성-선택.html">10 MMR 다양성 선택</a></li><li><a href="ch12-retrieval-tuning/11-질문-재작성과-검색.html">11 질문 재작성과 검색</a></li><li><a href="ch12-retrieval-tuning/12-종합-튜닝과-실험-로그.html">12 종합 튜닝과 실험 로그</a></li><li><a href="ch12-retrieval-tuning/13-검색-품질-실습.html">13 검색 품질 실습</a></li></ol></section>
+    <section><h2>챕터 간 실행 연결</h2><p>Ch9 06절과 Ch10 08절의 실제 검색 로그를 Ch11 06절에서 읽어 검색 지표를 계산합니다. 각 노트북은 새 커널에서 실행하며, 앞 장의 변수 대신 저장한 파일을 사용합니다. 배포 묶음의 <code>labs/part3/continuity-guide.md</code>에 실행 순서와 식별자 대응을 정리했습니다.</p><p>Ch12의 36건은 RRF 가중치와 MMR 관련성 비중의 설정 비교입니다. 검색부터 답변 생성까지 이어지는 통합 RAG는 별도로 실행하고 기록합니다. Ch11은 검색을 평가하며 생성 답변 평가는 Ch15에서 이어집니다.</p></section>
+    <section><h2>실험 결과를 읽을 때</h2>
+    <p>검색 후보에 정답이 포함되었는지와 정답이 상위에 있는지를 따로 확인합니다.
+    Recall@50은 후보 누락을, Precision@5와 nDCG@5는 상위 결과의 관련성과 순서를 살펴보는 데 사용합니다.
+    지표를 비교할 때 질문·정답 문서 ID·문서 집합과 설정을 함께 기록합니다.</p>
+    <p>제공 PDF 21건은 학습용 합성 자료입니다. 자신의 업무 분야 문서 100건을 사용하는 확장 실습에서는
+    문서 사용 권한과 개인정보를 확인하고, 실제 문서에서 평가 질문과 정답 근거를 다시 작성합니다.</p>
+    <p>리랭커에 입력한 후보에 정답 문서가 없다면 재정렬만으로 해당 문서를 추가할 수 없습니다.
+    한 설정의 평균 점수가 높아져도 어떤 질문의 결과가 나빠졌는지 함께 읽습니다.
+    실제 문서의 출처와 내용을 확인하는 과정은 지표 계산과 별도로 필요합니다.</p>
+    <p>Part 3을 마치면 Ch 13에서 이 검색 흐름을 그래프로 옮깁니다.
+    Part 3에서 만든 질문·정답 문서 ID·실험 기록은 다음 평가 실습에도 사용합니다.</p></section>
+    </main></body></html>

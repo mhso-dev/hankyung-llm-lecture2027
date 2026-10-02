@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  find["shutil.which로<br>pg_dump 찾기"]:::flow
+  here["찾음 · 이 컴퓨터의 명령<br>pg_dump 17.11"]:::measure
+  box["못 찾음<br>docker exec -i<br>kdt-ch31-postgres<br>안의 명령<br>교재 출력에서는<br>실행하지 않음"]
+  dump["pg_dump<br>--format=custom<br>--schema=ch31_shared"]:::flow
+  file["임시 폴더의<br>덤프 파일 하나"]:::tool
+  toc["종료 코드 0<br>목차에 문서 표 True<br>체크포인트 표 True<br>확장 False"]:::measure
+  find -.-> here
+  find -.-> box
+  here --> dump
+  box -.-> dump
+  dump --> file --> toc

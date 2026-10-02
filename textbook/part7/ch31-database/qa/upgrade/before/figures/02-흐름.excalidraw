@@ -1,0 +1,189 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "ch31-generator",
+  "elements": [
+    {
+      "type": "rectangle",
+      "id": "r0",
+      "x": 30,
+      "y": 20,
+      "width": 320,
+      "height": 65,
+      "strokeColor": "#334155",
+      "backgroundColor": "#DDEAF4",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "opacity": 100
+    },
+    {
+      "type": "text",
+      "id": "t0",
+      "x": 45,
+      "y": 40,
+      "width": 290,
+      "height": 24,
+      "text": "출금",
+      "fontSize": 18,
+      "fontFamily": 1,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "strokeColor": "#172033"
+    },
+    {
+      "type": "arrow",
+      "id": "a0",
+      "x": 190,
+      "y": 85,
+      "width": 0,
+      "height": 31,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          31
+        ]
+      ],
+      "strokeColor": "#334155",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "rectangle",
+      "id": "r1",
+      "x": 30,
+      "y": 120,
+      "width": 320,
+      "height": 65,
+      "strokeColor": "#334155",
+      "backgroundColor": "#F4D9D5",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "opacity": 100
+    },
+    {
+      "type": "text",
+      "id": "t1",
+      "x": 45,
+      "y": 140,
+      "width": 290,
+      "height": 24,
+      "text": "트랜잭션 경계",
+      "fontSize": 18,
+      "fontFamily": 1,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "strokeColor": "#172033"
+    },
+    {
+      "type": "arrow",
+      "id": "a1",
+      "x": 190,
+      "y": 185,
+      "width": 0,
+      "height": 31,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          31
+        ]
+      ],
+      "strokeColor": "#334155",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "rectangle",
+      "id": "r2",
+      "x": 30,
+      "y": 220,
+      "width": 320,
+      "height": 65,
+      "strokeColor": "#334155",
+      "backgroundColor": "#DDEDE8",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "opacity": 100
+    },
+    {
+      "type": "text",
+      "id": "t2",
+      "x": 45,
+      "y": 240,
+      "width": 290,
+      "height": 24,
+      "text": "입금 전 오류",
+      "fontSize": 18,
+      "fontFamily": 1,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "strokeColor": "#172033"
+    },
+    {
+      "type": "arrow",
+      "id": "a2",
+      "x": 190,
+      "y": 285,
+      "width": 0,
+      "height": 31,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          31
+        ]
+      ],
+      "strokeColor": "#334155",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "endArrowhead": "arrow"
+    },
+    {
+      "type": "rectangle",
+      "id": "r3",
+      "x": 30,
+      "y": 320,
+      "width": 320,
+      "height": 65,
+      "strokeColor": "#334155",
+      "backgroundColor": "#E8E2F4",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "roughness": 0,
+      "opacity": 100
+    },
+    {
+      "type": "text",
+      "id": "t3",
+      "x": 45,
+      "y": 340,
+      "width": 290,
+      "height": 24,
+      "text": "전체 롤백",
+      "fontSize": 18,
+      "fontFamily": 1,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "strokeColor": "#172033"
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}

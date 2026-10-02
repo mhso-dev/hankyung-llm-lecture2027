@@ -1,0 +1,305 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>문서 파싱과 스크래핑 — Ch 4 · 데이터 다루기 — 도구 제작 관점</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 4 · 데이터 다루기 — 도구 제작 관점</p>
+<h1>문서 파싱과 스크래핑</h1><div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>HTML 요소와 CSS 선택자로 기사 필드를 추출할 수 있습니다.</li><li>선택 결과가 없을 때 반환 형식을 유지할 수 있습니다.</li><li>robots.txt와 별도로 이용 조건·저작권·개인정보·호출 간격을 확인해야 하는 이유를 설명할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>모든 웹사이트가 구조화된 API를 제공하지는 않습니다. 공개 HTML에서 제목과 날짜를 읽어야 할 때는 문서의 태그와 속성을 분석해 필요한 값만 추출합니다. 화면에 보이는 문자열을 임의 위치로 자르면 광고나 메뉴가 섞이고 페이지 구조가 조금만 바뀌어도 결과가 달라집니다.</p><p>스크래핑은 기술적으로 읽을 수 있다는 사실만으로 사용이 허용되는 작업이 되지 않습니다. 대상 주소의 이용 약관, 저작권과 데이터베이스 권리, 개인정보, 접근 빈도 제한을 확인해야 합니다. robots.txt는 크롤러의 접근 경로를 알리는 규칙이며 접근 허가서나 비공개 보호 장치가 아닙니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>앞 절에서 HTTP 응답의 JSON 본문을 Python 사전으로 바꾸고 키로 값을 읽었습니다. HTML은 값을 사전의 키 대신 태그의 계층과 속성으로 표현합니다. Ch 2의 04절에서는 <code>None</code>을 값이 없는 상태로 사용했고, 05절에서는 예외를 구분해 처리했습니다. 이 두 방법으로 선택 결과가 없거나 필수 구조가 달라진 경우를 나누어 처리합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>HTML 문자열을 요소 트리로 바꿉니다</h3><p>HTML 문서는 여는 태그와 닫는 태그로 내용의 역할과 포함 관계를 표시합니다. <code>&lt;article data-id="A10"&gt;</code>은 기사 영역을 여는 태그이고 <code>data-id</code>는 그 요소의 속성입니다. 그 안의 <code>h1</code>, <code>p</code>, <code>time</code>은 자식 요소입니다. 이 부모와 자식 관계를 가지 모양으로 나타낸 것이 <strong>요소 트리</strong>입니다.</p><p><strong>파싱(parsing)</strong>은 문자열을 태그와 계층을 가진 구조로 해석하는 과정입니다. Beautiful Soup에 <code>lxml</code> 파서를 명시하면 어떤 파서로 트리를 만들었는지 실행 조건이 분명해집니다. 잘못 구성된 HTML은 파서에 따라 트리가 다를 수 있으므로 프로젝트와 실습의 파서 버전을 고정합니다.</p><h3>CSS 선택자로 노드를 고릅니다</h3><p><strong>CSS 선택자</strong>는 요소 이름, class, id, 속성 같은 조건으로 트리의 노드를 고르는 표기입니다. <code>article</code>은 이름이 article인 요소, <code>.summary</code>는 class 속성에 summary가 포함된 요소, <code>article time</code>은 article 안에 있는 time 요소를 뜻합니다. <code>select_one()</code>은 첫 번째 일치 노드를 반환하고 일치 항목이 없으면 <code>None</code>을 반환합니다. 반환된 노드의 <code>get_text(strip=True)</code>는 태그를 제외한 텍스트를 읽고 앞뒤 공백을 정리합니다. <code>article["data-id"]</code>와 <code>article.time["datetime"]</code>은 화면 문자열이 아니라 속성값을 읽습니다.</p><p><strong>스크래핑(scraping)</strong>은 웹 문서에서 필요한 데이터를 자동으로 추출하는 작업입니다. 파싱은 문자열을 구조로 바꾸는 처리이고, 선택과 추출은 그 구조에서 필요한 값을 읽는 처리입니다. <strong>robots.txt</strong>는 사용자 에이전트별 접근 경로 규칙을 전달하지만 이용 약관이나 법률 검토를 대신하지 않습니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270" width="720" height="270" role="img"
+ aria-labelledby="title-05-document-parsing desc-05-document-parsing">
+<title id="title-05-document-parsing">HTML 구조에서 필드 추출</title>
+<desc id="desc-05-document-parsing">파란 입력에서 노란 처리를 거쳐 초록 결과가 나오며 빨간 상자는 실패 사례를 나타냅니다.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker></defs>
+<rect width="720" height="270" fill="#fff"/>
+<text x="24" y="35" font-size="20" font-weight="700" fill="#111827">HTML 구조에서 필드 추출</text>
+<path d="M210 110H265" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M450 110H505" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<path d="M360 155V180" stroke="#dc2626" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="30" y="75" width="180" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="120.0" y="106.0" text-anchor="middle" font-size="16" fill="#111827">HTML 원문</text>
+<text x="120.0" y="129.0" text-anchor="middle" font-size="16" fill="#111827">article·h1·time</text>
+<rect x="270" y="75" width="180" height="80" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="106.0" text-anchor="middle" font-size="16" fill="#111827">lxml 파서</text>
+<text x="360.0" y="129.0" text-anchor="middle" font-size="16" fill="#111827">요소 트리</text>
+<rect x="510" y="75" width="180" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="600.0" y="106.0" text-anchor="middle" font-size="16" fill="#111827">id·title·summary</text>
+<text x="600.0" y="129.0" text-anchor="middle" font-size="16" fill="#111827">published</text>
+<rect x="270" y="185" width="180" height="55" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="360.0" y="203.5" text-anchor="middle" font-size="16" fill="#111827">없는 선택자</text>
+<text x="360.0" y="226.5" text-anchor="middle" font-size="16" fill="#111827">None 확인</text>
+</svg></div><p>초록 상자는 HTML 원문과 추출한 필드 사전을 나타냅니다. 파란 상자는 <code>lxml</code> 파서가 요소 트리를 만들고 CSS 선택자가 노드를 고르는 흐름입니다. 빨간 상자는 없는 선택자의 결과가 <code>None</code>인 상태에서 메서드를 호출한 실패를 보여 줍니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>준비 셀의 <code>Path.cwd()</code>는 현재 작업 폴더 경로를 반환하고 <code>Path.cwd().parents</code>는 상위 폴더들을 제공합니다. 괄호 안의 <code>path for path in ... if ...</code>는 조건에 맞는 경로를 차례로 내놓는 제너레이터 표현식입니다. <code>next(...)</code>는 그중 첫 경로를 꺼냅니다. 이 코드는 어느 프로젝트 하위 폴더에서 노트북을 실행해도 배포 데이터 파일이 있는 루트를 찾기 위한 보조 준비입니다.</p><p><code>read_text(encoding="utf-8")</code>는 HTML 파일을 문자열로 반환합니다. <code>BeautifulSoup(html, "lxml")</code>이 문자열을 요소 트리로 바꾸고, <code>select_one("article")</code>이 기사 컨테이너 하나를 반환합니다. 그 노드를 기준으로 <code>h1</code>, <code>.summary</code>, <code>time</code>을 찾습니다.</p><p>처리 결과는 <code>id</code>, <code>title</code>, <code>summary</code>, <code>published</code>, <code>text</code> 키를 가진 사전입니다. <code>json.dumps(..., ensure_ascii=False, indent=2)</code>는 이 Python 값을 한글과 들여쓰기를 유지한 JSON 문자열로 바꾸고, <code>write_text</code>가 파일에 기록합니다. <code>json.loads</code>는 다시 읽은 JSON 문자열을 Python 사전으로 바꾸며 기록 전후 값이 같은지 확인합니다.</p><p>같은 HTML에서 선택자 조건만 <code>.summary</code>에서 <code>time</code>으로 바꾸는 최소 비교를 실행합니다. 첫 선택자는 요약 텍스트를, 둘째 선택자는 화면 텍스트 <code>2026년 9월 1일</code>과 속성값 <code>2026-09-01</code>을 가진 노드를 반환합니다. 선택자가 바뀌면 같은 트리에서도 선택 노드와 읽을 값이 달라집니다.</p><p>robots.txt는 파싱 기본 예제와 분리한 주의 실습입니다. <code>RobotFileParser()</code>는 규칙 판독 객체를 만듭니다. <code>parse(문장 목록)</code>은 robots.txt 규칙 문장들을 이 객체에 읽어 들입니다. <code>can_fetch</code>는 사용자 에이전트와 주소를 입력으로 받아 경로 규칙상 접근 가능 여부를 불리언으로 반환합니다. <code>/articles/</code>는 <code>True</code>, <code>/private/</code>는 <code>False</code>이지만 이용 허가 전체를 뜻하지 않습니다.</p><section class="notebook" data-notebook="05-문서-파싱과-스크래핑" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="05-문서-파싱과-스크래핑.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDrrLjshJwg7YyM7Iux6rO8IOyKpO2BrOuemO2VkVxuIiwKICAgICJcbiIsCiAgICAiSFRNTCDqtazsobDsl5DshJwg7KCc66qp6rO8IOyalOyVveydhCDstpTstpztlZjqs6Agcm9ib3RzLnR4dCDqt5zsuZnsnYQg7J297Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6Ttlokg7ZmY6rK9IOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAiYFBhdGguY3dkKClg64qUIO2YhOyerCDsnpHsl4Ug7Y+0642U66W8IOuwmO2ZmO2VmOqzoCBgLnBhcmVudHNg64qUIOyDgeychCDtj7TrjZTrk6TsnYQg7KCc6rO17ZWp64uI64ukLiBgcGF0aCBmb3IgcGF0aCBpbiAuLi4gaWYgLi4uYOuKlCDsobDqsbTsl5Ag66ee64qUIOqyveuhnOulvCDssKjroYDroZwg64K064aT64qUIOygnOuEiOugiOydtO2EsCDtkZztmITsi53snbTrqbAsIGBuZXh0KC4uLilg64qUIOyyqyDqsr3roZzrpbwg6rq864OF64uI64ukLiDsnbQg67O07KGwIOy9lOuTnOuKlCDsi6Ttlokg7JyE7LmY6rCAIOuLrOudvOuPhCDrsLDtj6zrkJwgYGFydGljbGUuaHRtbGDsnYQg7LC+7Iq164uI64ukLiBgcmVhZF90ZXh0YOuKlCDtjIzsnbzsnYQg66y47J6Q7Je066GcIOuwmO2ZmO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICJjZWxsLTAzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjE3OjI3LjkzNDE3OVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjE3OjI3LjkzMzk2MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjE3OjI3Ljk4MDg2NVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MTc6MjcuOTgwNDM0WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuusuOyEnCDquLjsnbQ6IDI3MFxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOuwsO2PrOuQnCBIVE1MIOybkOusuOqzvCBDaCA1IOyghOuLrCDtjIzsnbzsnZgg6rK966Gc66W8IOykgOu5hO2VqeuLiOuLpC5cbiIsCiAgICAiaW1wb3J0IGpzb25cbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgImZyb20gdXJsbGliLnJvYm90cGFyc2VyIGltcG9ydCBSb2JvdEZpbGVQYXJzZXJcbiIsCiAgICAiXG4iLAogICAgImZyb20gYnM0IGltcG9ydCBCZWF1dGlmdWxTb3VwXG4iLAogICAgIlxuIiwKICAgICJyb290ID0gbmV4dChwYXRoIGZvciBwYXRoIGluIChQYXRoLmN3ZCgpLCAqUGF0aC5jd2QoKS5wYXJlbnRzKVxuIiwKICAgICIgICAgICAgICAgICBpZiAocGF0aCAvIFwibGFicy9wYXJ0MS9jaDA0LWRhdGEtdG9vbHMvZGF0YS9hcnRpY2xlLmh0bWxcIikuZXhpc3RzKCkpXG4iLAogICAgImRhdGFfZGlyID0gcm9vdCAvIFwibGFicy9wYXJ0MS9jaDA0LWRhdGEtdG9vbHMvZGF0YVwiXG4iLAogICAgImh0bWwgPSAoZGF0YV9kaXIgLyBcImFydGljbGUuaHRtbFwiKS5yZWFkX3RleHQoZW5jb2Rpbmc9XCJ1dGYtOFwiKVxuIiwKICAgICJoYW5kb2ZmX3BhdGggPSBkYXRhX2RpciAvIFwiYXJ0aWNsZS10ZXh0Lmpzb25cIlxuIiwKICAgICJwcmludChcIuusuOyEnCDquLjsnbQ6XCIsIGxlbihodG1sKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6riw67O4IOyLpO2WiVxuIiwKICAgICJcbiIsCiAgICAiSFRNTCDrrLjsnpDsl7TsnYAg7YOc6re47J2YIOu2gOuqqMK37J6Q7IudIOq0gOqzhOulvCDri7Tqs6Ag7J6I7Iq164uI64ukLiBgQmVhdXRpZnVsU291cChodG1sLCBcImx4bWxcIilg7J2AIOusuOyekOyXtOydhCDsmpTshowg7Yq466as66GcIO2MjOyLse2VqeuLiOuLpC4gQ1NTIOyEoO2DneyekCBgYXJ0aWNsZWDsnYAgYXJ0aWNsZSDsmpTshozrpbwsIGAuc3VtbWFyeWDripQgY2xhc3PqsIAgc3VtbWFyeeyduCDsmpTshozrpbwg6rOg66aF64uI64ukLiBgc2VsZWN0X29uZWDsnYAg7LKrIOuyiOynuCDsnbzsuZgg64W465OcIOuYkOuKlCBgTm9uZWDsnYQg67CY7ZmY7ZWp64uI64ukLiBganNvbi5kdW1wc2DripQgUHl0aG9uIOyCrOyghOydhCBKU09OIOusuOyekOyXtOuhnCDrsJTqvrjqs6AgYHdyaXRlX3RleHRg6rCAIO2MjOydvOyXkCDquLDroZ3tlanri4jri6QuIGBqc29uLmxvYWRzYOuKlCDri6Tsi5wg7J297J2AIEpTT04g66y47J6Q7Je07J2EIFB5dGhvbiDsgqzsoITsnLzroZwg65CY64+M66a964uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTc6MjcuOTgxODI4WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTc6MjcuOTgxNzMxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTc6MjcuOTg3MDY3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNy45ODY3MTFaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7YyM7IScOiBseG1sIOyEoO2Dne2VnCDsmpTshow6IGFydGljbGVcbiIsCiAgICAgICJ7J2lkJzogJ0ExMCcsICd0aXRsZSc6ICfqs6jrqqnsg4Hqtowg66ek7LacIO2ajOuztScsICdzdW1tYXJ5JzogJ+yjvOunkCDrsKnrrLjqsJ0g7Kad6rCA66GcIOydjOyLneygkCDrp6TstpzsnbQg64qY7JeI7Iq164uI64ukLicsICdwdWJsaXNoZWQnOiAnMjAyNi0wOS0wMScsICd0ZXh0JzogJ+qzqOuqqeyDgeq2jCDrp6Tstpwg7ZqM67O1XFxu7KO866eQIOuwqeusuOqwnSDspp3qsIDroZwg7J2M7Iud7KCQIOunpOy2nOydtCDripjsl4jsirXri4jri6QuJ31cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDquLDsgqwg7ZWE65Oc66W8IOy2lOy2nO2VtCBDaCA16rCAIOydveydhCBKU09OIO2MjOydvOuhnCDrs7TsobTtlanri4jri6QuXG4iLAogICAgInNvdXAgPSBCZWF1dGlmdWxTb3VwKGh0bWwsIFwibHhtbFwiKVxuIiwKICAgICJhcnRpY2xlID0gc291cC5zZWxlY3Rfb25lKFwiYXJ0aWNsZVwiKVxuIiwKICAgICJwcmludChcIu2MjOyEnDpcIiwgc291cC5idWlsZGVyLk5BTUUsIFwi7ISg7YOd7ZWcIOyalOyGjDpcIiwgYXJ0aWNsZS5uYW1lKVxuIiwKICAgICJyZWNvcmQgPSB7XCJpZFwiOmFydGljbGVbXCJkYXRhLWlkXCJdLCBcInRpdGxlXCI6YXJ0aWNsZS5oMS5nZXRfdGV4dChzdHJpcD1UcnVlKSxcbiIsCiAgICAiICAgICAgICAgIFwic3VtbWFyeVwiOmFydGljbGUuc2VsZWN0X29uZShcIi5zdW1tYXJ5XCIpLmdldF90ZXh0KHN0cmlwPVRydWUpLFxuIiwKICAgICIgICAgICAgICAgXCJwdWJsaXNoZWRcIjphcnRpY2xlLnRpbWVbXCJkYXRldGltZVwiXX1cbiIsCiAgICAicmVjb3JkW1widGV4dFwiXSA9IGZcIntyZWNvcmRbJ3RpdGxlJ119XFxue3JlY29yZFsnc3VtbWFyeSddfVwiXG4iLAogICAgInBheWxvYWQgPSB7XCJzY2hlbWFfdmVyc2lvblwiOlwiY2gwNC1wYXJzZWQtYXJ0aWNsZS12MVwiLFxuIiwKICAgICIgICAgICAgICAgIFwic291cmNlXCI6XCJsYWJzL3BhcnQxL2NoMDQtZGF0YS10b29scy9kYXRhL2FydGljbGUuaHRtbFwiLCBcInJlY29yZFwiOnJlY29yZH1cbiIsCiAgICAiaGFuZG9mZl9wYXRoLndyaXRlX3RleHQoanNvbi5kdW1wcyhwYXlsb2FkLCBlbnN1cmVfYXNjaWk9RmFsc2UsIGluZGVudD0yKSArIFwiXFxuXCIsIGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAiaGFuZG9mZiA9IGpzb24ubG9hZHMoaGFuZG9mZl9wYXRoLnJlYWRfdGV4dChlbmNvZGluZz1cInV0Zi04XCIpKVxuIiwKICAgICJwcmludChyZWNvcmQpXG4iLAogICAgImFzc2VydCBoYW5kb2ZmID09IHBheWxvYWQiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7KSR6rCEIOqysOqzvCDqtIDssLBcbiIsCiAgICAiXG4iLAogICAgIuyeheugpSBIVE1M7JeQ7IScIGFydGljbGUg64W465Oc66W8IOqzoOuluCDrkqQg7J6Q7IudIOyalOyGjOydmCDthY3siqTtirjsmYAgYGRhdGEtaWRgLCBgZGF0ZXRpbWVgIOyGjeyEseydhCDsnb3sl4jsirXri4jri6QuIOuwmO2ZmCDsgqzsoITsnZggYHRpdGxlYOqzvCBgcHVibGlzaGVkYOqwgCDtmZTrqbQg7JyE7LmY6rCAIOyVhOuLiOudvCDsmpTshozsmYAg7IaN7ISx7JeQ7IScIOy2lOy2nOuQnCDqsJLsnbjsp4Ag7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MTc6MjcuOTg3OTI3WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MTc6MjcuOTg3ODY4WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MTc6MjcuOTg5NDkzWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNy45ODkxODlaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7KCc66qpOiDqs6jrqqnsg4Hqtowg66ek7LacIO2ajOuztVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIO2ZlOuptCDrgqDsp5wg64yA7IugIOq4sOqzhCDtjJDrj4Ug7IaN7ISx7J20IOuwmO2ZmOuQmOyXiOuKlOyngCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgImFzc2VydCByZWNvcmRbXCJpZFwiXSA9PSBcIkExMFwiXG4iLAogICAgImFzc2VydCByZWNvcmRbXCJwdWJsaXNoZWRcIl0gPT0gXCIyMDI2LTA5LTAxXCJcbiIsCiAgICAicHJpbnQoXCLsoJzrqqk6XCIsIHJlY29yZFtcInRpdGxlXCJdKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDdhIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7ISg7YOd7J6QIOyhsOqxtOydhCDrsJTqv5Qg67mE6rWQXG4iLAogICAgIlxuIiwKICAgICLqsJnsnYAgYXJ0aWNsZSDrhbjrk5zsl5DshJwg7ISg7YOd7J6Q66eMIGAuc3VtbWFyeWDsl5DshJwgYHRpbWVg7Jy866GcIOuwlOq/ieuLiOuLpC4g7LKrIOyEoO2DneyekOuKlCDsmpTslb0g7YWN7Iqk7Yq466W8LCDrkZjsp7gg7ISg7YOd7J6Q64qUIO2ZlOuptCDrgqDsp5wg7YWN7Iqk7Yq47JmAIGBkYXRldGltZWAg7IaN7ISx7J2EIOqwgOynhCDrhbjrk5zrpbwg67CY7ZmY7ZWp64uI64ukLiDqsJnsnYAgSFRNTOyXkOyEnOuPhCDshKDtg50g7KGw6rG07JeQIOuUsOudvCDsnb3snYQg6rCS7J20IOuLrOudvOynkeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA3YiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNy45OTAyODhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNy45OTAyMjRaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNy45OTIxNzBaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjE3OjI3Ljk5MTg0NVoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsmpTslb06IOyjvOunkCDrsKnrrLjqsJ0g7Kad6rCA66GcIOydjOyLneygkCDrp6TstpzsnbQg64qY7JeI7Iq164uI64ukLlxuIiwKICAgICAgIu2ZlOuptCDrgqDsp5w6IDIwMjbrhYQgOeyblCAx7J28XG4iLAogICAgICAi64Kg7KecIOyGjeyEsTogMjAyNi0wOS0wMVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOqwmeydgCBIVE1M7JeQ7IScIOyEoO2DneyekCDsobDqsbTrp4wg67CU6r647Ja0IOuwmO2ZmCDrhbjrk5zsmYAg6rCS7J2EIOu5hOq1kO2VqeuLiOuLpC5cbiIsCiAgICAic3VtbWFyeV9ub2RlID0gYXJ0aWNsZS5zZWxlY3Rfb25lKFwiLnN1bW1hcnlcIilcbiIsCiAgICAidGltZV9ub2RlID0gYXJ0aWNsZS5zZWxlY3Rfb25lKFwidGltZVwiKVxuIiwKICAgICJwcmludChcIuyalOyVvTpcIiwgc3VtbWFyeV9ub2RlLmdldF90ZXh0KHN0cmlwPVRydWUpKVxuIiwKICAgICJwcmludChcIu2ZlOuptCDrgqDsp5w6XCIsIHRpbWVfbm9kZS5nZXRfdGV4dChzdHJpcD1UcnVlKSlcbiIsCiAgICAicHJpbnQoXCLrgqDsp5wg7IaN7ISxOlwiLCB0aW1lX25vZGVbXCJkYXRldGltZVwiXSlcbiIsCiAgICAiYXNzZXJ0IHRpbWVfbm9kZVtcImRhdGV0aW1lXCJdID09IHJlY29yZFtcInB1Ymxpc2hlZFwiXSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDgiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDrs4Trj4Qg7KO87J2YIOyLpOyKtTogcm9ib3RzLnR4dFxuIiwKICAgICJcbiIsCiAgICAi7J20IOyFgOydgCBIVE1MIO2VhOuTnCDstpTstpzsnZgg7KGw6rG0IOu5hOq1kOqwgCDslYTri4jrnbwg7KCR6re8IOqyveuhnOulvCDtmZXsnbjtlZjripQg67OE64+EIOyjvOydmCDsi6TsirXsnoXri4jri6QuIGBSb2JvdEZpbGVQYXJzZXIoKWDripQg6rec7LmZIO2MkOuPhSDqsJ3ssrTrpbwg66eM65Ot64uI64ukLiBgcGFyc2Uo66y47J6lIOuqqeuhnSlg7J2AIHJvYm90cy50eHQg6rec7LmZIOusuOyepeuTpOydhCDsnbQg6rCd7LK07JeQIOydveyWtCDrk6TsnoXri4jri6QuIGBjYW5fZmV0Y2hg64qUIOyCrOyaqeyekCDsl5DsnbTsoITtirjsmYAg7KO87IaM66W8IOyeheugpeycvOuhnCDrsJvslYQgcm9ib3RzLnR4dCDqt5zsuZnsg4Eg7KCR6re8IOqwgOuKpSDsl6zrtoDrpbwg67aI66as7Ja47Jy866GcIOuwmO2ZmO2VqeuLiOuLpC4g7J20IOqysOqzvOuKlCDsnbTsmqkg7JW96rSA7J2064KYIOyggOyekeq2jCDtl4jqsIDrpbwg64yA7Iug7ZWY7KeAIOyViuyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDUsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjE3OjI3Ljk5MjkwN1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjE3OjI3Ljk5Mjg1MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjE3OjI3Ljk5NDYxOFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MTc6MjcuOTk0Mjc4WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuq4sOyCrCDqsr3roZwg6rec7LmZOiBUcnVlXG4iLAogICAgICAi67mE6rO16rCcIOqyveuhnCDqt5zsuZk6IEZhbHNlXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgcm9ib3RzIOq3nOy5meydgCDtgazroaTrn6wg6rK966Gc66eMIO2MkOuLqO2VmOupsCDsnbTsmqkg7ZeI6rCA66W8IOucu+2VmOyngCDslYrsirXri4jri6QuXG4iLAogICAgInJvYm90cyA9IFJvYm90RmlsZVBhcnNlcigpXG4iLAogICAgInJvYm90cy5wYXJzZShbXCJVc2VyLWFnZW50OiAqXCIsIFwiQWxsb3c6IC9hcnRpY2xlcy9cIiwgXCJEaXNhbGxvdzogL3ByaXZhdGUvXCJdKVxuIiwKICAgICJwcmludChcIuq4sOyCrCDqsr3roZwg6rec7LmZOlwiLCByb2JvdHMuY2FuX2ZldGNoKFwiY291cnNlLWJvdFwiLCBcImh0dHBzOi8vZXhhbXBsZS50ZXN0L2FydGljbGVzL0ExMFwiKSlcbiIsCiAgICAicHJpbnQoXCLruYTqs7XqsJwg6rK966GcIOq3nOy5mTpcIiwgcm9ib3RzLmNhbl9mZXRjaChcImNvdXJzZS1ib3RcIiwgXCJodHRwczovL2V4YW1wbGUudGVzdC9wcml2YXRlL0ExMFwiKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEwIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TtjKgg7J6s7ZiEXG4iLAogICAgIlxuIiwKICAgICLsobTsnqztlZjsp4Ag7JWK64qUIOyEoO2DneyekOyXkCDrsJTroZwgYGdldF90ZXh0YOulvCDtmLjstpztlZjrqbQgYEF0dHJpYnV0ZUVycm9yYOqwgCDrsJzsg53tlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA2LAogICAiaWQiOiAiY2VsbC0xMSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNy45OTUyOTFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNy45OTUyMjVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwNjoxNzoyNy45OTY4NDJaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDA2OjE3OjI3Ljk5NjU5NFoiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIkF0dHJpYnV0ZUVycm9yIOyEoO2DneyekCDqsrDqs7w6IE5vbmVcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsl4bripQg7ISg7YOd7J6QIOqysOqzvOyXkCDrqZTshJzrk5zrpbwg7Zi47Lac7ZWY66m0IEF0dHJpYnV0ZUVycm9y6rCAIOuwnOyDne2VqeuLiOuLpC5cbiIsCiAgICAibWlzc2luZyA9IHNvdXAuc2VsZWN0X29uZShcIi5zdWJ0aXRsZVwiKVxuIiwKICAgICJ0cnk6XG4iLAogICAgIiAgICBtaXNzaW5nLmdldF90ZXh0KHN0cmlwPVRydWUpXG4iLAogICAgImV4Y2VwdCBBdHRyaWJ1dGVFcnJvciBhcyBlcnJvcjpcbiIsCiAgICAiICAgIHByaW50KHR5cGUoZXJyb3IpLl9fbmFtZV9fLCBcIuyEoO2DneyekCDqsrDqs7w6XCIsIG1pc3NpbmcpXG4iLAogICAgIiAgICBhc3NlcnQgbWlzc2luZyBpcyBOb25lIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xMiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsiJjsoJVcbiIsCiAgICAiXG4iLAogICAgIuyEoO2DnSDqsrDqs7zrpbwg7ZmV7J247ZWY6rOgIOyXhuuKlCDtlYTrk5zripQgYE5vbmVg7Jy866GcIOuwmO2ZmO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDcsCiAgICJpZCI6ICJjZWxsLTEzIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjE3OjI3Ljk5NzYxOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjE3OjI3Ljk5NzU2NloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjE3OjI3Ljk5OTM2MVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MTc6MjcuOTk5MDQ0WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJ7J2lkJzogJ0ExMCcsICd0aXRsZSc6ICfqs6jrqqnsg4Hqtowg66ek7LacIO2ajOuztScsICdzdW1tYXJ5JzogJ+yjvOunkCDrsKnrrLjqsJ0g7Kad6rCA66GcIOydjOyLneygkCDrp6TstpzsnbQg64qY7JeI7Iq164uI64ukLicsICdwdWJsaXNoZWQnOiAnMjAyNi0wOS0wMScsICd0ZXh0JzogJ+qzqOuqqeyDgeq2jCDrp6Tstpwg7ZqM67O1XFxu7KO866eQIOuwqeusuOqwnSDspp3qsIDroZwg7J2M7Iud7KCQIOunpOy2nOydtCDripjsl4jsirXri4jri6QuJywgJ3N1YnRpdGxlJzogTm9uZX1cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDshKDtg50g6rKw6rO866W8IO2ZleyduO2VmOqzoCDsl4bripQg7ISg7YOdIO2VhOuTnOulvCBOb25l7Jy866GcIOycoOyngO2VqeuLiOuLpC5cbiIsCiAgICAic3VidGl0bGVfbm9kZSA9IHNvdXAuc2VsZWN0X29uZShcIi5zdWJ0aXRsZVwiKVxuIiwKICAgICJzdWJ0aXRsZSA9IHN1YnRpdGxlX25vZGUuZ2V0X3RleHQoc3RyaXA9VHJ1ZSkgaWYgc3VidGl0bGVfbm9kZSBlbHNlIE5vbmVcbiIsCiAgICAiZml4ZWRfcmVjb3JkID0geyoqcmVjb3JkLCBcInN1YnRpdGxlXCI6c3VidGl0bGV9XG4iLAogICAgInByaW50KGZpeGVkX3JlY29yZClcbiIsCiAgICAiYXNzZXJ0IGZpeGVkX3JlY29yZFtcInN1YnRpdGxlXCJdIGlzIE5vbmUiCiAgIF0KICB9CiBdLAogIm1ldGFkYXRhIjogewogICJrZXJuZWxzcGVjIjogewogICAiZGlzcGxheV9uYW1lIjogIlB5dGhvbiAzIiwKICAgImxhbmd1YWdlIjogInB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbjMiCiAgfSwKICAibGFuZ3VhZ2VfaW5mbyI6IHsKICAgImNvZGVtaXJyb3JfbW9kZSI6IHsKICAgICJuYW1lIjogImlweXRob24iLAogICAgInZlcnNpb24iOiAzCiAgIH0sCiAgICJmaWxlX2V4dGVuc2lvbiI6ICIucHkiLAogICAibWltZXR5cGUiOiAidGV4dC94LXB5dGhvbiIsCiAgICJuYW1lIjogInB5dGhvbiIsCiAgICJuYmNvbnZlcnRfZXhwb3J0ZXIiOiAicHl0aG9uIiwKICAgInB5Z21lbnRzX2xleGVyIjogImlweXRob24zIiwKICAgInZlcnNpb24iOiAiMy4xMi4xMyIKICB9LAogICJsZXNzb25fZm9ybWF0IjogInBhaXJlZCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDcsCiAgICJjb2RlX3NoYTI1NiI6ICI4YzcyNzAzNjlhNWUzZjljMzQ4M2RiMTAwZDNkOTNlMThhZTc1YzA2NDhmODE2ZjRjZWI5ZTBmYTZkZGE5YTljIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDY6MTc6MjguMTE0NDA3KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICJiYjdmZGViNzI0MTEyMTE0MmVhYzE1OTA4ZTc1Zjc0ZjE3MGRjN2VhZjMyNzRmMjY0N2RlNmJmYzBkZjMzMDZkIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>문서 파싱과 스크래핑</h2>
+<p>HTML 구조에서 제목과 요약을 추출하고 robots.txt 규칙을 읽습니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p><code>Path.cwd()</code>는 현재 작업 폴더를 반환하고 <code>.parents</code>는 상위 폴더들을 제공합니다. <code>path for path in ... if ...</code>는 조건에 맞는 경로를 차례로 내놓는 제너레이터 표현식이며, <code>next(...)</code>는 첫 경로를 꺼냅니다. 이 보조 코드는 실행 위치가 달라도 배포된 <code>article.html</code>을 찾습니다. <code>read_text</code>는 파일을 문자열로 반환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 배포된 HTML 원문과 Ch 5 전달 파일의 경로를 준비합니다.
+import json
+from pathlib import Path
+from urllib.robotparser import RobotFileParser
+
+from bs4 import BeautifulSoup
+
+root = next(path for path in (Path.cwd(), *Path.cwd().parents)
+            if (path / &quot;labs/part1/ch04-data-tools/data/article.html&quot;).exists())
+data_dir = root / &quot;labs/part1/ch04-data-tools/data&quot;
+html = (data_dir / &quot;article.html&quot;).read_text(encoding=&quot;utf-8&quot;)
+handoff_path = data_dir / &quot;article-text.json&quot;
+print(&quot;문서 길이:&quot;, len(html))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">문서 길이: 270
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p>HTML 문자열은 태그의 부모·자식 관계를 담고 있습니다. <code>BeautifulSoup(html, &quot;lxml&quot;)</code>은 문자열을 요소 트리로 파싱합니다. CSS 선택자 <code>article</code>은 article 요소를, <code>.summary</code>는 class가 summary인 요소를 고릅니다. <code>select_one</code>은 첫 번째 일치 노드 또는 <code>None</code>을 반환합니다. <code>json.dumps</code>는 Python 사전을 JSON 문자열로 바꾸고 <code>write_text</code>가 파일에 기록합니다. <code>json.loads</code>는 다시 읽은 JSON 문자열을 Python 사전으로 되돌립니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 기사 필드를 추출해 Ch 5가 읽을 JSON 파일로 보존합니다.
+soup = BeautifulSoup(html, &quot;lxml&quot;)
+article = soup.select_one(&quot;article&quot;)
+print(&quot;파서:&quot;, soup.builder.NAME, &quot;선택한 요소:&quot;, article.name)
+record = {&quot;id&quot;:article[&quot;data-id&quot;], &quot;title&quot;:article.h1.get_text(strip=True),
+          &quot;summary&quot;:article.select_one(&quot;.summary&quot;).get_text(strip=True),
+          &quot;published&quot;:article.time[&quot;datetime&quot;]}
+record[&quot;text&quot;] = f&quot;{record[&#x27;title&#x27;]}\n{record[&#x27;summary&#x27;]}&quot;
+payload = {&quot;schema_version&quot;:&quot;ch04-parsed-article-v1&quot;,
+           &quot;source&quot;:&quot;labs/part1/ch04-data-tools/data/article.html&quot;, &quot;record&quot;:record}
+handoff_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + &quot;\n&quot;, encoding=&quot;utf-8&quot;)
+handoff = json.loads(handoff_path.read_text(encoding=&quot;utf-8&quot;))
+print(record)
+assert handoff == payload</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">파서: lxml 선택한 요소: article
+{&#x27;id&#x27;: &#x27;A10&#x27;, &#x27;title&#x27;: &#x27;골목상권 매출 회복&#x27;, &#x27;summary&#x27;: &#x27;주말 방문객 증가로 음식점 매출이 늘었습니다.&#x27;, &#x27;published&#x27;: &#x27;2026-09-01&#x27;, &#x27;text&#x27;: &#x27;골목상권 매출 회복\n주말 방문객 증가로 음식점 매출이 늘었습니다.&#x27;}
+</pre></div>
+<div class="nb-markdown"><h3>중간 결과 관찰</h3>
+<p>입력 HTML에서 article 노드를 고른 뒤 자식 요소의 텍스트와 <code>data-id</code>, <code>datetime</code> 속성을 읽었습니다. 반환 사전의 <code>title</code>과 <code>published</code>가 화면 위치가 아니라 요소와 속성에서 추출된 값인지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 화면 날짜 대신 기계 판독 속성이 반환되었는지 확인합니다.
+assert record[&quot;id&quot;] == &quot;A10&quot;
+assert record[&quot;published&quot;] == &quot;2026-09-01&quot;
+print(&quot;제목:&quot;, record[&quot;title&quot;])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">제목: 골목상권 매출 회복
+</pre></div>
+<div class="nb-markdown"><h3>선택자 조건을 바꿔 비교</h3>
+<p>같은 article 노드에서 선택자만 <code>.summary</code>에서 <code>time</code>으로 바꿉니다. 첫 선택자는 요약 텍스트를, 둘째 선택자는 화면 날짜 텍스트와 <code>datetime</code> 속성을 가진 노드를 반환합니다. 같은 HTML에서도 선택 조건에 따라 읽을 값이 달라집니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 같은 HTML에서 선택자 조건만 바꾸어 반환 노드와 값을 비교합니다.
+summary_node = article.select_one(&quot;.summary&quot;)
+time_node = article.select_one(&quot;time&quot;)
+print(&quot;요약:&quot;, summary_node.get_text(strip=True))
+print(&quot;화면 날짜:&quot;, time_node.get_text(strip=True))
+print(&quot;날짜 속성:&quot;, time_node[&quot;datetime&quot;])
+assert time_node[&quot;datetime&quot;] == record[&quot;published&quot;]</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">요약: 주말 방문객 증가로 음식점 매출이 늘었습니다.
+화면 날짜: 2026년 9월 1일
+날짜 속성: 2026-09-01
+</pre></div>
+<div class="nb-markdown"><h3>별도 주의 실습: robots.txt</h3>
+<p>이 셀은 HTML 필드 추출의 조건 비교가 아니라 접근 경로를 확인하는 별도 주의 실습입니다. <code>RobotFileParser()</code>는 규칙 판독 객체를 만듭니다. <code>parse(문장 목록)</code>은 robots.txt 규칙 문장들을 이 객체에 읽어 들입니다. <code>can_fetch</code>는 사용자 에이전트와 주소를 입력으로 받아 robots.txt 규칙상 접근 가능 여부를 불리언으로 반환합니다. 이 결과는 이용 약관이나 저작권 허가를 대신하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># robots 규칙은 크롤러 경로만 판단하며 이용 허가를 뜻하지 않습니다.
+robots = RobotFileParser()
+robots.parse([&quot;User-agent: *&quot;, &quot;Allow: /articles/&quot;, &quot;Disallow: /private/&quot;])
+print(&quot;기사 경로 규칙:&quot;, robots.can_fetch(&quot;course-bot&quot;, &quot;https://example.test/articles/A10&quot;))
+print(&quot;비공개 경로 규칙:&quot;, robots.can_fetch(&quot;course-bot&quot;, &quot;https://example.test/private/A10&quot;))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">기사 경로 규칙: True
+비공개 경로 규칙: False
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 경로 탐색은 실행 환경 준비, CSS 선택자 비교는 파싱 개념 예제, robots.txt는 접근 경로 주의 실습으로 구분합니다. 같은 HTML에서 <code>.summary</code>와 <code>time</code>이 서로 다른 노드를 반환하는지 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before는 문서에 없는 <code>.subtitle</code>을 선택하고 바로 <code>get_text()</code>를 호출합니다. 선택 결과가 None이므로 AttributeError가 발생합니다. After는 요소가 있는지 확인하고 없는 선택 필드를 None으로 반환합니다. 이렇게 하면 함수 사용자는 키 자체가 빠진 상태와 값이 없는 상태를 구분하지 않고 일정한 사전 구조를 받을 수 있습니다.</p><section class="notebook" data-notebook="05-문서-파싱과-스크래핑" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>존재하지 않는 선택자에 바로 <code>get_text</code>를 호출하면 <code>AttributeError</code>가 발생합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 없는 선택자 결과에 메서드를 호출하면 AttributeError가 발생합니다.
+missing = soup.select_one(&quot;.subtitle&quot;)
+try:
+    missing.get_text(strip=True)
+except AttributeError as error:
+    print(type(error).__name__, &quot;선택자 결과:&quot;, missing)
+    assert missing is None</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">AttributeError 선택자 결과: None
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>선택 결과를 확인하고 없는 필드는 <code>None</code>으로 반환합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 선택 결과를 확인하고 없는 선택 필드를 None으로 유지합니다.
+subtitle_node = soup.select_one(&quot;.subtitle&quot;)
+subtitle = subtitle_node.get_text(strip=True) if subtitle_node else None
+fixed_record = {**record, &quot;subtitle&quot;:subtitle}
+print(fixed_record)
+assert fixed_record[&quot;subtitle&quot;] is None</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;id&#x27;: &#x27;A10&#x27;, &#x27;title&#x27;: &#x27;골목상권 매출 회복&#x27;, &#x27;summary&#x27;: &#x27;주말 방문객 증가로 음식점 매출이 늘었습니다.&#x27;, &#x27;published&#x27;: &#x27;2026-09-01&#x27;, &#x27;text&#x27;: &#x27;골목상권 매출 회복\n주말 방문객 증가로 음식점 매출이 늘었습니다.&#x27;, &#x27;subtitle&#x27;: None}
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>robots.txt 허용은 법적 이용 허가가 아닙니다. 대상 사이트의 이용 약관, 저작권·데이터베이스 권리, 개인정보 처리 조건을 주소별로 확인합니다.</li><li>로그인, 접근 통제, CAPTCHA를 우회하지 않습니다. 접근 제한이 있으면 공식 API나 데이터 제공 경로를 찾습니다.</li><li>요청 간격과 동시 요청 수를 제한하고 서비스의 호출량 제한(rate limit)을 따릅니다. 이 노트북은 외부 사이트에 요청하지 않습니다.</li><li>선택자가 바뀌었을 때 빈 값을 계속 저장하지 않도록 필수 필드 누락을 검사하고 원문 URL과 수집 시각을 기록합니다.</li><li>기사 전문을 저장하거나 재배포하기 전에 필요한 범위와 권리를 검토합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>파서는 HTML 문자열을 요소 트리로 바꿉니다.</li><li>선택 결과의 존재를 확인해 반환 구조를 일정하게 유지합니다.</li><li>robots.txt와 이용 조건·권리·개인정보·호출 제한은 서로 다른 확인 항목입니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 추출한 제목과 요약은 <code>data/article-text.json</code>에 원본 경로와 함께 보존되며, Ch 5 01절이 이 파일을 직접 읽어 토큰 수를 측정합니다. Ch 19에서는 세 가지 조회 함수를 도구로 등록하되 스크래핑 정책 검사는 함수 바깥의 운영 규칙으로도 유지합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. <code>.summary</code> 선택자는 무엇을 고르나요?</p><p class="quiz-a"><strong>정답</strong> class 속성에 summary가 있는 요소를 고릅니다.</p><p class="quiz-q">2. 없는 subtitle에 바로 <code>get_text()</code>를 호출하면 왜 실패하나요?</p><p class="quiz-a"><strong>정답</strong> <code>select_one</code>이 요소 대신 None을 반환하고 None에는 해당 메서드가 없기 때문입니다.</p><p class="quiz-q">3. robots.txt에서 허용된 경로의 콘텐츠는 자유롭게 재배포해도 되나요?</p><p class="quiz-a"><strong>정답</strong> 아닙니다. robots.txt는 크롤러 접근 경로 규칙이며 이용 약관과 저작권을 별도로 확인해야 합니다.</p><p class="quiz-q">4. 날짜를 화면 문자열 대신 datetime 속성에서 읽는 이유는 무엇인가요?</p><p class="quiz-a"><strong>정답</strong> 표시 문구와 분리된 일정한 기계 판독 형식을 얻기 위해서입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/">Beautiful Soup 공식 문서</a> · 2026-09-09 확인 · beautifulsoup4 4.15.0</li><li><a href="https://docs.python.org/3/library/urllib.robotparser.html">Python 공식 문서 · urllib.robotparser</a> · 2026-09-09 확인 · Python 3.12</li><li><a href="https://developers.google.com/search/docs/crawling-indexing/robots/intro">Google Search Central · robots.txt 소개</a> · 2026-09-09 확인</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="04-REST와-페이지네이션.html">← REST와 페이지네이션</a></span><span><a href="index.html">챕터 목차</a></span><span>챕터 끝</span></div></div></body></html>

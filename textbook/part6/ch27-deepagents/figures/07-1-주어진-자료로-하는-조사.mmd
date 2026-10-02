@@ -1,0 +1,17 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  hand["손 요청 write_file 셋<br>교재용 자료 셋"]:::tool
+  files["상태 칸 files<br>/sources/ 파일 위치 셋"]:::measure
+  agent["create_deep_agent<br>tools 없음 · 도구 아홉"]:::flow
+  llm["모델 gpt-5.4-mini<br>grep과 read_file을 고름"]:::model
+  answer["답 글<br>문장 끝 출처 표시"]
+  check["check_citations<br>표시마다 파일 위치 in files"]:::flow
+  rows["판정 한 줄씩<br>있는가 True 또는 False"]:::measure
+  hand --> files
+  files --> agent
+  agent --> llm
+  llm --> answer
+  answer --> check
+  files -.-> check
+  check --> rows

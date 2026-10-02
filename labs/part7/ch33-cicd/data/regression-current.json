@@ -1,0 +1,8 @@
+{
+  "cases": [
+    {"qid": "C01", "required_facts": ["7권", "14일"], "expected_tools": ["retrieve"]},
+    {"qid": "C02", "required_facts": ["출처"], "expected_tools": ["retrieve", "cite"]},
+    {"qid": "C03", "required_facts": ["확인 필요"], "expected_tools": ["retrieve"]},
+    {"qid": "C04", "required_facts": ["500원"], "expected_tools": ["retrieve"]}
+  ]
+}

@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  pair["사례 Q002의 두 칸<br>답과 기준 답"]:::tool
+  head["build_judge_prompt<br>판정 머리글 rag-judge-v1.0.0 붙이기"]:::flow
+  judge["평가 모델 gpt-5.4-mini<br>요청 글 175자를 읽고 판정"]:::model
+  raw["받은 JSON 글 한 줄<br>score와 reason 두 칸"]:::measure
+  parse["json.loads로<br>딕셔너리 읽기"]:::flow
+  verdict["점수 1과 까닭 한 문장"]:::measure
+  pair --> head
+  head --> judge
+  judge --> raw
+  raw --> parse
+  parse --> verdict

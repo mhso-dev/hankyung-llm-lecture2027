@@ -1,0 +1,16 @@
+flowchart TB
+  %% classes
+  subgraph traj["기준 궤적 메시지 여섯"]
+    direction TB
+    m1["질문<br>HumanMessage"]:::tool
+    m2["첫 모델 응답<br>도구 요청<br>search_documents"]:::tool
+    m3["도구 결과 · 둘째 응답<br>도구 요청 check_source<br>도구 결과"]:::tool
+    m4["마지막 모델 응답<br>최종 답 글"]:::tool
+    m1 --> m2 --> m3 --> m4
+  end
+  step["한 단계 평가<br>first_step_pass"]:::flow
+  whole["궤적 평가<br>strict 모드 평가 함수"]:::flow
+  final["최종 답 평가<br>final_answer_pass"]:::flow
+  step -.-> m2
+  whole -.-> traj
+  final -.-> m4

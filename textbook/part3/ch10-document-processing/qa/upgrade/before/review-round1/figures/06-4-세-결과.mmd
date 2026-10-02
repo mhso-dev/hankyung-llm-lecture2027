@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  base["같은 글 905자<br>05절 재귀 방식은 6개"]:::tool
+  st["구조 방식<br>3개 · 223 · 470 · 182자"]:::measure
+  s95["시맨틱 방식 기준값 95<br>2개 · 233 · 671자"]:::measure
+  s50["시맨틱 방식 기준값 50<br>10개 · 1자에서 403자"]:::measure
+  keep["지킬 말 두 개가 함께 든<br>문서 청크 번호<br>구조 2번 · 95는 2번 · 50은 6번"]:::measure
+  note1["세 결과 모두 지킬 말 두 개를 한 문서 청크에 담았습니다<br>05절 재귀 방식에서는 두 말이 갈라졌습니다"]
+  base --> st
+  base --> s95
+  base --> s50
+  st --> keep
+  s95 --> keep
+  s50 --> keep
+  keep --> note1

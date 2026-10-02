@@ -1,0 +1,22 @@
+{
+  "date": "2026-09-09",
+  "common_tests": {
+    "passed": 37,
+    "subtests_passed": 16,
+    "command": "python -m pytest textbook/_notebook/tests -q"
+  },
+  "integration_scripts": {
+    "ruff_select": "E9,F63,F7,F82",
+    "ruff_passed": true,
+    "py_compile_passed": true
+  },
+  "ch3_execution": {
+    "notebooks": 5,
+    "code_cells": 30,
+    "max_lines": 22,
+    "fresh_kernels": true,
+    "temporary_workdir": true,
+    "global_git_default_branch": "master",
+    "final_policy_update_reexecuted": "03-병합-충돌-해결.ipynb"
+  }
+}

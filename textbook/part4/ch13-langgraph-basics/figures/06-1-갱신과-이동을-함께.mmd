@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  scorebox["점수 칸에 넣은 값"]:::tool
+  routenode["노드 route"]:::flow
+  cmd["Command 하나"]
+  upd["담긴 갱신<br>판단 이유 칸"]:::flow
+  dest["담긴 다음 노드 이름"]:::flow
+  slot["상태의 판단 이유 칸"]:::tool
+  nextone["다음 노드<br>make_answer 또는 ask_more"]:::flow
+  scorebox --> routenode
+  routenode --> cmd
+  cmd --> upd
+  cmd --> dest
+  upd --> slot
+  dest --> nextone

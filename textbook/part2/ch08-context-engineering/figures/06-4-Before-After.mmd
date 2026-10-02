@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 목록 세 줄만 넣음"]
+    direction LR
+    b1["user 글<br>목록 세 줄<br>추정 159"]:::tool
+    b2["gpt-5.4-mini<br>출력 상한 120"]:::model
+    b3["답 연장 정보가<br>없다고 함<br>빠진 연장 조건 3개"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph AFTER["After · 고른 출처의 본문을 엶"]
+    direction LR
+    a1["user 글<br>E01 p.3 자료 대출 본문<br>추정 217"]:::tool
+    a2["gpt-5.4-mini<br>출력 상한 120"]:::model
+    a3["답 예약이 없는 경우<br>1회 7일 연장<br>빠진 연장 조건 없음"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  BEFORE ~~~ AFTER

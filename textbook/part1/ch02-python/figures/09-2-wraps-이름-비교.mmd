@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  subgraph NOWRAPS["wraps 줄 없음"]
+    direction LR
+    n1["print_call(<br>calculate_line_total)"]:::flow --> n2["새 함수 wrapper<br>이름 정보 그대로"]:::tool --> n3["새 함수의 이름:<br>wrapper"]:::measure
+  end
+  subgraph WRAPS["@wraps(function) 한 줄 더함"]
+    direction LR
+    w1["print_call(<br>line_function)"]:::flow --> w2["새 함수 wrapper<br>원래 함수 이름 복사"]:::tool --> w3["새 함수의 이름:<br>calculate_line_total"]:::measure
+  end
+  NOWRAPS ~~~ WRAPS

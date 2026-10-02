@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  ch["바꾼 값 노드 함수 def<br>비동기 함수인가 False"]:::flow
+  subgraph out["동기 노드 그래프의 출력"]
+    direction TB
+    o1["invoke<br>칸 answer 받음"]:::measure
+    o2["await ainvoke<br>invoke 답과 같음 True"]:::measure
+    o3["재정의로 넘긴 HTTP 요청<br>상태 코드 200"]:::measure
+    o1 ~~~ o2 ~~~ o3
+  end
+  gy["처리 함수는<br>늘 ainvoke로 부름<br>노드가 def여도 답함"]
+  ch --> out
+  out -.-> gy

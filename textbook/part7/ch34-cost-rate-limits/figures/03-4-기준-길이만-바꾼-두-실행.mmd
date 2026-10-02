@@ -1,0 +1,22 @@
+flowchart TB
+  %% classes
+  same["같은 문의 글 셋 · 답 형식 글<br>같은 모델 설정과 요금표"]
+  subgraph run1["실행 1 · 기준 길이 30"]
+    direction TB
+    a1["기준 길이 30"]:::tool
+    a2["모델 배정<br>nano · nano · mini<br>요청 nano 두 번 · mini 한 번"]:::measure
+    a1 --> a2
+  end
+  subgraph run2["실행 2 · 값 하나만 바꿈"]
+    direction TB
+    b1["기준 길이 0"]:::flow
+    b2["모델 배정<br>mini · mini · mini<br>요청 mini 세 번"]:::measure
+    b1 --> b2
+  end
+  both["모델이 바뀐 문의<br>문의 1 · 문의 2<br>요청 수 합은<br>두 실행 모두 세 번"]
+  total["실행 1의 합이 더 적음<br>True"]:::measure
+  same --> run1
+  same --> run2
+  run1 ~~~ both
+  run2 ~~~ both
+  both ~~~ total

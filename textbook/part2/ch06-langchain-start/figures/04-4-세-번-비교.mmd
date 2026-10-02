@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph BASE["5절 기본 · gpt-5.4-mini"]
+    direction LR
+    b1["stream_usage 기본 True"]:::tool
+    b2["청크 18개 · 출력 17토큰<br>끝난 이유 stop"]:::measure
+    b1 --> b2
+  end
+  subgraph NOUSE["9절 사용량 끔"]
+    direction LR
+    n1["stream_usage=False"]:::tool
+    n2["청크 17개 · 출력 토큰 None<br>끝난 이유 stop"]:::measure
+    n1 --> n2
+  end
+  subgraph SHORT["10절 출력 상한"]
+    direction LR
+    s1["max_tokens=12"]:::tool
+    s2["청크 13개 · 출력 12토큰<br>끝난 이유 length · 끊긴 답"]:::measure
+    s1 --> s2
+  end
+  BASE --> NOUSE --> SHORT

@@ -1,0 +1,25 @@
+{
+  "chapter": "ch09-rag-first-run",
+  "include": [
+    "textbook/part3/ch09-rag-first-run/*.html",
+    "labs/part3/ch09-rag-first-run/README.md",
+    "labs/part3/ch09-rag-first-run/pyproject.toml",
+    "labs/part3/ch09-rag-first-run/uv.lock",
+    "labs/part3/ch09-rag-first-run/config.yaml",
+    "labs/part3/ch09-rag-first-run/notebooks/*.ipynb",
+    "labs/part3/ch09-rag-first-run/notebooks/rag_tools.py",
+    "labs/part3/ch09-rag-first-run/runs/continuity-ch09-search.jsonl",
+    "labs/data/rag-corpus/pdf/*/*.pdf",
+    "labs/data/rag-corpus/manifest.json",
+    "labs/data/rag-corpus/queries.jsonl"
+  ],
+  "exclude": [
+    ".env",
+    "**/.venv/**",
+    "**/.ruff_cache/**",
+    "**/.pytest_cache/**",
+    "**/*.failure.json",
+    "**/__pycache__/**"
+  ],
+  "note": "Part 3 묶음은 textbook/part3/_build_index.py가 textbook/_notebook/build_bundle.py의 practice_files()로 만든다. 노트북·README·pyproject·uv.lock은 그 안의 목록으로, config.yaml·runs 기록·도구 파일 rag_tools.py는 textbook/part3/public-files.json으로, labs/data/rag-corpus/ 자료는 build_bundle.py의 data 목록으로 들어간다(rag_tools.py 추가 2026-09-21 §2-7). harness.py·prompts.py·rag.py·examples/·tests/는 노트북이 쓰지 않아 넣지 않는다."
+}

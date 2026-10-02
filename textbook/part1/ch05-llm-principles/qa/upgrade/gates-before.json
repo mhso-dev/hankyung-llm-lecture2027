@@ -1,0 +1,510 @@
+{
+  "chapter": "ch05-llm-principles",
+  "label": "before",
+  "totals": {
+    "G1": 4,
+    "G2": 16,
+    "G3": 12,
+    "G4": 0,
+    "G5": 51,
+    "G6": 155,
+    "G7": 24
+  },
+  "passed_sections": 0,
+  "sections": [
+    {
+      "slug": "01-토큰화와-한국어-효율",
+      "code_cells": 5,
+      "sentences": 105,
+      "counts": {
+        "G1": 0,
+        "G2": 7,
+        "G3": 2,
+        "G4": 0,
+        "G5": 7,
+        "G6": 12,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [
+          "cell4:over_15_lines",
+          "cell4:nested_call_2plus",
+          "cell6:nested_call_2plus",
+          "cell6:nested_call_2plus",
+          "cell6:nested_call_2plus",
+          "cell6:nested_call_2plus",
+          "cell8:nested_call_2plus"
+        ],
+        "G3": [
+          "cell2:first_line_comment_missing",
+          "cell10:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:파란색은 학습자가 따라갈 입력 흐름, 녹색은 도구와 자료, 보라색은 모델의 처리, 노란색은 측정 결과, 빨간색은 확인할 제한을 뜻합니다",
+          "long:짧은 한국어 문장 하나를 1, 2, 4, 8회 반복했을 때 GPT-2의 토큰 수는 37, 75, 151, 303이었고 KLUE의 토큰 수는 8, 16, 32, 64였습니다",
+          "long:Hugging Face Transformers 공식 문서 · · 확인 2026-09-09 · transformers 4.56.2",
+          "english_start:`tokenize(text)`는 조각의 문자열 목록을 반환하고, `enc",
+          "english_start:`len(...)`은 반환된 목록에 들어 있는 항목 수를 셉니다",
+          "english_start:revision은 같은 이름의 모델 파일이 나중에 바뀌어도 실습에서 확인",
+          "english_start:`vocab_size`는 어휘에 등록된 토큰 ID 개수를 정수로 반환합니",
+          "english_start:`tokenize()`의 결과와 실제 모델 입력의 길이가 다를 수 있는 ",
+          "english_start:revision은 같은 이름의 모델 파일이 나중에 바뀌어도 이 실습에서 ",
+          "english_start:`vocab_size`는 tokenizer 어휘에 등록된 토큰 ID 개수",
+          "english_start:`tokenize(text)`는 토큰 문자열 목록을, `encode(te",
+          "english_start:`len()`은 반환된 목록의 항목 수를 셉니다"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "02-임베딩과-의미-유사도",
+      "code_cells": 5,
+      "sentences": 102,
+      "counts": {
+        "G1": 0,
+        "G2": 2,
+        "G3": 1,
+        "G4": 0,
+        "G5": 6,
+        "G6": 29,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [
+          "cell8:nested_call_2plus",
+          "cell8:nested_call_2plus"
+        ],
+        "G3": [
+          "cell10:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:`[3, 4]`는 숫자 두 개로 이루어진 2차원 벡터이고, 문장 임베딩 모델이 반환한 한 행은 숫자 384개로 이루어진 384차원 벡터입니다",
+          "long:0번 문장을 자기 자신과 비교한 값 1은 후보가 아니므로, `np.argsort(-scores[0])`가 반환한 큰 값 순서에서 첫 인덱스 0을 `[1:]`로 명시적으로 제외합니다",
+          "long:실습에서 '주문한 상품을 취소하고 싶습니다.'와 영어 문장 'I want to cancel my order.'의 유사도는 0.8987이었습니다",
+          "long:파란색은 학습자가 따라갈 입력 흐름, 녹색은 도구와 자료, 보라색은 모델의 처리, 노란색은 측정 결과, 빨간색은 확인할 제한을 뜻합니다",
+          "long:Hugging Face Transformers 공식 문서 · · 확인 2026-09-09 · transformers 4.56.2",
+          "long:paraphrase-multilingual-MiniLM-L12-v2 모델과 Apache-2.0 라이선스 · · 확인 2026-09-09",
+          "english_start:`[3, 4]`는 숫자 두 개로 이루어진 2차원 벡터이고, 문장 임베딩 ",
+          "english_start:`vectors.shape`는 배열의 모양을 `(행 수, 열 수)`로 반",
+          "english_start:`vectors[0, :5]`는 0번 행의 처음 다섯 값만 고릅니다",
+          "english_start:`[3, 4]`와 `[4, 3]`의 점곱은 `3×4 + 4×3 = 24`",
+          "english_start:`axis=1`은 각 행마다 길이를 하나씩 계산하고, `keepdims=",
+          "english_start:`ravel()`은 출력할 때 이 열을 1차원 목록처럼 펼칩니다",
+          "english_start:`[3, 4]`와 `[4, 3]`을 정규화해 계산한 유사도는 0.96이고",
+          "english_start:`@`는 NumPy의 행렬 곱 연산자입니다",
+          "english_start:`vectors.T`의 `T`는 행과 열을 바꾸는 전치(transpose",
+          "english_start:`[3, 4]`와 `[4, 3]`을 두 행으로 담습니다",
+          "english_start:`shape`는 행과 열의 수를 반환합니다",
+          "english_start:`axis=1`은 열 방향으로 각 행의 값을 묶어 벡터마다 길이 하나를 ",
+          "english_start:`keepdims=True`는 결과를 `(2,)`가 아닌 `(2, 1)`",
+          "english_start:`ravel()`은 출력할 때 이 열 모양을 1차원 `[5, 5]`로 펼",
+          "english_start:`model.encode()`는 각 문장을 384개의 실수로 바꾸어 Nu",
+          "english_start:`shape`의 `(4, 384)`는 4개 행이 문장 네 개에, 384개",
+          "english_start:`vectors[0, :5]`는 구조를 확인하려고 첫 문장의 앞 다섯 값",
+          "english_start:`vectors.T`는 행과 열을 바꾸고, `@`는 행렬 곱을 수행합니다",
+          "english_start:`np.argsort(-scores[0])`는 0번 행의 유사도를 큰 값",
+          "english_start:`nearest`는 NumPy 배열이며 `nearest.tolist()`",
+          "dense_paragraph:점곱(dot product)은 같은 위치의 숫자를 곱한 뒤 모두 더하는 계산입니다. `[3, 4]`와 `[4",
+          "dense_paragraph:벡터는 순서가 있는 숫자 목록입니다. `[3, 4]`와 `[4, 3]`을 두 행으로 담습니다. `shape`",
+          "dense_paragraph:실제 문장 벡터는 길이 1로 정규화되어 있습니다. `vectors.T`는 행과 열을 바꾸고, `@`는 행렬 "
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "03-어텐션-직관",
+      "code_cells": 3,
+      "sentences": 79,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 1,
+        "G4": 0,
+        "G5": 5,
+        "G6": 16,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [
+          "cell6:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:이 교재용 표는 질문을 B에서 A로 바꿀 때 큰 값의 위치도 함께 바꾸어, 현재 확인하려는 대상에 따라 관련 정보가 달라질 수 있음을 보여 줍니다",
+          "long:B 질문에서는 '빨간색입니다'에 0.45, 'B는'에 0.30을 놓았고 A 질문에서는 '파란색이고'에 0.45, 'A는'에 0.30을 놓았습니다",
+          "long:파란색은 학습자가 따라갈 입력 흐름, 녹색은 도구와 자료, 보라색은 모델의 처리, 노란색은 측정 결과, 빨간색은 확인할 제한을 뜻합니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 모델이 한 요청에서 다루는 토큰 길이 범위인 컨텍스트 윈도와 토큰 예산을 계산합니다",
+          "long:Hugging Face Transformers 공식 문서 · · 확인 2026-09-09 · transformers 4.56.2",
+          "english_start:`zip()`은 Ch 2의 선수 지식으로 가정하지 않고 이 절에서 처음 ",
+          "english_start:A를 처리할 때는 A와 파란색의 관계가 중요해집니다",
+          "english_start:`zip(tokens, weights)`은 같은 위치의 토큰과 비중을 한",
+          "english_start:`{token:12}`는 문자열을 12칸에 맞추고, `{weight:.2",
+          "english_start:`int(weight * 20)`은 비중을 막대 칸 수로 바꿉니다",
+          "english_start:Transformer의 어텐션을 직접 구현하는 내용은 이 과정의 선수 지",
+          "english_start:`zip()`은 같은 위치의 토큰과 비중을 한 쌍씩 반환합니다",
+          "english_start:`{token:12}`는 토큰을 12칸에 맞추고 `{weight:.2f}",
+          "english_start:`\"■\" * int(weight * 20)`은 비중을 막대 칸 수로 바꿉",
+          "english_start:`sum()`은 비중의 합을 반환합니다",
+          "dense_paragraph:**입력**은 설명을 위해 토큰이라고 가정한 문자열 목록과 같은 길이의 비중 목록입니다. `zip()`은 같"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "04-컨텍스트-윈도",
+      "code_cells": 4,
+      "sentences": 77,
+      "counts": {
+        "G1": 0,
+        "G2": 2,
+        "G3": 1,
+        "G4": 0,
+        "G5": 6,
+        "G6": 10,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [
+          "cell2:over_15_lines",
+          "cell2:nested_call_2plus"
+        ],
+        "G3": [
+          "cell8:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:토큰화기는 이 입력을 토큰 ID 목록으로 바꾸고, 채팅 템플릿(chat template)은 역할 표시와 생성 시작 표시를 덧붙인 모델용 입력을 만듭니다",
+          "long:파란색은 학습자가 따라갈 입력 흐름, 녹색은 도구와 자료, 보라색은 모델의 처리, 노란색은 측정 결과, 빨간색은 확인할 제한을 뜻합니다",
+          "long:이어서 출력 예약량을 32·64·128로 바꾸고 입력 한도를 계산한 뒤, 문서 반복 횟수별 실제 입력이 448 이하인지 판정합니다",
+          "long:채팅 템플릿을 적용하고 문서 문장을 10, 20, 40, 80회 반복했을 때 전체 입력은 220, 400, 760, 1480토큰이었습니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 한도 안에 있는 정보도 길이와 위치에 따라 활용 결과가 달라질 수 있는지 실제 생성으로 관찰합니다",
+          "long:Hugging Face Transformers 공식 문서 · · 확인 2026-09-09 · transformers 4.56.2",
+          "english_start:`parts`는 이 세 문자열을 이름과 본문으로 묶은 사전입니다",
+          "english_start:`messages`는 `role`과 `content`를 가진 사전의 목록",
+          "english_start:`encode()`는 각 문자열의 토큰 ID 목록을 반환합니다",
+          "dense_paragraph:시스템 지시, 문서, 질문 문자열이 **입력**입니다. `parts`는 이 세 문자열을 이름과 본문으로 묶은"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "05-컨텍스트-로트",
+      "code_cells": 5,
+      "sentences": 79,
+      "counts": {
+        "G1": 0,
+        "G2": 1,
+        "G3": 2,
+        "G4": 0,
+        "G5": 7,
+        "G6": 10,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [
+          "cell7:over_15_lines"
+        ],
+        "G3": [
+          "cell3:first_line_comment_missing",
+          "cell9:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_after_missing",
+          "cell3:explanation_before_missing",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:노트북이 불러오는 Qwen 설정의 `max_position_embeddings`는 32,768이며, 가장 긴 조건의 입력 1,201토큰과 최대 생성 20토큰의 합은 1,221로 이 값보다 작습니다",
+          "long:컨텍스트 로트(context rot)는 입력이 모델의 허용 범위 안에 있더라도 길이, 정보 위치, 주변 내용에 따라 필요한 정보를 활용한 결과가 달라질 수 있는 현상을 가리킵니다",
+          "long:파란색은 학습자가 따라갈 입력 흐름, 녹색은 도구와 자료, 보라색은 모델의 처리, 노란색은 측정 결과, 빨간색은 확인할 제한을 뜻합니다",
+          "long:다음 학습과 이어지는 지점 — 다음 절에서는 고정된 입력에서 temperature를 바꾸고 샘플링 출력이 어떻게 달라지는지 관찰합니다",
+          "long:Hugging Face Transformers 공식 문서 · · 확인 2026-09-09 · transformers 4.56.2",
+          "english_start:`generate()`는 프롬프트 문자열과 최대 생성 토큰 수를 입력받습",
+          "english_start:`model.config.max_position_embeddings`가 ",
+          "english_start:`for _ in [1, 2]`의 밑줄은 실행 횟수 값 자체를 이후 계산",
+          "english_start:`hits=0/2`는 두 실행 모두 코드 문자열을 출력하지 않았다는 뜻이",
+          "dense_paragraph:앞 절에서 연습용 컨텍스트 예산 512토큰을 계산했습니다. 이 값은 이번 모델의 입력 한도가 아닙니다. 노트"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "06-temperature와-샘플링",
+      "code_cells": 6,
+      "sentences": 143,
+      "counts": {
+        "G1": 2,
+        "G2": 3,
+        "G3": 2,
+        "G4": 0,
+        "G5": 7,
+        "G6": 36,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell6:conditional_expression",
+          "cell6:conditional_expression"
+        ],
+        "G2": [
+          "cell4:nested_call_2plus",
+          "cell4:nested_call_2plus",
+          "cell6:over_15_lines"
+        ],
+        "G3": [
+          "cell6:first_line_comment_missing",
+          "cell12:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell8:result_reading_quotes_no_output",
+          "cell10:result_reading_quotes_no_output",
+          "cell12:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:아이디어 이름을 여러 개 만들 때는 이러한 변화가 유용할 수 있지만, 데이터 형식이나 정책 답변처럼 일정한 결과가 필요한 작업에서는 변화가 검증을 어렵게 합니다",
+          "long:temperature 0.3과 1.0에서 난수 시드 11, 22, 33을 동일하게 사용하고, top-p와 최대 생성 길이도 고정합니다",
+          "long:결과는 temperature의 보편적인 효과를 증명하는 자료가 아니라, 이 실행 조건에서 실제로 나온 문자열을 읽는 연습 자료입니다",
+          "long:같은 환경과 연산에서 설정 비교를 재현하는 데 도움이 되지만, 라이브러리·하드웨어·알고리즘이 바뀌어도 동일한 문자열을 보장하는 규격은 아닙니다",
+          "long:마지막 상자는 높은 temperature의 우위를 뜻하지 않고, 이 실행에서는 두 조건 모두 세 문자열이 서로 달랐다는 관찰만 나타냅니다",
+          "long:이 결과를 읽은 뒤 프롬프트·temperature·seed·최대 생성 토큰을 입력받아 답변 문자열을 반환하는 `generate()` 함수를 정의합니다",
+          "long:확인할 점 — 교재용 로짓에서 T=0.5의 첫 후보 확률 0.8668이 T=1.0의 0.6652보다 집중되어 있고 두 합계는 모두 1입니다",
+          "long:실제 작업에서는 어절 수, 계절 관련성, 금지어, 발음 가능성 같은 평가 기준을 만들고 사람이 읽거나 자동 검사로 확인해야 합니다",
+          "long:이번 세 번의 실행에서는 temperature 0.3과 1.0 모두 서로 다른 문자열이 3개여서 다양성 증가를 관찰하지 못했습니다",
+          "long:Hugging Face Transformers: Generation strategies · 확인 2026-09-09 · 기준 Transformers 4.56.2",
+          "long:Hugging Face Transformers: GenerationConfig · 확인 2026-09-09 · 기준 Transformers 4.56.2",
+          "long:`AutoTokenizer.from_pretrained()`는 문자열과 토큰 ID를 서로 바꾸는 tokenizer 객체를 반환하고, `AutoModelForCausalLM.from_pretrained()`는 다음 토큰을 생성하는 모델 객체를 반환합니다",
+          "long:`generate()`는 프롬프트 문자열, temperature, 난수 시드, 최대 생성 토큰 수를 입력받고 새로 생성된 답변 문자열을 반환합니다",
+          "english_start:`model.generate()`가 새 토큰을 만들고, 입력 길이 이후의",
+          "english_start:`torch.inference_mode()`는 학습에 필요한 기울기 기록",
+          "english_start:temperature는 소프트맥스를 적용하기 전에 로짓의 상대적인 차이를",
+          "english_start:`return_tensors=\"pt\"`는 토큰 ID를 PyTorch 텐서",
+          "english_start:`max_new_tokens=24`가 새 토큰 생성을 멈췄기 때문입니다",
+          "english_start:temperature는 샘플링을 사용할 때 확률 분포에 영향을 줍니다",
+          "english_start:temperature와 top-p를 동시에 바꾸면 어느 설정이 결과 차이",
+          "english_start:`AutoTokenizer.from_pretrained()`는 문자열과 ",
+          "english_start:`torch.tensor([2.0, 1.0, 0.0])`는 세 후보 점수",
+          "english_start:`dim=0`은 이 1차원 배열의 후보 축 전체에 softmax를 적용한",
+          "english_start:`generate()`는 프롬프트 문자열, temperature, 난수 ",
+          "english_start:`messages`는 사용자 역할과 프롬프트를 묶습니다",
+          "english_start:`apply_chat_template(..., tokenize=False",
+          "english_start:`set_seed()`는 난수 시작 상태를 정합니다",
+          "english_start:`model.generate()`는 입력 텐서와 생성 옵션을 호출 시점에",
+          "english_start:`do_sample`은 temperature가 0보다 클 때만 샘플링을 ",
+          "english_start:`pad_token_id`는 길이를 맞추는 패딩 위치에 종료 토큰 ID를",
+          "english_start:`output[0, inputs[\"input_ids\"].shape[1]:",
+          "english_start:`decode(..., skip_special_tokens=True)`는",
+          "dense_paragraph:첫 코드 셀은 모델과 tokenizer를 고정 revision으로 불러오고 파라미터 수 494,032,768",
+          "dense_paragraph:이번 실행에서 temperature 0.3의 세 답은 모두 서로 달랐습니다. temperature 1.0의 ",
+          "dense_paragraph:여섯 출력 가운데 여러 문장이 인용부호, 단어, 목록의 중간에서 끝났습니다. `max_new_tokens=2",
+          "dense_paragraph:로짓은 모델이 다음 토큰 후보마다 계산한 변환 전 점수입니다. 아래의 세 값은 설명을 위해 정한 예이며 실제"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "07-환각의-구조적-원인",
+      "code_cells": 5,
+      "sentences": 146,
+      "counts": {
+        "G1": 2,
+        "G2": 1,
+        "G3": 2,
+        "G4": 0,
+        "G5": 7,
+        "G6": 18,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [
+          "cell3:conditional_expression",
+          "cell3:conditional_expression"
+        ],
+        "G2": [
+          "cell3:over_15_lines"
+        ],
+        "G3": [
+          "cell3:first_line_comment_missing",
+          "cell9:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_after_missing",
+          "cell3:explanation_before_missing",
+          "cell5:result_reading_quotes_no_output",
+          "cell7:result_reading_quotes_no_output",
+          "cell9:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:거짓말은 알고 있는 사실과 다른 내용을 의도적으로 말한다는 뜻을 포함하지만, 언어 모델에는 사람과 같은 의도를 그대로 적용할 수 없습니다",
+          "long:이 절에서는 환각(hallucination) 을 입력이나 확인 가능한 근거가 뒷받침하지 않는 내용을 모델이 답으로 생성한 현상이라고 제한해 사용합니다",
+          "long:먼저 답에서 외부 확인이 필요한 구체적 주장을 찾고, 다음으로 입력이나 확인 가능한 자료에 그 주장을 뒷받침하는 근거가 있는지 확인합니다",
+          "long:이 과정은 언어 패턴과 여러 지식을 모델 파라미터에 반영하지만, 각 생성 문장이 현재 시점의 사실인지 자동으로 조회하고 증명하는 절차는 아닙니다",
+          "long:다음 토큰 예측(next-token prediction) 은 앞의 토큰이 주어졌을 때 이어질 토큰의 확률을 높이는 학습 목표입니다",
+          "long:OpenAI의 2025년 연구는 희소하거나 임의적인 사실에서 이러한 학습 목표가 유창한 추측을 만들 수 있고, 정확도만 보상하는 평가가 불확실성 표현보다 추측을 유리하게 만들 수 있다는 한 구조적 설명을 제시합니다",
+          "long:첫 답은 지원금 액수를 직접 완성하지 못했지만, 해당 지원금이 2026년에 결정됐고 연구 결과 공개와 연결된다는 절차를 실제 정보처럼 생성했습니다",
+          "long:모델이 지시를 무시하도록 유도하는 입력, 근거가 일부만 있는 질문, 오래된 사실, 서로 충돌하는 자료, 여러 차례의 대화는 다루지 않았습니다",
+          "long:다음 토큰 예측이라는 학습 목표, 학습 자료의 오류와 빈틈, 질문에 제공된 정보, 모델 크기와 조정 방식, 생성 설정, 평가가 추측에 주는 보상이 함께 영향을 줄 수 있습니다",
+          "long:정답: 실제 제품 정보가 없고 존재하지 않는 것으로 보인다고 불확실성을 밝혔으며 구체적인 배터리 용량을 만들지 않았기 때문입니다",
+          "long:Kalai et al.: Why Language Models Hallucinate 원문 · 확인 2026-09-09 · 연구 PDF",
+          "long:Dziri et al.: On the Origin of Hallucinations in Conversational Models · 확인 2026-09-09 · NAACL 2022",
+          "long:각 반환 문자열에서 금액·날짜·절차·제품 사양처럼 외부 확인이 필요한 주장을 먼저 표시하고, 입력에 그 근거가 있었는지 확인합니다",
+          "english_start:`Qwen/Qwen2.5-0.5B-Instruct`의 같은 고정 revi",
+          "english_start:OpenAI의 2025년 연구는 희소하거나 임의적인 사실에서 이러한 학습",
+          "dense_paragraph:언어 모델의 답은 문법이 자연스럽고 설명의 형식도 익숙합니다. 이 때문에 독자는 문장이 자연스러우면 내용도 ",
+          "dense_paragraph:근거(grounding evidence) 는 답을 확인하는 데 사용할 수 있는 입력 자료입니다. 정책 원문,",
+          "dense_paragraph:첫 질문의 기록된 답에는 “지원금은 2026년에 결정되었습니다”, “연구 결과를 공개하고”와 같은 주장이 나"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    },
+    {
+      "slug": "08-모델-선택-기준",
+      "code_cells": 4,
+      "sentences": 130,
+      "counts": {
+        "G1": 0,
+        "G2": 0,
+        "G3": 1,
+        "G4": 0,
+        "G5": 6,
+        "G6": 24,
+        "G7": 3
+      },
+      "passed": false,
+      "issues": {
+        "G1": [],
+        "G2": [],
+        "G3": [
+          "cell8:first_line_comment_missing"
+        ],
+        "G4": [],
+        "G5": [
+          "title_cell_missing",
+          "core_figure_attachment_missing",
+          "cell2:result_reading_quotes_no_output",
+          "cell4:result_reading_quotes_no_output",
+          "cell6:result_reading_quotes_no_output",
+          "cell8:result_reading_after_missing"
+        ],
+        "G6": [
+          "long:01절은 tokenizer가 문장을 토큰 ID로 바꾸는 결과를 비교했고, 02절은 문장 임베딩과 코사인 유사도가 특정 모델과 문장 집합에서의 근접도를 나타낸다는 점을 확인했습니다",
+          "long:텍스트 생성 모델은 입력 뒤의 토큰을 이어 문장을 만들고, 문장 유사도 모델은 문장을 벡터로 바꾸어 거리를 비교하며, 빈칸 채우기 모델은 문장 안의 가려진 위치에 올 후보를 계산합니다",
+          "long:각 수치를 저장하는 정밀도, CPU나 GPU 중 어디서 실행하는지, 프로그램 구현에 따라 필요한 메모리와 처리 시간이 달라집니다",
+          "long:첫 토큰 지연시간(time to first token, TTFT) 은 요청을 시작한 뒤 첫 출력 토큰을 받을 때까지의 시간입니다",
+          "long:서비스 모델을 선택할 때는 모델을 처음 실행하는 경우와 한 번 실행해 준비된 경우를 구분하고, 입력 길이, 출력 길이, 동시에 처리하는 요청 수를 고정해 별도로 측정해야 합니다",
+          "long:이미 캐시된 모델의 로딩 시간은 0.384초였고, 같은 한국어 문장을 100번 반복한 입력은 1,202토큰으로 나뉘며 토큰화에 3.631밀리초가 걸렸습니다",
+          "long:확인할 점 — `eligible` 목록에는 한 모델만 남지만 출력의 마지막 문장은 선택 전에 실제 대표 질문과 정답 기준으로 품질과 속도를 측정해야 한다고 명시합니다",
+          "long:작업 종류와 라이선스 값은 실제 제품 요구에서 먼저 정해야 하며, 원하는 모델이 남도록 사후에 조건을 바꾸면 선택 기준의 의미가 없어집니다",
+          "long:모델이 입력을 계산하고 새 토큰을 만드는 시간, 네트워크 전송, 요청 대기, 생성 중인 답을 조금씩 전송하는 시간은 포함하지 않습니다",
+          "long:다음 학습과 이어지는 지점 — Ch 6에서는 외부 모델 API를 LangChain의 공통 인터페이스로 호출하고 메시지와 응답 객체를 다룹니다",
+          "long:Ch 5의 로컬 Qwen·MiniLM·KLUE 표를 그대로 사용하지 않고, 생성 API를 제공하는 OpenAI·Anthropic·Google 후보에 작업 적합성과 키 준비 여부를 적용합니다",
+          "long:정답: tokenizer가 문자열을 토큰 ID로 바꾸는 전처리만 측정했고 모델 추론과 새 토큰 생성은 실행하지 않았기 때문입니다",
+          "long:Hugging Face Transformers: Auto Classes · 확인 2026-09-09 · 기준 Transformers 4.56.2",
+          "long:작업 일치 여부와 라이선스 일치 여부를 각각 불리언 값으로 계산하고, 두 값이 모두 `True`일 때만 `append()`로 후보를 목록 끝에 추가합니다",
+          "english_start:`Qwen/Qwen2.5-0.5B-Instruct`는 텍스트 생성, `s",
+          "english_start:`AutoTokenizer.from_pretrained()`는 모델 ID",
+          "english_start:`AutoModelForCausalLM.from_pretrained()`",
+          "english_start:`num_parameters()`는 모델이 가진 파라미터 수를 정수로 반",
+          "english_start:`for`가 후보를 하나씩 읽고 두 비교 결과를 참 또는 거짓으로 저장합",
+          "english_start:`and`로 둘 다 참인지 확인한 뒤 `eligible.append(it",
+          "english_start:`task`는 실습에서 사용할 입력·출력 목적이고 `license`는 모",
+          "english_start:`AutoTokenizer.from_pretrained()`는 모델 ID",
+          "english_start:`num_parameters()`는 파라미터 수를 정수로 반환합니다",
+          "dense_paragraph:마지막 셀은 `required_task`를 `text-generation`, `required_license"
+        ],
+        "G7": [
+          "mermaid_count:0",
+          "illustration_count:0",
+          "figure_design_table_missing"
+        ]
+      }
+    }
+  ]
+}

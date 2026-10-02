@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  c6["Ch 6 기록 파일<br>provider-comparison-<br>continuity.json"]:::tool
+  c7["Ch 7 기록 파일<br>prompt-ab-continuity.json<br>출처에 Ch 6 파일 지문"]:::tool
+  hash["hashlib.sha256<br>지문 글자 수 64"]:::flow
+  c8["Ch 8 기록 파일<br>context-design-<br>continuity.json<br>출처에 Ch 7 파일 지문<br>설계 기록 3개"]:::tool
+  copy["같은 내용의 사본<br>runs/continuity/실행 시각"]:::tool
+  chk["출처 지문이 같은가 True<br>사본과 지문이 같은가 True"]:::measure
+  c6 -.-> c7
+  c7 --> hash
+  hash --> c8
+  c8 --> copy
+  copy --> chk

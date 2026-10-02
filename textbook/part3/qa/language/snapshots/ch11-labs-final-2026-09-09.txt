@@ -1,0 +1,205 @@
+
+===== labs/part3/ch11-evaluation/README.md =====
+# Chapter 11 평가 기초 실습
+
+노트북은 각각 새 Python 3.12 커널에서 독립 실행됩니다. 제공된 30개 학습용 질문과 공개 PDF를 사용하며, 정답 문서 ID는 검색 지표 계산을 위해 포함합니다. 답변 문자열과 비공개 정답 자료는 포함하지 않습니다.
+
+
+자동 평가 결과의 기본 스키마는 `run_id`, `run_date`, `settings`, `metrics_policy`, `corpus_fingerprint`, `metrics`, `slices`, `query_count`, `excluded_query_count`, `results`입니다. `metrics`에는 `recall_at_5`, `recall_at_50`, `precision_at_5`, `ndcg_at_5`가 들어갑니다. 질문별 결과에는 `gold_doc_ids`, `returned_count`, 상위 문서 ID를 함께 남깁니다. Chapter 12에서도 설정·지표·입력 식별자를 함께 기록하며, 절별 로그 형식은 해당 실습에서 확인합니다.
+
+
+===== labs/part3/ch11-evaluation/notebooks/01-질의셋과-정답-문서-ID.ipynb =====
+[markdown cell 1]
+# 질의셋과 정답 문서 ID
+
+제공된 30개 질문으로 검색 품질을 숫자로 확인합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+이 노트북은 제공 PDF에서 실제 텍스트를 추출합니다. 답변 생성 API는 호출하지 않습니다.
+
+[markdown cell 4]
+## 공개 PDF를 페이지 단위 후보로 준비
+
+스캔본은 OCR이 필요하므로 이번 기초 검색에서 제외합니다.
+
+[markdown cell 6]
+## 같은 검색기를 모든 질문에 적용
+
+단어와 한글 두 글자 조각의 겹침을 사용합니다. 점수가 같으면 문서 ID와 쪽 번호로 순서를 고정합니다.
+
+[markdown cell 8]
+## 라벨 구조 확인
+
+질문과 정답 문서 ID만 공개합니다. 정답 문장은 검색 평가에 필요하지 않습니다.
+
+[markdown cell 10]
+## 값 하나를 바꿔 비교
+
+질문 수를 5개와 30개로 바꾸고 문서 분포가 어떻게 달라지는지 확인합니다.
+
+
+===== labs/part3/ch11-evaluation/notebooks/02-Recall-at-50.ipynb =====
+[markdown cell 1]
+# Recall@50
+
+제공된 30개 질문으로 검색 품질을 숫자로 확인합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+이 노트북은 제공 PDF에서 실제 텍스트를 추출합니다. 답변 생성 API는 호출하지 않습니다.
+
+[markdown cell 4]
+## 공개 PDF를 페이지 단위 후보로 준비
+
+스캔본은 OCR이 필요하므로 이번 기초 검색에서 제외합니다.
+
+[markdown cell 6]
+## 같은 검색기를 모든 질문에 적용
+
+단어와 한글 두 글자 조각의 겹침을 사용합니다. 점수가 같으면 문서 ID와 쪽 번호로 순서를 고정합니다.
+
+[markdown cell 8]
+## Recall@50 계산
+
+정답 문서가 후보 50개 안에 한 번이라도 있으면 이 문항의 재현율은 1입니다.
+
+[markdown cell 10]
+## k 값 비교
+
+k만 바꾸고 질문·라벨·검색 점수를 고정합니다.
+
+[markdown cell 12]
+## 51위 누락을 작은 목록으로 확인
+
+현재 말뭉치는 검색 가능한 고유 문서가 17개라 Recall@50이 포화됩니다. 51개 목록으로 경계를 따로 검증합니다.
+
+
+===== labs/part3/ch11-evaluation/notebooks/03-Precision-at-5.ipynb =====
+[markdown cell 1]
+# Precision@5
+
+제공된 30개 질문으로 검색 품질을 숫자로 확인합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+이 노트북은 제공 PDF에서 실제 텍스트를 추출합니다. 답변 생성 API는 호출하지 않습니다.
+
+[markdown cell 4]
+## 공개 PDF를 페이지 단위 후보로 준비
+
+스캔본은 OCR이 필요하므로 이번 기초 검색에서 제외합니다.
+
+[markdown cell 6]
+## 같은 검색기를 모든 질문에 적용
+
+단어와 한글 두 글자 조각의 겹침을 사용합니다. 점수가 같으면 문서 ID와 쪽 번호로 순서를 고정합니다.
+
+[markdown cell 8]
+## Precision@5 계산
+
+중복 문서 ID를 제거한 상위 5개 문서 가운데 정답 문서가 차지하는 비율을 구합니다.
+
+[markdown cell 10]
+## k 값 비교
+
+k가 커질수록 관련 없는 페이지가 포함될 여지가 늘어납니다.
+
+
+===== labs/part3/ch11-evaluation/notebooks/04-nDCG-at-5.ipynb =====
+[markdown cell 1]
+# nDCG@5
+
+제공된 30개 질문으로 검색 품질을 숫자로 확인합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+이 노트북은 제공 PDF에서 실제 텍스트를 추출합니다. 답변 생성 API는 호출하지 않습니다.
+
+[markdown cell 4]
+## 공개 PDF를 페이지 단위 후보로 준비
+
+스캔본은 OCR이 필요하므로 이번 기초 검색에서 제외합니다.
+
+[markdown cell 6]
+## 같은 검색기를 모든 질문에 적용
+
+단어와 한글 두 글자 조각의 겹침을 사용합니다. 점수가 같으면 문서 ID와 쪽 번호로 순서를 고정합니다.
+
+[markdown cell 8]
+## 예제 순위를 손으로 계산
+
+관련도 1과 0만 사용하는 이진 라벨로 DCG와 이상적인 DCG를 비교합니다.
+
+[markdown cell 10]
+## 실제 30문항 nDCG@5
+
+정답 문서가 앞에 있을수록 점수가 높습니다.
+
+
+===== labs/part3/ch11-evaluation/notebooks/05-조건별-평가와-오류-분류.ipynb =====
+[markdown cell 1]
+# 조건별 평가와 오류 분류
+
+제공된 30개 질문으로 검색 품질을 숫자로 확인합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+이 노트북은 제공 PDF에서 실제 텍스트를 추출합니다. 답변 생성 API는 호출하지 않습니다.
+
+[markdown cell 4]
+## 공개 PDF를 페이지 단위 후보로 준비
+
+스캔본은 OCR이 필요하므로 이번 기초 검색에서 제외합니다.
+
+[markdown cell 6]
+## 같은 검색기를 모든 질문에 적용
+
+단어와 한글 두 글자 조각의 겹침을 사용합니다. 점수가 같으면 문서 ID와 쪽 번호로 순서를 고정합니다.
+
+[markdown cell 8]
+## 질문 유형별로 나누어 측정
+
+전체 평균과 유형별 평균을 함께 확인합니다.
+
+[markdown cell 10]
+## 문제가 발생한 검색 단계에 따라 오류 분류
+
+후보 누락과 상위 순위 문제를 서로 다른 이름으로 기록합니다.
+
+
+===== labs/part3/ch11-evaluation/notebooks/06-실험-로그와-자동-실행.ipynb =====
+[markdown cell 1]
+# 실험 로그와 자동 실행
+
+제공된 30개 질문으로 검색 품질을 숫자로 확인합니다.
+
+[markdown cell 2]
+## 실행 환경 준비
+
+이 노트북은 제공 PDF에서 실제 텍스트를 추출합니다. 답변 생성 API는 호출하지 않습니다.
+
+[markdown cell 4]
+## 공개 PDF를 페이지 단위 후보로 준비
+
+스캔본은 OCR이 필요하므로 이번 기초 검색에서 제외합니다.
+
+[markdown cell 6]
+## 같은 검색기를 모든 질문에 적용
+
+단어와 한글 두 글자 조각의 겹침을 사용합니다. 점수가 같으면 문서 ID와 쪽 번호로 순서를 고정합니다.
+
+[markdown cell 8]
+## 한 번의 실행을 한 행으로 기록
+
+설정·지표·날짜를 함께 저장해야 다음 실험과 비교할 수 있습니다.
+
+[markdown cell 10]
+## 저장 뒤 다시 읽어 확인
+
+자동 실행 결과가 JSON으로 복원되는지 검사합니다.

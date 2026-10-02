@@ -1,0 +1,17 @@
+{
+  "algorithm": "sha256",
+  "entries": [
+    {"source": "01-RAG-지도.html", "output_block": 1, "file": "ex01_rag_preserved.txt", "sha256": "28e1c9133354e785bbb6d658c7fada2057a4f45a35dd9ec4e86ec2f9c6edb100"},
+    {"source": "01-RAG-지도.html", "output_block": 2, "file": "ex01_without_context_preserved.txt", "sha256": "01960a4e741d895633da5a02ed38b6375870f68ae0242787a08e1e60a8a82638"},
+    {"source": "02-로더와-스플리터.html", "output_block": 1, "file": "ex02.txt", "sha256": "84175e3eb96b40e1961bad5a3410918e6613b9a89ce8f32692b15724c4d28691", "fresh_run": "2026-09-08"},
+    {"source": "02-로더와-스플리터.html", "output_block": 2, "file": "ex02_overlap_preserved.txt", "sha256": "00a78dc430582a579dcb225400d6013ed989b2fa130b61b72bf88b858a63769d"},
+    {"source": "03-임베딩과-벡터스토어.html", "output_block": 1, "file": "ex03_preserved.txt", "sha256": "9634d5233b9f9b6f67cce9eb4e29f04b43f69b6a23cd897491cfa93a8a0973d2"},
+    {"source": "03-임베딩과-벡터스토어.html", "output_block": 2, "file": "ex03_failure_preserved.txt", "sha256": "421ec221d4fb8e4001a0a89f2548f198f5a5728c4385bbcf9abae8deb047e1c6"},
+    {"source": "04-생성과-출처-인용.html", "output_block": 1, "file": "ex04_preserved.txt", "sha256": "43a03be584844603f183a495af603aa7d36ab23d644bc08314e1f750f9193562"},
+    {"source": "04-생성과-출처-인용.html", "output_block": 2, "file": "ex04_missing_tag_preserved.txt", "sha256": "b736fcd23623a6948d1756d6079c96ed8945190c9493f97d036d470f0bd00e10"},
+    {"source": "04-생성과-출처-인용.html", "output_block": 3, "file": "ex04_empty_hits_preserved.txt", "sha256": "7da92881a3f35584c8dcd2d416767ace8a7496770e0a3cf9936c1a3dc4d95d7f"},
+    {"source": "04-생성과-출처-인용.html", "output_block": 4, "file": "ex04_search_miss_preserved.txt", "sha256": "8ba223838334a1f0607f666ec3b7d7816ce72adedae2910ae9b4e8e183b771c3"},
+    {"source": "05-첫-실패-보기.html", "output_block": 1, "file": "ex05_preserved.txt", "sha256": "e78d11c3f2e20734bd112b733711a8bac869c52e6442a6fea1b96baa85c12f60"},
+    {"source": "06-실험-하네스.html", "output_block": 1, "file": "ex06_preserved.txt", "sha256": "5a9915c5094e079a6507abf4d0f5417a86faa56fab23eb94a656ff770ef12b53"}
+  ]
+}

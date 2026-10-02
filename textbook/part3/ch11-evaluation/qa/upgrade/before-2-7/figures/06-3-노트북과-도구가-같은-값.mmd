@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  log["Ch 10 기록 6줄"]:::tool
+  nbcalc["노트북 함수로 계산"]:::flow
+  toolcalc["도구 보고서에서 꺼내기"]:::flow
+  nbout["재현율 1.0 정밀도 0.2 nDCG 1.0"]:::measure
+  toolout["재현율 1.0 정밀도 0.2 nDCG 1.0"]:::measure
+  same["같은 줄 수 6"]:::measure
+  log --> nbcalc
+  log --> toolcalc
+  nbcalc --> nbout
+  toolcalc --> toolout
+  nbout --> same
+  toolout --> same

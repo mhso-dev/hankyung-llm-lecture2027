@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  q["건수 질문<br>결제된 paid 주문은<br>모두 몇 건이야?<br>기대 도구 tool_c"]:::tool
+  subgraph shortSide["짧은 판 · 설명 한 문장"]
+    direction TB
+    sPick["세 번 모두 tool_a<br>목록 도구"]:::measure
+    sTok["목록 질문<br>입력 토큰 177"]:::measure
+    sPick ~~~ sTok
+  end
+  subgraph detailSide["자세한 판 · 설명 네 문장"]
+    direction TB
+    dPick["세 번 모두 tool_c<br>합계 도구"]:::measure
+    dTok["목록 질문<br>입력 토큰 330"]:::measure
+    dPick ~~~ dTok
+  end
+  same["두 판 공통<br>공개 이름 · 입력 형식 같음<br>목록 질문 tool_a<br>한 건 질문 tool_b"]
+  q --> shortSide
+  q --> detailSide
+  shortSide ~~~ same
+  detailSide ~~~ same

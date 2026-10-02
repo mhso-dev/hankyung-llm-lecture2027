@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  q["질문<br>O103 주문의 금액은 얼마야?"]:::tool
+  spec["짧은 판 명세 셋<br>bind_tools가 실음"]
+  llm["gpt-5.4-mini<br>요청 1번"]:::model
+  text["응답 글의 길이 0"]:::measure
+  req["도구 호출 요청 1건<br>name tool_b<br>args order_id O103"]:::measure
+  skip["도구 실행<br>이 절에서는 하지 않음<br>05절에서"]
+  q --> llm
+  spec --> llm
+  llm --> text
+  llm --> req
+  req -.-> skip
+  style skip stroke-dasharray: 5 5

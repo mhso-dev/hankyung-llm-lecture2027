@@ -1,0 +1,275 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>백오프 큐 동시성 — Ch 34 · 비용 · Rate Limit 엔지니어링</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 서비스화와 운영 · Ch 34 · 비용 · Rate Limit 엔지니어링</p>
+<h1>백오프 큐 동시성</h1><div class="meta"><span>강의 0.6h</span><span>실습 1h</span><span>새 용어 5</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 0.6h | 실습 1h | 코드 Jupyter Notebook | 새 용어 5 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>HTTP 429 응답을 통제된 로컬 서버에서 재현할 수 있습니다.</li><li>지수 백오프와 지터를 적용해 재시도 간격을 분산할 수 있습니다.</li><li>큐와 세마포어로 동시 실행 수를 제한할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>모델 API에는 분당 요청 수와 분당 토큰 수 같은 제한이 있습니다. 요청이 한꺼번에 몰리면 서버는 HTTP 429로 현재 요청을 받을 수 없다고 알릴 수 있습니다. 즉시 같은 요청을 반복하면 다시 제한에 걸리고 전체 서비스의 부하도 커집니다. 재시도 시점과 동시에 처리할 작업 수를 조절해야 합니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch 16에서는 호출 한도와 재시도 함수를 직접 만들었습니다. Ch 30에서는 FastAPI 비동기 요청 처리를 배웠습니다. 이번 절은 그 두 내용을 운영 흐름으로 연결합니다. 실제 제공자에게 의도적으로 429를 만들지 않고, 로컬 HTTP 서버가 처음 두 요청에만 429를 반환하도록 구성합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>문이 닫혔을 때 줄을 정리하기</h3><p>입장 제한이 걸린 장소 앞에서 모든 사람이 동시에 문을 두드리면 혼잡이 커집니다. 대기열은 도착한 순서를 보관하고, 동시성 제한은 안에 들어가는 사람 수를 정합니다. 백오프는 거절된 요청이 다시 시도하기 전 기다리는 시간을 늘립니다.</p><dl class="term"><dt>Rate limit</dt><dd>일정 시간 동안 허용되는 요청이나 토큰의 최대량입니다.</dd><dt>HTTP 429</dt><dd>요청이 너무 많아 현재 처리할 수 없음을 나타내는 상태 코드입니다.</dd><dt>지수 백오프(exponential backoff)</dt><dd>재시도 횟수가 늘수록 대기 시간을 배수로 늘리는 방법입니다.</dd><dt>지터(jitter)</dt><dd>여러 클라이언트의 재시도 시점이 겹치지 않도록 더하는 작은 무작위 지연입니다.</dd><dt>세마포어(semaphore)</dt><dd>동시에 실행할 수 있는 작업 수를 제한하는 동기화 도구입니다.</dd></dl><figure><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 250" role="img" aria-label="로컬 429 응답과 재시도"><rect width="800" height="250" fill="white"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#334155"/></marker></defs><text x="400" y="42" text-anchor="middle" font-size="24" fill="#0f172a">로컬 429 응답과 재시도</text><rect x="75" y="95" width="155" height="65" rx="10" fill="#fee2e2" stroke="#334155"/><text x="152.5" y="133" text-anchor="middle" font-size="16" fill="#0f172a">로컬 429 응답</text><rect x="325" y="95" width="155" height="65" rx="10" fill="#dbeafe" stroke="#334155"/><text x="402.5" y="133" text-anchor="middle" font-size="16" fill="#0f172a">백오프 · 지터</text><path d="M230 127.5L317 127.5" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/><rect x="575" y="95" width="155" height="65" rx="10" fill="#dcfce7" stroke="#334155"/><text x="652.5" y="133" text-anchor="middle" font-size="16" fill="#0f172a">재시도 후 200</text><path d="M480 127.5L567 127.5" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/></svg></div><figcaption>빨간 상자의 로컬 429 응답을 받으면 파란 상자에서 재시도 대기 시간을 계산하고, 재시도 뒤 초록 상자의 200 응답을 확인합니다. 같은 절의 큐 실험은 별도로 여섯 개의 작업을 처리하며 최대 동시 실행 수를 측정합니다.</figcaption></figure>
+<h3>코드 읽기와 개념 경계</h3><p><code>asyncio.Queue</code>는 기다리는 작업을 보관하고, <code>Semaphore(2)</code>는 동시에 처리 구역에 들어갈 작업을 두 개로 제한합니다. <code>queue.get()</code>으로 항목을 꺼내고 처리가 끝난 뒤 <code>task_done()</code>을 호출합니다. 별도의 로컬 HTTP 서버는 처음 두 요청에 429를 반환해, 재시도 없는 호출과 백오프 호출을 같은 조건에서 비교하게 합니다.</p><p>지수 백오프는 시도 횟수에 따라 기본 대기 시간을 늘리고 지터는 여러 클라이언트가 같은 순간 다시 요청하는 현상을 줄입니다. 모든 오류를 재시도하면 안 됩니다. 인증 실패나 잘못된 입력은 기다려도 해결되지 않으며, 429와 일시적 5xx도 최대 횟수와 전체 시간 한도 안에서만 재시도합니다.</p><h2 id="b5"><span class="no">5</span>실행 예제</h2><p>표준 라이브러리의 <code>HTTPServer</code>를 로컬 주소에서 실행합니다. 서버는 첫 두 요청에 429, 세 번째부터 200을 반환합니다. 외부 API의 Rate limit을 소모하지 않으면서 실제 HTTP 오류 처리 코드를 실행할 수 있습니다.</p><section class="notebook" data-notebook="04-백오프-큐-동시성" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="04-백오프-큐-동시성.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICI1MGYwZjc4ZSIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMg67Cx7Jik7ZSEwrftgZDCt+uPmeyLnOyEsSDsoJztlZxcbiIsCiAgICAiXG4iLAogICAgIu2GteygnOuQnCDroZzsu6wgSFRUUCDshJzrsoTsl5DshJwgNDI566W8IOyerO2YhO2VmOqzoCDsnqzsi5zrj4Qg64yA6riw7JmAIOuPmeyLnOyEsSDsoJztlZzsnYQg7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImY4NmMzYTllIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYQiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJwcmVwLTM0LTA0LTAiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg7J20IOykgOu5hCDshYDsnbQg7ZWY64qUIOydvFxuIiwKICAgICJcbiIsCiAgICAi7KSA67mEIOyFgOydgCDruYTrj5nquLAg7YGQLCDrgpzsiJgg7KeA7YSwLCDroZzsu6wgSFRUUCDshJzrsoQsIOyLnOqwhCDsuKHsoJXsl5Ag7ZWE7JqU7ZWcIO2RnOykgCDrnbzsnbTruIzrn6zrpqzrp4wg67aI65+s7Ji164uI64ukLiDsmbjrtoAg7KCc6rO17J6QIEFQSeuKlCDtmLjstpztlZjsp4Ag7JWK7Iq164uI64ukLiDri6TsnYwg7IWA7JeQ7IScIOyatOyYgeyytOygnOqwgCDrsLDsoJXtlZwg66Gc7LusIO2PrO2KuOyXkCDqtZDsnKHsmqkgNDI5IOyEnOuyhOulvCDsi5zsnpHtlZjrqbAsIOygiOydtCDrgZ3rgpjrqbQg7ISc67KE66W8IOyiheujjO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDEsCiAgICJpZCI6ICI3ZWEwNDMwMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjowNToyOC42MDAzNDBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjowNToyOC42MDAyNzVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjowNToyOC42MDQ0OTlaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjA1OjI4LjYwNDE5NloiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLtkZzspIAg65287J2067iM65+s66asIOykgOu5hCDsmYTro4xcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiaW1wb3J0IGFzeW5jaW8sIGpzb24sIHJhbmRvbSwgdGhyZWFkaW5nLCB0aW1lXG4iLAogICAgImZyb20gaHR0cC5zZXJ2ZXIgaW1wb3J0IEJhc2VIVFRQUmVxdWVzdEhhbmRsZXIsIEhUVFBTZXJ2ZXJcbiIsCiAgICAiZnJvbSB1cmxsaWIuZXJyb3IgaW1wb3J0IEhUVFBFcnJvclxuIiwKICAgICJmcm9tIHVybGxpYi5yZXF1ZXN0IGltcG9ydCB1cmxvcGVuXG4iLAogICAgInByaW50KFwi7ZGc7KSAIOudvOydtOu4jOufrOumrCDspIDruYQg7JmE66OMXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiOTJlNzc5NzUiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDroZzsu6wgNDI5IOyEnOuyhFxuIiwKICAgICJcbiIsCiAgICAi7LKY7J2MIOuRkCDsmpTssq3sl5DripQgNDI566W8IOuwmO2ZmO2VmOqzoCDshLgg67KI7Ke4IOyalOyyreu2gO2EsCAyMDDsnYQg67CY7ZmY7ZWp64uI64ukLiDsmbjrtoAg7KCc6rO17J6Q7JeQ64qUIOyalOyyre2VmOyngCDslYrsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiOTg1ZThjYTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MDU6MjguNjA1MzU5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MDU6MjguNjA1MzEwWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MDU6MjguNjEwODI1WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjowNToyOC42MTA1NDlaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi66Gc7LusIOyEnOuyhCDspIDruYRcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiY2xhc3MgSGFuZGxlcihCYXNlSFRUUFJlcXVlc3RIYW5kbGVyKTpcbiIsCiAgICAiICAgIGNvdW50ID0gMFxuIiwKICAgICIgICAgZGVmIGRvX0dFVChzZWxmKTpcbiIsCiAgICAiICAgICAgICBIYW5kbGVyLmNvdW50ICs9IDFcbiIsCiAgICAiICAgICAgICBzdGF0dXMgPSA0MjkgaWYgSGFuZGxlci5jb3VudCA8PSAyIGVsc2UgMjAwXG4iLAogICAgIiAgICAgICAgc2VsZi5zZW5kX3Jlc3BvbnNlKHN0YXR1cyk7IHNlbGYuZW5kX2hlYWRlcnMoKTsgc2VsZi53ZmlsZS53cml0ZShzdHIoc3RhdHVzKS5lbmNvZGUoKSlcbiIsCiAgICAiICAgIGRlZiBsb2dfbWVzc2FnZShzZWxmLCAqYXJncyk6IHBhc3NcbiIsCiAgICAiXG4iLAogICAgInNlcnZlciA9IEhUVFBTZXJ2ZXIoKFwiMTI3LjAuMC4xXCIsIDApLCBIYW5kbGVyKVxuIiwKICAgICJ0aHJlYWRpbmcuVGhyZWFkKHRhcmdldD1zZXJ2ZXIuc2VydmVfZm9yZXZlciwgZGFlbW9uPVRydWUpLnN0YXJ0KClcbiIsCiAgICAidXJsID0gZlwiaHR0cDovLzEyNy4wLjAuMTp7c2VydmVyLnNlcnZlcl9wb3J0fS9cIlxuIiwKICAgICJwcmludChcIuuhnOy7rCDshJzrsoQg7KSA67mEXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiNzZlMWJiZTUiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDtgZDsmYAg64+Z7Iuc7ISxIOygnO2VnFxuIiwKICAgICJcbiIsCiAgICAi7IS466eI7Y+s7Ja06rCAIOuPmeyLnOyXkCDsspjrpqztlZjripQg7J6R7JeFIOyImOulvCAy6rCc66GcIOygnO2VnO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTM0LTA0LWEiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg67CU66GcIOuLpOydjCDsvZTrk5zrpbwg7J2964qUIOuwqeuylVxuIiwKICAgICJcbiIsCiAgICAiYGFzeW5jaW8uUXVldWVg64qUIOq4sOuLpOumrOuKlCDsnpHsl4XsnYQg67O06rSA7ZWY6rOgLCBgU2VtYXBob3JlKDIpYOuKlCDrj5nsi5zsl5Ag7LKY66asIOq1rOyXreyXkCDrk6TslrTqsIgg7J6R7JeF7J2EIOuRkCDqsJzroZwg7KCc7ZWc7ZWp64uI64ukLiBgcXVldWUuZ2V0KClg7Jy866GcIO2VreuqqeydhCDqurzrgrTqs6Ag7LKY66as6rCAIOuBneuCnCDrkqQgYHRhc2tfZG9uZSgpYOydhCDtmLjstpztlanri4jri6QuIOuzhOuPhOydmCDroZzsu6wgSFRUUCDshJzrsoTripQg7LKY7J2MIOuRkCDsmpTssq3sl5AgNDI566W8IOuwmO2ZmO2VtCwg7J6s7Iuc64+EIOyXhuuKlCDtmLjstpzqs7wg67Cx7Jik7ZSEIO2YuOy2nOydhCDqsJnsnYAg7KGw6rG07JeQ7IScIOu5hOq1kO2VmOqyjCDtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAzLAogICAiaWQiOiAiOTA2Y2M0NjYiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6MDU6MjguNjExNjk0WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6MDU6MjguNjExNjM2WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6MDU6MjguNzA3NjgzWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjowNToyOC43MDcxNjNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7LSI6riwIO2BkDogNiDsmYTro4w6IDYg7LWc64yAIOuPmeyLnCDsi6Ttlok6IDJcbiIsCiAgICAgICLrjIDquLAg67Cc7IOdIOyekeyXhTogNlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJhY3RpdmUgPSBwZWFrID0gMFxuIiwKICAgICJxdWV1ZSwgc2VtYXBob3JlLCBjb21wbGV0ZWQsIHdhaXRzID0gYXN5bmNpby5RdWV1ZSgpLCBhc3luY2lvLlNlbWFwaG9yZSgyKSwgW10sIFtdXG4iLAogICAgImZvciBudW1iZXIgaW4gcmFuZ2UoNik6IHF1ZXVlLnB1dF9ub3dhaXQoKG51bWJlciwgdGltZS5wZXJmX2NvdW50ZXIoKSkpXG4iLAogICAgImluaXRpYWxfc2l6ZSA9IHF1ZXVlLnFzaXplKClcbiIsCiAgICAiXG4iLAogICAgImFzeW5jIGRlZiB3b3JrZXIoKTpcbiIsCiAgICAiICAgIGdsb2JhbCBhY3RpdmUsIHBlYWtcbiIsCiAgICAiICAgIHdoaWxlIG5vdCBxdWV1ZS5lbXB0eSgpOlxuIiwKICAgICIgICAgICAgIG51bWJlciwgcXVldWVkX2F0ID0gYXdhaXQgcXVldWUuZ2V0KClcbiIsCiAgICAiICAgICAgICBhc3luYyB3aXRoIHNlbWFwaG9yZTpcbiIsCiAgICAiICAgICAgICAgICAgd2FpdHMuYXBwZW5kKHRpbWUucGVyZl9jb3VudGVyKCkgLSBxdWV1ZWRfYXQpXG4iLAogICAgIiAgICAgICAgICAgIGFjdGl2ZSArPSAxOyBwZWFrID0gbWF4KHBlYWssIGFjdGl2ZSlcbiIsCiAgICAiICAgICAgICAgICAgYXdhaXQgYXN5bmNpby5zbGVlcCgwLjAzKTsgY29tcGxldGVkLmFwcGVuZChudW1iZXIpOyBhY3RpdmUgLT0gMVxuIiwKICAgICIgICAgICAgIHF1ZXVlLnRhc2tfZG9uZSgpXG4iLAogICAgIlxuIiwKICAgICJhd2FpdCBhc3luY2lvLmdhdGhlcih3b3JrZXIoKSwgd29ya2VyKCksIHdvcmtlcigpKVxuIiwKICAgICJwcmludChcIuy0iOq4sCDtgZA6XCIsIGluaXRpYWxfc2l6ZSwgXCLsmYTro4w6XCIsIGxlbihjb21wbGV0ZWQpLCBcIuy1nOuMgCDrj5nsi5wg7Iuk7ZaJOlwiLCBwZWFrKVxuIiwKICAgICJwcmludChcIuuMgOq4sCDrsJzsg50g7J6R7JeFOlwiLCBzdW0od2FpdCA+IDAgZm9yIHdhaXQgaW4gd2FpdHMpKVxuIiwKICAgICJhc3NlcnQgcXVldWUuZW1wdHkoKSBhbmQgcGVhayA8PSAyIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiZGNjM2Q4MWQiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2MqCDsnqztmIRcbiIsCiAgICAiXG4iLAogICAgIuyerOyLnOuPhCDsl4bsnbQg7ZWcIOuyiOunjCDsmpTssq3tlZjrqbQgNDI56rCAIOq3uOuMgOuhnCDtmLjstpzsnpDsl5Dqsowg7KCE64us65Cp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogIjYzODgxY2ZkIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjA1OjI4LjcwODc3MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjA1OjI4LjcwODY5NFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjA1OjI4LjcyMDAzMVoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MDU6MjguNzE5NjQ3WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7LKrIOyalOyyrSDsg4Htg5w6IDQyOVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJ0cnk6XG4iLAogICAgIiAgICB1cmxvcGVuKHVybClcbiIsCiAgICAiZXhjZXB0IEhUVFBFcnJvciBhcyBlcnJvcjpcbiIsCiAgICAiICAgIHByaW50KFwi7LKrIOyalOyyrSDsg4Htg5w6XCIsIGVycm9yLmNvZGUpXG4iLAogICAgIiAgICBhc3NlcnQgZXJyb3IuY29kZSA9PSA0MjkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJkMzQxYTdlMCIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsp4DsiJgg67Cx7Jik7ZSE7JmAIOyngO2EsCDsoIHsmqlcbiIsCiAgICAiXG4iLAogICAgIuyLnOuPhCDtmp/siJjqsIAg64qY7IiY66GdIOuMgOq4sCDsi5zqsITsnYQg64qY66as6rOgIOyekeydgCDrrLTsnpHsnIQg7KeA7Jew7J2EIOuNlO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTM0LTA0LWIiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDri6jqs4Tsl5DshJwg6rWs67aE7ZWgIOuylOychFxuIiwKICAgICJcbiIsCiAgICAi7KeA7IiYIOuwseyYpO2UhOuKlCDsi5zrj4Qg7Zqf7IiY7JeQIOuUsOudvCDquLDrs7gg64yA6riwIOyLnOqwhOydhCDripjrpqzqs6Ag7KeA7YSw64qUIOyXrOufrCDtgbTrnbzsnbTslrjtirjqsIAg6rCZ7J2AIOyInOqwhCDri6Tsi5wg7JqU7LKt7ZWY64qUIO2YhOyDgeydhCDspITsnoXri4jri6QuIOuqqOuToCDsmKTrpZjrpbwg7J6s7Iuc64+E7ZWY66m0IOyViCDrkKnri4jri6QuIOyduOymnSDsi6TtjKjrgpgg7J6Y66q765CcIOyeheugpeydgCDquLDri6TroKTrj4Qg7ZW06rKw65CY7KeAIOyViuycvOupsCwgNDI57JmAIOydvOyLnOyggSA1eHjrj4Qg7LWc64yAIO2an+yImOyZgCDsoITssrQg7Iuc6rCEIO2VnOuPhCDslYjsl5DshJzrp4wg7J6s7Iuc64+E7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogIjEyOGEwZDhhIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjA1OjI4LjcyMDgwNVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjA1OjI4LjcyMDc1MFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjA1OjI5LjI4NTE4N1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6MDU6MjkuMjg0MzEwWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLstZzsooUg7IOB7YOcOiAyMDAg64yA6riwOiBbMC4wNTJdXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImRlZiBmZXRjaF93aXRoX2JhY2tvZmYodGFyZ2V0LCBhdHRlbXB0cz00KTpcbiIsCiAgICAiICAgIHdhaXRzID0gW11cbiIsCiAgICAiICAgIGZvciBhdHRlbXB0IGluIHJhbmdlKGF0dGVtcHRzKTpcbiIsCiAgICAiICAgICAgICB0cnk6XG4iLAogICAgIiAgICAgICAgICAgIHJldHVybiB1cmxvcGVuKHRhcmdldCkuc3RhdHVzLCB3YWl0c1xuIiwKICAgICIgICAgICAgIGV4Y2VwdCBIVFRQRXJyb3IgYXMgZXJyb3I6XG4iLAogICAgIiAgICAgICAgICAgIGlmIGVycm9yLmNvZGUgIT0gNDI5IG9yIGF0dGVtcHQgPT0gYXR0ZW1wdHMgLSAxOiByYWlzZVxuIiwKICAgICIgICAgICAgICAgICBkZWxheSA9IDAuMDUgKiAoMiAqKiBhdHRlbXB0KSArIHJhbmRvbS51bmlmb3JtKDAsIDAuMDEpXG4iLAogICAgIiAgICAgICAgICAgIHdhaXRzLmFwcGVuZChyb3VuZChkZWxheSwgMykpOyB0aW1lLnNsZWVwKGRlbGF5KVxuIiwKICAgICJcbiIsCiAgICAic3RhdHVzLCB3YWl0cyA9IGZldGNoX3dpdGhfYmFja29mZih1cmwpXG4iLAogICAgInByaW50KFwi7LWc7KKFIOyDge2DnDpcIiwgc3RhdHVzLCBcIuuMgOq4sDpcIiwgd2FpdHMpXG4iLAogICAgInNlcnZlci5zaHV0ZG93bigpOyBhc3NlcnQgc3RhdHVzID09IDIwMCIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAicGFpcmVkIiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNSwKICAgImNvZGVfc2hhMjU2IjogIjMxMjA5OGQ1MjFiNDZmNjY5NmEwY2E3NGQyZmVkYWUyOTc4NDU0NzhmMThmYzRlMDQ0ZTNmZDMwODAyM2MxZjQiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwMjowNToyOS40MDM5NDYrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjdjYjUzMmFmYjk2NTNmMmNiMThmYjA3NGRlODYyNmUwNWUyODNmNjA4NmZmNGUzMWRhNmQ5ZWUzNmFhODI0YWIiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>백오프·큐·동시성 제한</h2>
+<p>통제된 로컬 HTTP 서버에서 429를 재현하고 재시도 대기와 동시성 제한을 확인합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>준비 셀은 비동기 큐, 난수 지터, 로컬 HTTP 서버, 시간 측정에 필요한 표준 라이브러리만 불러옵니다. 외부 제공자 API는 호출하지 않습니다. 다음 셀에서 운영체제가 배정한 로컬 포트에 교육용 429 서버를 시작하며, 절이 끝나면 서버를 종료합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import asyncio, json, random, threading, time
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.error import HTTPError
+from urllib.request import urlopen
+print(&quot;표준 라이브러리 준비 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">표준 라이브러리 준비 완료
+</pre></div>
+<div class="nb-markdown"><h3>로컬 429 서버</h3>
+<p>처음 두 요청에는 429를 반환하고 세 번째 요청부터 200을 반환합니다. 외부 제공자에는 요청하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">class Handler(BaseHTTPRequestHandler):
+    count = 0
+    def do_GET(self):
+        Handler.count += 1
+        status = 429 if Handler.count &lt;= 2 else 200
+        self.send_response(status); self.end_headers(); self.wfile.write(str(status).encode())
+    def log_message(self, *args): pass
+
+server = HTTPServer((&quot;127.0.0.1&quot;, 0), Handler)
+threading.Thread(target=server.serve_forever, daemon=True).start()
+url = f&quot;http://127.0.0.1:{server.server_port}/&quot;
+print(&quot;로컬 서버 준비&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">로컬 서버 준비
+</pre></div>
+<div class="nb-markdown"><h3>큐와 동시성 제한</h3>
+<p>세마포어가 동시에 처리하는 작업 수를 2개로 제한합니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p><code>asyncio.Queue</code>는 기다리는 작업을 보관하고, <code>Semaphore(2)</code>는 동시에 처리 구역에 들어갈 작업을 두 개로 제한합니다. <code>queue.get()</code>으로 항목을 꺼내고 처리가 끝난 뒤 <code>task_done()</code>을 호출합니다. 별도의 로컬 HTTP 서버는 처음 두 요청에 429를 반환해, 재시도 없는 호출과 백오프 호출을 같은 조건에서 비교하게 합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">active = peak = 0
+queue, semaphore, completed, waits = asyncio.Queue(), asyncio.Semaphore(2), [], []
+for number in range(6): queue.put_nowait((number, time.perf_counter()))
+initial_size = queue.qsize()
+
+async def worker():
+    global active, peak
+    while not queue.empty():
+        number, queued_at = await queue.get()
+        async with semaphore:
+            waits.append(time.perf_counter() - queued_at)
+            active += 1; peak = max(peak, active)
+            await asyncio.sleep(0.03); completed.append(number); active -= 1
+        queue.task_done()
+
+await asyncio.gather(worker(), worker(), worker())
+print(&quot;초기 큐:&quot;, initial_size, &quot;완료:&quot;, len(completed), &quot;최대 동시 실행:&quot;, peak)
+print(&quot;대기 발생 작업:&quot;, sum(wait &gt; 0 for wait in waits))
+assert queue.empty() and peak &lt;= 2</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">초기 큐: 6 완료: 6 최대 동시 실행: 2
+대기 발생 작업: 6
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 첫 요청은 429를 반환합니다. 백오프 함수는 대기 기록을 남기고 최종 200을 받습니다. 실험에서는 작업 여섯 개를 처리했고, 최대 동시 실행 수는 2였습니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>재시도 없는 코드는 첫 429를 그대로 호출자에게 전달합니다. 수정 코드에서는 429만 재시도하며, 다른 HTTP 오류는 숨기지 않습니다. 대기 시간은 <code>0.05 × 2^attempt</code>에 작은 지터를 더해 계산합니다. 실제 운영에서는 응답 헤더의 재시도 안내와 SDK의 내장 재시도 정책도 함께 확인합니다.</p><section class="notebook" data-notebook="04-백오프-큐-동시성" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>재시도 없이 한 번만 요청하면 429가 그대로 호출자에게 전달됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">try:
+    urlopen(url)
+except HTTPError as error:
+    print(&quot;첫 요청 상태:&quot;, error.code)
+    assert error.code == 429</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">첫 요청 상태: 429
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>지수 백오프와 지터 적용</h3>
+<p>시도 횟수가 늘수록 대기 시간을 늘리고 작은 무작위 지연을 더합니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>지수 백오프는 시도 횟수에 따라 기본 대기 시간을 늘리고 지터는 여러 클라이언트가 같은 순간 다시 요청하는 현상을 줄입니다. 모든 오류를 재시도하면 안 됩니다. 인증 실패나 잘못된 입력은 기다려도 해결되지 않으며, 429와 일시적 5xx도 최대 횟수와 전체 시간 한도 안에서만 재시도합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">def fetch_with_backoff(target, attempts=4):
+    waits = []
+    for attempt in range(attempts):
+        try:
+            return urlopen(target).status, waits
+        except HTTPError as error:
+            if error.code != 429 or attempt == attempts - 1: raise
+            delay = 0.05 * (2 ** attempt) + random.uniform(0, 0.01)
+            waits.append(round(delay, 3)); time.sleep(delay)
+
+status, waits = fetch_with_backoff(url)
+print(&quot;최종 상태:&quot;, status, &quot;대기:&quot;, waits)
+server.shutdown(); assert status == 200</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">최종 상태: 200 대기: [0.052]
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>실패한 요청도 Rate limit 계산에 포함될 수 있으므로 무제한 재시도를 두지 않습니다.</li><li>응답을 이미 일부 처리한 비멱등 작업은 같은 요청을 다시 실행하기 전에 중복 효과를 확인합니다.</li><li>큐가 계속 길어지면 대기 시간 상한, 취소, 우선순위 정책이 필요합니다.</li><li>세마포어의 적정 값은 계정 등급, 모델, 평균 입력 토큰에 따라 달라집니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>429는 즉시 반복하지 않고 제한된 횟수로 백오프합니다.</li><li>지터는 여러 요청이 같은 시점에 다시 몰리는 현상을 줄입니다.</li><li>큐와 세마포어는 유입량과 동시 실행량을 분리합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 마지막 절에서는 처리량뿐 아니라 대화당 누적 비용을 p95로 관리하고 요청 전 예산 가드를 적용합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 429 직후 같은 간격으로 모든 클라이언트가 재시도하면 어떤 문제가 생기나요?</p><p class="quiz-a">재시도 시점이 다시 겹쳐 제한과 부하가 반복될 수 있습니다.</p><p class="quiz-q">2. 지터의 역할은 무엇인가요?</p><p class="quiz-a">재시도 시점을 조금씩 다르게 만들어 요청 집중을 줄입니다.</p><p class="quiz-q">3. 이번 실습이 실제 제공자의 과부하를 재현했다고 말할 수 있나요?</p><p class="quiz-a">말할 수 없습니다. 통제된 로컬 서버에서 HTTP 429 처리만 재현했습니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://developers.openai.com/api/docs/guides/rate-limits">OpenAI Rate limits guide</a> · 2026-09-11 확인</li><li><a href="https://platform.openai.com/docs/guides/error-codes/api-errors">OpenAI API error codes</a> · 2026-09-11 확인</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="03-모델-라우팅.html">← 모델 라우팅</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="05-예산-가드와-p95.html">예산 가드와 p95 →</a></span></div></div></body></html>

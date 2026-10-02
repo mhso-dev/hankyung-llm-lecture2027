@@ -1,0 +1,72 @@
+<!--meta: 강의 1h | 실습 2h | 코드 document_processing.py · examples/ex03_other_loaders.py | 새 용어 5 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 DOCX의 문단·표, HTML의 제목·본문, CSV의 머리글·행을 서로 다른 처리 단위로 설명할 수 있습니다.</li>
+<li>이 절을 마치면 형식이 가진 구조를 본문 표현과 메타데이터에 보존하여 <code>Document</code> 목록으로 변환할 수 있습니다.</li>
+<li>이 절을 마치면 잘못된 HTML과 헤더가 불분명한 CSV에서 자동 추정이 실패하는 사례를 재현하고 입력 계약을 수정할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>왜 지금 이것인가</h2>
+<p>PDF에서는 문단과 표를 추정해야 했습니다. DOCX, HTML, CSV는 작성 도구가 구조를 비교적 분명하게 저장합니다. DOCX에는 문단과 표 객체가 있고, HTML에는 제목과 본문 요소가 있으며, CSV에는 열 머리글과 행이 있습니다. 이 구조를 모두 평문 한 덩어리로 바꾸면 파서가 제공한 정보를 스스로 버리는 셈입니다. 로더 단계에서 구조를 보존해야 뒤의 구조 기반 청킹이 제목, 표, 행 경계를 사용할 수 있습니다.</p>
+<p>공통 <code>Document</code> 계약은 모든 내용을 똑같은 크기로 만들라는 뜻이 아닙니다. 형식마다 의미 있는 최소 단위가 다릅니다. 이번 기준선은 DOCX와 HTML 파일을 각각 <code>Document</code> 하나로 만들되 문단·표·줄 경계를 본문에 남기고, CSV는 한 행을 <code>Document</code> 하나로 만듭니다. 더 세밀한 구조 기반 청킹이 필요하면 이후 단계에서 단위 종류와 위치 메타데이터를 확장합니다.</p>
+
+<h2 id="b3"><span class="no">3</span>선수 지식 되짚기</h2>
+<ul><li><strong>Ch 4 구조화 파일</strong> — HTML 태그와 CSV 행을 파이썬 자료구조로 읽었습니다.</li>
+<li><strong>Ch 9 <code>split_docs()</code></strong> — 입력 <code>metadata</code>가 청크마다 복사된다는 점을 확인했습니다.</li>
+<li><strong>01절 공통 계약</strong> — <code>doc_id</code>·<code>source</code>·<code>file_type</code>·<code>parser</code>를 형식과 관계없이 남기기로 했습니다.</li></ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유 — 서랍의 칸막이를 유지하기</h3>
+<p>서류함의 칸막이에는 계약서, 영수증, 고객 명단이 구분되어 있습니다. 모든 종이를 꺼내 한 줄로 이어 붙이면 글자는 남지만 분류 기준이 사라집니다. DOCX의 문단과 표, HTML의 제목 계층, CSV의 행도 같은 역할을 합니다. 이번 기준선은 DOCX의 표 번호와 셀 구분, HTML의 줄 경계, CSV의 <code>row</code>를 보존합니다. 이후 구조 기반 청킹에서는 필요한 경우 단위 종류와 위치 필드를 더합니다.</p>
+<h3>정의</h3>
+<dl class="term">
+<dt>문단 (paragraph)</dt><dd>DOCX에서 문장과 서식을 담는 기본 블록입니다. 빈 문단과 제목 문단도 있으므로 텍스트만 보고 역할을 확정하지 않습니다.</dd>
+<dt>문서 객체 모델 (Document Object Model, DOM)</dt><dd>HTML 요소를 부모와 자식 관계의 트리로 표현한 구조입니다. 제목 아래의 본문과 목록을 같은 구역으로 묶는 근거가 됩니다.</dd>
+<dt>본문 선택자 (content selector)</dt><dd>HTML에서 실제 문서 내용이 들어 있는 요소를 고르는 규칙입니다. 내비게이션·광고·바닥글을 제외하고 <code>main</code>이나 지정된 <code>article</code>을 선택합니다.</dd>
+<dt>CSV 방언 (CSV dialect)</dt><dd>구분자, 따옴표, 이스케이프 방식처럼 CSV 생산자마다 달라지는 형식 규칙의 묶음입니다.</dd>
+<dt>형식 보존 단위 (typed unit)</dt><dd>본문과 함께 <code>paragraph</code>, <code>table</code>, <code>section</code>, <code>row</code> 같은 종류를 기록한 처리 단위입니다.</dd>
+</dl>
+
+<figure>{{svg:03-형식별-단위}}<figcaption>형식 보존 로더의 설계 목표입니다. DOCX 문단·표, HTML 제목·본문, CSV 머리글을 포함한 행을 구분해 공통 <code>Document</code> 계약에 넣습니다. 이번 기준선은 DOCX·HTML은 파일 단위, CSV는 행 단위까지만 구현합니다.</figcaption></figure>
+<p>DOCX는 <code>python-docx</code>로 문단과 표를 별도 객체로 읽을 수 있습니다. 이번 로더는 <code>iter_inner_content()</code>로 문단과 표의 문서 순서를 따르고, 표 앞에 표 번호를 넣은 뒤 셀을 <code>|</code>로 구분합니다. 표를 행별 <code>Document</code>로 나누거나 <code>table_index</code> 메타데이터를 붙이는 처리는 아직 구현하지 않았습니다. 더 정밀한 검색이 필요하면 열 이름을 각 행에 반복하고 표 위치를 별도 필드로 확장합니다.</p>
+<p>HTML은 <code>script</code>와 <code>style</code>을 제거한 뒤 보이는 텍스트를 읽습니다. 이번 기준선은 <code>html.parser</code>와 전체 문서를 사용하므로, 본문 선택자 기능은 아직 없습니다. 잘못 닫힌 태그가 있는 HTML은 <code>html.parser</code>, <code>lxml</code>, <code>html5lib</code>가 서로 다른 트리를 만들 수 있습니다. 운영 사이트에서는 파서를 고정하고 <code>main</code>이나 <code>article</code> 선택자를 추가하여 메뉴와 바닥글의 반복을 막습니다.</p>
+<p>CSV는 한 행이 하나의 사실 묶음인 경우가 많습니다. <code>DictReader</code>로 열 이름과 값을 결합하면 “4.5”라는 값만 남는 대신 “연속 동작 시간: 4.5시간”처럼 검색 가능한 문장이 됩니다. 파일은 <code>newline=''</code>로 열고 인코딩과 구분자를 입력 계약에 드러냅니다. <code>Sniffer.has_header()</code>는 휴리스틱이므로 헤더 유무를 최종 확정하는 기능으로 사용하지 않습니다.</p>
+<table><tr><th>형식</th><th>현재 기준선 단위</th><th>현재 위치 표현</th><th>확장할 때의 후보</th></tr>
+<tr><td>DOCX</td><td>파일당 하나</td><td>본문 안의 <code>[표 N]</code></td><td><code>block_index</code>, <code>table_index</code></td></tr>
+<tr><td>HTML</td><td>파일당 하나</td><td>줄바꿈으로 제목·본문 구분</td><td><code>section</code>, <code>selector</code></td></tr>
+<tr><td>CSV</td><td>데이터 행당 하나</td><td>메타데이터 <code>row</code></td><td><code>dialect</code>, 스키마 버전</td></tr></table>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>다음 노트북은 저장소의 작은 DOCX·HTML·CSV 픽스처를 형식별 라이브러리로 읽습니다. 학생은 문단, 본문 텍스트, 데이터 행의 차이를 출력으로 확인합니다.</p>
+{{notebook:03-DOCX-HTML-CSV|example}}
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before 셀은 존재하지 않는 CSV 열을 읽어 <code>KeyError</code>를 포착합니다. After 셀은 필수 열 <code>상품</code>과 <code>보관</code>을 먼저 검증한 뒤 값을 읽습니다.</p>
+{{notebook:03-DOCX-HTML-CSV|failure}}
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul><li><strong>구조를 보존하되 거대한 단위로 만들지 않습니다.</strong> 문서 전체 표가 지나치게 크면 행 묶음으로 나누고 표 제목과 머리글을 각 단위에 반복합니다.</li>
+<li><strong>빈 문단과 숨김 요소를 검사합니다.</strong> 화면에 보이지 않는 텍스트나 변경 내용이 추출될 수 있으므로 업무 규칙에 맞는 포함 범위를 정합니다.</li>
+<li><strong>인코딩 오류를 조용히 대체하지 않습니다.</strong> 잘못 읽은 CSV를 대체 문자로 저장하면 원본 손실을 찾기 어렵습니다. 후보 인코딩과 실패를 로그에 남깁니다.</li>
+<li><strong>HTML 파서를 고정합니다.</strong> 잘못된 HTML에서 파서별 DOM이 달라질 수 있으므로 라이브러리와 파서 이름을 함께 기록합니다.</li>
+<li><strong>개인정보 열을 구분합니다.</strong> CSV의 주민번호·연락처처럼 검색에 불필요한 열은 로더에서 제외하거나 별도 접근 정책을 적용합니다.</li></ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>현재 DOCX 로더는 문단·표의 순서와 표 구분 표식을 본문에, HTML 로더는 보이는 텍스트의 줄 경계를 본문에, CSV 로더는 행 번호를 메타데이터에 남깁니다.</li>
+<li>공통 <code>Document</code> 계약 안에서 DOCX의 표 구분 표식, HTML 줄 경계, CSV 행 번호처럼 현재 로더가 지원하는 구조를 남깁니다.</li>
+<li>HTML 파서와 본문 선택자, CSV 인코딩·구분자·헤더 유무는 자동 추정에 맡기지 않고 입력 계약으로 기록합니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 현재 로더가 남긴 표 구분 표식·줄 경계·행 번호는 구조 기반 청킹의 출발점입니다. 제목 구역과 표 위치를 독립 메타데이터로 쓰려면 로더를 확장해야 합니다. 다음 04절에서는 한국 실무에서 자주 만나는 HWP와 HWPX의 내부 구조 차이를 확인하고, 변환 또는 전용 도구가 필요한 경계를 정합니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. [하] CSV 한 행을 값만 연결하지 않고 열 이름과 함께 저장하는 이유는 무엇입니까?</p><p class="quiz-a">값의 의미를 나타내는 머리글이 함께 있어야 검색과 답변에서 “무엇의 값인지” 알 수 있기 때문입니다.</p>
+<p class="quiz-q">2. [중] HTML 전체 텍스트 추출이 검색 품질을 낮출 수 있는 이유는 무엇입니까?</p><p class="quiz-a">메뉴·광고·바닥글 같은 반복 텍스트가 본문과 함께 들어와 질문 단어와 잘못 일치하고, 실제 본문 청크의 순위를 밀어낼 수 있기 때문입니다.</p>
+<p class="quiz-q">3. [중] 잘못된 HTML에서 파서 이름과 버전을 기록해야 하는 이유는 무엇입니까?</p><p class="quiz-a">파서마다 서로 다른 DOM을 만들 수 있어 같은 선택자가 다른 본문을 반환할 수 있습니다. 결과를 재현하려면 파서 조건이 필요합니다.</p>
+<p class="quiz-q">4. [상] DOCX 표를 청킹할 때 행마다 반복해 넣어야 할 정보와 그 비용을 설명하세요.</p><p class="quiz-a">표 제목과 열 머리글을 각 행 또는 행 묶음에 반복해야 값의 의미가 유지됩니다. 반복한 만큼 토큰과 임베딩 비용이 늘므로 표 크기와 질의 유형에 따라 묶음 크기를 측정해야 합니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul><li>python-docx 공식 문서 「Quickstart」 — <a href="https://python-docx.readthedocs.io/en/latest/user/quickstart.html">python-docx.readthedocs.io</a> · 확인 2026-09-08 · 문단·표 API.</li>
+<li>Beautiful Soup 공식 문서 「Installing a parser」 — <a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser">crummy.com/software/BeautifulSoup</a> · 확인 2026-09-08 · 잘못된 HTML의 파서별 차이.</li>
+<li>Python 공식 문서 「csv — CSV File Reading and Writing」 — <a href="https://docs.python.org/3/library/csv.html">docs.python.org/3/library/csv.html</a> · 확인 2026-09-08 · <code>newline=''</code>, 방언, <code>Sniffer</code> 한계.</li></ul>

@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  root["후보 8개 · 개발 질문 15개"]:::flow
+  subgraph two["넘길 부모 수 2"]
+    t1["조각 수 평균 4206"]:::measure
+    t2["입력 가용분에 든 질문 6"]:::measure
+    t3["넘긴 부모 목록의 재현율 1.0"]:::measure
+  end
+  subgraph one["넘길 부모 수 1"]
+    o1["조각 수 평균 2502"]:::measure
+    o2["입력 가용분에 든 질문 15"]:::measure
+    o3["넘긴 부모 목록의 재현율 1.0"]:::measure
+  end
+  root --> t1
+  root --> o1
+  t1 --> t2
+  t2 --> t3
+  o1 --> o2
+  o2 --> o3

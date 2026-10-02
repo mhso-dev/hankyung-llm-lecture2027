@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  a["먼저 자르기 trim_history<br>남길 수가 1보다 작으면 멈춤"]:::flow
+  b["오래된 대화 셋<br>history_text로 글 하나"]:::flow
+  c["요약 모델 gpt-5.4-mini<br>요약 글 한 편"]:::model
+  d["요약 메시지<br>역할 user와 자료 표시"]:::measure
+  e["시스템 하나와 요약 메시지<br>최근 대화 둘을 이음<br>메시지 넷"]:::measure
+  a --> b
+  b --> c
+  c --> d
+  d --> e

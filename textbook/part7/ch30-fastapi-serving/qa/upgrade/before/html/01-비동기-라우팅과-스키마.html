@@ -1,0 +1,249 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>비동기 라우팅과 스키마 — Ch 30 · FastAPI로 Agent 서빙</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 7 · 서비스화 &amp; 배포 · Ch 30 · FastAPI로 Agent 서빙</p>
+<h1>비동기 라우팅과 스키마</h1><div class="meta"><span>강의 1.25h</span><span>실습 2.5h</span><span>새 용어 4</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1.25h | 실습 2.5h | 코드 Jupyter Notebook | 새 용어 4 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>비동기 경로 연산을 선언하고 요청 처리 순서를 설명할 수 있습니다.</li><li>Pydantic 제약으로 잘못된 요청을 Agent 호출 전에 거부할 수 있습니다.</li><li>정상 입력과 422 검증 오류를 직접 비교할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>노트북의 Agent는 파이썬 함수 호출로 시작했습니다. 웹 서비스에서는 다른 프로그램이 HTTP 요청을 보내므로 문자열 하나도 경로, 메서드, 본문 형식이라는 경계를 통과해야 합니다. 이 경계를 먼저 고정해야 Agent 오류와 웹 입력 오류를 구분할 수 있습니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>Ch2에서 `async def`와 `await`를 배웠고 Ch21에서 Agent 실행 객체를 만들었습니다. Ch25에서는 결과가 조각으로 이어질 수 있음을 확인했습니다. 이 절은 그 실행을 HTTP에 놓기 전에 요청과 응답의 모양부터 고정합니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><p>식당의 주문표에는 메뉴, 수량, 알레르기 표시를 적는 칸이 있습니다. 비어 있거나 잘못 적힌 주문은 주방에 들어가기 전에 되돌아갑니다. 웹 API의 스키마도 같은 역할을 합니다. 라우트(route)는 HTTP 메서드와 URL 경로를 파이썬 함수에 연결한 규칙입니다. FastAPI에서는 `@app.post('/v1/chat')` 아래의 함수를 경로 연산(path operation)이라고 합니다. 요청 스키마는 클라이언트가 보낼 필드와 제약을, 응답 스키마는 서버가 반환할 필드와 타입을 선언합니다.</p><p>Pydantic의 `Field(min_length=1, max_length=500)`는 질문이 비었거나 지나치게 긴 요청을 함수 실행 전에 거부합니다. 따라서 잘못된 입력은 모델 비용을 발생시키지 않습니다. 422 상태는 서버 장애가 아니라 요청 본문이 선언과 맞지 않는다는 뜻입니다. 클라이언트는 오류 위치와 종류를 읽어 사용자가 고칠 수 있는 메시지로 바꿉니다.</p><p>`async def`는 함수를 여러 CPU에서 자동으로 실행한다는 뜻이 아닙니다. 네트워크나 저장소를 기다리는 지점에서 `await`로 실행권을 이벤트 루프에 넘길 수 있다는 뜻입니다. Agent의 모델 호출은 대기 시간이 길 수 있어 이 방식과 잘 맞습니다. 반대로 긴 CPU 계산을 비동기 함수 안에서 직접 수행하면 다른 요청도 기다릴 수 있습니다.</p><p>응답 모델은 문서 장식이 아닙니다. 내부 상태에서 공개할 필드만 골라 직렬화하고 OpenAPI에 타입을 기록합니다. Agent 상태 전체를 반환하면 시스템 메시지, 도구 출력, 디버그 정보가 외부에 노출될 수 있습니다. 이 장은 `answer`와 `thread_id`만 새 응답 객체로 만듭니다.</p><h3>코드 읽기와 개념 경계</h3><p>코드는 <code>Question(BaseModel)</code>로 요청 본문의 모양을 먼저 선언합니다. <code>text: str = Field(...)</code>에서 콜론 뒤의 <code>str</code>은 받을 값의 타입이고, <code>Field</code>의 길이 조건은 라우트 함수가 실행되기 전에 적용됩니다. <code>@mini.post('/ask')</code>는 아래 <code>ask</code> 함수를 POST 요청과 연결하며, <code>body: Question</code>에는 검증이 끝난 객체가 전달됩니다. <code>TestClient.post(..., json=...)</code>가 파이썬 사전을 JSON 본문으로 보내고, 반환된 응답에서 상태 코드와 JSON을 따로 읽습니다.</p><p>같은 빈 문자열이라도 쿼리 매개변수, 헤더, JSON 본문 가운데 어디에 놓였는지에 따라 오류 위치가 달라집니다. 또한 422는 입력 형식이 선언과 맞지 않는 경우이고, 라우트 안의 코드가 실패해 생기는 500과 구분해야 합니다. 이 경계를 이해하면 모델 호출 전에 막힌 요청과 모델 실행 중 실패한 요청을 같은 장애로 집계하지 않게 됩니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 430" style="width:380px;max-width:none;height:auto;display:block;margin:0 auto" role="img" aria-label="요청 본문이 스키마 검증을 통과한 뒤 비동기 라우트에서 처리되어 응답으로 반환됩니다."><title>요청 본문이 스키마 검증을 통과한 뒤 비동기 라우트에서 처리되어 응답으로 반환됩니다.</title><defs><marker id="01-흐름-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#334155"/></marker></defs><path d="M190,85 L190,116" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#01-흐름-arrow)"/><path d="M190,185 L190,216" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#01-흐름-arrow)"/><path d="M190,285 L190,316" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#01-흐름-arrow)"/><rect x="30" y="20" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="59.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">HTTP 요청</text><rect x="30" y="120" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="159.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">Pydantic 검증</text><rect x="30" y="220" width="320" height="65" rx="10" fill="#DDEAF4" stroke="#334155" stroke-width="2"/><text x="190.0" y="259.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">async 라우트</text><rect x="30" y="320" width="320" height="65" rx="10" fill="#DDEDE8" stroke="#334155" stroke-width="2"/><text x="190.0" y="359.0" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#172033">JSON 응답</text></svg></div><p>위쪽의 요청에서 아래쪽의 관찰 결과까지 화살표를 따라 읽습니다. 파란 상자는 데이터, 보라색 상자는 Agent 실행, 초록 상자는 확인할 결과를 나타냅니다.</p><h3>서비스 설계 판단</h3><p>서비스 스키마를 정할 때는 성공 예시만 보지 않고 경계값을 표로 적습니다. 질문 길이가 1, 500, 501일 때의 상태 코드와 오류 본문을 확인하고, 필드가 없을 때와 null일 때가 같은지도 구분합니다. 프런트엔드가 보내지 않는 필드에 기본값을 둘지, 누락을 오류로 볼지도 제품 요구에 따라 결정합니다. 응답 모델에서는 클라이언트가 실제로 읽는 필드와 서버 내부 추적 필드를 나눕니다. 이 표가 있으면 모델 호출 결과가 달라져도 HTTP 입력 검증은 결정적으로 회귀 검사할 수 있습니다. 비동기 라우트의 처리량을 확인할 때는 한 요청의 속도만 재지 않고 여러 요청이 기다리는 상황에서 다른 요청이 진행되는지 봅니다. 로컬 TestClient는 기본 계약을 빠르게 확인하는 도구이며, 실제 서버의 동시성은 uvicorn 프로세스와 외부 모델 연결을 포함한 부하 실험에서 측정합니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>작은 FastAPI 앱에 `async def` 라우트와 Pydantic 모델을 연결합니다. 정상 문자열은 200과 길이를 반환하고 빈 문자열은 422로 거부됩니다. 같은 경로와 모델에서 입력 값 하나만 바꾸므로 스키마 제약의 효과를 분리해 관찰할 수 있습니다.</p><section class="notebook" data-notebook="01-비동기-라우팅과-스키마" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="01-비동기-라우팅과-스키마.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDruYTrj5nquLAg65287Jqw7YyF6rO8IFB5ZGFudGljIOyKpO2CpOuniFxuIiwKICAgICJcbiIsCiAgICAi7JqU7LKtIOuzuOusuOydhCDtg4DsnoXsnLzroZwg7ISg7Ja47ZWY66m0IOygleyDgSDsnoXroKXqs7wg7J6Y66q765CcIOyeheugpeydtCDslrTrlrvqsowg64KY64mY64qU7KeAIO2ZleyduO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAyIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7ZaJIO2ZmOqyvSDspIDruYRcbiIsCiAgICAiXG4iLAogICAgIu2YhOyerCDtj7TrjZTrgpgg7IOB7JyEIO2PtOuNlOyXkOyEnCBgbGFicy9wYXJ0Ny9jaDMwLWZhc3RhcGktc2VydmluZ2DsnYQg7LC+7JWEIOyekeyXhSDtj7TrjZTroZwg7IKs7Jqp7ZWp64uI64ukLiDruYTrsIAg7YKk66W8IOy2nOugpe2VmOyngCDslYrsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAicHJlcC0zMC0wMS0wIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDspIDruYQg7IWA7J20IO2VmOuKlCDsnbxcbiIsCiAgICAiXG4iLAogICAgIuydtCDspIDruYQg7IWA7J2AIGBQYXRoLmN3ZCgpLnJlc29sdmUoKWDroZwg7ZiE7J6sIO2PtOuNlOulvCDsoIjrjIAg6rK966Gc66GcIOydveqzoCwg7ZiE7J6sIO2PtOuNlOyZgCDrtoDrqqgg7Y+0642U7JeQ7IScIGBhZ2VudF9zZXJ2aWNlYOqwgCDsnojripQg7LKrIOychOy5mOulvCBgbmV4dCguLi4sIE5vbmUpYOuhnCDssL7sirXri4jri6QuIOywvuyngCDrqrvtlZjrqbQgYGFzc2VydGDqsIAg7Iuk7ZaJ7J2EIOykkeuLqO2VqeuLiOuLpC4g7LC+7J2AIOuSpCBgb3MuY2hkaXIobGFiKWDsnbQg7J207ZuEIGltcG9ydOyZgCDtjIzsnbwg7KCR6re87J2YIOq4sOykgCDtj7TrjZTrpbwg67CU6r646rOgLCDrp4jsp4Drp4kg7Lac66Cl7J2AIOyLpOygnCDshKDtg53rkJwg7Y+0642UIOydtOumhOydhCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoyOTozOS43MDU0NjlaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoyOTozOS43MDUzMTBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoyOTozOS43MTU1MDNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjI5OjM5LjcxNDgzN1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsi6TsirUg7Y+0642UOiBjaDMwLWZhc3RhcGktc2VydmluZ1xuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICJpbXBvcnQgb3NcbiIsCiAgICAiZnJvbSBwYXRobGliIGltcG9ydCBQYXRoXG4iLAogICAgInN0YXJ0ID0gUGF0aC5jd2QoKS5yZXNvbHZlKClcbiIsCiAgICAibGFiID0gbmV4dCgocCBmb3IgcCBpbiAoc3RhcnQsICpzdGFydC5wYXJlbnRzKVxuIiwKICAgICIgICAgaWYgKHAgLyAnYWdlbnRfc2VydmljZScpLmlzX2RpcigpKSwgTm9uZSlcbiIsCiAgICAiYXNzZXJ0IGxhYiBpcyBub3QgTm9uZSwgJ2FnZW50X3NlcnZpY2XqsIAg7J6I64qUIENoMzAg7Iuk7Iq1IO2PtOuNlOyXkOyEnCDsi6TtlontlZjshLjsmpQuJ1xuIiwKICAgICJvcy5jaGRpcihsYWIpXG4iLAogICAgInByaW50KCfsi6TsirUg7Y+0642UOicsIFBhdGguY3dkKCkubmFtZSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA0IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6riw67O4IOyLpO2WiVxuIiwKICAgICJcbiIsCiAgICAi7J6R7J2AIEZhc3RBUEkg7JWx7JeQIGBhc3luYyBkZWZgIOudvOyasO2KuOyZgCBQeWRhbnRpYyDsmpTssq0g66qo64247J2EIOyXsOqysO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTMwLTAxLWEiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg67CU66GcIOuLpOydjCDsvZTrk5zrpbwg7J2964qUIOuwqeuylVxuIiwKICAgICJcbiIsCiAgICAi7L2U65Oc64qUIGBRdWVzdGlvbihCYXNlTW9kZWwpYOuhnCDsmpTssq0g67O466y47J2YIOuqqOyWkeydhCDrqLzsoIAg7ISg7Ja47ZWp64uI64ukLiBgdGV4dDogc3RyID0gRmllbGQoLi4uKWDsl5DshJwg7L2c66GgIOuSpOydmCBgc3RyYOydgCDrsJvsnYQg6rCS7J2YIO2DgOyeheydtOqzoCwgYEZpZWxkYOydmCDquLjsnbQg7KGw6rG07J2AIOudvOyasO2KuCDtlajsiJjqsIAg7Iuk7ZaJ65CY6riwIOyghOyXkCDsoIHsmqnrkKnri4jri6QuIGBAbWluaS5wb3N0KCcvYXNrJylg64qUIOyVhOuemCBgYXNrYCDtlajsiJjrpbwgUE9TVCDsmpTssq3qs7wg7Jew6rKw7ZWY66mwLCBgYm9keTogUXVlc3Rpb25g7JeQ64qUIOqygOymneydtCDrgZ3rgpwg6rCd7LK06rCAIOyghOuLrOuQqeuLiOuLpC4gYFRlc3RDbGllbnQucG9zdCguLi4sIGpzb249Li4uKWDqsIAg7YyM7J207I2sIOyCrOyghOydhCBKU09OIOuzuOusuOycvOuhnCDrs7TrgrTqs6AsIOuwmO2ZmOuQnCDsnZHri7Xsl5DshJwg7IOB7YOcIOy9lOuTnOyZgCBKU09O7J2EIOuUsOuhnCDsnb3sirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAyLAogICAiaWQiOiAiY2VsbC0wNSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0xMVQwMjoyOTozOS43MTY5NzhaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0xMVQwMjoyOTozOS43MTY4NDdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0xMVQwMjoyOTozOS44NTk2MjVaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTExVDAyOjI5OjM5Ljg1OTIwM1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogW10sCiAgICJzb3VyY2UiOiBbCiAgICAiZnJvbSBmYXN0YXBpIGltcG9ydCBGYXN0QVBJXG4iLAogICAgImZyb20gZmFzdGFwaS50ZXN0Y2xpZW50IGltcG9ydCBUZXN0Q2xpZW50XG4iLAogICAgImZyb20gcHlkYW50aWMgaW1wb3J0IEJhc2VNb2RlbCwgRmllbGRcbiIsCiAgICAiXG4iLAogICAgImNsYXNzIFF1ZXN0aW9uKEJhc2VNb2RlbCk6XG4iLAogICAgIiAgICB0ZXh0OiBzdHIgPSBGaWVsZChtaW5fbGVuZ3RoPTEsIG1heF9sZW5ndGg9MjApXG4iLAogICAgIlxuIiwKICAgICJtaW5pID0gRmFzdEFQSSgpXG4iLAogICAgIkBtaW5pLnBvc3QoJy9hc2snKVxuIiwKICAgICJhc3luYyBkZWYgYXNrKGJvZHk6IFF1ZXN0aW9uKTpcbiIsCiAgICAiICAgIHJldHVybiB7J2xlbmd0aCc6IGxlbihib2R5LnRleHQpfVxuIiwKICAgICJcbiIsCiAgICAiY2xpZW50ID0gVGVzdENsaWVudChtaW5pKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDYiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsoJXsg4Eg7JqU7LKtIOq0gOywsFxuIiwKICAgICJcbiIsCiAgICAiSlNPTiDrs7jrrLjsnbQgYFF1ZXN0aW9uYCDqsJ3ssrTroZwg67OA7ZmY65CcIOuSpCDquLjsnbTqsIAg67CY7ZmY65Cp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6Mjk6MzkuODYwNDkwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6Mjk6MzkuODYwNDIxWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6Mjk6MzkuODY4NTg3WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoyOTozOS44NjgyMjJaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiMjAwIHsnbGVuZ3RoJzogNX1cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAib2sgPSBjbGllbnQucG9zdCgnL2FzaycsIGpzb249eyd0ZXh0JzogJ+yViOuFle2VmOyEuOyalCd9KVxuIiwKICAgICJwcmludChvay5zdGF0dXNfY29kZSwgb2suanNvbigpKVxuIiwKICAgICJhc3NlcnQgb2suanNvbigpID09IHsnbGVuZ3RoJzogNX0iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImJlZm9yZSIKICAgfSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDsi6TtjKgg7J6s7ZiEXG4iLAogICAgIlxuIiwKICAgICLruYgg66y47J6Q7Je07J2AIOydkeyaqSDsvZTrk5zsl5Ag64+E64us7ZWY6riwIOyghOyXkCDsiqTtgqTrp4gg6rKA7Kad7JeQ7IScIOqxsOu2gOuQqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDAyOjI5OjM5Ljg2OTMxMloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDAyOjI5OjM5Ljg2OTI2OFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDAyOjI5OjM5Ljg3MTgzMloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDI6Mjk6MzkuODcxNTAyWiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiNDIyIHN0cmluZ190b29fc2hvcnRcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiYmFkID0gY2xpZW50LnBvc3QoJy9hc2snLCBqc29uPXsndGV4dCc6ICcnfSlcbiIsCiAgICAicHJpbnQoYmFkLnN0YXR1c19jb2RlLCBiYWQuanNvbigpWydkZXRhaWwnXVswXVsndHlwZSddKVxuIiwKICAgICJhc3NlcnQgYmFkLnN0YXR1c19jb2RlID09IDQyMiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMTAiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7IiY7KCVXG4iLAogICAgIlxuIiwKICAgICLqsJnsnYAg7JqU7LKt7JeQ7IScIOuCtOyaqeydhCDtlZwg6riA7J6QIOydtOyDgSDssYTsmrDrqbQg6rKA7Kad7J2EIO2GteqzvO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjb25jZXB0LTMwLTAxLWIiLAogICAibWV0YWRhdGEiOiB7CiAgICAibGVzc29uX3BhcnQiOiAiYWZ0ZXIiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOydtCDri6jqs4Tsl5DshJwg6rWs67aE7ZWgIOuylOychFxuIiwKICAgICJcbiIsCiAgICAi6rCZ7J2AIOu5iCDrrLjsnpDsl7TsnbTrnbzrj4Qg7L+866asIOunpOqwnOuzgOyImCwg7Zek642ULCBKU09OIOuzuOusuCDqsIDsmrTrjbAg7Ja065SU7JeQIOuGk+yYgOuKlOyngOyXkCDrlLDrnbwg7Jik66WYIOychOy5mOqwgCDri6zrnbzsp5Hri4jri6QuIOuYkO2VnCA0MjLripQg7J6F66ClIO2YleyLneydtCDshKDslrjqs7wg66ee7KeAIOyViuuKlCDqsr3smrDsnbTqs6AsIOudvOyasO2KuCDslYjsnZgg7L2U65Oc6rCAIOyLpO2MqO2VtCDsg53quLDripQgNTAw6rO8IOq1rOu2hO2VtOyVvCDtlanri4jri6QuIOydtCDqsr3qs4Trpbwg7J207ZW07ZWY66m0IOuqqOuNuCDtmLjstpwg7KCE7JeQIOunie2ejCDsmpTssq3qs7wg66qo6424IOyLpO2WiSDspJEg7Iuk7Yyo7ZWcIOyalOyyreydhCDqsJnsnYAg7J6l7JWg66GcIOynkeqzhO2VmOyngCDslYrqsowg65Cp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNSwKICAgImlkIjogImNlbGwtMTEiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDI6Mjk6MzkuODcyNDU3WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDI6Mjk6MzkuODcyNDE4WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDI6Mjk6MzkuODc0NzUwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwMjoyOTozOS44NzQ1MTRaIgogICAgfSwKICAgICJsZXNzb25fcGFydCI6ICJhZnRlciIKICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIjIwMCB7J2xlbmd0aCc6IDJ9XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgImZpeGVkID0gY2xpZW50LnBvc3QoJy9hc2snLCBqc29uPXsndGV4dCc6ICftmZXsnbgnfSlcbiIsCiAgICAicHJpbnQoZml4ZWQuc3RhdHVzX2NvZGUsIGZpeGVkLmpzb24oKSlcbiIsCiAgICAiYXNzZXJ0IGZpeGVkLnN0YXR1c19jb2RlID09IDIwMCIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAicGFpcmVkIiwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogNSwKICAgImNvZGVfc2hhMjU2IjogIjdiZDU3ZDFmOTA3MjVlYTM5NThlMjQ3NDk3OTJkMWExNDI3MzQwNmE5NjBhZTMxNzJjOTg1ZTcwNWNhOWFmNWQiLAogICAiZXhlY3V0ZWRfYXQiOiAiMjAyNi0wOS0xMVQwMjoyOTozOS45OTA2MTkrMDA6MDAiLAogICAiZnJlc2hfa2VybmVsIjogdHJ1ZSwKICAgIm91dHB1dHNfc2hhMjU2IjogIjE5OGZmOGNiNWQ5NDQ4NWQ4YjY5NmQ4YTc0OGJjMzdkZjJhYzIwZjU4NzZlODQ2NTczZTMxNzM4NjJjZmNhNWUiLAogICAicHl0aG9uX3ZlcnNpb24iOiAiMy4xMi4xMyIsCiAgICJzdGF0dXMiOiAicGFzc2VkIgogIH0KIH0sCiAibmJmb3JtYXQiOiA0LAogIm5iZm9ybWF0X21pbm9yIjogNQp9Cg==">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>비동기 라우팅과 Pydantic 스키마</h2>
+<p>요청 본문을 타입으로 선언하면 정상 입력과 잘못된 입력이 어떻게 나뉘는지 확인합니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>현재 폴더나 상위 폴더에서 <code>labs/part7/ch30-fastapi-serving</code>을 찾아 작업 폴더로 사용합니다. 비밀 키를 출력하지 않습니다.</p></div>
+<div class="nb-markdown"><h4>이 준비 셀이 하는 일</h4>
+<p>이 준비 셀은 <code>Path.cwd().resolve()</code>로 현재 폴더를 절대 경로로 읽고, 현재 폴더와 부모 폴더에서 <code>agent_service</code>가 있는 첫 위치를 <code>next(..., None)</code>로 찾습니다. 찾지 못하면 <code>assert</code>가 실행을 중단합니다. 찾은 뒤 <code>os.chdir(lab)</code>이 이후 import와 파일 접근의 기준 폴더를 바꾸고, 마지막 출력은 실제 선택된 폴더 이름을 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">import os
+from pathlib import Path
+start = Path.cwd().resolve()
+lab = next((p for p in (start, *start.parents)
+    if (p / &#x27;agent_service&#x27;).is_dir()), None)
+assert lab is not None, &#x27;agent_service가 있는 Ch30 실습 폴더에서 실행하세요.&#x27;
+os.chdir(lab)
+print(&#x27;실습 폴더:&#x27;, Path.cwd().name)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">실습 폴더: ch30-fastapi-serving
+</pre></div>
+<div class="nb-markdown"><h3>기본 실행</h3>
+<p>작은 FastAPI 앱에 <code>async def</code> 라우트와 Pydantic 요청 모델을 연결합니다.</p></div>
+<div class="nb-markdown"><h4>바로 다음 코드를 읽는 방법</h4>
+<p>코드는 <code>Question(BaseModel)</code>로 요청 본문의 모양을 먼저 선언합니다. <code>text: str = Field(...)</code>에서 콜론 뒤의 <code>str</code>은 받을 값의 타입이고, <code>Field</code>의 길이 조건은 라우트 함수가 실행되기 전에 적용됩니다. <code>@mini.post(&#x27;/ask&#x27;)</code>는 아래 <code>ask</code> 함수를 POST 요청과 연결하며, <code>body: Question</code>에는 검증이 끝난 객체가 전달됩니다. <code>TestClient.post(..., json=...)</code>가 파이썬 사전을 JSON 본문으로 보내고, 반환된 응답에서 상태 코드와 JSON을 따로 읽습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from pydantic import BaseModel, Field
+
+class Question(BaseModel):
+    text: str = Field(min_length=1, max_length=20)
+
+mini = FastAPI()
+@mini.post(&#x27;/ask&#x27;)
+async def ask(body: Question):
+    return {&#x27;length&#x27;: len(body.text)}
+
+client = TestClient(mini)</code></pre></div></div>
+<div class="nb-markdown"><h3>정상 요청 관찰</h3>
+<p>JSON 본문이 <code>Question</code> 객체로 변환된 뒤 길이가 반환됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">ok = client.post(&#x27;/ask&#x27;, json={&#x27;text&#x27;: &#x27;안녕하세요&#x27;})
+print(ok.status_code, ok.json())
+assert ok.json() == {&#x27;length&#x27;: 5}</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">200 {&#x27;length&#x27;: 5}
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — 정상 요청의 200과 `length`, 빈 문자열 요청의 422와 `string_too_short`를 실제 출력에서 확인합니다.</p>
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2><p>Before에서는 빈 문자열의 422와 최소 길이 오류를 확인합니다. After에서는 같은 JSON 필드에 한 글자 이상의 값을 넣어 200을 받습니다. 오류를 임의의 검사 함수로 만들지 않고 FastAPI가 실제로 반환한 응답을 읽습니다.</p><section class="notebook" data-notebook="01-비동기-라우팅과-스키마" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현</h3>
+<p>빈 문자열은 응용 코드에 도달하기 전에 스키마 검증에서 거부됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">bad = client.post(&#x27;/ask&#x27;, json={&#x27;text&#x27;: &#x27;&#x27;})
+print(bad.status_code, bad.json()[&#x27;detail&#x27;][0][&#x27;type&#x27;])
+assert bad.status_code == 422</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">422 string_too_short
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정</h3>
+<p>같은 요청에서 내용을 한 글자 이상 채우면 검증을 통과합니다.</p></div>
+<div class="nb-markdown"><h4>이 단계에서 구분할 범위</h4>
+<p>같은 빈 문자열이라도 쿼리 매개변수, 헤더, JSON 본문 가운데 어디에 놓였는지에 따라 오류 위치가 달라집니다. 또한 422는 입력 형식이 선언과 맞지 않는 경우이고, 라우트 안의 코드가 실패해 생기는 500과 구분해야 합니다. 이 경계를 이해하면 모델 호출 전에 막힌 요청과 모델 실행 중 실패한 요청을 같은 장애로 집계하지 않게 됩니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">fixed = client.post(&#x27;/ask&#x27;, json={&#x27;text&#x27;: &#x27;확인&#x27;})
+print(fixed.status_code, fixed.json())
+assert fixed.status_code == 200</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">200 {&#x27;length&#x27;: 2}
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>비동기 함수 안에서 동기 HTTP 클라이언트나 긴 파일 처리를 호출하면 이벤트 루프가 멈출 수 있습니다.</li><li>질문 길이 500자는 교육용 값입니다. 실제 서비스에서는 토큰 한도와 비용을 측정해 정합니다.</li><li>오류 세부 정보를 화면에 그대로 노출하지 말고 사용자가 수정할 항목만 안내합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>비동기 경로 연산을 선언하고 요청 처리 순서를 설명할 수 있습니다.</li><li>Pydantic 제약으로 잘못된 요청을 Agent 호출 전에 거부할 수 있습니다.</li><li>정상 입력과 422 검증 오류를 직접 비교할 수 있습니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — 02절에서는 Agent 객체와 인증 로직을 `Depends`로 전달합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>1. Pydantic 검증은 언제 실행되나요?</summary><p class="quiz-a"><b>해설</b> — 경로 연산 함수가 호출되기 전에 실행됩니다.</p></details><details class="quiz"><summary>2. `async def`가 CPU 계산을 자동 병렬화하나요?</summary><p class="quiz-a"><b>해설</b> — 아닙니다. 기다림을 양보하게 하며 CPU 병렬 처리는 별도 설계가 필요합니다.</p></details><details class="quiz"><summary>3. 응답 모델을 따로 두는 이유는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 외부에 공개할 필드를 제한하고 안정적인 타입을 기록하기 위해서입니다.</p></details><details class="quiz"><summary>4. 빈 질문의 상태 코드는 무엇인가요?</summary><p class="quiz-a"><b>해설</b> — 422입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://fastapi.tiangolo.com/tutorial/body/">FastAPI 요청 본문</a> · 확인 2026-09-11</li><li><a href="https://fastapi.tiangolo.com/async/">FastAPI async</a> · 확인 2026-09-11</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span>&nbsp;</span><span><a href="index.html">챕터 목차</a></span><span><a href="02-의존성으로-Agent-주입.html">의존성으로 Agent 주입 →</a></span></div></div></body></html>

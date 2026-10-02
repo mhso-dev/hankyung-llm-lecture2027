@@ -1,0 +1,563 @@
+{
+  "sections": [
+    {
+      "chapter": "ch30-fastapi-serving",
+      "section": "01-비동기-라우팅과-스키마",
+      "prose_characters": 13712,
+      "code_cells": 22,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 22,
+        "code_sha256": "861cacdb64be1cf3bf7a5e8e712eab20cc46488075e16225f7f182699fb3337f",
+        "executed_at": "2026-09-29T06:32:54.621453+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "87ea510f027a766becb9c3e031690b996b3f266d918be96ef7d73b9d136e7542",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch30-fastapi-serving",
+      "section": "02-의존성으로-Agent-주입",
+      "prose_characters": 12950,
+      "code_cells": 24,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 24,
+        "code_sha256": "c52cc10f20174814794fa5777b3b7e0770f2201aada1275662980fdc31abe2fc",
+        "executed_at": "2026-09-29T07:10:35.369296+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "2003205a3569603a5593a4766bb5cecd9e428b763200a5ac7de9c413b321fd40",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch30-fastapi-serving",
+      "section": "03-ainvoke-요청-응답",
+      "prose_characters": 12047,
+      "code_cells": 22,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 22,
+        "code_sha256": "eb33867b5939602dd85bd68b32ea5331a1d9f944453da26372ba231d9da5d8ba",
+        "executed_at": "2026-09-29T07:42:43.609990+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "5d7bc81af09991040f44da15b7bafa0f816d71887b09041483babfb1aa5461c2",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch30-fastapi-serving",
+      "section": "04-astream과-응답-스트림",
+      "prose_characters": 11933,
+      "code_cells": 23,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 23,
+        "code_sha256": "2b5a740d6f1d276610033c8e0318692a7d3a475a04fb384742fd92be5c929eb7",
+        "executed_at": "2026-09-29T08:16:51.857733+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "e7a37a53a5462c2c69c5495d36970df07393a9722960a346af32c1a2f6384f72",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch30-fastapi-serving",
+      "section": "05-POST-SSE-이벤트-설계",
+      "prose_characters": 13425,
+      "code_cells": 25,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 25,
+        "code_sha256": "662e8a3e9119dd8a0fff854ed51daebb3c356aab56fa4ba5de4857d1fc2ed9a0",
+        "executed_at": "2026-09-29T08:53:39.632140+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "85e481f72c0f433f484ea2fd050395a4b798177c7acfd686a7d1e7543835525e",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch30-fastapi-serving",
+      "section": "06-fetch-재연결과-오류-이벤트",
+      "prose_characters": 13168,
+      "code_cells": 26,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 26,
+        "code_sha256": "21a623d11a53dc5ef945858d8636da9a1cd7796b991a3555cdd5156e7a135ecb",
+        "executed_at": "2026-09-29T09:32:33.074728+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "e1b573c11c415069e40b58d451812336bde56ee609856c27eb63750fb9b72465",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch30-fastapi-serving",
+      "section": "07-인증-CORS-타임아웃",
+      "prose_characters": 13610,
+      "code_cells": 21,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 21,
+        "code_sha256": "e9a38985d45644592aec280ab9c9589765bd187500af2e55f4f3fbd3f679ca5c",
+        "executed_at": "2026-09-29T10:12:30.060336+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "ff1e1ec601d4deb85681ecb65ca53a3d86589bf0e6206f97344d8c3e22263fc4",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch30-fastapi-serving",
+      "section": "08-OpenAPI와-TS-SDK",
+      "prose_characters": 12695,
+      "code_cells": 22,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 22,
+        "code_sha256": "eddd600d09d66bd083137169d4dfa874017bd318d77192f55457d0b80be7c2d0",
+        "executed_at": "2026-09-29T10:49:45.977429+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "3ac7d06e34cb59a8210a3fabc20679f095cb7f9b59545707e14f9239fc3dea51",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch30-fastapi-serving",
+      "section": "09-실제-Agent-HTTP-통합",
+      "prose_characters": 12104,
+      "code_cells": 23,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 23,
+        "code_sha256": "30c6e2033d0518565ead41e63a41ca65493df53e739d9850782751d101e9204f",
+        "executed_at": "2026-09-29T11:36:42.005746+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "ead89bbaaee08d9d2b940250d8fcf1ba7a7074a4450d02f942b187be44239c65",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch30-fastapi-serving",
+      "section": "10-FastAPI-서빙-실습",
+      "prose_characters": 11637,
+      "code_cells": 21,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 21,
+        "code_sha256": "7541bca126e47b28036a5564576f893be984ef227ed6f8a8e742e3a80bf6d451",
+        "executed_at": "2026-09-29T12:23:31.330151+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "defaca81a09f89a958ad5b1fa29449795556e220350e4c2a37a31ad616517f72",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch31-database",
+      "section": "01-SQLAlchemy-비동기-PostgreSQL",
+      "prose_characters": 12206,
+      "code_cells": 21,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 21,
+        "code_sha256": "1566ad038be4abd7db723070446788017f52b754fbafa692c5f6327dd6193feb",
+        "executed_at": "2026-09-29T21:08:37.061115+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "f8a551e4d649634fd6baa5ae53637c9c6bf95f95a07be7c0598abdb0e34a4a7d",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch31-database",
+      "section": "02-트랜잭션과-원자성",
+      "prose_characters": 11954,
+      "code_cells": 23,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 23,
+        "code_sha256": "39d29f86a1f263265d7aed6a7343da598e523d597cd8de4985203d09af600dc1",
+        "executed_at": "2026-09-29T16:31:16.255174+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "a44f100e391036ae6a3314822ca8c3e17a0d4b0e6fb44671612de12d418801ad",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch31-database",
+      "section": "03-Alembic-적용과-롤백",
+      "prose_characters": 13921,
+      "code_cells": 31,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 31,
+        "code_sha256": "f97cba07f5bc40c161d04a77d7043d5ec1ea17ecd3e716ca2d2455817b04d252",
+        "executed_at": "2026-09-29T17:09:43.920675+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "875e6c2e50d4e2aa17243057e5951b2844f3d1f120b08a9a686a7f8e9da7c838",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch31-database",
+      "section": "04-커넥션-풀-고갈과-대응",
+      "prose_characters": 14011,
+      "code_cells": 21,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 21,
+        "code_sha256": "d919bdcdd61a9254a90dbe2b5fbb60a80458210c94df0899dc61e0a6f1f4572c",
+        "executed_at": "2026-09-29T18:54:00.976457+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "1673bbd94b671b0e41a5d6e5193a246c806efb9a3a4851a223e6975d525125f8",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch31-database",
+      "section": "05-pgvector-체크포인터-공존과-백업",
+      "prose_characters": 14597,
+      "code_cells": 31,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 31,
+        "code_sha256": "6269536315f374f65e1e859232ac9f21a07e56b8798a3064eacec17f2857a4ac",
+        "executed_at": "2026-09-29T19:32:40.262019+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "8bac96cd5e64e0f1d40a8c19885363fdf47b51c02d16bc18f2b1a93baa3e6e39",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch31-database",
+      "section": "06-DB와-상태-영속화-실습",
+      "prose_characters": 12184,
+      "code_cells": 23,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 23,
+        "code_sha256": "bb245f74e6577cf881a5dc9f1eea2432b3b7c74f759ab963b8d14144de92728e",
+        "executed_at": "2026-09-29T20:10:04.934100+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "139e24d3c384b0ae1f35f979dde3f03427268e56a2d5aa455c18b35ccb7e9099",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch32-docker",
+      "section": "01-이미지와-레이어",
+      "prose_characters": 3678,
+      "code_cells": 4,
+      "review_questions": 4,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 4,
+        "code_sha256": "785b79c4042c205b1c2cd28e677b8ee345346e330045a18711558f70213b61dd",
+        "executed_at": "2026-09-11T02:06:41.490627+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "e1576e229538de57a3e5c26fc19051e71accd0b095ab31262ebbe6fcbbd7a3ec",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch32-docker",
+      "section": "02-uv-멀티스테이지-빌드",
+      "prose_characters": 3586,
+      "code_cells": 4,
+      "review_questions": 4,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 4,
+        "code_sha256": "33647a368b12434b27cf703ff62405413935cde2b39fd442b09de0861ea3851e",
+        "executed_at": "2026-09-11T02:06:45.194010+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "2fa6266d53b9ff16e7208d0cecb114aa5c6e789d6c6b67ca3ba805021f49cad5",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch32-docker",
+      "section": "03-빌드-캐시와-이미지-크기",
+      "prose_characters": 3473,
+      "code_cells": 5,
+      "review_questions": 4,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 5,
+        "code_sha256": "4433507203b705d735e6d0970fc2db7878cfd15f40fd058aef7217ab3fac4b5b",
+        "executed_at": "2026-09-11T02:22:35.741217+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "3116e10dcc2d7fe73d5f1ce6a846cb6a9989e8fe98e7614c6b04f9e0536429df",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch32-docker",
+      "section": "04-Compose와-pgvector-스택",
+      "prose_characters": 3729,
+      "code_cells": 5,
+      "review_questions": 4,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 5,
+        "code_sha256": "4deccdd5e791ec7fc794fc6502b4f6d3784ab5445dfb6d6eeee1c1acc6e50a2d",
+        "executed_at": "2026-09-11T02:07:07.032165+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "8a8755a1698a5cac45a5afd75bcbef10d34a4e9632024a18ed9c4cec3fa69804",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch32-docker",
+      "section": "05-환경변수-시크릿-헬스체크-로그",
+      "prose_characters": 4103,
+      "code_cells": 5,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 5,
+        "code_sha256": "e81f38e6497c6fef96de2db05c777197814e1e0b20165df289a3a8252dc33aa1",
+        "executed_at": "2026-09-11T02:07:21.849231+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "ec729ab07f6e90508e0a368821b539f76754a941ae30a56ec2f45457c6a11441",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch33-cicd",
+      "section": "01-테스트-린트-빌드와-GitHub-Actions",
+      "prose_characters": 3813,
+      "code_cells": 6,
+      "review_questions": 4,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 6,
+        "code_sha256": "a308899b3756c9d5ff6279c277bd8ccec22f9366c4fd112ddca2b938abb53697",
+        "executed_at": "2026-09-11T02:19:24.575973+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "52a505dd20949760f4fe2cc7c2623dd66b46ca5adf38e42ec5fe20238e31d9a3",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch33-cicd",
+      "section": "02-평가-회귀를-CI에-연결하기",
+      "prose_characters": 3302,
+      "code_cells": 4,
+      "review_questions": 4,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 4,
+        "code_sha256": "61c7664ff88719fb6c4b35c852e833b122ae394ead8cad728b691f08337d756c",
+        "executed_at": "2026-09-11T02:19:25.170697+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "c585bc9320a0389b0fda7b8973dc256894fa8ee293dfd617f6b819dd4619b8ba",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch33-cicd",
+      "section": "03-레지스트리-다이제스트와-클라우드-배포",
+      "prose_characters": 3608,
+      "code_cells": 3,
+      "review_questions": 4,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 3,
+        "code_sha256": "22217644f20af42176ac92271b81326308bf898c45ec31566153a97f0251fef5",
+        "executed_at": "2026-09-11T02:19:28.145218+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "b5bd3e53bb1356f772e87772dd626449604acde2000f12d9be28e7ccc9d0ad3c",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch33-cicd",
+      "section": "04-모니터링과-알림",
+      "prose_characters": 3256,
+      "code_cells": 3,
+      "review_questions": 4,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 3,
+        "code_sha256": "6d9741f9e60010c9cf2dd079f35e26817e0359b25776799e4415587bbef826b0",
+        "executed_at": "2026-09-11T02:19:28.661444+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "1db1055c05238feed64a746a9ea1fcfd0dbeb9ffc9281afc9fd55b03f64bb000",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch33-cicd",
+      "section": "05-롤백과-복구-검증",
+      "prose_characters": 3452,
+      "code_cells": 4,
+      "review_questions": 4,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 4,
+        "code_sha256": "05cad8b3f6c235d903f5fb349aa3c9b362203b537006d7a1769b0a405d8c5fc3",
+        "executed_at": "2026-09-11T02:22:27.440554+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "24ad660f5fb5654ef307e96465d462a3843219b9a260550ae6ecc8c9e38ed0c4",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch34-cost-rate-limits",
+      "section": "01-프롬프트-캐시-계측",
+      "prose_characters": 10988,
+      "code_cells": 22,
+      "review_questions": 4,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 22,
+        "code_sha256": "f5a17ed5befbbcbe37f7c2c0635b59d71c3b5da00025879934b0605ba208ab4a",
+        "executed_at": "2026-09-29T22:43:28.027337+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "0a7c2201e49284543a7f4a21766441040b5a41a4f77eb139a29419cd828fb27e",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch34-cost-rate-limits",
+      "section": "02-Batch-API",
+      "prose_characters": 11419,
+      "code_cells": 29,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 29,
+        "code_sha256": "51e2b77e959b81ba4dc7480e1e31b8667e489e09d6a8801f2dababfeb99be3dd",
+        "executed_at": "2026-09-29T23:24:53.668847+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "0d10754ff204968c8351dd44c7363369ac81ebc571858707087268686bf998b8",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch34-cost-rate-limits",
+      "section": "03-모델-라우팅",
+      "prose_characters": 10692,
+      "code_cells": 23,
+      "review_questions": 4,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 23,
+        "code_sha256": "2d7f2868d55a40d52e6d46db94a09701ec18530bc265300f6b3c7bb332281984",
+        "executed_at": "2026-09-30T00:00:50.397396+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "1f1032aadab81abffd23cfe264957033fe6df3e957caeeb7cc66994fdee3bd87",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch34-cost-rate-limits",
+      "section": "04-백오프-큐-동시성",
+      "prose_characters": 13763,
+      "code_cells": 24,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 24,
+        "code_sha256": "85149d05fc2bfbe69e58f94b1f73dfef71be42cd6c3beec7f409d99ddebd0e8e",
+        "executed_at": "2026-09-30T01:04:46.086928+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "19201b0a960053c23f922208f318dcb3ac95df40e87ce0bb6feafdc62b771f79",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch34-cost-rate-limits",
+      "section": "05-예산-가드와-p95",
+      "prose_characters": 11985,
+      "code_cells": 23,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 23,
+        "code_sha256": "92e7ef90171e14988b17a08b5af3bc907f600bc3bf7a856977989568f5b7cda1",
+        "executed_at": "2026-09-30T01:48:41.834088+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "627531578c0a2e45b1741108746bde67f393ec3462ec12617f167f2a6efb2013",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "chapter": "ch34-cost-rate-limits",
+      "section": "06-비용과-Rate-Limit-실습",
+      "prose_characters": 12239,
+      "code_cells": 26,
+      "review_questions": 5,
+      "execution": {
+        "allow_errors": false,
+        "code_cells": 26,
+        "code_sha256": "ef7f93c07463a6c37d68d856b3ccc3caa06dda36feb70966e83e50509da838f2",
+        "executed_at": "2026-09-30T02:36:47.350928+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "dbf373b583014fa200b046f1ef3840b7950bb70c4cc8a345d384de1de7891636",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    }
+  ],
+  "links_broken": [],
+  "earlier_sources_checked": 433,
+  "earlier_sources_changed": [],
+  "archives": [
+    {
+      "file": "part7-practice.zip",
+      "files": 114,
+      "sha256": "710053c5061e14d6fe40a04b9845539f4b9880672986f435e9bbb3e0212473b8"
+    },
+    {
+      "file": "llm-practice.zip",
+      "files": 514,
+      "sha256": "b0c5a072cee25d80c118b35925a7bf134d7a88139e33c8e782409f0e866f5638"
+    }
+  ]
+}

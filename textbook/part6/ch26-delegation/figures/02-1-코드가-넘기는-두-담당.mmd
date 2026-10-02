@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  s(["START 시작점<br>조건 함수 pick_desk가<br>담당 칸을 읽고 고름"])
+  l["loan_desk<br>대출 규정 담당<br>Command로 넘기거나 답함"]:::flow
+  i["interlibrary_desk<br>상호대차 담당"]:::flow
+  e(["END 끝점"])
+  m[("InMemorySaver<br>스레드마다 담당 칸 저장")]
+  s -.->|담당 칸이 빈 글이면| l
+  s -.->|담당 칸이 interlibrary_desk면| i
+  l -.->|goto interlibrary_desk| i
+  l -.->|goto END| e
+  i --> e
+  m ---|다음 차례에 읽음| s

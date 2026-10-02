@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  req["칸 셋을 약속한 요청 글"]:::tool
+  plan["gpt-5.4-mini<br>기획 칸 셋 제목 독자 절차"]:::model
+  g1["게이트 원래 규칙<br>필수 칸 셋 · 절차 셋 이상"]:::flow
+  done["상태 완료 · 요청 둘<br>게이트가 찾은 문제 없음"]:::measure
+  wide["바꾼 값<br>필수 칸에 문의처를 더함"]:::tool
+  g2["게이트 바꾼 규칙<br>같은 기획을 다시 검사"]:::flow
+  stop["문제 문의처 칸 없음<br>모델 요청 없음"]:::measure
+  req --> plan
+  plan --> g1
+  g1 -.->|문제 없음| done
+  plan --> g2
+  wide --> g2
+  g2 --> stop

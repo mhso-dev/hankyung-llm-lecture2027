@@ -1,0 +1,19 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant U as 우리 코드
+  participant G as Deep Agent 그래프
+  box Lavender
+  participant M as 모델<br>gpt-5.4-mini
+  end
+  U->>G: 5절과 같은 질문으로 invoke
+  Note over G: 기록 훅<br>시스템 글 우리 글과 할 일 설명 글 · 도구 열
+  G->>M: 첫 요청
+  M-->>G: 도구 요청 write_todos 하나
+  Note over G: 도구 실행 노드<br>상태 칸 todos에 목록을 적음
+  loop 모델이 도구를 요청하는 동안
+    G->>M: 다음 요청 · 시스템 글 같음
+    M-->>G: lookup_rule 또는 write_todos
+  end
+  G->>M: 마지막 요청
+  M-->>G: 도구 요청 없음 · 답 글
+  G-->>U: 결과 메시지와 todos

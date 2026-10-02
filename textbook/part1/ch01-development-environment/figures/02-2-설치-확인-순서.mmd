@@ -1,0 +1,12 @@
+flowchart TD
+  %% classes
+  I["공식 페이지 명령으로<br>uv 설치"]:::flow
+  N["새 터미널 열기"]:::flow
+  V["uv --version 입력"]:::flow
+  Q{"버전 글자가<br>나오나?"}:::measure
+  OK["course-ch01 폴더 열고<br>현재 위치 확인"]:::flow
+  NG["설치가 끝났는지와<br>새 터미널인지 확인"]
+  I --> N --> V --> Q
+  Q -- "나옴" --> OK
+  Q -- "명령을 찾지 못함" --> NG
+  NG -. "다시" .-> N

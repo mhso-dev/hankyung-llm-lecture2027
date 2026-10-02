@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  asks["문의 셋<br>20 · 25 · 36글자"]:::tool
+  router["choose_model<br>03절 모델 라우터<br>기준 길이와 글자 수를 견줌"]:::flow
+  guard["try_reserve<br>05절 예산 가드<br>모델마다 예약 금액<br>비용 상한 0.006"]:::flow
+  stop["막힌 대화<br>요청을 보내지 않음"]
+  send["make_request<br>send_inquiry<br>01절 실험 번호와<br>정책 글 6000자를 앞에"]:::flow
+  models["gpt-5.4-nano<br>또는 gpt-5.4-mini<br>temperature=0<br>reasoning_effort none"]:::model
+  cost["cost_row · total_cost<br>캐시 입력 할인을<br>넣은 예상 비용"]:::flow
+  asks --> router
+  router --> guard
+  guard -. 예약이 막힘 .-> stop
+  guard -. 예약됨 .-> send
+  send --> models
+  models --> cost

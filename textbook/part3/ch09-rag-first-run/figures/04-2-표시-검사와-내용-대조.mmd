@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  a["5절 답<br>휴관 월요일 · 도서 7권<br>끝에 E01 p.2 E01 p.3"]:::measure
+  c1["check_answer<br>표시가 답에 있는가"]:::flow
+  c2["find_missing_words<br>기록 내용에 말이 있는가"]:::flow
+  r1["같은 기록<br>E01 p.2 · E01 p.3<br>E01 p.1 없음"]:::measure
+  r2["월요일은 E01 p.2<br>7권은 E01 p.3<br>E01 p.1은 둘 다 없음"]:::measure
+  g["문장과 표시의 짝은 답에 없음<br>뜻은 사람이 원문으로 확인"]
+  a --> c1
+  a --> c2
+  c1 --> r1
+  c2 --> r2
+  r1 ~~~ g
+  r2 ~~~ g

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part1/qa/check_delivery.py", line 176, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part1/qa/check_delivery.py", line 100, in main
+    assert 3 <= parser.quizzes <= 5, f"Quiz count: {page}: {parser.quizzes}"
+AssertionError: Quiz count: /sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part1/ch02-python/01-변수와-자료형.html: 6

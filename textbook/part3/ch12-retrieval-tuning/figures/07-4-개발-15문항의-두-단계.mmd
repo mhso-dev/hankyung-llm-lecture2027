@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  root["개발 질문 15개 · 후보 8개"]:::tool
+  place["정답 부모 자리<br>두 단계 모두 15문항이 1"]:::measure
+  mean["질문 평균 재현율<br>자리 1 · 2 · 3 모두 1.0"]:::measure
+  moved["1위 문서 청크가 바뀐 질문 3개<br>Q002 · Q039 · Q087"]:::measure
+  note["1차 후보가 이미 정답 부모를 자리 1에 둠"]
+  root --> place
+  root --> mean
+  root --> moved
+  place --> note
+  mean --> note

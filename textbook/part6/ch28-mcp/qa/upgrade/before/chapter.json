@@ -1,0 +1,41 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 개발",
+  "chapter": "ch28-mcp",
+  "title": "MCP — Model Context Protocol",
+  "hours": "총 16h · 강의 5h · 실습 11h",
+  "objectives": [
+    "MCP의 도구·리소스·프롬프트와 capability 협상을 설명할 수 있습니다.",
+    "FastMCP 읽기 전용 서버를 만들고 stdio 클라이언트에서 호출할 수 있습니다.",
+    "LangChain 1.4.0 MCPAdapter로 도구를 연결하고 첫 호출 입력 토큰을 측정할 수 있습니다.",
+    "로컬·원격 전송의 인증과 최소 권한 경계를 구분할 수 있습니다."
+  ],
+  "lab_path": "labs/part6/ch28-mcp",
+  "sections": [
+    {
+      "slug": "01-MCP-구조와-capability-협상",
+      "title": "MCP 구조와 capability 협상",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-FastMCP-로컬-서버-제작",
+      "title": "FastMCP 로컬 서버 제작",
+      "format": "paired"
+    },
+    {
+      "slug": "03-stdio와-원격-전송-권한-경계",
+      "title": "stdio와 원격 전송·권한 경계",
+      "format": "paired"
+    },
+    {
+      "slug": "04-LangChain-MCP-클라이언트-연동",
+      "title": "LangChain MCP 클라이언트 연동",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-도구-정의와-첫-호출-토큰",
+      "title": "도구 정의와 첫 호출 토큰",
+      "format": "experiment"
+    }
+  ]
+}

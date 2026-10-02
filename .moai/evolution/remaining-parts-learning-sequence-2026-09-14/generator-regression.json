@@ -1,0 +1,15 @@
+{
+  "passed": 6,
+  "checks": [
+    "candidate_prompts precedence over prompts",
+    "history loop precedence over MAX_ITERATIONS reference",
+    "history output precedence over MAX_ITERATIONS reference",
+    "pip command after leading comments",
+    "synthetic trace literal explanation",
+    "invoke in comments does not claim execution"
+  ],
+  "files": [
+    "labs/part4/notebook_guidance.py",
+    "labs/part5/ch18-workflow-patterns/author_notebooks.py"
+  ]
+}

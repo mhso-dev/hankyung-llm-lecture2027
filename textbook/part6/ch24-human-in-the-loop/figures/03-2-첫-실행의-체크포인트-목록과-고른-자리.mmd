@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  s1["단계 -1 · 만든 자리 input<br>다음 노드 가상 시작점"]:::measure
+  s2["단계 0 · loop<br>다음 노드 quote"]:::measure
+  s3["단계 1 · loop<br>다음 노드 discount<br>기본 가격 10000"]:::measure
+  s4["단계 2 · loop · 멈춤<br>다음 노드 ask_price<br>질문 값 최종 가격 9000"]:::measure
+  s5["단계 3 · loop<br>다음 노드 없음<br>최종 가격 9000 · approve"]:::measure
+  f["함수 find_before<br>최신 것부터 보며<br>다음 노드에 discount가 든<br>첫 체크포인트를 고름"]:::flow
+  s1 --> s2
+  s2 --> s3
+  s3 --> s4
+  s4 --> s5
+  f -.->|고름| s3

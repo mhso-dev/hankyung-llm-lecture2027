@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 무시 규칙만 추가"]
+    direction LR
+    b1["debug.log<br>먼저 커밋함"]:::tool
+    b2[".gitignore에<br>*.log 추가"]:::flow
+    b3["M debug.log 남음<br>check-ignore 종료 코드 1"]:::fail
+    b1 --> b2 --> b3
+  end
+  subgraph AFTER["After · 색인에서만 빼기"]
+    direction LR
+    a1["git rm --cached<br>debug.log"]:::flow
+    a2["커밋<br>2 files changed"]:::tool
+    a3["상태 목록 비어 있음<br>.gitignore:3:*.log"]:::measure
+    a1 --> a2 --> a3
+  end
+  BEFORE --> AFTER

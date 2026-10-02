@@ -1,0 +1,24 @@
+flowchart TB
+  %% classes
+  subgraph qa["대출 질문"]
+    direction TB
+    a1["자료실에서 일반 도서를<br>며칠 빌릴 수 있나요?"]:::tool
+    a2["흔적 model 두 번<br>모델 요청 두 번<br>도구 메시지 하나 · 대출"]:::measure
+    a1 --> a2
+  end
+  subgraph qb["인사 질문"]
+    direction TB
+    b1["안녕하세요.<br>한 문장으로<br>인사해 주세요."]:::tool
+    b2["흔적 model 한 번<br>모델 요청 한 번<br>도구 메시지 없음"]:::measure
+    b1 --> b2
+  end
+  subgraph qc["바꾼 값 · 운영·연체 질문"]
+    direction TB
+    c1["자료실 운영 시간과<br>연체 규정을<br>함께 알려 주세요."]:::tool
+    c2["흔적 model 세 번<br>모델 요청 세 번<br>도구 메시지 둘<br>운영 다음 연체"]:::measure
+    c1 --> c2
+  end
+  same["세 질문 공통 · 같은 그래프<br>호출 ID 짝 True<br>모델 요청이 도구 메시지보다 하나 많음"]
+  qa ~~~ same
+  qb ~~~ same
+  qc ~~~ same

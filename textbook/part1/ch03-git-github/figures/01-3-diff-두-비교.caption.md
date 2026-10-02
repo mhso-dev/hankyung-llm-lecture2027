@@ -1,0 +1,4 @@
+- 설명 대상 문장: 명령 `git diff`는 작업 폴더와 색인을 비교합니다. 옵션을 붙인 `git diff --cached`는 색인과 마지막 커밋을 비교합니다.
+- 캡션: 같은 변경이 git add 전에는 git diff에, git add 뒤에는 git diff --cached에 나옵니다.
+- 읽는 법: 위 칸이 git add 전(상태 줄 ` M app.py`), 아래 칸이 뒤(상태 줄 `M  app.py`)입니다. 초록 상자는 세 자리의 내용, 양쪽 화살표 위 글자는 비교 명령과 결과입니다. 아래 칸에서 `git diff`는 출력이 없고, `git diff --cached`에 `-print("주문 2건")`, `+print("주문 3건")`이 나옵니다.
+- alt: git add 전에는 git diff가 작업 폴더 3건과 색인 2건의 차이를 보이고, git add 뒤에는 git diff가 비고 git diff --cached가 색인 3건과 마지막 커밋 2건의 차이를 보이는 그림

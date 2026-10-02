@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  ov["시간 제한 0초로 재정의<br>같은 질문 · 같은 셀에서 비움"]:::flow
+  resp["받은 응답 상태 코드 200<br>SSE 사건 하나 error<br>token 사건 없음 · done 없음"]:::measure
+  subgraph bf["Before · 상태 코드만 봄"]
+    direction TB
+    b1["status_says_ok"]:::flow
+    b2["판정 성공<br>True"]:::fail
+    b1 --> b2
+  end
+  subgraph af["After · 마지막 사건을 봄"]
+    direction TB
+    a1["ended_with_done"]:::flow
+    a2["판정 False<br>끝까지 받지 못함"]:::measure
+    a1 --> a2
+  end
+  ov --> resp
+  resp --> bf
+  resp --> af

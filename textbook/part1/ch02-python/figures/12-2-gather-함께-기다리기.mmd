@@ -1,0 +1,15 @@
+sequenceDiagram
+  participant L as 이벤트 루프
+  participant P as 연필 check_stock
+  participant N as 노트 check_stock
+  L->>P: 실행 시작
+  Note over P: 확인 시작: 연필
+  P-->>L: await asyncio.sleep(0.2)
+  L->>N: 실행 시작
+  Note over N: 확인 시작: 노트
+  N-->>L: await asyncio.sleep(0.1)
+  L->>N: 0.1초 뒤 이어서
+  Note over N: 확인 끝: 노트
+  L->>P: 0.2초 뒤 이어서
+  Note over P: 확인 끝: 연필
+  Note over L,N: 반환값 목록 ['연필 재고 있음', '노트 재고 있음']<br>걸린 시간(초): 0.2

@@ -1,0 +1,102 @@
+{
+  "run_id": "ch08-context-20260909T173723662220Z",
+  "run_date": "2026-09-09",
+  "source_chapter": "ch08",
+  "source_record": {
+    "path": "labs/part2/ch07-prompt-engineering/runs/prompt-ab-continuity.json",
+    "sha256": "b5a235f4d990939b4f8499283797e006ccb50a1207a015fdc1de2687ccb1bf5f",
+    "run_id": "ch07-prompt-ab-20260909T173709587105Z"
+  },
+  "model": "openai:gpt-5.4-mini",
+  "settings": {
+    "max_tokens": 300,
+    "pricing_date": "2026-09-09",
+    "pricing_usd_per_million": {
+      "ordinary_input": 0.75,
+      "cached_input": 0.075,
+      "output": 4.5
+    }
+  },
+  "question": "대출 권수, 기간, 연장 조건과 출처를 알려 주세요.",
+  "comparison_policy": "문자열 확인은 원문 정독 보조임",
+  "results": [
+    {
+      "design": "full",
+      "context": "[E01-p2] 월요일 휴관\n[E01-p3] 회원 1명당 최대 7권, 대출 기간 14일. 예약이 없으면 1회 7일 연장.\n[E01-p5] 회원은 최초 2시간 무료입니다.",
+      "answer": "대출 관련 정보는 다음과 같습니다.\n\n- **대출 권수:** 회원 1명당 **최대 7권**까지 대출 가능합니다.  \n  - **출처:** [E01-p3]\n\n- **대출 기간:** **14일**입니다.  \n  - **출처:** [E01-p3]\n\n- **연장 조건:** **예약이 없을 경우 1회에 한해 7일 연장**할 수 있습니다.  \n  - **출처:** [E01-p3]\n\n참고로,\n- **월요일 휴관** 정보는 대출 규정이 아니라 도서관 운영일 안내입니다.  \n  - **출처:** [E01-p2]\n- **최초 2시간 무료**는 주차/이용료 관련 내용으로, 대출 규정과는 별개입니다.  \n  - **출처:** [E01-p5]",
+      "usage": {
+        "input_tokens": 110,
+        "output_tokens": 198,
+        "total_tokens": 308,
+        "input_token_details": {
+          "audio": 0,
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "audio": 0,
+          "reasoning": 0
+        }
+      },
+      "latency_ms": 2153.5,
+      "cache_read_tokens": 0,
+      "estimated_cost_usd": 0.0009735,
+      "checks": {
+        "대출 조건": true,
+        "연장 예외": true,
+        "출처": true
+      }
+    },
+    {
+      "design": "selected",
+      "context": "[E01-p3] 회원 1명당 최대 7권, 대출 기간 14일. 예약이 없으면 1회 7일 연장.",
+      "answer": "다음과 같이 정리할 수 있습니다.\n\n- **대출 권수**: 회원 1명당 **최대 7권**\n- **대출 기간**: **14일**\n- **연장 조건**: **예약이 없을 경우 1회 7일 연장 가능**\n\n**출처**: **[E01-p3]**  \n근거 문구: “회원 1명당 최대 7권, 대출 기간 14일. 예약이 없으면 1회 7일 연장.”\n\n원하시면 제가 이 내용을 **표 형태**로도 정리해 드릴게요.",
+      "usage": {
+        "input_tokens": 86,
+        "output_tokens": 137,
+        "total_tokens": 223,
+        "input_token_details": {
+          "audio": 0,
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "audio": 0,
+          "reasoning": 0
+        }
+      },
+      "latency_ms": 1266.0,
+      "cache_read_tokens": 0,
+      "estimated_cost_usd": 0.000681,
+      "checks": {
+        "대출 조건": true,
+        "연장 예외": true,
+        "출처": true
+      }
+    },
+    {
+      "design": "compressed",
+      "context": "1명당 최대 7권, 14일 대출, 예약 없으면 1회 7일 연장 [E01-p3]",
+      "answer": "대출 조건은 다음과 같습니다.\n\n- **대출 권수:** 1명당 **최대 7권**\n- **대출 기간:** **14일**\n- **연장 조건:** **예약이 없을 경우에 한해 1회 7일 연장 가능**\n\n**출처:** **[E01-p3]**",
+      "usage": {
+        "input_tokens": 82,
+        "output_tokens": 76,
+        "total_tokens": 158,
+        "input_token_details": {
+          "audio": 0,
+          "cache_read": 0
+        },
+        "output_token_details": {
+          "audio": 0,
+          "reasoning": 0
+        }
+      },
+      "latency_ms": 1058.2,
+      "cache_read_tokens": 0,
+      "estimated_cost_usd": 0.0004035,
+      "checks": {
+        "대출 조건": true,
+        "연장 예외": true,
+        "출처": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 개발",
+  "chapter": "ch21-create-agent",
+  "title": "create_agent — 직접 만든 루프를 한 함수로",
+  "hours": "총 16h · 강의 6h · 실습 10h",
+  "objectives": [
+    "함수 create_agent에 모델 객체·도구 목록·시스템 메시지 글을 넘겨 에이전트 그래프를 만들고, 노드·조건 함수·메시지 칸을 Ch 20 그래프와 견줄 수 있습니다.",
+    "인자 response_format으로 도구 전략과 제공자 전략을 붙여, 양식 값이 칸 structured_response에 담기는 자리와 메시지 수를 견줄 수 있습니다.",
+    "라이브러리 상태 형식 AgentState에 칸을 더하고 실행 정보(context)를 도구에 넘겨, 결과에 남는 값과 남지 않는 값을 가를 수 있습니다.",
+    "옛 함수 create_react_agent와 create_agent로 같은 재료의 그래프를 만들어, 옮길 때 바뀌는 인자 이름과 그래프 모양을 출력으로 찾을 수 있습니다.",
+    "Ch 14 검색 함수를 검색 도구로 감싸 에이전트 그래프에 넘기고, 검색어와 검색 횟수를 모델이 고른다는 것을 도구 호출 요청으로 확인할 수 있습니다.",
+    "같은 평가 질문 셋을 고정 흐름과 에이전트 흐름으로 보내 모델 요청 수·입력 토큰·정답 문서 자리·근거 충실도를 견주고, 비교 기록 파일을 쓸 수 있습니다.",
+    "실습에서 01절 에이전트 그래프에 도구 전략과 실행 정보를 붙여 대출 문의 하나를 처리하고, 연체 일수 하나를 바꿔 도구 메시지와 양식 칸을 견줄 수 있습니다."
+  ],
+  "lab_path": "labs/part6/ch21-create-agent",
+  "sections": [
+    {
+      "slug": "01-create-agent와-ReAct-루프",
+      "title": "create_agent와 ReAct 루프",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-구조화-출력-두-전략",
+      "title": "구조화 출력 두 전략",
+      "format": "experiment"
+    },
+    {
+      "slug": "03-AgentState와-context-schema",
+      "title": "AgentState와 context_schema",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-0x에서-1x로-마이그레이션",
+      "title": "0.x에서 1.x로 마이그레이션",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-retriever를-도구로-전환",
+      "title": "retriever를 도구로 전환",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-같은-평가셋으로-RAG-비교",
+      "title": "같은 평가셋으로 RAG 비교",
+      "format": "experiment"
+    },
+    {
+      "slug": "07-create-agent-실습",
+      "title": "create_agent 실습: 대출 문의 에이전트에 양식과 실행 정보 붙이기",
+      "format": "experiment"
+    }
+  ]
+}

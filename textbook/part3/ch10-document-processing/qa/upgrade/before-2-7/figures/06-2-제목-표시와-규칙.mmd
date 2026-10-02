@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph FIT["규칙이 글의 표시와 맞을 때"]
+    direction LR
+    a1["표시를 붙인 글<br>911자"]:::tool
+    a2["규칙: 표시 한 개는<br>heading 칸"]:::flow
+    a3["문서 청크 3개<br>제목 칸 세 개"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  subgraph MISS["규칙이 글의 표시와 다를 때"]
+    direction LR
+    b1["같은 글<br>911자"]:::tool
+    b2["규칙: 표시 두 개는<br>heading 칸"]:::flow
+    b3["문서 청크 1개<br>제목 칸 없음"]:::measure
+    b1 --> b2
+    b2 --> b3
+  end
+  note1["표시가 맞은 위 칸에서는<br>제목 글이 본문에서 빠지고 heading 칸에 남습니다"]
+  FIT ~~~ MISS
+  MISS ~~~ note1

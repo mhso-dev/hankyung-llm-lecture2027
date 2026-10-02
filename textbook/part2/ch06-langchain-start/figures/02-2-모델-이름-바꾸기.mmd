@@ -1,0 +1,22 @@
+flowchart TB
+  %% classes
+  subgraph NANO["5절 · 콜론 뒤 모델 이름만 바꿈"]
+    direction LR
+    n1["openai:<br>gpt-5.4-nano<br>reasoning_effort none"]:::tool
+    n2["gpt-5.4-nano"]:::model
+    n3["ChatOpenAI<br>답 한 문장 · 출력 44토큰"]:::measure
+    n1 --> n2 --> n3
+  end
+  subgraph SAME["6절 · 콜론 앞 제공자만 바꿈"]
+    direction LR
+    c1["anthropic:<br>claude-haiku-4-5<br>reasoning_effort none"]:::tool
+    c2["ValidationError<br>none은 받지 않음"]:::measure
+    c1 --> c2
+  end
+  subgraph FIXED["6절 · 추론 설정 줄을 뺌"]
+    direction LR
+    d1["anthropic:<br>claude-haiku-4-5<br>temperature 0"]:::tool
+    d2["ChatAnthropic<br>키 없음 · 요청 0번"]:::measure
+    d1 --> d2
+  end
+  NANO --> SAME --> FIXED

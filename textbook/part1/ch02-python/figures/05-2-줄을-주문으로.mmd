@@ -1,0 +1,9 @@
+flowchart TD
+  %% classes
+  A["줄 목록 items<br>['연필,3', '노트,2']"]:::tool
+  B["줄 하나 '연필,3'<br>split(',')로 나눔"]:::flow
+  C["풀어 담기<br>name '연필'<br>count_text '3'"]:::flow
+  D["int(count_text)<br>글자 '3' → 정수 3"]:::flow
+  E["return order_line<br>('연필', 3)"]:::flow
+  F["append()로 모은 주문 목록<br>[('연필', 3), ('노트', 2)]"]:::measure
+  A --> B --> C --> D --> E --> F

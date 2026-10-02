@@ -1,0 +1,29 @@
+{
+  "version": "v1.6",
+  "genre": "essay",
+  "char_count": 3473,
+  "metrics": {
+    "comma_inclusion_rate": 0.34285714285714286,
+    "comma_usage_rate": 0.8285714285714286,
+    "ending_comma_rate": 0.4444444444444444,
+    "comma_segment_length": 5.53125,
+    "conclusion_pivot_count": 0,
+    "safe_balance_count": 0,
+    "hanja_nominalizer_density": 0.007142857142857143,
+    "lexical_diversity": 0.7728571428571429
+  },
+  "z_scores": {
+    "comma_inclusion_rate": 0.4594305464121133,
+    "comma_usage_rate": -0.4215784215784213,
+    "ending_comma_rate": 5.129617856890584,
+    "comma_segment_length": 0.5611638954869359,
+    "hanja_nominalizer_density": -1.7619047619047619,
+    "lexical_diversity": 2.457142857142858
+  },
+  "risk_band": "low",
+  "risk_score": 2,
+  "evidence": {
+    "conclusion_pivots": [],
+    "safe_balances": []
+  }
+}

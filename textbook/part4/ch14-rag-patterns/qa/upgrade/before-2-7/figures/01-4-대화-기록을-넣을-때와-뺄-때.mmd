@@ -1,0 +1,21 @@
+flowchart LR
+  %% classes
+  subgraph withlog["대화 기록을 넣은 재작성"]
+    direction TB
+    w1["넣은 대화 기록<br>두 줄"]:::tool
+    w2["재작성한 질문에<br>스터디룸이 있음"]:::measure
+    w3["정답 문서의<br>자리 하나"]:::measure
+    w1 ~~~ w2
+    w2 ~~~ w3
+  end
+  subgraph nolog["대화 기록을 뺀 재작성"]
+    direction TB
+    n1["넣은 대화 기록<br>없음"]:::tool
+    n2["재작성한 질문에<br>스터디룸이 없음"]:::measure
+    n3["정답 문서는<br>첫 자리 밖"]:::measure
+    n1 ~~~ n2
+    n2 ~~~ n3
+  end
+  same2["두 재작성 모두<br>같은 머리글과<br>같은 후속 질문"]
+  withlog ~~~ nolog
+  nolog ~~~ same2

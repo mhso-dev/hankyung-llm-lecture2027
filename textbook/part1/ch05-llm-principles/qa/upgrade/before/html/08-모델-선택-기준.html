@@ -1,0 +1,267 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모델 선택 기준 — Ch 5 · LLM 동작 원리</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style><script>
+window.addEventListener("load", () => {
+  const addCss = href => { const link = document.createElement("link"); link.rel = "stylesheet"; link.href = href; document.head.appendChild(link); };
+  addCss("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addCss("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script></head><body><div class="page">
+<header class="top"><p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 1 · 개발 기반 · Ch 5 · LLM 동작 원리</p>
+<h1>모델 선택 기준</h1><div class="meta"><span>강의 1h</span><span>실습 0.5h</span><span>새 용어 7</span></div></header><nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">실험 결과 해석</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><style>p code,li code{font-size:16px!important}.diagram>svg{width:760px;max-width:none;height:auto;display:block}</style>
+<!--meta: 강의 1h | 실습 0.5h | 코드 Jupyter Notebook | 새 용어 7 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2><div class="goal"><ul><li>작업 종류와 라이선스를 필수 조건으로 사용해 맞지 않는 모델 후보를 제외할 수 있습니다.</li><li>파라미터 수, 로딩 시간, 토큰화 시간을 각각 무엇을 측정한 값인지 구분할 수 있습니다.</li><li>후보 필터 결과와 품질 비교 결과가 다름을 설명할 수 있습니다.</li><li>실제 서비스 입력과 평가 기준으로 모델 선택 실험을 설계할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2><p>모델을 선택할 때 이름이 널리 알려졌거나 공개 점수가 높다는 이유만으로 결정하면 필요한 작업을 수행하지 못할 수 있습니다. 문장 생성, 문장 유사도 계산, 빈칸 채우기는 입력과 출력 형식이 다릅니다. 라이선스가 프로젝트의 배포 방식과 맞지 않으면 기술적으로 실행할 수 있어도 사용할 수 없습니다. 메모리에 올라가지 않거나 응답 시간이 목표를 넘는 모델도 서비스에 적용하기 어렵습니다. 먼저 반드시 만족해야 하는 조건으로 후보를 거르고, 남은 후보를 같은 평가 자료와 환경에서 측정해야 합니다.</p><p>이 절은 세 모델의 작업 종류와 라이선스를 비교합니다. 후보 표는 성능 순위가 아닙니다. 생성 작업과 Apache-2.0을 필수 조건으로 정했을 때 어떤 후보가 남는지 Python 목록 처리로 확인합니다. 이어서 선택된 생성 모델의 파라미터 수, 현재 환경의 캐시된 로딩 시간, 한 문장을 반복한 입력의 토큰화 시간을 측정합니다. 이 수치들은 생성 답변의 품질이나 첫 토큰까지 걸리는 시간을 직접 보여 주지 않습니다.</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2><p>01절은 tokenizer가 문장을 토큰 ID로 바꾸는 결과를 비교했고, 02절은 문장 임베딩과 코사인 유사도가 특정 모델과 문장 집합에서의 근접도를 나타낸다는 점을 확인했습니다. 06절과 07절은 작은 생성 모델로 샘플링과 근거 없는 답변을 관찰했습니다. 같은 “언어 모델”이라는 넓은 이름 아래에서도 tokenizer, 임베딩 모델, 생성 모델의 역할이 다릅니다. 이번 절에서는 앞에서 사용한 모델을 하나의 순위표에 억지로 놓지 않고, 작업에 맞는 인터페이스부터 확인합니다.</p><p>노트북은 이미 사용한 고정 모델 ID와 모델 카드의 라이선스 표기를 후보 목록에 적습니다. <code>Qwen/Qwen2.5-0.5B-Instruct</code>는 텍스트 생성, <code>sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2</code>는 문장 유사도, <code>klue/bert-base</code>는 빈칸 채우기 후보로 기록합니다. 이 목록은 세 모델의 모든 가능한 용도를 설명하지 않으며, 실습에서 사용할 대표 작업을 구분하기 위한 자료입니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2><h3>채용 공고의 필수 조건과 실기 평가를 나눕니다</h3><p><code>AutoTokenizer.from_pretrained()</code>는 모델 ID와 고정 revision을 입력받아 문자열을 토큰 ID로 바꾸는 tokenizer 객체를 반환합니다. <code>AutoModelForCausalLM.from_pretrained()</code>는 같은 식별자로 다음 토큰 생성용 모델 객체를 반환합니다. <code>num_parameters()</code>는 모델이 가진 파라미터 수를 정수로 반환합니다. 메서드 이름의 <code>Auto</code>는 모델 ID에 맞는 구체 클래스를 라이브러리가 선택한다는 뜻입니다.</p><p>운전 업무 지원자를 고를 때 먼저 필요한 면허가 있는지 확인합니다. 면허가 있는 후보끼리는 같은 도로에서 안전성과 업무 수행을 평가합니다. 면허 확인만으로 가장 안전한 운전자를 정할 수 없고, 주행 점수가 높아도 필요한 면허가 없으면 해당 업무를 맡길 수 없습니다. 모델 선택도 필수 조건 필터와 비교 평가를 분리합니다.</p><p><strong>작업 종류(task)</strong>는 모델이 받는 입력과 만드는 출력의 목적입니다. 텍스트 생성 모델은 입력 뒤의 토큰을 이어 문장을 만들고, 문장 유사도 모델은 문장을 벡터로 바꾸어 거리를 비교하며, 빈칸 채우기 모델은 문장 안의 가려진 위치에 올 후보를 계산합니다. 필요한 작업과 다른 모델은 성능 비교 전에 제외합니다.</p><p><strong>라이선스(license)</strong>는 모델 코드와 가중치를 사용할 때 지켜야 하는 조건입니다. 같은 Apache-2.0 표기라도 모델 카드, 데이터, 함께 배포하는 코드의 조건을 확인해야 합니다. <code>CC-BY-SA-4.0</code>처럼 표시와 공유 조건이 다른 후보도 있습니다. 이 절은 법률 자문을 제공하지 않습니다. 실제 배포 전에는 모델 카드 원문과 조직 정책을 확인합니다.</p><p><strong>파라미터(parameter)</strong>는 학습 과정에서 조정되는 모델 내부의 수치입니다. 파라미터 수는 모델 규모를 설명하는 한 값이지만 정확도, 메모리, 파일 용량, 속도와 일대일로 같지 않습니다. 각 수치를 저장하는 정밀도, CPU나 GPU 중 어디서 실행하는지, 프로그램 구현에 따라 필요한 메모리와 처리 시간이 달라집니다.</p><p><strong>로딩 시간(load time)</strong>은 모델 파일을 읽고 객체를 준비하는 데 걸린 시간입니다. 노트북의 <code>cached load seconds</code>는 모델 파일이 이미 로컬 캐시에 있는 현재 컴퓨터에서 한 번 측정한 0.384초입니다. 최초 다운로드 시간, 서버 시작 전체 시간, 요청마다 드는 생성 시간이 아닙니다. <strong>토큰화 시간(tokenization time)</strong>은 문자열을 토큰 ID로 바꾸는 전처리 시간입니다. 기록된 3.631밀리초는 1,202토큰을 현재 CPU 환경에서 한 번 변환한 값이며, 답을 생성하는 시간이 아닙니다.</p><p><strong>생성 지연시간(generation latency)</strong>은 입력 처리 후 출력 토큰을 만드는 데 걸리는 시간입니다. <strong>첫 토큰 지연시간(time to first token, TTFT)</strong>은 요청을 시작한 뒤 첫 출력 토큰을 받을 때까지의 시간입니다. 이번 노트북은 생성 호출을 수행하지 않으므로 둘 다 측정하지 않았습니다. 서비스 모델을 선택할 때는 모델을 처음 실행하는 경우와 한 번 실행해 준비된 경우를 구분하고, 입력 길이, 출력 길이, 동시에 처리하는 요청 수를 고정해 별도로 측정해야 합니다.</p><h3>도식 읽기</h3><div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 210" role="img" aria-labelledby="title desc">
+<title id="title">08-model-selection 개념 도식</title>
+<desc id="desc">네 단계를 왼쪽에서 오른쪽으로 읽는 흐름</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#475569"/></marker></defs>
+<rect x="20" y="55" width="165" height="90" rx="14" fill="#dcfce7" stroke="#334155" stroke-width="2"/>
+<text x="102.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">작업·라이선스</text>
+<line x1="185" y1="100" x2="210" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="215" y="55" width="165" height="90" rx="14" fill="#dbeafe" stroke="#334155" stroke-width="2"/>
+<text x="297.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">필수 조건 필터</text>
+<line x1="380" y1="100" x2="405" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="410" y="55" width="165" height="90" rx="14" fill="#dcfce7" stroke="#334155" stroke-width="2"/>
+<text x="492.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">후보 모델</text>
+<line x1="575" y1="100" x2="600" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="605" y="55" width="165" height="90" rx="14" fill="#fef3c7" stroke="#334155" stroke-width="2"/>
+<text x="687.5" y="107" text-anchor="middle" font-family="Noto Sans KR, sans-serif" font-size="17" fill="#172033">자체 평가 필요</text>
+</svg></div><p>도식은 왼쪽에서 오른쪽으로 작업·라이선스, 필수 조건 필터, 후보 모델, 자체 평가 필요를 차례로 놓습니다. 네 상자는 직선 화살표로 이어집니다. 필터를 통과한 후보가 생겨도 마지막 상자처럼 자체 평가가 더 필요합니다. 이 도식은 세 후보의 세부 목록이나 품질 순위를 나타내지 않습니다. 노트북의 Qwen 한 후보 결과도 필터 조건을 만족한 결과일 뿐 품질 우승을 뜻하지 않습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p>첫 코드 셀은 세 후보의 모델 ID, 대표 작업, 모델 카드 라이선스를 사전으로 만들고 한 줄씩 출력합니다. 이 표에서 Qwen은 생성, multilingual MiniLM은 문장 유사도, KLUE BERT는 빈칸 채우기로 구분됩니다. 다음 셀은 Qwen의 고정 revision을 로드해 파라미터 494,032,768개를 확인합니다. 이미 캐시된 모델의 로딩 시간은 0.384초였고, 같은 한국어 문장을 100번 반복한 입력은 1,202토큰으로 나뉘며 토큰화에 3.631밀리초가 걸렸습니다.</p><p>마지막 셀은 <code>required_task</code>를 <code>text-generation</code>, <code>required_license</code>를 <code>apache-2.0</code>으로 정합니다. <code>for</code>가 후보를 하나씩 읽고 두 비교 결과를 참 또는 거짓으로 저장합니다. <code>and</code>로 둘 다 참인지 확인한 뒤 <code>eligible.append(item)</code>으로 만족한 후보를 결과 목록에 추가하면 Qwen 후보 하나가 출력됩니다. 이것은 요구 조건에 맞는 후보를 찾은 결과입니다. 세 모델에 같은 생성 질문을 던져 Qwen의 품질이 더 좋다고 측정한 결과가 아닙니다. 나머지 두 모델은 애초에 대표 작업이 다르므로 이 생성 후보 필터에서 제외됐습니다.</p><section class="notebook" data-notebook="08-모델-선택-기준" data-lesson-format="experiment" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-11</span><button type="button" class="copy-all">전체 코드 복사</button><a download="08-모델-선택-기준.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDrqqjrjbgg7ISg7YOdIOq4sOykgFxuIiwKICAgICJcbiIsCiAgICAi7KCV7ZmV64+ELCDsho3rj4QsIOuplOuqqOumrCwg65287J207ISg7IqkIOyhsOqxtOydtCDri6Trpbwg65WMIOyWtOuWu+qyjCDrqqjrjbgg7ZuE67O066W8IOu5hOq1kO2VoOq5jOyalD9cbiIsCiAgICAiXG4iLAogICAgIlB5dGhvbiAzLjEy7JmAIOyeoOq4tCDtjKjtgqTsp4Drpbwg7IKs7Jqp7ZWp64uI64ukLiDssqsg7Iuk7ZaJ7JeQ7ISc64qUIOuhnOy7rCDrqqjrjbjsnYQg64uk7Jq066Gc65Oc7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDruYTqtZDtkZwg66eM65Ok6riwXG4iLAogICAgIlxuIiwKICAgICIqKuyeheugpSoq7J2AIOuqqOuNuCBJRCwg64yA7ZGcIOyekeyXhSwg65287J207ISg7Iqk66W8IOuLtOydgCDsgqzsoIQg7IS4IOqwnOyeheuLiOuLpC4gYHRhc2tg64qUIOyLpOyKteyXkOyEnCDsgqzsmqntlaAg7J6F66ClwrfstpzroKUg66qp7KCB7J206rOgIGBsaWNlbnNlYOuKlCDrqqjrjbgg7Lm065Oc7JeQIO2RnOyLnOuQnCDsgqzsmqkg7KGw6rG07J6F64uI64ukLiDsnbQg7IWA7J2AIO2bhOuztCDsoJXrs7Trpbwg7ZWcIOykhOyUqSDstpzroKXtlaAg67+QIOyEseuKpeydhCDruYTqtZDtlZjsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMSwKICAgImlkIjogImNlbGwtMDMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MzQ6NTIuMjk4MTkwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MzQ6NTIuMjk3OTgyWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MzQ6NTMuOTQ5NTcyWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjozNDo1My45NDkxNDFaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAieydpZCc6ICdRd2VuL1F3ZW4yLjUtMC41Qi1JbnN0cnVjdCcsICd0YXNrJzogJ3RleHQtZ2VuZXJhdGlvbicsICdsaWNlbnNlJzogJ2FwYWNoZS0yLjAnfVxuIiwKICAgICAgInsnaWQnOiAnc2VudGVuY2UtdHJhbnNmb3JtZXJzL3BhcmFwaHJhc2UtbXVsdGlsaW5ndWFsLU1pbmlMTS1MMTItdjInLCAndGFzayc6ICdzZW50ZW5jZS1zaW1pbGFyaXR5JywgJ2xpY2Vuc2UnOiAnYXBhY2hlLTIuMCd9XG4iLAogICAgICAieydpZCc6ICdrbHVlL2JlcnQtYmFzZScsICd0YXNrJzogJ2ZpbGwtbWFzaycsICdsaWNlbnNlJzogJ0NDLUJZLVNBLTQuMCd9XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMg7JyEIOyEpOuqheydmCDsobDqsbTsnYQg7Iuk7ZaJ7ZWY6rOgIOyLpOygnCDstpzroKXsnYQg7ZmV7J247ZWp64uI64ukLlxuIiwKICAgICJpbXBvcnQgd2FybmluZ3NcbiIsCiAgICAid2FybmluZ3MuZmlsdGVyd2FybmluZ3MoXCJpZ25vcmVcIiwgbWVzc2FnZT1cIklQcm9ncmVzcyBub3QgZm91bmRcIilcbiIsCiAgICAiZnJvbSB0cmFuc2Zvcm1lcnMgaW1wb3J0IEF1dG9Nb2RlbEZvckNhdXNhbExNLCBBdXRvVG9rZW5pemVyXG4iLAogICAgIlxuIiwKICAgICJjYW5kaWRhdGVzID0gW1xuIiwKICAgICIgICAge1wiaWRcIjogXCJRd2VuL1F3ZW4yLjUtMC41Qi1JbnN0cnVjdFwiLCBcInRhc2tcIjogXCJ0ZXh0LWdlbmVyYXRpb25cIiwgXCJsaWNlbnNlXCI6IFwiYXBhY2hlLTIuMFwifSxcbiIsCiAgICAiICAgIHtcImlkXCI6IFwic2VudGVuY2UtdHJhbnNmb3JtZXJzL3BhcmFwaHJhc2UtbXVsdGlsaW5ndWFsLU1pbmlMTS1MMTItdjJcIiwgXCJ0YXNrXCI6IFwic2VudGVuY2Utc2ltaWxhcml0eVwiLCBcImxpY2Vuc2VcIjogXCJhcGFjaGUtMi4wXCJ9LFxuIiwKICAgICIgICAge1wiaWRcIjogXCJrbHVlL2JlcnQtYmFzZVwiLCBcInRhc2tcIjogXCJmaWxsLW1hc2tcIiwgXCJsaWNlbnNlXCI6IFwiQ0MtQlktU0EtNC4wXCJ9LFxuIiwKICAgICJdXG4iLAogICAgImZvciBpdGVtIGluIGNhbmRpZGF0ZXM6XG4iLAogICAgIiAgICBwcmludChpdGVtKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyDtmITsnqwg7ZmY6rK97JeQ7IScIOyLpO2WiSDqsIDriqXshLEg7ZmV7J24XG4iLAogICAgIlxuIiwKICAgICJgQXV0b1Rva2VuaXplci5mcm9tX3ByZXRyYWluZWQoKWDripQg66qo6424IElE7JeQIOunnuuKlCB0b2tlbml6ZXIg6rCd7LK066W8IOuwmO2ZmO2VmOqzoCwgYEF1dG9Nb2RlbEZvckNhdXNhbExNLmZyb21fcHJldHJhaW5lZCgpYOuKlCDri6TsnYwg7Yag7YGwIOyDneyEseyaqSDrqqjrjbgg6rCd7LK066W8IOuwmO2ZmO2VqeuLiOuLpC4gYG51bV9wYXJhbWV0ZXJzKClg64qUIO2MjOudvOuvuO2EsCDsiJjrpbwg7KCV7IiY66GcIOuwmO2ZmO2VqeuLiOuLpC4g7Lac66Cl7J2YIOuhnOuUqSDsi5zqsITqs7wg7Yag7YGw7ZmUIOyLnOqwhOydgCDtmITsnqwg7LqQ7Iuc7JmAIENQVeyXkOyEnCDsuKHsoJXtlZwg6rCS7J2066mwIOyDneyEsSDri7Xrs4DsnZgg7KeA7Jew7Iuc6rCE7J20IOyVhOuLmeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDIsCiAgICJpZCI6ICJjZWxsLTA1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTExVDA2OjM0OjUzLjk1MDUzOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTExVDA2OjM0OjUzLjk1MDQxOVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTExVDA2OjM0OjU0LjcwNjE4N1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMTFUMDY6MzQ6NTQuNzA1MjYzWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgInBhcmFtZXRlcnM6IDQ5NCwwMzIsNzY4XG4iLAogICAgICAiY2FjaGVkIGxvYWQgc2Vjb25kczogMC4zODRcbiIsCiAgICAgICJ0b2tlbml6ZTogMTIwMiB0b2tlbnMgaW4gMy42MzEgbXNcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDsnIQg7ISk66qF7J2YIOyhsOqxtOydhCDsi6TtlontlZjqs6Ag7Iuk7KCcIOy2nOugpeydhCDtmZXsnbjtlanri4jri6QuXG4iLAogICAgImltcG9ydCB0aW1lXG4iLAogICAgIm1vZGVsX2lkID0gY2FuZGlkYXRlc1swXVtcImlkXCJdXG4iLAogICAgInJldmlzaW9uID0gXCI3YWU1NTc2MDRhZGY2N2JlNTA0MTdmNTljMmMyZjE2N2RlZjlhNzc1XCJcbiIsCiAgICAidG9rZW5pemVyID0gQXV0b1Rva2VuaXplci5mcm9tX3ByZXRyYWluZWQobW9kZWxfaWQsIHJldmlzaW9uPXJldmlzaW9uKVxuIiwKICAgICJzdGFydCA9IHRpbWUucGVyZl9jb3VudGVyKClcbiIsCiAgICAibW9kZWwgPSBBdXRvTW9kZWxGb3JDYXVzYWxMTS5mcm9tX3ByZXRyYWluZWQobW9kZWxfaWQsIHJldmlzaW9uPXJldmlzaW9uKVxuIiwKICAgICJsb2FkX3NlY29uZHMgPSB0aW1lLnBlcmZfY291bnRlcigpIC0gc3RhcnRcbiIsCiAgICAidGV4dCA9IFwi7ZWc6rWt7Ja0IOusuOyepeydhCDthqDtgbDtmZTtlanri4jri6QuIFwiICogMTAwXG4iLAogICAgInN0YXJ0ID0gdGltZS5wZXJmX2NvdW50ZXIoKVxuIiwKICAgICJpZHMgPSB0b2tlbml6ZXIuZW5jb2RlKHRleHQpXG4iLAogICAgInRva2VuaXplX21zID0gKHRpbWUucGVyZl9jb3VudGVyKCkgLSBzdGFydCkgKiAxMDAwXG4iLAogICAgInByaW50KFwicGFyYW1ldGVyczpcIiwgZlwie21vZGVsLm51bV9wYXJhbWV0ZXJzKCk6LH1cIilcbiIsCiAgICAicHJpbnQoXCJjYWNoZWQgbG9hZCBzZWNvbmRzOlwiLCByb3VuZChsb2FkX3NlY29uZHMsIDMpKVxuIiwKICAgICJwcmludChcInRva2VuaXplOlwiLCBsZW4oaWRzKSwgXCJ0b2tlbnMgaW5cIiwgcm91bmQodG9rZW5pemVfbXMsIDMpLCBcIm1zXCIpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wNiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIO2VhOyImCDsobDqsbTsnLzroZwg7ZuE67O0IOqxsOultOq4sFxuIiwKICAgICJcbiIsCiAgICAi7IOd7ISxIOyekeyXheqzvCBBcGFjaGUtMi4w7J2EIO2VhOyImCDsobDqsbTsnLzroZwg7J6F66Cl7ZWp64uI64ukLiDruYgg66qp66GdIGBlbGlnaWJsZWDsnYQg66eM65OgIOuSpCBgZm9yYCDrsJjrs7XrrLjsnbQg7ZuE67O0IOyCrOyghOydhCDtlZjrgpjslKkg6rq864OF64uI64ukLiDsnpHsl4Ug7J287LmYIOyXrOu2gOyZgCDrnbzsnbTshKDsiqQg7J287LmYIOyXrOu2gOulvCDqsIHqsIEg67aI66as7Ja4IOqwkuycvOuhnCDqs4TsgrDtlZjqs6AsIOuRkCDqsJLsnbQg66qo65GQIGBUcnVlYOydvCDrlYzrp4wgYGFwcGVuZCgpYOuhnCDtm4Trs7Trpbwg66qp66GdIOuBneyXkCDstpTqsIDtlanri4jri6QuIOuwmOuzteydtCDrgZ3rgpjrqbQgYGVsaWdpYmxlYOyXkOuKlCDrkZAg7KGw6rG07J2EIOuqqOuRkCDthrXqs7ztlZwg7IKs7KCE66eMIOuCqOyKteuLiOuLpC4g7ZuE67O0IO2VmOuCmOqwgCDrgqjslZjri6TripQg7IKs7Iuk7J2AIOq3uCDtm4Trs7TqsIAg6rCA7J6lIOygle2Zle2VmOuLpOuKlCDrnLvsnbQg7JWE64uZ64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MzQ6NTQuNzA4MDk5WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MzQ6NTQuNzA3OTQ1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MzQ6NTQuNzExNDEwWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjozNDo1NC43MTA4MzRaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiZWxpZ2libGU6IFt7J2lkJzogJ1F3ZW4vUXdlbjIuNS0wLjVCLUluc3RydWN0JywgJ3Rhc2snOiAndGV4dC1nZW5lcmF0aW9uJywgJ2xpY2Vuc2UnOiAnYXBhY2hlLTIuMCd9XVxuIiwKICAgICAgIuyEoO2DnSDsoITsl5DripQg7Iuk7KCcIOuMgO2RnCDsp4jrrLjqs7wg7KCV64u1IOq4sOykgOycvOuhnCDtkojsp4jqs7wg7IaN64+E66W8IOy2lOqwgCDsuKHsoJXtlbTslbwg7ZWp64uI64ukLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOychCDshKTrqoXsnZgg7KGw6rG07J2EIOyLpO2Wie2VmOqzoCDsi6TsoJwg7Lac66Cl7J2EIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAicmVxdWlyZWRfdGFzayA9IFwidGV4dC1nZW5lcmF0aW9uXCJcbiIsCiAgICAicmVxdWlyZWRfbGljZW5zZSA9IFwiYXBhY2hlLTIuMFwiXG4iLAogICAgImVsaWdpYmxlID0gW11cbiIsCiAgICAiZm9yIGl0ZW0gaW4gY2FuZGlkYXRlczpcbiIsCiAgICAiICAgIHRhc2tfbWF0Y2hlcyA9IGl0ZW1bXCJ0YXNrXCJdID09IHJlcXVpcmVkX3Rhc2tcbiIsCiAgICAiICAgIGxpY2Vuc2VfbWF0Y2hlcyA9IGl0ZW1bXCJsaWNlbnNlXCJdID09IHJlcXVpcmVkX2xpY2Vuc2VcbiIsCiAgICAiICAgIGlmIHRhc2tfbWF0Y2hlcyBhbmQgbGljZW5zZV9tYXRjaGVzOlxuIiwKICAgICIgICAgICAgIGVsaWdpYmxlLmFwcGVuZChpdGVtKVxuIiwKICAgICJwcmludChcImVsaWdpYmxlOlwiLCBlbGlnaWJsZSlcbiIsCiAgICAicHJpbnQoXCLshKDtg50g7KCE7JeQ64qUIOyLpOygnCDrjIDtkZwg7KeI66y46rO8IOygleuLtSDquLDspIDsnLzroZwg7ZKI7KeI6rO8IOyGjeuPhOulvCDstpTqsIAg7Lih7KCV7ZW07JW8IO2VqeuLiOuLpC5cIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA4IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg6rWs7KGwIOqygOymnVxuIiwKICAgICJcbiIsCiAgICAi7JiI7IOB7ZWcIOyLpO2XmCDsobDqsbTqs7wg7Lac66ClIOq1rOyhsOqwgCDsnKDsp4DrkJjsl4jripTsp4Ag7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNCwKICAgImlkIjogImNlbGwtMDkiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMTFUMDY6MzQ6NTQuNzEzMDkwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMTFUMDY6MzQ6NTQuNzEyOTI0WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMTFUMDY6MzQ6NTQuNzE2MjQxWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0xMVQwNjozNDo1NC43MTU2NDNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi6rKA7KadOiDtlYTsiJgg7KGw6rG07Jy866GcIDPqsJwg7ZuE67O0IOykkSAx6rCc66W8IOqxuOuggOyKteuLiOuLpC5cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiYXNzZXJ0IGxlbihjYW5kaWRhdGVzKSA9PSAzIGFuZCBsZW4oZWxpZ2libGUpID09IDFcbiIsCiAgICAiYXNzZXJ0IG1vZGVsLm51bV9wYXJhbWV0ZXJzKCkgPT0gNDk0XzAzMl83NjhcbiIsCiAgICAicHJpbnQoXCLqsoDspp06IO2VhOyImCDsobDqsbTsnLzroZwgM+qwnCDtm4Trs7Qg7KSRIDHqsJzrpbwg6rG466CA7Iq164uI64ukLlwiKSIKICAgXQogIH0KIF0sCiAibWV0YWRhdGEiOiB7CiAgImtlcm5lbHNwZWMiOiB7CiAgICJkaXNwbGF5X25hbWUiOiAiUHl0aG9uIDMiLAogICAibGFuZ3VhZ2UiOiAicHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uMyIKICB9LAogICJsYW5ndWFnZV9pbmZvIjogewogICAiY29kZW1pcnJvcl9tb2RlIjogewogICAgIm5hbWUiOiAiaXB5dGhvbiIsCiAgICAidmVyc2lvbiI6IDMKICAgfSwKICAgImZpbGVfZXh0ZW5zaW9uIjogIi5weSIsCiAgICJtaW1ldHlwZSI6ICJ0ZXh0L3gtcHl0aG9uIiwKICAgIm5hbWUiOiAicHl0aG9uIiwKICAgIm5iY29udmVydF9leHBvcnRlciI6ICJweXRob24iLAogICAicHlnbWVudHNfbGV4ZXIiOiAiaXB5dGhvbjMiLAogICAidmVyc2lvbiI6ICIzLjEyLjEzIgogIH0sCiAgImxlc3Nvbl9mb3JtYXQiOiAiZXhwZXJpbWVudCIsCiAgInZlcmlmaWNhdGlvbiI6IHsKICAgImFsbG93X2Vycm9ycyI6IGZhbHNlLAogICAiY29kZV9jZWxscyI6IDQsCiAgICJjb2RlX3NoYTI1NiI6ICJmNDUyNTQ0ODE1MmYwNmM1ZGFhMjBiZGRlNzM1OTI3ZWZmZjI0OGVkNDY4YzRhNTk0NTdjMjIzYTU4ZjFmMDUxIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMTFUMDY6MzQ6NTQuODMwODgxKzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICIyYTg0MzVlMmY1MDMwOTU4MmY3NWQ5MTNiMTk5MmQwZWMwMDRiNTNhMjExYzlhNWEzNDI0YmZlODhmZWE4YTllIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 실험 셀 전체가 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>모델 선택 기준</h2>
+<p>정확도, 속도, 메모리, 라이선스 조건이 다를 때 어떻게 모델 후보를 비교할까요?</p>
+<p>Python 3.12와 잠긴 패키지를 사용합니다. 첫 실행에서는 로컬 모델을 다운로드합니다.</p></div>
+<div class="nb-markdown"><h3>비교표 만들기</h3>
+<p><strong>입력</strong>은 모델 ID, 대표 작업, 라이선스를 담은 사전 세 개입니다. <code>task</code>는 실습에서 사용할 입력·출력 목적이고 <code>license</code>는 모델 카드에 표시된 사용 조건입니다. 이 셀은 후보 정보를 한 줄씩 출력할 뿐 성능을 비교하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 위 설명의 조건을 실행하고 실제 출력을 확인합니다.
+import warnings
+warnings.filterwarnings(&quot;ignore&quot;, message=&quot;IProgress not found&quot;)
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+candidates = [
+    {&quot;id&quot;: &quot;Qwen/Qwen2.5-0.5B-Instruct&quot;, &quot;task&quot;: &quot;text-generation&quot;, &quot;license&quot;: &quot;apache-2.0&quot;},
+    {&quot;id&quot;: &quot;sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2&quot;, &quot;task&quot;: &quot;sentence-similarity&quot;, &quot;license&quot;: &quot;apache-2.0&quot;},
+    {&quot;id&quot;: &quot;klue/bert-base&quot;, &quot;task&quot;: &quot;fill-mask&quot;, &quot;license&quot;: &quot;CC-BY-SA-4.0&quot;},
+]
+for item in candidates:
+    print(item)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">{&#x27;id&#x27;: &#x27;Qwen/Qwen2.5-0.5B-Instruct&#x27;, &#x27;task&#x27;: &#x27;text-generation&#x27;, &#x27;license&#x27;: &#x27;apache-2.0&#x27;}
+{&#x27;id&#x27;: &#x27;sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2&#x27;, &#x27;task&#x27;: &#x27;sentence-similarity&#x27;, &#x27;license&#x27;: &#x27;apache-2.0&#x27;}
+{&#x27;id&#x27;: &#x27;klue/bert-base&#x27;, &#x27;task&#x27;: &#x27;fill-mask&#x27;, &#x27;license&#x27;: &#x27;CC-BY-SA-4.0&#x27;}
+</pre></div>
+<div class="nb-markdown"><h3>현재 환경에서 실행 가능성 확인</h3>
+<p><code>AutoTokenizer.from_pretrained()</code>는 모델 ID에 맞는 tokenizer 객체를 반환하고, <code>AutoModelForCausalLM.from_pretrained()</code>는 다음 토큰 생성용 모델 객체를 반환합니다. <code>num_parameters()</code>는 파라미터 수를 정수로 반환합니다. 출력의 로딩 시간과 토큰화 시간은 현재 캐시와 CPU에서 측정한 값이며 생성 답변의 지연시간이 아닙니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 위 설명의 조건을 실행하고 실제 출력을 확인합니다.
+import time
+model_id = candidates[0][&quot;id&quot;]
+revision = &quot;7ae557604adf67be50417f59c2c2f167def9a775&quot;
+tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
+start = time.perf_counter()
+model = AutoModelForCausalLM.from_pretrained(model_id, revision=revision)
+load_seconds = time.perf_counter() - start
+text = &quot;한국어 문장을 토큰화합니다. &quot; * 100
+start = time.perf_counter()
+ids = tokenizer.encode(text)
+tokenize_ms = (time.perf_counter() - start) * 1000
+print(&quot;parameters:&quot;, f&quot;{model.num_parameters():,}&quot;)
+print(&quot;cached load seconds:&quot;, round(load_seconds, 3))
+print(&quot;tokenize:&quot;, len(ids), &quot;tokens in&quot;, round(tokenize_ms, 3), &quot;ms&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">parameters: 494,032,768
+cached load seconds: 0.384
+tokenize: 1202 tokens in 3.631 ms
+</pre></div>
+<div class="nb-markdown"><h3>필수 조건으로 후보 거르기</h3>
+<p>생성 작업과 Apache-2.0을 필수 조건으로 입력합니다. 빈 목록 <code>eligible</code>을 만든 뒤 <code>for</code> 반복문이 후보 사전을 하나씩 꺼냅니다. 작업 일치 여부와 라이선스 일치 여부를 각각 불리언 값으로 계산하고, 두 값이 모두 <code>True</code>일 때만 <code>append()</code>로 후보를 목록 끝에 추가합니다. 반복이 끝나면 <code>eligible</code>에는 두 조건을 모두 통과한 사전만 남습니다. 후보 하나가 남았다는 사실은 그 후보가 가장 정확하다는 뜻이 아닙니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 위 설명의 조건을 실행하고 실제 출력을 확인합니다.
+required_task = &quot;text-generation&quot;
+required_license = &quot;apache-2.0&quot;
+eligible = []
+for item in candidates:
+    task_matches = item[&quot;task&quot;] == required_task
+    license_matches = item[&quot;license&quot;] == required_license
+    if task_matches and license_matches:
+        eligible.append(item)
+print(&quot;eligible:&quot;, eligible)
+print(&quot;선택 전에는 실제 대표 질문과 정답 기준으로 품질과 속도를 추가 측정해야 합니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">eligible: [{&#x27;id&#x27;: &#x27;Qwen/Qwen2.5-0.5B-Instruct&#x27;, &#x27;task&#x27;: &#x27;text-generation&#x27;, &#x27;license&#x27;: &#x27;apache-2.0&#x27;}]
+선택 전에는 실제 대표 질문과 정답 기준으로 품질과 속도를 추가 측정해야 합니다.
+</pre></div>
+<div class="nb-markdown"><h3>구조 검증</h3>
+<p>예상한 실험 조건과 출력 구조가 유지되었는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source">assert len(candidates) == 3 and len(eligible) == 1
+assert model.num_parameters() == 494_032_768
+print(&quot;검증: 필수 조건으로 3개 후보 중 1개를 걸렀습니다.&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">검증: 필수 조건으로 3개 후보 중 1개를 걸렀습니다.
+</pre></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section><p class="look"><b>확인할 점</b> — <code>eligible</code> 목록에는 한 모델만 남지만 출력의 마지막 문장은 선택 전에 실제 대표 질문과 정답 기준으로 품질과 속도를 측정해야 한다고 명시합니다. 자체 질의셋은 서비스에서 실제로 들어올 대표 질문과 질문별 정답 기준을 함께 모은 평가 자료입니다. 0.384초와 3.631밀리초를 생성 응답 시간이나 TTFT로 부르지 않습니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2><p>세 후보 중 필수 작업과 라이선스를 동시에 만족한 항목은 Qwen 하나였습니다. 이는 필터 조건을 코드로 정확히 적용했음을 보여 줍니다. 필수 라이선스를 바꾸거나 임베딩 작업을 선택하면 결과 목록도 달라집니다. 작업 종류와 라이선스 값은 실제 제품 요구에서 먼저 정해야 하며, 원하는 모델이 남도록 사후에 조건을 바꾸면 선택 기준의 의미가 없어집니다.</p><p>파라미터 수 494,032,768개는 실행 모델이 약 0.49B 규모라는 모델 카드 정보와 맞습니다. 이 값만으로 품질이나 메모리 사용량을 결정할 수 없습니다. 캐시된 로딩 0.384초도 현재 한 번의 실행 결과입니다. 디스크 캐시, 운영체제 상태, 장치, 패키지 버전에 따라 달라질 수 있습니다. 최초 설치에서는 모델 다운로드 시간이 추가됩니다.</p><p>1,202토큰을 3.631밀리초에 토큰화한 측정은 전처리 한 단계만 포함합니다. 모델이 입력을 계산하고 새 토큰을 만드는 시간, 네트워크 전송, 요청 대기, 생성 중인 답을 조금씩 전송하는 시간은 포함하지 않습니다. 따라서 “모델 응답이 1밀리초”라고 설명하면 잘못입니다. 실제 후보 비교에서는 같은 입력·출력 길이와 반복 횟수로 전체 지연과 TTFT를 여러 번 측정합니다. 측정값을 정렬해 가운데에 있는 값과 느린 실행 사례도 품질 평가와 함께 기록합니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2><ul><li>모델 카드의 task 표기는 후보 분류의 시작점입니다. 실제 코드 인터페이스와 입력·출력 형식이 서비스 요구에 맞는지 작은 실행으로 확인합니다.</li><li>라이선스 이름만 복사하지 말고 고정 revision의 모델 카드, 가중치, 코드, 데이터 관련 조건을 확인합니다. 조건이 바뀔 수 있으므로 확인 날짜를 남깁니다.</li><li>파라미터 수가 큰 모델이 모든 업무에서 더 좋은 것은 아닙니다. 자체 질의셋의 정답 기준과 실패 비용으로 품질을 측정합니다.</li><li>캐시된 로딩 시간은 최초 다운로드와 서버 시작 시간을 포함하지 않습니다. 모델을 처음 불러오는 경우와 이미 불러온 경우를 분리해 측정합니다.</li><li>토큰화 시간은 생성 시간이나 TTFT가 아닙니다. 측정 구간의 시작과 끝을 코드로 명시합니다.</li><li>후보가 하나 남았다는 사실은 선택이 끝났다는 뜻이 아닙니다. 품질, 지연, 메모리, 비용, 운영 제약을 만족하지 못하면 다른 후보를 추가합니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2><ul><li>작업 종류와 라이선스 같은 필수 조건으로 후보를 먼저 거르고 남은 모델만 같은 기준으로 평가합니다.</li><li>이번 측정의 로딩 시간과 토큰화 시간은 생성 지연이나 첫 토큰 지연을 나타내지 않습니다.</li><li>후보 필터는 품질 비교가 아니므로 서비스의 대표 질문과 정답 기준으로 만든 자체 질의셋과 운영 환경 측정이 필요합니다.</li></ul><p><strong>다음 학습과 이어지는 지점</strong> — Ch 6에서는 외부 모델 API를 LangChain의 공통 인터페이스로 호출하고 메시지와 응답 객체를 다룹니다. Ch 5의 로컬 Qwen·MiniLM·KLUE 표를 그대로 사용하지 않고, 생성 API를 제공하는 OpenAI·Anthropic·Google 후보에 작업 적합성과 키 준비 여부를 적용합니다. Ch 6의 1회 호출 기록은 모델 품질 순위가 아닙니다. Ch 11은 검색 결과를 자체 질의셋과 검색 지표로 측정하고, 생성 답변의 정확성과 근거성은 Ch 15에서 별도로 평가합니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary><p class="quiz-q">1. 생성 작업과 Apache-2.0을 필수 조건으로 적용했을 때 어떤 후보가 남았습니까?</p><p class="quiz-a"><strong>정답:</strong> <code>Qwen/Qwen2.5-0.5B-Instruct</code> 하나가 남았습니다. 다른 두 후보는 대표 작업이나 라이선스 조건이 달랐습니다.</p><p class="quiz-q">2. 캐시된 로딩 시간 0.384초가 포함하지 않는 시간을 두 가지 쓰십시오.</p><p class="quiz-a"><strong>정답:</strong> 최초 모델 다운로드 시간과 실제 출력 토큰 생성 시간을 포함하지 않습니다. 네트워크·큐 대기와 전체 서버 시작도 별도입니다.</p><p class="quiz-q">3. 1,202토큰을 3.631밀리초에 처리한 값을 생성 지연시간이라고 부를 수 없는 이유는 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> tokenizer가 문자열을 토큰 ID로 바꾸는 전처리만 측정했고 모델 추론과 새 토큰 생성은 실행하지 않았기 때문입니다.</p><p class="quiz-q">4. 필수 조건 필터 뒤에도 자체 질의셋 평가가 필요한 이유는 무엇입니까?</p><p class="quiz-a"><strong>정답:</strong> 필터는 작업·라이선스 적합성만 확인하며 실제 업무 답변의 정확도, 실패 유형, 지연, 비용을 비교하지 않기 때문입니다.</p></details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2><ul><li><a href="https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct/tree/7ae557604adf67be50417f59c2c2f167def9a775">Qwen2.5-0.5B-Instruct 모델 카드와 고정 revision</a> · 확인 2026-09-09 · Apache-2.0</li><li><a href="https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2/tree/e8f8c211226b894fcb81acc59f3b34ba3efd5f42">multilingual MiniLM 모델 카드와 고정 revision</a> · 확인 2026-09-09 · Apache-2.0</li><li><a href="https://huggingface.co/klue/bert-base/tree/77c8b3d707df785034b4e50f2da5d37be5f0f546">KLUE BERT 모델 카드와 고정 revision</a> · 확인 2026-09-09 · CC-BY-SA-4.0</li><li><a href="https://huggingface.co/docs/transformers/model_doc/auto">Hugging Face Transformers: Auto Classes</a> · 확인 2026-09-09 · 기준 Transformers 4.56.2</li></ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script><div class="nav-foot"><span><a href="07-환각의-구조적-원인.html">← 환각의 구조적 원인</a></span><span><a href="index.html">챕터 목차</a></span><span>챕터 끝</span></div></div></body></html>

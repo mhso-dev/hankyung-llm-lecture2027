@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph lp["01절 도구 lookup_policy"]
+    direction TB
+    l1["매개변수 topic · 표시 str<br>모델이 채우는 인자"]:::flow
+    l2["입력 형식의 인자 topic<br>명세의 인자 topic"]:::measure
+    l1 --> l2
+  end
+  subgraph ml["이 절 도구 check_my_loan"]
+    direction TB
+    m1["매개변수 runtime<br>표시 ToolRuntime<br>안에 MemberContext<br>라이브러리가 채우는 매개변수"]:::flow
+    m2["입력 형식의 인자 없음<br>명세의 인자 없음"]:::measure
+    m3["소스 확인 · 실행할 때<br>도구 실행 노드가 runtime을<br>만들어 넣어 줌"]
+    m1 --> m2
+    m2 ~~~ m3
+  end
+  lp ~~~ ml

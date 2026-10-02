@@ -1,0 +1,22 @@
+flowchart TB
+  %% classes
+  form["양식 클래스 PolicyAnswer<br>칸 topic · answer"]:::tool
+  subgraph ts["도구 전략 ToolStrategy"]
+    direction TB
+    t1["양식 도구 PolicyAnswer로<br>모델에게 알림"]
+    t2["둘째 응답 · 도구 호출 요청<br>PolicyAnswer<br>내용 글 길이 0"]:::measure
+    t3["마지막 도구 메시지<br>Returning structured<br>response"]:::measure
+    t1 --> t2
+    t2 --> t3
+  end
+  subgraph ps["제공자 전략 ProviderStrategy"]
+    direction TB
+    p1["요청의 response_format에<br>양식을 실음"]
+    p2["마지막 응답<br>도구 호출 요청 0건<br>내용 글이 JSON 모양"]:::measure
+    p1 --> p2
+  end
+  out["칸 structured_response<br>종류 PolicyAnswer<br>칸 이름 topic · answer"]:::measure
+  form --> ts
+  form --> ps
+  ts --> out
+  ps --> out

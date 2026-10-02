@@ -1,0 +1,39 @@
+{
+  "run_id": "advanced-continuity-20260910T025210-integrated-01",
+  "run_type": "generation_smoke_test",
+  "qid": "Q002",
+  "split": "dev",
+  "question": "도서는 한 번에 몇 권까지, 며칠 동안 빌릴 수 있나요?",
+  "gold_doc_ids": [
+    "E01"
+  ],
+  "retrieved": [
+    {
+      "doc_id": "E01",
+      "page": 3,
+      "chunk_id": "E01-P03-C01"
+    },
+    {
+      "doc_id": "E02",
+      "page": 3,
+      "chunk_id": "E02-P03-C01"
+    }
+  ],
+  "response": "도서는 한 번에 **7권까지** 빌릴 수 있고, 대출 기간은 **14일**입니다. [E01 p.3]",
+  "duration_ms": 27001.53,
+  "retrieval_metrics": null,
+  "generation_evaluation": {
+    "status": "not_evaluated",
+    "next_chapter": "Ch15"
+  },
+  "settings": {
+    "input": "PDF page text",
+    "dense": "text-embedding-3-small",
+    "sparse": "Kiwi+BM25",
+    "fusion": "RRF(k=60)",
+    "reranker": "BAAI/bge-reranker-v2-m3",
+    "context_selection": "matched-page-text",
+    "chat": "gpt-5.4-mini",
+    "dimensions": 256
+  }
+}

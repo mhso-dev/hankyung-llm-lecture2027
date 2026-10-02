@@ -1,0 +1,370 @@
+[
+  {
+    "name": "01-commit-ignore",
+    "title": "파일 상태가 커밋으로 기록되는 순서",
+    "caption": "새 파일은 무시 규칙을 먼저 확인합니다. 추적할 파일을 git add로 선택하고 git commit으로 기록하며 .env는 스테이징 대상에서 제외합니다.",
+    "w": 720,
+    "h": 425,
+    "elements": [
+      {
+        "kind": "box",
+        "id": "working",
+        "x": 30,
+        "y": 80,
+        "w": 270,
+        "h": 70,
+        "label": "작업 폴더의 새 파일\napp.py · .env",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "ignore",
+        "x": 30,
+        "y": 200,
+        "w": 270,
+        "h": 75,
+        "label": ".gitignore 확인\napp.py는 추적 가능",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "ignored",
+        "x": 410,
+        "y": 200,
+        "w": 280,
+        "h": 75,
+        "label": ".env는 규칙과 일치\n스테이징에서 제외",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "stage",
+        "x": 30,
+        "y": 330,
+        "w": 270,
+        "h": 65,
+        "label": "git add app.py\n스테이징에서 선택",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "commit",
+        "x": 410,
+        "y": 330,
+        "w": 280,
+        "h": 65,
+        "label": "git commit\n선택한 변경 기록",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "a1",
+        "points": [
+          [
+            165,
+            150
+          ],
+          [
+            165,
+            200
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "a2",
+        "points": [
+          [
+            300,
+            237
+          ],
+          [
+            410,
+            237
+          ]
+        ],
+        "color": "#2563eb",
+        "label": ".env",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "a3",
+        "points": [
+          [
+            165,
+            275
+          ],
+          [
+            165,
+            330
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "a4",
+        "points": [
+          [
+            300,
+            363
+          ],
+          [
+            410,
+            363
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      }
+    ]
+  },
+  {
+    "name": "02-flow-review",
+    "title": "기능 브랜치의 검토와 병합",
+    "caption": "main에서 기능 브랜치를 만들고 원격에 게시한 뒤 차이 검토와 수정 과정을 거쳐 main에 병합합니다.",
+    "boxes": [
+      {
+        "label": "main\n검토된 기준",
+        "color": "green"
+      },
+      {
+        "label": "feature/order-summary\n기능 커밋",
+        "color": "blue"
+      },
+      {
+        "label": "로컬 PR 리뷰 모의\nmain...feature 차이",
+        "color": "yellow"
+      },
+      {
+        "label": "리뷰 의견 반영\n수정 커밋",
+        "color": "blue"
+      },
+      {
+        "label": "main 병합 후\n원격 갱신",
+        "color": "green"
+      }
+    ]
+  },
+  {
+    "name": "03-merge-conflict",
+    "title": "팀 저장소의 병합 충돌 해결",
+    "caption": "두 작업자가 같은 줄을 다르게 수정하면 원격 push가 거부되고 병합 충돌을 정책 자료에 맞춰 해결합니다.",
+    "boxes": [
+      {
+        "label": "공통 main\n출고 정책 기록",
+        "color": "green"
+      },
+      {
+        "label": "Alice 변경\n14시 이전 오늘 출고",
+        "color": "blue"
+      },
+      {
+        "label": "Bob 변경\n내일 출고",
+        "color": "blue"
+      },
+      {
+        "label": "push 거부와 pull 충돌\n같은 줄의 다른 내용",
+        "color": "red"
+      },
+      {
+        "label": "정책 근거로 해결\n원격 main 갱신",
+        "color": "blue"
+      }
+    ]
+  },
+  {
+    "name": "04-recovery-tools",
+    "title": "상황에 맞는 Git 도구 선택",
+    "caption": "세 행은 서로 다른 상황입니다. 공개 변경 취소에는 revert, 로컬 참조 복구에는 reflog, 두 작업 폴더 사용에는 worktree를 선택합니다.",
+    "w": 720,
+    "h": 405,
+    "elements": [
+      {
+        "kind": "box",
+        "id": "revert_case",
+        "x": 30,
+        "y": 90,
+        "w": 295,
+        "h": 65,
+        "label": "공유한 변경을 취소할 때",
+        "fill": "#fee2e2",
+        "stroke": "#dc2626",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "revert",
+        "x": 410,
+        "y": 90,
+        "w": 280,
+        "h": 65,
+        "label": "revert\n취소하는 새 커밋",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "r1",
+        "points": [
+          [
+            325,
+            122
+          ],
+          [
+            410,
+            122
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "reflog_case",
+        "x": 30,
+        "y": 205,
+        "w": 295,
+        "h": 65,
+        "label": "로컬 커밋을 다시 찾을 때",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "reflog",
+        "x": 410,
+        "y": 205,
+        "w": 280,
+        "h": 65,
+        "label": "reflog\n참조 이동 기록 확인",
+        "fill": "#fef3c7",
+        "stroke": "#d97706",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "r2",
+        "points": [
+          [
+            325,
+            237
+          ],
+          [
+            410,
+            237
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "worktree_case",
+        "x": 30,
+        "y": 320,
+        "w": 295,
+        "h": 65,
+        "label": "두 브랜치를 함께 작업할 때",
+        "fill": "#dcfce7",
+        "stroke": "#16a34a",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "box",
+        "id": "worktree",
+        "x": 410,
+        "y": 320,
+        "w": 280,
+        "h": 65,
+        "label": "worktree\n브랜치별 작업 폴더",
+        "fill": "#dbeafe",
+        "stroke": "#2563eb",
+        "fs": 16,
+        "dashed": false
+      },
+      {
+        "kind": "arrow",
+        "id": "r3",
+        "points": [
+          [
+            325,
+            352
+          ],
+          [
+            410,
+            352
+          ]
+        ],
+        "color": "#2563eb",
+        "label": "",
+        "fs": 14,
+        "dashed": false
+      }
+    ]
+  },
+  {
+    "name": "05-secret-response",
+    "title": "실제 시크릿 유출 시 대응 순서",
+    "caption": "실제 유출 시 자격 증명을 폐기·교체한 뒤 협업자와 이력 재작성을 조율합니다. 실습은 가상 문자열의 이력 정리·원격 갱신·재검사만 실행합니다.",
+    "boxes": [
+      {
+        "label": "노출 발견\n권한과 공개 범위 확인",
+        "color": "red"
+      },
+      {
+        "label": "실제 유출 시 폐기·교체\n외부 서비스에서 수행",
+        "color": "blue"
+      },
+      {
+        "label": "관리자·협업자 조율\n재작성 범위 결정",
+        "color": "blue"
+      },
+      {
+        "label": "이력 정리와 원격 갱신\n경로·값 재검사",
+        "color": "blue"
+      },
+      {
+        "label": "새 이력 재복제\n경로·값 부재 확인",
+        "color": "yellow"
+      }
+    ]
+  }
+]

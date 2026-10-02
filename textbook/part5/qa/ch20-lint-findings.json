@@ -1,0 +1,101 @@
+[
+  {
+    "cell": 6,
+    "code": "F401",
+    "end_location": {
+      "column": 23,
+      "row": 3
+    },
+    "filename": "/Users/mhso/working/claude/projects/한국경제신문/labs/part5/ch20-tool-node/notebooks/01-ToolNode와-tools-condition.ipynb",
+    "fix": {
+      "applicability": "safe",
+      "edits": [
+        {
+          "content": "",
+          "end_location": {
+            "column": 1,
+            "row": 4
+          },
+          "location": {
+            "column": 1,
+            "row": 3
+          }
+        }
+      ],
+      "message": "Remove unused import: `typing.Any`"
+    },
+    "location": {
+      "column": 20,
+      "row": 3
+    },
+    "message": "`typing.Any` imported but unused",
+    "noqa_row": 3,
+    "url": "https://docs.astral.sh/ruff/rules/unused-import"
+  },
+  {
+    "cell": 6,
+    "code": "F401",
+    "end_location": {
+      "column": 23,
+      "row": 3
+    },
+    "filename": "/Users/mhso/working/claude/projects/한국경제신문/labs/part5/ch20-tool-node/notebooks/02-도구-오류와-ToolMessage.ipynb",
+    "fix": {
+      "applicability": "safe",
+      "edits": [
+        {
+          "content": "",
+          "end_location": {
+            "column": 1,
+            "row": 4
+          },
+          "location": {
+            "column": 1,
+            "row": 3
+          }
+        }
+      ],
+      "message": "Remove unused import: `typing.Any`"
+    },
+    "location": {
+      "column": 20,
+      "row": 3
+    },
+    "message": "`typing.Any` imported but unused",
+    "noqa_row": 3,
+    "url": "https://docs.astral.sh/ruff/rules/unused-import"
+  },
+  {
+    "cell": 10,
+    "code": "F401",
+    "end_location": {
+      "column": 57,
+      "row": 2
+    },
+    "filename": "/Users/mhso/working/claude/projects/한국경제신문/labs/part5/ch20-tool-node/notebooks/04-if-분기와-모델-선택-비교.ipynb",
+    "fix": {
+      "applicability": "safe",
+      "edits": [
+        {
+          "content": "from langchain.messages import HumanMessage",
+          "end_location": {
+            "column": 57,
+            "row": 2
+          },
+          "location": {
+            "column": 1,
+            "row": 2
+          }
+        }
+      ],
+      "message": "Remove unused import: `langchain.messages.ToolMessage`"
+    },
+    "location": {
+      "column": 46,
+      "row": 2
+    },
+    "message": "`langchain.messages.ToolMessage` imported but unused",
+    "noqa_row": 2,
+    "url": "https://docs.astral.sh/ruff/rules/unused-import"
+  }
+]

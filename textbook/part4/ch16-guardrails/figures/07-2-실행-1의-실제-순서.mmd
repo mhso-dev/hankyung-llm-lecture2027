@@ -1,0 +1,21 @@
+%%{init: {"sequence": {"messageAlign": "left"}}}%%
+sequenceDiagram
+  participant S as serve_all<br>serve_question
+  participant B as 예산 · 04절
+  participant M as 모델 gpt-5.4-mini
+  participant L as 기록 목록
+  S->>B: 첫째 질문 예약
+  Note over B: 예산 칸 calls 1
+  S->>M: 가린 첫째 질문
+  M-->>S: 받은 답
+  S->>L: answer 한 줄
+  S->>B: 둘째 질문 예약
+  Note over B: 예산 칸 calls 2
+  S->>M: 가린 둘째 질문
+  M-->>S: 받은 답
+  S->>L: answer 한 줄
+  S->>B: 셋째 질문 예약
+  B-->>S: ValueError
+  Note over B: 호출 한도를 넘습니다
+  S->>L: stopped 한 줄
+  Note over L: 기록 줄 셋<br>원문 값 없음

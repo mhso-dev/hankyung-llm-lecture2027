@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  s["append_key_once<br>기록 파일을 읽음"]:::flow
+  y["건너뜀<br>파일에 쓰지 않음"]:::flow
+  n["append_key를 불러<br>키 한 줄을 적음"]:::flow
+  o1["2절 둘째 부름 결과 건너뜀<br>5절 다시 실행<br>칸 notes에 건너뜀"]:::measure
+  o2["2절 첫 부름 결과 적음<br>5절 끊기 전 키 한 줄"]:::measure
+  e["기록 파일의 키<br>order-2306 한 줄"]:::measure
+  s -.->|키가 이미 있음| y
+  s -.->|키가 없음| n
+  y --> o1
+  n --> o2
+  o1 --> e
+  o2 --> e

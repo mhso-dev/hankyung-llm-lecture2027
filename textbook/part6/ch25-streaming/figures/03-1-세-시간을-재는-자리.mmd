@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  s["시작 시각<br>stream을 부르기 직전"]:::flow
+  a["자리 1 · custom<br>진행 값 30 · 모델 요청 전<br>여기까지 첫 사건 시간"]:::measure
+  b["자리 2 · messages<br>글자 없는 스트림 청크"]:::measure
+  c["자리 3 · messages<br>글자가 든 첫 스트림 청크<br>여기까지 첫 토큰 도착 시간"]:::measure
+  d["맨 끝 · updates<br>노드 write_answer의 갱신"]:::measure
+  e["끝 시각<br>반복문이 끝난 뒤<br>여기까지 전체 걸린 시간"]:::flow
+  s --> a
+  a --> b
+  b --> c
+  c -->|스트림 청크들 · 둘째 진행 값| d
+  d --> e

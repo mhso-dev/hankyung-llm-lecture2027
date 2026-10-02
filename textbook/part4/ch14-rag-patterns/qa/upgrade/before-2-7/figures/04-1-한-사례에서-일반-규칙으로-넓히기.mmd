@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  q["한 사례의 세부가 담긴<br>구체 질문"]:::tool
+  p["우리가 적은<br>넓히기 머리글"]:::flow
+  m["답 모델 gpt-5.4-mini"]:::model
+  v["넓힌 질문 한 줄"]:::measure
+  s["우리가 적은<br>넓힌 질문으로 거리 검색"]:::flow
+  g["정답 문서 FAC-004가<br>첫 자리"]:::measure
+  q --> p
+  p --> m
+  m --> v
+  v --> s
+  s --> g

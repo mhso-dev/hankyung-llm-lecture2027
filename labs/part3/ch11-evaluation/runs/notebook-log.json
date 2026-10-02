@@ -1,0 +1,18 @@
+{
+  "run_id": "lexical-doc-v1",
+  "run_date": "2026-09-09",
+  "settings": {
+    "retriever": "word+bigrams",
+    "candidate_k": 50,
+    "report_k": 5
+  },
+  "metrics": {
+    "recall_at_50": 1.0,
+    "precision_at_5": 0.2
+  },
+  "metrics_policy": "unique-doc-macro-v1",
+  "query_count": 30,
+  "excluded_query_count": 0,
+  "candidate_page_count": 90,
+  "returned_unique_doc_count": 17
+}

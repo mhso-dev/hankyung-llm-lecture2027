@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  ev["휴관 기록 E01 p.2<br>목록 가운데에 하나"]:::tool
+  fill["무관한 기록 E02 p.5<br>한 줄 32토큰"]:::tool
+  build["build_long_notes<br>무관한 기록 수만 바꿈"]:::flow
+  lists["무관한 기록<br>10 · 100 · 1000개<br>추정 456 · 3336 · 32136"]:::measure
+  mdl["gpt-5.4-mini<br>출력 상한 120"]:::model
+  rec["make_length_record<br>지킬 말 · 출처 표시 수 · 비용"]:::flow
+  ev --> build
+  fill --> build
+  build --> lists
+  lists --> mdl
+  mdl --> rec

@@ -1,0 +1,4 @@
+- 설명 대상 문장: 두 셀은 import 문의 모양만 다르고, 그래서 클래스를 부를 때 적는 이름이 다릅니다.
+- 캡션: import 문의 두 가지 모양. 모듈 이름을 가져오면 점을 찍어 부르고, 클래스 이름을 가져오면 점 없이 부릅니다.
+- 읽는 법: 위 칸은 3번 소제목, 아래 칸은 5번 소제목이고, 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 파란 상자는 import 문과 호출, 초록 상자는 import 문이 노트북에 만든 이름, 노란 상자는 출력입니다. 위 칸은 이름 order_tools가 생겨 점을 찍고 부르고(pencil 수량: 5), 아래 칸은 이름 OrderLine이 생겨 점 없이 부릅니다(note 수량: 4).
+- alt: 위 칸은 import order_tools 줄로 노트북에 이름 order_tools가 생겨 order_tools.OrderLine('연필', 3)으로 pencil 수량 5가 나오고, 아래 칸은 from order_tools import OrderLine 줄로 이름 OrderLine이 생겨 OrderLine('노트', 2)로 note 수량 4가 나오는 것을 비교한 그림

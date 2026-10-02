@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  h["대화 기록<br>시스템 하나와 대화 다섯"]:::tool
+  s["나누기<br>split_history"]:::flow
+  sh["요약하기<br>summarize_history"]:::flow
+  t["자르기 trim_history<br>최근 대화 둘만 남김"]:::flow
+  m["요약 모델 gpt-5.4-mini<br>오래된 대화 셋을 요약"]:::model
+  tr["자른 기록<br>메시지 셋"]:::measure
+  sr["요약한 기록<br>메시지 넷"]:::measure
+  h --> s
+  s --> sh
+  s --> t
+  sh --> m
+  t --> tr
+  m --> sr

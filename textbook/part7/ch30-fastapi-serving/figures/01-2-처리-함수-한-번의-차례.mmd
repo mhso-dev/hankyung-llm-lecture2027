@@ -1,0 +1,12 @@
+flowchart TB
+  %% classes
+  req["요청 POST /v1/chat<br>본문 JSON"]:::tool
+  chk["라이브러리가<br>입력 형식으로 검사<br>처리 함수를 부르기 전"]
+  run["await chat_after<br>처리 함수 몸통"]:::flow
+  mk["make_result 동기 호출<br>글을 잇고 바로 끝남"]:::flow
+  cut["응답 형식으로 거름<br>칸 answer thread_id"]
+  ok["상태 코드 200"]:::measure
+  bad["상태 코드 422<br>처리 함수를 부르지 않음"]:::measure
+  req --> chk
+  chk -->|맞음| run --> mk --> cut --> ok
+  chk -.->|어긋남| bad

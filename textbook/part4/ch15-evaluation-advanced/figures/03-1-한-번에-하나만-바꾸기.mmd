@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph head["머리글만 바꾸기"]
+    direction TB
+    a1["사례 세 건의 두 칸<br>답 · 근거 문서"]:::tool
+    a2["근거 충실도 머리글 두 판<br>rag-judge-v1.0.0 · v1.1.0"]:::flow
+    a3["질문 번호별 점수<br>두 판을 나란히"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  subgraph order["차례만 바꾸기"]
+    direction TB
+    b1["같은 두 답<br>짧은 답 · 긴 답"]:::tool
+    b2["쌍 비교 두 차례<br>짧은 답 먼저 · 긴 답 먼저"]:::flow
+    b3["두 차례에서<br>고른 글 이름"]:::measure
+    b1 --> b2
+    b2 --> b3
+  end
+  same["두 실험 모두 같은 평가 모델<br>gpt-5.4-mini<br>바꾼 것 하나 말고<br>나머지는 그대로"]
+  head ~~~ same
+  order ~~~ same

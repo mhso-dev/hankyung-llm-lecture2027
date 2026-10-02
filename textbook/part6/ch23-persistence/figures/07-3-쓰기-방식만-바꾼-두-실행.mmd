@@ -1,0 +1,20 @@
+flowchart TB
+  %% classes
+  top["바꾼 값 하나 · 쓰기 방식<br>실행 1 idempotent<br>실행 2 naive"]:::tool
+  subgraph r1["실행 1 · idempotent"]
+    direction TB
+    a1["다시 실행한 record_loan<br>append_key_once가<br>키를 찾아 건너뜀"]:::flow
+    a2["기록 파일에 같은 키 한 줄<br>칸 notes 신청 받음 · 건너뜀"]:::measure
+    a1 --> a2
+  end
+  subgraph r2["실행 2 · naive"]
+    direction TB
+    b1["다시 실행한 record_loan<br>append_key가<br>검사 없이 한 줄 더"]:::flow
+    b2["기록 파일에 같은 키 두 줄<br>칸 notes 신청 받음 · 적음"]:::measure
+    b1 --> b2
+  end
+  cm["두 실행 같음<br>멈춘 뒤 다음 노드 record_loan<br>체크포인트 셋<br>이어 간 뒤 체크포인트 넷<br>receive_request 한 번<br>record_loan 두 번"]
+  top --> r1
+  top --> r2
+  r1 ~~~ cm
+  r2 ~~~ cm

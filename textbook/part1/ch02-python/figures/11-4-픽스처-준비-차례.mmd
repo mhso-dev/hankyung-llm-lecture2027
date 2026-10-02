@@ -1,0 +1,15 @@
+sequenceDiagram
+  participant P as pytest
+  participant F as 픽스처 items()
+  participant A as test_add_note
+  participant B as test_add_pencil
+  P->>F: SETUP F items
+  F-->>P: 새 빈 목록 []
+  P->>A: items를 넣어 부름
+  A-->>P: ['노트'] · 점 .
+  Note over P,F: TEARDOWN F items
+  P->>F: SETUP F items
+  F-->>P: 또 새 빈 목록 []
+  P->>B: items를 넣어 부름
+  B-->>P: ['연필'] · 점 .
+  Note over P,F: TEARDOWN F items<br>2 passed

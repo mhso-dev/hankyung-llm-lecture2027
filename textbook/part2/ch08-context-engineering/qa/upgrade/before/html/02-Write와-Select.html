@@ -1,0 +1,566 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · Write와 Select — Ch 8 · Context Engineering 기초</title>
+<style id="chapter-styles">
+:root{--ivory:#FAF9F5;--paper:#FFFFFF;--slate:#141413;--clay:#D97757;--clay-d:#B85C3E;--oat:#E3DACC;
+--olive:#788C5D;--g100:#F0EEE6;--g300:#D1CFC5;--g500:#5F5E57;--g700:#3D3D3A;
+--sans:"Noto Sans KR","Pretendard",system-ui,-apple-system,sans-serif;
+--serif:"Noto Serif KR","Pretendard",ui-serif,Georgia,serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--max-width:860px;--radius-panel:12px;--border:1.5px solid var(--g300);
+--blue:#4a9eed;--blue-bg:#eaf4ff;--purple:#8b5cf6;--green:#22c55e;--green-bg:#edfbef;--yellow:#f59e0b;--yellow-bg:#fff8e6;--red:#ef4444;--red-bg:#fff0f0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:17px;line-height:1.75;word-break:keep-all}
+a{color:#9E4527;overflow-wrap:anywhere}
+.page{max-width:var(--max-width);margin:0 auto;padding:32px 24px 96px}
+header.top{border-bottom:var(--border);padding-bottom:20px;margin-bottom:24px}
+header.top .crumb{font-size:14px;color:var(--g500);margin:0 0 6px}
+header.top h1{font-family:var(--serif);font-size:30px;line-height:1.3;margin:0 0 10px;letter-spacing:-0.01em}
+header.top .meta{font-size:14px;color:var(--g700);display:flex;gap:14px;flex-wrap:wrap}
+header.top .meta span{background:var(--g100);padding:3px 10px;border-radius:999px}
+nav.toc{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px;margin:0 0 32px;font-size:16px}
+nav.toc b{display:block;margin-bottom:6px;color:var(--g700)}
+nav.toc ol{margin:0;padding-left:20px;columns:2;column-gap:24px}
+nav.toc li{margin:2px 0}
+h2{font-family:var(--serif);font-size:24px;margin:48px 0 14px;padding-top:14px;border-top:var(--border);letter-spacing:-0.01em}
+h2 .no{display:inline-block;min-width:34px;color:#9E4527;font-family:var(--mono);font-size:16px;margin-right:6px}
+h3{font-size:19px;margin:30px 0 10px}
+h4{font-size:17px;margin:22px 0 8px;color:var(--g700)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:24px}
+li{margin:4px 0}
+strong{color:var(--slate)}
+code{font-family:var(--mono);font-size:max(14px,0.9em);background:var(--g100);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+pre{background:#1f1f1d;color:#f1efe8;border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.6;margin:10px 0 18px}
+pre code{background:transparent;padding:0;color:inherit;font-size:inherit}
+pre.out{background:var(--g100);color:var(--slate);border:1px dashed var(--g300);font-size:14px}
+pre.out::before{content:"실행 결과";display:block;font-family:var(--sans);font-size:14px;color:var(--g700);margin-bottom:6px}
+.look{font-size:16px;color:var(--g700);border-left:3px solid var(--clay);padding:4px 12px;margin:-8px 0 18px;background:var(--paper)}
+.look b{color:#9E4527}
+figure{margin:22px 0 26px;background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px}
+figure .diagram{overflow-x:auto}figure svg{width:760px;max-width:none;height:auto;display:block}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+figcaption{font-size:14px;color:var(--g700);margin-top:10px;line-height:1.6}
+figcaption .gaze{display:block;color:var(--g500);margin-top:4px}
+.tw{overflow-x:auto;margin:10px 0 20px}
+table{border-collapse:collapse;width:100%;margin:0;font-size:16px;background:var(--paper)}
+th,td{border:1px solid var(--g300);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--g100);font-weight:700}
+.goal{background:var(--paper);border:var(--border);border-radius:var(--radius-panel);padding:14px 18px 6px}
+.goal li{list-style:none;position:relative;padding-left:26px}
+.goal li::before{content:"☐";position:absolute;left:0;color:var(--clay)}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0 18px;border:1px solid;font-size:16px}
+.callout.blue{background:var(--blue-bg);border-color:var(--blue)}
+.callout.green{background:var(--green-bg);border-color:var(--green)}
+.callout.yellow{background:var(--yellow-bg);border-color:var(--yellow)}
+.callout.red{background:var(--red-bg);border-color:var(--red)}
+.callout b:first-child{display:block;margin-bottom:4px}
+.term{background:var(--paper);border:var(--border);border-radius:10px;padding:10px 16px;margin:10px 0 18px;font-size:16px}
+.term dt{font-weight:700;margin-top:6px}
+.term dd{margin:0 0 4px 0;color:var(--g700)}
+details{border:var(--border);border-radius:var(--radius-panel);background:var(--paper);padding:0 18px;margin:14px 0 22px}
+details summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+details summary::before{content:"▸ ";color:var(--clay)}
+details[open] summary::before{content:"▾ "}
+details.quiz{background:var(--paper)}
+.quiz-q{margin:10px 0 4px;font-weight:700}
+.quiz-a{color:var(--g700);font-size:16px;margin:0 0 12px;padding-left:14px;border-left:2px solid var(--oat)}
+.nav-foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:18px;border-top:var(--border);font-size:16px}
+.tag{display:inline-block;font-size:14px;padding:1px 8px;border-radius:999px;background:var(--g100);color:var(--g700);vertical-align:middle;margin-left:4px}
+.tbd{background:#fff3bf;border-bottom:2px dotted var(--yellow);padding:0 3px}
+.file{font-family:var(--mono);font-size:14px;color:var(--g700);margin:-4px 0 6px}
+@media (max-width:640px){body{font-size:16px}nav.toc ol{columns:1}h2{font-size:22px}}
+@media (max-width:640px){.page{padding:24px 18px 64px}.nav-foot{flex-wrap:wrap}.nav-foot span{min-width:0;max-width:100%}}
+@media print{figure svg{width:100%;max-width:100%}body{background:#fff;color:#000;font-size:12pt}.page{max-width:none}pre{white-space:pre-wrap}details{page-break-inside:avoid}details summary::before{content:""}nav.toc{display:none}}
+
+/* One shared theme; syntax remains selectable, with intact indentation. */
+:root{--ivory:#f5f5f5;--paper:#fff;--slate:#242424;--clay:#b34b0d;--clay-d:#9b3f0a;--g100:#f3f3f3;--g300:#d5d5d5;--g500:#5b5b5b;--g700:#363636;--serif:var(--sans);--max-width:1040px;--radius-panel:4px;--border:1px solid #d5d5d5}
+body{background:#f5f5f5;color:#242424;font-size:17px}
+.page{background:white;max-width:1040px;margin:24px auto;padding:28px 48px 72px;border:1px solid #dedede;box-shadow:0 1px 8px #0000000a;min-width:0}
+header.top{border-top:4px solid #b34b0d;padding-top:18px}
+header.top h1,h2{font-family:var(--sans)}
+header.top h1{font-size:29px}h2{font-size:24px}
+nav.toc{background:#fafafa;border-radius:4px}
+a{color:#195f99}
+pre{background:#f7f7f7;color:#242424;border:1px solid #ddd;border-radius:2px;white-space:pre;overflow-wrap:normal;overflow-x:auto}
+pre code{color:inherit}.hljs{background:transparent!important;padding:0!important}
+pre.out{white-space:pre-wrap}
+.nb-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #d5d5d5;border-bottom:1px solid #d5d5d5;padding:12px 0;margin-bottom:16px;font-size:14px}
+.nb-toolbar span{margin-right:auto;color:#555}.nb-toolbar a{font-size:14px}
+button{font-family:var(--sans);font-size:14px;color:#333;background:#fff;border:1px solid #aaa;border-radius:3px;padding:5px 10px;cursor:pointer}
+button:hover{background:#eee}button:focus-visible,a:focus-visible{outline:3px solid #195f99;outline-offset:3px}
+.nb-guide{font-size:16px;color:#444}.nb-markdown{margin:22px 0 12px}.nb-markdown h3{margin:20px 0 10px}
+.nb-cell,.nb-result{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;margin:12px 0 8px;align-items:start}
+.nb-prompt{font-family:var(--mono);font-size:14px;color:#245c99;text-align:right;padding-top:13px;white-space:nowrap}
+.nb-result .nb-prompt{color:#85411d}.nb-input{position:relative;min-width:0;border-left:3px solid #4385b4}
+.nb-input pre{margin:0;padding:14px;line-height:1.65;font-size:14px;border-color:#d7d7d7}
+.nb-input code{white-space:pre;overflow-wrap:normal;word-break:normal}
+.copy-cell{position:absolute;left:-72px;top:42px;z-index:1;background:#fff}
+.nb-result pre.nb-output{background:#fff;border:0;margin:0;padding:10px 14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.copy-status{font-size:14px;color:#245c47;min-height:22px}.look{border-color:#b34b0d}.look b{color:#91410f}
+.diagram,.diagram-scroll{max-width:100%;overflow-x:auto}figure{max-width:100%}
+.meta,.crumb,.file,.tag{overflow-wrap:anywhere}
+@media(max-width:640px){.page{margin:0;padding:20px 16px 48px;border:0;box-shadow:none}header.top h1{font-size:25px}.nb-cell,.nb-result{grid-template-columns:minmax(0,1fr);gap:0}.nb-prompt{text-align:left;padding:2px 0;font-size:14px}.nb-toolbar{gap:10px}h2{font-size:22px}}
+@media print{.page{border:0;box-shadow:none;margin:0;max-width:none;padding:0}.copy-cell,.copy-all,.nb-toolbar a,.copy-status{display:none}.nb-input pre{padding-top:14px;white-space:pre-wrap}.nb-input code{white-space:pre-wrap}.nb-cell,.nb-result{break-inside:avoid}}
+
+/* Accessible syntax colors on the light notebook input background. */
+.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#a32138!important}.hljs-built_in,.hljs-type{color:#8a3b00!important}.hljs-comment,.hljs-quote{color:#53626d!important}.hljs-string,.hljs-regexp{color:#075329!important}.hljs-number,.hljs-symbol,.hljs-variable{color:#075985!important}
+
+@media(max-width:640px){.tw table{min-width:640px}.tw td code,.tw th code{white-space:nowrap;overflow-wrap:normal}}
+
+.nb-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.nb-stage{min-width:0;border-top:3px solid #a44720;padding-top:8px}
+.nb-stage[data-lesson-stage="after"]{border-top-color:#286442}
+.nb-stage>h3{font-size:19px;margin:8px 0 16px}
+.nb-stage .nb-cell,.nb-stage .nb-result{grid-template-columns:minmax(0,1fr);gap:0}
+.nb-stage .nb-prompt{text-align:left;padding:2px 0}
+.nb-stage .nb-input pre,.nb-stage .nb-input code{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-stage .nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}
+.nb-stage .copy-cell{left:auto;right:8px;top:-36px}
+@media(max-width:640px){.nb-cell>.nb-prompt{min-height:32px;box-sizing:border-box}.copy-cell{left:auto;right:8px;top:-32px}}
+@media(max-width:880px){.nb-comparison{grid-template-columns:minmax(0,1fr);gap:28px}}
+</style>
+<script>
+// 본문과 기본 서식은 외부 서버 연결 없이 표시합니다.
+window.addEventListener("load", () => {
+  const addStylesheet = (href) => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    document.head.appendChild(link);
+  };
+  addStylesheet("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js";
+  script.async = true;
+  script.onload = () => {
+    if (!window.hljs) return;
+    addStylesheet("https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/github.min.css");
+    document.querySelectorAll("pre:not(.out) code").forEach(el => hljs.highlightElement(el));
+  };
+  document.head.appendChild(script);
+}, {once: true});
+</script>
+</head><body><div class="page">
+<!-- 생성: _build.py · 원본 조각 _src/02-Write와-Select.html · 도식 figures/*.svg · 삽화 figures/*.png (Higgsfield, 요청 nano_banana_pro·완료 nano_banana_2, 2026-09-08) -->
+<header class="top">
+<p class="crumb">한경 KDT · LLM Agent 개발 &amp; 바이브코딩 · Part 2 LLM 기초 · Ch 8 · Context Engineering 기초</p>
+<h1>02 · Write와 Select</h1>
+<div class="meta"><span>강의 1h</span><span>실습 2h</span><span>새 용어 7</span></div>
+</header>
+<nav class='toc'><b>이 절의 구성</b><ol><li><a href="#b1">학습 목표</a></li><li><a href="#b2">이 내용을 배우는 이유</a></li><li><a href="#b3">앞에서 배운 내용</a></li><li><a href="#b4">핵심 개념</a></li><li><a href="#b5">실행 예제</a></li><li><a href="#b6">일부러 실패해 보기</a></li><li><a href="#b7">주의할 점과 실무 메모</a></li><li><a href="#b8">정리와 다음 절</a></li><li><a href="#b9">복습 문제</a></li><li><a href="#b10">참고 자료</a></li></ol></nav><!--meta: 강의 1h | 실습 2h | 코드 Jupyter Notebook | 새 용어 7 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 Write와 Select가 컨텍스트 윈도 밖과 안을 어떻게 연결하는지 설명할 수 있습니다.</li>
+<li>이 절을 마치면 결정과 문서 조각을 외부 JSON 파일에 저장하고, 다시 읽어 메시지에 포함해야 하는 이유를 설명할 수 있습니다.</li>
+<li>이 절을 마치면 질문에서 정한 기관·주제·날짜를 조건문으로 비교하여 필요한 자료를 선택할 수 있습니다.</li>
+<li>이 절을 마치면 기관·주제·날짜로 자료를 선택하고, 답에 표시된 출처 식별자로 원문을 찾을 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>01절에서 컨텍스트에 사용할 수 있는 입력 가용분을 계산했습니다. 실제 업무 자료는 그 범위보다 길 수 있습니다. 모든 회의 기록과 규정을 매번 메시지에 복사하면 예산을 빠르게 사용하고, 현재 질문과 관련이 적은 문장이 답에 영향을 줄 수 있습니다. 긴 자료는 호출 밖에 보관하고, 이번 질문에 필요한 항목만 읽어 오는 절차가 필요합니다.</p>
+<p>LangChain 팀은 컨텍스트를 다루는 여러 사례를 Write·Select·Compress·Isolate라는 네 이름으로 정리했습니다. 이 이름들은 업계가 공통으로 정한 공식 절차가 아니며, API가 이 순서대로 실행하도록 요구하지도 않습니다. 이 절에서는 그중 <strong>자료를 파일에 저장하는 Write와 필요한 자료를 골라 메시지에 넣는 Select</strong>를 다룹니다. 나머지 두 방법은 03절에서 살펴봅니다.</p>
+<p>선택은 사람이 정한 조건문과 데이터로 수행합니다. 모델이 어떤 문서를 사용할지 판단하지 않으며, 임베딩이나 벡터스토어도 사용하지 않습니다. Ch 9에서는 사람이 정한 선택 기준의 일부를 검색으로 자동화합니다. 따라서 이 절의 기록 형식과 출처 식별자는 다음 챕터의 검색 결과를 이해하는 기초가 됩니다.</p>
+
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>01절에서 외부 파일은 그 자체로 현재 컨텍스트가 아니라고 배웠습니다. 파일의 내용을 읽고 호출 메시지에 포함해야 모델이 참고할 수 있습니다. 또한 입력 가용분 안에서 지시, 질문, 근거를 배분했습니다. 이 절에서는 근거 전체를 넣지 않고 필요한 항목만 선택합니다.</p>
+<p>Ch 6에서 작성한 모델 호출 코드에서 사용자 메시지를 만드는 위치를 찾습니다. Ch 7에서 지시와 근거를 나누어 배치한 방식을 다시 확인합니다. Select의 결과는 그 메시지의 근거 영역에 추가되며, 선택하지 않은 기록은 포함하지 않습니다.</p>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+
+<h3>비유 — 자료 보관함과 열람대</h3>
+<p>자료실에는 여러 기관의 규정과 회의 기록이 보관되어 있습니다. 질문을 처리할 때 모든 서류를 열람대에 펼치지 않습니다. 먼저 자료 목록에서 기관, 문서 종류, 적용 날짜를 확인합니다. 질문과 맞는 자료를 고른 뒤 그 문서만 열람대에 놓습니다. 보관함에 기록하는 일이 Write이고, 열람대에 놓을 자료를 고르는 일이 Select입니다. 모델은 열람대에 놓인 내용만 현재 답의 근거로 사용할 수 있습니다.</p>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>Write (외부 기록)</dt>
+<dd>나중에 사용할 결정, 문서 조각, 중간 결과를 현재 컨텍스트 윈도 밖의 변수나 파일에 저장하는 전략입니다. 이 절에서는 사람이 읽을 수 있는 JSON 파일을 사용합니다.</dd>
+<dt>외부 저장소 (external store)</dt>
+<dd>현재 모델 호출과 분리되어 정보를 보관하는 위치입니다. 파일, 데이터베이스, 객체 저장소 등이 될 수 있습니다. 저장되었다는 사실만으로 모델의 입력이나 학습 데이터가 되지는 않습니다.</dd>
+<dt>Select (선택)</dt>
+<dd>외부 기록 가운데 이번 질문에 필요한 항목을 골라 현재 호출 메시지로 가져오는 전략입니다. 이 절에서는 사람이 작성한 명시적 조건으로 선택합니다.</dd>
+<dt>메타데이터 (metadata)</dt>
+<dd>본문 옆에 항목별로 적어 두는 설명 정보입니다. 표의 열처럼 문서 식별자, 기관, 문서 종류, 적용 시작일, 상태를 따로 저장합니다. 프로그램은 이 항목을 비교하여 필요한 문서를 고릅니다.</dd>
+<dt>출처 식별자 (source ID)</dt>
+<dd>선택한 근거가 어느 기록에서 왔는지 추적하는 고유 값입니다. 답을 검토하거나 원문을 다시 열 때 사용합니다.</dd>
+<dt>적용 조건 (applicability condition)</dt>
+<dd>기록이 유효한 기관, 업무, 대상, 날짜, 버전의 범위입니다. 자료를 고를 때 이 조건을 확인하지 않으면 다른 기관이나 시점의 규정을 잘못 사용할 수 있습니다.</dd>
+</dl>
+
+<h3>Write는 모델의 학습이나 자동 기억이 아닙니다</h3>
+<p>프로그램이 JSON 파일을 저장하면 다음 실행에서도 데이터를 다시 읽을 수 있습니다. 그러나 모델은 그 파일의 위치와 내용을 자동으로 알지 못합니다. 파일을 저장해도 모델 자체가 새 내용을 학습하는 것은 아니며, 제품 전체에서 자동으로 기억하는 기능이 생기지도 않습니다. 다음 호출에서 쓰려면 프로그램이 파일을 열고, 필요한 항목을 고른 뒤, 그 내용을 메시지에 넣어야 합니다.</p>
+<p>이 구분은 디버깅에 필요합니다. 저장 파일에 올바른 값이 있는데 답이 틀렸다면 세 지점을 차례로 봅니다. 파일을 제대로 읽었는지, 올바른 항목을 선택했는지, 선택한 내용이 실제 메시지에 포함되었는지 확인합니다. “저장했으니 모델이 기억해야 한다”는 가정으로는 어느 단계가 빠졌는지 찾을 수 없습니다.</p>
+
+<h3>기록은 본문과 조건을 함께 보존합니다</h3>
+<p>Write 단계에서 문장만 저장하면 Select 단계가 판단할 정보가 부족합니다. 예를 들어 “매주 월요일에 운영하지 않는다”는 문장에는 어느 기관의 어느 시설인지, 언제부터 적용되는지, 현재 유효한지 나타나지 않습니다. 예를 들어 JSON 항목에 본문과 함께 출처 식별자, 기관, 문서 종류, 적용 날짜, 상태를 둘 수 있습니다. 이번 실습에서는 ID·기관·주제·적용일·본문을 기록합니다. 실제 필드 구성은 필요한 정보에 맞추되, <strong>선택에 필요한 조건을 본문에서 분리하여 명시적으로 저장한다</strong>는 원칙을 지킵니다.</p>
+<div class="tw"><table>
+<tr><th>필드 역할</th><th>선택에서 확인하는 내용</th><th>이 정보를 기록하는 이유</th></tr>
+<tr><td>출처 식별자</td><td>어느 기록인가?</td><td>원문 확인과 오류 추적</td></tr>
+<tr><td>기관·대상</td><td>질문의 대상과 같은가?</td><td>다른 기관의 정보가 섞이는 것을 방지</td></tr>
+<tr><td>문서 종류</td><td>규정, 안내, 회의 기록 중 무엇인가?</td><td>근거의 성격을 구분</td></tr>
+<tr><td>적용 날짜·상태</td><td>질문의 시점에 유효한가?</td><td>폐기된 규정이나 아직 시행되지 않은 규정을 잘못 사용하는 일을 방지</td></tr>
+<tr><td>본문</td><td>질문에 답하는 사실이 있는가?</td><td>답의 직접 근거</td></tr>
+</table></div>
+
+<h3>Select는 질문과 메타데이터를 함께 봅니다</h3>
+<p>이 절에서는 질문에 필요한 기관·주제·기준 날짜를 사람이 코드에 적습니다. 조건문은 기관과 주제가 맞고, 적용 시작일이 기준 날짜보다 늦지 않은 기록을 고릅니다. 출력된 ID와 본문을 읽어 대출·주차 기록이 선택되고 휴관 기록은 빠졌는지 확인합니다. 같은 규정의 여러 버전 중 최신 것을 고르거나 적용 종료일을 확인하는 기능은 이번 코드에 포함하지 않습니다.</p>
+<p>이번 실습에서는 기관·주제·날짜를 자료 선택에 사용합니다. 선택을 마친 뒤에는 본문과 출처 식별자를 메시지에 넣고, 모델에게 답에도 그 식별자를 표시하도록 요청합니다. 답의 <code>[E01-p3]</code>를 저장된 기록의 ID와 비교하면 어떤 자료를 사용했는지 확인할 수 있습니다. 기관과 날짜를 답에 표시하는 기능은 이번 코드에 포함하지 않습니다.</p>
+
+<h3>점진적으로 필요한 내용만 엽니다</h3>
+<p>자료가 많을 때는 처음부터 모든 본문을 읽지 않아도 됩니다. 첫 단계에서는 식별자, 제목, 기관, 적용 날짜처럼 짧은 목록을 봅니다. 두 번째 단계에서 질문과 맞는 항목을 고릅니다. 세 번째 단계에서 선택한 항목의 본문만 읽습니다. 이를 점진적 공개(progressive disclosure)라고 합니다. 처음에는 얕은 정보를 보고, 필요한 경우에만 상세 내용을 여는 방식입니다.</p>
+<p>점진적 공개가 언제나 더 빠르거나 더 적은 토큰을 보장하지는 않습니다. 목록의 메타데이터가 부정확하거나 선택 조건이 부족하면 필요한 문서를 놓칠 수 있습니다. 이 절에서는 사람이 후보와 원문을 확인하여 이 한계를 관찰합니다. Ch 9에서 검색이 선택을 자동화한 뒤에도 출처와 조건을 검토해야 하는 이유가 여기에 있습니다.</p>
+
+<h3>도식 — 저장된 자료가 현재 메시지로 들어오는 경로</h3>
+<figure>
+<div class="diagram" tabindex="0" aria-label="도식: 가로로 이동하여 전체 보기"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif" role="img" aria-label="외부 저장과 컨텍스트 선택은 서로 다른 단계입니다">
+<title>외부 저장과 컨텍스트 선택은 서로 다른 단계입니다</title>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+</defs>
+<rect width="800" height="400" fill="#ffffff"/>
+<text x="20" y="32.0" font-size="20" fill="#1e293b" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">외부 저장과 컨텍스트 선택은 서로 다른 단계입니다</tspan></text>
+<rect x="35" y="145" width="120" height="80" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="95.0" y="172.8" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="95.0" dy="0.0">Write</tspan><tspan x="95.0" dy="24.3">기록</tspan></text>
+<polyline points="155,185 190,185" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#m-blue)"/>
+<rect x="190" y="130" width="155" height="110" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="267.5" y="172.8" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="267.5" dy="0.0">외부 저장소</tspan><tspan x="267.5" dy="24.3">대화 기록·문서</tspan></text>
+<polyline points="345,185 390,185" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#m-blue)"/>
+<rect x="390" y="145" width="135" height="80" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="457.5" y="174.2" font-size="16" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="457.5" dy="0.0">Select</tspan><tspan x="457.5" dy="21.6">관련 기록 선택</tspan></text>
+<polyline points="525,185 555,185" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#m-blue)"/>
+<rect x="555" y="145" width="105" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="607.5" y="172.8" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="607.5" dy="0.0">메시지</tspan><tspan x="607.5" dy="24.3">본문</tspan></text>
+<polyline points="660,185 680,185" fill="none" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#m-purple)"/>
+<rect x="680" y="145" width="85" height="80" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+<text x="722.5" y="185.0" font-size="18" fill="#1e293b" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="722.5" dy="0.0">LLM</tspan></text>
+<text x="190" y="300.0" font-size="20" fill="#b91c1c" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="190" dy="0.0">저장만으로 모델에 전달되지는 않습니다</tspan></text>
+<text x="190" y="335.0" font-size="16" fill="#1e293b" text-anchor="start" dominant-baseline="middle" font-weight="normal"><tspan x="190" dy="0.0">Select를 실행해야 저장된 내용이 모델 입력에 포함됩니다.</tspan></text>
+</svg></div>
+<figcaption>Write는 결정과 문서 조각을 외부 JSON에 보존합니다. Select는 질문과 메타데이터를 비교해 항목을 고르고, 선택한 본문과 출처 식별자를 현재 메시지에 넣습니다.</figcaption>
+</figure>
+
+<!-- learning-sequence-20260914-02 -->
+<h3>파일의 기록이 질문의 근거가 되는 과정</h3>
+<p><code>json.dumps(records)</code>는 Python 목록을 저장 가능한 JSON 문자열로 변환합니다. <code>write_text()</code>가 그 문자열을 파일에 쓰고, <code>read_text()</code>가 다시 문자열로 읽습니다. <code>json.loads()</code>가 목록으로 복원한 뒤에야 각 기록의 키를 이용해 조건을 검사합니다. 저장, 읽기, 선택, 메시지 조립은 각각 별도 단계입니다.</p>
+<p>선택 코드에서 <code>topics</code>는 필요한 주제를 모은 집합입니다. <code>row[&quot;topic&quot;] in criteria[&quot;topics&quot;]</code>는 한 기록의 주제가 그 집합에 있는지 검사합니다. 기관 일치, 주제 포함, 적용 시작일 조건을 <code>and</code>로 연결하므로 세 조건이 모두 참인 기록만 선택됩니다. <code>selected_ids</code>에는 중복 없는 식별자를 모으고, 두 번째 반복문은 원래 기록 순서대로 본문을 가져옵니다.</p>
+<p>같은 상품의 2025년 설명서와 2026년 설명서를 함께 저장한 상황을 생각해 봅니다. 두 설명서의 적용 시작일이 질문 날짜보다 빠르면 이번 조건은 둘 다 선택할 수 있습니다. 가장 최근 버전 하나를 고르는 규칙은 별도로 필요합니다. 기관과 주제가 맞는다는 사실만으로 최신 문서를 선택했다고 결론 내리지 않는 이유입니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2><p><code>effective_date</code>는 날짜 필터를 관찰하기 위한 합성 메타데이터이며, PDF의 발행일이나 실제 규정 시행일을 뜻하지 않습니다.</p>
+<p>짧은 기록 세 개를 JSON으로 저장하고 다시 읽습니다. 그다음 질문에서 정한 기관·주제·날짜와 각 기록의 같은 항목을 비교하여 필요한 문서 ID를 고릅니다. 선택 결과만 실제 API 입력에 포함되므로 Write와 Select의 차이를 한 셀씩 확인할 수 있습니다.</p>
+<section class="notebook" data-notebook="02-Write와-Select" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<div class="nb-toolbar"><span>Python 3.12 · 실행 확인 2026-09-09</span><button type="button" class="copy-all">전체 코드 복사</button><a download="02-Write와-Select.ipynb" href="data:application/x-ipynb+json;base64,ewogImNlbGxzIjogWwogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTAxIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyAwMi4gV3JpdGXsmYAgU2VsZWN0XG4iLAogICAgIlxuIiwKICAgICJXcml0ZeuKlCDsoJXrs7Trpbwg7Jm467aAIOq4sOuhneyXkCDrgqjquLDripQg64uo6rOE7J206rOgLCBTZWxlY3TripQg7ZiE7J6sIOyniOusuOyXkCDtlYTsmpTtlZwg6riw66Gd66eMIOqzoOultOuKlCDri6jqs4TsnoXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0wMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOyLpO2WiSDtmZjqsr0g7KSA67mEXG4iLAogICAgIlxuIiwKICAgICLsi6TsirUg7YyM7J287J2AIGBsYWJzL3BhcnQyL2NoMDgtY29udGV4dC1lbmdpbmVlcmluZy9ub3RlYm9va3MvMDItV3JpdGXsmYAtU2VsZWN0LmlweW5iYOyeheuLiOuLpC4g7IOIIOy7pOuEkOyXkOyEnCDsi5zsnpHtlbQg7LKrIOy9lOuTnCDshYDroZwg7Yyo7YKk7KeAIOuyhOyghOydhCDrp57stpgg65KkLCDshKTrqoXqs7wg7L2U65Oc66W8IOychOyXkOyEnOu2gO2EsCDsiJzshJzrjIDroZwg7Iuk7ZaJ7ZWp64uI64ukLiBgLmVudmDripQg7ZiE7J6sIOyekeyXhSDtj7TrjZTsnZgg7IOB7JyEIOqyveuhnOyXkOyEnOuPhCDssL7sirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxLAogICAiaWQiOiAiY2VsbC0wMyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNi4zNDc5NDFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNi4zNDc4MTdaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNy4wMzE2NjhaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3LjAzMTI4MFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICJOb3RlOiB5b3UgbWF5IG5lZWQgdG8gcmVzdGFydCB0aGUga2VybmVsIHRvIHVzZSB1cGRhdGVkIHBhY2thZ2VzLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjICVwaXDsnYAg7ZiE7J6sIOuFuO2KuOu2gSDsu6TrhJDsl5Ag7Yyo7YKk7KeA66W8IOyEpOy5mO2VmOuKlCBKdXB5dGVyIOyghOyaqSDrqoXroLnsnoXri4jri6QuXG4iLAogICAgIiMgLXHripQg7ISk7LmYIOuhnOq3uOulvCDspITsnbTqs6AsID09IOuSpCDsiKvsnpDripQg7IiY7JeF7JeQ7IScIOqygOymne2VnCDrsoTsoITsnYQg6rOg7KCV7ZWp64uI64ukLlxuIiwKICAgICIlcGlwIGluc3RhbGwgLXEgXCJsYW5nY2hhaW49PTEuNC4wXCIgXCJsYW5nY2hhaW4tb3BlbmFpPT0xLjYuMFwiIFwicHl0aG9uLWRvdGVudj09MS4yLjNcIiBcInRpa3Rva2VuPT0wLjE0LjBcIiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDQiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyAxLiBBUEkg7Jew6rKwIOykgOu5hFxuIiwKICAgICJcbiIsCiAgICAi6rCBIOuFuO2KuOu2geydgCDruYgg7Luk64SQ7JeQ7IScIOyLnOyeke2VoCDsiJgg7J6I64+E66GdIOyXsOqysCDsvZTrk5zrpbwg7Y+s7ZWo7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMiwKICAgImlkIjogImNlbGwtMDUiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6MjY6MTcuMDMyNjEwWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6MjY6MTcuMDMyNTM1WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6MjY6MTcuMDM4MTY0WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNy4wMzc4NTlaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiLmVuduyZgCBBUEkg7YKkIO2ZleyduCDsmYTro4xcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBmaW5kX2RvdGVuduuKlCDtmITsnqwg7Y+0642U67aA7YSwIOyDgeychCDtj7TrjZTrpbwg6rKA7IOJ7ZW0IC5lbnYg6rK966Gc66W8IOywvuyKteuLiOuLpC5cbiIsCiAgICAiaW1wb3J0IG9zXG4iLAogICAgIlxuIiwKICAgICJmcm9tIGRvdGVudiBpbXBvcnQgZmluZF9kb3RlbnYsIGxvYWRfZG90ZW52XG4iLAogICAgIlxuIiwKICAgICIjIHVzZWN3ZD1UcnVl64qUIOuFuO2KuOu2geydhCDsi6TtlontlZwg7Y+0642U66W8IOqygOyDiSDsi5zsnpHsoJDsnLzroZwg7KeA7KCV7ZWp64uI64ukLlxuIiwKICAgICIjIO2CpCDqsJLsnYAg7Lac66Cl7ZWY7KeAIOyViuqzoCDsobTsnqwg7Jes67aA66eMIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiZW52X3BhdGggPSBmaW5kX2RvdGVudih1c2Vjd2Q9VHJ1ZSlcbiIsCiAgICAiaWYgbm90IGVudl9wYXRoOlxuIiwKICAgICIgICAgcmFpc2UgRmlsZU5vdEZvdW5kRXJyb3IoXCLtmITsnqwg7Y+0642U7J2YIOyDgeychCDqsr3roZzsl5DshJwgLmVuduulvCDssL7sp4Ag66q77ZaI7Iq164uI64ukLlwiKVxuIiwKICAgICJsb2FkX2RvdGVudihlbnZfcGF0aClcbiIsCiAgICAiaWYgbm90IG9zLmdldGVudihcIk9QRU5BSV9BUElfS0VZXCIpOlxuIiwKICAgICIgICAgcmFpc2UgUnVudGltZUVycm9yKFwiLmVuduyXkCBPUEVOQUlfQVBJX0tFWeqwgCDsl4bsirXri4jri6QuXCIpXG4iLAogICAgInByaW50KFwiLmVuduyZgCBBUEkg7YKkIO2ZleyduCDsmYTro4xcIikiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTA2IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOuqqOuNuCDqsJ3ssrTrpbwg66eM65Ot64uI64ukXG4iLAogICAgIlxuIiwKICAgICJgLmVudmAg7ZmV7J247J20IOuBneuCnCDrkqQg66qo6424IOydtOumhOqzvCDstpzroKUg7KCc7ZWc7J2EIOyngOygle2VqeuLiOuLpC4g7J20IOyFgOydgCDslYTsp4EgQVBJ7JeQIOyniOusuOydhCDrs7TrgrTsp4Ag7JWK7Iq164uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMywKICAgImlkIjogImNlbGwtMDciLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6MjY6MTcuMDM4OTk2WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6MjY6MTcuMDM4OTM5WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6MjY6MTcuNzg4NzU1WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNy43ODgzMzZaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAiTGFuZ0NoYWluIOuqqOuNuCDspIDruYQg7JmE66OMXG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgaW5pdF9jaGF0X21vZGVs7J2AIHByb3ZpZGVyOm1vZGVsIO2YleyLneycvOuhnCDssYTtjIUg66qo6424IOqwneyytOulvCDrp4zrk63ri4jri6QuXG4iLAogICAgIiMgbW9kZWzsnYAg7J207ZuEIOyFgOyXkOyEnCBpbnZva2UoKeulvCDtmLjstpztlaAg65WMIOyCrOyaqe2VqeuLiOuLpC5cbiIsCiAgICAiZnJvbSBsYW5nY2hhaW4uY2hhdF9tb2RlbHMgaW1wb3J0IGluaXRfY2hhdF9tb2RlbFxuIiwKICAgICJcbiIsCiAgICAiIyBvcGVuYWk664qUIOqzteq4ieyekCDsnbTrpoTsnbTrqbAsIHJlYXNvbmluZ19lZmZvcnQ9XCJub25lXCLsnYAg67OE64+EIOy2lOuhoCDthqDtgbDsnYQg7IKs7Jqp7ZWY7KeAIOyViuuKlCDshKTsoJXsnoXri4jri6QuXG4iLAogICAgIiMgbWF4X3Rva2Vucz0zMDDsnYAg7IOd7ISx7ZWgIOy2nOugpSDthqDtgbAg7IiY7J2YIOyDge2VnOyeheuLiOuLpC5cbiIsCiAgICAibW9kZWwgPSBpbml0X2NoYXRfbW9kZWwoXG4iLAogICAgIiAgICBcIm9wZW5haTpncHQtNS40LW1pbmlcIixcbiIsCiAgICAiICAgIHJlYXNvbmluZ19lZmZvcnQ9XCJub25lXCIsXG4iLAogICAgIiAgICBtYXhfdG9rZW5zPTMwMCxcbiIsCiAgICAiKVxuIiwKICAgICJwcmludChcIkxhbmdDaGFpbiDrqqjrjbgg7KSA67mEIOyZhOujjFwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMDgiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyAyLiDquLDroZ3snYQgSlNPTuycvOuhnCDsoIDsnqXtlZjqs6Ag64uk7IucIOydveyKteuLiOuLpFxuIiwKICAgICJcbiIsCiAgICAi7JiI7KCcIOuNsOydtO2EsOuKlCDsvZTrk5wg7JWI7JeQIOyngeygkSDsoIHsirXri4jri6QuIGBlZmZlY3RpdmVfZGF0ZWDripQg64Kg7KecIO2VhO2EsOulvCDqtIDssLDtlZjquLAg7JyE7ZWcIO2VqeyEsSDrqZTtg4DrjbDsnbTthLDsnbTrqbAsIFBERuydmCDrsJztlonsnbzsnbTrgpgg7Iuk7KCcIOq3nOyglSDsi5ztlonsnbzsnYQg65y77ZWY7KeAIOyViuyKteuLiOuLpC4g7KCA7J6lIO2MjOydvOydgCDsmrTsmIHssrTsoJzsnZgg7J6E7IucIO2PtOuNlOyXkCDrp4zrk6TquLAg65WM66y47JeQIOuFuO2KuOu2geydhCDslrTripAg7Y+0642U7JeQ7IScIOyXtOyWtOuPhCDsi6TtlontlaAg7IiYIOyeiOyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDQsCiAgICJpZCI6ICJjZWxsLTA5IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3Ljc4OTY5N1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3Ljc4OTYzNVoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3Ljc5MTgwN1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MjY6MTcuNzkxNDg5WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuyggOyepe2VoCDquLDroZ06IDNcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyDqsIEg6riw66Gd7JeQ64qUIOyEoO2DneyXkCDsk7gg6riw6rSAwrfso7zsoJzCt+yggeyaqeydvOqzvCDri7Xsl5Ag7JO4IOuzuOusuOydtCDsnojsirXri4jri6QuXG4iLAogICAgImltcG9ydCBqc29uXG4iLAogICAgImZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aFxuIiwKICAgICJmcm9tIHRlbXBmaWxlIGltcG9ydCBnZXR0ZW1wZGlyXG4iLAogICAgIlxuIiwKICAgICJyZWNvcmRzID0gW1xuIiwKICAgICIgICAge1wiaWRcIjogXCJFMDEtcDJcIiwgXCJpbnN0aXR1dGlvblwiOiBcIuuvuOultOyLnOumveuPhOyEnOq0gFwiLCBcInRvcGljXCI6IFwi7Zy06rSAXCIsXG4iLAogICAgIiAgICAgXCJlZmZlY3RpdmVfZGF0ZVwiOiBcIjIwMjUtMDEtMDFcIiwgXCJ0ZXh0XCI6IFwi66ek7KO8IOyblOyalOydvCDtnLTqtIBcIn0sXG4iLAogICAgIiAgICB7XCJpZFwiOiBcIkUwMS1wM1wiLCBcImluc3RpdHV0aW9uXCI6IFwi66+466W07Iuc66a964+E7ISc6rSAXCIsIFwidG9waWNcIjogXCLrjIDstpxcIixcbiIsCiAgICAiICAgICBcImVmZmVjdGl2ZV9kYXRlXCI6IFwiMjAyNS0wMS0wMVwiLCBcInRleHRcIjogXCI36raMLCAxNOydvCDrjIDstpxcIn0sXG4iLAogICAgIiAgICB7XCJpZFwiOiBcIkUwMS1wNVwiLCBcImluc3RpdHV0aW9uXCI6IFwi66+466W07Iuc66a964+E7ISc6rSAXCIsIFwidG9waWNcIjogXCLso7zssKhcIixcbiIsCiAgICAiICAgICBcImVmZmVjdGl2ZV9kYXRlXCI6IFwiMjAyNS0wMS0wMVwiLCBcInRleHRcIjogXCLtmozsm5DsnYAg7LWc7LSIIDLsi5zqsIQg66y066OM7J6F64uI64ukLlwifSxcbiIsCiAgICAiXVxuIiwKICAgICJwcmludChcIuyggOyepe2VoCDquLDroZ06XCIsIGxlbihyZWNvcmRzKSkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTEwIiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOyehOyLnCDtjIzsnbzsl5Ag6riw66Gd7J2EIOyUgeuLiOuLpFxuIiwKICAgICJcbiIsCiAgICAiYGdldHRlbXBkaXIoKWDrpbwg7IKs7Jqp7ZWY66+A66GcIOuFuO2KuOu2geydhCDslrTripAg7Y+0642U7JeQ7IScIOyXtOyWtOuPhCDqsJnsnYAg67Cp7Iud7Jy866GcIOyLpO2WieuQqeuLiOuLpC4g7Lac66Cl65CcIOydtOumhOycvOuhnCDsoIDsnqUg7YyM7J287J2EIO2ZleyduO2VqeuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgImBQYXRoKGdldHRlbXBkaXIoKSkgLyBcImNoMDgtbWVtb3J5Lmpzb25cImDsnYAg7J6E7IucIO2PtOuNlOyXkCDtjIzsnbwg7J2066aE7J2EIOyXsOqysO2VnCDqsr3roZzsnoXri4jri6QuIGBqc29uLmR1bXBzKClg64qUIOuqqeuhneydhCBKU09OIOusuOyekOyXtOuhnCDrsJTqvrjqs6AgYHdyaXRlX3RleHQoKWDqsIAg6re4IOusuOyekOyXtOydhCDsoIDsnqXtlanri4jri6QuIOqzoOyglSDtjIzsnbwg7J2066aE7J2066+A66GcIOydtCDshYDsnYQg64uk7IucIOyLpO2Wie2VmOuptCDqsJnsnYAg7J2066aE7J2YIOq4sOuhneydhCDrja7slrTslIHri4jri6QuIOyepeq4sCDrs7TsobTsnbTrgpgg7Jes65+sIOyCrOyaqeyekOydmCDsoIDsnqXsnYQg7ISk6rOE7ZWcIOyYiOygnOuKlCDslYTri5nri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA1LAogICAiaWQiOiAiY2VsbC0xMSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNy43OTI0NTJaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNy43OTI0MDVaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNy43OTQ2OThaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3Ljc5NDM4NFoiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLsnoTsi5wg7Y+0642U7JeQIOyggOyepe2VnCDtjIzsnbw6IGNoMDgtbWVtb3J5Lmpzb25cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBlbnN1cmVfYXNjaWk9RmFsc2XripQg7ZWc6rWt7Ja066W8IOq3uOuMgOuhnCBKU09O7JeQIOq4sOuhne2VqeuLiOuLpC5cbiIsCiAgICAibWVtb3J5X3BhdGggPSBQYXRoKGdldHRlbXBkaXIoKSkgLyBcImNoMDgtbWVtb3J5Lmpzb25cIlxuIiwKICAgICJqc29uX3RleHQgPSBqc29uLmR1bXBzKHJlY29yZHMsIGVuc3VyZV9hc2NpaT1GYWxzZSlcbiIsCiAgICAibWVtb3J5X3BhdGgud3JpdGVfdGV4dChqc29uX3RleHQsIGVuY29kaW5nPVwidXRmLThcIilcbiIsCiAgICAicHJpbnQoXCLsnoTsi5wg7Y+0642U7JeQIOyggOyepe2VnCDtjIzsnbw6XCIsIG1lbW9yeV9wYXRoLm5hbWUpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xMiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDtjIzsnbzsnYQg64uk7IucIOydveyWtCDspJHqsIQg6rKw6rO866W8IO2ZleyduO2VqeuLiOuLpFxuIiwKICAgICJcbiIsCiAgICAiYHJlYWRfdGV4dCgpYOuKlCDrrLjsnpDsl7TsnYQg67CY7ZmY7ZWY6rOgLCBganNvbi5sb2FkcygpYOuKlCDqt7gg66y47J6Q7Je07J2EIO2MjOydtOyNrCDrqqnroZ3snLzroZwg67O17JuQ7ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogNiwKICAgImlkIjogImNlbGwtMTMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6MjY6MTcuNzk1MzAxWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6MjY6MTcuNzk1MjYwWiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6MjY6MTcuNzk2OTg5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNy43OTY2MzNaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi64uk7IucIOydveydgCDquLDroZ06IDNcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBsb2FkZWTsl5DripQg7YyM7J287JeQ7IScIOuzteybkO2VnCDquLDroZ0g66qp66Gd7J20IOyggOyepeuQqeuLiOuLpC5cbiIsCiAgICAic2F2ZWRfdGV4dCA9IG1lbW9yeV9wYXRoLnJlYWRfdGV4dChlbmNvZGluZz1cInV0Zi04XCIpXG4iLAogICAgImxvYWRlZCA9IGpzb24ubG9hZHMoc2F2ZWRfdGV4dClcbiIsCiAgICAicHJpbnQoXCLri6Tsi5wg7J297J2AIOq4sOuhnTpcIiwgbGVuKGxvYWRlZCkpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xNCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIDMuIOyniOusuOyXkCDtlYTsmpTtlZwg6riw66Gd66eMIOyEoO2Dne2VqeuLiOuLpFxuIiwKICAgICJcbiIsCiAgICAi6riw6rSAwrfso7zsoJzCt+yniOusuCDrgqDsp5zrpbwg7L2U65Oc7JeQIOyggeqzoCwg7IS4IOyhsOqxtOydtCDrp57ripQg6riw66Gd7J2YIElE66W8IOqzoOumheuLiOuLpC4g7J6Q64+ZIOqygOyDieydgCBDaCA57JeQ7IScIOuLpOujueuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgImB0b3BpY3Ng64qUIO2VhOyalO2VnCDso7zsoJzsnZgg7KeR7ZWp7J206rOgIGBpbmDsnYAg7Y+s7ZWoIOyXrOu2gOulvCDqsoDsgqztlanri4jri6QuIOyEuCDsobDqsbTsnYQgYGFuZGDroZwg7Jew6rKw7ZWY66+A66GcIOuqqOuRkCDssLjsnbgg6riw66Gd66eMIElEIOynke2VqeyXkCDrhKPsirXri4jri6QuIOydtOyWtOyngOuKlCDrsJjrs7XrrLjsnYAgYGxvYWRlZGDsnZgg7JuQ656YIOyInOyEnOuhnCDshKDtg53tlZwg6riw66Gd7J2EIOuqqOydjeuLiOuLpC5cbiIsCiAgICAiXG4iLAogICAgIuyYiOulvCDrk6TslrQg6rCZ7J2AIOyDge2SiOydmCAyMDI164WE6rO8IDIwMjbrhYQg7ISk66qF7ISc6rCAIOuqqOuRkCDquLDspIDsnbwg7KCE7JeQIOyLnO2WieuQmOyXiOuLpOuptCDrkZAg66y47ISc6rCAIO2VqOq7mCDshKDtg53rkKAg7IiYIOyeiOyKteuLiOuLpC4g7JWE656YIOyhsOqxtOydgCDstZzsi6Ag67KE7KCEIO2VmOuCmOulvCDqs6DrpbTqsbDrgpgg7Y+Q6riwIOyXrOu2gOulvCDtmZXsnbjtlZjsp4Ag7JWK7Iq164uI64ukLiDsp4jrrLjsnZgg6riw6rSAwrfso7zsoJzCt+uCoOynnCDsl63si5wg7IKs656M7J20IOygle2VnCDqsJLsnbTrqbAg66qo64247J20IOyniOusuOyXkOyEnCDsnpDrj5kg7LaU7Lac7ZWY7KeAIOyViuyKteuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDcsCiAgICJpZCI6ICJjZWxsLTE1IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3Ljc5NzU5MloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3Ljc5NzU0NloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3Ljc5OTQ2NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MjY6MTcuNzk5MjM3WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIkUwMS1wMyDrjIDstpwgN+q2jCwgMTTsnbwg64yA7LacXG4iLAogICAgICAiRTAxLXA1IOyjvOywqCDtmozsm5DsnYAg7LWc7LSIIDLsi5zqsIQg66y066OM7J6F64uI64ukLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGNyaXRlcmlh64qUIOyniOusuOyXkOyEnCDtmZXsnbjtlZwg6riw6rSAwrfso7zsoJzCt+uCoOynnOyeheuLiOuLpC5cbiIsCiAgICAiY3JpdGVyaWEgPSB7XG4iLAogICAgIiAgICBcImluc3RpdHV0aW9uXCI6IFwi66+466W07Iuc66a964+E7ISc6rSAXCIsXG4iLAogICAgIiAgICBcInRvcGljc1wiOiB7XCLrjIDstpxcIiwgXCLso7zssKhcIn0sXG4iLAogICAgIiAgICBcImFzX29mXCI6IFwiMjAyNi0wOS0wOFwiLFxuIiwKICAgICJ9XG4iLAogICAgInNlbGVjdGVkX2lkcyA9IHNldCgpXG4iLAogICAgImZvciByb3cgaW4gbG9hZGVkOlxuIiwKICAgICIgICAgc2FtZV9pbnN0aXR1dGlvbiA9IHJvd1tcImluc3RpdHV0aW9uXCJdID09IGNyaXRlcmlhW1wiaW5zdGl0dXRpb25cIl1cbiIsCiAgICAiICAgIG5lZWRlZF90b3BpYyA9IHJvd1tcInRvcGljXCJdIGluIGNyaXRlcmlhW1widG9waWNzXCJdXG4iLAogICAgIiAgICBhbHJlYWR5X2VmZmVjdGl2ZSA9IHJvd1tcImVmZmVjdGl2ZV9kYXRlXCJdIDw9IGNyaXRlcmlhW1wiYXNfb2ZcIl1cbiIsCiAgICAiICAgIGlmIHNhbWVfaW5zdGl0dXRpb24gYW5kIG5lZWRlZF90b3BpYyBhbmQgYWxyZWFkeV9lZmZlY3RpdmU6XG4iLAogICAgIiAgICAgICAgc2VsZWN0ZWRfaWRzLmFkZChyb3dbXCJpZFwiXSlcbiIsCiAgICAiXG4iLAogICAgInNlbGVjdGVkID0gW11cbiIsCiAgICAiZm9yIHJvdyBpbiBsb2FkZWQ6XG4iLAogICAgIiAgICBpZiByb3dbXCJpZFwiXSBpbiBzZWxlY3RlZF9pZHM6XG4iLAogICAgIiAgICAgICAgc2VsZWN0ZWQuYXBwZW5kKHJvdylcbiIsCiAgICAiXG4iLAogICAgImZvciByb3cgaW4gc2VsZWN0ZWQ6XG4iLAogICAgIiAgICBwcmludChyb3dbXCJpZFwiXSwgcm93W1widG9waWNcIl0sIHJvd1tcInRleHRcIl0pIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0xNiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIDQuIOyEoO2Dne2VnCDquLDroZ3snLzroZwg64u17J2EIOyDneyEse2VqeuLiOuLpFxuIiwKICAgICJcbiIsCiAgICAi66qo64247JeQ64qUIOyggOyepeyGjCDsoITssrQg64yA7IugIOyEoO2Dne2VnCDrkZAg6riw66Gd66eMIOyghOuLrO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDgsCiAgICJpZCI6ICJjZWxsLTE3IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3LjgwMDA5M1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3LjgwMDAzOFoiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3LjgwMTc0NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MjY6MTcuODAxNDQ1WiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbCiAgICB7CiAgICAgIm5hbWUiOiAic3Rkb3V0IiwKICAgICAib3V0cHV0X3R5cGUiOiAic3RyZWFtIiwKICAgICAidGV4dCI6IFsKICAgICAgIuq3vOqxsDpcbiIsCiAgICAgICJbRTAxLXAzXSA36raMLCAxNOydvCDrjIDstpxcbiIsCiAgICAgICJbRTAxLXA1XSDtmozsm5DsnYAg7LWc7LSIIDLsi5zqsIQg66y066OM7J6F64uI64ukLlxuIiwKICAgICAgIlxuIiwKICAgICAgIuyniOusuDog64yA7LacIOq2jOyImOyZgCDso7zssKgg66y066OMIOyLnOqwhOydhCDslYzroKQg7KO87IS47JqULlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGNvbnRleHRfbGluZXPsl5Ag7Lac7LKYIElE7JmAIOuCtOyaqeydhCDtlZwg7KSE7JSpIOy2lOqwgO2VqeuLiOuLpC5cbiIsCiAgICAiY29udGV4dF9saW5lcyA9IFtdXG4iLAogICAgImZvciByb3cgaW4gc2VsZWN0ZWQ6XG4iLAogICAgIiAgICBsaW5lID0gZlwiW3tyb3dbJ2lkJ119XSB7cm93Wyd0ZXh0J119XCJcbiIsCiAgICAiICAgIGNvbnRleHRfbGluZXMuYXBwZW5kKGxpbmUpXG4iLAogICAgIlxuIiwKICAgICJjb250ZXh0ID0gXCJcXG5cIi5qb2luKGNvbnRleHRfbGluZXMpXG4iLAogICAgInByb21wdCA9IGZcIlwiXCLqt7zqsbA6XG4iLAogICAgIntjb250ZXh0fVxuIiwKICAgICJcbiIsCiAgICAi7KeI66y4OiDrjIDstpwg6raM7IiY7JmAIOyjvOywqCDrrLTro4wg7Iuc6rCE7J2EIOyVjOugpCDso7zshLjsmpQuXCJcIlwiXG4iLAogICAgInByaW50KHByb21wdCkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTE4IiwKICAgIm1ldGFkYXRhIjoge30sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOuqqOuNuOyXkCDsoITri6ztlaAg66mU7Iuc7KeA66W8IOunjOuTreuLiOuLpFxuIiwKICAgICJcbiIsCiAgICAiYHN5c3RlbWDsl5DripQg64u167OAIOq3nOy5meydhCwgYHVzZXJg7JeQ64qUIOyVnuyXkOyEnCDrp4zrk6Ag7KeI66y47J2EIOuEo+yKteuLiOuLpC4g7IWA7J2EIOyLpO2Wie2VnCDrkqQg7Jet7ZWgIOyInOyEnOulvCDtmZXsnbjtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiA5LAogICAiaWQiOiAiY2VsbC0xOSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNy44MDIzNDFaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNy44MDIzMDNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNzoyNjoxNy44MDM4ODNaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3LjgwMzYxN1oiCiAgICB9CiAgIH0sCiAgICJvdXRwdXRzIjogWwogICAgewogICAgICJuYW1lIjogInN0ZG91dCIsCiAgICAgIm91dHB1dF90eXBlIjogInN0cmVhbSIsCiAgICAgInRleHQiOiBbCiAgICAgICLrqZTsi5zsp4Ag7Jet7ZWgOiBbJ3N5c3RlbScsICd1c2VyJ11cbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBtZXNzYWdlc+uKlCDsl63tlaDqs7wg64K07Jqp7J2EIOynneyngOydgCDrqqnroZ3snoXri4jri6QuXG4iLAogICAgIiMgc3lzdGVtIOyngOyLnOulvCB1c2VyIOyniOusuOuztOuLpCDrqLzsoIAg65Gh64uI64ukLlxuIiwKICAgICJtZXNzYWdlcyA9IFtcbiIsCiAgICAiICAgIChcInN5c3RlbVwiLCBcIuygnOqzteuQnCDqt7zqsbDrp4wg7IKs7Jqp7ZWY6rOgIOusuOyepeuniOuLpCDsi53rs4TsnpDrpbwg67aZ7J207IS47JqULlwiKSxcbiIsCiAgICAiICAgIChcInVzZXJcIiwgcHJvbXB0KSxcbiIsCiAgICAiXVxuIiwKICAgICJyb2xlcyA9IFtdXG4iLAogICAgImZvciByb2xlLCBjb250ZW50IGluIG1lc3NhZ2VzOlxuIiwKICAgICIgICAgcm9sZXMuYXBwZW5kKHJvbGUpXG4iLAogICAgInByaW50KFwi66mU7Iuc7KeAIOyXre2VoDpcIiwgcm9sZXMpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0yMCIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIyDrqqjrjbjsnYQg7ZWcIOuyiCDtmLjstpztlanri4jri6RcbiIsCiAgICAiXG4iLAogICAgImBpbnZva2UoKWDsnZgg67CY7ZmY6rCS7J2AIGBBSU1lc3NhZ2Vg7J6F64uI64ukLiDsgqzsmqnrn4kg7KCV67O06rCAIOyXhuycvOuptCDsnbTtm4Qg67mE6rWQ66W8IO2VoCDsiJgg7JeG7Jy866+A66GcIOymieyLnCDsmKTrpZjrpbwg64OF64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMTAsCiAgICJpZCI6ICJjZWxsLTIxIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3LjgwNDQ3MVoiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE3LjgwNDQzM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE4Ljc1NDkzN1oiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MjY6MTguNzU0MTQxWiIKICAgIH0KICAgfSwKICAgIm91dHB1dHMiOiBbXSwKICAgInNvdXJjZSI6IFsKICAgICIjIHJlc3BvbnNl64qUIOuqqOuNuOydmCDri7Xqs7wg66mU7YOA642w7J207YSw66W8IOqwgOynhCBBSU1lc3NhZ2XsnoXri4jri6QuXG4iLAogICAgInJlc3BvbnNlID0gbW9kZWwuaW52b2tlKG1lc3NhZ2VzKVxuIiwKICAgICJ1c2FnZSA9IHJlc3BvbnNlLnVzYWdlX21ldGFkYXRhXG4iLAogICAgIlxuIiwKICAgICJpZiB1c2FnZSBpcyBOb25lOlxuIiwKICAgICIgICAgcmFpc2UgUnVudGltZUVycm9yKFwi66qo6424IOyCrOyaqeufiSDrqZTtg4DrjbDsnbTthLDqsIAg7JeG7Iq164uI64ukLlwiKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMjIiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyMg64u16rO8IOyLpOygnCDthqDtgbAg7IiY66W8IOq0gOywsO2VqeuLiOuLpFxuIiwKICAgICJcbiIsCiAgICAi66i87KCAIOuLteuzgCDsm5DrrLjsnYQg7J296rOgLCDri6TsnYwg65GQIOykhOyXkOyEnCBBUEnqsIAg67O06rOg7ZWcIOyeheugpcK37Lac66ClIO2GoO2BsCDsiJjrpbwg7ZmV7J247ZWp64uI64ukLiDri7Xrs4Ag66y46rWs7JmAIOyImOy5mOuKlCDsi6Ttlonrp4jri6Qg64us65287KeIIOyImCDsnojsirXri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxMSwKICAgImlkIjogImNlbGwtMjMiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6MjY6MTguNzU2NzQzWiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6MjY6MTguNzU2NjE3WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6MjY6MTguNzU5Mjg5WiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzoyNjoxOC43NTg3NzRaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi64yA7LacIOq2jOyImOuKlCA36raM7J6F64uI64ukLiBbRTAxLXAzXSAgXG4iLAogICAgICAi7KO87LCoIOustOujjCDsi5zqsITsnYAg7LWc7LSIIDLsi5zqsITsnoXri4jri6QuIFtFMDEtcDVdXG4iLAogICAgICAiaW5wdXRfdG9rZW5zOiA3NVxuIiwKICAgICAgIm91dHB1dF90b2tlbnM6IDM3XG4iCiAgICAgXQogICAgfQogICBdLAogICAic291cmNlIjogWwogICAgIiMgdGV4dOuKlCDri7Xrs4Ag66y47J6Q7Je07J206rOgIHVzYWdl64qUIOyLpOygnCDtmLjstpzsnZgg7Yag7YGwIOyCrOyaqeufieyeheuLiOuLpC5cbiIsCiAgICAicHJpbnQocmVzcG9uc2UudGV4dClcbiIsCiAgICAicHJpbnQoXCJpbnB1dF90b2tlbnM6XCIsIHVzYWdlLmdldChcImlucHV0X3Rva2Vuc1wiKSlcbiIsCiAgICAicHJpbnQoXCJvdXRwdXRfdG9rZW5zOlwiLCB1c2FnZS5nZXQoXCJvdXRwdXRfdG9rZW5zXCIpKSIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogIm1hcmtkb3duIiwKICAgImlkIjogImNlbGwtMjQiLAogICAibWV0YWRhdGEiOiB7fSwKICAgInNvdXJjZSI6IFsKICAgICIjIyA1LiDshKDtg50gSUQg7ZWcIOqwnOulvCDspITsl6wg67mE6rWQ7ZWp64uI64ukXG4iLAogICAgIlxuIiwKICAgICLquLDrs7gg7ISg7YOd7JeQ64qUIOuMgOy2nOqzvCDso7zssKjqsIAg65Ok7Ja0IOyeiOyKteuLiOuLpC4g7KO87LCoIElEIO2VmOuCmOulvCDsoJzsmbjtlZwg65KkIOyEoO2DneuQnCDquLDroZ0g7IiY7JmAIOyjvOygnOulvCDruYTqtZDtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAiY29kZSIsCiAgICJleGVjdXRpb25fY291bnQiOiAxMiwKICAgImlkIjogImNlbGwtMjUiLAogICAibWV0YWRhdGEiOiB7CiAgICAiZXhlY3V0aW9uIjogewogICAgICJpb3B1Yi5leGVjdXRlX2lucHV0IjogIjIwMjYtMDktMDlUMTc6MjY6MTguNzYwNDY3WiIsCiAgICAgImlvcHViLnN0YXR1cy5idXN5IjogIjIwMjYtMDktMDlUMTc6MjY6MTguNzYwMzU2WiIsCiAgICAgImlvcHViLnN0YXR1cy5pZGxlIjogIjIwMjYtMDktMDlUMTc6MjY6MTguNzYzMDkxWiIsCiAgICAgInNoZWxsLmV4ZWN1dGVfcmVwbHkiOiAiMjAyNi0wOS0wOVQxNzoyNjoxOC43NjI2NDBaIgogICAgfQogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi6riw67O4IOyEoO2DnSDsiJg6IDJcbiIsCiAgICAgICLrs4Dqsr0g7ISg7YOdIOyImDogMVxuIiwKICAgICAgIuuzgOqyvSDtm4Qg7KO87KCcOiDrjIDstpxcbiIKICAgICBdCiAgICB9CiAgIF0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyBjaGFuZ2VkX2lkc+yXkOyEnOuKlCBFMDEtcDUg7ZWY64KY66eMIOygnOyZuO2VqeuLiOuLpC5cbiIsCiAgICAiY2hhbmdlZF9pZHMgPSBzZWxlY3RlZF9pZHMgLSB7XCJFMDEtcDVcIn1cbiIsCiAgICAiY2hhbmdlZF9zZWxlY3RlZCA9IFtdXG4iLAogICAgImZvciByb3cgaW4gbG9hZGVkOlxuIiwKICAgICIgICAgaWYgcm93W1wiaWRcIl0gaW4gY2hhbmdlZF9pZHM6XG4iLAogICAgIiAgICAgICAgY2hhbmdlZF9zZWxlY3RlZC5hcHBlbmQocm93KVxuIiwKICAgICJcbiIsCiAgICAicHJpbnQoXCLquLDrs7gg7ISg7YOdIOyImDpcIiwgbGVuKHNlbGVjdGVkKSlcbiIsCiAgICAicHJpbnQoXCLrs4Dqsr0g7ISg7YOdIOyImDpcIiwgbGVuKGNoYW5nZWRfc2VsZWN0ZWQpKVxuIiwKICAgICJwcmludChcIuuzgOqyvSDtm4Qg7KO87KCcOlwiLCBjaGFuZ2VkX3NlbGVjdGVkWzBdW1widG9waWNcIl0pIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0yNiIsCiAgICJtZXRhZGF0YSI6IHt9LAogICAic291cmNlIjogWwogICAgIiMjIOygleumrFxuIiwKICAgICJcbiIsCiAgICAi7Jm467aAIOq4sOuhneydgCDsoIDsnqXrp4zsnLzroZwg66qo64247JeQIOyghOuLrOuQmOyngCDslYrsirXri4jri6QuIOyniOusuOyXkCDrp57ripQg7ZWt66qp7J2EIOyEoO2Dne2VmOyXrCDtmLjstpwg7J6F66Cl7JeQIOuEo+yWtOyVvCDtlanri4jri6QuIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0yNyIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMg7Iuk7YyoIOyerO2YhDog7KCA7J6l7ZWcIOq4sOuhneydhCDrqZTsi5zsp4Dsl5Ag64Sj7KeAIOyViuyKteuLiOuLpFxuIiwKICAgICJcbiIsCiAgICAi7YyM7J287JeQ64qUIOyEuCDquLDroZ3snbQg7J6I7KeA66eMIOuqqOuNuOyXkOuKlCDruYgg6re86rGw66W8IOyghOuLrO2VqeuLiOuLpC4g64yA7LacIOq2jOyImOyZgCDso7zssKgg7Iuc6rCE7J2EIOuLte2VoCDsoJXrs7TqsIAg7Iuk7KCcIOuplOyLnOyngOyXkCDsnojripTsp4Ag7ZmV7J247ZWp64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMTMsCiAgICJpZCI6ICJjZWxsLTI4IiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjI2OjE4Ljc2NDIyNloiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE4Ljc2NDEyMloiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE4Ljc2NjY0NFoiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MjY6MTguNzY2MTA3WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi6re86rGwOlxuIiwKICAgICAgIlxuIiwKICAgICAgIlxuIiwKICAgICAgIuyniOusuDog64yA7LacIOq2jOyImOyZgCDso7zssKgg66y066OMIOyLnOqwhOydhCDslYzroKQg7KO87IS47JqULlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOuRkCDtmLjstpzsl5DshJwg7KeI66y46rO8IOuLteuzgCDqt5zsuZnsnYAg6re464yA66GcIOyCrOyaqe2VqeuLiOuLpC5cbiIsCiAgICAicXVlc3Rpb24gPSBcIuuMgOy2nCDqtozsiJjsmYAg7KO87LCoIOustOujjCDsi5zqsITsnYQg7JWM66CkIOyjvOyEuOyalC5cIlxuIiwKICAgICJhbnN3ZXJfcnVsZSA9IFwi7KCc6rO165CcIOq3vOqxsOunjCDsgqzsmqntlZjqs6Ag66y47J6l66eI64ukIOyLneuzhOyekOulvCDrtpnsnbTshLjsmpQuIOq3vOqxsOqwgCDsl4bsnLzrqbQg66qo66W464uk6rOgIOuLte2VmOyEuOyalC5cIlxuIiwKICAgICIjIOu5iCDrrLjsnpDsl7TsnYAg7KCA7J6lIO2MjOydvOydmCDrs7jrrLjsnYQg66mU7Iuc7KeA7JeQIOyYruq4sOyngCDslYrsnYAg7IOB7YOc7J6F64uI64ukLlxuIiwKICAgICJtaXNzaW5nX2NvbnRleHQgPSBcIlwiXG4iLAogICAgImJlZm9yZV9wcm9tcHQgPSBmXCJcIlwi6re86rGwOlxuIiwKICAgICJ7bWlzc2luZ19jb250ZXh0fVxuIiwKICAgICJcbiIsCiAgICAi7KeI66y4OiB7cXVlc3Rpb259XCJcIlwiXG4iLAogICAgInByaW50KGJlZm9yZV9wcm9tcHQpIgogICBdCiAgfSwKICB7CiAgICJjZWxsX3R5cGUiOiAibWFya2Rvd24iLAogICAiaWQiOiAiY2VsbC0yOSIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJsZXNzb25fcGFydCI6ICJiZWZvcmUiCiAgIH0sCiAgICJzb3VyY2UiOiBbCiAgICAiIyMjIOq3vOqxsOqwgCDsl4bripQg66mU7Iuc7KeA66GcIOyLpOygnCDri7XsnYQg7ZmV7J247ZWp64uI64ukXG4iLAogICAgIlxuIiwKICAgICJgaW52b2tlKClg7JeQIO2MjOydvCDqsr3roZzrpbwg7KCE64us7ZWY7KeAIOyViuyVmOqzoCwg66mU7Iuc7KeA7JeQ64+EIOuzuOusuOydtCDsl4bsirXri4jri6QuIOuqqOuNuOydgCDsoIDsnqUg7YyM7J287J2YIOuCtOyaqeydhCDsnpDrj5nsnLzroZwg7J297KeAIOyViuyKteuLiOuLpC4g7Lac66ClIOusuOq1rOuKlCDsi6Ttlonrp4jri6Qg64us65287KeR64uI64ukLiIKICAgXQogIH0sCiAgewogICAiY2VsbF90eXBlIjogImNvZGUiLAogICAiZXhlY3V0aW9uX2NvdW50IjogMTQsCiAgICJpZCI6ICJjZWxsLTMwIiwKICAgIm1ldGFkYXRhIjogewogICAgImV4ZWN1dGlvbiI6IHsKICAgICAiaW9wdWIuZXhlY3V0ZV9pbnB1dCI6ICIyMDI2LTA5LTA5VDE3OjI2OjE4Ljc2NzcwM1oiLAogICAgICJpb3B1Yi5zdGF0dXMuYnVzeSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE4Ljc2NzYwN1oiLAogICAgICJpb3B1Yi5zdGF0dXMuaWRsZSI6ICIyMDI2LTA5LTA5VDE3OjI2OjE5LjkzMDE4NloiLAogICAgICJzaGVsbC5leGVjdXRlX3JlcGx5IjogIjIwMjYtMDktMDlUMTc6MjY6MTkuOTI5MzM2WiIKICAgIH0sCiAgICAibGVzc29uX3BhcnQiOiAiYmVmb3JlIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi6re86rGw6rCAIOyXhuyWtCAqKuuqqOumheuLiOuLpCoqLlxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIOq3vOqxsOqwgCDruYTslrQg7J6I7Jy866m0IOygle2Zle2VnCDqtozsiJjsmYAg7Iuc6rCE7J2EIOuLte2VoCDsiJgg7JeG64qU7KeAIOydveyKteuLiOuLpC5cbiIsCiAgICAiYmVmb3JlX3Jlc3BvbnNlID0gbW9kZWwuaW52b2tlKFtcbiIsCiAgICAiICAgIChcInN5c3RlbVwiLCBhbnN3ZXJfcnVsZSksXG4iLAogICAgIiAgICAoXCJ1c2VyXCIsIGJlZm9yZV9wcm9tcHQpLFxuIiwKICAgICJdKVxuIiwKICAgICJwcmludChiZWZvcmVfcmVzcG9uc2UudGV4dCkiCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJtYXJrZG93biIsCiAgICJpZCI6ICJjZWxsLTMxIiwKICAgIm1ldGFkYXRhIjogewogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAic291cmNlIjogWwogICAgIiMjIOyImOyglTog7ISg7YOd7ZWcIOq4sOuhneydhCDqsJnsnYAg7KeI66y47J2YIOq3vOqxsOuhnCDrhKPsirXri4jri6RcbiIsCiAgICAiXG4iLAogICAgIuyVnuyXkOyEnCDrp4zrk6AgYGNvbnRleHRg7JeQ64qUIOuMgOy2nMK37KO87LCoIOuzuOusuOqzvCDstpzsspggSUTqsIAg7J6I7Iq164uI64ukLiDqt7zqsbAg7JiB7Jet66eMIOydtCDqsJLsnLzroZwg67CU6r647Ja0IOuLpOyLnCDtmLjstpztlanri4jri6QuIOuLteydmCA36raMwrcy7Iuc6rCE6rO8IOy2nOyymCBJROulvCDsm5Drnpgg6riw66Gd6rO8IOu5hOq1kO2VqeuLiOuLpC4iCiAgIF0KICB9LAogIHsKICAgImNlbGxfdHlwZSI6ICJjb2RlIiwKICAgImV4ZWN1dGlvbl9jb3VudCI6IDE1LAogICAiaWQiOiAiY2VsbC0zMiIsCiAgICJtZXRhZGF0YSI6IHsKICAgICJleGVjdXRpb24iOiB7CiAgICAgImlvcHViLmV4ZWN1dGVfaW5wdXQiOiAiMjAyNi0wOS0wOVQxNzoyNjoxOS45MzIzMTBaIiwKICAgICAiaW9wdWIuc3RhdHVzLmJ1c3kiOiAiMjAyNi0wOS0wOVQxNzoyNjoxOS45MzIxNDNaIiwKICAgICAiaW9wdWIuc3RhdHVzLmlkbGUiOiAiMjAyNi0wOS0wOVQxNzoyNjoyMS4zNDUxNjBaIiwKICAgICAic2hlbGwuZXhlY3V0ZV9yZXBseSI6ICIyMDI2LTA5LTA5VDE3OjI2OjIxLjM0NDQ5NloiCiAgICB9LAogICAgImxlc3Nvbl9wYXJ0IjogImFmdGVyIgogICB9LAogICAib3V0cHV0cyI6IFsKICAgIHsKICAgICAibmFtZSI6ICJzdGRvdXQiLAogICAgICJvdXRwdXRfdHlwZSI6ICJzdHJlYW0iLAogICAgICJ0ZXh0IjogWwogICAgICAi7KCE64us7ZWcIOq3vOqxsDogW0UwMS1wM10gN+q2jCwgMTTsnbwg64yA7LacXG4iLAogICAgICAiW0UwMS1wNV0g7ZqM7JuQ7J2AIOy1nOy0iCAy7Iuc6rCEIOustOujjOyeheuLiOuLpC5cbiIsCiAgICAgICLrqqjrjbgg64u1OiDrjIDstpwg6raM7IiY64qUICoqN+q2jCoq7J6F64uI64ukLiBbRTAxLXAzXSAgXG4iLAogICAgICAi7KO87LCoIOustOujjCDsi5zqsITsnYAgKirstZzstIggMuyLnOqwhCoq7J6F64uI64ukLiBbRTAxLXA1XVxuIgogICAgIF0KICAgIH0KICAgXSwKICAgInNvdXJjZSI6IFsKICAgICIjIGNvbnRleHTripQg7JWe7JeQ7IScIHNlbGVjdGVk7J2YIOuzuOusuOqzvCDstpzsspggSUTrpbwg7Jew6rKw7ZWcIOusuOyekOyXtOyeheuLiOuLpC5cbiIsCiAgICAiYWZ0ZXJfcHJvbXB0ID0gZlwiXCJcIuq3vOqxsDpcbiIsCiAgICAie2NvbnRleHR9XG4iLAogICAgIlxuIiwKICAgICLsp4jrrLg6IHtxdWVzdGlvbn1cIlwiXCJcbiIsCiAgICAiYWZ0ZXJfcmVzcG9uc2UgPSBtb2RlbC5pbnZva2UoW1xuIiwKICAgICIgICAgKFwic3lzdGVtXCIsIGFuc3dlcl9ydWxlKSxcbiIsCiAgICAiICAgIChcInVzZXJcIiwgYWZ0ZXJfcHJvbXB0KSxcbiIsCiAgICAiXSlcbiIsCiAgICAicHJpbnQoXCLsoITri6ztlZwg6re86rGwOlwiLCBjb250ZXh0KVxuIiwKICAgICJwcmludChcIuuqqOuNuCDri7U6XCIsIGFmdGVyX3Jlc3BvbnNlLnRleHQpIgogICBdCiAgfQogXSwKICJtZXRhZGF0YSI6IHsKICAia2VybmVsc3BlYyI6IHsKICAgImRpc3BsYXlfbmFtZSI6ICJQeXRob24gMyIsCiAgICJsYW5ndWFnZSI6ICJweXRob24iLAogICAibmFtZSI6ICJweXRob24zIgogIH0sCiAgImxhbmd1YWdlX2luZm8iOiB7CiAgICJjb2RlbWlycm9yX21vZGUiOiB7CiAgICAibmFtZSI6ICJpcHl0aG9uIiwKICAgICJ2ZXJzaW9uIjogMwogICB9LAogICAiZmlsZV9leHRlbnNpb24iOiAiLnB5IiwKICAgIm1pbWV0eXBlIjogInRleHQveC1weXRob24iLAogICAibmFtZSI6ICJweXRob24iLAogICAibmJjb252ZXJ0X2V4cG9ydGVyIjogInB5dGhvbiIsCiAgICJweWdtZW50c19sZXhlciI6ICJpcHl0aG9uMyIsCiAgICJ2ZXJzaW9uIjogIjMuMTIuMTMiCiAgfSwKICAidmVyaWZpY2F0aW9uIjogewogICAiYWxsb3dfZXJyb3JzIjogZmFsc2UsCiAgICJjb2RlX2NlbGxzIjogMTUsCiAgICJjb2RlX3NoYTI1NiI6ICI4MTU4MTExY2E4MzYxMTljNDkwYjFlYzhlZjQ5ODg2OWZlMTljZmZjMDY5NmZiMDgxYzRjMjFjMDhkZDgwYzhmIiwKICAgImV4ZWN1dGVkX2F0IjogIjIwMjYtMDktMDlUMTc6MjY6MjEuNDY5NjU5KzAwOjAwIiwKICAgImZyZXNoX2tlcm5lbCI6IHRydWUsCiAgICJvdXRwdXRzX3NoYTI1NiI6ICJhNzFhMGY2ZGRiYTlmM2EzMjM3NjI1MmVkYWY3ZTY3NTA1NWI3Y2VmODc4MTcwYTU2NTNkMjVmYzU0NGE4MDgxIiwKICAgInB5dGhvbl92ZXJzaW9uIjogIjMuMTIuMTMiLAogICAic3RhdHVzIjogInBhc3NlZCIKICB9CiB9LAogIm5iZm9ybWF0IjogNCwKICJuYmZvcm1hdF9taW5vciI6IDUKfQo=">노트북만 내려받기</a></div><p class="nb-guide">준비된 Python 3.12 노트북에서 첫 셀부터 <code>Shift+Enter</code>로 하나씩 실행합니다. 안내한 결과를 먼저 확인하고 지정한 값 하나를 바꿔 비교합니다. 문서를 사용하는 실습은 파일 묶음이 필요합니다. <a href="../../downloads/llm-practice.zip" download>노트북과 실습 파일 함께 받기</a> · <a href="../../index.html">처음 실습하는 방법</a>. 전체 코드 복사에는 아래의 Before/After 셀도 포함됩니다. 이 HTML에서는 코드를 실행하지 않습니다.</p>
+<div class="nb-markdown"><h2>02. Write와 Select</h2>
+<p>Write는 정보를 외부 기록에 남기는 단계이고, Select는 현재 질문에 필요한 기록만 고르는 단계입니다.</p></div>
+<div class="nb-markdown"><h3>실행 환경 준비</h3>
+<p>실습 파일은 <code>labs/part2/ch08-context-engineering/notebooks/02-Write와-Select.ipynb</code>입니다. 새 커널에서 시작해 첫 코드 셀로 패키지 버전을 맞춘 뒤, 설명과 코드를 위에서부터 순서대로 실행합니다. <code>.env</code>는 현재 작업 폴더의 상위 경로에서도 찾습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [1]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># %pip은 현재 노트북 커널에 패키지를 설치하는 Jupyter 전용 명령입니다.
+# -q는 설치 로그를 줄이고, == 뒤 숫자는 수업에서 검증한 버전을 고정합니다.
+%pip install -q &quot;langchain==1.4.0&quot; &quot;langchain-openai==1.6.0&quot; &quot;python-dotenv==1.2.3&quot; &quot;tiktoken==0.14.0&quot;</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+<div class="nb-markdown"><h3>1. API 연결 준비</h3>
+<p>각 노트북은 빈 커널에서 시작할 수 있도록 연결 코드를 포함합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [2]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># find_dotenv는 현재 폴더부터 상위 폴더를 검색해 .env 경로를 찾습니다.
+import os
+
+from dotenv import find_dotenv, load_dotenv
+
+# usecwd=True는 노트북을 실행한 폴더를 검색 시작점으로 지정합니다.
+# 키 값은 출력하지 않고 존재 여부만 확인합니다.
+env_path = find_dotenv(usecwd=True)
+if not env_path:
+    raise FileNotFoundError(&quot;현재 폴더의 상위 경로에서 .env를 찾지 못했습니다.&quot;)
+load_dotenv(env_path)
+if not os.getenv(&quot;OPENAI_API_KEY&quot;):
+    raise RuntimeError(&quot;.env에 OPENAI_API_KEY가 없습니다.&quot;)
+print(&quot;.env와 API 키 확인 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">.env와 API 키 확인 완료
+</pre></div>
+<div class="nb-markdown"><h4>모델 객체를 만듭니다</h4>
+<p><code>.env</code> 확인이 끝난 뒤 모델 이름과 출력 제한을 지정합니다. 이 셀은 아직 API에 질문을 보내지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [3]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># init_chat_model은 provider:model 형식으로 채팅 모델 객체를 만듭니다.
+# model은 이후 셀에서 invoke()를 호출할 때 사용합니다.
+from langchain.chat_models import init_chat_model
+
+# openai:는 공급자 이름이며, reasoning_effort=&quot;none&quot;은 별도 추론 토큰을 사용하지 않는 설정입니다.
+# max_tokens=300은 생성할 출력 토큰 수의 상한입니다.
+model = init_chat_model(
+    &quot;openai:gpt-5.4-mini&quot;,
+    reasoning_effort=&quot;none&quot;,
+    max_tokens=300,
+)
+print(&quot;LangChain 모델 준비 완료&quot;)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">LangChain 모델 준비 완료
+</pre></div>
+<div class="nb-markdown"><h3>2. 기록을 JSON으로 저장하고 다시 읽습니다</h3>
+<p>예제 데이터는 코드 안에 직접 적습니다. <code>effective_date</code>는 날짜 필터를 관찰하기 위한 합성 메타데이터이며, PDF의 발행일이나 실제 규정 시행일을 뜻하지 않습니다. 저장 파일은 운영체제의 임시 폴더에 만들기 때문에 노트북을 어느 폴더에서 열어도 실행할 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [4]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 각 기록에는 선택에 쓸 기관·주제·적용일과 답에 쓸 본문이 있습니다.
+import json
+from pathlib import Path
+from tempfile import gettempdir
+
+records = [
+    {&quot;id&quot;: &quot;E01-p2&quot;, &quot;institution&quot;: &quot;미르시립도서관&quot;, &quot;topic&quot;: &quot;휴관&quot;,
+     &quot;effective_date&quot;: &quot;2025-01-01&quot;, &quot;text&quot;: &quot;매주 월요일 휴관&quot;},
+    {&quot;id&quot;: &quot;E01-p3&quot;, &quot;institution&quot;: &quot;미르시립도서관&quot;, &quot;topic&quot;: &quot;대출&quot;,
+     &quot;effective_date&quot;: &quot;2025-01-01&quot;, &quot;text&quot;: &quot;7권, 14일 대출&quot;},
+    {&quot;id&quot;: &quot;E01-p5&quot;, &quot;institution&quot;: &quot;미르시립도서관&quot;, &quot;topic&quot;: &quot;주차&quot;,
+     &quot;effective_date&quot;: &quot;2025-01-01&quot;, &quot;text&quot;: &quot;회원은 최초 2시간 무료입니다.&quot;},
+]
+print(&quot;저장할 기록:&quot;, len(records))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">저장할 기록: 3
+</pre></div>
+<div class="nb-markdown"><h4>임시 파일에 기록을 씁니다</h4>
+<p><code>gettempdir()</code>를 사용하므로 노트북을 어느 폴더에서 열어도 같은 방식으로 실행됩니다. 출력된 이름으로 저장 파일을 확인합니다.</p>
+<p><code>Path(gettempdir()) / &quot;ch08-memory.json&quot;</code>은 임시 폴더에 파일 이름을 연결한 경로입니다. <code>json.dumps()</code>는 목록을 JSON 문자열로 바꾸고 <code>write_text()</code>가 그 문자열을 저장합니다. 고정 파일 이름이므로 이 셀을 다시 실행하면 같은 이름의 기록을 덮어씁니다. 장기 보존이나 여러 사용자의 저장을 설계한 예제는 아닙니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [5]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># ensure_ascii=False는 한국어를 그대로 JSON에 기록합니다.
+memory_path = Path(gettempdir()) / &quot;ch08-memory.json&quot;
+json_text = json.dumps(records, ensure_ascii=False)
+memory_path.write_text(json_text, encoding=&quot;utf-8&quot;)
+print(&quot;임시 폴더에 저장한 파일:&quot;, memory_path.name)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">임시 폴더에 저장한 파일: ch08-memory.json
+</pre></div>
+<div class="nb-markdown"><h4>파일을 다시 읽어 중간 결과를 확인합니다</h4>
+<p><code>read_text()</code>는 문자열을 반환하고, <code>json.loads()</code>는 그 문자열을 파이썬 목록으로 복원합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [6]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># loaded에는 파일에서 복원한 기록 목록이 저장됩니다.
+saved_text = memory_path.read_text(encoding=&quot;utf-8&quot;)
+loaded = json.loads(saved_text)
+print(&quot;다시 읽은 기록:&quot;, len(loaded))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">다시 읽은 기록: 3
+</pre></div>
+<div class="nb-markdown"><h3>3. 질문에 필요한 기록만 선택합니다</h3>
+<p>기관·주제·질문 날짜를 코드에 적고, 세 조건이 맞는 기록의 ID를 고릅니다. 자동 검색은 Ch 9에서 다룹니다.</p>
+<p><code>topics</code>는 필요한 주제의 집합이고 <code>in</code>은 포함 여부를 검사합니다. 세 조건을 <code>and</code>로 연결하므로 모두 참인 기록만 ID 집합에 넣습니다. 이어지는 반복문은 <code>loaded</code>의 원래 순서로 선택한 기록을 모읍니다.</p>
+<p>예를 들어 같은 상품의 2025년과 2026년 설명서가 모두 기준일 전에 시행되었다면 두 문서가 함께 선택될 수 있습니다. 아래 조건은 최신 버전 하나를 고르거나 폐기 여부를 확인하지 않습니다. 질문의 기관·주제·날짜 역시 사람이 정한 값이며 모델이 질문에서 자동 추출하지 않습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [7]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># criteria는 질문에서 확인한 기관·주제·날짜입니다.
+criteria = {
+    &quot;institution&quot;: &quot;미르시립도서관&quot;,
+    &quot;topics&quot;: {&quot;대출&quot;, &quot;주차&quot;},
+    &quot;as_of&quot;: &quot;2026-09-08&quot;,
+}
+selected_ids = set()
+for row in loaded:
+    same_institution = row[&quot;institution&quot;] == criteria[&quot;institution&quot;]
+    needed_topic = row[&quot;topic&quot;] in criteria[&quot;topics&quot;]
+    already_effective = row[&quot;effective_date&quot;] &lt;= criteria[&quot;as_of&quot;]
+    if same_institution and needed_topic and already_effective:
+        selected_ids.add(row[&quot;id&quot;])
+
+selected = []
+for row in loaded:
+    if row[&quot;id&quot;] in selected_ids:
+        selected.append(row)
+
+for row in selected:
+    print(row[&quot;id&quot;], row[&quot;topic&quot;], row[&quot;text&quot;])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">E01-p3 대출 7권, 14일 대출
+E01-p5 주차 회원은 최초 2시간 무료입니다.
+</pre></div>
+<div class="nb-markdown"><h3>4. 선택한 기록으로 답을 생성합니다</h3>
+<p>모델에는 저장소 전체 대신 선택한 두 기록만 전달합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [8]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># context_lines에 출처 ID와 내용을 한 줄씩 추가합니다.
+context_lines = []
+for row in selected:
+    line = f&quot;[{row[&#x27;id&#x27;]}] {row[&#x27;text&#x27;]}&quot;
+    context_lines.append(line)
+
+context = &quot;\n&quot;.join(context_lines)
+prompt = f&quot;&quot;&quot;근거:
+{context}
+
+질문: 대출 권수와 주차 무료 시간을 알려 주세요.&quot;&quot;&quot;
+print(prompt)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">근거:
+[E01-p3] 7권, 14일 대출
+[E01-p5] 회원은 최초 2시간 무료입니다.
+
+질문: 대출 권수와 주차 무료 시간을 알려 주세요.
+</pre></div>
+<div class="nb-markdown"><h4>모델에 전달할 메시지를 만듭니다</h4>
+<p><code>system</code>에는 답변 규칙을, <code>user</code>에는 앞에서 만든 질문을 넣습니다. 셀을 실행한 뒤 역할 순서를 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [9]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># messages는 역할과 내용을 짝지은 목록입니다.
+# system 지시를 user 질문보다 먼저 둡니다.
+messages = [
+    (&quot;system&quot;, &quot;제공된 근거만 사용하고 문장마다 식별자를 붙이세요.&quot;),
+    (&quot;user&quot;, prompt),
+]
+roles = []
+for role, content in messages:
+    roles.append(role)
+print(&quot;메시지 역할:&quot;, roles)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">메시지 역할: [&#x27;system&#x27;, &#x27;user&#x27;]
+</pre></div>
+<div class="nb-markdown"><h4>모델을 한 번 호출합니다</h4>
+<p><code>invoke()</code>의 반환값은 <code>AIMessage</code>입니다. 사용량 정보가 없으면 이후 비교를 할 수 없으므로 즉시 오류를 냅니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [10]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># response는 모델의 답과 메타데이터를 가진 AIMessage입니다.
+response = model.invoke(messages)
+usage = response.usage_metadata
+
+if usage is None:
+    raise RuntimeError(&quot;모델 사용량 메타데이터가 없습니다.&quot;)</code></pre></div></div>
+<div class="nb-markdown"><h4>답과 실제 토큰 수를 관찰합니다</h4>
+<p>먼저 답변 원문을 읽고, 다음 두 줄에서 API가 보고한 입력·출력 토큰 수를 확인합니다. 답변 문구와 수치는 실행마다 달라질 수 있습니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [11]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># text는 답변 문자열이고 usage는 실제 호출의 토큰 사용량입니다.
+print(response.text)
+print(&quot;input_tokens:&quot;, usage.get(&quot;input_tokens&quot;))
+print(&quot;output_tokens:&quot;, usage.get(&quot;output_tokens&quot;))</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">대출 권수는 7권입니다. [E01-p3]  
+주차 무료 시간은 최초 2시간입니다. [E01-p5]
+input_tokens: 75
+output_tokens: 37
+</pre></div>
+<div class="nb-markdown"><h3>5. 선택 ID 한 개를 줄여 비교합니다</h3>
+<p>기본 선택에는 대출과 주차가 들어 있습니다. 주차 ID 하나를 제외한 뒤 선택된 기록 수와 주제를 비교합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [12]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># changed_ids에서는 E01-p5 하나만 제외합니다.
+changed_ids = selected_ids - {&quot;E01-p5&quot;}
+changed_selected = []
+for row in loaded:
+    if row[&quot;id&quot;] in changed_ids:
+        changed_selected.append(row)
+
+print(&quot;기본 선택 수:&quot;, len(selected))
+print(&quot;변경 선택 수:&quot;, len(changed_selected))
+print(&quot;변경 후 주제:&quot;, changed_selected[0][&quot;topic&quot;])</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">기본 선택 수: 2
+변경 선택 수: 1
+변경 후 주제: 대출
+</pre></div>
+<div class="nb-markdown"><h3>정리</h3>
+<p>외부 기록은 저장만으로 모델에 전달되지 않습니다. 질문에 맞는 항목을 선택하여 호출 입력에 넣어야 합니다.</p></div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+<p class="look"><b>확인할 점</b> — 실습 파일은 <code>labs/part2/ch08-context-engineering/notebooks/02-Write와-Select.ipynb</code>입니다. 저장할 목록, 출력된 임시 파일 이름, 다시 읽은 목록, 선택 결과를 차례로 확인합니다. 기본 선택에서 주차 ID 한 개를 제외했을 때 기록 수와 주제가 어떻게 달라지는지 비교합니다.</p>
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before에서는 파일을 저장해 놓고도 근거를 메시지에 넣지 않습니다. After에서는 앞에서 선택한 대출·주차 기록을 넣습니다. 질문과 답변 규칙을 같게 두고 실제 모델의 답을 비교합니다. 근거가 없어 답하지 못하는 것은 이 실습에서 모델이 잘못한 일이 아닙니다. 자료를 저장하고도 호출에 전달하지 않은 프로그램의 누락을 관찰합니다.</p>
+<section class="notebook" data-notebook="02-Write와-Select" data-lesson-format="paired" aria-label="순서대로 실행하는 노트북">
+<p class="nb-guide">앞의 실행 예제를 실행한 같은 노트북에서 Before 다음 After 순서로 실행합니다. 출력은 실제 실행 결과입니다.</p><div class="nb-comparison">
+<section class="nb-stage" data-lesson-stage="before"><h3>Before — 실패 코드</h3>
+<div class="nb-markdown"><h3>실패 재현: 저장한 기록을 메시지에 넣지 않습니다</h3>
+<p>파일에는 세 기록이 있지만 모델에는 빈 근거를 전달합니다. 대출 권수와 주차 시간을 답할 정보가 실제 메시지에 있는지 확인합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [13]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 두 호출에서 질문과 답변 규칙은 그대로 사용합니다.
+question = &quot;대출 권수와 주차 무료 시간을 알려 주세요.&quot;
+answer_rule = &quot;제공된 근거만 사용하고 문장마다 식별자를 붙이세요. 근거가 없으면 모른다고 답하세요.&quot;
+# 빈 문자열은 저장 파일의 본문을 메시지에 옮기지 않은 상태입니다.
+missing_context = &quot;&quot;
+before_prompt = f&quot;&quot;&quot;근거:
+{missing_context}
+
+질문: {question}&quot;&quot;&quot;
+print(before_prompt)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">근거:
+
+
+질문: 대출 권수와 주차 무료 시간을 알려 주세요.
+</pre></div>
+<div class="nb-markdown"><h4>근거가 없는 메시지로 실제 답을 확인합니다</h4>
+<p><code>invoke()</code>에 파일 경로를 전달하지 않았고, 메시지에도 본문이 없습니다. 모델은 저장 파일의 내용을 자동으로 읽지 않습니다. 출력 문구는 실행마다 달라집니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [14]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># 근거가 비어 있으면 정확한 권수와 시간을 답할 수 없는지 읽습니다.
+before_response = model.invoke([
+    (&quot;system&quot;, answer_rule),
+    (&quot;user&quot;, before_prompt),
+])
+print(before_response.text)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">근거가 없어 **모릅니다**.
+</pre></div>
+</section>
+<section class="nb-stage" data-lesson-stage="after"><h3>After — 수정 코드</h3>
+<div class="nb-markdown"><h3>수정: 선택한 기록을 같은 질문의 근거로 넣습니다</h3>
+<p>앞에서 만든 <code>context</code>에는 대출·주차 본문과 출처 ID가 있습니다. 근거 영역만 이 값으로 바꾸어 다시 호출합니다. 답의 7권·2시간과 출처 ID를 원래 기록과 비교합니다.</p></div>
+<div class="nb-cell"><div class="nb-prompt">In [15]:</div><div class="nb-input"><button type="button" class="copy-cell" aria-label="이 셀의 코드 복사">복사</button><pre><code class="language-python nb-source"># context는 앞에서 selected의 본문과 출처 ID를 연결한 문자열입니다.
+after_prompt = f&quot;&quot;&quot;근거:
+{context}
+
+질문: {question}&quot;&quot;&quot;
+after_response = model.invoke([
+    (&quot;system&quot;, answer_rule),
+    (&quot;user&quot;, after_prompt),
+])
+print(&quot;전달한 근거:&quot;, context)
+print(&quot;모델 답:&quot;, after_response.text)</code></pre></div></div>
+<div class="nb-result"><div class="nb-prompt">출력:</div><pre class="nb-output">전달한 근거: [E01-p3] 7권, 14일 대출
+[E01-p5] 회원은 최초 2시간 무료입니다.
+모델 답: 대출 권수는 **7권**입니다. [E01-p3]  
+주차 무료 시간은 **최초 2시간**입니다. [E01-p5]
+</pre></div>
+</section>
+</div>
+<p class="copy-status" role="status" aria-live="polite"></p></section>
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>JSON 저장은 보안 저장을 뜻하지 않습니다.</strong> 개인 정보와 비밀 값은 평문 예제 파일에 넣지 않습니다. 실제 서비스에서는 접근 권한, 암호화, 보존 기간을 별도로 설계합니다.</li>
+<li><strong>저장과 컨텍스트 포함을 구분합니다.</strong> 파일에 있는 데이터는 프로그램이 읽어 메시지로 전달하기 전까지 현재 모델 호출의 입력이 아닙니다.</li>
+<li><strong>출처 식별자를 변형하지 않습니다.</strong> 요약이나 답을 만들 때도 원래 식별자를 유지해야 원문을 다시 확인할 수 있습니다.</li>
+<li><strong>날짜 형식을 맞춘 뒤 비교합니다.</strong> 이 실습의 날짜는 모두 <code>YYYY-MM-DD</code> 형식이므로 문자열 순서와 날짜 순서가 같습니다. 이 합성 필드에서 <code>effective_date &lt;= as_of</code>는 실습용 적용 시작일 당일부터 자료를 선택합니다. 서로 다른 날짜 형식을 받는 프로그램에서는 먼저 날짜 값으로 변환해야 합니다. 종료일이나 이전 버전의 폐기 여부를 판단하는 규칙은 추가로 작성해야 합니다.</li>
+<li><strong>Select의 누락 가능성을 기록합니다.</strong> 사람이 정한 규칙이 모든 표현을 포괄하지 못할 수 있습니다. 후보가 없으면 근거 없이 답을 만들기보다 선택 실패로 처리합니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul>
+<li>Write는 정보를 컨텍스트 윈도 밖에 저장하며, 저장 자체는 모델 학습이나 자동 기억이 아닙니다.</li>
+<li>Select는 질문과 메타데이터를 비교하여 필요한 기록을 고르고 현재 메시지로 가져옵니다.</li>
+<li>기관·주제·날짜는 선택 조건으로 사용하고, 본문과 출처 식별자는 모델에 전달하여 답의 근거를 확인합니다.</li>
+</ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 03절에서는 선택한 기록이나 긴 대화가 여전히 예산보다 클 때 Compress로 줄이고, 서로 다른 업무 자료는 Isolate로 분리합니다. Ch 9에서는 이 절의 사람 선택을 검색이 수행하며, 출처 식별자와 메타데이터가 검색 결과를 검토하는 기준으로 이어집니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q"><strong>[하]</strong> 1. JSON 파일에 기록한 사실을 모델이 다음 호출에서 사용하려면 반드시 어떤 단계가 필요합니까?</p>
+<p class="quiz-a"><strong>정답과 해설</strong> — 프로그램이 파일을 읽고, 필요한 항목을 선택하여, 그 내용을 호출 메시지에 포함해야 합니다. 틀렸다면 이 절의 핵심 개념 ‘Write는 모델의 학습이나 자동 기억이 아닙니다’를 다시 봅니다.</p>
+<p class="quiz-q"><strong>[중]</strong> 2. 본문과 함께 출처 식별자와 적용 날짜를 저장해야 하는 이유를 각각 설명하세요.</p>
+<p class="quiz-a"><strong>정답과 해설</strong> — 출처 식별자는 답의 근거가 된 원문을 다시 찾아 오류를 추적하게 합니다. 적용 날짜는 질문 시점에 유효한 기록인지 판단하게 합니다. 틀렸다면 이 절의 핵심 개념 ‘기록은 본문과 조건을 함께 보존합니다’를 다시 봅니다.</p>
+<p class="quiz-q"><strong>[중]</strong> 3. 문서 본문 전체를 처음부터 읽는 방식과 점진적 공개 방식의 차이를 세 단계로 설명하세요.</p>
+<p class="quiz-a"><strong>정답과 해설</strong> — 점진적 공개는 먼저 식별자와 메타데이터 목록을 보고, 질문과 맞는 항목을 고른 뒤, 선택한 본문만 읽습니다. 모든 본문을 처음부터 현재 메시지에 넣지 않습니다. 틀렸다면 이 절의 핵심 개념 ‘점진적으로 필요한 내용만 엽니다’를 다시 봅니다.</p>
+<p class="quiz-q"><strong>[상·확장]</strong> 4. 같은 기관의 이전 규정과 현재 규정이 있을 때, 안전한 Select 규칙과 답의 출력 형식을 설계하세요.</p>
+<p class="quiz-a"><strong>정답과 해설</strong> — 질문의 기준 날짜를 확인하고, 기관이 같으며 그 날짜에 유효한 기록을 선택합니다. 선택한 본문과 함께 출처 식별자·적용 기간을 메시지에 넣고, 답에는 사용한 출처 식별자를 표시합니다. 기준 날짜가 없으면 임의로 고르지 않고 추가 조건이 필요함을 표시합니다. 틀렸다면 이 절의 핵심 개념 ‘Select는 질문과 메타데이터를 함께 봅니다’를 다시 봅니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul>
+<li>LangChain Team, 「Context Engineering」 — <a href="https://www.langchain.com/blog/context-engineering-for-agents">langchain.com/blog/context-engineering-for-agents</a> · 2025-07-02 · 확인 2026-09-08. 자료를 저장·선택·압축·분리하는 네 방법을 설명한 글입니다. 업계가 공통으로 정한 공식 단계는 아닙니다.</li>
+<li>Anthropic, 「Effective context engineering for AI agents」 — <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">anthropic.com/engineering/effective-context-engineering-for-ai-agents</a> · 2025-09-29 · 확인 2026-09-08. 필요한 자료를 실행할 때 불러오고, 본문과 출처·날짜 같은 항목을 함께 기록하는 방식의 근거.</li>
+<li>Anthropic, 「Equipping agents for the real world with Agent Skills」 — <a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills</a> · 2025-10-16 · 확인 2026-09-08. 메타데이터에서 본문과 연결 파일로 이어지는 점진적 공개 사례.</li>
+</ul>
+<script>document.addEventListener('DOMContentLoaded', () => {
+  async function copy(text, notebook) {
+    const status = notebook.querySelector('.copy-status');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(field);
+        field.select();
+        const success = document.execCommand('copy');
+        field.remove();
+        if (!success) throw new Error('copy unavailable');
+      }
+      status.textContent = '코드를 복사했습니다. Jupyter 코드 셀에 붙여 넣으세요.';
+    } catch (_) {
+      status.textContent = '자동 복사가 제한되어 있습니다. 코드 영역을 선택해 복사하세요.';
+    }
+  }
+  document.querySelectorAll('.notebook').forEach(notebook => {
+    notebook.querySelectorAll('.copy-cell').forEach(button => {
+      button.addEventListener('click', () => copy(button.parentElement.querySelector('.nb-source').textContent, notebook));
+    });
+    notebook.querySelector('.copy-all')?.addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.notebook')]
+        .filter(section => section.dataset.notebook === notebook.dataset.notebook);
+      const source = sections.flatMap(section => [...section.querySelectorAll('.nb-source')])
+        .map(cell => cell.textContent).join('\n\n');
+      copy(source, notebook);
+    });
+  });
+});
+</script>
+<div class="nav-foot"><span><a href="01-컨텍스트와-토큰-예산.html">← 01 · 컨텍스트와 토큰 예산</a></span><span><a href="index.html">챕터 목차</a></span><span><a href="03-Compress와-Isolate.html">03 · Compress와 Isolate →</a></span></div>
+</div></body></html>

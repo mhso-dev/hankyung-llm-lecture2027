@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  c["고른 체크포인트<br>두 가지 같음<br>단계 1 · 만든 자리 loop<br>다음 노드 discount<br>기본 가격 10000 · 할인 10"]
+  subgraph O["원래 가지 · 첫 실행"]
+    direction TB
+    o1["단계 2 · loop<br>질문 값 최종 가격 9000"]:::measure
+    o2["단계 3 · loop<br>최종 가격 9000 · approve"]:::measure
+    o1 --> o2
+  end
+  subgraph N["새 가지 · 값 고쳐 넣기"]
+    direction TB
+    n0["할인 20을<br>update_state로 넣음"]:::tool
+    n1["단계 2 · 만든 자리 update<br>할인 20"]:::measure
+    n2["단계 3 · loop<br>질문 값 최종 가격 8000"]:::measure
+    n3["단계 4 · loop<br>최종 가격 8000 · approve"]:::measure
+    n0 --> n1
+    n1 --> n2
+    n2 --> n3
+  end
+  c --> O
+  c --> N

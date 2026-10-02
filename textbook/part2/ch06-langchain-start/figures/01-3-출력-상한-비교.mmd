@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph FULL["출력 상한을 주지 않은 호출"]
+    direction LR
+    f1["max_tokens None"]:::tool
+    f2["gpt-5.4-mini"]:::model
+    f3["출력 41토큰<br>끝난 이유 stop"]:::measure
+    f1 --> f2 --> f3
+  end
+  subgraph SHORT["출력 상한 12인 호출"]
+    direction LR
+    s1["max_tokens 12"]:::tool
+    s2["gpt-5.4-mini"]:::model
+    s3["출력 12토큰<br>끝난 이유 length<br>답이 중간에 끊김"]:::measure
+    s1 --> s2 --> s3
+  end
+  FULL --> SHORT

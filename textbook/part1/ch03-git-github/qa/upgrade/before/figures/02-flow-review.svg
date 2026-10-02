@@ -1,0 +1,28 @@
+<svg style="min-width:720px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 695" width="720" height="695" font-family="Pretendard, Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif" role="img" aria-labelledby="title-02-flow-review desc-02-flow-review">
+<title id="title-02-flow-review">기능 브랜치의 검토와 병합</title>
+<desc id="desc-02-flow-review">main에서 기능 브랜치를 만들고 원격에 게시한 뒤 차이 검토와 수정 과정을 거쳐 main에 병합합니다.</desc>
+<defs>
+<marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+<marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+<marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="m-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+</defs>
+<rect width="720" height="695" fill="#ffffff"/>
+<text x="20" y="30.0" font-size="19" fill="#111827" text-anchor="start" dominant-baseline="middle" font-weight="bold"><tspan x="20" dy="0.0">기능 브랜치의 검토와 병합</tspan></text>
+<rect x="80" y="75" width="560" height="76" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="360.0" y="101.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">main</tspan><tspan x="360.0" dy="23.0">검토된 기준</tspan></text>
+<polyline points="360,151 360,185" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="185" width="560" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="211.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">feature/order-summary</tspan><tspan x="360.0" dy="23.0">기능 커밋</tspan></text>
+<polyline points="360,261 360,295" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="295" width="560" height="76" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="360.0" y="321.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">로컬 PR 리뷰 모의</tspan><tspan x="360.0" dy="23.0">main...feature 차이</tspan></text>
+<polyline points="360,371 360,405" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="405" width="560" height="76" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="360.0" y="431.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">리뷰 의견 반영</tspan><tspan x="360.0" dy="23.0">수정 커밋</tspan></text>
+<polyline points="360,481 360,515" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#m-blue)"/>
+<rect x="80" y="515" width="560" height="76" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="360.0" y="541.5" font-size="17" fill="#111827" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">main 병합 후</tspan><tspan x="360.0" dy="23.0">원격 갱신</tspan></text>
+<text x="360.0" y="669.0" font-size="14" fill="#4b5563" text-anchor="middle" dominant-baseline="middle" font-weight="normal"><tspan x="360.0" dy="0.0">파랑: 작성한 흐름 · 초록: 데이터 · 노랑: 확인 · 빨강: 실패</tspan></text>
+</svg>

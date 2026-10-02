@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  inq["문의 글 하나<br>글자 수 len"]:::tool
+  router["choose_model<br>글자 수와 기준 길이를 견줌"]:::flow
+  pick1["고른 이름<br>gpt-5.4-nano"]:::flow
+  pick2["고른 이름<br>gpt-5.4-mini"]:::flow
+  nano["gpt-5.4-nano<br>temperature=0<br>reasoning_effort none"]:::model
+  mini["gpt-5.4-mini<br>temperature=0<br>reasoning_effort none"]:::model
+  inq --> router
+  router -. 기준 길이 이하 .-> pick1
+  router -. 기준 길이보다 김 .-> pick2
+  pick1 -- send_inquiry로 보냄 --> nano
+  pick2 -- send_inquiry로 보냄 --> mini

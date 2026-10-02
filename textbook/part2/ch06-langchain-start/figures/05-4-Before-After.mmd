@@ -1,0 +1,23 @@
+%%{init: {"flowchart": {"wrappingWidth": 320}}}%%
+flowchart TB
+  %% classes
+  subgraph BEFORE["Before · 9절 폴백 없음"]
+    direction LR
+    b1["tiny_model<br>gpt-5.4-mini · 0.001초"]:::model
+    b2["OpenAITimeoutError<br>받은 답 None"]:::fail
+    b1 --> b2
+  end
+  subgraph AFTER["After · 10절 시간 초과면 nano로 넘김"]
+    direction LR
+    a1["tiny_model<br>gpt-5.4-mini<br>0.001초"]:::model
+    a2["fallback_model<br>gpt-5.4-nano<br>30초"]:::model
+    a3["AIMessage<br>응답한 모델<br>gpt-5.4-nano-2026-03-17"]:::measure
+    a1 --> a2 --> a3
+  end
+  subgraph CHECK["After 확인 · 10절 모델 없음"]
+    direction LR
+    c1["기본 경로 typo_model<br>gpt-5.4-mimi"]:::tool
+    c2["OpenAIModelNotFoundError<br>대체 모델로 넘기지 않음<br>받은 답 None"]:::measure
+    c1 --> c2
+  end
+  BEFORE --> AFTER --> CHECK

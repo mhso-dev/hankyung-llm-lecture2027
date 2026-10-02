@@ -1,0 +1,17 @@
+flowchart TB
+  %% classes
+  subgraph left["코드가 고른 환불 절차"]
+    direction TB
+    a1["기록 줄 넷<br>고른 쪽 모두 코드"]:::tool
+    a2["모델이 한 단계 하나<br>모델이 고른 단계 없음<br>워크플로우"]:::measure
+    a1 --> a2
+  end
+  subgraph right["모델이 고른 환불 절차"]
+    direction TB
+    b1["기록 줄 여섯<br>다음 단계 고르기<br>두 줄을 더함"]:::tool
+    b2["모델이 한 단계 셋<br>모델이 고른 단계 둘<br>에이전트 후보"]:::measure
+    b1 --> b2
+  end
+  same["두 기록의 도구 차례는 같음<br>주문 조회 · 환불 규정 확인<br>그다음 환불 요청 등록"]
+  left ~~~ same
+  right ~~~ same

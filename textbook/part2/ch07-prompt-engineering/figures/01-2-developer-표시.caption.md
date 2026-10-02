@@ -1,0 +1,4 @@
+- 설명 대상 문장: developer 튜플은 따로 된 클래스가 아니라 추가 정보에 OpenAI용 역할 표시가 붙은 SystemMessage가 됩니다.
+- 캡션: developer 튜플은 따로 된 클래스가 아니라 OpenAI용 역할 표시가 붙은 SystemMessage가 되고, langchain-openai가 그 표시를 읽어 요청 역할을 적습니다.
+- 읽는 법: 위에서 아래로. 초록 상자는 4절에서 넣은 `("developer", constraint_text)`, 파란 상자는 `invoke()`가 요청 전에 부르는 `convert_to_messages()`(langchain-core 1.6.2 `_convert_input`), 노란 상자는 5절 출력 `SystemMessage | system | {'__openai_role__': 'developer'}`·`둘째 메시지의 OpenAI 역할 표시: developer`. 회색 상자는 출력으로 보지 않은 단계(langchain-openai 1.6.0 `_convert_message_to_dict`가 `__openai_role__`을 요청 역할로 씀, 탐색 실행 `_get_request_payload`에서 `['system', 'developer', 'user']` 확인). 보라 상자는 6절에서 요청을 받은 모델.
+- alt: 위에서 아래로 초록 상자 developer 튜플 과업 제약, 파란 상자 invoke 안 convert_to_messages, 노란 상자 SystemMessage __openai_role__ developer, 회색 상자 langchain-openai 요청 역할을 developer로 적음, 보라 상자 gpt-5.4-mini가 차례로 이어지는 흐름도

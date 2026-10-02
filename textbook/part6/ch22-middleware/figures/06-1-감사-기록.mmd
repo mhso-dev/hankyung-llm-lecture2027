@@ -1,0 +1,9 @@
+flowchart TD
+  %% classes
+  a1["before_agent 자리<br>audit_start"]:::flow --> e1["agent_start<br>글자 수 46 · 지문"]:::measure
+  e1 --> m1["모델 호출"]:::model
+  m1 --> t1["wrap_tool_call 자리<br>audit_tool"]:::flow
+  t1 --> e2["tool_start → tool_success"]:::measure
+  e2 --> m2["모델 호출"]:::model
+  m2 --> a2["after_agent 자리<br>audit_end"]:::flow
+  a2 --> e3["agent_end<br>메시지 4개"]:::measure

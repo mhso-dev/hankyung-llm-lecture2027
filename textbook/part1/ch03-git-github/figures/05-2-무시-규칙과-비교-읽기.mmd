@@ -1,0 +1,6 @@
+%%{init: {"flowchart": {"wrappingWidth": 360}}}%%
+flowchart LR
+  %% classes
+  f1[".env<br>DEMO_API_KEY=더미 키"]:::tool --> m1["!! .env<br>.gitignore:1:.env"]:::measure
+  f2[".env.local<br>같은 더미 키"]:::tool --> m2["?? .env.local<br>규칙 확인 종료 코드: 1"]:::fail
+  f3["settings.example<br>git diff --cached"]:::tool --> m3["+DEMO_API_KEY=replace-me<br>더미 키 없음"]:::measure

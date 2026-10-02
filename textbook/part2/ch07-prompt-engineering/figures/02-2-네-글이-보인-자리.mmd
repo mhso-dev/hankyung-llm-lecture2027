@@ -1,0 +1,13 @@
+flowchart TB
+  %% classes
+  T["developer 과업 명세<br>목표 · 필수 정보<br>금지 사항 · 출력 형식"]:::tool
+  M["gpt-5.4-mini"]:::model
+  G["목표<br>분류: 파손 교환 문의"]:::measure
+  R["필수 정보<br>A-1042 · 사진 요청<br>페르소나만 답에도 있음"]:::measure
+  F["금지 사항<br>원문 읽기<br>보상 약속 없음"]:::measure
+  L["출력 형식<br>줄 수 3"]:::measure
+  T --> M
+  M --> G
+  M --> R
+  M --> F
+  M --> L

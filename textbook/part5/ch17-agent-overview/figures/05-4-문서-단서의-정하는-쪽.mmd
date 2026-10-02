@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  src["제품 문서 단서 자료<br>확인일 2026-09-10<br>셋 모두 이 과정에서<br>실행 안 함"]:::tool
+  fn["count_control<br>칸 control에 든 낱말 세기"]:::flow
+  a["Deep Research 단서 다섯<br>모델 다섯"]:::measure
+  b["Claude Code 단서 넷<br>코드 넷"]:::measure
+  c["Codex 단서 셋<br>코드 하나 · 미확인 둘"]:::measure
+  note["문서가 설명하려는 쪽이 다름<br>제품의 자율성을<br>견준 값이 아님"]
+  src --> fn
+  fn --> a
+  fn --> b
+  fn --> c
+  a ~~~ note
+  b ~~~ note
+  c ~~~ note

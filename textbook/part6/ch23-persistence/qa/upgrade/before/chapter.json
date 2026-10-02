@@ -1,0 +1,45 @@
+{
+  "part": 6,
+  "part_title": "Part 6 · Agent 개발",
+  "chapter": "ch23-persistence",
+  "title": "Persistence와 Durable Execution",
+  "hours": "총 16h · 강의 6h · 실습 10h",
+  "objectives": [
+    "체크포인터와 thread_id로 실행 상태를 저장하고 재개할 수 있습니다.",
+    "PostgresSaver를 준비하고 내구 실행 모드별 장애 복구 범위를 비교할 수 있습니다.",
+    "pending writes와 멱등 키를 사용해 재실행의 중복 부작용을 줄일 수 있습니다."
+  ],
+  "lab_path": "labs/part6/ch23-persistence",
+  "sections": [
+    {
+      "slug": "01-체크포인터와-스레드",
+      "title": "체크포인터와 스레드",
+      "format": "experiment"
+    },
+    {
+      "slug": "02-PostgresSaver-준비와-스키마",
+      "title": "PostgresSaver 준비와 스키마",
+      "format": "paired"
+    },
+    {
+      "slug": "03-스레드-재개와-대화-이어가기",
+      "title": "스레드 재개와 대화 이어가기",
+      "format": "experiment"
+    },
+    {
+      "slug": "04-내구-실행-모드-비교",
+      "title": "내구 실행 모드 비교",
+      "format": "experiment"
+    },
+    {
+      "slug": "05-pending-writes와-장애-복구",
+      "title": "pending writes와 장애 복구",
+      "format": "experiment"
+    },
+    {
+      "slug": "06-노드-재시작과-멱등성",
+      "title": "노드 재시작과 멱등성",
+      "format": "paired"
+    }
+  ]
+}

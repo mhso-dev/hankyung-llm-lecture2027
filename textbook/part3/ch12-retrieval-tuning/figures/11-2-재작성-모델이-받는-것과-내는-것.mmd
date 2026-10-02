@@ -1,0 +1,13 @@
+flowchart LR
+  %% classes
+  ask["대상 빠진<br>후속 질문"]:::tool
+  hist["대화 기록"]:::tool
+  empty["대화 기록 자리에<br>없음"]:::tool
+  writer["재작성 모델"]:::model
+  full["대상을 채운<br>독립 질문"]:::model
+  short["대상을 채우지<br>못한 문장"]:::model
+  ask --> writer
+  hist -->|함께| writer
+  empty -->|대신| writer
+  writer -->|기록 넣음| full
+  writer -->|기록 뺌| short

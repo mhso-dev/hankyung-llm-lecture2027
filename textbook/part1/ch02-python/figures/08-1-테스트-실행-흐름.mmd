@@ -1,0 +1,13 @@
+flowchart TD
+  %% classes
+  N["노트북 셀<br>exit_code = run_pytest()"]:::flow
+  P["새 Python에서 명령 실행<br>python -m pytest<br>-q --color=no"]:::flow
+  T["테스트 파일 찾기<br>test_price_tools.py<br>이름이 test_로 시작"]:::tool
+  M["from import 줄이<br>모듈 파일 price_tools.py<br>불러오기"]:::tool
+  A["test_two_keyboards 부르기<br>assert line_total == 78000"]:::flow
+  O["출력 점 하나와 1 passed<br>종료 코드: 0"]:::measure
+  N --> P
+  P --> T
+  T --> M
+  M --> A
+  A --> O

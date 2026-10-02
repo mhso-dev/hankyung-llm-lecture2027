@@ -1,0 +1,13 @@
+flowchart TD
+  %% classes
+  O["실습 폴더 열기<br>ch01-development-<br>environment"]:::flow
+  S["uv sync --locked"]:::flow
+  V["uv run python --version"]:::flow
+  Q{"Python 3.12로<br>시작하나?"}:::measure
+  I["인터프리터와 커널에서<br>.venv 고르기"]:::flow
+  K["노트북 첫 확인<br>가상환경 안인가 True"]:::measure
+  NG["pyproject.toml과 uv.lock이<br>함께 있는지 확인"]
+  O --> S --> V --> Q
+  Q -- "예" --> I --> K
+  Q -- "아니요" --> NG
+  NG -. "다시" .-> S

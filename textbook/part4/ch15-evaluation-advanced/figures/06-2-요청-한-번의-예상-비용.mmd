@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  case["평가 사례 세 건<br>Q002 · Q006 · Q090"]:::tool
+  model["gpt-5.4-mini<br>판정 요청 세 번<br>rag-judge-v1.0.0"]:::model
+  usage["사용량<br>입력 토큰<br>1995 · 2004 · 3248<br>캐시 입력 · 출력 토큰 수"]:::measure
+  price["요금표 2026-09-17<br>입력 0.75 · 캐시 입력 0.075<br>출력 4.5"]:::tool
+  est["estimate_cost<br>토큰 수에 요금을 곱해 더하고<br>100만으로 나눔"]:::flow
+  result["요청마다 예상 비용<br>캐시 입력 할인 없이<br>계산한 비용도 나란히"]:::measure
+  note["캐시 입력 · 출력 토큰 수와<br>예상 비용은 새 커널<br>두 번에서 서로 달랐음"]
+  case --> model
+  model --> usage
+  usage --> est
+  price --> est
+  est --> result
+  result ~~~ note

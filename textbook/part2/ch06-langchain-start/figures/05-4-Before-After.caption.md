@@ -1,0 +1,4 @@
+- 설명 대상 문장: 폴백이 없으면 답이 없고, 시간 초과일 때만 nano로 넘기면 답을 받으며, 모델 없음 오류는 넘기지 않습니다.
+- 캡션: 폴백이 없는 Before는 답을 받지 못했고, After는 시간 초과 뒤 gpt-5.4-nano가 답했으며, 모델 없음 오류는 대체 모델로 넘기지 않았습니다.
+- 읽는 법: 위에서 아래로 세 칸, 칸 안은 왼쪽에서 오른쪽. 위 칸 9절 Before(`오류 종류: OpenAITimeoutError`·`받은 답: None`, 빨강), 가운데 칸 10절 After(`호출 객체 종류: RunnableWithFallbacks`, `응답 객체 종류: AIMessage`·`기본 경로 모델: gpt-5.4-mini`·`응답한 모델: gpt-5.4-nano-2026-03-17`), 아래 칸 10절 After 확인(`오류 종류: OpenAIModelNotFoundError`·`받은 답: None`). 보라 실행한 모델, 초록 없는 모델 이름 설정, 노랑 출력으로 확인한 결과.
+- alt: 위 칸 Before 9절 폴백 없음은 보라 상자 tiny_model gpt-5.4-mini 0.001초가 빨간 상자 OpenAITimeoutError 받은 답 None으로, 가운데 칸 After 10절은 보라 상자 tiny_model에서 보라 상자 fallback_model gpt-5.4-nano 30초를 거쳐 노란 상자 AIMessage 응답한 모델 gpt-5.4-nano-2026-03-17로, 아래 칸 After 확인은 초록 상자 기본 경로 typo_model gpt-5.4-mimi가 노란 상자 OpenAIModelNotFoundError 대체 모델로 넘기지 않음 받은 답 None으로 이어지는 비교 그림

@@ -1,0 +1,95 @@
+<!--meta: 강의 1h | 실습 2h | 코드 04-생성과-출처-인용.ipynb | 새 용어 4 -->
+
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul>
+<li>이 절을 마치면 검색 결과 k개를 하나의 문자열로 조립하는 <code>format_context()</code>와, 그것을 프롬프트에 넣어 답을 받는 <code>generate()</code>를 읽고 고칠 수 있습니다.</li>
+<li>이 절을 마치면 모델에게 <em>실제로 보낸 문자열</em>을 출력해 확인하고, 답 뒤에 붙은 <code>[E01 p.2]</code>가 어디서 왔는지 추적할 수 있습니다.</li>
+<li>이 절을 마치면 <code>answer()</code> 한 함수로 질문 → 답까지 완주하고, 토큰 수로 호출 비용을 어림할 수 있습니다.</li>
+</ul></div>
+
+<h2 id="b2"><span class="no">2</span>왜 지금 이것인가</h2>
+<p>마지막 상자입니다. 03절의 <code>search()</code>가 반환한 (청크, 점수) 4개를 모델에게 전달해 답을 받으면 RAG 한 사이클이 완성됩니다. 이 절을 마치면 "이틀 안에 실행되는 RAG"라는 챕터 목표가 달성됩니다.</p>
+<p>이 절에서 정하는 것이 하나 더 있습니다. <strong>출처 표기 형식</strong>입니다. 답 뒤에 <code>[doc_id p.페이지]</code>를 붙이기로 정하면, 그 형식이 05절의 실패 분석, Ch 11의 "무엇을 맞다고 볼지" 합의, 중간 프로젝트 요건("출처 인용")까지 이어집니다. 형식은 지금 정하고, 지키는지 측정하는 것은 Ch 11부터입니다.</p>
+
+<h2 id="b3"><span class="no">3</span>선수 지식 되짚기</h2>
+<ul>
+<li><strong>Ch 6 <code>init_chat_model</code></strong> — 첫 호출 때 쓴 함수 그대로입니다. 메시지를 <code>("system", …)</code>, <code>("user", …)</code> 튜플 목록으로 넘기는 형식도 같습니다.</li>
+<li><strong>Ch 7 프롬프트 설계</strong> — 역할 지정, 근거 범위 제한, 출력 형식 지정. 세 가지가 이 절의 시스템 프롬프트 세 줄입니다.</li>
+<li><strong>Ch 8 컨텍스트 예산</strong> — 기본 노트북은 짧은 문서 한두 건을 문맥으로 보냅니다. 전체 말뭉치 확장에서는 청크 4개 × 500자가 프롬프트의 대부분을 차지하며, k를 늘리면 입력 비용도 늘어납니다.</li>
+<li><strong>03절의 검색</strong> — 기본 노트북은 독립 실행을 위해 벡터스토어를 다시 만들고 <code>similarity_search()</code>를 직접 호출합니다. 검색이 틀리면 생성은 그 틀린 재료로 답을 만듭니다.</li>
+</ul>
+
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+
+<h3>비유 — 답안지 규칙</h3>
+<p>오픈북 시험에서 감독관이 규칙을 정합니다. "책상 위 자료만 보고 답하라. 답의 근거가 된 쪽 번호를 답 옆에 적어라." 규칙이 없으면 학생은 기억으로 답하거나 근거 없이 씁니다. 시스템 프롬프트가 이 규칙이고, 검색 결과를 조립한 문자열이 책상 위 자료이며, <code>[E01 p.2]</code>가 답 옆의 쪽 번호입니다. 규칙을 지킬지는 학생(모델)에게 달려 있다는 점도 같습니다. 05절에서 규칙이 어떻게 깨지는지 봅니다.</p>
+
+<h3>정의</h3>
+<dl class="term">
+<dt>컨텍스트 조립 (context assembly)</dt>
+<dd>검색된 청크 여러 개를 모델이 읽을 하나의 문자열로 이어 붙이는 것입니다. 청크마다 출처 태그를 앞에 붙이고 구분선으로 나눕니다. 이 형식이 모델의 출처 표기 형식을 결정합니다.</dd>
+<dt>시스템 프롬프트 (system prompt)</dt>
+<dd>모델의 역할과 규칙을 적는 메시지입니다. 이 절에서는 "문서 절만 근거로 답하라"와 "출처를 <code>[doc_id p.페이지]</code>로 붙여라" 두 규칙을 적습니다.</dd>
+<dt>출처 인용 (citation)</dt>
+<dd>답의 근거가 된 청크의 <code>doc_id</code>·<code>page</code>를 답에 표기하는 것입니다. 모델이 표기한 출처는 검색된 k개 중 하나여야 합니다. 그렇지 않으면 지어낸 출처입니다.</dd>
+<dt>사용량 메타데이터 (usage_metadata)</dt>
+<dd>응답 객체에 붙어 오는 입력·출력 토큰 수입니다. 비용 계산과 06절 하네스 로그의 재료입니다.</dd>
+</dl>
+
+<h3>기본 노트북의 조립과 생성</h3>
+<p>읽을 때 순서를 지키세요. 첫째, 검색한 문서의 <code>doc_id</code>와 <code>page</code>로 출처 태그를 만듭니다. 둘째, 태그와 본문을 질문 앞에 놓습니다. 셋째, 모델에 전달한 뒤 답과 출처가 함께 있는지 검사합니다. 기본 노트북은 이 과정을 변수 몇 개로 그대로 보여 줍니다. 선택 확장의 <code>rag.py</code>는 같은 절차를 <code>format_context()</code>·<code>Answer</code>·<code>answer()</code>로 묶어 전체 말뭉치에서 반복할 수 있게 합니다.</p>
+<div class="callout yellow"><b>모델 선택</b><code>gpt-5.4-mini</code>(2026-03 출시)를 씁니다. 이 교재의 실행에서는 <code>temperature</code>를 설정하지 않습니다. 모델별 지원 매개변수는 실행 전에 공식 API 문서에서 확인합니다. 출력은 실행마다 조금씩 달라집니다. 교재의 출력은 2026-09-07 실행 결과이며, 여러분의 출력과 표현이 다를 수 있습니다. 답의 <em>내용</em>과 <em>출처 태그</em>가 같은지를 봅니다.</div>
+
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>문서 두 건을 임베딩하고, 검색 1위의 내용과 출처 태그를 실제 생성 모델에 전달합니다. 검색과 생성이 짧은 셀 두 개로 이어지므로 전달되는 문맥을 바로 확인할 수 있습니다.</p>
+{{notebook:04-생성과-출처-인용|example}}
+<p class="look"><b>확인할 점</b> — 실제 응답에 휴관일과 <code>[D01 p.1]</code> 형식의 출처가 함께 나타납니다. 마지막 셀은 답과 출처를 따로 검사합니다. 출력은 실행마다 달라집니다(2026-09-08, gpt-5.4-mini).</p>
+
+<h2 id="b6"><span class="no">6</span>일부러 실패해 보기</h2>
+<p>Before에서 <code>page</code> 메타데이터가 없는 문서의 <code>KeyError</code>를 확인합니다. After에서 쪽 번호를 명시한 문서로 같은 출처 태그 생성을 성공시킵니다.</p>
+{{notebook:04-생성과-출처-인용|failure}}
+
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul>
+<li><strong>출처 후보와 실제 출처는 다릅니다.</strong> <code>Answer.sources</code>는 검색이 <em>가져온</em> 4개이고, 답에 붙은 <code>[E01 p.2]</code>는 모델이 <em>썼다고 주장하는</em> 것입니다. 둘을 나눠 기록해야 Ch 11에서 검색 지표(Recall)와 생성 지표(Groundedness)를 따로 측정할 수 있습니다.</li>
+<li><strong>출처 태그 검증은 정규식 한 줄입니다.</strong> 답에서 <code>\[([A-Z]\d{2}) p\.(\d+)\]</code>를 추출해 <code>sources</code> 안에 있는지 확인하면 "지어낸 출처"를 걸러 낼 수 있습니다. Ch 16 가드레일의 출력 검증 항목이고, 여기서는 아직 붙이지 않습니다.</li>
+<li><strong>비용.</strong> gpt-5.4-mini 표준 요금은 입력 미화 0.75달러, 출력 4.50달러 / 100만 토큰입니다(2026-09-07 확인). 위 호출 하나의 약 1,200개의 토큰을 입력·출력별 단가로 계산한 추정 비용은 약 0.001달러입니다. 출력 토큰이 입력보다 6배 비싸므로 "짧게 답하라"는 규칙은 품질 문제이기 전에 비용 문제입니다.</li>
+<li><strong>한국어 출력 규칙.</strong> 시스템 프롬프트에 "한국어로"를 넣지 않으면 영어 문서가 섞인 코퍼스에서 영어로 답하는 경우가 생깁니다. 이 코퍼스는 전부 한국어라 영향이 없지만 습관으로 넣습니다.</li>
+<li><strong>응답에서 텍스트 읽기.</strong> <code>model.invoke()</code>는 <code>AIMessage</code>를 반환합니다. 기본 노트북은 <code>answer.text</code>로 텍스트를 읽습니다. <code>content</code>는 문자열이나 콘텐츠 블록 목록일 수 있으므로 멀티모달 응답을 다루는 Ch 26에서 별도로 확인합니다.</li>
+</ul>
+
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul>
+<li><code>format_context()</code>가 청크 앞에 <code>[doc_id p.페이지]</code> 태그를 붙여 하나의 문자열로 조립하고, <code>generate()</code>가 그것을 시스템 프롬프트와 함께 모델에 보냅니다. 출처 표기는 프롬프트 규칙이 아니라 조립 데이터가 만듭니다.</li>
+<li><code>answer()</code>는 검색 한 번 + 생성 한 번, 두 줄입니다. RAG 첫 완주가 여기서 마무리됩니다.</li>
+<li>검색이 가져오지 못한 정보는 제공된 문서 근거로 확인할 수 없습니다. 검색 순위 오류는 k개 안에 정답이 있으면 생성이 흡수하지만, k개 밖이면 제공된 문서에 정답 근거가 없습니다.</li>
+</ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — 기본 노트북의 출처 태그 검사는 Ch 16 출력 검증으로 이어집니다. 선택 확장에서는 "모르면 모른다" 규칙을 추가한 <code>strict</code> 프롬프트와 검색 출처 후보를 별도로 기록합니다. 검색 후보와 답 속 태그의 차이는 Ch 11·15에서 검색 지표와 생성 지표를 나누는 근거입니다. 다음 05절에서 이 RAG가 어떻게 실패하는지 일부러 확인합니다.</p>
+
+<h2 id="b9"><span class="no">9</span>복습 문제</h2>
+<details class="quiz" open><summary>문제 4개 · 해설 포함</summary>
+<p class="quiz-q">1. 모델이 답에 <code>[D01 p.1]</code>을 붙일 수 있도록 어떤 데이터를 문맥에 넣었습니까?</p>
+<p class="quiz-a"><code>format_context()</code>에서 청크 앞에 <code>tag = f"[{doc_id} p.{page}]"</code>를 붙이는 줄입니다. 시스템 프롬프트는 "붙여라"라고 지시할 뿐이고, 붙일 문자열은 조립 단계가 줍니다.</p>
+<p class="quiz-q">2. 수습 급여 질문에서 정답 청크는 3위였고 1·2위는 표지와 다른 회사 규정이었습니다. 답이 맞게 나온 것은 누구의 공입니까? 이 방식의 위험은 무엇입니까?</p>
+<p class="quiz-a">생성(모델)의 공입니다. k=4 안에 정답이 있었고 모델이 그것을 골랐습니다. 위험은 다른 회사(M05) 규정이 같은 프롬프트에 있어 모델이 그쪽 수치를 고를 수도 있다는 점이고, 실제로 06절 로그에서 정답 청크가 빠진 채 누리테크 규정을 근거로 답한 사례(Q007)가 나옵니다.</p>
+<p class="quiz-q">3. "검색이 가져오지 못한 정보는 제공된 문서 근거로 확인할 수 없다"를 이 절의 실행 결과로 설명하세요.</p>
+<p class="quiz-a">실패 3의 반납 질문입니다. 검색 결과에 E01 3쪽이 없었고 모델은 "규정이 없다"고 답했습니다. 프롬프트를 아무리 고쳐도 없는 재료로는 답할 수 없습니다.</p>
+<p class="quiz-q">4. 입력 1,162개의 토큰 중 질문은 30개의 토큰 미만입니다. 나머지는 무엇이며, k를 8로 바꾸면 비용은 어떻게 됩니까?</p>
+<p class="quiz-a">기본 노트북에서는 짧은 문서가 입력의 대부분입니다. 별도로 보관한 2026-09-07 전체 말뭉치 확장 실험에서는 같은 8문항에서 k를 4에서 8로 바꾸자 입력 토큰 합계가 9,588에서 17,366으로 약 1.8배가 되었습니다. 증가 폭은 청크 길이와 프롬프트에 따라 달라집니다.</p>
+</details>
+
+<h2 id="b10"><span class="no">10</span>강사 노트</h2>
+<details class="instructor"><summary>시간 배분 · 시연 순서 · 예상 질문 · 막히는 지점 · A/B 트랙</summary>
+<p><strong>시간 배분(3h)</strong> — 강의 60분: 답안지 규칙 비유(10) · 출처 태그 조립(20) · 실행 결과 읽기(20) · 입력 비용(10). 실습 120분: 기본 노트북 전체 실행(30) · <code>k=1</code>과 <code>k=2</code> 문맥 비교(30) · 누락된 <code>page</code> 오류 확인(20) · 선택 확장으로 질문·출처 표 살펴보기(40).</p>
+<p><strong>시연 순서</strong> — ① 문서 두 건과 메타데이터를 확인 ② 질문을 검색해 <code>context</code> 문자열을 조립 ③ 실제 생성 응답의 월요일과 <code>[D01 p.1]</code> 확인 ④ <code>k=2</code>에서 문맥이 늘어나는 모습 비교 ⑤ <code>page</code>가 없는 문서의 실제 <code>KeyError</code> 확인 ⑥ 전체 말뭉치 함수 분리는 선택 확장으로 소개.</p>
+<p><strong>예상 질문</strong> — "<code>temperature=0</code>으로 고정하면 되지 않나요?" → 이 교재에서는 해당 값을 설정하지 않았으며 모델별 지원 여부를 먼저 확인해야 한다고 답하고, 재현성은 Ch 15 회귀 스위트에서 다룬다고 예고. "출처를 두 개 붙이면요?" → 허용되며 정규식이 둘 다 추출한다고 답함. "답이 너무 짧은데 더 길게 하면?" → 출력 토큰이 6배 비싸다는 점을 들어 요건(중간 프로젝트)에 맞춰 정하라고 안내.</p>
+<p><strong>학생이 막히는 지점</strong> — 벡터스토어가 처음 문서를 임베딩하는 동안 응답을 기다려야 한다는 점. <code>AIMessage</code> 객체와 그 객체의 <code>text</code> 문자열을 구분하는 지점. 시스템 프롬프트를 사용자 메시지에 합쳐 넣는 습관(Ch 7 복습).</p>
+<p><strong>A/B 트랙</strong> — A트랙은 출처 태그 추적까지. B트랙은 정규식으로 답 속 태그를 추출해 <code>sources</code>와 대조하는 <code>check_citations(answer) -&gt; bool</code>을 만들고 테스트를 붙이게 합니다(Ch 16 예행).</p>
+</details>
+
+<h2 id="b11"><span class="no">11</span>참고 자료</h2>
+<ul>
+<li>LangChain 「Build a RAG agent」 — <code>init_chat_model</code> 절과 검색 결과를 프롬프트에 넣는 예제 — <a href="https://docs.langchain.com/oss/python/langchain/rag">docs.langchain.com/oss/python/langchain/rag</a> · 확인 2026-09-07 · 예제의 <code>create_agent</code>·<code>@tool</code> 부분은 이 챕터 범위 밖(Ch 19~21).</li>
+<li>OpenAI API 요금 — gpt-5.4-mini 입력 0.75 / 출력 4.50달러 per 1M tokens (standard) — <a href="https://developers.openai.com/api/docs/pricing">developers.openai.com/api/docs/pricing</a> · 확인 2026-09-07.</li>
+<li>기준 버전: langchain 1.4.0 · langchain-openai 1.6.0 · 모델 gpt-5.4-mini-2026-03-17.</li>
+</ul>

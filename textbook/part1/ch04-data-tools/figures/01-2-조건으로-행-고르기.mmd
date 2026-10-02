@@ -1,0 +1,11 @@
+flowchart TB
+  %% classes
+  STS["status 열<br>paid · pending · paid"]:::tool
+  MSK["마스크<br>True · False · True"]:::tool
+  ROWS["고른 행<br>O101 · O103"]:::tool
+  AMT["금액 열만<br>32000 · 27000"]:::tool
+  TOT["결제 완료 합계<br>59000"]:::measure
+  STS -- "paid와 같은가" --> MSK
+  MSK -- "orders.loc[마스크]" --> ROWS
+  ROWS -- "열 amount만" --> AMT
+  AMT -- "sum()" --> TOT

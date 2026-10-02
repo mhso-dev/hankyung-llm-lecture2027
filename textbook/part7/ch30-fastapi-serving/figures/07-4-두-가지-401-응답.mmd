@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  none["접근 토큰이 없는 요청"]:::tool
+  subgraph bf["Before · 실습 앱 require_token"]
+    direction TB
+    b1["401<br>인증 정보가<br>올바르지 않습니다<br>WWW-Authenticate 없음"]:::fail
+  end
+  subgraph af["After · HTTPBearer를 쓴 새 앱"]
+    direction TB
+    a1["401 Not authenticated<br>WWW-Authenticate Bearer"]:::measure
+    a2["Bearer abc를 보내면 200<br>접근 토큰 글은 보지 않음"]:::measure
+    a1 ~~~ a2
+  end
+  none --> bf
+  none --> af

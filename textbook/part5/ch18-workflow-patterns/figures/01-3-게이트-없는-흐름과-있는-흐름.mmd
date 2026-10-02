@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph before["Before · 게이트 없는 흐름"]
+    direction TB
+    b1["gpt-5.4-mini<br>기획 요청"]:::model
+    b2["검사 없이 작성 요청<br>칸 셋이 없는 기획이 넘어감"]:::fail
+    b3["상태 완료 · 요청 둘<br>흐름이 알린 문제 없음"]:::fail
+    b1 --> b2
+    b2 --> b3
+  end
+  subgraph after["After · 게이트가 있는 흐름"]
+    direction TB
+    a1["gpt-5.4-mini<br>기획 요청"]:::model
+    a2["게이트 check_plan"]:::flow
+    a3["상태 멈춤 · 요청 하나<br>제목 독자 절차 칸 없음"]:::measure
+    a1 --> a2
+    a2 --> a3
+  end
+  same["두 칸 모두 같은 요청 글<br>칸 이름을 적지 않은 기획 요청<br>코드는 게이트 세 줄과<br>마지막 줄의 칸 문제만 다름"]
+  before ~~~ same
+  after ~~~ same

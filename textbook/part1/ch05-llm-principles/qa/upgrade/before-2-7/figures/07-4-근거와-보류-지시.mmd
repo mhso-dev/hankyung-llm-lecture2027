@@ -1,0 +1,15 @@
+flowchart LR
+  %% classes
+  QUESTIONS["가상을 뺀<br>같은 질문 두 개"]:::tool
+  NO_RULE["지시 없음"]:::tool
+  RULE["보류 지시<br>시스템 메시지"]:::tool
+  PLAIN_NO_DOC["6절 문서 없음<br>새 숫자 1 · 10000"]:::measure
+  PLAIN_DOC["8절 문서 있음<br>정답 숫자 True · True"]:::measure
+  RULE_NO_DOC["9절 문서 없음<br>보류 문장 True · True"]:::measure
+  RULE_DOC["9절 문서 있음<br>1번 보류 · 정답 숫자 False<br>2번 4200mAh · True"]:::measure
+  QUESTIONS --> NO_RULE
+  QUESTIONS --> RULE
+  NO_RULE --> PLAIN_NO_DOC
+  NO_RULE --> PLAIN_DOC
+  RULE --> RULE_NO_DOC
+  RULE --> RULE_DOC

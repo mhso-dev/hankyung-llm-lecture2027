@@ -1,0 +1,77 @@
+<!--meta: 실습 30분 | 코드 Jupyter Notebook | 새 용어 0개 -->
+<h2 id="b1"><span class="no">1</span>학습 목표</h2>
+<div class="goal"><ul><li>1~5절에서 배운 확인 여섯 가지를 한 점검표로 모으는 과정을 따라갈 수 있습니다.</li><li>점검표에서 통과하지 못한 칸을 찾고, 그 이유를 종료 코드와 오류 메시지에서 읽을 수 있습니다.</li><li>작업 폴더 하나를 바꿨을 때 점검표의 어느 칸이 달라지는지 설명할 수 있습니다.</li></ul></div>
+<h2 id="b2"><span class="no">2</span>이 내용을 배우는 이유</h2>
+<p>1~5절에서는 버전, 경로, 스크립트 실행, Git, Docker를 하나씩 따로 확인했습니다. 다음 장부터 실습 폴더를 새로 열면 이 점검표 순서로 먼저 확인해 볼 수 있습니다.</p>
+<p>이번 절은 이 챕터의 실습입니다. 앞에서 배운 확인을 한 노트북에 모아 강사와 함께 실행해 봅니다. 새 문법이나 새 기능은 없습니다.</p>
+<p>실습 주제는 새 연습 폴더 점검입니다. 노트북이 만든 연습 폴더 <code>practice</code>를 두 번 점검합니다. 한 번은 바른 작업 폴더에서, 한 번은 한 칸 위 폴더에서 점검합니다.</p>
+<p><strong>이 절의 질문</strong> — 작업 폴더를 잘못 고르면 점검표의 어느 칸이 달라질까요?</p>
+<h2 id="b3"><span class="no">3</span>앞에서 배운 내용</h2>
+<p>이번 실습은 아래 다섯 절에서 배운 것을 그대로 가져옵니다.</p>
+<table><thead><tr><th>절</th><th>배운 것</th><th>실습에서 쓰는 곳</th></tr></thead><tbody>
+<tr><td>1절</td><td>실행 전에 예상 적기, 목록과 번호 늘리기, <code>==</code> 비교</td><td>실행마다 먼저 예상, 점검표 칸 이름 목록</td></tr>
+<tr><td>2절</td><td>임시 폴더 <code>workspace</code>, 기준 폴더 <code>base_folder</code>와 상대 경로 <code>data/message.txt</code></td><td>파일 칸, 실행 2의 한 칸 위 작업 폴더</td></tr>
+<tr><td>3절</td><td>Python 버전과 <code>sys.prefix</code> 비교, 종료 코드 <code>returncode</code>와 오류 메시지 <code>stderr</code></td><td>Python·가상환경 칸, 실패 이유 읽기</td></tr>
+<tr><td>4절</td><td><code>hello.py</code> 네 줄 실행과 예상 출력 <code>총액: 6000원</code> 비교</td><td>hello.py 칸</td></tr>
+<tr><td>5절</td><td><code>git init</code>·<code>git add</code>·커밋, <code>git status --short</code>, 인자 <code>cwd</code>, docker 찾기</td><td>재료 만들기, Git 칸, Docker 칸</td></tr>
+</tbody></table>
+<p>2절 Before에서는 기준 폴더를 한 칸 위로 잡자 파일을 찾지 못했습니다. 실행 2는 같은 실수를 점검표 전체에 적용합니다. 이 장은 모델을 부르지 않으므로 API 키가 필요 없습니다.</p>
+<h2 id="b4"><span class="no">4</span>핵심 개념</h2>
+<h3>비유로 시작하기</h3>
+<p>2절에서는 같은 설명을 들고 다른 방에서 출발하면 편지를 찾지 못한다고 했습니다. 이번에는 같은 사람이 가방을 메고 두 방에 들어갑니다.</p>
+<p>책상 서랍의 편지는 방에 딸려 있어서 초록 방에서만 찾을 수 있습니다. 어깨에 멘 가방 속 필통은 사람을 따라다니므로 어느 방에서나 그대로 있습니다.</p>
+{{img:06-4-두-방-가방|초록 벽 방에서는 가방을 멘 사람이 서랍 속 편지를 보고 웃고, 노란 벽 방에서는 같은 가방을 멘 같은 사람이 빈 서랍을 보고 곤란해하는 삽화|방을 바꾸면 서랍 속 편지는 달라지지만, 어깨에 멘 가방 속 필통은 그대로입니다.}}
+<p><strong>그림 읽기</strong> — 왼쪽 초록 방과 오른쪽 노란 방에 같은 책상이 하나씩 있습니다. 왼쪽 서랍에만 편지가 반쯤 나와 있고, 오른쪽 서랍은 비어 있습니다. 두 방의 사람은 같은 주황 가방을 메고 있고, 가방 위로 파란 필통이 보입니다.</p>
+<p>점검표도 같습니다. 방은 작업 폴더이고, 서랍 속 편지는 practice 폴더 안의 파일입니다. 가방 속 필통은 노트북 커널의 Python과 가상환경입니다. 작업 폴더를 바꾸면 폴더 안의 파일을 쓰는 칸만 달라집니다.</p>
+<h3>점검표의 구성</h3>
+{{mermaid:06-1-조립도|작업 폴더 base_folder가 data/message.txt 확인, python hello.py 실행, git status --short 확인 세 곳에 들어가고, Python 3.12·가상환경 확인과 docker 찾기는 작업 폴더 없이 실행되어 여섯 결과가 점검표로 모이는 조립도|점검표 여섯 칸을 채우는 확인과, 그중 작업 폴더를 쓰는 세 확인입니다.}}
+<p><strong>도식 읽기</strong> — 왼쪽에서 오른쪽으로 읽습니다. 파란 상자는 우리가 고르는 작업 폴더이고, 초록 상자는 1~5절에서 배운 확인입니다. 노란 상자는 결과를 모은 점검표입니다.</p>
+<p>작업 폴더에서 화살표를 받는 확인은 가운데 세 개입니다. 맨 위 Python 3.12·가상환경 확인과 맨 아래 docker 찾기는 작업 폴더를 쓰지 않습니다.</p>
+<p>초록 상자는 다섯 개이고, 맨 위 상자에 Python 3.12와 가상환경 두 확인이 함께 들어 있습니다. 여섯 확인의 결과는 모두 오른쪽 점검표로 모입니다.</p>
+<table><thead><tr><th>칸</th><th>이름</th><th>확인 방법</th><th>통과 기준</th></tr></thead><tbody>
+<tr><td>1</td><td>Python 3.12</td><td><code>platform.python_version()</code>이 3.12로 시작하는가</td><td><code>True</code></td></tr>
+<tr><td>2</td><td>커널이 가상환경 안</td><td><code>sys.prefix != sys.base_prefix</code></td><td><code>True</code></td></tr>
+<tr><td>3</td><td>data/message.txt 있음</td><td><code>base_folder / relative_path</code>의 <code>is_file()</code></td><td><code>True</code></td></tr>
+<tr><td>4</td><td>hello.py 출력 총액: 6000원</td><td>작업 폴더에서 <code>python hello.py</code> 실행</td><td>종료 코드 0이고 출력이 <code>총액: 6000원</code></td></tr>
+<tr><td>5</td><td>Git 상태 0줄</td><td>작업 폴더에서 <code>git status --short</code> 실행</td><td>종료 코드 0이고 출력 0줄</td></tr>
+<tr><td>6</td><td>Docker 클라이언트</td><td>docker를 찾았을 때만 <code>docker --version</code></td><td>종료 코드 0</td></tr>
+</tbody></table>
+<p>넷째 칸은 4절과 조금 다르게 실행합니다. 4절은 파일 전체 경로를 넣었고, 이번에는 파일 이름 <code>hello.py</code>만 적습니다. 대신 인자 <code>cwd</code>로 작업 폴더에서 실행합니다. 터미널에서 현재 폴더의 hello.py를 실행하는 것과 같은 조건입니다.</p>
+<h3>두 번의 실행</h3>
+<p>실행 1은 작업 폴더 <code>base_folder</code>를 practice로 둡니다. 점검할 연습 폴더를 바르게 고른 경우입니다.</p>
+<p>실행 2는 작업 폴더만 한 칸 위인 임시 폴더로 바꿉니다. 점검 방법, 명령 목록, 연습 폴더의 파일은 모두 실행 1과 같습니다.</p>
+<h2 id="b5"><span class="no">5</span>실행 예제</h2>
+<p>노트북은 먼저 재료를 만듭니다. 임시 폴더에 practice 폴더, <code>data/message.txt</code>, <code>hello.py</code>를 만들고 Git으로 커밋합니다. 그다음 점검표 칸 이름 여섯 개를 목록 <code>check_names</code>에 담습니다.</p>
+<p>실행 1은 칸마다 셀 하나로 확인하고, 결과를 목록 <code>run_1</code>에 모아 출력합니다. 실행 2는 같은 확인을 셀 네 개로 다시 하고 <code>run_2</code>에 모읍니다. 모델 호출은 없고, 준비 셀을 뺀 코드 셀 18개가 1분 안에 끝납니다.</p>
+{{notebook:06-개발환경-실습}}
+<p class="look"><b>확인할 점</b> — 실행 1의 점검표에서 True 칸 수가 <code>5</code>인지 봅니다. 비교 셀에서 달라진 칸 수가 <code>3</code>인지도 봅니다.</p>
+<h3>실행 1의 실제 순서</h3>
+{{mermaid:06-2-실행1-순서|노트북이 작업 폴더 practice에서 Python 3.12·가상환경·message.txt를 확인하고, python hello.py와 git status --short를 실행해 종료 코드 0을 받은 뒤, Docker 명령을 찾지 못해 점검표 True 5칸으로 끝나는 순서도|실행 1(작업 폴더 practice)에서 노트북이 확인한 순서와 받은 결과입니다.}}
+<p><strong>도식 읽기</strong> — 위에서 아래로 시간이 흐릅니다. 첫 노란 메모는 정한 작업 폴더이고, 나머지 메모는 노트북 안에서 바로 확인한 결과입니다. 두 화살표 쌍은 노트북이 다른 프로그램을 실행하고 결과를 받은 자리입니다.</p>
+<p>두 프로그램 모두 practice 폴더에서 실행됐고 종료 코드는 0이었습니다. 마지막에 Docker만 명령을 찾지 못해, 점검표의 True 칸은 5칸이었습니다.</p>
+<h2 id="b6"><span class="no">6</span>실험 결과 해석</h2>
+<p>실행 1에서 작업 폴더를 쓰는 세 칸은 모두 통과했습니다. 파일 확인은 True였고, 스크립트는 종료 코드 0으로 <code>총액: 6000원</code>을 출력했습니다. Git 상태 출력은 0줄이었습니다.</p>
+<p>Python 3.12 칸과 가상환경 칸도 True였습니다. Docker 칸은 명령을 찾지 못해 False였습니다. 이 교재 환경에 Docker가 설치되어 있지 않기 때문입니다.</p>
+{{mermaid:06-3-두-실행-비교|실행 1에서는 파일·hello.py·Git 세 칸 True와 Python·가상환경 두 칸 True, Docker 명령을 찾지 못함이고, 실행 2에서는 파일·hello.py·Git 세 칸이 종료 코드 2·128과 함께 False로 바뀌고 나머지 두 상자는 같은 비교 그림|같은 연습 폴더를 작업 폴더만 바꿔 점검한 두 결과입니다.}}
+<p><strong>도식 읽기</strong> — 위 칸은 실행 1, 아래 칸은 실행 2입니다. 노란 상자는 통과한 칸이고, 빨간 상자는 통과하지 못한 칸입니다. 위아래에서 색이 바뀐 것은 왼쪽 상자 하나뿐입니다.</p>
+<p>실행 2에서는 작업 폴더만 한 칸 위로 바꿨습니다. 파일 확인은 False였습니다. 스크립트 실행은 종료 코드 2로 끝났고, 오류 메시지에 <code>can't open file</code>이 있었습니다. 한 칸 위 폴더에는 hello.py가 없기 때문입니다.</p>
+<p>Git 칸도 False였습니다. 명령 git은 종료 코드 128로 끝났고, 오류 메시지에 <code>not a git repository</code>가 있었습니다. 저장소 표시인 <code>.git</code> 폴더는 practice 안에만 있습니다.</p>
+<p>Python, 가상환경, Docker 칸은 두 실행에서 같았습니다. 비교 셀의 달라진 칸 수는 3이었고, True 칸은 5칸에서 2칸으로 줄었습니다.</p>
+<p>결론은 이렇습니다. 이번 실습에서 작업 폴더를 잘못 고르자 폴더 안의 파일을 쓰는 세 칸이 함께 실패했습니다. 커널과 컴퓨터에 딸린 세 칸은 그대로였습니다. 이 결과는 작업 폴더 하나를 한 번 바꿔 관찰한 것입니다.</p>
+<h2 id="b7"><span class="no">7</span>주의할 점과 실무 메모</h2>
+<ul><li>파일, hello.py, Git 세 칸이 함께 False이면 도구를 다시 설치하기 전에 작업 폴더부터 확인합니다. 실행 2에서도 도구는 그대로인데 이 세 칸만 실패했습니다.</li>
+<li>Docker 칸이 False여도 Ch 2의 Python 학습은 진행할 수 있습니다. 5절의 여섯 가지 준비 상태 표를 따릅니다.</li>
+<li>Docker 설치 컴퓨터에서 Docker 칸이 어떻게 나오는지는 이번에 실행하지 않았습니다. 그 컴퓨터에서는 <code>else</code> 아래 줄이 실행됩니다.</li>
+<li>오류 메시지 전체에는 임시 폴더 위치가 들어 있어 사람마다 다릅니다. 그래서 노트북은 알아볼 글이 들어 있는지만 연산자 <code>in</code>으로 확인했습니다. git 오류는 괄호 속 문구와 둘째 줄이 환경마다 다를 수 있습니다. 그래서 공통으로 들어 있는 <code>not a git repository</code>만 확인했습니다.</li>
+<li>점검표 칸 이름 옆에 배운 절을 주석으로 적었습니다. 칸이 늘어나도 어느 확인을 어디서 배웠는지 바로 찾을 수 있습니다.</li></ul>
+<h2 id="b8"><span class="no">8</span>정리와 다음 절</h2>
+<ul><li>1~5절에서 따로 배운 확인 여섯 가지를 한 점검표로 모았습니다.</li><li>실행 1에서 작업 폴더를 practice로 두자 True 5칸이었고, Docker 칸만 명령을 찾지 못해 False였습니다.</li><li>실행 2에서 작업 폴더만 한 칸 위로 바꾸자 파일, hello.py, Git 세 칸이 False로 바뀌었습니다. 나머지 세 칸은 같았습니다.</li></ul>
+<p><strong>다음 학습과 이어지는 지점</strong> — Ch 2에서는 이번에 점검한 Python 3.12 환경에서 Python 문법을 배웁니다. 실습 폴더를 새로 열면 이번 점검표의 순서로 먼저 확인해 볼 수 있습니다. 커밋은 Ch 3에서, 이미지와 컨테이너는 Docker를 다루는 뒤쪽 챕터에서 다시 다룹니다.</p>
+<h2 id="b9"><span class="no">9</span>복습 문제</h2><details class="quiz"><summary>문제와 해설</summary>
+<p class="quiz-q">1. 실행 1에서 Docker 칸만 False였습니다. 작업 폴더를 고치면 이 칸이 True가 되나요? · 기초</p><p class="quiz-a"><b>해설</b> — 아닙니다. Docker 칸은 작업 폴더를 쓰지 않고 docker 명령을 찾습니다. 실행 2에서 작업 폴더를 바꿔도 Docker 칸은 그대로 False였습니다.</p>
+<p class="quiz-q">2. 실행 2에서 hello.py 칸을 통과하지 못한 이유는 무엇인가요? · 적용</p><p class="quiz-a"><b>해설</b> — 파일 이름 <code>hello.py</code>만 적은 명령을 한 칸 위 폴더에서 실행했기 때문입니다. 그 폴더에는 hello.py가 없어 종료 코드 2와 <code>can't open file</code> 메시지가 나왔습니다.</p>
+<p class="quiz-q">3. 점검표의 파일, hello.py, Git 세 칸이 함께 False입니다. 무엇부터 확인하나요? · 적용</p><p class="quiz-a"><b>해설</b> — 작업 폴더가 파일이 들어 있는 연습 폴더 practice인지 먼저 확인합니다. 세 칸 모두 작업 폴더를 쓰는 확인이기 때문입니다. 실행 2에서도 작업 폴더만 바꿨는데 이 세 칸이 함께 실패했습니다.</p>
+<p class="quiz-q">4. 이번 결과만으로 「Docker가 설치된 컴퓨터에서는 True 6칸이 된다」고 말할 수 있나요? · 분석</p><p class="quiz-a"><b>해설</b> — 말할 수 없습니다. 이 교재 환경에는 docker가 없어서 버전을 묻는 줄을 실행하지 않았습니다. 확인한 것은 명령을 찾지 못했을 때 Docker 칸이 False라는 점까지입니다.</p>
+</details>
+<h2 id="b10"><span class="no">10</span>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3.12/library/pathlib.html">Python 3.12 pathlib</a> · <a href="https://docs.python.org/3.12/library/tempfile.html">tempfile</a> · 2절에서 확인 2026-09-16</li><li><a href="https://docs.python.org/3.12/library/subprocess.html">Python 3.12 subprocess</a> · <a href="https://docs.python.org/3.12/library/sys.html">sys</a> · <a href="https://docs.python.org/3.12/library/shutil.html#shutil.which">shutil.which</a> · 3절·5절에서 확인 2026-09-16</li><li><a href="https://git-scm.com/docs/git-status">git-status 짧은 형식</a> · <a href="https://git-scm.com/docs/git">git -c 옵션</a> · 5절에서 확인 2026-09-16 · 예제는 교재에서 작성</li></ul>

@@ -1,0 +1,14 @@
+flowchart TB
+  %% classes
+  sc["문의 종류 가르기<br>워크플로우 점수 4"]:::measure
+  val["바꾼 값 기준값<br>3 · 4 · 5"]:::tool
+  rec["recommend<br>점수가 기준값 이상인가"]:::flow
+  ok["워크플로우로 충분<br>기준값 3 · 4"]:::measure
+  no["모델이 고르는 단계 검토<br>기준값 5"]:::measure
+  other["다른 두 일은 그대로<br>환불 절차 6은 모두 충분<br>장애 원인 조사 1은 모두 검토"]
+  sc --> rec
+  val --> rec
+  rec -.->|이상이면| ok
+  rec -.->|작으면| no
+  ok ~~~ other
+  no ~~~ other

@@ -1,0 +1,102 @@
+[
+  {
+    "notebook": "labs/part6/ch24-human-in-the-loop/notebooks/01-interrupt-승인-게이트.ipynb",
+    "html": "textbook/part6/ch24-human-in-the-loop/01-interrupt-승인-게이트.html",
+    "code_cells": 28,
+    "code_lines": 205,
+    "max_cell_lines": 11,
+    "verification": {
+      "allow_errors": false,
+      "code_cells": 28,
+      "code_sha256": "7187f7a39f3fbd146120412daf4d9675ecf132703117570348b3b570744595ab",
+      "executed_at": "2026-09-25T13:50:56.438453+00:00",
+      "fresh_kernel": true,
+      "outputs_sha256": "fbaaa8908bd18c3b40364f4e558903e8eafe43b0a9e34eaaa0ca401323f09970",
+      "python_version": "3.12.13",
+      "status": "passed"
+    },
+    "python_version": "3.12.13",
+    "lesson_format": "paired",
+    "html_matches": true,
+    "download_matches": true,
+    "outputs_match": true,
+    "failure_section_matches": true,
+    "before_cells": 4,
+    "after_cells": 12
+  },
+  {
+    "notebook": "labs/part6/ch24-human-in-the-loop/notebooks/02-Command-resume으로-실행-재개.ipynb",
+    "html": "textbook/part6/ch24-human-in-the-loop/02-Command-resume으로-실행-재개.html",
+    "code_cells": 28,
+    "code_lines": 189,
+    "max_cell_lines": 11,
+    "verification": {
+      "allow_errors": false,
+      "code_cells": 28,
+      "code_sha256": "ead91c80882f194d6d58a329197d2637cba1cf77eb8595387dfd832354fd0441",
+      "executed_at": "2026-09-25T14:23:57.569633+00:00",
+      "fresh_kernel": true,
+      "outputs_sha256": "b3385367b194ef3d9263855fcf2cc60b955c3b1a9e242a02d33561376d34c608",
+      "python_version": "3.12.13",
+      "status": "passed"
+    },
+    "python_version": "3.12.13",
+    "lesson_format": "experiment",
+    "html_matches": true,
+    "download_matches": true,
+    "outputs_match": true,
+    "failure_section_matches": true,
+    "before_cells": 0,
+    "after_cells": 0
+  },
+  {
+    "notebook": "labs/part6/ch24-human-in-the-loop/notebooks/03-상태-기록과-다른-분기-재실행.ipynb",
+    "html": "textbook/part6/ch24-human-in-the-loop/03-상태-기록과-다른-분기-재실행.html",
+    "code_cells": 28,
+    "code_lines": 188,
+    "max_cell_lines": 11,
+    "verification": {
+      "allow_errors": false,
+      "code_cells": 28,
+      "code_sha256": "12b29f1517d5f8b90c041487a6c8ae0c14a1c6a1710cbc3d28129f7c5e74cdbd",
+      "executed_at": "2026-09-25T14:52:29.288449+00:00",
+      "fresh_kernel": true,
+      "outputs_sha256": "aab2462d34f9ccda3285d028f80e1dc9a01d4ff4edbfa10af71f953685ab89d8",
+      "python_version": "3.12.13",
+      "status": "passed"
+    },
+    "python_version": "3.12.13",
+    "lesson_format": "experiment",
+    "html_matches": true,
+    "download_matches": true,
+    "outputs_match": true,
+    "failure_section_matches": true,
+    "before_cells": 0,
+    "after_cells": 0
+  },
+  {
+    "notebook": "labs/part6/ch24-human-in-the-loop/notebooks/04-Human-in-the-Loop-실습.ipynb",
+    "html": "textbook/part6/ch24-human-in-the-loop/04-Human-in-the-Loop-실습.html",
+    "code_cells": 28,
+    "code_lines": 202,
+    "max_cell_lines": 12,
+    "verification": {
+      "allow_errors": false,
+      "code_cells": 28,
+      "code_sha256": "c4722b0d084f12987ac29f96abb6da6e4dbbeb7550fc9d8e5ff57897919a02e6",
+      "executed_at": "2026-09-25T15:27:36.116342+00:00",
+      "fresh_kernel": true,
+      "outputs_sha256": "2aeaebb251740d00d01c79673a498d419be28f5d9b80ebeb9e7550907bcd425c",
+      "python_version": "3.12.13",
+      "status": "passed"
+    },
+    "python_version": "3.12.13",
+    "lesson_format": "experiment",
+    "html_matches": true,
+    "download_matches": true,
+    "outputs_match": true,
+    "failure_section_matches": true,
+    "before_cells": 0,
+    "after_cells": 0
+  }
+]

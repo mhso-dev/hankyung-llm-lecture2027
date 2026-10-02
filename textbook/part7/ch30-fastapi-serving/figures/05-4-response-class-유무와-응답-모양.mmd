@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  same["같은 처리 함수 stream_answer<br>같은 질문 yield 일곱 번"]:::flow
+  subgraph r1["실행 1 · response_class 있음"]
+    direction TB
+    a1["response_class=<br>EventSourceResponse"]:::flow
+    b1["본문 종류<br>text/event-stream"]:::measure
+    c1["SSE 사건 일곱<br>event: 줄 일곱"]:::measure
+    a1 --> b1 --> c1
+  end
+  subgraph r2["실행 2 · response_class 없음"]
+    direction TB
+    a2["response_class<br>빼기만 함"]:::flow
+    b2["본문 종류<br>application/jsonl"]:::measure
+    c2["JSON 줄 일곱<br>event: 줄 없음"]:::measure
+    a2 --> b2 --> c2
+  end
+  same --> r1
+  same --> r2

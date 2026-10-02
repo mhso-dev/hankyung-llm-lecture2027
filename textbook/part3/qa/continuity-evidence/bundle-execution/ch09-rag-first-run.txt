@@ -1,0 +1,15 @@
+PASS 06-실험-하네스.ipynb: 28 cells
+Using CPython 3.12.13
+Creating virtual environment at: [사용자 폴더]/tmp/fc5-part3/hankyung-continuity-wbcb4mjo/part3-practice/labs/part3/ch09-rag-first-run/.venv
+Downloading sqlalchemy (3.2MiB)
+Downloading openai (1.7MiB)
+Downloading aiohttp (1.7MiB)
+Downloading ruff (9.5MiB)
+Downloading langchain-community (2.3MiB)
+ Downloaded openai
+ Downloaded aiohttp
+ Downloaded langchain-community
+ Downloaded sqlalchemy
+ Downloaded ruff
+Installed 94 packages in 250ms
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.

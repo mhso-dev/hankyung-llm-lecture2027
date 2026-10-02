@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part6/qa/check_delivery.py", line 140, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part6/qa/check_delivery.py", line 117, in main
+    assert content == (ROOT / entry['path']).read_bytes(), f'Stale file: {entry["path"]}'
+AssertionError: Stale file: labs/part6/ch25-streaming/notebooks/02-토큰과-중간-진행-스트리밍.ipynb

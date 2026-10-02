@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  E["환경 파일 이름 env_file_name<br>칸: 환경 파일"]:::tool
+  A["add_on_branch()<br>02·05절 브랜치와 색인 비교<br>칸: 색인의 더미 키"]:::flow
+  C["commit_without_key()<br>01절 무시 규칙과<br>rm --cached"]:::flow
+  U["update_branch()<br>03절 main 받기와 충돌 해결<br>칸: main 받기 종료 코드"]:::flow
+  P["open_pull_request()<br>merge_pull_request()<br>02절 PR 올리기와 병합<br>칸: PR 변경 요약, main의 무시 규칙"]:::flow
+  K["count_key_commits()<br>05절 더미 키 검색<br>칸: 더미 키 커밋 수"]:::flow
+  R["기록장 report<br>칸 여섯 개"]:::measure
+  E --> A
+  A -->|색인의 더미 키| C
+  C --> U
+  U --> P
+  P --> K
+  K --> R

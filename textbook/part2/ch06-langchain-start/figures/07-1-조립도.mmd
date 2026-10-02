@@ -1,0 +1,15 @@
+%%{init: {"flowchart": {"wrappingWidth": 320}}}%%
+flowchart TB
+  %% classes
+  S["재료<br>StudyCard 양식 · 질문 두 개"]:::tool
+  B["조립 함수 build_card_path<br>인자 primary_timeout"]:::flow
+  P["기본 경로 gpt-5.4-mini<br>03절 양식 붙이기<br>timeout 실행 1 30초 · 실행 2 0.001초"]:::model
+  N["대체 경로 gpt-5.4-nano<br>03절 양식 붙이기 · timeout 30초"]:::model
+  T["timed_invoke<br>06절 걸린 초"]:::flow
+  R["make_card_record<br>estimate_answer_cost<br>응답한 모델로 06절 요금표 고르기"]:::flow
+  L["기록 한 줄<br>응답한 모델 · 토큰 수<br>걸린 초 · 예상 비용"]:::measure
+  S --> B --> P
+  P -->|05절 폴백 · 시간 초과일 때만| N
+  P -->|결과 딕셔너리| T
+  N -->|결과 딕셔너리| T
+  T --> R --> L

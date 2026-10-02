@@ -1,0 +1,130 @@
+{
+  "version": "v2.1",
+  "genre": "essay",
+  "char_count": 22011,
+  "metrics": {
+    "comma_inclusion_rate": 0.23755656108597284,
+    "comma_usage_rate": 0.43665158371040724,
+    "ending_comma_rate": 0.2903225806451613,
+    "comma_segment_length": 7.977952755905512,
+    "conclusion_pivot_count": 7,
+    "safe_balance_count": 1,
+    "hanja_nominalizer_density": 0.016045958795562597,
+    "lexical_diversity": 0.42452456418383516
+  },
+  "z_scores": {
+    "comma_inclusion_rate": -0.14713962508080164,
+    "comma_usage_rate": -0.9697180647406889,
+    "ending_comma_rate": 3.170026454483933,
+    "comma_segment_length": 1.723492995679578,
+    "hanja_nominalizer_density": -1.4651347068145801,
+    "lexical_diversity": -4.509508716323298
+  },
+  "risk_band": "high",
+  "risk_score": 6,
+  "evidence": {
+    "conclusion_pivots": [
+      "따라서"
+    ],
+    "safe_balances": [
+      "양쪽 모두"
+    ]
+  },
+  "v2_metrics": {
+    "lexical_diversity_ttr": 0.42452456418383516,
+    "lexical_density": 0.03645007923930269,
+    "ending_diversity": 0.01485148514851485,
+    "normalisation_score": 0.0,
+    "da_streak_rate": 4,
+    "inanimate_subject_rate": 0.0,
+    "by_passive_count": 0,
+    "double_passive_count": 0,
+    "pronoun_density": 0.0,
+    "deul_overuse_rate": 0.0,
+    "relative_clause_nesting": 64,
+    "have_make_literal_count": 6,
+    "double_particle_count": 2,
+    "progressive_aspect_rate": 0.0022624434389140274,
+    "antithesis_count": 4,
+    "antithesis_rate": 0.00904977375565611,
+    "long_sentence_rate": 0.027149321266968326,
+    "geosida_rate": 0.0
+  },
+  "v2_interference_index": {
+    "components": {
+      "T1_inanimate_subject_rate": 0.0,
+      "T2a_by_passive_per_1k": 0.0,
+      "T2b_double_passive_per_1k": 0.0,
+      "T3_pronoun_density": 0.0,
+      "T4_deul_overuse_rate": 0.0,
+      "T5_nested_clause_count": 64,
+      "T6_have_make_per_1k": 0.2725909772386534,
+      "T7_double_particle_per_1k": 0.09086365907955113,
+      "T8b_progressive_rate": 0.0022624434389140274
+    },
+    "weighted_total": 1.1022124684264203,
+    "n_sentences": 442,
+    "n_chars": 22011
+  },
+  "v2_z_scores": {
+    "lexical_diversity_ttr": -2.4434429477020605,
+    "lexical_density": -3.7649988680099606,
+    "ending_diversity": -4.45957095709571,
+    "normalisation_score": -3.3333333333333335,
+    "da_streak_rate": 6.0,
+    "inanimate_subject_rate": -1.6666666666666667,
+    "by_passive_count": -0.5,
+    "double_passive_count": -0.33333333333333337,
+    "pronoun_density": -1.2,
+    "deul_overuse_rate": -0.625,
+    "relative_clause_nesting": 127.4,
+    "have_make_literal_count": 6.999999999999999,
+    "double_particle_count": 2.428571428571429,
+    "progressive_aspect_rate": -1.2217194570135745,
+    "antithesis_count": null,
+    "antithesis_rate": 0.42248868778280546,
+    "long_sentence_rate": -1.1663759769642124,
+    "geosida_rate": -1.6538461538461537
+  },
+  "v2_baseline_warnings": [
+    "lexical_diversity_ttr",
+    "lexical_density",
+    "ending_diversity",
+    "normalisation_score",
+    "da_streak_rate",
+    "inanimate_subject_rate",
+    "by_passive_count",
+    "double_passive_count",
+    "pronoun_density",
+    "deul_overuse_rate",
+    "relative_clause_nesting",
+    "have_make_literal_count",
+    "double_particle_count",
+    "progressive_aspect_rate"
+  ],
+  "v2_copy_metrics": {
+    "mechanical_verb_calque_count": 0,
+    "abstract_noun_ending_count": 0,
+    "benefactive_calque_count": 0,
+    "sentence_initial_deuneun_count": 0,
+    "first_person_formal_count": 0,
+    "second_person_appeal_ratio": {
+      "third_person_declarative": 0,
+      "second_person_tokens": 0,
+      "appeal_absent": false
+    }
+  },
+  "v2_copy_interference_index": {
+    "components": {
+      "A20_mechanical_verb_per_1k": 0.0,
+      "A21_abstract_ending_per_1k": 0.0,
+      "A22_benefactive_per_1k": 0.0,
+      "A24_deuneun_initial_per_1k": 0.0,
+      "I7_first_person_formal_per_1k": 0.0,
+      "A25_appeal_absent": 0.0
+    },
+    "weighted_total": 0.0,
+    "n_sentences": 442,
+    "n_chars": 22011
+  }
+}

@@ -1,0 +1,4 @@
+- 설명 대상 문장: except Exception은 파일 없음과 수량 오류를 같은 빈 목록으로 감췄고, except 줄을 FileNotFoundError로 좁히자 수량 오류의 메시지가 함수 밖까지 나왔습니다.
+- 캡션: except 줄에 Exception을 적은 Before는 두 문제가 같은 빈 목록이 되고, FileNotFoundError만 적은 After는 수량 오류가 함수 밖으로 나옵니다.
+- 읽는 법: 위 칸이 Before, 아래 칸이 After이고, 칸 안은 왼쪽에서 오른쪽으로 읽습니다. 초록 상자는 읽은 파일과 거기서 난 오류, 파란 상자는 except 줄입니다. Before는 두 화살표가 except Exception 하나로 모여 빨간 상자(주문 목록 [] · [], 두 결과가 같은가 True)에 이릅니다. After는 missing.txt만 except FileNotFoundError를 거쳐 노란 상자 []로 가고, bad_orders.txt는 except 줄을 거치지 않고 노란 상자의 오류 메시지로 갑니다. 빨강은 실제로 틀린 Before 결과에만 썼습니다.
+- alt: Before는 missing.txt의 FileNotFoundError와 bad_orders.txt의 ValueError가 모두 except Exception에 받혀 두 주문 목록이 빈 목록으로 같아지고, After는 missing.txt만 except FileNotFoundError에 받혀 빈 목록이 되고 bad_orders.txt의 ValueError는 함수 밖에서 오류 메시지로 보이는 비교 그림

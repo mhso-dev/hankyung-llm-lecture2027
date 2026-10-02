@@ -1,0 +1,21 @@
+flowchart TB
+  %% classes
+  subgraph INDEX["색인 · 문서가 바뀔 때 다시 만듦"]
+    direction LR
+    p["E01.pdf 5쪽<br>Document 5개"]:::tool
+    c["문서 청크 8개"]:::tool
+    s["벡터스토어<br>벡터 8개"]:::tool
+    p --> c
+    c --> s
+  end
+  subgraph ASK["질문 처리 · 질문할 때마다 실행"]
+    direction LR
+    q["질문<br>한 문장"]:::tool
+    k["검색<br>k=2"]:::flow
+    m["gpt-5.4-mini"]:::model
+    a["답과<br>출처 표시"]:::measure
+    q --> k
+    k -->|근거 2개<br>+ 질문| m
+    m --> a
+  end
+  INDEX -->|벡터스토어에서 검색| ASK

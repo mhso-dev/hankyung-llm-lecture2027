@@ -1,0 +1,66 @@
+{
+  "archive_sha256": "05b4a61f6a0ab33bca7ef266fd3211d718bed679739de6c16157ecc317443f64",
+  "source": "part3-practice.zip",
+  "data_or_student_module_fallback": false,
+  "verification_runner": "textbook/_notebook/execute.py (outside ZIP, verification only)",
+  "notebooks": [
+    {
+      "notebook": "labs/part3/ch09-rag-first-run/notebooks/06-실험-하네스.ipynb",
+      "working_directory": "extracted notebook directory",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 11,
+        "code_sha256": "8e192f1f8959e6fa13a453ec7f1ee9ba3be95ef6b271b60ba1e6c9c78f3972c2",
+        "executed_at": "2026-09-09T16:26:55.794131+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "f1f43fd475fa3cd9a19e37a6d63361b4a0bbb898ac56bc1c34f4fc6b2e1c863a",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "notebook": "labs/part3/ch10-document-processing/notebooks/08-인덱싱-비교-실험.ipynb",
+      "working_directory": "extracted notebook directory",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 10,
+        "code_sha256": "edd10ad7421cb830c0ce6a45935e1dde43d16fe00eb6bb723651f9dd4eec5d08",
+        "executed_at": "2026-09-09T16:27:11.127524+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "6f52dfa7a9d161e0099968029b45c4bd81f6b20fe44075e434110e7e616d3d71",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    },
+    {
+      "notebook": "labs/part3/ch11-evaluation/notebooks/06-실험-로그와-자동-실행.ipynb",
+      "working_directory": "extracted notebook directory",
+      "verification": {
+        "allow_errors": false,
+        "code_cells": 6,
+        "code_sha256": "c704a43d79e7740a4cdbf5a5f7a0c8486755de190e24fa9c32bc389cb971fa24",
+        "executed_at": "2026-09-09T16:27:12.602325+00:00",
+        "fresh_kernel": true,
+        "outputs_sha256": "4d56392fc8654f6c4fa50350f46b4a5f9ff3b93e9aa2fa00cba81648c28fda03",
+        "python_version": "3.12.13",
+        "status": "passed"
+      }
+    }
+  ],
+  "temporary_extraction": "/var/folders/14/3sq03f6s3_7bs0tygfqqvc_c0000gn/T/hankyung-continuity-3mjmmfdq/part3-practice",
+  "credentials_written": false,
+  "final_archive_sha256": "5095d3571b904171b38cb1207c739f80a0ac751f358f530353c48447b35636e3",
+  "final_archive_changed_files_since_execution": [],
+  "final_archive_execution_inputs_identical": true,
+  "fresh_handoff_source_run_ids": [
+    "20260909T162655027842-ch09",
+    "20260909T162711008560-ch10-01",
+    "20260909T162711008560-ch10-02",
+    "20260909T162711008560-ch10-03",
+    "20260909T162711008560-ch10-04",
+    "20260909T162711008560-ch10-05",
+    "20260909T162711008560-ch10-06"
+  ],
+  "fresh_handoff_evaluated_runs": 7,
+  "cutoff_policy_verified": true
+}

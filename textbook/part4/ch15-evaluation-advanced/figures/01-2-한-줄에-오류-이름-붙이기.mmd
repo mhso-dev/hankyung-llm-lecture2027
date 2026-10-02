@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  docs["Q005 다섯 자리 문서<br>E02 E01 E01 H02 H01"]:::tool
+  uniq["unique_doc_ids<br>처음 나온 문서만 남기기"]:::flow
+  ids["고유 문서 목록<br>E02 E01 H02 H01"]:::measure
+  rank["find_gold_rank<br>정답 E01의 자리 세기"]:::flow
+  place["정답 자리 둘"]:::measure
+  judge["error_name<br>자르는 자리 1과 견주기"]:::flow
+  named["오류 이름 뒤로 밀림"]:::measure
+  docs --> uniq
+  uniq --> ids
+  ids --> rank
+  rank --> place
+  place --> judge
+  judge --> named

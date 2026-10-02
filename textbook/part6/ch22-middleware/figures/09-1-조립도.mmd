@@ -1,0 +1,10 @@
+flowchart TB
+  %% classes
+  q["질문 들어옴"]:::flow --> s["감사 시작 기록<br>audit_start"]:::measure
+  s --> m["이메일 가리기<br>before_model"]:::flow
+  m --> l["호출 수 확인<br>모델 호출 전"]:::measure
+  l --> M["모델 호출<br>입력 기록"]:::model
+  M -- "도구 요청" --> t["도구 호출·기록<br>audit_tool"]:::tool
+  t -. "다음 모델 호출" .-> m
+  M -- "최종 답" --> e["감사 끝 기록<br>audit_end"]:::measure
+  l -. "한도 넘음" .-> e

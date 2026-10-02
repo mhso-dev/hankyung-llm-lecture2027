@@ -1,0 +1,14 @@
+runner ok 3.12.13 0.11.0
+PASS extracted archive: ch30-fastapi-serving
+runner ok 3.12.13 0.11.0
+db ok 127.0.0.1:55431
+PASS extracted archive: ch31-database
+PASS extracted archive: ch32-docker
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/.cache/final-close/3-check-scripts/dx/p7_bundle_probe.py", line 83, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/.cache/final-close/3-check-scripts/dx/p7_bundle_probe.py", line 47, in main
+    sync = subprocess.run(
+  File "/usr/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['uv', 'sync', '--locked', '--project', '/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/tmp/part7-student-q8fodaxy/part7-practice/labs/part7/ch33-cicd']' returned non-zero exit status 1.

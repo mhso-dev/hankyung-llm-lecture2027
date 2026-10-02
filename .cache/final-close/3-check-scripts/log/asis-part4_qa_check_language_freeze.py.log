@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part4/qa/check_language_freeze.py", line 38, in <module>
+    main()
+  File "/sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/textbook/part4/qa/check_language_freeze.py", line 30, in main
+    assert hashlib.sha256(source.read_bytes()).hexdigest() == item['source_sha256'], source
+AssertionError: /sessions/rcw-01fa62dwjghtyrmrgyqrfwx5/mnt/한국경제신문/labs/part4/ch13-langgraph-basics/README.md

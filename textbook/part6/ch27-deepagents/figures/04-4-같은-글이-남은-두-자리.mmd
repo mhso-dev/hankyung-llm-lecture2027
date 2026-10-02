@@ -1,0 +1,20 @@
+%%{init: {"flowchart": {"rankSpacing": 28, "wrappingWidth": 300}}}%%
+flowchart TB
+  %% classes
+  reply["모델의 응답<br>write_file 요청 하나"]:::model
+  subgraph outside[메시지 목록 밖]
+    direction TB
+    f1["임시 폴더 안 notes/rules.md<br>요청 인자의 글과 같음 True"]:::measure
+    f2["상태 칸 files<br>빈 목록"]:::measure
+    f1 ~~~ f2
+  end
+  subgraph inside[이번 실행의 메시지 목록]
+    direction TB
+    m1["응답의 도구 호출 인자<br>content 글"]:::measure
+    m2["도구 메시지<br>Updated file"]:::measure
+    m1 ~~~ m2
+  end
+  rule["셈<br>요청 수는 도구를 요청한<br>응답 수 더하기 1"]
+  reply --> inside
+  reply --> outside
+  outside ~~~ rule

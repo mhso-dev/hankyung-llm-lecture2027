@@ -1,0 +1,15 @@
+flowchart TB
+  %% classes
+  url["접속 글<br>127.0.0.1:55431<br>/ch31_lab"]:::tool
+  ext["확장 vector 0.8.1<br>기본 이름 공간 public"]
+  subgraph ns["이름 공간 ch31_shared"]
+    direction TB
+    docs["문서 표 documents<br>문서 셋 · 벡터 칸"]:::tool
+    hnsw["HNSW 색인<br>documents_<br>embedding_hnsw"]:::flow
+    saver["체크포인터 표 넷<br>setup()이 만듦"]
+    docs --> hnsw
+  end
+  seen["표 다섯<br>checkpoints 줄 셋<br>저장된 값 value 12"]:::measure
+  url --> ns
+  ext -. 자료형을 빌려 씀 .-> docs
+  ns --> seen

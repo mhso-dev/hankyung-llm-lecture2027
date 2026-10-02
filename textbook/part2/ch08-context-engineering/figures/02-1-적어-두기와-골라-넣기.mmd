@@ -1,0 +1,19 @@
+flowchart TB
+  %% classes
+  subgraph WRITE["Write · 적어 두기"]
+    R["기록 목록 5개<br>출처 · 기관 · 주제 · 내용"]:::tool
+    W["json.dumps<br>with open w"]:::flow
+    F["library-notes.json<br>메시지 목록 밖의 파일"]:::tool
+  end
+  subgraph SELECT["Select · 골라 넣기"]
+    S["json.loads 뒤 조건 검사<br>기관 미르시립도서관<br>주제 대출 · 주차"]:::flow
+    P["고른 기록 2개<br>E01 p.3 · E01 p.5"]:::measure
+    U["user 글<br>기록 두 줄 + 질문"]:::tool
+  end
+  M["gpt-5.4-mini"]:::model
+  R --> W
+  W --> F
+  WRITE --> SELECT
+  S --> P
+  P --> U
+  SELECT --> M
